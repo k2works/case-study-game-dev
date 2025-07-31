@@ -53,6 +53,8 @@ npm run docs:serve
 
 ### 配置
 
+#### ドキュメント
+
 ドキュメントのビルドとデプロイ：
 
 ```bash
@@ -61,6 +63,19 @@ npm run docs:build
 
 # 静的ファイルは site/ ディレクトリに生成されます
 ```
+
+#### アプリケーション
+
+ぷよぷよゲームのデプロイ：
+
+```bash
+# Vercelを使用したデプロイ
+npx vercel --prod --yes
+```
+
+**本番環境URL**: https://case-study-game-ei37z6k4q-k2works-projects.vercel.app
+
+詳細な手順は [デプロイドキュメント](./docs/operation/デプロイ.md) を参照してください。
 
 **[⬆ back to top](#構成)**
 
