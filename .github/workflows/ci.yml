@@ -60,31 +60,23 @@ jobs:
     if: github.ref == 'refs/heads/case-1'
     
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-        cache-dependency-path: app/package-lock.json
-    
-    - name: Install dependencies
-      working-directory: ./app
-      run: npm ci
-    
-    - name: Build application
-      working-directory: ./app
-      run: npm run build
-    
-    - name: Install Vercel CLI
-      if: github.ref == 'refs/heads/case-1'
-      run: npm install --global vercel@latest
-    
-    - name: Deploy to Vercel
-      if: github.ref == 'refs/heads/case-1'
-      working-directory: ./app
-      run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
-      env:
-        VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
-        VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      - uses: actions/checkout@v2
+      - name: Setup Environment Variables
+        run: |
+          echo VITE_APP_API_URL=${{ vars.DEV_APP_API_URL }} > .env
+        working-directory: app
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: app
+
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: app
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: app
