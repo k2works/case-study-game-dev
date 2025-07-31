@@ -85,6 +85,18 @@
 | `ORG_ID` | Vercel組織ID | 手順6.2で取得したID |
 | `PROJECT_ID` | VercelプロジェクトID | 手順6.3で取得したID |
 
+#### 6.5 GitHub Repository Variablesの設定
+
+環境変数も設定する必要があります：
+
+1. GitHubリポジトリの「Settings」→「Secrets and variables」→「Actions」
+2. 「Variables」タブをクリック
+3. 以下のVariableを追加：
+
+| Variable名 | 説明 | 値の例 |
+|------------|------|--------|
+| `DEV_APP_API_URL` | 開発環境のAPI URL | `https://api.example.com` |
+
 ## 手動デプロイ
 
 手動でVercelにデプロイする場合：
@@ -99,16 +111,19 @@ cd app
 # 初回設定
 vercel login
 
-# アプリケーションのビルド
-npm run build
+# 環境変数の設定
+echo "VITE_APP_API_URL=https://api.example.com" > .env
 
-# デプロイ（環境変数を使用）
-export VERCEL_ORG_ID=your_org_id
-export VERCEL_PROJECT_ID=your_project_id
-vercel --prod
+# 既存プロジェクトの場合：環境情報を取得
+vercel pull --yes --environment=preview
 
-# または既存プロジェクトへのデプロイ
-vercel link
+# Vercelでビルド
+vercel build
+
+# プリビルドされたアーティファクトをデプロイ
+vercel deploy --prebuilt
+
+# または新規プロジェクトの場合
 vercel --prod
 ```
 
@@ -116,9 +131,11 @@ vercel --prod
 
 1. `case-1`ブランチに変更をプッシュ
 2. GitHub Actionsが実行されることを確認
-3. アプリケーションがビルドされる
-4. Vercel CLIを使用してデプロイが実行される
-5. Vercelダッシュボードで新しいデプロイメントを確認
+3. 環境変数が設定される（`VITE_APP_API_URL`）
+4. Vercel環境情報が取得される（preview環境）
+5. Vercelがプロジェクトをビルドする
+6. プリビルドされたアーティファクトがデプロイされる
+7. Vercelダッシュボードで新しいデプロイメントを確認
 
 ## トラブルシューティング
 
@@ -161,27 +178,40 @@ vercel --prod
 - `npm run build`でアプリケーションをビルドしてから`vercel --prod`でデプロイ
 - GitHub Actionsではubuntu-latestランナーを使用
 
-#### パス不存在エラー
+#### Vercel Pull/Build/Deploy エラー
 
-**問題**: `The provided path "~/work/.../app/app" does not exist`エラーが発生
-**解決方法1**: 環境変数を使用したデプロイ
-- `VERCEL_ORG_ID`と`VERCEL_PROJECT_ID`環境変数を設定
-- 既存のプロジェクト設定の影響を回避
-  ```bash
-  cd app
-  export VERCEL_ORG_ID=your_org_id
-  export VERCEL_PROJECT_ID=your_project_id
-  vercel --prod --token=TOKEN --yes
+**問題**: `vercel pull`, `vercel build`, または `vercel deploy` でエラーが発生
+**解決**:
+- 正しいトークンが設定されているか確認
+- プロジェクトIDと組織IDが正しく設定されているか確認
+- preview環境が存在するか確認
+- GitHub Actionsワークフロー：
+  ```yaml
+  - name: Pull Vercel Environment Information
+    run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+    working-directory: app
+  
+  - name: Build Project Artifacts
+    run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+    working-directory: app
+  
+  - name: Deploy Project Artifacts to Vercel
+    run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+    working-directory: app
   ```
 
-**解決方法2**: 手動プロジェクト設定
-- `.vercel/project.json`を手動作成してプロジェクト情報を設定
-- `working-directory`を正しく設定
-- Vercelプロジェクト設定でRoot Directoryが正しく設定されているか確認
-- GitHub Actionsで以下のコマンドを実行：
-  ```bash
-  mkdir -p .vercel
-  echo '{"orgId":"ORG_ID","projectId":"PROJECT_ID"}' > .vercel/project.json
+#### 環境変数設定エラー
+
+**問題**: 環境変数が正しく設定されない
+**解決**:
+- GitHub Repository Variablesが正しく設定されているか確認
+- `.env`ファイルが正しく作成されているか確認
+- ワークフローでの環境変数設定：
+  ```yaml
+  - name: Setup Environment Variables
+    run: |
+      echo VITE_APP_API_URL=${{ vars.DEV_APP_API_URL }} > .env
+    working-directory: app
   ```
 
 #### 未知のオプションエラー
