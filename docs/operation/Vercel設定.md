@@ -85,11 +85,28 @@
 | `ORG_ID` | Vercel組織ID | 手順6.2で取得したID |
 | `PROJECT_ID` | VercelプロジェクトID | 手順6.3で取得したID |
 
+## 手動デプロイ
+
+手動でVercelにデプロイする場合：
+
+```bash
+# Vercel CLIのインストール
+npm i -g vercel@latest
+
+# 初回設定（appディレクトリで実行）
+cd app
+vercel login
+vercel link
+
+# デプロイ
+vercel --prod
+```
+
 ## 自動デプロイの動作確認
 
 1. `case-1`ブランチに変更をプッシュ
 2. GitHub Actionsが実行されることを確認
-3. テスト・ビルドが成功後、Vercelへのデプロイが実行される
+3. Vercel CLIを使用したデプロイフローが実行される
 4. Vercelダッシュボードで新しいデプロイメントを確認
 
 ## トラブルシューティング
