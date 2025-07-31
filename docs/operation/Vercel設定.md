@@ -98,12 +98,15 @@ cd app
 
 # 初回設定
 vercel login
-vercel link
 
 # アプリケーションのビルド
 npm run build
 
-# デプロイ
+# デプロイ（新しいプロジェクトとして）
+vercel --prod --name=puyo-puyo-game
+
+# または既存プロジェクトへのデプロイ
+vercel link
 vercel --prod
 ```
 
@@ -159,7 +162,15 @@ vercel --prod
 #### パス不存在エラー
 
 **問題**: `The provided path "~/work/.../app/app" does not exist`エラーが発生
-**解決**:
+**解決方法1**: 新しいプロジェクトとしてデプロイ
+- `--name`と`--org`オプションを使用して新しいプロジェクトを作成
+- 既存のプロジェクト設定の影響を回避
+  ```bash
+  cd app
+  vercel --prod --token=TOKEN --yes --name=puyo-puyo-game --org=ORG_ID
+  ```
+
+**解決方法2**: 手動プロジェクト設定
 - `.vercel/project.json`を手動作成してプロジェクト情報を設定
 - `working-directory`を正しく設定
 - Vercelプロジェクト設定でRoot Directoryが正しく設定されているか確認
