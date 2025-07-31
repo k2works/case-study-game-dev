@@ -63,11 +63,34 @@ src/
     └── integration/
 ```
 
+## デプロイ
+
+このアプリケーションはVercelにデプロイされます。
+
+### Vercel設定
+
+以下の環境変数をGitHubリポジトリのSecretsに設定してください：
+
+- `VERCEL_TOKEN`: Vercelアクセストークン
+- `ORG_ID`: Vercel組織ID
+- `PROJECT_ID`: VercelプロジェクトID
+
+### 手動デプロイ
+
+```bash
+# Vercel CLIのインストール
+npm i -g vercel
+
+# デプロイ
+vercel --prod
+```
+
 ## 開発プロセス
 
 1. **テスト駆動開発**: Red-Green-Refactorサイクル
 2. **イテレーション開発**: 機能を段階的に実装
 3. **継続的インテグレーション**: GitHubActionsによる自動化
+4. **継続的デプロイ**: Vercelへの自動デプロイ
 
 ## 実装予定機能
 
