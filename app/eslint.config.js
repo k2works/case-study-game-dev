@@ -6,6 +6,9 @@ import prettier from 'eslint-plugin-prettier'
 export default [
   js.configs.recommended,
   {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
+  },
+  {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: typescriptParser,
@@ -36,7 +39,7 @@ export default [
     files: ['**/*.test.{ts,tsx}'],
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn'
+      '@typescript-eslint/no-unused-vars': 'warn',
     },
   },
   {

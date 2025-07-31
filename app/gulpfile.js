@@ -31,7 +31,9 @@ export const checkAndFix = series(lintFix, format, test)
 // ファイル監視タスク（Ruby入門2のGuardに対応）
 export function guard() {
   console.log('🔍 Guard is watching for file changes...')
-  console.log('Files will be automatically linted, formatted, and tested on change.')
+  console.log(
+    'Files will be automatically linted, formatted, and tested on change.'
+  )
   watch('src/**/*.ts', series(lintFix, format, test))
   watch('**/*.test.ts', series(test))
 }
