@@ -103,6 +103,10 @@ npm run docs:build
 
 プロジェクトの運用に関する情報は [運用ドキュメント](./docs/operation/) を参照してください。
 
+**主要な運用ドキュメント：**
+- [セットアップ](./docs/operation/セットアップ.md) - 開発環境のセットアップ
+- [Vercel設定](./docs/operation/Vercel設定.md) - ぷよぷよゲームのデプロイ設定
+
 利用可能なコマンド：
 
 | コマンド | 説明 |

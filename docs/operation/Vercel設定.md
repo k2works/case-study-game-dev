@@ -1,0 +1,130 @@
+# Vercel設定ガイド
+
+## 概要
+
+このドキュメントでは、ぷよぷよゲームアプリケーションをVercelにデプロイするための設定手順を説明します。
+
+## 前提条件
+
+- GitHubアカウント
+- Vercelアカウント
+- 本プロジェクトのリポジトリへのアクセス権限
+
+## 手順
+
+### 1. Vercelアカウントの作成・ログイン
+
+1. [Vercel](https://vercel.com/)にアクセス
+2. GitHubアカウントでサインアップ/ログイン
+
+### 2. プロジェクトのインポート
+
+1. Vercelダッシュボードで「Add New...」→「Project」をクリック
+2. GitHubリポジトリから本プロジェクトを選択
+3. 「Import」をクリック
+
+### 3. プロジェクト設定
+
+#### Framework Preset
+- **Framework Preset**: `Other`を選択
+
+#### Build and Output Settings
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Install Command**: `npm install`
+
+#### Root Directory
+- **Root Directory**: `app`を指定
+- 「Include source files outside of the Root Directory in the Build Step」にチェック
+
+### 4. 環境変数の設定（オプション）
+
+必要に応じて以下の環境変数を設定：
+
+| 変数名 | 説明 | 値の例 |
+|--------|------|--------|
+| `NODE_ENV` | Node.js実行環境 | `production` |
+
+### 5. デプロイ実行
+
+「Deploy」ボタンをクリックしてデプロイを開始
+
+### 6. GitHub Actions用のシークレット設定
+
+自動デプロイを有効にするため、GitHubリポジトリのSecretsに以下を設定：
+
+#### 6.1 Vercel Tokenの取得
+
+1. Vercelダッシュボードで右上のプロフィール→「Settings」
+2. 左メニューから「Tokens」
+3. 「Create Token」で新しいトークンを作成
+4. トークン名を入力（例：`github-actions`）
+5. スコープは「Full Account」を選択
+6. 生成されたトークンをコピー
+
+#### 6.2 Organization IDの取得
+
+1. Vercelダッシュボードで右上のプロフィール→「Settings」
+2. 左メニューから「General」
+3. 「Your ID」をコピー
+
+#### 6.3 Project IDの取得
+
+1. Vercelダッシュボードでプロジェクトを選択
+2. 「Settings」タブをクリック
+3. 「General」セクションで「Project ID」をコピー
+
+#### 6.4 GitHubリポジトリのSecrets設定
+
+1. GitHubリポジトリの「Settings」→「Secrets and variables」→「Actions」
+2. 以下のSecretを追加：
+
+| Secret名 | 説明 | 値 |
+|----------|------|-----|
+| `VERCEL_TOKEN` | Vercelアクセストークン | 手順6.1で取得したトークン |
+| `ORG_ID` | Vercel組織ID | 手順6.2で取得したID |
+| `PROJECT_ID` | VercelプロジェクトID | 手順6.3で取得したID |
+
+## 自動デプロイの動作確認
+
+1. `case-1`ブランチに変更をプッシュ
+2. GitHub Actionsが実行されることを確認
+3. テスト・ビルドが成功後、Vercelへのデプロイが実行される
+4. Vercelダッシュボードで新しいデプロイメントを確認
+
+## トラブルシューティング
+
+### よくある問題と解決方法
+
+#### ビルドエラー
+
+**問題**: `npm run build`でエラーが発生
+**解決**: 
+- `app/`ディレクトリがRoot Directoryに設定されているか確認
+- Build Commandが正しく設定されているか確認
+
+#### デプロイが実行されない
+
+**問題**: GitHub Actionsは成功するがVercelデプロイが実行されない
+**解決**:
+- GitHub Secretsがすべて正しく設定されているか確認
+- `case-1`ブランチにプッシュしているか確認
+
+#### 404エラー
+
+**問題**: デプロイ後にアクセスすると404エラー
+**解決**:
+- Output Directoryが`dist`に設定されているか確認
+- `vercel.json`の設定を確認
+
+## 関連ファイル
+
+- `app/vercel.json` - Vercel設定ファイル
+- `.github/workflows/ci.yml` - GitHub Actionsワークフロー
+- `app/package.json` - ビルドスクリプト設定
+
+## 参考資料
+
+- [Vercel Documentation](https://vercel.com/docs)
+- [Vercel GitHub Integration](https://vercel.com/docs/git/vercel-for-github)
+- [GitHub Actions Secrets](https://docs.github.com/ja/actions/security-guides/encrypted-secrets)
