@@ -160,9 +160,14 @@ vercel --prod
 
 **問題**: `The provided path "~/work/.../app/app" does not exist`エラーが発生
 **解決**:
-- デプロイ前に`vercel link`でプロジェクトをリンク
+- `.vercel/project.json`を手動作成してプロジェクト情報を設定
 - `working-directory`を正しく設定
 - Vercelプロジェクト設定でRoot Directoryが正しく設定されているか確認
+- GitHub Actionsで以下のコマンドを実行：
+  ```bash
+  mkdir -p .vercel
+  echo '{"orgId":"ORG_ID","projectId":"PROJECT_ID"}' > .vercel/project.json
+  ```
 
 ## 関連ファイル
 

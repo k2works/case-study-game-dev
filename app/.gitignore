@@ -27,6 +27,9 @@ dist-ssr
 coverage
 *.lcov
 
+# Vercel
+.vercel
+
 # OS generated files
 .DS_Store
 .DS_Store?
