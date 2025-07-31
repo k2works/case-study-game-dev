@@ -106,8 +106,9 @@ vercel --prod
 
 1. `case-1`ブランチに変更をプッシュ
 2. GitHub Actionsが実行されることを確認
-3. Vercel CLIを使用したデプロイフローが実行される
-4. Vercelダッシュボードで新しいデプロイメントを確認
+3. アプリケーションがビルドされる
+4. Vercel CLIを使用してデプロイが実行される
+5. Vercelダッシュボードで新しいデプロイメントを確認
 
 ## トラブルシューティング
 
@@ -141,6 +142,14 @@ vercel --prod
 **解決**:
 - `vercel.json`から`name`プロパティを削除
 - プロジェクト名はVercelダッシュボードで管理
+
+#### spawn sh ENOENT エラー
+
+**問題**: `vercel build`で`spawn sh ENOENT`エラーが発生
+**解決**:
+- Vercelビルドの代わりにnpmビルドを使用
+- `npm run build`でアプリケーションをビルドしてから`vercel --prod`でデプロイ
+- GitHub Actionsではubuntu-latestランナーを使用
 
 ## 関連ファイル
 
