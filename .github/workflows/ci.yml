@@ -81,11 +81,10 @@ jobs:
       if: github.ref == 'refs/heads/case-1'
       run: npm install --global vercel@latest
     
-    - name: Deploy to Vercel with explicit project
+    - name: Deploy to Vercel
       if: github.ref == 'refs/heads/case-1'
-      run: |
-        cd app
-        vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --name=puyo-puyo-game --org=${{ secrets.ORG_ID }}
+      working-directory: ./app
+      run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
       env:
         VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
         VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}

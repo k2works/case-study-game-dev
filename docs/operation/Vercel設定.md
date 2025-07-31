@@ -102,8 +102,10 @@ vercel login
 # アプリケーションのビルド
 npm run build
 
-# デプロイ（新しいプロジェクトとして）
-vercel --prod --name=puyo-puyo-game
+# デプロイ（環境変数を使用）
+export VERCEL_ORG_ID=your_org_id
+export VERCEL_PROJECT_ID=your_project_id
+vercel --prod
 
 # または既存プロジェクトへのデプロイ
 vercel link
@@ -162,12 +164,14 @@ vercel --prod
 #### パス不存在エラー
 
 **問題**: `The provided path "~/work/.../app/app" does not exist`エラーが発生
-**解決方法1**: 新しいプロジェクトとしてデプロイ
-- `--name`と`--org`オプションを使用して新しいプロジェクトを作成
+**解決方法1**: 環境変数を使用したデプロイ
+- `VERCEL_ORG_ID`と`VERCEL_PROJECT_ID`環境変数を設定
 - 既存のプロジェクト設定の影響を回避
   ```bash
   cd app
-  vercel --prod --token=TOKEN --yes --name=puyo-puyo-game --org=ORG_ID
+  export VERCEL_ORG_ID=your_org_id
+  export VERCEL_PROJECT_ID=your_project_id
+  vercel --prod --token=TOKEN --yes
   ```
 
 **解決方法2**: 手動プロジェクト設定
@@ -179,6 +183,14 @@ vercel --prod
   mkdir -p .vercel
   echo '{"orgId":"ORG_ID","projectId":"PROJECT_ID"}' > .vercel/project.json
   ```
+
+#### 未知のオプションエラー
+
+**問題**: `Error: unknown or unexpected option: --org`エラーが発生
+**解決**:
+- `--org`オプションは使用しない
+- 代わりに`VERCEL_ORG_ID`環境変数を使用
+- サポートされているオプションのみを使用：`--prod`, `--token`, `--yes`
 
 ## 関連ファイル
 
