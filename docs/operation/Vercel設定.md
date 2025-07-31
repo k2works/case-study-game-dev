@@ -26,12 +26,12 @@
 ### 3. プロジェクト設定
 
 #### Framework Preset
-- **Framework Preset**: `Other`を選択
+- **Framework Preset**: `Vite`を選択（自動検出される場合あり）
 
 #### Build and Output Settings
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist`
-- **Install Command**: `npm install`
+- **Build Command**: `npm run build`（自動検出される）
+- **Output Directory**: `dist`（自動検出される）
+- **Install Command**: `npm install`（自動検出される）
 
 #### Root Directory
 - **Root Directory**: `app`を指定
@@ -115,7 +115,15 @@
 **問題**: デプロイ後にアクセスすると404エラー
 **解決**:
 - Output Directoryが`dist`に設定されているか確認
-- `vercel.json`の設定を確認
+- `vercel.json`の`rewrites`設定を確認
+- SPAの場合、すべてのルートを`/index.html`にリダイレクトする設定が必要
+
+#### "name" property deprecated 警告
+
+**問題**: `vercel.json`で名前プロパティの警告が出る
+**解決**:
+- `vercel.json`から`name`プロパティを削除
+- プロジェクト名はVercelダッシュボードで管理
 
 ## 関連ファイル
 
