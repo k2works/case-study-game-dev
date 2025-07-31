@@ -81,6 +81,14 @@ jobs:
       if: github.ref == 'refs/heads/case-1'
       run: npm install --global vercel@latest
     
+    - name: Link Vercel project
+      if: github.ref == 'refs/heads/case-1'
+      run: vercel link --yes --token=${{ secrets.VERCEL_TOKEN }}
+      working-directory: ./app
+      env:
+        VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+    
     - name: Deploy to Vercel
       if: github.ref == 'refs/heads/case-1'
       run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes

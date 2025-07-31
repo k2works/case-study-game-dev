@@ -93,10 +93,15 @@
 # Vercel CLIのインストール
 npm i -g vercel@latest
 
-# 初回設定（appディレクトリで実行）
+# アプリケーションディレクトリに移動
 cd app
+
+# 初回設定
 vercel login
 vercel link
+
+# アプリケーションのビルド
+npm run build
 
 # デプロイ
 vercel --prod
@@ -150,6 +155,14 @@ vercel --prod
 - Vercelビルドの代わりにnpmビルドを使用
 - `npm run build`でアプリケーションをビルドしてから`vercel --prod`でデプロイ
 - GitHub Actionsではubuntu-latestランナーを使用
+
+#### パス不存在エラー
+
+**問題**: `The provided path "~/work/.../app/app" does not exist`エラーが発生
+**解決**:
+- デプロイ前に`vercel link`でプロジェクトをリンク
+- `working-directory`を正しく設定
+- Vercelプロジェクト設定でRoot Directoryが正しく設定されているか確認
 
 ## 関連ファイル
 
