@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ case-1, main, develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ case-1, main, develop ]
 
 jobs:
   test:
@@ -57,7 +57,7 @@ jobs:
   build-and-deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/case-1'
     
     steps:
     - uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
     
     - name: Deploy to Vercel
       uses: amondnet/vercel-action@v25
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/case-1'
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-org-id: ${{ secrets.ORG_ID }}
