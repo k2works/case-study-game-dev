@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ぷよぷよ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-info">
+            <h1>ぷよぷよ</h1>
+            <div class="score">
+                <div>スコア: <span id="score">0</span></div>
+                <div>レベル: <span id="level">1</span></div>
+                <div>ライン: <span id="lines">0</span></div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <canvas id="game-board" width="300" height="600"></canvas>
+            <div class="next-piece">
+                <h3>ネクスト</h3>
+                <canvas id="next-canvas" width="120" height="120"></canvas>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h3>操作方法</h3>
+            <div class="control-item">
+                <span>←→</span>: 左右移動
+            </div>
+            <div class="control-item">
+                <span>↓</span>: 高速落下
+            </div>
+            <div class="control-item">
+                <span>↑</span>: 回転
+            </div>
+            <div class="control-item">
+                <span>スペース</span>: 一時停止
+            </div>
+            <button id="start-button">ゲーム開始</button>
+            <button id="restart-button">リスタート</button>
+        </div>
+    </div>
+    
+    <div id="game-over" class="game-over hidden">
+        <div class="game-over-content">
+            <h2>ゲームオーバー</h2>
+            <p>スコア: <span id="final-score">0</span></p>
+            <button id="play-again">もう一度プレイ</button>
+        </div>
+    </div>
+    
+    <script src="puyo.js"></script>
+</body>
+</html>

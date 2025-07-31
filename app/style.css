@@ -1,0 +1,205 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.game-container {
+    display: flex;
+    gap: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.game-info h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+.score {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.score div {
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.game-area {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+#game-board {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.next-piece {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.next-piece h3 {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+#next-canvas {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 25px;
+    border-radius: 15px;
+    min-width: 200px;
+}
+
+.controls h3 {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.control-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.9rem;
+}
+
+.control-item span:first-child {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4);
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.game-over {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.game-over-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.game-over-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.game-over-content p {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ぷよの色定義 */
+.puyo-red { background-color: #ff4757; }
+.puyo-blue { background-color: #3742fa; }
+.puyo-green { background-color: #2ed573; }
+.puyo-yellow { background-color: #ffa502; }
+.puyo-purple { background-color: #a55eea; }
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .game-area {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .game-info h1 {
+        font-size: 2rem;
+    }
+    
+    .controls {
+        min-width: auto;
+        width: 100%;
+    }
+}
