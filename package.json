@@ -3,10 +3,28 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "journal": "gulp journal:generate",
+    "docs:serve": "gulp mkdocs:serve",
+    "docs:stop": "gulp mkdocs:stop",
+    "docs:build": "gulp mkdocs:build"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k2works/ai-programing-exercise.git"
+  },
+  "keywords": [
+    "ai",
+    "programming",
+    "learning"
+  ],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "bugs": {
+    "url": "https://github.com/k2works/ai-programing-exercise/issues"
+  },
+  "homepage": "https://github.com/k2works/ai-programing-exercise#readme",
+  "type": "module",
+  "dependencies": {
+    "gulp": "^4.0.2"
+  }
 }
