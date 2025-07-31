@@ -1,7 +1,7 @@
-site_name: AI Programing Exercise
-site_description: Documentation for the AI Programming Exercise project.
+site_name: ゲーム開発のケーススタディ
+site_description: Documentation for the Game Development project.
 site_author: Project Team
-repo_url: https://github.com/k2works/ai-programing-exercise
+repo_url: https://github.com/k2works/case-study-game-dev
 repo_name: ai-programing-exercise
 
 theme:
