@@ -1,0 +1,16 @@
+{
+  "reporter": ["text", "html", "json"],
+  "reportsDirectory": "coverage",
+  "exclude": [
+    "dist/**",
+    "node_modules/**",
+    "**/*.test.ts",
+    "**/*.config.js",
+    "**/*.config.ts",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "gulpfile.js"
+  ],
+  "all": true,
+  "checkCoverage": false
+}
