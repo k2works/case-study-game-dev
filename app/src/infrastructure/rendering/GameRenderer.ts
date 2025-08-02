@@ -35,6 +35,8 @@ export class GameRenderer {
     this.renderField(game.getField())
     this.renderCurrentPuyo(game.getCurrentPuyo())
     this.renderScore(game.getScore())
+    this.renderChainCount(game.getChainCount())
+    this.renderControls()
     this.renderGameState(game)
   }
 
@@ -110,8 +112,51 @@ export class GameRenderer {
   }
 
   private renderScore(score: number): void {
-    this.context.fillStyle = '#000'
+    // スコア表示の背景
+    this.context.fillStyle = '#ffffff'
+    this.context.fillRect(5, 10, 150, 25)
+
+    // 枠線を描画
+    this.context.strokeStyle = '#000000'
+    this.context.lineWidth = 1
+    this.context.strokeRect(5, 10, 150, 25)
+
+    // スコアテキストを描画
+    this.context.fillStyle = '#000000'
+    this.context.font = 'bold 18px Arial'
     this.context.fillText(`Score: ${score}`, 10, 30)
+
+    // フォントを元に戻す
+    this.context.font = '16px Arial'
+  }
+
+  private renderChainCount(chainCount: number): void {
+    // 背景を白く塗りつぶし
+    this.context.fillStyle = '#ffffff'
+    this.context.fillRect(5, 40, 100, 25)
+
+    // 黒い枠線を描画
+    this.context.strokeStyle = '#000000'
+    this.context.lineWidth = 1
+    this.context.strokeRect(5, 40, 100, 25)
+
+    // 連鎖数テキストを描画
+    this.context.fillStyle = '#000000'
+    this.context.font = 'bold 16px Arial'
+    this.context.fillText(`Chain: ${chainCount}`, 10, 60)
+  }
+
+  private renderControls(): void {
+    this.context.fillStyle = '#666'
+    this.context.font = '12px Arial'
+    const controls = ['← → : 移動', '↑ : 回転', '↓ : 高速落下']
+
+    controls.forEach((control, index) => {
+      this.context.fillText(control, 10, this.canvas.height - 60 + index * 15)
+    })
+
+    // フォントを元に戻す
+    this.context.font = '16px Arial'
   }
 
   private renderGameState(game: Game): void {

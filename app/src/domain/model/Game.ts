@@ -187,7 +187,8 @@ export class Game {
         // スコアを計算（基本スコア + 連鎖ボーナス）
         const baseScore = clearedCount * 10
         const chainBonus = this.calculateChainBonus(this.chainCount)
-        this.score += baseScore * chainBonus
+        const addedScore = baseScore * chainBonus
+        this.score += addedScore
 
         // 重力を適用（消去後の落下処理）
         this.field.applyGravity()
