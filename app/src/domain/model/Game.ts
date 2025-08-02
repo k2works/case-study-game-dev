@@ -9,6 +9,7 @@ export class Game {
   private currentPuyo: PuyoPair | null
   private fallTimer: number
   private readonly fallInterval: number = 30 // 30フレーム（約0.5秒）ごとに落下
+  private chainCount: number
 
   constructor() {
     this.state = GameState.READY
@@ -16,6 +17,7 @@ export class Game {
     this.field = new GameField()
     this.currentPuyo = null
     this.fallTimer = 0
+    this.chainCount = 0
   }
 
   getState(): GameState {
@@ -32,6 +34,10 @@ export class Game {
 
   getCurrentPuyo(): PuyoPair | null {
     return this.currentPuyo
+  }
+
+  getChainCount(): number {
+    return this.chainCount
   }
 
   start(): void {
@@ -165,23 +171,35 @@ export class Game {
     this.processClearAndGravity()
   }
 
-  private processClearAndGravity(): void {
+  processClearAndGravity(): void {
     // まず重力を適用（ぷよ配置後の落下処理）
     this.field.applyGravity()
 
     let clearedCount = 0
+    this.chainCount = 0 // 連鎖カウントをリセット
 
     // 消去可能なぷよがある限り繰り返し処理
     do {
       clearedCount = this.field.clearConnectedPuyos()
       if (clearedCount > 0) {
-        // スコアを加算
-        this.score += clearedCount * 10
+        this.chainCount++ // 連鎖数をインクリメント
+        
+        // スコアを計算（基本スコア + 連鎖ボーナス）
+        const baseScore = clearedCount * 10
+        const chainBonus = this.calculateChainBonus(this.chainCount)
+        this.score += baseScore * chainBonus
 
         // 重力を適用（消去後の落下処理）
         this.field.applyGravity()
       }
     } while (clearedCount > 0)
+  }
+
+  private calculateChainBonus(chain: number): number {
+    // 連鎖ボーナスの計算
+    // 1連鎖: 1倍, 2連鎖: 2倍, 3連鎖: 4倍, 4連鎖: 8倍...
+    if (chain <= 1) return 1
+    return Math.pow(2, chain - 1)
   }
 
   private generateNewPuyo(): void {
