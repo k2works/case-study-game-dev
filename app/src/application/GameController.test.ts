@@ -97,7 +97,7 @@ describe('GameController', () => {
       const spy = vi.spyOn(game, 'rotatePuyo')
 
       // 上キーを押下
-      const upEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+      const upEvent = new KeyboardEvent('keydown', { code: 'ArrowUp' })
       document.dispatchEvent(upEvent)
 
       // update を呼び出して入力処理を実行
@@ -112,7 +112,7 @@ describe('GameController', () => {
       const spy = vi.spyOn(game, 'movePuyo')
 
       // 左キーを押下
-      const leftEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' })
+      const leftEvent = new KeyboardEvent('keydown', { code: 'ArrowLeft' })
       document.dispatchEvent(leftEvent)
 
       // update を呼び出して入力処理を実行

@@ -8,14 +8,14 @@ export class InputHandler {
 
   private setupEventListeners(): void {
     document.addEventListener('keydown', (event) => {
-      if (!this.keysPressed.has(event.key)) {
-        this.keysJustPressed.add(event.key)
+      if (!this.keysPressed.has(event.code)) {
+        this.keysJustPressed.add(event.code)
       }
-      this.keysPressed.add(event.key)
+      this.keysPressed.add(event.code)
     })
 
     document.addEventListener('keyup', (event) => {
-      this.keysPressed.delete(event.key)
+      this.keysPressed.delete(event.code)
     })
   }
 
