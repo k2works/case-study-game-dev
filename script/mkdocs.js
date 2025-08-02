@@ -22,7 +22,7 @@ export default function(gulp) {
       console.log('Starting MkDocs server using Docker Compose...');
 
       // Execute docker-compose up command to start mkdocs service
-      execSync('docker-compose up -d mkdocs', { stdio: 'inherit' });
+      execSync('docker compose up -d mkdocs', { stdio: 'inherit' });
 
       console.log('\nMkDocs server started successfully!');
       console.log('Documentation is now available at http://localhost:8000');
@@ -44,7 +44,7 @@ export default function(gulp) {
       removeSiteDirectory();
 
       // Execute docker-compose run command to build mkdocs documentation
-      execSync('docker-compose run --rm mkdocs mkdocs build', { stdio: 'inherit' });
+      execSync('docker compose run --rm mkdocs mkdocs build', { stdio: 'inherit' });
 
       console.log('\nMkDocs documentation built successfully!');
 
@@ -61,7 +61,7 @@ export default function(gulp) {
       console.log('Stopping MkDocs server...');
 
       // Execute docker-compose down command to stop mkdocs service
-      execSync('docker-compose down', { stdio: 'inherit' });
+      execSync('docker compose down', { stdio: 'inherit' });
 
       console.log('MkDocs server stopped successfully!');
 
