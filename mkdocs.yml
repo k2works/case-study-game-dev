@@ -57,3 +57,4 @@ plugins:
 
 nav:
   - Home: index.md
+  - Case1: ./reference/case-1/index.md

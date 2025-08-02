@@ -135,3 +135,5 @@ dist
 wiki
 site
 .vercel
+
+!docs/**/CLAUDE.local.md
