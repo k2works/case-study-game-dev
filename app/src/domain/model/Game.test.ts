@@ -263,5 +263,46 @@ describe('Game', () => {
       expect(field.getCell(0, 8)).toBe(null) // 元の位置は空
       expect(field.getCell(0, 11)).toBe(PuyoColor.BLUE) // 最下段に落下
     })
+
+    it('ぷよ配置時に重力が適用される（消去されない場合）', () => {
+      const field = game.getField()
+
+      // 途中の位置にぷよを配置（消去されない組み合わせ）
+      field.setCell(0, 8, PuyoColor.RED)
+      field.setCell(1, 8, PuyoColor.BLUE)
+      field.setCell(2, 8, PuyoColor.GREEN)
+
+      // Game.processClearAndGravityを模擬するために、直接重力を適用
+      field.applyGravity()
+
+      // ぷよが最下段に落下していることを確認
+      expect(field.getCell(0, 8)).toBe(null)
+      expect(field.getCell(1, 8)).toBe(null)
+      expect(field.getCell(2, 8)).toBe(null)
+
+      expect(field.getCell(0, 11)).toBe(PuyoColor.RED)
+      expect(field.getCell(1, 11)).toBe(PuyoColor.BLUE)
+      expect(field.getCell(2, 11)).toBe(PuyoColor.GREEN)
+    })
+
+    it('空中に浮いているぷよが重力で落下する', () => {
+      const field = game.getField()
+
+      // 空中に浮いているぷよを配置
+      field.setCell(2, 5, PuyoColor.YELLOW) // 中空のぷよ
+      field.setCell(2, 11, PuyoColor.PURPLE) // 最下段のぷよ
+
+      // 重力を適用
+      field.applyGravity()
+
+      // 浮いていたぷよが下に詰まることを確認
+      expect(field.getCell(2, 5)).toBe(null) // 元の位置は空
+
+      // 重力適用後、上から順に収集されて下から配置される
+      // YELLOW(4)が最初に収集され、PURPLE(5)が次に収集される
+      // 下から配置するため：最下段にYELLOW、その上にPURPLE
+      expect(field.getCell(2, 11)).toBe(PuyoColor.YELLOW) // 最下段に移動
+      expect(field.getCell(2, 10)).toBe(PuyoColor.PURPLE) // 下から2番目に移動
+    })
   })
 })

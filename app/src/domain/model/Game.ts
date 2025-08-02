@@ -166,6 +166,9 @@ export class Game {
   }
 
   private processClearAndGravity(): void {
+    // まず重力を適用（ぷよ配置後の落下処理）
+    this.field.applyGravity()
+
     let clearedCount = 0
 
     // 消去可能なぷよがある限り繰り返し処理
@@ -175,7 +178,7 @@ export class Game {
         // スコアを加算
         this.score += clearedCount * 10
 
-        // 重力を適用
+        // 重力を適用（消去後の落下処理）
         this.field.applyGravity()
       }
     } while (clearedCount > 0)
