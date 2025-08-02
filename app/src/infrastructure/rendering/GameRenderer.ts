@@ -1,5 +1,6 @@
 import { Game } from '../../domain/model/Game'
 import { GameField } from '../../domain/model/GameField'
+import { GameState } from '../../domain/model/GameState'
 import { PuyoPair, PuyoColor } from '../../domain/model/Puyo'
 
 export class GameRenderer {
@@ -40,7 +41,7 @@ export class GameRenderer {
     this.renderGameState(game)
     
     // ゲームオーバー表示
-    if (game.getState() === 'game_over') {
+    if (game.getState() === GameState.GAME_OVER) {
       this.renderGameOver(game.getScore())
     }
   }

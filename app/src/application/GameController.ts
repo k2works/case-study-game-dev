@@ -1,4 +1,5 @@
 import { Game } from '../domain/model/Game'
+import { GameState } from '../domain/model/GameState'
 import { GameRenderer } from '../infrastructure/rendering/GameRenderer'
 import { InputHandler } from '../infrastructure/input/InputHandler'
 
@@ -64,13 +65,13 @@ export class GameController {
 
   private handleInput(): void {
     // Rキーでリスタート（ゲームオーバー時のみ）
-    if (this.inputHandler.isKeyJustPressed('KeyR') && this.game.getState() === 'game_over') {
+    if (this.inputHandler.isKeyJustPressed('KeyR') && this.game.getState() === GameState.GAME_OVER) {
       this.game.restart()
       return
     }
     
     // 通常のゲーム操作（プレイ中のみ）
-    if (this.game.getState() === 'playing') {
+    if (this.game.getState() === GameState.PLAYING) {
       if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {
         this.game.movePuyo(-1, 0)
       }
