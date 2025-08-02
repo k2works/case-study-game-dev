@@ -61,10 +61,10 @@ nav:
     - 要件: ./requirements/要件.md
   - 開発:
     - 開発計画: ./development/開発計画.md
-    - ユーザーインターフェース設計: ./requirements/ユーザーインターフェース設計.md
-    - アーキテクチャ設計: ./requirements/アーキテクチャ設計.md
-    - データモデル設計: ./requirements/データモデル設計.md
-    - ドメインモデル設計: ./requirements/ドメインモデル設計.md
+    - ユーザーインターフェース設計: ./development/ユーザーインターフェース設計.md
+    - アーキテクチャ設計: ./development/アーキテクチャ設計.md
+    - データモデル設計: ./development/データモデル設計.md
+    - ドメインモデル設計: ./development/ドメインモデル設計.md
   - 運用:
     - セットアップ: ./operation/セットアップ.md
     - MkDocs GitHub Actions設定: ./operation/MkDocs_GitHub_Actions設定.md
