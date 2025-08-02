@@ -39,7 +39,7 @@ export class GameRenderer {
     this.renderChainCount(game.getChainCount())
     this.renderControls()
     this.renderGameState(game)
-    
+
     // ゲームオーバー表示
     if (game.getState() === GameState.GAME_OVER) {
       this.renderGameOver(game.getScore())
@@ -175,7 +175,7 @@ export class GameRenderer {
     // 半透明のオーバーレイ
     this.context.fillStyle = 'rgba(0, 0, 0, 0.8)'
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
-    
+
     // ゲームオーバータイトル
     this.context.fillStyle = '#ff4444'
     this.context.font = 'bold 36px Arial'
@@ -185,7 +185,7 @@ export class GameRenderer {
       this.canvas.width / 2,
       this.canvas.height / 2 - 60
     )
-    
+
     // 最終スコア表示
     this.context.fillStyle = '#ffffff'
     this.context.font = 'bold 24px Arial'
@@ -194,7 +194,7 @@ export class GameRenderer {
       this.canvas.width / 2,
       this.canvas.height / 2 - 20
     )
-    
+
     // リスタート案内
     this.context.fillStyle = '#cccccc'
     this.context.font = '16px Arial'
@@ -203,7 +203,7 @@ export class GameRenderer {
       this.canvas.width / 2,
       this.canvas.height / 2 + 20
     )
-    
+
     // フォントとアラインメントを元に戻す
     this.context.font = '16px Arial'
     this.context.textAlign = 'left'

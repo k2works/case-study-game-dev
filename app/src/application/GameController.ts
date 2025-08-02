@@ -65,11 +65,14 @@ export class GameController {
 
   private handleInput(): void {
     // Rキーでリスタート（ゲームオーバー時のみ）
-    if (this.inputHandler.isKeyJustPressed('KeyR') && this.game.getState() === GameState.GAME_OVER) {
+    if (
+      this.inputHandler.isKeyJustPressed('KeyR') &&
+      this.game.getState() === GameState.GAME_OVER
+    ) {
       this.game.restart()
       return
     }
-    
+
     // 通常のゲーム操作（プレイ中のみ）
     if (this.game.getState() === GameState.PLAYING) {
       if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {

@@ -126,13 +126,13 @@ describe('GameController', () => {
   describe('リセット機能', () => {
     it('reset()でゲームを新しいインスタンスでリセットできる', () => {
       const originalGame = gameController.getGame()
-      
+
       // ゲームを開始
       gameController.start()
-      
+
       // リセット実行
       gameController.reset()
-      
+
       // 新しいGameインスタンスが作成されていることを確認
       const newGame = gameController.getGame()
       expect(newGame).not.toBe(originalGame)
@@ -143,10 +143,10 @@ describe('GameController', () => {
     it('reset()後にゲームループが再開する', () => {
       // ゲームを停止
       gameController.stop()
-      
+
       // リセット実行
       gameController.reset()
-      
+
       // ゲームループが開始されていることを確認（gameLoopIdが設定されている）
       // プライベートフィールドなので間接的に確認
       const game = gameController.getGame()

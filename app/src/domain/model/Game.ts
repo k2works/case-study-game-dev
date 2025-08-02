@@ -213,14 +213,14 @@ export class Game {
     const mainColor = this.getRandomColor()
     const subColor = this.getRandomColor()
     this.currentPuyo = PuyoPair.create(mainColor, subColor)
-    
+
     // 新しいぷよが配置できるかチェック
     this.checkGameOver()
   }
 
   checkGameOver(): void {
     if (!this.currentPuyo) return
-    
+
     // 新しいぷよが初期位置に配置できるかチェック
     if (!this.canMoveTo(this.currentPuyo)) {
       this.state = GameState.GAME_OVER
@@ -237,10 +237,10 @@ export class Game {
     this.score = 0
     this.chainCount = 0
     this.fallTimer = 0
-    
+
     // フィールドをクリア
     this.field = new GameField()
-    
+
     // 新しいぷよを生成
     this.generateNewPuyo()
   }
