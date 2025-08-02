@@ -1,13 +1,3 @@
----
-title: ADR-0005: Vercelデプロイの採用
-description: 本番環境デプロイ基盤としてVercelを採用する決定
-published: true
-date: 2025-08-02T00:00:00.000Z
-tags: Vercel, デプロイ, CI/CD, ホスティング
-editor: markdown
-dateCreated: 2025-08-02T00:00:00.000Z
----
-
 # ADR-0005: Vercelデプロイの採用
 
 本番環境デプロイ基盤としてVercelを採用する

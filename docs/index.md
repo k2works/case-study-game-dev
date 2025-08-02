@@ -6,7 +6,7 @@
 
 **全8イテレーション完了** - 完全に動作するゲームが実装されています。
 
-🎮 **[デモプレイ](https://case-study-game-dev.vercel.app/)**
+🎮 **[デモプレイ](https://app-1ggw4877v-k2works-projects.vercel.app/)**
 
 ## まずこれを読もうリスト
 

@@ -1,13 +1,3 @@
----
-title: ADR-0004: Canvas APIの採用
-description: ゲーム描画のためのCanvas API採用の決定
-published: true
-date: 2025-08-02T00:00:00.000Z
-tags: Canvas API, 描画, HTML5, WebGL
-editor: markdown
-dateCreated: 2025-08-02T00:00:00.000Z
----
-
 # ADR-0004: Canvas APIの採用
 
 ゲーム描画技術としてHTML5 Canvas APIを採用する
