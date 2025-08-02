@@ -27,6 +27,7 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         global: 'readonly',
+        KeyboardEvent: 'readonly',
       },
     },
     plugins: {

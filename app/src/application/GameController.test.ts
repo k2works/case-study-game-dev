@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { GameController } from './GameController'
 
 // HTMLCanvasElementのモック
@@ -80,6 +80,46 @@ describe('GameController', () => {
       expect(mockContext.clearRect).toHaveBeenCalled()
 
       gameController.stop()
+    })
+  })
+
+  describe('入力処理', () => {
+    beforeEach(() => {
+      gameController.start()
+    })
+
+    afterEach(() => {
+      gameController.stop()
+    })
+
+    it('回転入力をゲームに転送する', () => {
+      const game = gameController.getGame()
+      const spy = vi.spyOn(game, 'rotatePuyo')
+
+      // 上キーを押下
+      const upEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+      document.dispatchEvent(upEvent)
+
+      // update を呼び出して入力処理を実行
+      // @ts-expect-error privateメソッドにアクセスするため
+      gameController.update()
+
+      expect(spy).toHaveBeenCalled()
+    })
+
+    it('左右の移動入力をゲームに転送する', () => {
+      const game = gameController.getGame()
+      const spy = vi.spyOn(game, 'movePuyo')
+
+      // 左キーを押下
+      const leftEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' })
+      document.dispatchEvent(leftEvent)
+
+      // update を呼び出して入力処理を実行
+      // @ts-expect-error privateメソッドにアクセスするため
+      gameController.update()
+
+      expect(spy).toHaveBeenCalledWith(-1, 0)
     })
   })
 })

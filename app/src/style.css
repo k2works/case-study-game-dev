@@ -74,10 +74,30 @@ h1 {
   width: 100%;
 }
 
-#controls div {
+#controls > div:first-child {
   font-size: 1.2em;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#instructions {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  text-align: left;
+}
+
+#instructions h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1em;
+  color: #fff;
+}
+
+#instructions p {
+  margin: 0.3rem 0;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 button {

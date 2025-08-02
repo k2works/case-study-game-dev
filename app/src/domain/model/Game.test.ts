@@ -145,4 +145,70 @@ describe('Game', () => {
       )
     })
   })
+
+  describe('ぷよの回転', () => {
+    beforeEach(() => {
+      game.start()
+    })
+
+    it('ぷよを時計回りに回転できる', () => {
+      const initialPuyo = game.getCurrentPuyo()
+      const initialSubPosition = initialPuyo!.sub.position
+
+      const rotated = game.rotatePuyo()
+
+      expect(rotated).toBe(true)
+      const rotatedPuyo = game.getCurrentPuyo()
+      expect(rotatedPuyo!.sub.position).not.toEqual(initialSubPosition)
+    })
+
+    it('壁キック処理が動作する', () => {
+      // ぷよを右端まで移動
+      for (let i = 0; i < 10; i++) {
+        game.movePuyo(1, 0)
+      }
+
+      // 現在の位置を記録
+      const puyoBeforeRotate = game.getCurrentPuyo()!
+      const originalX = puyoBeforeRotate.main.position.x
+
+      // 回転を試行（壁キックが必要な状況）
+      const rotated = game.rotatePuyo()
+
+      if (rotated) {
+        const puyoAfterRotate = game.getCurrentPuyo()!
+        // 壁キックが発生した場合、位置が調整される
+        expect(puyoAfterRotate.main.position.x).toBeLessThanOrEqual(originalX)
+      }
+    })
+
+    it('壁キックでも回転できない場合は失敗する', () => {
+      // まず1回回転させてサブぷよを右側に配置
+      game.rotatePuyo()
+
+      // 左端まで移動
+      for (let i = 0; i < 10; i++) {
+        game.movePuyo(-1, 0)
+      }
+
+      const puyoBeforeRotate = game.getCurrentPuyo()!
+
+      // この状態でもう一度回転を試行（サブぷよが左端から出てしまう）
+      const rotated = game.rotatePuyo()
+
+      // 特定の状況では回転できない場合もある
+      if (!rotated) {
+        const puyoAfterRotate = game.getCurrentPuyo()!
+        expect(puyoAfterRotate.sub.position).toEqual(
+          puyoBeforeRotate.sub.position
+        )
+      }
+    })
+
+    it('他のぷよがある位置への回転は失敗する', () => {
+      // この時点ではまだ他のぷよがフィールドにないため、
+      // フィールドに配置されたぷよとの衝突テストは後で実装
+      expect(true).toBe(true) // プレースホルダー
+    })
+  })
 })

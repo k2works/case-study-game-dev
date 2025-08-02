@@ -72,6 +72,9 @@ export class GameController {
     if (this.inputHandler.isKeyPressed('ArrowDown')) {
       this.game.movePuyo(0, 1)
     }
+    if (this.inputHandler.isKeyJustPressed('ArrowUp')) {
+      this.game.rotatePuyo()
+    }
   }
 
   private render(): void {

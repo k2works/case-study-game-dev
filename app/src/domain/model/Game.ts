@@ -75,6 +75,22 @@ export class Game {
     return false
   }
 
+  rotatePuyo(): boolean {
+    if (!this.currentPuyo || this.state !== GameState.PLAYING) {
+      return false
+    }
+
+    const rotatedPuyo = this.currentPuyo.rotate()
+
+    if (this.canMoveTo(rotatedPuyo)) {
+      this.currentPuyo = rotatedPuyo
+      return true
+    }
+
+    // 壁キック処理を試行
+    return this.tryWallKick(rotatedPuyo)
+  }
+
   private fallPuyo(): void {
     if (!this.currentPuyo) return
 
@@ -151,6 +167,24 @@ export class Game {
     const mainColor = this.getRandomColor()
     const subColor = this.getRandomColor()
     this.currentPuyo = PuyoPair.create(mainColor, subColor)
+  }
+
+  private tryWallKick(rotatedPuyo: PuyoPair): boolean {
+    // 壁キック候補位置（左右に1マス移動を試行）
+    const kickOffsets = [
+      { dx: -1, dy: 0 }, // 左に1マス
+      { dx: 1, dy: 0 }, // 右に1マス
+    ]
+
+    for (const offset of kickOffsets) {
+      const kickedPuyo = rotatedPuyo.moveBy(offset.dx, offset.dy)
+      if (this.canMoveTo(kickedPuyo)) {
+        this.currentPuyo = kickedPuyo
+        return true
+      }
+    }
+
+    return false
   }
 
   private getRandomColor(): PuyoColor {
