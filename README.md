@@ -98,7 +98,7 @@ npm run dev
 
 ゲームは http://localhost:5173 でアクセス可能です。
 
-🎮 **デモ**: [オンラインでプレイ](https://case-study-game-dev.vercel.app/) (デプロイ済み)
+🎮 **デモ**: [オンラインでプレイ](https://app-1ggw4877v-k2works-projects.vercel.app/) (デプロイ済み)
 
 詳細は [アプリケーションREADME](./app/README.md) を参照してください。
 
