@@ -1,9 +1,21 @@
 'use strict';
 
 import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 // Function to register the mkdocs:serve task
 export default function(gulp) {
+  // Helper function to remove site directory
+  const removeSiteDirectory = () => {
+    const siteDir = path.join(process.cwd(), 'site');
+    if (fs.existsSync(siteDir)) {
+      console.log('Removing existing site directory...');
+      fs.rmSync(siteDir, { recursive: true, force: true });
+      console.log('Site directory removed successfully!');
+    }
+  };
+
   // MkDocs serve task
   gulp.task('mkdocs:serve', (done) => {
     try {
@@ -27,6 +39,9 @@ export default function(gulp) {
   gulp.task('mkdocs:build', (done) => {
     try {
       console.log('Building MkDocs documentation...');
+
+      // Remove existing site directory before building
+      removeSiteDirectory();
 
       // Execute docker-compose run command to build mkdocs documentation
       execSync('docker-compose run --rm mkdocs mkdocs build', { stdio: 'inherit' });
