@@ -57,12 +57,12 @@ plugins:
 
 nav:
   - Home: index.md
+  - 要件:
+      - 要件定義: requirements/要件定義.md
   - 開発:
     - アーキテクチャ: development/アーキテクチャ.md
     - 設計: development/設計.md
     - 実装: development/実装.md
-  - 要件:
-    - 要件定義: requirements/要件定義.md
   - 運用:
     - セットアップ: operation/セットアップ.md
     - Vercel設定: operation/Vercel設定.md
