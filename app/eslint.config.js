@@ -40,6 +40,8 @@ export default [
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      // 循環的複雑度の制限 - 7を超える場合はエラー
+      'complexity': ['error', { max: 7 }],
     },
   },
   {
