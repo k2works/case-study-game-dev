@@ -7,12 +7,15 @@ export class Game {
   private score: number
   private field: GameField
   private currentPuyo: PuyoPair | null
+  private fallTimer: number
+  private readonly fallInterval: number = 30 // 30フレーム（約0.5秒）ごとに落下
 
   constructor() {
     this.state = GameState.READY
     this.score = 0
     this.field = new GameField()
     this.currentPuyo = null
+    this.fallTimer = 0
   }
 
   getState(): GameState {
@@ -34,6 +37,109 @@ export class Game {
   start(): void {
     this.state = GameState.PLAYING
     this.generateNewPuyo()
+  }
+
+  update(): void {
+    if (this.state !== GameState.PLAYING || !this.currentPuyo) {
+      return
+    }
+
+    this.fallTimer++
+    
+    // 落下タイマーが間隔に達したら落下処理を実行
+    if (this.fallTimer >= this.fallInterval) {
+      this.fallTimer = 0
+      this.fallPuyo()
+    }
+  }
+
+  movePuyo(dx: number, dy: number): boolean {
+    if (!this.currentPuyo || this.state !== GameState.PLAYING) {
+      return false
+    }
+
+    const movedPuyo = this.currentPuyo.moveBy(dx, dy)
+    
+    if (this.canMoveTo(movedPuyo)) {
+      this.currentPuyo = movedPuyo
+      
+      // 下方向の移動で着地した場合の処理
+      if (dy > 0 && !this.canMoveTo(this.currentPuyo.moveBy(0, 1))) {
+        this.placePuyoOnField()
+        this.generateNewPuyo()
+      }
+      
+      return true
+    }
+    
+    return false
+  }
+
+  private fallPuyo(): void {
+    if (!this.currentPuyo) return
+
+    // ぷよを1つ下に移動
+    const movedPuyo = this.currentPuyo.moveBy(0, 1)
+    
+    // 着地判定
+    if (this.canMoveTo(movedPuyo)) {
+      this.currentPuyo = movedPuyo
+    } else {
+      // 着地したのでフィールドに配置
+      this.placePuyoOnField()
+      this.generateNewPuyo()
+    }
+  }
+
+  private canMoveTo(puyoPair: PuyoPair): boolean {
+    // メインぷよの位置チェック
+    if (!this.isValidPosition(puyoPair.main.position.x, puyoPair.main.position.y)) {
+      return false
+    }
+    
+    // サブぷよの位置チェック
+    if (!this.isValidPosition(puyoPair.sub.position.x, puyoPair.sub.position.y)) {
+      return false
+    }
+
+    return true
+  }
+
+  private isValidPosition(x: number, y: number): boolean {
+    // フィールドの境界チェック
+    if (x < 0 || x >= this.field.getWidth() || y >= this.field.getHeight()) {
+      return false
+    }
+
+    // y < 0 の場合（フィールド上部）は有効
+    if (y < 0) {
+      return true
+    }
+
+    // フィールド内の既存のぷよとの衝突チェック
+    return this.field.getCell(x, y) === null
+  }
+
+  private placePuyoOnField(): void {
+    if (!this.currentPuyo) return
+
+    // メインぷよをフィールドに配置
+    if (this.currentPuyo.main.position.y >= 0) {
+      this.field.setCell(
+        this.currentPuyo.main.position.x,
+        this.currentPuyo.main.position.y,
+        this.currentPuyo.main.color
+      )
+    }
+
+    // サブぷよをフィールドに配置
+    if (this.currentPuyo.sub.position.y >= 0) {
+      this.field.setCell(
+        this.currentPuyo.sub.position.x,
+        this.currentPuyo.sub.position.y,
+        this.currentPuyo.sub.color
+      )
+    }
   }
 
   private generateNewPuyo(): void {

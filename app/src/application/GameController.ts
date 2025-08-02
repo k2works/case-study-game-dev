@@ -1,9 +1,11 @@
 import { Game } from '../domain/model/Game'
 import { GameRenderer } from '../infrastructure/rendering/GameRenderer'
+import { InputHandler } from '../infrastructure/input/InputHandler'
 
 export class GameController {
   private game: Game
   private renderer: GameRenderer
+  private inputHandler: InputHandler
   private gameLoopId: number | null = null
   private readonly targetFPS = 60
   private readonly frameTime = 1000 / this.targetFPS
@@ -12,6 +14,7 @@ export class GameController {
   constructor(canvas: HTMLCanvasElement) {
     this.game = new Game()
     this.renderer = new GameRenderer(canvas)
+    this.inputHandler = new InputHandler()
   }
 
   start(): void {
@@ -49,8 +52,26 @@ export class GameController {
   }
 
   private update(): void {
-    // ゲームロジックの更新はここで行う
-    // 現在はレンダリングのみ
+    // 入力処理
+    this.handleInput()
+    
+    // ゲームロジックの更新
+    this.game.update()
+    
+    // 入力ハンドラーの更新（JustPressedをクリア）
+    this.inputHandler.update()
+  }
+
+  private handleInput(): void {
+    if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {
+      this.game.movePuyo(-1, 0)
+    }
+    if (this.inputHandler.isKeyJustPressed('ArrowRight')) {
+      this.game.movePuyo(1, 0)
+    }
+    if (this.inputHandler.isKeyPressed('ArrowDown')) {
+      this.game.movePuyo(0, 1)
+    }
   }
 
   private render(): void {
