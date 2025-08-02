@@ -298,11 +298,135 @@ describe('Game', () => {
       // 浮いていたぷよが下に詰まることを確認
       expect(field.getCell(2, 5)).toBe(null) // 元の位置は空
 
-      // 重力適用後、上から順に収集されて下から配置される
-      // YELLOW(4)が最初に収集され、PURPLE(5)が次に収集される
-      // 下から配置するため：最下段にYELLOW、その上にPURPLE
-      expect(field.getCell(2, 11)).toBe(PuyoColor.YELLOW) // 最下段に移動
-      expect(field.getCell(2, 10)).toBe(PuyoColor.PURPLE) // 下から2番目に移動
+      // 重力適用後、順序を保持して配置される
+      // YELLOW(4)が上、PURPLE(5)が下にあったので、その順序を保持
+      expect(field.getCell(2, 10)).toBe(PuyoColor.YELLOW) // 下から2番目に移動
+      expect(field.getCell(2, 11)).toBe(PuyoColor.PURPLE) // 最下段に移動
+    })
+  })
+
+  describe('色の保持', () => {
+    beforeEach(() => {
+      game.start()
+    })
+
+    it('ぷよの色が配置後も正しく保持される', () => {
+      const field = game.getField()
+      
+      // 特定の色のぷよを配置
+      field.setCell(0, 11, PuyoColor.RED)
+      field.setCell(1, 11, PuyoColor.BLUE)
+      field.setCell(2, 11, PuyoColor.GREEN)
+      field.setCell(3, 11, PuyoColor.YELLOW)
+      field.setCell(4, 11, PuyoColor.PURPLE)
+      
+      // 配置直後の色を確認
+      expect(field.getCell(0, 11)).toBe(PuyoColor.RED)
+      expect(field.getCell(1, 11)).toBe(PuyoColor.BLUE)
+      expect(field.getCell(2, 11)).toBe(PuyoColor.GREEN)
+      expect(field.getCell(3, 11)).toBe(PuyoColor.YELLOW)
+      expect(field.getCell(4, 11)).toBe(PuyoColor.PURPLE)
+    })
+
+    it('重力適用後もぷよの色が保持される', () => {
+      const field = game.getField()
+      
+      // 中空にぷよを配置
+      field.setCell(0, 5, PuyoColor.RED)
+      field.setCell(1, 5, PuyoColor.BLUE)
+      field.setCell(2, 5, PuyoColor.GREEN)
+      
+      // 重力を適用
+      field.applyGravity()
+      
+      // 落下後も色が保持されていることを確認
+      expect(field.getCell(0, 11)).toBe(PuyoColor.RED)
+      expect(field.getCell(1, 11)).toBe(PuyoColor.BLUE)
+      expect(field.getCell(2, 11)).toBe(PuyoColor.GREEN)
+    })
+
+    it('ぷよ配置と重力適用の一連の処理で色が保持される', () => {
+      const field = game.getField()
+      
+      // 複数色のぷよを配置（消去されない配置）
+      field.setCell(0, 8, PuyoColor.RED)
+      field.setCell(1, 8, PuyoColor.BLUE)
+      field.setCell(0, 9, PuyoColor.GREEN)
+      field.setCell(1, 9, PuyoColor.YELLOW)
+      
+      // processClearAndGravityを模擬
+      field.applyGravity()
+      const clearedCount = field.clearConnectedPuyos()
+      
+      // 消去は発生しないはず
+      expect(clearedCount).toBe(0)
+      
+      // 色が正しく保持されていることを確認
+      // 元の上下関係を保持：RED(y=8)、GREEN(y=9)の順
+      expect(field.getCell(0, 10)).toBe(PuyoColor.RED)
+      expect(field.getCell(1, 10)).toBe(PuyoColor.BLUE)
+      expect(field.getCell(0, 11)).toBe(PuyoColor.GREEN)
+      expect(field.getCell(1, 11)).toBe(PuyoColor.YELLOW)
+    })
+  })
+
+  describe('色反転バグの再現', () => {
+    beforeEach(() => {
+      game.start()
+    })
+
+    it('左端配置後に右端配置すると左端ぷよの色が反転しない', () => {
+      const field = game.getField()
+      
+      // 最初のぷよを手動で左端（x=0）に移動して配置
+      const firstPuyo = game.getCurrentPuyo()!
+      
+      // 1つ目のぷよの色を記録
+      const firstMainColor = firstPuyo.main.color
+      const firstSubColor = firstPuyo.sub.color
+      console.log(`First puyo colors - Main: ${firstMainColor}, Sub: ${firstSubColor}`)
+      
+      // 左端まで移動（初期位置x=2から x=0へ）
+      game.movePuyo(-2, 0) // 左に2マス移動
+      console.log(`First puyo after move - Main: (${game.getCurrentPuyo()!.main.position.x}, ${game.getCurrentPuyo()!.main.position.y}), Sub: (${game.getCurrentPuyo()!.sub.position.x}, ${game.getCurrentPuyo()!.sub.position.y})`)
+      
+      // 下まで落下させて配置
+      for (let i = 0; i < 20; i++) {
+        if (!game.movePuyo(0, 1)) break // 着地するまで下に移動
+      }
+      
+      // 配置されたぷよの色を確認
+      const placedMainColor = field.getCell(0, 11) // 左端最下段
+      const placedSubColor = field.getCell(0, 10)  // 左端下から2番目
+      console.log(`Placed puyo colors - Main: ${placedMainColor}, Sub: ${placedSubColor}`)
+      
+      // 色が正しく配置されていることを確認
+      expect(placedMainColor).toBe(firstMainColor)
+      expect(placedSubColor).toBe(firstSubColor)
+      
+      // 2つ目のぷよの色を記録
+      const secondPuyo = game.getCurrentPuyo()!
+      const secondMainColor = secondPuyo.main.color
+      const secondSubColor = secondPuyo.sub.color
+      
+      // 右端まで移動（初期位置x=2から x=5へ）
+      game.movePuyo(3, 0) // 右に3マス移動
+      
+      // 下まで落下させて配置
+      for (let i = 0; i < 20; i++) {
+        if (!game.movePuyo(0, 1)) break // 着地するまで下に移動
+      }
+      
+      // 右端に配置されたぷよの色を確認
+      const rightMainColor = field.getCell(5, 11) // 右端最下段
+      const rightSubColor = field.getCell(5, 10)  // 右端下から2番目
+      
+      expect(rightMainColor).toBe(secondMainColor)
+      expect(rightSubColor).toBe(secondSubColor)
+      
+      // 重要: 左端のぷよの色が変わっていないことを確認
+      expect(field.getCell(0, 11)).toBe(firstMainColor) // 変わってはいけない
+      expect(field.getCell(0, 10)).toBe(firstSubColor)  // 変わってはいけない
     })
   })
 })

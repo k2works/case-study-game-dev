@@ -109,11 +109,11 @@ describe('GameField', () => {
     it('空きスペースにぷよが落下する', () => {
       gameField.applyGravity()
 
-      // 重力適用後：下から詰まる（上から収集した順序で下から配置）
+      // 重力適用後：下から詰まる（順序を保持）
       expect(gameField.getCell(0, 8)).toBe(null) // 元の上の位置は空に
       expect(gameField.getCell(0, 9)).toBe(null) // 中間も空に
-      expect(gameField.getCell(0, 10)).toBe(PuyoColor.BLUE) // 青が下から2番目
-      expect(gameField.getCell(0, 11)).toBe(PuyoColor.RED) // 赤が最下段（最初に収集されたため）
+      expect(gameField.getCell(0, 10)).toBe(PuyoColor.RED) // 赤が下から2番目（元の順序保持）
+      expect(gameField.getCell(0, 11)).toBe(PuyoColor.BLUE) // 青が最下段
     })
 
     it('複数列で同時に落下処理が動作する', () => {
@@ -126,8 +126,8 @@ describe('GameField', () => {
       expect(gameField.getCell(1, 7)).toBe(null) // 元の位置は空に
       expect(gameField.getCell(1, 8)).toBe(null) // 中間も空に
       expect(gameField.getCell(1, 9)).toBe(null) // 元の位置も空に
-      expect(gameField.getCell(1, 10)).toBe(PuyoColor.YELLOW) // 黄が下から2番目（後から収集）
-      expect(gameField.getCell(1, 11)).toBe(PuyoColor.GREEN) // 緑が最下段（最初に収集）
+      expect(gameField.getCell(1, 10)).toBe(PuyoColor.GREEN) // 緑が下から2番目（元の順序保持）
+      expect(gameField.getCell(1, 11)).toBe(PuyoColor.YELLOW) // 黄が最下段
     })
   })
 })

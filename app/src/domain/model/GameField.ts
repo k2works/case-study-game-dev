@@ -184,9 +184,10 @@ export class GameField {
         this.setCell(x, y, null)
       }
 
-      // 下から詰めて配置
+      // 下から詰めて配置（順序を保持）
+      // puyos配列の最後の要素から配置することで、元の上下関係を維持
       for (let i = 0; i < puyos.length; i++) {
-        const targetY = GameField.FIELD_HEIGHT - 1 - i
+        const targetY = GameField.FIELD_HEIGHT - puyos.length + i
         this.setCell(x, targetY, puyos[i])
       }
     }
