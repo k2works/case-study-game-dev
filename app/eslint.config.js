@@ -41,7 +41,7 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       // 循環的複雑度の制限 - 7を超える場合はエラー
-      'complexity': ['error', { max: 7 }],
+      complexity: ['error', { max: 7 }],
     },
   },
   {
