@@ -193,6 +193,11 @@ export class Game {
         this.field.applyGravity()
       }
     } while (clearedCount > 0)
+
+    // 全消しボーナスの判定と加算
+    if (this.chainCount > 0 && this.field.isEmpty()) {
+      this.score += 2000 // 全消しボーナス
+    }
   }
 
   private calculateChainBonus(chain: number): number {

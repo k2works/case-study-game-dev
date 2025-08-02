@@ -378,11 +378,11 @@ describe('Game', () => {
     it('連鎖が発生して連鎖数がカウントされる', () => {
       const field = game.getField()
 
-      // 連鎖が発生する配置を作成
+      // 連鎖が発生する配置を作成（全消しにならないように残るぷよを配置）
       // 赤4つが消えると青が落下して青4つが揃う
-      // B B - -  (y=9)
-      // R R B B  (y=10)
-      // R R - -  (y=11)
+      // B B - - -  (y=9)
+      // R R B B -  (y=10)
+      // R R - - G  (y=11) <- 緑が残って全消しを防ぐ
       field.setCell(0, 9, PuyoColor.BLUE)
       field.setCell(1, 9, PuyoColor.BLUE)
       field.setCell(0, 10, PuyoColor.RED)
@@ -391,6 +391,7 @@ describe('Game', () => {
       field.setCell(3, 10, PuyoColor.BLUE)
       field.setCell(0, 11, PuyoColor.RED)
       field.setCell(1, 11, PuyoColor.RED)
+      field.setCell(4, 11, PuyoColor.GREEN) // 残るぷよを配置
 
       const initialScore = game.getScore()
 
@@ -407,19 +408,19 @@ describe('Game', () => {
       // 具体的なスコア計算の確認
       // 1連鎖目: 赤4個 × 10点 × 1倍 = 40点
       // 2連鎖目: 青4個 × 10点 × 2倍 = 80点
-      // 合計: 120点
+      // 合計: 120点（全消しボーナスなし）
       expect(finalScore - initialScore).toBe(120)
     })
 
     it('連鎖ボーナスが正しく計算される', () => {
       const field = game.getField()
 
-      // シンプルな2連鎖のセットアップに変更
+      // シンプルな2連鎖のセットアップに変更（全消しにならないように残るぷよを配置）
       //
       // 配置：
-      // B B - -  (y=9) 2連鎖目の青が落下後にここに来る
-      // R R - -  (y=10) 1連鎖目の赤（最初に消える）
-      // R R B B  (y=11) 赤が消えると青が隣接して4つ揃う
+      // B B - - -  (y=9) 2連鎖目の青が落下後にここに来る
+      // R R - - -  (y=10) 1連鎖目の赤（最初に消える）
+      // R R B B G  (y=11) 赤が消えると青が隣接して4つ揃う、緑が残る
 
       // 1連鎖目: 赤4個（最初に消える）
       field.setCell(0, 10, PuyoColor.RED)
@@ -433,6 +434,9 @@ describe('Game', () => {
       field.setCell(2, 11, PuyoColor.BLUE)
       field.setCell(3, 11, PuyoColor.BLUE)
 
+      // 残るぷよ（全消しを防ぐ）
+      field.setCell(4, 11, PuyoColor.GREEN)
+
       const initialScore = game.getScore()
 
       // 連鎖処理を実行
@@ -444,7 +448,7 @@ describe('Game', () => {
       // スコア計算
       // 1連鎖目: 4個 × 10点 × 1倍 = 40点
       // 2連鎖目: 4個 × 10点 × 2倍 = 80点
-      // 合計: 120点
+      // 合計: 120点（全消しボーナスなし）
       const finalScore = game.getScore()
       expect(finalScore - initialScore).toBe(120)
     })
@@ -464,6 +468,93 @@ describe('Game', () => {
         const actual = chain <= 1 ? 1 : Math.pow(2, chain - 1)
         expect(actual).toBe(expected)
       }
+    })
+  })
+
+  describe('全消しボーナス', () => {
+    beforeEach(() => {
+      game.start()
+    })
+
+    it('全消し発生時にボーナスが加算される', () => {
+      const field = game.getField()
+
+      // 4つのぷよを配置して全消しが発生する状況を作成
+      field.setCell(0, 10, PuyoColor.RED)
+      field.setCell(1, 10, PuyoColor.RED)
+      field.setCell(0, 11, PuyoColor.RED)
+      field.setCell(1, 11, PuyoColor.RED)
+
+      const initialScore = game.getScore()
+
+      // 消去処理を実行
+      game.processClearAndGravity()
+
+      // フィールドが空になっていることを確認
+      expect(field.isEmpty()).toBe(true)
+
+      // 全消しボーナスが加算されていることを確認
+      const finalScore = game.getScore()
+      // 基本スコア(4個 × 10点 × 1倍 = 40点) + 全消しボーナス(2000点) = 2040点
+      expect(finalScore - initialScore).toBe(2040)
+    })
+
+    it('全消しが発生しない場合はボーナスが加算されない', () => {
+      const field = game.getField()
+
+      // 4つのぷよを消去して、他のぷよが残る状況を作成
+      field.setCell(0, 10, PuyoColor.RED)
+      field.setCell(1, 10, PuyoColor.RED)
+      field.setCell(0, 11, PuyoColor.RED)
+      field.setCell(1, 11, PuyoColor.RED)
+      // 残るぷよを配置
+      field.setCell(2, 11, PuyoColor.BLUE)
+
+      const initialScore = game.getScore()
+
+      // 消去処理を実行
+      game.processClearAndGravity()
+
+      // フィールドが空になっていないことを確認
+      expect(field.isEmpty()).toBe(false)
+
+      // 全消しボーナスが加算されていないことを確認（基本スコアのみ）
+      const finalScore = game.getScore()
+      // 基本スコア(4個 × 10点 × 1倍 = 40点)のみ
+      expect(finalScore - initialScore).toBe(40)
+    })
+
+    it('連鎖と全消しが同時発生した場合の計算', () => {
+      const field = game.getField()
+
+      // 2連鎖で全消しが発生する配置
+      // 青2個が上部に配置され、赤4個消去後に落下して青4個が揃い全消し
+      field.setCell(0, 8, PuyoColor.BLUE)
+      field.setCell(1, 8, PuyoColor.BLUE)
+
+      field.setCell(0, 10, PuyoColor.RED)
+      field.setCell(1, 10, PuyoColor.RED)
+      field.setCell(0, 11, PuyoColor.RED)
+      field.setCell(1, 11, PuyoColor.RED)
+
+      field.setCell(2, 11, PuyoColor.BLUE)
+      field.setCell(3, 11, PuyoColor.BLUE)
+
+      const initialScore = game.getScore()
+
+      // 連鎖処理を実行
+      game.processClearAndGravity()
+
+      // フィールドが空になっていることを確認
+      expect(field.isEmpty()).toBe(true)
+
+      // 連鎖ボーナス + 全消しボーナスが加算されていることを確認
+      const finalScore = game.getScore()
+      // 1連鎖: 4個 × 10点 × 1倍 = 40点
+      // 2連鎖: 4個 × 10点 × 2倍 = 80点
+      // 全消しボーナス: 2000点
+      // 合計: 2120点
+      expect(finalScore - initialScore).toBe(2120)
     })
   })
 
