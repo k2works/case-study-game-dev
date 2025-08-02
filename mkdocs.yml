@@ -58,26 +58,40 @@ plugins:
 nav:
   - Home: index.md
   - 要件:
-    - 要件: ./requirements/要件.md
+      - 概要: requirements/index.md
+      - 要件詳細: requirements/要件.md
   - 開発:
-    - 開発計画: ./development/開発計画.md
-    - ユーザーインターフェース設計: ./development/ユーザーインターフェース設計.md
-    - アーキテクチャ設計: ./development/アーキテクチャ設計.md
-    - データモデル設計: ./development/データモデル設計.md
-    - ドメインモデル設計: ./development/ドメインモデル設計.md
+      - 概要: development/index.md
+      - 開発計画: development/開発計画.md
+      - アーキテクチャ設計: development/アーキテクチャ設計.md
+      - データモデル設計: development/データモデル設計.md
+      - ドメインモデル設計: development/ドメインモデル設計.md
+      - ユーザーインターフェース設計: development/ユーザーインターフェース設計.md
   - 運用:
-    - セットアップ: ./operation/セットアップ.md
-    - MkDocs GitHub Actions設定: ./operation/MkDocs_GitHub_Actions設定.md
+      - 概要: operation/index.md
+      - セットアップ: operation/セットアップ.md
+      - CI/CD設定: operation/ci-cd設定.md
+      - MkDocs GitHub Actions設定: operation/MkDocs_GitHub_Actions設定.md
   - ADR:
-      - 概要: ./adr/index.md
-      - TypeScriptの採用: ./adr/0001-adopt-typescript.md
-      - Vitestの採用: ./adr/0002-adopt-vitest.md
-      - Canvas APIの採用: ./adr/0003-adopt-canvas-api.md
-      - TDDアプローチの採用: ./adr/0004-adopt-tdd-approach.md
-      - GitHub Actionsの採用: ./adr/0005-adopt-github-actions.md
-      - Vercelの採用: ./adr/0006-adopt-vercel.md
-  - 日誌:
-    - 2025年7月31日: ./journal/20250731.md
-    - 2025年8月2日: ./journal/20250802.md
+      - 概要: adr/index.md
+      - TypeScriptの採用: adr/0001-adopt-typescript.md
+      - Vitestの採用: adr/0002-adopt-vitest.md
+      - Canvas APIの採用: adr/0003-adopt-canvas-api.md
+      - TDDアプローチの採用: adr/0004-adopt-tdd-approach.md
+      - GitHub Actionsの採用: adr/0005-adopt-github-actions.md
+      - Vercelの採用: adr/0006-adopt-vercel.md
+  - 開発日誌:
+      - 概要: journal/index.md
+      - 2025年7月31日: journal/20250731.md
+      - 2025年8月2日: journal/20250802.md
   - 参考資料:
-    - Case1: ./reference/case-1/index.md
+      - よいソフトウェアとは: reference/よいソフトウェアとは.md
+      - 開発ガイド: reference/開発ガイド.md
+      - エクストリームプログラミング: reference/エクストリームプログラミング.md
+      - テスト駆動開発から始めるTypeScript入門:
+          - エピソード1: reference/テスト駆動開発から始めるTypeScript入門1.md
+          - エピソード2: reference/テスト駆動開発から始めるTypeScript入門2.md
+          - エピソード3: reference/テスト駆動開発から始めるTypeScript入門3.md
+  - テンプレート:
+      - ADR: template/ADR.md
+      - README: template/README.md
