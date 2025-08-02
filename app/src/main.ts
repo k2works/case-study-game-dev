@@ -24,8 +24,7 @@ startButton?.addEventListener('click', () => {
 
 resetButton?.addEventListener('click', () => {
   console.log('ゲームリセット')
-  gameController.stop()
-  // TODO: リセット機能の実装（将来のイテレーションで実装予定）
+  gameController.reset()
 })
 
 console.log('ぷよぷよゲーム準備完了')

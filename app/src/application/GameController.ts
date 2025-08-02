@@ -94,4 +94,10 @@ export class GameController {
   getGame(): Game {
     return this.game
   }
+
+  reset(): void {
+    this.stop()
+    this.game = new Game()
+    this.start()
+  }
 }
