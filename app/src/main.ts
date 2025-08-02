@@ -1,5 +1,5 @@
 import './style.css'
-// import { Game } from './Game'
+import { Game } from './Game'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -13,12 +13,79 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   </div>
 `
 
-// const canvas = document.querySelector<HTMLCanvasElement>('#game-canvas')!
-// const game = new Game()
+const canvas = document.querySelector<HTMLCanvasElement>('#game-canvas')!
+const ctx = canvas.getContext('2d')!
+const game = new Game()
+
+// セルサイズ（各マスの大きさ）
+const CELL_SIZE = 40
+
+// ゲームフィールドを描画する関数
+function drawField() {
+  const field = game.getField()
+
+  // フィールドの背景を描画
+  ctx.fillStyle = '#f0f0f0'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // グリッドラインを描画
+  ctx.strokeStyle = '#ddd'
+  ctx.lineWidth = 1
+
+  for (let y = 0; y <= field.length; y++) {
+    ctx.beginPath()
+    ctx.moveTo(0, y * CELL_SIZE)
+    ctx.lineTo(canvas.width, y * CELL_SIZE)
+    ctx.stroke()
+  }
+
+  for (let x = 0; x <= field[0].length; x++) {
+    ctx.beginPath()
+    ctx.moveTo(x * CELL_SIZE, 0)
+    ctx.lineTo(x * CELL_SIZE, canvas.height)
+    ctx.stroke()
+  }
+
+  // フィールドの各セルを描画
+  for (let y = 0; y < field.length; y++) {
+    for (let x = 0; x < field[y].length; x++) {
+      if (field[y][x] !== 0) {
+        drawPuyoCell(x, y, field[y][x])
+      }
+    }
+  }
+}
+
+// 現在のぷよを描画する関数
+function drawCurrentPuyo() {
+  const puyo = game.getCurrentPuyo()
+  if (puyo) {
+    drawPuyoCell(puyo.x, puyo.y, puyo.color)
+  }
+}
+
+// ぷよセルを描画する関数
+function drawPuyoCell(x: number, y: number, color: number) {
+  const colors = ['', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7']
+
+  ctx.fillStyle = colors[color] || '#999'
+  ctx.fillRect(x * CELL_SIZE + 2, y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4)
+
+  // ぷよの境界線を描画
+  ctx.strokeStyle = '#333'
+  ctx.lineWidth = 2
+  ctx.strokeRect(x * CELL_SIZE + 2, y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4)
+}
+
+// ゲームを描画する関数
+function draw() {
+  drawField()
+  drawCurrentPuyo()
+}
 
 // ゲームループを開始
 function gameLoop() {
-  // ここでゲームの描画処理を実装
+  draw()
   requestAnimationFrame(gameLoop)
 }
 
