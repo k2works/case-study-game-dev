@@ -285,6 +285,132 @@ $ git add .
 $ git commit -m 'chore: 静的コード解析セットアップ'
 ```
 
+#### 循環的複雑度の制限
+
+良いコードを維持するために、**循環的複雑度**（Cyclomatic Complexity）も管理しましょう。循環的複雑度は、プログラムの制御フローの複雑さを測る指標で、メソッドの理解しやすさや保守性に直結します。
+
+> 循環的複雑度とは、プログラムの論理的な複雑さを測定するソフトウェアメトリクスの一つです。条件分岐や繰り返し処理の数に基づいて計算され、値が高いほどコードの理解やテストが困難になります。
+
+ESLintの設定に循環的複雑度の制限を追加しましょう。一般的に、循環的複雑度は7以下に保つことが推奨されています。
+
+```javascript
+// eslint.config.js
+export default [
+  // ...既存の設定...
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      // ...既存のルール...
+      // 循環的複雑度の制限 - 7を超える場合はエラー
+      'complexity': ['error', { max: 7 }],
+    },
+  },
+]
+```
+
+設定を追加したらESLintを実行して確認してみましょう。
+
+```bash
+$ npm run lint
+> app@0.0.0 lint
+> eslint . --ext .ts,.tsx
+
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\src\application\GameController.ts
+  66:22  error  Method 'handleInput' has a complexity of 8. Maximum allowed is 7  complexity
+
+✖ 1 problem (1 error, 0 warnings)
+```
+
+循環的複雑度が7を超えるメソッドが検出されました。この場合は、メソッドを小さく分割してリファクタリングします。
+
+**リファクタリング前（複雑度8）：**
+```typescript
+private handleInput(): void {
+  // Rキーでリスタート（ゲームオーバー時のみ）
+  if (this.inputHandler.isKeyJustPressed('KeyR') && this.game.getState() === GameState.GAME_OVER) {
+    this.game.restart()
+    return
+  }
+
+  // 通常のゲーム操作（プレイ中のみ）
+  if (this.game.getState() === GameState.PLAYING) {
+    if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {
+      this.game.movePuyo(-1, 0)
+    }
+    if (this.inputHandler.isKeyJustPressed('ArrowRight')) {
+      this.game.movePuyo(1, 0)
+    }
+    if (this.inputHandler.isKeyPressed('ArrowDown')) {
+      this.game.movePuyo(0, 1)
+    }
+    if (this.inputHandler.isKeyJustPressed('ArrowUp')) {
+      this.game.rotatePuyo()
+    }
+  }
+}
+```
+
+**リファクタリング後（各メソッド複雑度1-3）：**
+```typescript
+private handleInput(): void {
+  this.handleGameOverInput()
+  this.handleGamePlayInput()
+}
+
+private handleGameOverInput(): void {
+  // Rキーでリスタート（ゲームオーバー時のみ）
+  if (this.inputHandler.isKeyJustPressed('KeyR') && this.game.getState() === GameState.GAME_OVER) {
+    this.game.restart()
+  }
+}
+
+private handleGamePlayInput(): void {
+  // 通常のゲーム操作（プレイ中のみ）
+  if (this.game.getState() === GameState.PLAYING) {
+    this.handleMovementInput()
+    this.handleRotationInput()
+  }
+}
+
+private handleMovementInput(): void {
+  if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {
+    this.game.movePuyo(-1, 0)
+  }
+  if (this.inputHandler.isKeyJustPressed('ArrowRight')) {
+    this.game.movePuyo(1, 0)
+  }
+  if (this.inputHandler.isKeyPressed('ArrowDown')) {
+    this.game.movePuyo(0, 1)
+  }
+}
+
+private handleRotationInput(): void {
+  if (this.inputHandler.isKeyJustPressed('ArrowUp')) {
+    this.game.rotatePuyo()
+  }
+}
+```
+
+リファクタリング後にESLintを再実行します。
+
+```bash
+$ npm run lint
+> app@0.0.0 lint
+> eslint . --ext .ts,.tsx
+
+$ # エラーなし
+```
+
+循環的複雑度の制限により、以下の効果が得られます：
+
+- **可読性向上**: 小さなメソッドは理解しやすい
+- **保守性向上**: 変更の影響範囲が限定される
+- **テスト容易性**: 個別機能のテストが簡単
+- **自動品質管理**: 複雑なコードの混入を自動防止
+
+このように、ESLintルールを活用することで、継続的にコード品質を保つことができます。
+
+
 ### コードフォーマッタ
 
 良いコードであるためにはフォーマットも大切な要素です。
