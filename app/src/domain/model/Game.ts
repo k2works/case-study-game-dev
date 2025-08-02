@@ -160,6 +160,25 @@ export class Game {
         this.currentPuyo.sub.color
       )
     }
+
+    // ぷよ配置後の処理：消去と落下を繰り返し実行
+    this.processClearAndGravity()
+  }
+
+  private processClearAndGravity(): void {
+    let clearedCount = 0
+
+    // 消去可能なぷよがある限り繰り返し処理
+    do {
+      clearedCount = this.field.clearConnectedPuyos()
+      if (clearedCount > 0) {
+        // スコアを加算
+        this.score += clearedCount * 10
+
+        // 重力を適用
+        this.field.applyGravity()
+      }
+    } while (clearedCount > 0)
   }
 
   private generateNewPuyo(): void {

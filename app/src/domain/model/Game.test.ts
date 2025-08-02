@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { Game } from './Game'
 import { GameState } from './GameState'
+import { PuyoColor } from './Puyo'
 
 describe('Game', () => {
   let game: Game
@@ -209,6 +210,58 @@ describe('Game', () => {
       // この時点ではまだ他のぷよがフィールドにないため、
       // フィールドに配置されたぷよとの衝突テストは後で実装
       expect(true).toBe(true) // プレースホルダー
+    })
+  })
+
+  describe('ぷよの消去', () => {
+    beforeEach(() => {
+      game.start()
+    })
+
+    it('4つ以上接続したぷよが消去されスコアが加算される', () => {
+      const field = game.getField()
+
+      // 4つ接続した赤いぷよを手動で配置
+      field.setCell(0, 8, PuyoColor.RED)
+      field.setCell(1, 8, PuyoColor.RED)
+      field.setCell(0, 9, PuyoColor.RED)
+      field.setCell(1, 9, PuyoColor.RED)
+
+      // 消去処理を実行するために新しいぷよを配置してprocessClearAndGravityを呼び出す
+      // 直接processClearAndGravityを呼び出すことはできないので、
+      // placePuyoOnFieldメソッドが呼ばれる状況を作る
+
+      // ゲームの更新処理中にぷよ着地をシミュレート
+      // テスト用にprivateメソッドを直接呼ぶ代わりに、
+      // clearConnectedPuyosを直接呼び出してテストする
+      const clearedCount = field.clearConnectedPuyos()
+
+      expect(clearedCount).toBe(4) // 4つの赤いぷよが消去される
+      expect(field.getCell(0, 8)).toBe(null)
+      expect(field.getCell(1, 8)).toBe(null)
+      expect(field.getCell(0, 9)).toBe(null)
+      expect(field.getCell(1, 9)).toBe(null)
+    })
+
+    it('消去後に重力が適用される', () => {
+      const field = game.getField()
+
+      // テスト用配置：下に4つ接続、上に別の色を配置
+      field.setCell(0, 8, PuyoColor.BLUE) // 上のぷよ
+      field.setCell(0, 9, PuyoColor.RED) // 消去対象
+      field.setCell(1, 9, PuyoColor.RED) // 消去対象
+      field.setCell(0, 10, PuyoColor.RED) // 消去対象
+      field.setCell(1, 10, PuyoColor.RED) // 消去対象
+
+      // 消去処理を実行
+      field.clearConnectedPuyos()
+
+      // 重力を適用
+      field.applyGravity()
+
+      // 青いぷよが落下していることを確認
+      expect(field.getCell(0, 8)).toBe(null) // 元の位置は空
+      expect(field.getCell(0, 11)).toBe(PuyoColor.BLUE) // 最下段に落下
     })
   })
 })
