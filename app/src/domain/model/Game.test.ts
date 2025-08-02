@@ -377,7 +377,7 @@ describe('Game', () => {
 
     it('連鎖が発生して連鎖数がカウントされる', () => {
       const field = game.getField()
-      
+
       // 連鎖が発生する配置を作成
       // 赤4つが消えると青が落下して青4つが揃う
       // B B - -  (y=9)
@@ -391,19 +391,19 @@ describe('Game', () => {
       field.setCell(3, 10, PuyoColor.BLUE)
       field.setCell(0, 11, PuyoColor.RED)
       field.setCell(1, 11, PuyoColor.RED)
-      
+
       const initialScore = game.getScore()
-      
+
       // 連鎖処理を実行
       game.processClearAndGravity()
-      
+
       // 連鎖数を確認
       expect(game.getChainCount()).toBe(2) // 2連鎖
-      
+
       // スコアにボーナスが加算されている
       const finalScore = game.getScore()
       expect(finalScore).toBeGreaterThan(initialScore)
-      
+
       // 具体的なスコア計算の確認
       // 1連鎖目: 赤4個 × 10点 × 1倍 = 40点
       // 2連鎖目: 青4個 × 10点 × 2倍 = 80点
@@ -413,34 +413,34 @@ describe('Game', () => {
 
     it('連鎖ボーナスが正しく計算される', () => {
       const field = game.getField()
-      
+
       // シンプルな2連鎖のセットアップに変更
-      // 
+      //
       // 配置：
       // B B - -  (y=9) 2連鎖目の青が落下後にここに来る
       // R R - -  (y=10) 1連鎖目の赤（最初に消える）
       // R R B B  (y=11) 赤が消えると青が隣接して4つ揃う
-      
+
       // 1連鎖目: 赤4個（最初に消える）
       field.setCell(0, 10, PuyoColor.RED)
       field.setCell(1, 10, PuyoColor.RED)
       field.setCell(0, 11, PuyoColor.RED)
       field.setCell(1, 11, PuyoColor.RED)
-      
+
       // 2連鎖目: 青4個（赤が消えた後に4つ隣接する）
       field.setCell(0, 9, PuyoColor.BLUE)
       field.setCell(1, 9, PuyoColor.BLUE)
       field.setCell(2, 11, PuyoColor.BLUE)
       field.setCell(3, 11, PuyoColor.BLUE)
-      
+
       const initialScore = game.getScore()
-      
+
       // 連鎖処理を実行
       game.processClearAndGravity()
-      
+
       // 2連鎖発生を確認
       expect(game.getChainCount()).toBe(2)
-      
+
       // スコア計算
       // 1連鎖目: 4個 × 10点 × 1倍 = 40点
       // 2連鎖目: 4個 × 10点 × 2倍 = 80点
@@ -451,13 +451,13 @@ describe('Game', () => {
 
     it('計算式のテスト', () => {
       // 連鎖ボーナス計算式の単体テスト
-      
+
       // calculateChainBonusメソッドが private なのでテスト用に確認
       // 1連鎖: 1倍, 2連鎖: 2倍, 3連鎖: 4倍, 4連鎖: 8倍...
-      
+
       // 2^0 = 1, 2^1 = 2, 2^2 = 4, 2^3 = 8 の数列
       const testBonuses = [1, 2, 4, 8, 16]
-      
+
       for (let chain = 1; chain <= 5; chain++) {
         const expected = testBonuses[chain - 1]
         // Math.pow(2, chain - 1) で chain=1なら 2^0=1, chain=2なら 2^1=2

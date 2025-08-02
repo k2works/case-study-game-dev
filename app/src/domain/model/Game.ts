@@ -183,7 +183,7 @@ export class Game {
       clearedCount = this.field.clearConnectedPuyos()
       if (clearedCount > 0) {
         this.chainCount++ // 連鎖数をインクリメント
-        
+
         // スコアを計算（基本スコア + 連鎖ボーナス）
         const baseScore = clearedCount * 10
         const chainBonus = this.calculateChainBonus(this.chainCount)
