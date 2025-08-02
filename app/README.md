@@ -13,13 +13,13 @@ TypeScriptとViteを使用して開発されたぷよぷよゲームです。テ
 
 ### 前提
 
-| ソフトウェア | バージョン   | 備考 |
-| :----------- |:--------| :--- |
+| ソフトウェア | バージョン | 備考                       |
+| :----------- | :--------- | :------------------------- |
 | Node.js      | 20.x, 22.x | アプリケーション実行に必要 |
-| npm          | 最新     | パッケージ管理に必要 |
-| TypeScript   | 5.8.x    | アプリケーション開発言語 |
-| Vite         | 7.x      | ビルドツール |
-| Vitest       | 3.x      | テスティングフレームワーク |
+| npm          | 最新       | パッケージ管理に必要       |
+| TypeScript   | 5.8.x      | アプリケーション開発言語   |
+| Vite         | 7.x        | ビルドツール               |
+| Vitest       | 3.x        | テスティングフレームワーク |
 
 ## 構成
 
@@ -93,21 +93,21 @@ GitHub Actionsによる自動デプロイが設定されています：
 
 #### 品質管理コマンド
 
-| コマンド | 説明 |
-| :------- | :--- |
-| `npm run lint` | ESLintによるコード解析 |
-| `npm run lint:fix` | ESLintによる自動修正 |
-| `npm run format` | Prettierによるコードフォーマット |
-| `npm run format:check` | フォーマットチェック |
-| `npm run test:coverage` | テストカバレッジの確認 |
-| `npm run check` | 総合品質チェック（lint + format + test） |
+| コマンド                | 説明                                     |
+| :---------------------- | :--------------------------------------- |
+| `npm run lint`          | ESLintによるコード解析                   |
+| `npm run lint:fix`      | ESLintによる自動修正                     |
+| `npm run format`        | Prettierによるコードフォーマット         |
+| `npm run format:check`  | フォーマットチェック                     |
+| `npm run test:coverage` | テストカバレッジの確認                   |
+| `npm run check`         | 総合品質チェック（lint + format + test） |
 
 #### Gulpタスク
 
-| コマンド | 説明 |
-| :------- | :--- |
-| `npm run gulp` | Gulpタスクランナー起動 |
-| `npm run watch` | ファイル監視 |
+| コマンド        | 説明                               |
+| :-------------- | :--------------------------------- |
+| `npm run gulp`  | Gulpタスクランナー起動             |
+| `npm run watch` | ファイル監視                       |
 | `npm run guard` | 自動品質チェック（ファイル変更時） |
 
 #### 技術スタック
@@ -140,12 +140,14 @@ GitHub Actionsによる自動デプロイが設定されています：
 #### 開発フロー
 
 1. **テスト駆動開発（TDD）**
+
    ```bash
    # テスト作成 → 実装 → リファクタリングのサイクル
    npm run test:watch  # テスト監視モード
    ```
 
 2. **品質チェック**
+
    ```bash
    # コミット前の品質チェック
    npm run check
