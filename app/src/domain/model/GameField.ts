@@ -38,14 +38,24 @@ export class GameField {
   }
 
   getCell(x: number, y: number): number | null {
-    if (x < 0 || x >= GameField.FIELD_WIDTH || y < 0 || y >= GameField.FIELD_HEIGHT) {
+    if (
+      x < 0 ||
+      x >= GameField.FIELD_WIDTH ||
+      y < 0 ||
+      y >= GameField.FIELD_HEIGHT
+    ) {
       return null
     }
     return this.grid[y][x]
   }
 
   setCell(x: number, y: number, color: number | null): void {
-    if (x >= 0 && x < GameField.FIELD_WIDTH && y >= 0 && y < GameField.FIELD_HEIGHT) {
+    if (
+      x >= 0 &&
+      x < GameField.FIELD_WIDTH &&
+      y >= 0 &&
+      y < GameField.FIELD_HEIGHT
+    ) {
       this.grid[y][x] = color
     }
   }

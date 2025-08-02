@@ -45,7 +45,7 @@ export class Game {
     }
 
     this.fallTimer++
-    
+
     // 落下タイマーが間隔に達したら落下処理を実行
     if (this.fallTimer >= this.fallInterval) {
       this.fallTimer = 0
@@ -59,19 +59,19 @@ export class Game {
     }
 
     const movedPuyo = this.currentPuyo.moveBy(dx, dy)
-    
+
     if (this.canMoveTo(movedPuyo)) {
       this.currentPuyo = movedPuyo
-      
+
       // 下方向の移動で着地した場合の処理
       if (dy > 0 && !this.canMoveTo(this.currentPuyo.moveBy(0, 1))) {
         this.placePuyoOnField()
         this.generateNewPuyo()
       }
-      
+
       return true
     }
-    
+
     return false
   }
 
@@ -80,7 +80,7 @@ export class Game {
 
     // ぷよを1つ下に移動
     const movedPuyo = this.currentPuyo.moveBy(0, 1)
-    
+
     // 着地判定
     if (this.canMoveTo(movedPuyo)) {
       this.currentPuyo = movedPuyo
@@ -93,12 +93,16 @@ export class Game {
 
   private canMoveTo(puyoPair: PuyoPair): boolean {
     // メインぷよの位置チェック
-    if (!this.isValidPosition(puyoPair.main.position.x, puyoPair.main.position.y)) {
+    if (
+      !this.isValidPosition(puyoPair.main.position.x, puyoPair.main.position.y)
+    ) {
       return false
     }
-    
+
     // サブぷよの位置チェック
-    if (!this.isValidPosition(puyoPair.sub.position.x, puyoPair.sub.position.y)) {
+    if (
+      !this.isValidPosition(puyoPair.sub.position.x, puyoPair.sub.position.y)
+    ) {
       return false
     }
 
@@ -155,7 +159,7 @@ export class Game {
       PuyoColor.BLUE,
       PuyoColor.GREEN,
       PuyoColor.YELLOW,
-      PuyoColor.PURPLE
+      PuyoColor.PURPLE,
     ]
     return colors[Math.floor(Math.random() * colors.length)]
   }

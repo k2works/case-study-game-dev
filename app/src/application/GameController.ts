@@ -37,7 +37,7 @@ export class GameController {
         this.render()
         this.lastFrameTime = currentTime
       }
-      
+
       this.gameLoopId = requestAnimationFrame(gameLoop)
     }
 
@@ -54,10 +54,10 @@ export class GameController {
   private update(): void {
     // 入力処理
     this.handleInput()
-    
+
     // ゲームロジックの更新
     this.game.update()
-    
+
     // 入力ハンドラーの更新（JustPressedをクリア）
     this.inputHandler.update()
   }

@@ -21,6 +21,12 @@ export default [
         document: 'readonly',
         window: 'readonly',
         HTMLCanvasElement: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        global: 'readonly',
       },
     },
     plugins: {
@@ -40,6 +46,7 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {

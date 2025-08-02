@@ -65,7 +65,7 @@ describe('Game', () => {
     it('ぷよが地面に着地する', () => {
       const field = game.getField()
       const fieldHeight = field.getHeight()
-      
+
       // ぷよを地面近くまで落下させる（フレーム数を調整）
       for (let i = 0; i < fieldHeight * 30; i++) {
         game.update()
@@ -79,7 +79,7 @@ describe('Game', () => {
       const initialPuyo = game.getCurrentPuyo()
       const field = game.getField()
       const fieldHeight = field.getHeight()
-      
+
       // ぷよを地面まで落下させる（フレーム数を調整）
       for (let i = 0; i < fieldHeight * 30; i++) {
         game.update()
@@ -124,7 +124,9 @@ describe('Game', () => {
 
       expect(moved).toBe(false)
       const puyoAfterMove = game.getCurrentPuyo()
-      expect(puyoAfterMove!.main.position.x).toBe(puyoBeforeMove!.main.position.x)
+      expect(puyoAfterMove!.main.position.x).toBe(
+        puyoBeforeMove!.main.position.x
+      )
     })
 
     it('フィールドの右端を超えて移動できない', () => {
@@ -138,7 +140,9 @@ describe('Game', () => {
 
       expect(moved).toBe(false)
       const puyoAfterMove = game.getCurrentPuyo()
-      expect(puyoAfterMove!.main.position.x).toBe(puyoBeforeMove!.main.position.x)
+      expect(puyoAfterMove!.main.position.x).toBe(
+        puyoBeforeMove!.main.position.x
+      )
     })
   })
 })

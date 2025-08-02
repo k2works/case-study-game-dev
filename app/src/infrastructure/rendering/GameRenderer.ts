@@ -17,10 +17,10 @@ export class GameRenderer {
     }
     this.context = context
     this.setupCanvas()
-    
+
     // ゲームフィールドを中央配置するためのオフセット計算
     // キャンバス幅320px、フィールド幅 6 * 32 = 192px
-    this.fieldOffsetX = (this.canvas.width - (6 * this.cellSize)) / 2
+    this.fieldOffsetX = (this.canvas.width - 6 * this.cellSize) / 2
   }
 
   private setupCanvas(): void {

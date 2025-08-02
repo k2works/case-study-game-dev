@@ -16,13 +16,13 @@ const mockContext = {
   textAlign: '',
   lineWidth: 1,
   strokeStyle: '',
-  measureText: vi.fn(() => ({ width: 50 }))
+  measureText: vi.fn(() => ({ width: 50 })),
 }
 
 global.HTMLCanvasElement = vi.fn(() => ({
   getContext: vi.fn(() => mockContext),
   width: 320,
-  height: 480
+  height: 480,
 })) as any
 
 describe('GameRenderer', () => {
@@ -68,7 +68,11 @@ describe('GameRenderer', () => {
     it('スコアが描画される', () => {
       renderer.render(game)
 
-      expect(mockContext.fillText).toHaveBeenCalledWith(expect.stringContaining('Score'), expect.any(Number), expect.any(Number))
+      expect(mockContext.fillText).toHaveBeenCalledWith(
+        expect.stringContaining('Score'),
+        expect.any(Number),
+        expect.any(Number)
+      )
     })
   })
 

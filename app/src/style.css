@@ -47,9 +47,15 @@ h1 {
 }
 
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 #game-canvas {
@@ -120,11 +126,11 @@ button:active {
     color: #213547;
     background-color: #ffffff;
   }
-  
+
   body {
     background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   }
-  
+
   button {
     background-color: #f9f9f9;
     color: #213547;
