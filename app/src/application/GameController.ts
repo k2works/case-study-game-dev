@@ -63,17 +63,26 @@ export class GameController {
   }
 
   private handleInput(): void {
-    if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {
-      this.game.movePuyo(-1, 0)
+    // Rキーでリスタート（ゲームオーバー時のみ）
+    if (this.inputHandler.isKeyJustPressed('KeyR') && this.game.getState() === 'game_over') {
+      this.game.restart()
+      return
     }
-    if (this.inputHandler.isKeyJustPressed('ArrowRight')) {
-      this.game.movePuyo(1, 0)
-    }
-    if (this.inputHandler.isKeyPressed('ArrowDown')) {
-      this.game.movePuyo(0, 1)
-    }
-    if (this.inputHandler.isKeyJustPressed('ArrowUp')) {
-      this.game.rotatePuyo()
+    
+    // 通常のゲーム操作（プレイ中のみ）
+    if (this.game.getState() === 'playing') {
+      if (this.inputHandler.isKeyJustPressed('ArrowLeft')) {
+        this.game.movePuyo(-1, 0)
+      }
+      if (this.inputHandler.isKeyJustPressed('ArrowRight')) {
+        this.game.movePuyo(1, 0)
+      }
+      if (this.inputHandler.isKeyPressed('ArrowDown')) {
+        this.game.movePuyo(0, 1)
+      }
+      if (this.inputHandler.isKeyJustPressed('ArrowUp')) {
+        this.game.rotatePuyo()
+      }
     }
   }
 

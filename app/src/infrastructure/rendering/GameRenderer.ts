@@ -38,6 +38,11 @@ export class GameRenderer {
     this.renderChainCount(game.getChainCount())
     this.renderControls()
     this.renderGameState(game)
+    
+    // ゲームオーバー表示
+    if (game.getState() === 'game_over') {
+      this.renderGameOver(game.getScore())
+    }
   }
 
   private clearCanvas(): void {
@@ -163,5 +168,43 @@ export class GameRenderer {
     const state = game.getState()
     this.context.fillStyle = '#000'
     this.context.fillText(`State: ${state}`, 10, this.canvas.height - 20)
+  }
+
+  private renderGameOver(finalScore: number): void {
+    // 半透明のオーバーレイ
+    this.context.fillStyle = 'rgba(0, 0, 0, 0.8)'
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+    
+    // ゲームオーバータイトル
+    this.context.fillStyle = '#ff4444'
+    this.context.font = 'bold 36px Arial'
+    this.context.textAlign = 'center'
+    this.context.fillText(
+      'GAME OVER',
+      this.canvas.width / 2,
+      this.canvas.height / 2 - 60
+    )
+    
+    // 最終スコア表示
+    this.context.fillStyle = '#ffffff'
+    this.context.font = 'bold 24px Arial'
+    this.context.fillText(
+      `Final Score: ${finalScore}`,
+      this.canvas.width / 2,
+      this.canvas.height / 2 - 20
+    )
+    
+    // リスタート案内
+    this.context.fillStyle = '#cccccc'
+    this.context.font = '16px Arial'
+    this.context.fillText(
+      'Press R to Restart',
+      this.canvas.width / 2,
+      this.canvas.height / 2 + 20
+    )
+    
+    // フォントとアラインメントを元に戻す
+    this.context.font = '16px Arial'
+    this.context.textAlign = 'left'
   }
 }
