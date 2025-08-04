@@ -1264,4 +1264,203 @@ describe('Game', () => {
       expect(game.getScore()).toBe(40) // 4 * 10 * 1
     })
   })
+
+  describe('連鎖システム統合テスト', () => {
+    it('完全な連鎖シナリオ：着地→消去→連鎖→スコア計算が正しく動作すること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 確実な2連鎖パターンを設定
+      // 1連鎖目：底部の赤4つ（横一列）
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+      field[11][4] = 1
+
+      // 2連鎖目：青4つ（赤が消えた後に落下して連鎖）
+      field[10][1] = 2 // 落下後: [11][1]
+      field[10][2] = 2 // 落下後: [11][2]
+      field[9][3] = 2 // 落下後: [11][3]
+      field[9][4] = 2 // 落下後: [11][4]
+
+      // ぷよペア着地をシミュレート（連鎖に影響しない位置・色）
+      const puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 3
+      puyoPair.satellite.color = 4
+      puyoPair.axis.x = 5
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 0
+      puyoPair.satellite.y = 11
+
+      // 着地処理を実行
+      ;(game as any).handleLandedPuyo()
+
+      // 2連鎖が発生したことを確認
+      expect(game.getChainCount()).toBe(2)
+
+      // スコアが正しく計算されたことを確認
+      // 1連鎖目: 4個 * 10 * 1 = 40点
+      // 2連鎖目: 4個 * 10 * 2 = 80点
+      // 合計: 120点
+      expect(game.getScore()).toBe(120)
+
+      // 着地したぷよペアは残っている
+      expect(field[11][5]).toBe(3)
+      expect(field[11][0]).toBe(4)
+    })
+
+    it('基本的なスコア加算システムが正しく動作すること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // シンプルな1連鎖パターンを設定
+      field[11][0] = 1 // 赤
+      field[11][1] = 1 // 赤
+      field[11][2] = 1 // 赤
+      field[11][3] = 1 // 赤
+
+      // ぷよペアの着地をシミュレート（連鎖に影響しない色と位置）
+      const puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 2 // 青色
+      puyoPair.satellite.color = 3 // 緑色
+      puyoPair.axis.x = 5
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 4
+      puyoPair.satellite.y = 11
+
+      // 着地処理実行
+      ;(game as any).handleLandedPuyo()
+
+      // 1連鎖が発生したことを確認
+      expect(game.getChainCount()).toBe(1)
+
+      // スコアが正しく計算されたことを確認
+      // 1連鎖目: 4個 * 10 * 1 = 40点
+      expect(game.getScore()).toBe(40)
+
+      // 赤いぷよが消去されていることを確認
+      expect(field[11][0]).toBe(0)
+      expect(field[11][1]).toBe(0)
+      expect(field[11][2]).toBe(0)
+      expect(field[11][3]).toBe(0)
+
+      // 着地したぷよペアは残っている
+      expect(field[11][5]).toBe(2) // 軸ぷよ（青）
+      expect(field[11][4]).toBe(3) // 衛星ぷよ（緑）
+    })
+
+    it('複数回のゲームプレイでスコアが累積されること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 1回目のぷよ着地と消去
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 1回目の着地処理
+      let puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 2
+      puyoPair.satellite.color = 3
+      puyoPair.axis.x = 5
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 4
+      puyoPair.satellite.y = 11
+      ;(game as any).handleLandedPuyo()
+
+      const firstScore = game.getScore()
+      expect(firstScore).toBe(40) // 4 * 10 * 1
+
+      // 2回目のぷよ着地と消去（新しいぷよペアが生成されている）
+      field[11][0] = 2
+      field[11][1] = 2
+      field[10][0] = 2
+      field[10][1] = 2
+
+      // 2回目の着地処理
+      puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 3
+      puyoPair.satellite.color = 4
+      puyoPair.axis.x = 3
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 2
+      puyoPair.satellite.y = 11
+      ;(game as any).handleLandedPuyo()
+
+      // スコアが累積されていることを確認
+      const totalScore = game.getScore()
+      expect(totalScore).toBe(80) // 40 + (4 * 10 * 1)
+    })
+
+    it('連鎖が発生しない場合はスコアに影響しないこと', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 消去されない配置（3つ以下）
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+
+      // ぷよペア着地をシミュレート
+      const puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 2
+      puyoPair.satellite.color = 3
+      puyoPair.axis.x = 5
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 4
+      puyoPair.satellite.y = 11
+
+      // 着地処理を実行
+      ;(game as any).handleLandedPuyo()
+
+      // 連鎖が発生していないことを確認
+      expect(game.getChainCount()).toBe(0)
+
+      // スコアが変化していないことを確認
+      expect(game.getScore()).toBe(0)
+
+      // ぷよが消去されていないことを確認
+      expect(field[11][0]).toBe(1)
+      expect(field[11][1]).toBe(1)
+      expect(field[11][2]).toBe(1)
+    })
+
+    it('UI更新との統合：ゲーム状態がUIに正しく反映されること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 初期状態の確認
+      expect(game.getScore()).toBe(0)
+      expect(game.getChainCount()).toBe(0)
+
+      // 連鎖パターンを設定
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // ぷよペア着地をシミュレート
+      const puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 2
+      puyoPair.satellite.color = 3
+      puyoPair.axis.x = 5
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 4
+      puyoPair.satellite.y = 11
+
+      // 着地処理を実行
+      ;(game as any).handleLandedPuyo()
+
+      // ゲーム状態が更新されていることを確認
+      expect(game.getScore()).toBeGreaterThan(0) // スコアが加算されている
+      expect(game.getChainCount()).toBe(1) // 1連鎖が記録されている
+
+      // 新しいぷよペアが生成されていることを確認
+      const newPuyoPair = game.getCurrentPuyoPair()
+      expect(newPuyoPair).not.toBeNull()
+      expect(newPuyoPair!.axis.x).toBe(2) // 初期位置
+      expect(newPuyoPair!.axis.y).toBe(1) // 初期位置
+    })
+  })
 })
