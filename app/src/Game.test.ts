@@ -968,4 +968,88 @@ describe('Game', () => {
       })
     })
   })
+
+  describe('ゲームループとの統合', () => {
+    it('ぷよが着地したときに消去処理が自動実行される', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // L字型に同色（赤色=1）のぷよを配置して4つ揃える
+      field[11][0] = 1 // 底辺
+      field[11][1] = 1 // 底辺
+      field[11][2] = 1 // 底辺
+      field[10][0] = 1 // 縦棒
+
+      // ぷよペアの色を調整して、赤色になるようにする
+      const puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 1 // 赤色
+      puyoPair.satellite.color = 2 // 異なる色（青色）
+
+      // 着地位置を設定（軸ぷよが11,2の位置、衛星ぷよが11,3の位置）
+      puyoPair.axis.x = 2
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 3
+      puyoPair.satellite.y = 11
+
+      // 着地処理を実行（消去処理が自動実行されるはず）
+      ;(game as any).handleLandedPuyo()
+
+      // 5つ揃った赤ぷよが消去されているかチェック（元の4つ + 軸ぷよ）
+      expect(field[11][0]).toBe(0)
+      expect(field[11][1]).toBe(0)
+      expect(field[11][2]).toBe(0)
+      expect(field[10][0]).toBe(0)
+
+      // 衛星ぷよ（青色）は消去されずに残る
+      expect(field[11][3]).toBe(2)
+    })
+
+    it('連鎖が発生したときに連続で消去処理が実行される', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 連鎖パターンを設定
+      // 下段：赤4つ（消去対象）
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 上段：青4つ（落下後に連鎖）
+      field[9][1] = 2
+      field[9][2] = 2
+      field[10][1] = 2
+      field[10][2] = 2
+
+      // ぷよペアの色を設定（連鎖に影響しない位置・色）
+      const puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.color = 3 // 緑色（連鎖に影響しない）
+      puyoPair.satellite.color = 4 // 黄色（連鎖に影響しない）
+
+      // 着地位置を設定（連鎖に影響しない位置）
+      puyoPair.axis.x = 5
+      puyoPair.axis.y = 11
+      puyoPair.satellite.x = 4
+      puyoPair.satellite.y = 11
+
+      // 着地処理実行
+      ;(game as any).handleLandedPuyo()
+
+      // 1回目の消去：赤4つが消去される
+      expect(field[11][0]).toBe(0)
+      expect(field[11][1]).toBe(0)
+      expect(field[11][2]).toBe(0)
+      expect(field[11][3]).toBe(0)
+
+      // 2回目の消去：青4つが落下して連鎖で消去される
+      expect(field[11][1]).toBe(0) // 落下してきた青も消去
+      expect(field[11][2]).toBe(0) // 落下してきた青も消去
+      expect(field[10][1]).toBe(0) // 元からあった青も消去
+      expect(field[10][2]).toBe(0) // 元からあった青も消去
+
+      // 着地したぷよペアは残る（連鎖に関与しないため）
+      expect(field[11][5]).toBe(3) // 軸ぷよ（緑）
+      expect(field[11][4]).toBe(4) // 衛星ぷよ（黄）
+    })
+  })
 })

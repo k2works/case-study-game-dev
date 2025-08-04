@@ -52,6 +52,7 @@ export class Game {
 
   private handleLandedPuyo(): void {
     this.fixPuyoPair()
+    this.processChain()
     this.generateNewPuyoPair()
     this.puyoLanded = false
     this.dropTimer = 0
@@ -410,6 +411,22 @@ export class Game {
         }
         writePos-- // 次の書き込み位置を上に移動
       }
+    }
+  }
+
+  private processChain(): void {
+    // 連鎖処理：消去できるぷよがある限り繰り返す
+    while (true) {
+      // 消去処理を実行
+      const erased = this.erasePuyos()
+
+      // 消去されるぷよがない場合は連鎖終了
+      if (!erased) {
+        break
+      }
+
+      // 重力処理を実行
+      this.applyGravity()
     }
   }
 }
