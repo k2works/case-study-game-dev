@@ -443,6 +443,9 @@ export class Game {
       // 重力処理を実行
       this.applyGravity()
     }
+
+    // 連鎖処理終了後、全消しボーナスをチェック
+    this.addZenkeshiScore()
   }
 
   public getChainCount(): number {
@@ -511,6 +514,23 @@ export class Game {
       }
     }
     return true // すべてのセルが空の場合は全消し
+  }
+
+  public getZenkeshiBonus(): number {
+    // 全消しボーナスは固定で2000点
+    return 2000
+  }
+
+  public calculateZenkeshiScore(): number {
+    // 全消し状態の場合は2000点、そうでなければ0点
+    return this.isAllClear() ? this.getZenkeshiBonus() : 0
+  }
+
+  private addZenkeshiScore(): void {
+    // 全消し状態の場合はボーナスを加算
+    if (this.isAllClear()) {
+      this.addScore(this.getZenkeshiBonus())
+    }
   }
 }
 

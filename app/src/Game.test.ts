@@ -1256,11 +1256,14 @@ describe('Game', () => {
       field[11][2] = 1
       field[11][3] = 1
 
+      // 消去されない別の色のぷよを配置（全消しを防ぐため）
+      field[10][5] = 2
+
       // 連鎖処理を実行
       ;(game as any).resetChainCount()
       ;(game as any).processChain()
 
-      // スコアが自動的に加算されることを確認
+      // スコアが自動的に加算されることを確認（全消しボーナスなし）
       expect(game.getScore()).toBe(40) // 4 * 10 * 1
     })
   })
@@ -1525,6 +1528,89 @@ describe('Game', () => {
 
       // 全消しであることを確認
       expect(game.isAllClear()).toBe(true)
+    })
+  })
+
+  describe('全消しボーナス計算', () => {
+    it('全消し発生時に2000点のボーナスが加算されること', () => {
+      const game = new Game()
+
+      // 全消しボーナスの計算を確認
+      expect(game.getZenkeshiBonus()).toBe(2000)
+    })
+
+    it('全消しが発生しない場合はボーナスが0であること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // フィールドにぷよを配置（全消しではない状態）
+      field[11][0] = 1
+
+      // 全消しボーナスが0であることを確認
+      expect(game.calculateZenkeshiScore()).toBe(0)
+    })
+
+    it('全消しが発生する場合は2000点が加算されること', () => {
+      const game = new Game()
+
+      // 盤面が空の状態（全消し）での計算
+      expect(game.calculateZenkeshiScore()).toBe(2000)
+    })
+
+    it('連鎖と全消しが同時発生した場合に正しく計算されること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 4つの赤いぷよを配置（1連鎖で全消し）
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 連鎖処理前のスコアを記録
+      const initialScore = game.getScore()
+
+      // 連鎖処理を実行
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      // スコアが正しく計算されていることを確認
+      // 1連鎖: 4個 * 10 * 1 = 40点
+      // 全消しボーナス: 2000点
+      // 合計: 2040点
+      expect(game.getScore()).toBe(initialScore + 40 + 2000)
+
+      // 盤面が空になっている（全消し状態）
+      expect(game.isAllClear()).toBe(true)
+    })
+
+    it('部分的な消去では全消しボーナスが発生しないこと', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 4つの赤いぷよを配置（1連鎖）
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 残るぷよを配置（重力処理後も残るように底に配置）
+      field[11][5] = 2
+
+      // 連鎖処理前のスコアを記録
+      const initialScore = game.getScore()
+
+      // 連鎖処理を実行
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      // スコアが正しく計算されていることを確認
+      // 1連鎖: 4個 * 10 * 1 = 40点（全消しボーナスなし）
+      expect(game.getScore()).toBe(initialScore + 40)
+
+      // 盤面が完全に空ではない
+      expect(game.isAllClear()).toBe(false)
+      expect(field[11][5]).toBe(2) // 残ったぷよ
     })
   })
 })
