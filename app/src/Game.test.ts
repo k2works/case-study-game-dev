@@ -366,5 +366,34 @@ describe('Game', () => {
       // 中央の安全な位置では回転可能
       expect((game as any).canRotate()).toBe(true)
     })
+
+    it('壁キック処理が正しく動作すること', () => {
+      // 壁キック処理メソッドが存在することを確認
+      expect(typeof (game as any).tryWallKick).toBe('function')
+
+      // 現在は単体ぷよなので壁キックは不要（常にfalse）
+      expect((game as any).tryWallKick()).toBe(false)
+    })
+
+    it('左端での壁キック処理を試みること', () => {
+      // ぷよを左端に移動
+      game.handleInput('ArrowLeft')
+      game.handleInput('ArrowLeft')
+      expect(game.getCurrentPuyo()!.x).toBe(0)
+
+      // 壁キック処理の結果を確認（単体ぷよでは不要）
+      expect((game as any).tryWallKick()).toBe(false)
+    })
+
+    it('右端での壁キック処理を試みること', () => {
+      // ぷよを右端に移動
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowRight')
+      expect(game.getCurrentPuyo()!.x).toBe(5)
+
+      // 壁キック処理の結果を確認（単体ぷよでは不要）
+      expect((game as any).tryWallKick()).toBe(false)
+    })
   })
 })

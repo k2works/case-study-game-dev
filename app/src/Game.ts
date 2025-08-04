@@ -197,13 +197,32 @@ export class Game {
   private canRotate(): boolean {
     if (!this.currentPuyo) return false
 
+    // 通常の回転が可能かチェック
     // 現在は単体ぷよなので常に回転可能
-    // 将来的にペアぷよ実装時に以下をチェック:
-    // - 回転後の位置がフィールド内にあるか
-    // - 回転後の位置に他のぷよがないか
-    // - 壁キック可能か
+
+    // 通常の回転が不可能な場合は壁キックを試す
+    if (!this.isNormalRotationPossible()) {
+      return this.tryWallKick()
+    }
 
     return true
+  }
+
+  private isNormalRotationPossible(): boolean {
+    // 現在は単体ぷよなので常に可能
+    // 将来的にペアぷよ実装時に回転後の位置をチェック
+    return true
+  }
+
+  private tryWallKick(): boolean {
+    if (!this.currentPuyo) return false
+
+    // 現在は単体ぷよなので壁キックは不要
+    // 将来的にペアぷよ実装時に以下を実装:
+    // - 左右の壁キック（1マス移動して回転）
+    // - 上下の壁キック（必要に応じて）
+
+    return false
   }
 
   private generateNewPuyo(): void {
