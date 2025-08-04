@@ -58,9 +58,12 @@ function drawField() {
 
 // 現在のぷよを描画する関数
 function drawCurrentPuyo() {
-  const puyo = game.getCurrentPuyo()
-  if (puyo) {
-    drawPuyoCell(puyo.x, puyo.y, puyo.color)
+  const puyoPair = game.getCurrentPuyoPair()
+  if (puyoPair) {
+    const positions = puyoPair.getPositions()
+    positions.forEach(pos => {
+      drawPuyoCell(pos.x, pos.y, pos.color)
+    })
   }
 }
 

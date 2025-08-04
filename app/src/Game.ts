@@ -1,6 +1,7 @@
 export class Game {
   private field: number[][]
   private currentPuyo: Puyo | null = null
+  private currentPuyoPair: PuyoPair | null = null
   private gameOver = false
   private dropTimer = 0
   private dropInterval = 1000 // 1秒ごとに落下
@@ -12,7 +13,7 @@ export class Game {
   constructor() {
     // 6列x12行のフィールドを初期化
     this.field = Array.from({ length: 12 }, () => Array(6).fill(0))
-    this.generateNewPuyo()
+    this.generateNewPuyoPair()
   }
 
   isGameOver(): boolean {
@@ -25,6 +26,10 @@ export class Game {
 
   getCurrentPuyo(): Puyo | null {
     return this.currentPuyo
+  }
+
+  getCurrentPuyoPair(): PuyoPair | null {
+    return this.currentPuyoPair
   }
 
   isPuyoLanded(): boolean {
@@ -227,6 +232,10 @@ export class Game {
 
   private generateNewPuyo(): void {
     this.currentPuyo = new Puyo(2, 0) // 中央上部に生成
+  }
+
+  private generateNewPuyoPair(): void {
+    this.currentPuyoPair = new PuyoPair(2, 0) // 中央上部に生成
   }
 }
 

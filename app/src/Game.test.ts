@@ -22,25 +22,27 @@ describe('Game', () => {
     })
 
     it('新しいぷよを生成する', () => {
-      const puyo = game.getCurrentPuyo()
-      expect(puyo).toBeDefined()
-      expect(puyo).not.toBeNull()
+      const puyoPair = game.getCurrentPuyoPair()
+      expect(puyoPair).toBeDefined()
+      expect(puyoPair).not.toBeNull()
     })
 
-    it('ぷよが画面に表示されること', () => {
-      const puyo = game.getCurrentPuyo()
-      expect(puyo).not.toBeNull()
-      expect(puyo!.x).toBe(2) // 中央に生成
-      expect(puyo!.y).toBe(0) // 上部に生成
-      expect(puyo!.color).toBeGreaterThanOrEqual(1) // 色が設定されている
-      expect(puyo!.color).toBeLessThanOrEqual(4) // 1-4の範囲
+    it('ぷよペアが画面に表示されること', () => {
+      const puyoPair = game.getCurrentPuyoPair()
+      expect(puyoPair).not.toBeNull()
+      expect(puyoPair!.axis.x).toBe(2) // 中央に生成
+      expect(puyoPair!.axis.y).toBe(0) // 上部に生成
+      expect(puyoPair!.axis.color).toBeGreaterThanOrEqual(1) // 軸ぷよの色が設定されている
+      expect(puyoPair!.axis.color).toBeLessThanOrEqual(4) // 1-4の範囲
+      expect(puyoPair!.satellite.color).toBeGreaterThanOrEqual(1) // 衛星ぷよの色が設定されている
+      expect(puyoPair!.satellite.color).toBeLessThanOrEqual(4) // 1-4の範囲
     })
 
     it('ゲームループが正常に動作すること', () => {
       // ゲームが初期状態で動作可能な状態にあることを確認
       expect(game.isGameOver()).toBe(false)
       expect(game.getField()).toBeDefined()
-      expect(game.getCurrentPuyo()).toBeDefined()
+      expect(game.getCurrentPuyoPair()).toBeDefined()
     })
   })
 
