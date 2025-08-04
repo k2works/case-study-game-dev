@@ -612,4 +612,40 @@ describe('Game', () => {
       expect(puyoPair.rotation).toBe(0) // 一周して上に戻る
     })
   })
+
+  describe('ぷよの消去システム', () => {
+    describe('ぷよの接続判定', () => {
+      it('隣接する同じ色のぷよを検出できること', () => {
+        const field = game.getField()
+        // 同じ色のぷよを隣接して配置
+        field[11][2] = 1 // 赤
+        field[11][3] = 1 // 赤（隣接）
+        field[10][2] = 1 // 赤（上に隣接）
+        field[11][1] = 2 // 青（隣接するが色が違う）
+
+        // 隣接する同じ色のぷよを検出する機能をテスト
+        const connectedPuyos = game.findConnectedPuyos(2, 11, 1)
+        expect(connectedPuyos).toHaveLength(3) // 3つの赤いぷよが接続
+        expect(connectedPuyos).toContainEqual({ x: 2, y: 11 })
+        expect(connectedPuyos).toContainEqual({ x: 3, y: 11 })
+        expect(connectedPuyos).toContainEqual({ x: 2, y: 10 })
+        expect(connectedPuyos).not.toContainEqual({ x: 1, y: 11 }) // 青いぷよは含まれない
+      })
+
+      it('孤立したぷよは1つだけ検出されること', () => {
+        const field = game.getField()
+        field[11][2] = 1 // 赤（孤立）
+        field[11][4] = 1 // 赤（離れている）
+
+        const connectedPuyos = game.findConnectedPuyos(2, 11, 1)
+        expect(connectedPuyos).toHaveLength(1)
+        expect(connectedPuyos).toContainEqual({ x: 2, y: 11 })
+      })
+
+      it('空のセルからは何も検出されないこと', () => {
+        const connectedPuyos = game.findConnectedPuyos(2, 11, 0)
+        expect(connectedPuyos).toHaveLength(0)
+      })
+    })
+  })
 })

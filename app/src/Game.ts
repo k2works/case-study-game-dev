@@ -279,6 +279,66 @@ export class Game {
   private generateNewPuyoPair(): void {
     this.currentPuyoPair = new PuyoPair(2, 1) // 中央上部に生成（衛星が上に来る場合を考慮してy=1）
   }
+
+  public findConnectedPuyos(x: number, y: number, color: number): Array<{ x: number; y: number }> {
+    // 空のセルや色が0の場合は何も返さない
+    if (color === 0 || this.field[y][x] !== color) {
+      return []
+    }
+
+    const visited: boolean[][] = Array.from({ length: 12 }, () => Array(6).fill(false))
+    const result: Array<{ x: number; y: number }> = []
+
+    this.dfsConnectedPuyos(x, y, color, visited, result)
+    return result
+  }
+
+  private dfsConnectedPuyos(
+    currentX: number,
+    currentY: number,
+    color: number,
+    visited: boolean[][],
+    result: Array<{ x: number; y: number }>
+  ): void {
+    // 範囲外または無効な条件をチェック
+    if (!this.isValidDfsPosition(currentX, currentY, color, visited)) {
+      return
+    }
+
+    // 訪問済みにマークして結果に追加
+    visited[currentY][currentX] = true
+    result.push({ x: currentX, y: currentY })
+
+    // 隣接する4方向を再帰的に探索
+    this.exploreDfsDirections(currentX, currentY, color, visited, result)
+  }
+
+  private isValidDfsPosition(x: number, y: number, color: number, visited: boolean[][]): boolean {
+    // 範囲外チェック
+    if (x < 0 || x >= 6 || y < 0 || y >= 12) return false
+    // 既に訪問済みまたは異なる色の場合
+    if (visited[y][x] || this.field[y][x] !== color) return false
+    return true
+  }
+
+  private exploreDfsDirections(
+    x: number,
+    y: number,
+    color: number,
+    visited: boolean[][],
+    result: Array<{ x: number; y: number }>
+  ): void {
+    const directions = [
+      { dx: 0, dy: -1 }, // 上
+      { dx: 1, dy: 0 }, // 右
+      { dx: 0, dy: 1 }, // 下
+      { dx: -1, dy: 0 }, // 左
+    ]
+
+    for (const dir of directions) {
+      this.dfsConnectedPuyos(x + dir.dx, y + dir.dy, color, visited, result)
+    }
+  }
 }
 
 export class Puyo {
