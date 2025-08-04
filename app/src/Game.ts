@@ -4,6 +4,7 @@ export class Game {
   private gameOver = false
   private dropTimer = 0
   private dropInterval = 1000 // 1秒ごとに落下
+  private puyoLanded = false
 
   constructor() {
     // 6列x12行のフィールドを初期化
@@ -23,11 +24,20 @@ export class Game {
     return this.currentPuyo
   }
 
+  isPuyoLanded(): boolean {
+    return this.puyoLanded
+  }
+
   update(deltaTime?: number): void {
     if (!this.currentPuyo || this.gameOver) return
 
-    // deltaTimeが指定されていない場合は即座に落下
+    // deltaTimeが指定されていない場合は即座に落下と着地判定
     if (deltaTime === undefined) {
+      // 着地判定
+      if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+        this.puyoLanded = true
+        return
+      }
       this.dropPuyo()
       return
     }
@@ -35,6 +45,11 @@ export class Game {
     // 時間経過による落下処理
     this.dropTimer += deltaTime
     if (this.dropTimer >= this.dropInterval) {
+      // 着地判定
+      if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+        this.puyoLanded = true
+        return
+      }
       this.dropPuyo()
       this.dropTimer = 0
     }

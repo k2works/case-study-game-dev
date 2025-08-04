@@ -124,5 +124,37 @@ describe('Game', () => {
       game.handleInput('ArrowDown')
       expect(game.getCurrentPuyo()!.y).toBe(11)
     })
+
+    it('ぷよが底に着地したことを検出できること', () => {
+      // ぷよを底まで落下させる
+      for (let i = 0; i < 11; i++) {
+        game.handleInput('ArrowDown')
+      }
+
+      expect(game.getCurrentPuyo()!.y).toBe(11)
+      expect(game.isPuyoLanded()).toBe(false) // まだ着地していない
+
+      // updateを呼ぶと着地判定が行われる
+      game.update()
+      expect(game.isPuyoLanded()).toBe(true)
+    })
+
+    it('他のぷよの上に着地したことを検出できること', () => {
+      // フィールドの底に既存のぷよを配置
+      const field = game.getField()
+      field[10][2] = 1 // y=10, x=2に既存のぷよ
+
+      // ぷよを落下させる
+      for (let i = 0; i < 9; i++) {
+        game.handleInput('ArrowDown')
+      }
+
+      expect(game.getCurrentPuyo()!.y).toBe(9)
+      expect(game.isPuyoLanded()).toBe(false)
+
+      // updateを呼ぶと着地判定が行われる
+      game.update()
+      expect(game.isPuyoLanded()).toBe(true)
+    })
   })
 })
