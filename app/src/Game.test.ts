@@ -61,5 +61,26 @@ describe('Game', () => {
       game.update(1000) // 1000ms (1秒)
       expect(game.getCurrentPuyo()!.y).toBe(initialY + 1)
     })
+
+    it('左矢印キーでぷよを左に移動できること', () => {
+      const initialX = game.getCurrentPuyo()!.x
+      game.handleInput('ArrowLeft')
+      const newX = game.getCurrentPuyo()!.x
+      expect(newX).toBe(initialX - 1)
+    })
+
+    it('右矢印キーでぷよを右に移動できること', () => {
+      const initialX = game.getCurrentPuyo()!.x
+      game.handleInput('ArrowRight')
+      const newX = game.getCurrentPuyo()!.x
+      expect(newX).toBe(initialX + 1)
+    })
+
+    it('下矢印キーでぷよを高速落下できること', () => {
+      const initialY = game.getCurrentPuyo()!.y
+      game.handleInput('ArrowDown')
+      const newY = game.getCurrentPuyo()!.y
+      expect(newY).toBe(initialY + 1)
+    })
   })
 })

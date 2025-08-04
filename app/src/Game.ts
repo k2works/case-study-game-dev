@@ -40,6 +40,34 @@ export class Game {
     }
   }
 
+  handleInput(key: string): void {
+    if (!this.currentPuyo || this.gameOver) return
+
+    switch (key) {
+      case 'ArrowLeft':
+        this.movePuyo(-1, 0)
+        break
+      case 'ArrowRight':
+        this.movePuyo(1, 0)
+        break
+      case 'ArrowDown':
+        this.dropPuyo()
+        break
+    }
+  }
+
+  private movePuyo(dx: number, dy: number): void {
+    if (!this.currentPuyo) return
+
+    const newX = this.currentPuyo.x + dx
+    const newY = this.currentPuyo.y + dy
+
+    if (this.canMoveTo(newX, newY)) {
+      this.currentPuyo.x = newX
+      this.currentPuyo.y = newY
+    }
+  }
+
   private dropPuyo(): void {
     if (!this.currentPuyo) return
 
