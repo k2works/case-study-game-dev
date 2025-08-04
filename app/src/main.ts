@@ -83,13 +83,31 @@ function draw() {
   drawCurrentPuyo()
 }
 
-// ゲームループを開始
-function gameLoop() {
+// ゲームループ用の変数
+let lastTime = 0
+
+// ゲームループ
+function gameLoop(currentTime: number) {
+  // デルタタイムを計算
+  const deltaTime = currentTime - lastTime
+  lastTime = currentTime
+
+  // ゲームの更新
+  game.update(deltaTime)
+
+  // 描画
   draw()
+
   requestAnimationFrame(gameLoop)
 }
 
-gameLoop()
+// ゲームループを開始
+requestAnimationFrame(gameLoop)
+
+// キーボード入力の処理
+document.addEventListener('keydown', (event) => {
+  game.handleInput(event.key)
+})
 
 // リスタートボタンの処理
 document.querySelector<HTMLButtonElement>('#restart-btn')!.addEventListener('click', () => {

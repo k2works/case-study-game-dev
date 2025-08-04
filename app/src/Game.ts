@@ -142,6 +142,6 @@ export class Puyo {
   constructor(
     public x: number,
     public y: number,
-    public color: number = 1
+    public color: number = Math.floor(Math.random() * 4) + 1 // 1-4のランダムな色
   ) {}
 }

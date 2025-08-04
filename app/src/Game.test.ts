@@ -32,7 +32,8 @@ describe('Game', () => {
       expect(puyo).not.toBeNull()
       expect(puyo!.x).toBe(2) // 中央に生成
       expect(puyo!.y).toBe(0) // 上部に生成
-      expect(puyo!.color).toBe(1) // 色が設定されている
+      expect(puyo!.color).toBeGreaterThanOrEqual(1) // 色が設定されている
+      expect(puyo!.color).toBeLessThanOrEqual(4) // 1-4の範囲
     })
 
     it('ゲームループが正常に動作すること', () => {
