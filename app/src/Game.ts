@@ -8,6 +8,7 @@ export class Game {
   private keysPressed: Set<string> = new Set() // 押されているキー
   private fastDropTimer = 0
   private fastDropInterval = 50 // 高速落下は50msごと
+  private chainCount = 0 // 連鎖数
 
   constructor() {
     // 6列x12行のフィールドを初期化
@@ -52,6 +53,7 @@ export class Game {
 
   private handleLandedPuyo(): void {
     this.fixPuyoPair()
+    this.resetChainCount()
     this.processChain()
     this.generateNewPuyoPair()
     this.puyoLanded = false
@@ -425,9 +427,20 @@ export class Game {
         break
       }
 
+      // 連鎖数をカウント
+      this.chainCount++
+
       // 重力処理を実行
       this.applyGravity()
     }
+  }
+
+  public getChainCount(): number {
+    return this.chainCount
+  }
+
+  private resetChainCount(): void {
+    this.chainCount = 0
   }
 }
 

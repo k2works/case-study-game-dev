@@ -1052,4 +1052,85 @@ describe('Game', () => {
       expect(field[11][4]).toBe(4) // 衛星ぷよ（黄）
     })
   })
+
+  describe('連鎖カウント機能', () => {
+    it('1連鎖のとき連鎖数が1になること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 4つ以上の同色ぷよを配置（1連鎖のみ）
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 連鎖カウントをリセット
+      ;(game as any).resetChainCount()
+
+      // 連鎖処理を実行
+      ;(game as any).processChain()
+
+      // 1連鎖が記録されることを確認
+      expect(game.getChainCount()).toBe(1)
+    })
+
+    it('2連鎖のとき連鎖数が2になること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 連鎖パターンを設定
+      // 下段：赤4つ（1連鎖目）- 横一列
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+      field[11][4] = 1
+
+      // 上段：青4つ（2連鎖目、落下後に隣接して4つ揃う）
+      field[10][1] = 2 // 落下後: [11][1]
+      field[10][2] = 2 // 落下後: [11][2]
+      field[9][3] = 2 // 落下後: [11][3]
+      field[9][4] = 2 // 落下後: [11][4]
+
+      // 連鎖カウントをリセット
+      ;(game as any).resetChainCount()
+
+      // 連鎖処理を実行
+      ;(game as any).processChain()
+
+      // 2連鎖が記録されることを確認
+      expect(game.getChainCount()).toBe(2)
+    })
+
+    it('消去が発生しない場合は連鎖数が0のままであること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 3つ以下の同色ぷよを配置（消去されない）
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+
+      // 連鎖カウントをリセット
+      ;(game as any).resetChainCount()
+
+      // 連鎖処理を実行
+      ;(game as any).processChain()
+
+      // 連鎖数は0のまま
+      expect(game.getChainCount()).toBe(0)
+    })
+
+    it('連鎖カウントがリセットされること', () => {
+      const game = new Game()
+
+      // 連鎖カウントを手動で設定
+      ;(game as any).chainCount = 5
+
+      // リセット実行
+      ;(game as any).resetChainCount()
+
+      // 0にリセットされることを確認
+      expect(game.getChainCount()).toBe(0)
+    })
+  })
 })
