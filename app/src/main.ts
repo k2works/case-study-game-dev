@@ -4,7 +4,19 @@ import { Game } from './Game'
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <h1>ぷよぷよゲーム</h1>
-    <canvas id="game-canvas" width="240" height="480"></canvas>
+    <div class="game-container">
+      <canvas id="game-canvas" width="240" height="480"></canvas>
+      <div class="game-info">
+        <div class="score-display">
+          <h3>スコア</h3>
+          <div id="score-value">0</div>
+        </div>
+        <div class="chain-display">
+          <h3>連鎖数</h3>
+          <div id="chain-value">0</div>
+        </div>
+      </div>
+    </div>
     <div class="controls">
       <p>操作方法:</p>
       <p>←→: 移動, ↑: 回転, ↓: 高速落下</p>
@@ -16,6 +28,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 const canvas = document.querySelector<HTMLCanvasElement>('#game-canvas')!
 const ctx = canvas.getContext('2d')!
 const game = new Game()
+const scoreElement = document.querySelector<HTMLDivElement>('#score-value')!
+const chainElement = document.querySelector<HTMLDivElement>('#chain-value')!
 
 // セルサイズ（各マスの大きさ）
 const CELL_SIZE = 40
@@ -80,10 +94,20 @@ function drawPuyoCell(x: number, y: number, color: number) {
   ctx.strokeRect(x * CELL_SIZE + 2, y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4)
 }
 
+// UIを更新する関数
+function updateUI() {
+  // スコアを更新
+  scoreElement.textContent = game.getScore().toString()
+
+  // 連鎖数を更新
+  chainElement.textContent = game.getChainCount().toString()
+}
+
 // ゲームを描画する関数
 function draw() {
   drawField()
   drawCurrentPuyo()
+  updateUI()
 }
 
 // ゲームループ用の変数

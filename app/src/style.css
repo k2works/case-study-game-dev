@@ -82,6 +82,61 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* ゲームレイアウト */
+.game-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 2rem 0;
+}
+
+#game-canvas {
+  border: 2px solid #646cff;
+  border-radius: 8px;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 120px;
+}
+
+.score-display,
+.chain-display {
+  background-color: #1a1a1a;
+  border: 1px solid #646cff;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.score-display h3,
+.chain-display h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #646cff;
+}
+
+#score-value,
+#chain-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+}
+
+.controls {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.controls p {
+  margin: 0.5rem 0;
+  color: #888;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -92,5 +147,16 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+
+  .score-display,
+  .chain-display {
+    background-color: #f9f9f9;
+    border-color: #646cff;
+  }
+
+  #score-value,
+  #chain-value {
+    color: #213547;
   }
 }
