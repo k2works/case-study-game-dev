@@ -5,6 +5,9 @@ export class Game {
   private dropTimer = 0
   private dropInterval = 1000 // 1秒ごとに落下
   private puyoLanded = false
+  private keysPressed: Set<string> = new Set() // 押されているキー
+  private fastDropTimer = 0
+  private fastDropInterval = 50 // 高速落下は50msごと
 
   constructor() {
     // 6列x12行のフィールドを初期化
@@ -52,6 +55,7 @@ export class Game {
     this.generateNewPuyo()
     this.puyoLanded = false
     this.dropTimer = 0
+    this.fastDropTimer = 0
   }
 
   private immediateDropUpdate(): void {
@@ -68,6 +72,22 @@ export class Game {
   private timedDropUpdate(deltaTime: number): void {
     if (!this.currentPuyo) return
 
+    // 高速落下処理
+    if (this.keysPressed.has('ArrowDown')) {
+      this.fastDropTimer += deltaTime
+      if (this.fastDropTimer >= this.fastDropInterval) {
+        // 着地判定
+        if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+          this.puyoLanded = true
+          return
+        }
+        this.dropPuyo()
+        this.fastDropTimer = 0
+      }
+      return
+    }
+
+    // 通常の落下処理
     this.dropTimer += deltaTime
     if (this.dropTimer >= this.dropInterval) {
       // 着地判定
@@ -93,6 +113,31 @@ export class Game {
       case 'ArrowDown':
         this.dropPuyo()
         break
+    }
+  }
+
+  handleKeyDown(key: string): void {
+    if (!this.currentPuyo || this.gameOver) return
+    
+    this.keysPressed.add(key)
+    
+    // 非高速落下キーは即座に処理
+    switch (key) {
+      case 'ArrowLeft':
+        this.movePuyo(-1, 0)
+        break
+      case 'ArrowRight':
+        this.movePuyo(1, 0)
+        break
+    }
+  }
+
+  handleKeyUp(key: string): void {
+    this.keysPressed.delete(key)
+    
+    // 高速落下キーが離された場合はタイマーをリセット
+    if (key === 'ArrowDown') {
+      this.fastDropTimer = 0
     }
   }
 

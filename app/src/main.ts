@@ -106,7 +106,20 @@ requestAnimationFrame(gameLoop)
 
 // キーボード入力の処理
 document.addEventListener('keydown', (event) => {
-  game.handleInput(event.key)
+  // 既存のhandleInputは一回押し用（左右移動、一回落下）
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    // 左右移動は一回押しで処理
+    if (!event.repeat) {
+      game.handleInput(event.key)
+    }
+  } else {
+    // その他のキーは押下状態を管理
+    game.handleKeyDown(event.key)
+  }
+})
+
+document.addEventListener('keyup', (event) => {
+  game.handleKeyUp(event.key)
 })
 
 // リスタートボタンの処理
