@@ -156,5 +156,49 @@ describe('Game', () => {
       game.update()
       expect(game.isPuyoLanded()).toBe(true)
     })
+
+    it('ぷよが着地したら次のぷよが生成されること', () => {
+      const firstPuyo = game.getCurrentPuyo()
+      expect(firstPuyo).not.toBeNull()
+
+      // ぷよを底まで落下させる
+      for (let i = 0; i < 11; i++) {
+        game.handleInput('ArrowDown')
+      }
+
+      // 着地判定と次のぷよ生成
+      game.update()
+      expect(game.isPuyoLanded()).toBe(true)
+
+      // 次のupdateで新しいぷよが生成される
+      game.update()
+      const newPuyo = game.getCurrentPuyo()
+      expect(newPuyo).not.toBeNull()
+      expect(newPuyo!.x).toBe(2) // 新しいぷよは中央に生成
+      expect(newPuyo!.y).toBe(0) // 新しいぷよは上部に生成
+      expect(game.isPuyoLanded()).toBe(false) // 着地フラグはリセット
+    })
+
+    it('着地したぷよがフィールドに固定されること', () => {
+      // ぷよを底まで落下させる
+      for (let i = 0; i < 11; i++) {
+        game.handleInput('ArrowDown')
+      }
+
+      const puyoX = game.getCurrentPuyo()!.x
+      const puyoY = game.getCurrentPuyo()!.y
+      const puyoColor = game.getCurrentPuyo()!.color
+
+      // 着地判定
+      game.update()
+      expect(game.isPuyoLanded()).toBe(true)
+
+      // 次のupdateで固定と新しいぷよ生成
+      game.update()
+
+      // フィールドに固定されているか確認
+      const field = game.getField()
+      expect(field[puyoY][puyoX]).toBe(puyoColor)
+    })
   })
 })

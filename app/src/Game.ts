@@ -31,18 +31,43 @@ export class Game {
   update(deltaTime?: number): void {
     if (!this.currentPuyo || this.gameOver) return
 
-    // deltaTimeが指定されていない場合は即座に落下と着地判定
+    // 着地済みのぷよを処理
+    if (this.puyoLanded) {
+      this.handleLandedPuyo()
+      return
+    }
+
+    // 即座に落下する場合
     if (deltaTime === undefined) {
-      // 着地判定
-      if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
-        this.puyoLanded = true
-        return
-      }
-      this.dropPuyo()
+      this.immediateDropUpdate()
       return
     }
 
     // 時間経過による落下処理
+    this.timedDropUpdate(deltaTime)
+  }
+
+  private handleLandedPuyo(): void {
+    this.fixPuyo()
+    this.generateNewPuyo()
+    this.puyoLanded = false
+    this.dropTimer = 0
+  }
+
+  private immediateDropUpdate(): void {
+    if (!this.currentPuyo) return
+
+    // 着地判定
+    if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+      this.puyoLanded = true
+      return
+    }
+    this.dropPuyo()
+  }
+
+  private timedDropUpdate(deltaTime: number): void {
+    if (!this.currentPuyo) return
+
     this.dropTimer += deltaTime
     if (this.dropTimer >= this.dropInterval) {
       // 着地判定
@@ -99,6 +124,13 @@ export class Game {
     }
     // 既存のぷよがないかチェック
     return this.field[y][x] === 0
+  }
+
+  private fixPuyo(): void {
+    if (!this.currentPuyo) return
+
+    // 現在のぷよをフィールドに固定
+    this.field[this.currentPuyo.y][this.currentPuyo.x] = this.currentPuyo.color
   }
 
   private generateNewPuyo(): void {
