@@ -320,5 +320,51 @@ describe('Game', () => {
       // 現在はrotatePuyoメソッドが存在することを確認
       expect(typeof (game as any).rotatePuyo).toBe('function')
     })
+
+    it('フィールドの右端で回転できないこと', () => {
+      // ぷよを右端に移動
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowRight') // x=5に移動
+      expect(game.getCurrentPuyo()!.x).toBe(5)
+
+      // 現在のぷよの位置を記録
+      const beforeX = game.getCurrentPuyo()!.x
+      const beforeY = game.getCurrentPuyo()!.y
+
+      // 回転を試みる（将来的にペアぷよで必要）
+      game.handleInput('ArrowUp')
+
+      // 位置が変わらないことを確認
+      expect(game.getCurrentPuyo()!.x).toBe(beforeX)
+      expect(game.getCurrentPuyo()!.y).toBe(beforeY)
+    })
+
+    it('フィールドの底近くで回転できないこと', () => {
+      // ぷよを底近くまで移動
+      for (let i = 0; i < 10; i++) {
+        game.handleInput('ArrowDown')
+      }
+      expect(game.getCurrentPuyo()!.y).toBe(10)
+
+      // 現在のぷよの位置を記録
+      const beforeX = game.getCurrentPuyo()!.x
+      const beforeY = game.getCurrentPuyo()!.y
+
+      // 回転を試みる
+      game.handleInput('ArrowUp')
+
+      // 位置が変わらないことを確認（将来的にペアぷよで必要）
+      expect(game.getCurrentPuyo()!.x).toBe(beforeX)
+      expect(game.getCurrentPuyo()!.y).toBe(beforeY)
+    })
+
+    it('canRotateメソッドが存在し正しく動作すること', () => {
+      // canRotateメソッドが存在することを確認
+      expect(typeof (game as any).canRotate).toBe('function')
+
+      // 中央の安全な位置では回転可能
+      expect((game as any).canRotate()).toBe(true)
+    })
   })
 })

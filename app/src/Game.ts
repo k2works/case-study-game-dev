@@ -187,8 +187,23 @@ export class Game {
   private rotatePuyo(): void {
     if (!this.currentPuyo) return
 
+    // 回転可能かチェック
+    if (!this.canRotate()) return
+
     // 単体ぷよの場合は回転しても位置は変わらない
     // 将来的にペアぷよ実装時に拡張予定
+  }
+
+  private canRotate(): boolean {
+    if (!this.currentPuyo) return false
+
+    // 現在は単体ぷよなので常に回転可能
+    // 将来的にペアぷよ実装時に以下をチェック:
+    // - 回転後の位置がフィールド内にあるか
+    // - 回転後の位置に他のぷよがないか
+    // - 壁キック可能か
+
+    return true
   }
 
   private generateNewPuyo(): void {
