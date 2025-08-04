@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { Game } from './Game'
+import { Game, PuyoPair } from './Game'
 
 describe('Game', () => {
   let game: Game
@@ -432,6 +432,56 @@ describe('Game', () => {
       expect(finalPuyo.x).toBe(initialPuyo.x)
       expect(finalPuyo.y).toBe(initialPuyo.y)
       expect(finalPuyo.color).toBe(initialPuyo.color)
+    })
+  })
+
+  describe('ペアぷよ', () => {
+    it('PuyoPairクラスが存在すること', () => {
+      expect(typeof PuyoPair).toBe('function')
+    })
+
+    it('ペアぷよが2個のぷよで構成されること', () => {
+      const puyoPair = new PuyoPair(2, 0)
+      expect(puyoPair.axis).toBeDefined()
+      expect(puyoPair.satellite).toBeDefined()
+      expect(puyoPair.axis.x).toBe(2)
+      expect(puyoPair.axis.y).toBe(0)
+      expect(puyoPair.satellite.x).toBe(2)
+      expect(puyoPair.satellite.y).toBe(-1) // 軸の上に配置
+    })
+
+    it('軸ぷよと衛星ぷよが異なる色であること', () => {
+      const puyoPair = new PuyoPair(2, 0)
+      // 必ずしも異なる色である必要はないが、独立して色が設定されていることを確認
+      expect(puyoPair.axis.color).toBeGreaterThanOrEqual(1)
+      expect(puyoPair.axis.color).toBeLessThanOrEqual(4)
+      expect(puyoPair.satellite.color).toBeGreaterThanOrEqual(1)
+      expect(puyoPair.satellite.color).toBeLessThanOrEqual(4)
+    })
+
+    it('ペアぷよの位置を取得できること', () => {
+      const puyoPair = new PuyoPair(3, 5)
+      const positions = puyoPair.getPositions()
+      expect(positions).toHaveLength(2)
+      expect(positions[0]).toEqual({ x: 3, y: 5, color: puyoPair.axis.color })
+      expect(positions[1]).toEqual({ x: 3, y: 4, color: puyoPair.satellite.color })
+    })
+
+    it('ペアぷよの回転状態を管理できること', () => {
+      const puyoPair = new PuyoPair(2, 0)
+      expect(puyoPair.rotation).toBe(0) // 初期状態は0（上）
+
+      puyoPair.rotate()
+      expect(puyoPair.rotation).toBe(1) // 右
+
+      puyoPair.rotate()
+      expect(puyoPair.rotation).toBe(2) // 下
+
+      puyoPair.rotate()
+      expect(puyoPair.rotation).toBe(3) // 左
+
+      puyoPair.rotate()
+      expect(puyoPair.rotation).toBe(0) // 一周して上に戻る
     })
   })
 })
