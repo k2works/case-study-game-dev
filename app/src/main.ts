@@ -61,7 +61,7 @@ function drawCurrentPuyo() {
   const puyoPair = game.getCurrentPuyoPair()
   if (puyoPair) {
     const positions = puyoPair.getPositions()
-    positions.forEach(pos => {
+    positions.forEach((pos) => {
       drawPuyoCell(pos.x, pos.y, pos.color)
     })
   }

@@ -31,7 +31,7 @@ describe('Game', () => {
       const puyoPair = game.getCurrentPuyoPair()
       expect(puyoPair).not.toBeNull()
       expect(puyoPair!.axis.x).toBe(2) // 中央に生成
-      expect(puyoPair!.axis.y).toBe(0) // 上部に生成
+      expect(puyoPair!.axis.y).toBe(1) // 上部に生成
       expect(puyoPair!.axis.color).toBeGreaterThanOrEqual(1) // 軸ぷよの色が設定されている
       expect(puyoPair!.axis.color).toBeLessThanOrEqual(4) // 1-4の範囲
       expect(puyoPair!.satellite.color).toBeGreaterThanOrEqual(1) // 衛星ぷよの色が設定されている
@@ -48,18 +48,18 @@ describe('Game', () => {
 
   describe('ぷよの高速落下', () => {
     it('下矢印キーを押し続けている間、ぷよが高速で落下すること', () => {
-      const initialY = game.getCurrentPuyo()!.y
+      const initialY = game.getCurrentPuyoPair()!.axis.y
 
       // 下矢印キーを押下開始
       game.handleKeyDown('ArrowDown')
 
       // 短時間で複数回落下することを確認
       game.update(50) // 50ms後
-      const firstDropY = game.getCurrentPuyo()!.y
+      const firstDropY = game.getCurrentPuyoPair()!.axis.y
       expect(firstDropY).toBeGreaterThan(initialY)
 
       game.update(50) // さらに50ms後
-      const secondDropY = game.getCurrentPuyo()!.y
+      const secondDropY = game.getCurrentPuyoPair()!.axis.y
       expect(secondDropY).toBeGreaterThan(firstDropY)
     })
 
@@ -67,18 +67,18 @@ describe('Game', () => {
       // 下矢印キーを押下開始
       game.handleKeyDown('ArrowDown')
       game.update(50)
-      const fastDropY = game.getCurrentPuyo()!.y
+      const fastDropY = game.getCurrentPuyoPair()!.axis.y
 
       // 下矢印キーを離す
       game.handleKeyUp('ArrowDown')
 
       // 通常の落下間隔（1000ms）では落下しない
       game.update(100)
-      expect(game.getCurrentPuyo()!.y).toBe(fastDropY)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(fastDropY)
 
       // 1000ms経過で通常落下
       game.update(1000)
-      expect(game.getCurrentPuyo()!.y).toBe(fastDropY + 1)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(fastDropY + 1)
     })
 
     it('高速落下中に着地したら次のぷよが生成されること', () => {
@@ -97,9 +97,9 @@ describe('Game', () => {
 
       // 次のupdateで新しいぷよ生成
       game.update()
-      const newPuyo = game.getCurrentPuyo()!
-      expect(newPuyo.x).toBe(2)
-      expect(newPuyo.y).toBe(0)
+      const newPuyoPair = game.getCurrentPuyoPair()!
+      expect(newPuyoPair.axis.x).toBe(2)
+      expect(newPuyoPair.axis.y).toBe(1)
     })
 
     it('高速落下中も境界判定が正しく動作すること', () => {
@@ -108,52 +108,52 @@ describe('Game', () => {
         game.handleInput('ArrowDown')
       }
 
-      expect(game.getCurrentPuyo()!.y).toBe(11)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(11)
 
       // 高速落下を試みても底より下には行かない
       game.handleKeyDown('ArrowDown')
       game.update(50)
-      expect(game.getCurrentPuyo()!.y).toBe(11)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(11)
     })
   })
 
   describe('ぷよの移動', () => {
     it('ぷよが自動的に落下すること', () => {
-      const initialY = game.getCurrentPuyo()!.y
+      const initialY = game.getCurrentPuyoPair()!.axis.y
       game.update()
-      const newY = game.getCurrentPuyo()!.y
+      const newY = game.getCurrentPuyoPair()!.axis.y
       expect(newY).toBe(initialY + 1)
     })
 
     it('一定時間経過後にぷよが落下すること', () => {
-      const initialY = game.getCurrentPuyo()!.y
+      const initialY = game.getCurrentPuyoPair()!.axis.y
       // 落下に必要な時間が経過していない場合
       game.update(100) // 100ms
-      expect(game.getCurrentPuyo()!.y).toBe(initialY)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(initialY)
 
       // 落下に必要な時間が経過した場合
       game.update(1000) // 1000ms (1秒)
-      expect(game.getCurrentPuyo()!.y).toBe(initialY + 1)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(initialY + 1)
     })
 
     it('左矢印キーでぷよを左に移動できること', () => {
-      const initialX = game.getCurrentPuyo()!.x
+      const initialX = game.getCurrentPuyoPair()!.axis.x
       game.handleInput('ArrowLeft')
-      const newX = game.getCurrentPuyo()!.x
+      const newX = game.getCurrentPuyoPair()!.axis.x
       expect(newX).toBe(initialX - 1)
     })
 
     it('右矢印キーでぷよを右に移動できること', () => {
-      const initialX = game.getCurrentPuyo()!.x
+      const initialX = game.getCurrentPuyoPair()!.axis.x
       game.handleInput('ArrowRight')
-      const newX = game.getCurrentPuyo()!.x
+      const newX = game.getCurrentPuyoPair()!.axis.x
       expect(newX).toBe(initialX + 1)
     })
 
     it('下矢印キーでぷよを高速落下できること', () => {
-      const initialY = game.getCurrentPuyo()!.y
+      const initialY = game.getCurrentPuyoPair()!.axis.y
       game.handleInput('ArrowDown')
-      const newY = game.getCurrentPuyo()!.y
+      const newY = game.getCurrentPuyoPair()!.axis.y
       expect(newY).toBe(initialY + 1)
     })
 
@@ -163,12 +163,12 @@ describe('Game', () => {
       game.handleInput('ArrowLeft')
       game.handleInput('ArrowLeft') // x=2から左端(x=0)まで移動
 
-      const currentX = game.getCurrentPuyo()!.x
+      const currentX = game.getCurrentPuyoPair()!.axis.x
       expect(currentX).toBe(0)
 
       // さらに左に移動しようとしても移動しない
       game.handleInput('ArrowLeft')
-      expect(game.getCurrentPuyo()!.x).toBe(0)
+      expect(game.getCurrentPuyoPair()!.axis.x).toBe(0)
     })
 
     it('フィールドの右端で右に移動できないこと', () => {
@@ -177,12 +177,12 @@ describe('Game', () => {
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight') // x=2から右端(x=5)まで移動
 
-      const currentX = game.getCurrentPuyo()!.x
+      const currentX = game.getCurrentPuyoPair()!.axis.x
       expect(currentX).toBe(5)
 
       // さらに右に移動しようとしても移動しない
       game.handleInput('ArrowRight')
-      expect(game.getCurrentPuyo()!.x).toBe(5)
+      expect(game.getCurrentPuyoPair()!.axis.x).toBe(5)
     })
 
     it('フィールドの底で下に移動できないこと', () => {
@@ -191,12 +191,12 @@ describe('Game', () => {
         game.handleInput('ArrowDown')
       }
 
-      const currentY = game.getCurrentPuyo()!.y
+      const currentY = game.getCurrentPuyoPair()!.axis.y
       expect(currentY).toBe(11) // 底はy=11
 
       // さらに下に移動しようとしても移動しない
       game.handleInput('ArrowDown')
-      expect(game.getCurrentPuyo()!.y).toBe(11)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(11)
     })
 
     it('ぷよが底に着地したことを検出できること', () => {
@@ -205,7 +205,7 @@ describe('Game', () => {
         game.handleInput('ArrowDown')
       }
 
-      expect(game.getCurrentPuyo()!.y).toBe(11)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(11)
       expect(game.isPuyoLanded()).toBe(false) // まだ着地していない
 
       // updateを呼ぶと着地判定が行われる
@@ -223,7 +223,7 @@ describe('Game', () => {
         game.handleInput('ArrowDown')
       }
 
-      expect(game.getCurrentPuyo()!.y).toBe(9)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(9)
       expect(game.isPuyoLanded()).toBe(false)
 
       // updateを呼ぶと着地判定が行われる
@@ -232,8 +232,8 @@ describe('Game', () => {
     })
 
     it('ぷよが着地したら次のぷよが生成されること', () => {
-      const firstPuyo = game.getCurrentPuyo()
-      expect(firstPuyo).not.toBeNull()
+      const firstPuyoPair = game.getCurrentPuyoPair()
+      expect(firstPuyoPair).not.toBeNull()
 
       // ぷよを底まで落下させる
       for (let i = 0; i < 11; i++) {
@@ -246,10 +246,10 @@ describe('Game', () => {
 
       // 次のupdateで新しいぷよが生成される
       game.update()
-      const newPuyo = game.getCurrentPuyo()
-      expect(newPuyo).not.toBeNull()
-      expect(newPuyo!.x).toBe(2) // 新しいぷよは中央に生成
-      expect(newPuyo!.y).toBe(0) // 新しいぷよは上部に生成
+      const newPuyoPair = game.getCurrentPuyoPair()
+      expect(newPuyoPair).not.toBeNull()
+      expect(newPuyoPair!.axis.x).toBe(2) // 新しいぷよは中央に生成
+      expect(newPuyoPair!.axis.y).toBe(1) // 新しいぷよは上部に生成
       expect(game.isPuyoLanded()).toBe(false) // 着地フラグはリセット
     })
 
@@ -259,9 +259,13 @@ describe('Game', () => {
         game.handleInput('ArrowDown')
       }
 
-      const puyoX = game.getCurrentPuyo()!.x
-      const puyoY = game.getCurrentPuyo()!.y
-      const puyoColor = game.getCurrentPuyo()!.color
+      const puyoPair = game.getCurrentPuyoPair()!
+      const axisX = puyoPair.axis.x
+      const axisY = puyoPair.axis.y
+      const axisColor = puyoPair.axis.color
+      const satX = puyoPair.satellite.x
+      const satY = puyoPair.satellite.y
+      const satColor = puyoPair.satellite.color
 
       // 着地判定
       game.update()
@@ -272,55 +276,79 @@ describe('Game', () => {
 
       // フィールドに固定されているか確認
       const field = game.getField()
-      expect(field[puyoY][puyoX]).toBe(puyoColor)
+      expect(field[axisY][axisX]).toBe(axisColor)
+      expect(field[satY][satX]).toBe(satColor)
     })
   })
 
   describe('ぷよの回転', () => {
     it('上矢印キーでぷよを時計回りに回転できること', () => {
       // 初期状態での位置を記録
-      const initialX = game.getCurrentPuyo()!.x
-      const initialY = game.getCurrentPuyo()!.y
+      const puyoPair = game.getCurrentPuyoPair()!
+      const initialRotation = puyoPair.rotation
+      const initialAxisX = puyoPair.axis.x
+      const initialAxisY = puyoPair.axis.y
+      const initialSatX = puyoPair.satellite.x
+      const initialSatY = puyoPair.satellite.y
 
       // 回転処理を実行
       game.handleInput('ArrowUp')
 
-      // 回転後の位置を確認（単体ぷよなので位置は変わらない）
-      expect(game.getCurrentPuyo()!.x).toBe(initialX)
-      expect(game.getCurrentPuyo()!.y).toBe(initialY)
+      // 回転後の状態を確認
+      const rotatedPuyoPair = game.getCurrentPuyoPair()!
+      expect(rotatedPuyoPair.rotation).toBe((initialRotation + 1) % 4)
+      expect(rotatedPuyoPair.axis.x).toBe(initialAxisX)
+      expect(rotatedPuyoPair.axis.y).toBe(initialAxisY)
+      // 衛星の位置は回転によって変わる
+      expect(
+        rotatedPuyoPair.satellite.x !== initialSatX || rotatedPuyoPair.satellite.y !== initialSatY
+      ).toBe(true)
     })
 
     it('フィールドの境界内でのみ回転が可能であること', () => {
       // ぷよを左端に移動
       game.handleInput('ArrowLeft')
       game.handleInput('ArrowLeft')
-      expect(game.getCurrentPuyo()!.x).toBe(0)
+      expect(game.getCurrentPuyoPair()!.axis.x).toBe(0)
 
-      // 左端でも回転は可能（単体ぷよの場合）
-      const beforeRotationX = game.getCurrentPuyo()!.x
+      // 左端での回転を試みる
+      const beforeRotation = game.getCurrentPuyoPair()!.rotation
+      const beforeAxisX = game.getCurrentPuyoPair()!.axis.x
       game.handleInput('ArrowUp')
-      expect(game.getCurrentPuyo()!.x).toBe(beforeRotationX)
+
+      // 回転が実行されるか、または境界チェックで無効になるか
+      const afterPuyoPair = game.getCurrentPuyoPair()!
+      expect(afterPuyoPair.axis.x).toBe(beforeAxisX) // 軸の位置は変わらない
     })
 
     it('他のぷよがある場合は回転できないこと', () => {
       // フィールドに既存のぷよを配置
       const field = game.getField()
-      field[1][2] = 1 // 現在のぷよの隣に配置
+      field[0][3] = 1 // 衛星の位置に配置して回転を阻止
 
-      const beforeRotationX = game.getCurrentPuyo()!.x
-      const beforeRotationY = game.getCurrentPuyo()!.y
+      const beforeRotation = game.getCurrentPuyoPair()!.rotation
+      const beforeAxisX = game.getCurrentPuyoPair()!.axis.x
+      const beforeAxisY = game.getCurrentPuyoPair()!.axis.y
 
       // 回転を試みる
       game.handleInput('ArrowUp')
 
-      // 位置が変わらないことを確認
-      expect(game.getCurrentPuyo()!.x).toBe(beforeRotationX)
-      expect(game.getCurrentPuyo()!.y).toBe(beforeRotationY)
+      // 回転が無効になることを確認
+      const afterPuyoPair = game.getCurrentPuyoPair()!
+      expect(afterPuyoPair.rotation).toBe(beforeRotation)
+      expect(afterPuyoPair.axis.x).toBe(beforeAxisX)
+      expect(afterPuyoPair.axis.y).toBe(beforeAxisY)
     })
 
     it('回転処理が正しく呼び出されること', () => {
-      // 現在はrotatePuyoメソッドが存在することを確認
-      expect(typeof (game as any).rotatePuyo).toBe('function')
+      // rotatePuyoPairメソッドが存在することを確認
+      expect(typeof (game as any).rotatePuyoPair).toBe('function')
+
+      // 回転が実際に実行されることを確認
+      const initialRotation = game.getCurrentPuyoPair()!.rotation
+      game.handleInput('ArrowUp')
+      const afterRotation = game.getCurrentPuyoPair()!.rotation
+      expect(afterRotation).toBe((initialRotation + 1) % 4)
     })
 
     it('フィールドの右端で回転できないこと', () => {
@@ -328,18 +356,21 @@ describe('Game', () => {
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight') // x=5に移動
-      expect(game.getCurrentPuyo()!.x).toBe(5)
+      expect(game.getCurrentPuyoPair()!.axis.x).toBe(5)
 
-      // 現在のぷよの位置を記録
-      const beforeX = game.getCurrentPuyo()!.x
-      const beforeY = game.getCurrentPuyo()!.y
+      // 回転前の状態を記録
+      const beforeRotation = game.getCurrentPuyoPair()!.rotation
+      const beforeX = game.getCurrentPuyoPair()!.axis.x
+      const beforeY = game.getCurrentPuyoPair()!.axis.y
 
-      // 回転を試みる（将来的にペアぷよで必要）
+      // 回転を試みる（右端では衛星がフィールド外に出るため無効）
       game.handleInput('ArrowUp')
 
-      // 位置が変わらないことを確認
-      expect(game.getCurrentPuyo()!.x).toBe(beforeX)
-      expect(game.getCurrentPuyo()!.y).toBe(beforeY)
+      // 回転が無効になることを確認
+      const afterPuyoPair = game.getCurrentPuyoPair()!
+      expect(afterPuyoPair.rotation).toBe(beforeRotation)
+      expect(afterPuyoPair.axis.x).toBe(beforeX)
+      expect(afterPuyoPair.axis.y).toBe(beforeY)
     })
 
     it('フィールドの底近くで回転できないこと', () => {
@@ -347,41 +378,44 @@ describe('Game', () => {
       for (let i = 0; i < 10; i++) {
         game.handleInput('ArrowDown')
       }
-      expect(game.getCurrentPuyo()!.y).toBe(10)
+      expect(game.getCurrentPuyoPair()!.axis.y).toBe(11)
 
-      // 現在のぷよの位置を記録
-      const beforeX = game.getCurrentPuyo()!.x
-      const beforeY = game.getCurrentPuyo()!.y
+      // 回転前の状態を記録
+      const beforeRotation = game.getCurrentPuyoPair()!.rotation
+      const beforeX = game.getCurrentPuyoPair()!.axis.x
+      const beforeY = game.getCurrentPuyoPair()!.axis.y
 
-      // 回転を試みる
+      // 回転を試みる（衛星がフィールド外に出るため無効）
       game.handleInput('ArrowUp')
 
-      // 位置が変わらないことを確認（将来的にペアぷよで必要）
-      expect(game.getCurrentPuyo()!.x).toBe(beforeX)
-      expect(game.getCurrentPuyo()!.y).toBe(beforeY)
+      // 回転が無効になることを確認
+      const afterPuyoPair = game.getCurrentPuyoPair()!
+      expect(afterPuyoPair.rotation).toBe(beforeRotation)
+      expect(afterPuyoPair.axis.x).toBe(beforeX)
+      expect(afterPuyoPair.axis.y).toBe(beforeY)
     })
 
     it('canRotateメソッドが存在し正しく動作すること', () => {
-      // canRotateメソッドが存在することを確認
-      expect(typeof (game as any).canRotate).toBe('function')
+      // canRotatePuyoPairメソッドが存在することを確認
+      expect(typeof (game as any).canRotatePuyoPair).toBe('function')
 
       // 中央の安全な位置では回転可能
-      expect((game as any).canRotate()).toBe(true)
+      expect((game as any).canRotatePuyoPair()).toBe(true)
     })
 
     it('壁キック処理が正しく動作すること', () => {
       // 壁キック処理メソッドが存在することを確認
-      expect(typeof (game as any).tryWallKick).toBe('function')
+      expect(typeof (game as any).tryWallKickPuyoPair).toBe('function')
 
-      // 現在は単体ぷよなので壁キックは不要（常にfalse）
-      expect((game as any).tryWallKick()).toBe(false)
+      // PuyoPairの壁キック処理をテスト
+      expect((game as any).tryWallKickPuyoPair()).toBe(false)
     })
 
     it('左端での壁キック処理を試みること', () => {
       // ぷよを左端に移動
       game.handleInput('ArrowLeft')
       game.handleInput('ArrowLeft')
-      expect(game.getCurrentPuyo()!.x).toBe(0)
+      expect((game as any).tryWallKickPuyoPair()).toBe(false)
 
       // 壁キック処理の結果を確認（単体ぷよでは不要）
       expect((game as any).tryWallKick()).toBe(false)
@@ -392,48 +426,62 @@ describe('Game', () => {
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight')
-      expect(game.getCurrentPuyo()!.x).toBe(5)
+      expect((game as any).tryWallKickPuyoPair()).toBe(false)
 
       // 壁キック処理の結果を確認（単体ぷよでは不要）
       expect((game as any).tryWallKick()).toBe(false)
     })
 
     it('回転操作が画面に正しく反映されること', () => {
-      const initialPuyo = game.getCurrentPuyo()!
-      const initialX = initialPuyo.x
-      const initialY = initialPuyo.y
-      const initialColor = initialPuyo.color
+      const initialPuyoPair = game.getCurrentPuyoPair()!
+      const initialRotation = initialPuyoPair.rotation
+      const initialAxisX = initialPuyoPair.axis.x
+      const initialAxisY = initialPuyoPair.axis.y
+      const initialSatX = initialPuyoPair.satellite.x
+      const initialSatY = initialPuyoPair.satellite.y
 
       // 回転操作を実行
       game.handleInput('ArrowUp')
 
-      // 現在のぷよを取得
-      const rotatedPuyo = game.getCurrentPuyo()!
+      // 現在のぷよペアを取得
+      const rotatedPuyoPair = game.getCurrentPuyoPair()!
 
-      // 単体ぷよの場合は位置は変わらないが、オブジェクトは同じ
-      expect(rotatedPuyo.x).toBe(initialX)
-      expect(rotatedPuyo.y).toBe(initialY)
-      expect(rotatedPuyo.color).toBe(initialColor)
+      // 軸の位置は変わらないが、回転状態と衛星の位置は変わる
+      expect(rotatedPuyoPair.axis.x).toBe(initialAxisX)
+      expect(rotatedPuyoPair.axis.y).toBe(initialAxisY)
+      expect(rotatedPuyoPair.rotation).toBe((initialRotation + 1) % 4)
 
-      // ぷよオブジェクトは同じインスタンス
-      expect(rotatedPuyo).toBe(initialPuyo)
+      // 衛星の位置は回転によって変わる
+      expect(
+        rotatedPuyoPair.satellite.x !== initialSatX || rotatedPuyoPair.satellite.y !== initialSatY
+      ).toBe(true)
+
+      // ペアオブジェクトは同じインスタンス
+      expect(rotatedPuyoPair).toBe(initialPuyoPair)
     })
 
     it('連続した回転操作が正しく処理されること', () => {
-      const initialPuyo = game.getCurrentPuyo()!
+      const initialPuyoPair = game.getCurrentPuyoPair()!
+      const initialRotation = initialPuyoPair.rotation
+      const initialAxisX = initialPuyoPair.axis.x
+      const initialAxisY = initialPuyoPair.axis.y
+      const initialSatX = initialPuyoPair.satellite.x
+      const initialSatY = initialPuyoPair.satellite.y
 
-      // 複数回の回転操作
+      // 4回の回転操作（一周）
       game.handleInput('ArrowUp')
       game.handleInput('ArrowUp')
       game.handleInput('ArrowUp')
       game.handleInput('ArrowUp')
 
-      const finalPuyo = game.getCurrentPuyo()!
+      const finalPuyoPair = game.getCurrentPuyoPair()!
 
-      // 単体ぷよの場合は4回転しても元の状態と同じ
-      expect(finalPuyo.x).toBe(initialPuyo.x)
-      expect(finalPuyo.y).toBe(initialPuyo.y)
-      expect(finalPuyo.color).toBe(initialPuyo.color)
+      // 4回転して元の状態に戻る
+      expect(finalPuyoPair.rotation).toBe(initialRotation)
+      expect(finalPuyoPair.axis.x).toBe(initialAxisX)
+      expect(finalPuyoPair.axis.y).toBe(initialAxisY)
+      expect(finalPuyoPair.satellite.x).toBe(initialSatX)
+      expect(finalPuyoPair.satellite.y).toBe(initialSatY)
     })
   })
 
@@ -447,9 +495,9 @@ describe('Game', () => {
       expect(puyoPair.axis).toBeDefined()
       expect(puyoPair.satellite).toBeDefined()
       expect(puyoPair.axis.x).toBe(2)
-      expect(puyoPair.axis.y).toBe(0)
+      expect(puyoPair.axis.y).toBe(0) // テスト用のPuyoPairは直接y=0で作成
       expect(puyoPair.satellite.x).toBe(2)
-      expect(puyoPair.satellite.y).toBe(-1) // 軸の上に配置
+      expect(puyoPair.satellite.y).toBe(-1) // 軸の上に配置（回転0の場合）
     })
 
     it('軸ぷよと衛星ぷよが異なる色であること', () => {

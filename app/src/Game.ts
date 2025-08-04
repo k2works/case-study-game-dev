@@ -1,6 +1,5 @@
 export class Game {
   private field: number[][]
-  private currentPuyo: Puyo | null = null
   private currentPuyoPair: PuyoPair | null = null
   private gameOver = false
   private dropTimer = 0
@@ -24,10 +23,6 @@ export class Game {
     return this.field
   }
 
-  getCurrentPuyo(): Puyo | null {
-    return this.currentPuyo
-  }
-
   getCurrentPuyoPair(): PuyoPair | null {
     return this.currentPuyoPair
   }
@@ -37,7 +32,7 @@ export class Game {
   }
 
   update(deltaTime?: number): void {
-    if (!this.currentPuyo || this.gameOver) return
+    if (!this.currentPuyoPair || this.gameOver) return
 
     // 着地済みのぷよを処理
     if (this.puyoLanded) {
@@ -56,37 +51,37 @@ export class Game {
   }
 
   private handleLandedPuyo(): void {
-    this.fixPuyo()
-    this.generateNewPuyo()
+    this.fixPuyoPair()
+    this.generateNewPuyoPair()
     this.puyoLanded = false
     this.dropTimer = 0
     this.fastDropTimer = 0
   }
 
   private immediateDropUpdate(): void {
-    if (!this.currentPuyo) return
+    if (!this.currentPuyoPair) return
 
     // 着地判定
-    if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+    if (!this.canPuyoPairMoveTo(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y + 1)) {
       this.puyoLanded = true
       return
     }
-    this.dropPuyo()
+    this.dropPuyoPair()
   }
 
   private timedDropUpdate(deltaTime: number): void {
-    if (!this.currentPuyo) return
+    if (!this.currentPuyoPair) return
 
     // 高速落下処理
     if (this.keysPressed.has('ArrowDown')) {
       this.fastDropTimer += deltaTime
       if (this.fastDropTimer >= this.fastDropInterval) {
         // 着地判定
-        if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+        if (!this.canPuyoPairMoveTo(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y + 1)) {
           this.puyoLanded = true
           return
         }
-        this.dropPuyo()
+        this.dropPuyoPair()
         this.fastDropTimer = 0
       }
       return
@@ -96,49 +91,49 @@ export class Game {
     this.dropTimer += deltaTime
     if (this.dropTimer >= this.dropInterval) {
       // 着地判定
-      if (!this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
+      if (!this.canPuyoPairMoveTo(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y + 1)) {
         this.puyoLanded = true
         return
       }
-      this.dropPuyo()
+      this.dropPuyoPair()
       this.dropTimer = 0
     }
   }
 
   handleInput(key: string): void {
-    if (!this.currentPuyo || this.gameOver) return
+    if (!this.currentPuyoPair || this.gameOver) return
 
     switch (key) {
       case 'ArrowLeft':
-        this.movePuyo(-1, 0)
+        this.movePuyoPair(-1, 0)
         break
       case 'ArrowRight':
-        this.movePuyo(1, 0)
+        this.movePuyoPair(1, 0)
         break
       case 'ArrowDown':
-        this.dropPuyo()
+        this.dropPuyoPair()
         break
       case 'ArrowUp':
-        this.rotatePuyo()
+        this.rotatePuyoPair()
         break
     }
   }
 
   handleKeyDown(key: string): void {
-    if (!this.currentPuyo || this.gameOver) return
+    if (!this.currentPuyoPair || this.gameOver) return
 
     this.keysPressed.add(key)
 
     // 非高速落下キーは即座に処理
     switch (key) {
       case 'ArrowLeft':
-        this.movePuyo(-1, 0)
+        this.movePuyoPair(-1, 0)
         break
       case 'ArrowRight':
-        this.movePuyo(1, 0)
+        this.movePuyoPair(1, 0)
         break
       case 'ArrowUp':
-        this.rotatePuyo()
+        this.rotatePuyoPair()
         break
     }
   }
@@ -152,24 +147,23 @@ export class Game {
     }
   }
 
-  private movePuyo(dx: number, dy: number): void {
-    if (!this.currentPuyo) return
+  private movePuyoPair(dx: number, dy: number): void {
+    if (!this.currentPuyoPair) return
 
-    const newX = this.currentPuyo.x + dx
-    const newY = this.currentPuyo.y + dy
+    const newX = this.currentPuyoPair.axis.x + dx
+    const newY = this.currentPuyoPair.axis.y + dy
 
-    if (this.canMoveTo(newX, newY)) {
-      this.currentPuyo.x = newX
-      this.currentPuyo.y = newY
+    if (this.canPuyoPairMoveTo(newX, newY)) {
+      this.currentPuyoPair.moveTo(newX, newY)
     }
   }
 
-  private dropPuyo(): void {
-    if (!this.currentPuyo) return
+  private dropPuyoPair(): void {
+    if (!this.currentPuyoPair) return
 
     // 下に移動できるかチェック
-    if (this.canMoveTo(this.currentPuyo.x, this.currentPuyo.y + 1)) {
-      this.currentPuyo.y++
+    if (this.canPuyoPairMoveTo(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y + 1)) {
+      this.currentPuyoPair.moveTo(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y + 1)
     }
   }
 
@@ -182,60 +176,105 @@ export class Game {
     return this.field[y][x] === 0
   }
 
-  private fixPuyo(): void {
-    if (!this.currentPuyo) return
+  private canPuyoPairMoveTo(axisX: number, axisY: number): boolean {
+    if (!this.currentPuyoPair) return false
 
-    // 現在のぷよをフィールドに固定
-    this.field[this.currentPuyo.y][this.currentPuyo.x] = this.currentPuyo.color
-  }
+    // 新しい軸の位置で衛星の位置を計算
+    const tempPair = new PuyoPair(axisX, axisY)
+    tempPair.rotation = this.currentPuyoPair.rotation
 
-  private rotatePuyo(): void {
-    if (!this.currentPuyo) return
+    const positions = tempPair.getPositions()
 
-    // 回転可能かチェック
-    if (!this.canRotate()) return
-
-    // 単体ぷよの場合は回転しても位置は変わらない
-    // 将来的にペアぷよ実装時に拡張予定
-  }
-
-  private canRotate(): boolean {
-    if (!this.currentPuyo) return false
-
-    // 通常の回転が可能かチェック
-    // 現在は単体ぷよなので常に回転可能
-
-    // 通常の回転が不可能な場合は壁キックを試す
-    if (!this.isNormalRotationPossible()) {
-      return this.tryWallKick()
+    // 軸と衛星の両方が移動可能かチェック
+    for (const pos of positions) {
+      if (!this.canMoveTo(pos.x, pos.y)) {
+        return false
+      }
     }
 
     return true
   }
 
-  private isNormalRotationPossible(): boolean {
-    // 現在は単体ぷよなので常に可能
-    // 将来的にペアぷよ実装時に回転後の位置をチェック
+  private fixPuyoPair(): void {
+    if (!this.currentPuyoPair) return
+
+    // ペアぷよの両方をフィールドに固定
+    const positions = this.currentPuyoPair.getPositions()
+    for (const pos of positions) {
+      this.field[pos.y][pos.x] = pos.color
+    }
+  }
+
+  private rotatePuyoPair(): void {
+    if (!this.currentPuyoPair) return
+
+    // 回転可能かチェック
+    if (!this.canRotatePuyoPair()) return
+
+    // 回転を実行
+    this.currentPuyoPair.rotate()
+  }
+
+  private canRotatePuyoPair(): boolean {
+    if (!this.currentPuyoPair) return false
+
+    // 回転後の位置をテスト
+    const tempPair = new PuyoPair(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y)
+    tempPair.rotation = (this.currentPuyoPair.rotation + 1) % 4
+
+    const positions = tempPair.getPositions()
+
+    // 回転後の両方の位置が有効かチェック
+    for (const pos of positions) {
+      if (!this.canMoveTo(pos.x, pos.y)) {
+        // 通常の回転が不可能な場合は壁キックを試す
+        return this.tryWallKickPuyoPair()
+      }
+    }
+
     return true
   }
 
-  private tryWallKick(): boolean {
-    if (!this.currentPuyo) return false
+  private tryWallKickPuyoPair(): boolean {
+    if (!this.currentPuyoPair) return false
 
-    // 現在は単体ぷよなので壁キックは不要
-    // 将来的にペアぷよ実装時に以下を実装:
-    // - 左右の壁キック（1マス移動して回転）
-    // - 上下の壁キック（必要に応じて）
+    // 壁キックのオフセットパターン（左右に1マス移動を試す）
+    const wallKickOffsets = [
+      { x: -1, y: 0 }, // 左に1マス
+      { x: 1, y: 0 }, // 右に1マス
+      { x: 0, y: -1 }, // 上に1マス
+    ]
+
+    for (const offset of wallKickOffsets) {
+      const testX = this.currentPuyoPair.axis.x + offset.x
+      const testY = this.currentPuyoPair.axis.y + offset.y
+
+      // 移動先で回転可能かテスト
+      const tempPair = new PuyoPair(testX, testY)
+      tempPair.rotation = (this.currentPuyoPair.rotation + 1) % 4
+
+      const positions = tempPair.getPositions()
+      let canRotateHere = true
+
+      for (const pos of positions) {
+        if (!this.canMoveTo(pos.x, pos.y)) {
+          canRotateHere = false
+          break
+        }
+      }
+
+      if (canRotateHere) {
+        // 壁キック成功：位置を移動してから回転
+        this.currentPuyoPair.moveTo(testX, testY)
+        return true
+      }
+    }
 
     return false
   }
 
-  private generateNewPuyo(): void {
-    this.currentPuyo = new Puyo(2, 0) // 中央上部に生成
-  }
-
   private generateNewPuyoPair(): void {
-    this.currentPuyoPair = new PuyoPair(2, 0) // 中央上部に生成
+    this.currentPuyoPair = new PuyoPair(2, 1) // 中央上部に生成（衛星が上に来る場合を考慮してy=1）
   }
 }
 
@@ -254,7 +293,8 @@ export class PuyoPair {
 
   constructor(x: number, y: number) {
     this.axis = new Puyo(x, y)
-    this.satellite = new Puyo(x, y - 1) // 軸の上に衛星ぷよを配置
+    this.satellite = new Puyo(x, y + 1) // 軸の下に衛星ぷよを配置（初期状態）
+    this.updateSatellitePosition() // 正しい位置に更新
   }
 
   rotate(): void {
@@ -262,7 +302,7 @@ export class PuyoPair {
     this.updateSatellitePosition()
   }
 
-  private updateSatellitePosition(): void {
+  public updateSatellitePosition(): void {
     const offsets = [
       { x: 0, y: -1 }, // 上
       { x: 1, y: 0 }, // 右
