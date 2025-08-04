@@ -799,5 +799,173 @@ describe('Game', () => {
         expect(field[10][4]).toBe(2)
       })
     })
+
+    describe('消去後の落下処理', () => {
+      it('消去された後の空きスペースにぷよが落下すること', () => {
+        const field = game.getField()
+        // 底に消去対象の4つの赤いぷよを配置
+        field[11][2] = 1
+        field[11][3] = 1
+        field[10][2] = 1
+        field[10][3] = 1
+
+        // その上に青いぷよを配置
+        field[9][2] = 2
+        field[8][3] = 2
+
+        // 消去処理を実行
+        game.erasePuyos()
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // 青いぷよが下に落下していることを確認
+        expect(field[11][2]).toBe(2) // 上から落下
+        expect(field[11][3]).toBe(2) // 上から落下
+
+        // 元の位置は空になっている
+        expect(field[9][2]).toBe(0)
+        expect(field[8][3]).toBe(0)
+      })
+
+      it('複数段のぷよが正しく落下すること', () => {
+        const field = game.getField()
+        // 底に消去対象の赤いぷよ
+        field[11][2] = 1
+        field[10][2] = 1
+        field[9][2] = 1
+        field[8][2] = 1
+
+        // その上に複数の青いぷよ
+        field[7][2] = 2
+        field[6][2] = 2
+        field[5][2] = 2
+
+        // 消去処理を実行
+        game.erasePuyos()
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // 青いぷよが下に詰まって落下していることを確認
+        expect(field[11][2]).toBe(2)
+        expect(field[10][2]).toBe(2)
+        expect(field[9][2]).toBe(2)
+
+        // 上の方は空になっている
+        expect(field[8][2]).toBe(0)
+        expect(field[7][2]).toBe(0)
+        expect(field[6][2]).toBe(0)
+        expect(field[5][2]).toBe(0)
+      })
+
+      it('部分的な落下も正しく処理されること', () => {
+        const field = game.getField()
+        // L字型に配置された消去対象の赤いぷよ
+        field[11][1] = 1
+        field[11][2] = 1
+        field[10][1] = 1
+        field[9][1] = 1
+
+        // その上と横に青いぷよ
+        field[8][1] = 2 // 消去されたぷよの上
+        field[11][3] = 2 // 消去されないぷよの横
+
+        // 消去処理を実行
+        game.erasePuyos()
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // 上にあった青いぷよが落下
+        expect(field[11][1]).toBe(2)
+        expect(field[8][1]).toBe(0)
+
+        // 横にあった青いぷよはそのまま
+        expect(field[11][3]).toBe(2)
+      })
+
+      it('空の列には何も起こらないこと', () => {
+        const field = game.getField()
+        // 一部の列にのみぷよを配置
+        field[11][2] = 1
+        field[10][2] = 1
+        field[9][2] = 1
+        field[8][2] = 1
+
+        // 消去処理を実行
+        game.erasePuyos()
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // 空の列（0, 1, 3, 4, 5）は変化なし
+        for (let y = 0; y < 12; y++) {
+          expect(field[y][0]).toBe(0)
+          expect(field[y][1]).toBe(0)
+          expect(field[y][3]).toBe(0)
+          expect(field[y][4]).toBe(0)
+          expect(field[y][5]).toBe(0)
+        }
+      })
+    })
+
+    describe('消去されない場合の落下処理', () => {
+      it('ぷよが重なっている場合に下に空間があれば落下すること', () => {
+        const field = game.getField()
+        // 浮いているぷよを配置（下に空間がある状態）
+        field[9][2] = 1 // 赤いぷよが浮いている
+        field[8][2] = 2 // 青いぷよが浮いている
+        field[6][2] = 1 // さらに上に赤いぷよが浮いている
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // ぷよが底に落下していることを確認
+        expect(field[11][2]).toBe(1) // 最初に置いた赤いぷよ
+        expect(field[10][2]).toBe(2) // 青いぷよ
+        expect(field[9][2]).toBe(1) // 最後の赤いぷよ
+
+        // 元の位置は空になっている
+        expect(field[8][2]).toBe(0)
+        expect(field[6][2]).toBe(0)
+      })
+
+      it('支えがないぷよは重力で落下すること', () => {
+        const field = game.getField()
+        // 底にぷよがあり、その上に空間、さらに上にぷよ
+        field[11][1] = 1 // 底の支えるぷよ
+        field[8][1] = 2 // 浮いているぷよ
+        field[7][1] = 3 // さらに浮いているぷよ
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // ぷよが正しく落下して積み重なる
+        expect(field[11][1]).toBe(1) // 底のぷよはそのまま
+        expect(field[10][1]).toBe(2) // 浮いていたぷよが落下
+        expect(field[9][1]).toBe(3) // 一番上のぷよも落下
+
+        // 元の位置は空
+        expect(field[8][1]).toBe(0)
+        expect(field[7][1]).toBe(0)
+      })
+
+      it('すでに正しい位置にあるぷよは移動しないこと', () => {
+        const field = game.getField()
+        // 正しく積み重なったぷよを配置
+        field[11][3] = 1
+        field[10][3] = 2
+        field[9][3] = 3
+
+        // 重力処理を実行
+        game.applyGravity()
+
+        // 位置は変わらない
+        expect(field[11][3]).toBe(1)
+        expect(field[10][3]).toBe(2)
+        expect(field[9][3]).toBe(3)
+      })
+    })
   })
 })

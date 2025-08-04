@@ -388,6 +388,30 @@ export class Game {
 
     return true
   }
+
+  public applyGravity(): void {
+    // 各列に対して重力を適用
+    for (let x = 0; x < 6; x++) {
+      this.applyGravityToColumn(x)
+    }
+  }
+
+  private applyGravityToColumn(x: number): void {
+    // 各列の底から上に向かって、空いているスペースを詰める
+    let writePos = 11 // 書き込み位置（底から開始）
+
+    // 底から上に向かってスキャン
+    for (let y = 11; y >= 0; y--) {
+      if (this.field[y][x] !== 0) {
+        // ぷよがある場合は書き込み位置に移動
+        if (y !== writePos) {
+          this.field[writePos][x] = this.field[y][x]
+          this.field[y][x] = 0
+        }
+        writePos-- // 次の書き込み位置を上に移動
+      }
+    }
+  }
 }
 
 export class Puyo {
