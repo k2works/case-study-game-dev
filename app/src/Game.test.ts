@@ -82,5 +82,47 @@ describe('Game', () => {
       const newY = game.getCurrentPuyo()!.y
       expect(newY).toBe(initialY + 1)
     })
+
+    it('フィールドの左端で左に移動できないこと', () => {
+      // ぷよを左端に移動
+      game.handleInput('ArrowLeft')
+      game.handleInput('ArrowLeft')
+      game.handleInput('ArrowLeft') // x=2から左端(x=0)まで移動
+
+      const currentX = game.getCurrentPuyo()!.x
+      expect(currentX).toBe(0)
+
+      // さらに左に移動しようとしても移動しない
+      game.handleInput('ArrowLeft')
+      expect(game.getCurrentPuyo()!.x).toBe(0)
+    })
+
+    it('フィールドの右端で右に移動できないこと', () => {
+      // ぷよを右端に移動
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowRight') // x=2から右端(x=5)まで移動
+
+      const currentX = game.getCurrentPuyo()!.x
+      expect(currentX).toBe(5)
+
+      // さらに右に移動しようとしても移動しない
+      game.handleInput('ArrowRight')
+      expect(game.getCurrentPuyo()!.x).toBe(5)
+    })
+
+    it('フィールドの底で下に移動できないこと', () => {
+      // ぷよを底まで落下させる
+      for (let i = 0; i < 12; i++) {
+        game.handleInput('ArrowDown')
+      }
+
+      const currentY = game.getCurrentPuyo()!.y
+      expect(currentY).toBe(11) // 底はy=11
+
+      // さらに下に移動しようとしても移動しない
+      game.handleInput('ArrowDown')
+      expect(game.getCurrentPuyo()!.y).toBe(11)
+    })
   })
 })
