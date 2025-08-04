@@ -1463,4 +1463,68 @@ describe('Game', () => {
       expect(newPuyoPair!.axis.y).toBe(1) // 初期位置
     })
   })
+
+  describe('全消し判定機能', () => {
+    it('盤面にぷよが存在する場合は全消しではないこと', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // フィールドにぷよを配置
+      field[11][0] = 1
+      field[10][2] = 2
+
+      // 全消し判定を実行
+      expect(game.isAllClear()).toBe(false)
+    })
+
+    it('盤面が完全に空の場合は全消しであること', () => {
+      const game = new Game()
+
+      // 初期状態（全て0）で全消し判定を実行
+      expect(game.isAllClear()).toBe(true)
+    })
+
+    it('盤面のぷよをすべて消去した後は全消しであること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // フィールドにぷよを配置
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 消去前は全消しではない
+      expect(game.isAllClear()).toBe(false)
+
+      // 消去処理を実行
+      game.erasePuyos()
+
+      // 消去後は全消しである
+      expect(game.isAllClear()).toBe(true)
+    })
+
+    it('フィールドの角にぷよがある場合でも正しく検出されること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // フィールドの四隅にぷよを配置
+      field[0][0] = 1 // 左上
+      field[0][5] = 2 // 右上
+      field[11][0] = 3 // 左下
+      field[11][5] = 4 // 右下
+
+      // 全消しではないことを確認
+      expect(game.isAllClear()).toBe(false)
+
+      // すべて消去
+      field[0][0] = 0
+      field[0][5] = 0
+      field[11][0] = 0
+      field[11][5] = 0
+
+      // 全消しであることを確認
+      expect(game.isAllClear()).toBe(true)
+    })
+  })
 })

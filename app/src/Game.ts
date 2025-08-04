@@ -485,7 +485,7 @@ export class Game {
     this.score += points
   }
 
-  private resetScore(): void {
+  public resetScore(): void {
     this.score = 0
   }
 
@@ -499,6 +499,18 @@ export class Game {
   private addErasureScore(erasedCount: number, chainCount: number): void {
     const points = this.calculateErasureScore(erasedCount, chainCount)
     this.addScore(points)
+  }
+
+  public isAllClear(): boolean {
+    // フィールド全体をスキャンして、すべてのセルが空（0）かどうかを確認
+    for (let y = 0; y < 12; y++) {
+      for (let x = 0; x < 6; x++) {
+        if (this.field[y][x] !== 0) {
+          return false // 空でないセルが見つかった場合は全消しではない
+        }
+      }
+    }
+    return true // すべてのセルが空の場合は全消し
   }
 }
 
