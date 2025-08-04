@@ -42,4 +42,24 @@ describe('Game', () => {
       expect(game.getCurrentPuyo()).toBeDefined()
     })
   })
+
+  describe('ぷよの移動', () => {
+    it('ぷよが自動的に落下すること', () => {
+      const initialY = game.getCurrentPuyo()!.y
+      game.update()
+      const newY = game.getCurrentPuyo()!.y
+      expect(newY).toBe(initialY + 1)
+    })
+
+    it('一定時間経過後にぷよが落下すること', () => {
+      const initialY = game.getCurrentPuyo()!.y
+      // 落下に必要な時間が経過していない場合
+      game.update(100) // 100ms
+      expect(game.getCurrentPuyo()!.y).toBe(initialY)
+
+      // 落下に必要な時間が経過した場合
+      game.update(1000) // 1000ms (1秒)
+      expect(game.getCurrentPuyo()!.y).toBe(initialY + 1)
+    })
+  })
 })
