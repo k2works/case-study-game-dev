@@ -1133,4 +1133,62 @@ describe('Game', () => {
       expect(game.getChainCount()).toBe(0)
     })
   })
+
+  describe('連鎖ボーナス計算', () => {
+    it('1連鎖のとき連鎖ボーナスが1倍になること', () => {
+      const game = new Game()
+
+      // 1連鎖のボーナス倍率を確認
+      expect(game.getChainBonus(1)).toBe(1)
+    })
+
+    it('2連鎖のとき連鎖ボーナスが2倍になること', () => {
+      const game = new Game()
+
+      // 2連鎖のボーナス倍率を確認
+      expect(game.getChainBonus(2)).toBe(2)
+    })
+
+    it('3連鎖のとき連鎖ボーナスが4倍になること', () => {
+      const game = new Game()
+
+      // 3連鎖のボーナス倍率を確認
+      expect(game.getChainBonus(3)).toBe(4)
+    })
+
+    it('4連鎖のとき連鎖ボーナスが8倍になること', () => {
+      const game = new Game()
+
+      // 4連鎖のボーナス倍率を確認
+      expect(game.getChainBonus(4)).toBe(8)
+    })
+
+    it('5連鎖以上のとき連鎖ボーナスが16倍になること', () => {
+      const game = new Game()
+
+      // 5連鎖以上のボーナス倍率を確認
+      expect(game.getChainBonus(5)).toBe(16)
+      expect(game.getChainBonus(10)).toBe(16)
+      expect(game.getChainBonus(99)).toBe(16)
+    })
+
+    it('0連鎖のとき連鎖ボーナスが1倍になること', () => {
+      const game = new Game()
+
+      // 0連鎖（連鎖なし）のボーナス倍率を確認
+      expect(game.getChainBonus(0)).toBe(1)
+    })
+
+    it('基本スコアに連鎖ボーナスが正しく適用されること', () => {
+      const game = new Game()
+      const baseScore = 100
+
+      // 各連鎖数でのスコア計算を確認
+      expect(game.calculateChainScore(baseScore, 1)).toBe(100) // 100 * 1
+      expect(game.calculateChainScore(baseScore, 2)).toBe(200) // 100 * 2
+      expect(game.calculateChainScore(baseScore, 3)).toBe(400) // 100 * 4
+      expect(game.calculateChainScore(baseScore, 4)).toBe(800) // 100 * 8
+      expect(game.calculateChainScore(baseScore, 5)).toBe(1600) // 100 * 16
+    })
+  })
 })

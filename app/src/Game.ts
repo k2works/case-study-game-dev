@@ -442,6 +442,30 @@ export class Game {
   private resetChainCount(): void {
     this.chainCount = 0
   }
+
+  public getChainBonus(chainCount: number): number {
+    // 連鎖ボーナス倍率の計算
+    // 1連鎖: 1倍, 2連鎖: 2倍, 3連鎖: 4倍, 4連鎖: 8倍, 5連鎖以上: 16倍
+    switch (chainCount) {
+      case 0:
+        return 1 // 連鎖なしでも1倍
+      case 1:
+        return 1
+      case 2:
+        return 2
+      case 3:
+        return 4
+      case 4:
+        return 8
+      default:
+        return 16 // 5連鎖以上は16倍
+    }
+  }
+
+  public calculateChainScore(baseScore: number, chainCount: number): number {
+    // 基本スコアに連鎖ボーナスを適用
+    return baseScore * this.getChainBonus(chainCount)
+  }
 }
 
 export class Puyo {
