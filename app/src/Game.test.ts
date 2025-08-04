@@ -717,8 +717,8 @@ describe('Game', () => {
         field[11][4] = 1
         field[10][2] = 1
 
-        const erased = game.erasePuyos()
-        expect(erased).toBe(true) // 消去が実行されたことを確認
+        const erasedCount = game.erasePuyos()
+        expect(erasedCount).toBe(4) // 4つのぷよが消去されたことを確認
 
         // 消去されたセルが空になっていることを確認
         expect(field[11][2]).toBe(0)
@@ -734,8 +734,8 @@ describe('Game', () => {
         field[11][3] = 1
         field[11][4] = 1
 
-        const erased = game.erasePuyos()
-        expect(erased).toBe(false) // 消去が実行されなかったことを確認
+        const erasedCount = game.erasePuyos()
+        expect(erasedCount).toBe(0) // 消去が実行されなかったことを確認
 
         // ぷよがそのまま残っていることを確認
         expect(field[11][2]).toBe(1)
@@ -757,8 +757,8 @@ describe('Game', () => {
         field[10][4] = 2
         field[10][5] = 2
 
-        const erased = game.erasePuyos()
-        expect(erased).toBe(true)
+        const erasedCount = game.erasePuyos()
+        expect(erasedCount).toBe(8) // 8つのぷよが消去されたことを確認
 
         // 両方のグループが消去されていることを確認
         expect(field[11][0]).toBe(0)
@@ -784,8 +784,8 @@ describe('Game', () => {
         field[11][5] = 2
         field[10][4] = 2
 
-        const erased = game.erasePuyos()
-        expect(erased).toBe(true)
+        const erasedCount = game.erasePuyos()
+        expect(erasedCount).toBe(4) // 4つのぷよが消去されたことを確認
 
         // 赤いぷよは消去されている
         expect(field[11][0]).toBe(0)
@@ -1189,6 +1189,79 @@ describe('Game', () => {
       expect(game.calculateChainScore(baseScore, 3)).toBe(400) // 100 * 4
       expect(game.calculateChainScore(baseScore, 4)).toBe(800) // 100 * 8
       expect(game.calculateChainScore(baseScore, 5)).toBe(1600) // 100 * 16
+    })
+  })
+
+  describe('スコアシステム', () => {
+    it('ゲーム開始時のスコアが0であること', () => {
+      const game = new Game()
+
+      expect(game.getScore()).toBe(0)
+    })
+
+    it('スコアを加算できること', () => {
+      const game = new Game()
+
+      ;(game as any).addScore(100)
+      expect(game.getScore()).toBe(100)
+      ;(game as any).addScore(50)
+      expect(game.getScore()).toBe(150)
+    })
+
+    it('連鎖数に応じたスコアが正しく計算されること', () => {
+      const game = new Game()
+      const erasedCount = 4 // 4つのぷよが消去された
+
+      // 1連鎖時のスコア計算
+      const score1Chain = game.calculateErasureScore(erasedCount, 1)
+      expect(score1Chain).toBe(40) // 4 * 10 * 1
+
+      // 2連鎖時のスコア計算
+      const score2Chain = game.calculateErasureScore(erasedCount, 2)
+      expect(score2Chain).toBe(80) // 4 * 10 * 2
+
+      // 3連鎖時のスコア計算
+      const score3Chain = game.calculateErasureScore(erasedCount, 3)
+      expect(score3Chain).toBe(160) // 4 * 10 * 4
+    })
+
+    it('複数回の消去でスコアが累積されること', () => {
+      const game = new Game()
+
+      // 1回目の消去（4個、1連鎖）
+      ;(game as any).addErasureScore(4, 1)
+      expect(game.getScore()).toBe(40) // 4 * 10 * 1
+
+      // 2回目の消去（5個、2連鎖）
+      ;(game as any).addErasureScore(5, 2)
+      expect(game.getScore()).toBe(140) // 40 + (5 * 10 * 2)
+    })
+
+    it('スコアリセット機能が動作すること', () => {
+      const game = new Game()
+
+      ;(game as any).addScore(500)
+      expect(game.getScore()).toBe(500)
+      ;(game as any).resetScore()
+      expect(game.getScore()).toBe(0)
+    })
+
+    it('消去時に自動的にスコアが加算されること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 4つの赤いぷよを配置
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 連鎖処理を実行
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      // スコアが自動的に加算されることを確認
+      expect(game.getScore()).toBe(40) // 4 * 10 * 1
     })
   })
 })

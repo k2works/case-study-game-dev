@@ -9,6 +9,7 @@ export class Game {
   private fastDropTimer = 0
   private fastDropInterval = 50 // 高速落下は50msごと
   private chainCount = 0 // 連鎖数
+  private score = 0 // 現在のスコア
 
   constructor() {
     // 6列x12行のフィールドを初期化
@@ -374,12 +375,18 @@ export class Game {
     return result
   }
 
-  public erasePuyos(): boolean {
+  public erasePuyos(): number {
     const erasableGroups = this.findErasableGroups()
 
-    // 消去対象グループがない場合はfalseを返す
+    // 消去対象グループがない場合は0を返す
     if (erasableGroups.length === 0) {
-      return false
+      return 0
+    }
+
+    // 消去されるぷよの総数を計算
+    let totalErasedCount = 0
+    for (const group of erasableGroups) {
+      totalErasedCount += group.length
     }
 
     // 消去対象のぷよをすべて消去（0にセット）
@@ -389,7 +396,7 @@ export class Game {
       }
     }
 
-    return true
+    return totalErasedCount
   }
 
   public applyGravity(): void {
@@ -420,15 +427,18 @@ export class Game {
     // 連鎖処理：消去できるぷよがある限り繰り返す
     while (true) {
       // 消去処理を実行
-      const erased = this.erasePuyos()
+      const erasedCount = this.erasePuyos()
 
       // 消去されるぷよがない場合は連鎖終了
-      if (!erased) {
+      if (erasedCount === 0) {
         break
       }
 
       // 連鎖数をカウント
       this.chainCount++
+
+      // スコアを加算
+      this.addErasureScore(erasedCount, this.chainCount)
 
       // 重力処理を実行
       this.applyGravity()
@@ -465,6 +475,30 @@ export class Game {
   public calculateChainScore(baseScore: number, chainCount: number): number {
     // 基本スコアに連鎖ボーナスを適用
     return baseScore * this.getChainBonus(chainCount)
+  }
+
+  public getScore(): number {
+    return this.score
+  }
+
+  private addScore(points: number): void {
+    this.score += points
+  }
+
+  private resetScore(): void {
+    this.score = 0
+  }
+
+  public calculateErasureScore(erasedCount: number, chainCount: number): number {
+    // 基本スコア: 消去したぷよ数 × 10点
+    const baseScore = erasedCount * 10
+    // 連鎖ボーナスを適用
+    return this.calculateChainScore(baseScore, chainCount)
+  }
+
+  private addErasureScore(erasedCount: number, chainCount: number): void {
+    const points = this.calculateErasureScore(erasedCount, chainCount)
+    this.addScore(points)
   }
 }
 
