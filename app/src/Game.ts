@@ -339,6 +339,37 @@ export class Game {
       this.dfsConnectedPuyos(x + dir.dx, y + dir.dy, color, visited, result)
     }
   }
+
+  public findErasableGroups(): Array<Array<{ x: number; y: number }>> {
+    const visited: boolean[][] = Array.from({ length: 12 }, () => Array(6).fill(false))
+    const erasableGroups: Array<Array<{ x: number; y: number }>> = []
+
+    // フィールド全体をスキャンして消去対象グループを検出
+    for (let y = 0; y < 12; y++) {
+      for (let x = 0; x < 6; x++) {
+        if (!visited[y][x] && this.field[y][x] !== 0) {
+          const group = this.findConnectedPuyosForErasure(x, y, this.field[y][x], visited)
+          // 4つ以上のグループは消去対象
+          if (group.length >= 4) {
+            erasableGroups.push(group)
+          }
+        }
+      }
+    }
+
+    return erasableGroups
+  }
+
+  private findConnectedPuyosForErasure(
+    x: number,
+    y: number,
+    color: number,
+    visited: boolean[][]
+  ): Array<{ x: number; y: number }> {
+    const result: Array<{ x: number; y: number }> = []
+    this.dfsConnectedPuyos(x, y, color, visited, result)
+    return result
+  }
 }
 
 export class Puyo {

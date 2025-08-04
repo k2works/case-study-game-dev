@@ -647,5 +647,65 @@ describe('Game', () => {
         expect(connectedPuyos).toHaveLength(0)
       })
     })
+
+    describe('4つ以上つながったぷよの検出', () => {
+      it('4つ以上つながったぷよのグループを消去対象として検出できること', () => {
+        const field = game.getField()
+        // L字型に4つの赤いぷよを配置
+        field[11][2] = 1 // 赤
+        field[11][3] = 1 // 赤
+        field[11][4] = 1 // 赤
+        field[10][2] = 1 // 赤（4つ目）
+
+        const erasableGroups = game.findErasableGroups()
+        expect(erasableGroups).toHaveLength(1) // 1つのグループが消去対象
+        expect(erasableGroups[0]).toHaveLength(4) // 4つのぷよで構成
+      })
+
+      it('3つ以下のぷよは消去対象として検出されないこと', () => {
+        const field = game.getField()
+        // 3つの赤いぷよを配置
+        field[11][2] = 1 // 赤
+        field[11][3] = 1 // 赤
+        field[11][4] = 1 // 赤
+
+        const erasableGroups = game.findErasableGroups()
+        expect(erasableGroups).toHaveLength(0) // 消去対象なし
+      })
+
+      it('複数の消去対象グループを同時に検出できること', () => {
+        const field = game.getField()
+        // 赤いぷよグループ（4つ）
+        field[11][0] = 1
+        field[11][1] = 1
+        field[10][0] = 1
+        field[10][1] = 1
+
+        // 青いぷよグループ（4つ）
+        field[11][4] = 2
+        field[11][5] = 2
+        field[10][4] = 2
+        field[10][5] = 2
+
+        const erasableGroups = game.findErasableGroups()
+        expect(erasableGroups).toHaveLength(2) // 2つのグループが消去対象
+        expect(erasableGroups[0]).toHaveLength(4)
+        expect(erasableGroups[1]).toHaveLength(4)
+      })
+
+      it('5つ以上のぷよも消去対象として検出されること', () => {
+        const field = game.getField()
+        // 5つの赤いぷよを配置
+        field[11][2] = 1
+        field[11][3] = 1
+        field[11][4] = 1
+        field[10][2] = 1
+        field[10][3] = 1
+
+        const erasableGroups = game.findErasableGroups()
+        expect(erasableGroups).toHaveLength(1)
+        expect(erasableGroups[0]).toHaveLength(5)
+      })
+    })
   })
 })
