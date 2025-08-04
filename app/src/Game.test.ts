@@ -395,5 +395,43 @@ describe('Game', () => {
       // 壁キック処理の結果を確認（単体ぷよでは不要）
       expect((game as any).tryWallKick()).toBe(false)
     })
+
+    it('回転操作が画面に正しく反映されること', () => {
+      const initialPuyo = game.getCurrentPuyo()!
+      const initialX = initialPuyo.x
+      const initialY = initialPuyo.y
+      const initialColor = initialPuyo.color
+
+      // 回転操作を実行
+      game.handleInput('ArrowUp')
+
+      // 現在のぷよを取得
+      const rotatedPuyo = game.getCurrentPuyo()!
+
+      // 単体ぷよの場合は位置は変わらないが、オブジェクトは同じ
+      expect(rotatedPuyo.x).toBe(initialX)
+      expect(rotatedPuyo.y).toBe(initialY)
+      expect(rotatedPuyo.color).toBe(initialColor)
+
+      // ぷよオブジェクトは同じインスタンス
+      expect(rotatedPuyo).toBe(initialPuyo)
+    })
+
+    it('連続した回転操作が正しく処理されること', () => {
+      const initialPuyo = game.getCurrentPuyo()!
+
+      // 複数回の回転操作
+      game.handleInput('ArrowUp')
+      game.handleInput('ArrowUp')
+      game.handleInput('ArrowUp')
+      game.handleInput('ArrowUp')
+
+      const finalPuyo = game.getCurrentPuyo()!
+
+      // 単体ぷよの場合は4回転しても元の状態と同じ
+      expect(finalPuyo.x).toBe(initialPuyo.x)
+      expect(finalPuyo.y).toBe(initialPuyo.y)
+      expect(finalPuyo.color).toBe(initialPuyo.color)
+    })
   })
 })
