@@ -707,5 +707,97 @@ describe('Game', () => {
         expect(erasableGroups[0]).toHaveLength(5)
       })
     })
+
+    describe('ぷよの消去処理', () => {
+      it('4つ以上つながったぷよを実際に消去できること', () => {
+        const field = game.getField()
+        // 4つの赤いぷよを配置
+        field[11][2] = 1
+        field[11][3] = 1
+        field[11][4] = 1
+        field[10][2] = 1
+
+        const erased = game.erasePuyos()
+        expect(erased).toBe(true) // 消去が実行されたことを確認
+
+        // 消去されたセルが空になっていることを確認
+        expect(field[11][2]).toBe(0)
+        expect(field[11][3]).toBe(0)
+        expect(field[11][4]).toBe(0)
+        expect(field[10][2]).toBe(0)
+      })
+
+      it('3つ以下のぷよは消去されないこと', () => {
+        const field = game.getField()
+        // 3つの赤いぷよを配置
+        field[11][2] = 1
+        field[11][3] = 1
+        field[11][4] = 1
+
+        const erased = game.erasePuyos()
+        expect(erased).toBe(false) // 消去が実行されなかったことを確認
+
+        // ぷよがそのまま残っていることを確認
+        expect(field[11][2]).toBe(1)
+        expect(field[11][3]).toBe(1)
+        expect(field[11][4]).toBe(1)
+      })
+
+      it('複数のグループを同時に消去できること', () => {
+        const field = game.getField()
+        // 赤いぷよグループ（4つ）
+        field[11][0] = 1
+        field[11][1] = 1
+        field[10][0] = 1
+        field[10][1] = 1
+
+        // 青いぷよグループ（4つ）
+        field[11][4] = 2
+        field[11][5] = 2
+        field[10][4] = 2
+        field[10][5] = 2
+
+        const erased = game.erasePuyos()
+        expect(erased).toBe(true)
+
+        // 両方のグループが消去されていることを確認
+        expect(field[11][0]).toBe(0)
+        expect(field[11][1]).toBe(0)
+        expect(field[10][0]).toBe(0)
+        expect(field[10][1]).toBe(0)
+        expect(field[11][4]).toBe(0)
+        expect(field[11][5]).toBe(0)
+        expect(field[10][4]).toBe(0)
+        expect(field[10][5]).toBe(0)
+      })
+
+      it('消去されないぷよはそのまま残ること', () => {
+        const field = game.getField()
+        // 消去対象の4つの赤いぷよ
+        field[11][0] = 1
+        field[11][1] = 1
+        field[10][0] = 1
+        field[10][1] = 1
+
+        // 消去対象でない3つの青いぷよ
+        field[11][4] = 2
+        field[11][5] = 2
+        field[10][4] = 2
+
+        const erased = game.erasePuyos()
+        expect(erased).toBe(true)
+
+        // 赤いぷよは消去されている
+        expect(field[11][0]).toBe(0)
+        expect(field[11][1]).toBe(0)
+        expect(field[10][0]).toBe(0)
+        expect(field[10][1]).toBe(0)
+
+        // 青いぷよはそのまま残っている
+        expect(field[11][4]).toBe(2)
+        expect(field[11][5]).toBe(2)
+        expect(field[10][4]).toBe(2)
+      })
+    })
   })
 })

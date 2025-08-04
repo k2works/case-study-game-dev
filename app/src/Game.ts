@@ -370,6 +370,24 @@ export class Game {
     this.dfsConnectedPuyos(x, y, color, visited, result)
     return result
   }
+
+  public erasePuyos(): boolean {
+    const erasableGroups = this.findErasableGroups()
+
+    // 消去対象グループがない場合はfalseを返す
+    if (erasableGroups.length === 0) {
+      return false
+    }
+
+    // 消去対象のぷよをすべて消去（0にセット）
+    for (const group of erasableGroups) {
+      for (const puyo of group) {
+        this.field[puyo.y][puyo.x] = 0
+      }
+    }
+
+    return true
+  }
 }
 
 export class Puyo {
