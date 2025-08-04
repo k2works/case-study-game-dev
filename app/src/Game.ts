@@ -182,6 +182,7 @@ export class Game {
     // 新しい軸の位置で衛星の位置を計算
     const tempPair = new PuyoPair(axisX, axisY)
     tempPair.rotation = this.currentPuyoPair.rotation
+    tempPair.updateSatellitePosition() // 現在の回転状態で衛星位置を更新
 
     const positions = tempPair.getPositions()
 
@@ -221,6 +222,7 @@ export class Game {
     // 回転後の位置をテスト
     const tempPair = new PuyoPair(this.currentPuyoPair.axis.x, this.currentPuyoPair.axis.y)
     tempPair.rotation = (this.currentPuyoPair.rotation + 1) % 4
+    tempPair.updateSatellitePosition() // 回転後の正しい位置を計算
 
     const positions = tempPair.getPositions()
 
@@ -252,6 +254,7 @@ export class Game {
       // 移動先で回転可能かテスト
       const tempPair = new PuyoPair(testX, testY)
       tempPair.rotation = (this.currentPuyoPair.rotation + 1) % 4
+      tempPair.updateSatellitePosition() // 回転後の正しい位置を計算
 
       const positions = tempPair.getPositions()
       let canRotateHere = true
