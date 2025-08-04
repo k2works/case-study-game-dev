@@ -113,14 +113,17 @@ export class Game {
       case 'ArrowDown':
         this.dropPuyo()
         break
+      case 'ArrowUp':
+        this.rotatePuyo()
+        break
     }
   }
 
   handleKeyDown(key: string): void {
     if (!this.currentPuyo || this.gameOver) return
-    
+
     this.keysPressed.add(key)
-    
+
     // 非高速落下キーは即座に処理
     switch (key) {
       case 'ArrowLeft':
@@ -129,12 +132,15 @@ export class Game {
       case 'ArrowRight':
         this.movePuyo(1, 0)
         break
+      case 'ArrowUp':
+        this.rotatePuyo()
+        break
     }
   }
 
   handleKeyUp(key: string): void {
     this.keysPressed.delete(key)
-    
+
     // 高速落下キーが離された場合はタイマーをリセット
     if (key === 'ArrowDown') {
       this.fastDropTimer = 0
@@ -176,6 +182,13 @@ export class Game {
 
     // 現在のぷよをフィールドに固定
     this.field[this.currentPuyo.y][this.currentPuyo.x] = this.currentPuyo.color
+  }
+
+  private rotatePuyo(): void {
+    if (!this.currentPuyo) return
+
+    // 単体ぷよの場合は回転しても位置は変わらない
+    // 将来的にペアぷよ実装時に拡張予定
   }
 
   private generateNewPuyo(): void {

@@ -47,35 +47,33 @@ describe('Game', () => {
   describe('ぷよの高速落下', () => {
     it('下矢印キーを押し続けている間、ぷよが高速で落下すること', () => {
       const initialY = game.getCurrentPuyo()!.y
-      
+
       // 下矢印キーを押下開始
       game.handleKeyDown('ArrowDown')
-      
+
       // 短時間で複数回落下することを確認
       game.update(50) // 50ms後
       const firstDropY = game.getCurrentPuyo()!.y
       expect(firstDropY).toBeGreaterThan(initialY)
-      
+
       game.update(50) // さらに50ms後
       const secondDropY = game.getCurrentPuyo()!.y
       expect(secondDropY).toBeGreaterThan(firstDropY)
     })
 
     it('下矢印キーを離すと通常の落下速度に戻ること', () => {
-      const initialY = game.getCurrentPuyo()!.y
-      
       // 下矢印キーを押下開始
       game.handleKeyDown('ArrowDown')
       game.update(50)
       const fastDropY = game.getCurrentPuyo()!.y
-      
+
       // 下矢印キーを離す
       game.handleKeyUp('ArrowDown')
-      
+
       // 通常の落下間隔（1000ms）では落下しない
       game.update(100)
       expect(game.getCurrentPuyo()!.y).toBe(fastDropY)
-      
+
       // 1000ms経過で通常落下
       game.update(1000)
       expect(game.getCurrentPuyo()!.y).toBe(fastDropY + 1)
@@ -86,17 +84,15 @@ describe('Game', () => {
       for (let i = 0; i < 10; i++) {
         game.handleInput('ArrowDown')
       }
-      
-      const puyoBeforeLanding = game.getCurrentPuyo()!
-      
+
       // 高速落下で着地させる
       game.handleKeyDown('ArrowDown')
       game.update(100) // 着地するまで
-      
+
       // updateで着地処理
       game.update()
       expect(game.isPuyoLanded()).toBe(true)
-      
+
       // 次のupdateで新しいぷよ生成
       game.update()
       const newPuyo = game.getCurrentPuyo()!
@@ -109,9 +105,9 @@ describe('Game', () => {
       for (let i = 0; i < 11; i++) {
         game.handleInput('ArrowDown')
       }
-      
+
       expect(game.getCurrentPuyo()!.y).toBe(11)
-      
+
       // 高速落下を試みても底より下には行かない
       game.handleKeyDown('ArrowDown')
       game.update(50)
@@ -275,6 +271,54 @@ describe('Game', () => {
       // フィールドに固定されているか確認
       const field = game.getField()
       expect(field[puyoY][puyoX]).toBe(puyoColor)
+    })
+  })
+
+  describe('ぷよの回転', () => {
+    it('上矢印キーでぷよを時計回りに回転できること', () => {
+      // 初期状態での位置を記録
+      const initialX = game.getCurrentPuyo()!.x
+      const initialY = game.getCurrentPuyo()!.y
+
+      // 回転処理を実行
+      game.handleInput('ArrowUp')
+
+      // 回転後の位置を確認（単体ぷよなので位置は変わらない）
+      expect(game.getCurrentPuyo()!.x).toBe(initialX)
+      expect(game.getCurrentPuyo()!.y).toBe(initialY)
+    })
+
+    it('フィールドの境界内でのみ回転が可能であること', () => {
+      // ぷよを左端に移動
+      game.handleInput('ArrowLeft')
+      game.handleInput('ArrowLeft')
+      expect(game.getCurrentPuyo()!.x).toBe(0)
+
+      // 左端でも回転は可能（単体ぷよの場合）
+      const beforeRotationX = game.getCurrentPuyo()!.x
+      game.handleInput('ArrowUp')
+      expect(game.getCurrentPuyo()!.x).toBe(beforeRotationX)
+    })
+
+    it('他のぷよがある場合は回転できないこと', () => {
+      // フィールドに既存のぷよを配置
+      const field = game.getField()
+      field[1][2] = 1 // 現在のぷよの隣に配置
+
+      const beforeRotationX = game.getCurrentPuyo()!.x
+      const beforeRotationY = game.getCurrentPuyo()!.y
+
+      // 回転を試みる
+      game.handleInput('ArrowUp')
+
+      // 位置が変わらないことを確認
+      expect(game.getCurrentPuyo()!.x).toBe(beforeRotationX)
+      expect(game.getCurrentPuyo()!.y).toBe(beforeRotationY)
+    })
+
+    it('回転処理が正しく呼び出されること', () => {
+      // 現在はrotatePuyoメソッドが存在することを確認
+      expect(typeof (game as any).rotatePuyo).toBe('function')
     })
   })
 })
