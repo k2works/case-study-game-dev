@@ -137,6 +137,82 @@ button:focus-visible {
   color: #888;
 }
 
+/* 全消し演出 */
+.zenkeshi-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.zenkeshi-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.zenkeshi-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.zenkeshi-message {
+  text-align: center;
+  color: white;
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: zenkeshiBounce 0.6s ease-out;
+}
+
+.zenkeshi-message h2 {
+  font-size: 3rem;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: zenkeshiGlow 2s ease-in-out infinite alternate;
+}
+
+.zenkeshi-message p {
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes zenkeshiBounce {
+  0% {
+    transform: scale(0.3) rotate(-5deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes zenkeshiGlow {
+  0% {
+    text-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    text-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(255, 255, 255, 0.8);
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -158,5 +234,10 @@ button:focus-visible {
   #score-value,
   #chain-value {
     color: #213547;
+  }
+
+  .zenkeshi-message {
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    color: white;
   }
 }

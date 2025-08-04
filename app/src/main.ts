@@ -17,6 +17,12 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         </div>
       </div>
     </div>
+    <div id="zenkeshi-overlay" class="zenkeshi-overlay hidden">
+      <div class="zenkeshi-message">
+        <h2>全消し！</h2>
+        <p>+2000点</p>
+      </div>
+    </div>
     <div class="controls">
       <p>操作方法:</p>
       <p>←→: 移動, ↑: 回転, ↓: 高速落下</p>
@@ -30,6 +36,12 @@ const ctx = canvas.getContext('2d')!
 const game = new Game()
 const scoreElement = document.querySelector<HTMLDivElement>('#score-value')!
 const chainElement = document.querySelector<HTMLDivElement>('#chain-value')!
+const zenkeshiOverlay = document.querySelector<HTMLDivElement>('#zenkeshi-overlay')!
+
+// 全消し演出コールバックを設定
+game.setZenkeshiCallback(() => {
+  showZenkeshiAnimation()
+})
 
 // セルサイズ（各マスの大きさ）
 const CELL_SIZE = 40
@@ -101,6 +113,23 @@ function updateUI() {
 
   // 連鎖数を更新
   chainElement.textContent = game.getChainCount().toString()
+}
+
+// 全消し演出を表示する関数
+function showZenkeshiAnimation() {
+  zenkeshiOverlay.classList.remove('hidden')
+  zenkeshiOverlay.classList.add('show')
+
+  // 3秒後に演出を非表示にする
+  window.setTimeout(() => {
+    hideZenkeshiAnimation()
+  }, 3000)
+}
+
+// 全消し演出を非表示にする関数
+function hideZenkeshiAnimation() {
+  zenkeshiOverlay.classList.remove('show')
+  zenkeshiOverlay.classList.add('hidden')
 }
 
 // ゲームを描画する関数

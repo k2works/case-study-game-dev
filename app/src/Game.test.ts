@@ -1613,4 +1613,86 @@ describe('Game', () => {
       expect(field[11][5]).toBe(2) // 残ったぷよ
     })
   })
+
+  describe('全消し演出機能', () => {
+    it('全消し演出コールバックを設定できること', () => {
+      const game = new Game()
+      let callbackCalled = false
+
+      // コールバック関数を設定
+      game.setZenkeshiCallback(() => {
+        callbackCalled = true
+      })
+
+      // 全消しが発生する状況を作成
+      const field = game.getField()
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+
+      // 連鎖処理を実行（全消しになる）
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      // コールバックが呼ばれたことを確認
+      expect(callbackCalled).toBe(true)
+    })
+
+    it('全消しが発生しない場合は演出コールバックが呼ばれないこと', () => {
+      const game = new Game()
+      let callbackCalled = false
+
+      // コールバック関数を設定
+      game.setZenkeshiCallback(() => {
+        callbackCalled = true
+      })
+
+      // 全消しが発生しない状況を作成
+      const field = game.getField()
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+      field[11][5] = 2 // 残るぷよ
+
+      // 連鎖処理を実行（全消しにならない）
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      // コールバックが呼ばれていないことを確認
+      expect(callbackCalled).toBe(false)
+    })
+
+    it('複数回の全消しで演出コールバックが正しく動作すること', () => {
+      const game = new Game()
+      let callbackCount = 0
+
+      // コールバック関数を設定（呼ばれた回数をカウント）
+      game.setZenkeshiCallback(() => {
+        callbackCount++
+      })
+
+      // 1回目の全消し
+      const field = game.getField()
+      field[11][0] = 1
+      field[11][1] = 1
+      field[11][2] = 1
+      field[11][3] = 1
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      expect(callbackCount).toBe(1)
+
+      // 2回目の全消し
+      field[11][0] = 2
+      field[11][1] = 2
+      field[11][2] = 2
+      field[11][3] = 2
+      ;(game as any).resetChainCount()
+      ;(game as any).processChain()
+
+      expect(callbackCount).toBe(2)
+    })
+  })
 })

@@ -10,6 +10,7 @@ export class Game {
   private fastDropInterval = 50 // 高速落下は50msごと
   private chainCount = 0 // 連鎖数
   private score = 0 // 現在のスコア
+  private zenkeshiCallback: (() => void) | null = null // 全消し演出コールバック
 
   constructor() {
     // 6列x12行のフィールドを初期化
@@ -530,7 +531,15 @@ export class Game {
     // 全消し状態の場合はボーナスを加算
     if (this.isAllClear()) {
       this.addScore(this.getZenkeshiBonus())
+      // 全消し演出をトリガー
+      if (this.zenkeshiCallback) {
+        this.zenkeshiCallback()
+      }
     }
+  }
+
+  public setZenkeshiCallback(callback: () => void): void {
+    this.zenkeshiCallback = callback
   }
 }
 
