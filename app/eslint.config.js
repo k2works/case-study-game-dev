@@ -21,10 +21,13 @@ export default [
         HTMLDivElement: 'readonly',
         HTMLButtonElement: 'readonly',
         HTMLCanvasElement: 'readonly',
+        HTMLElement: 'readonly',
         CanvasRenderingContext2D: 'readonly',
+        KeyboardEvent: 'readonly',
         window: 'readonly',
         console: 'readonly',
         requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
       },
     },
     plugins: {
