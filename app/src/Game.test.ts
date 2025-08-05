@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { Game } from './Game'
-import { PuyoPair } from './Puyo'
+import { Game } from './domain/entities/Game'
+import { PuyoPair } from './domain/valueObjects/Puyo'
 
 describe('Game', () => {
   let game: Game

@@ -1,4 +1,4 @@
-import { GameField } from './GameField'
+import { GameField } from '../entities/GameField'
 import { ScoreCalculator } from './ScoreCalculator'
 
 export class GameLogic {

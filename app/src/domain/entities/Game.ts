@@ -1,8 +1,8 @@
 import { GameField } from './GameField'
-import { GameLogic } from './GameLogic'
-import { PuyoPair } from './Puyo'
-import { GameState } from './GameState'
-import { ScoreCalculator } from './ScoreCalculator'
+import { GameLogic } from '../services/GameLogic'
+import { PuyoPair } from '../valueObjects/Puyo'
+import { GameState } from '../valueObjects/GameState'
+import { ScoreCalculator } from '../services/ScoreCalculator'
 
 export class Game {
   private gameField: GameField

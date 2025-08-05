@@ -1,5 +1,5 @@
 import './style.css'
-import { Game } from './Game'
+import { Game } from './domain/entities/Game'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
