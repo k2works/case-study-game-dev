@@ -67,6 +67,9 @@ nav:
       - データモデル設計: development/データモデル設計.md
       - ドメインモデル設計: development/ドメインモデル設計.md
       - ユーザーインターフェース設計: development/ユーザーインターフェース設計.md
+      - アーキテクチャ: development/アーキテクチャ.md
+      - 設計: development/設計.md
+      - 実装: development/実装.md
   - 運用:
       - 概要: operation/index.md
       - セットアップ: operation/セットアップ.md
@@ -84,6 +87,9 @@ nav:
       - 概要: journal/index.md
       - 2025年7月31日: journal/20250731.md
       - 2025年8月2日: journal/20250802.md
+  - レポート:
+      - 概要: report/index.md
+      - プロジェクト評価レポート: report/評価レポート.md
   - 参考資料:
       - よいソフトウェアとは: reference/よいソフトウェアとは.md
       - 開発ガイド: reference/開発ガイド.md

@@ -6,11 +6,11 @@ export class GameController {
   private game: Game
   private renderer: GameRenderer
   private inputHandler: InputHandler
-  private scoreElement: HTMLDivElement
-  private chainElement: HTMLDivElement
-  private zenkeshiOverlay: HTMLDivElement
-  private gameoverOverlay: HTMLDivElement
-  private finalScoreElement: HTMLElement
+  private scoreElement!: HTMLDivElement
+  private chainElement!: HTMLDivElement
+  private zenkeshiOverlay!: HTMLDivElement
+  private gameoverOverlay!: HTMLDivElement
+  private finalScoreElement!: HTMLElement
   private lastTime = 0
   private gameLoopId: number | null = null
 

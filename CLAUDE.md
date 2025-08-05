@@ -98,23 +98,34 @@ state イテレーション {
 ### コーディングとテスト
 
 ```plantuml
-@startuml "TDD実装サイクル"
+```plantuml
+@startuml "イテレーション開発プロセス"
+
 start
-:TODOリスト確認;
-:失敗テスト作成 (Red);
-:最小実装 (Green);
-:リファクタリング (Refactor);
-:UI確認;
-if (イテレーション完了?) then (yes)
-  :ふりかえり;
-  :コミット;
-  :次イテレーション;
-  stop
-else (no)
-  :コミット;
-  :次のTODO;
-endif
-start
+:イテレーション計画;
+:TODOリスト作成;
+
+repeat
+  :TODO選択;
+  
+  repeat
+    :失敗テスト作成 (Red);
+    :最小実装 (Green);
+    :リファクタリング (Refactor);
+    :品質チェック;
+    if (品質OK?) then (yes)
+      :コミット;
+    else (no)
+      :修正;
+    endif
+  repeat while (TODO完了?)
+  
+repeat while (全TODO完了?)
+
+:イテレーションレビュー;
+:ふりかえり;
+stop
+
 @enduml
 ```
 

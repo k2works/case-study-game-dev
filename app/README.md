@@ -161,14 +161,37 @@ GitHub Actionsによる自動デプロイが設定されています：
 
 #### アーキテクチャ
 
+クリーンアーキテクチャに従った層構造を採用しています：
+
 ```
 src/
-├── Game.ts          # ゲームコアロジック
-├── Game.test.ts     # ゲームのテスト
-├── main.ts          # エントリーポイント
-├── style.css        # スタイル
-└── vite-env.d.ts    # 型定義
+├── domain/                    # ドメイン層
+│   ├── entities/             # エンティティ
+│   │   ├── Game.ts          # ゲームエンティティ
+│   │   └── GameField.ts     # フィールド管理
+│   ├── services/            # ドメインサービス
+│   │   ├── GameLogic.ts     # 連鎖処理
+│   │   └── ScoreCalculator.ts # スコア計算
+│   └── valueObjects/        # 値オブジェクト
+│       ├── Puyo.ts          # ぷよ・ぷよペア
+│       └── GameState.ts     # ゲーム状態
+├── presentation/             # プレゼンテーション層
+│   └── GameController.ts    # ゲーム制御・UI管理
+├── infrastructure/          # インフラストラクチャ層
+│   ├── GameRenderer.ts      # レンダリング処理
+│   └── InputHandler.ts      # 入力処理
+├── Game.test.ts             # 統合テスト
+├── main.ts                  # エントリーポイント
+├── style.css                # スタイル
+└── vite-env.d.ts            # 型定義
 ```
+
+#### 設計原則
+
+- **SOLID原則**: 単一責任・開放閉鎖・依存性逆転の適用
+- **循環的複雑度**: 全メソッド7以下に制限
+- **テスト駆動開発**: 121個のテストケースによる品質保証
+- **依存関係の方向**: 外側の層が内側の層に依存
 
 #### コーディング規約
 
