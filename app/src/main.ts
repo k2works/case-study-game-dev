@@ -45,7 +45,7 @@ const scoreElement = document.querySelector<HTMLDivElement>('#score-value')!
 const chainElement = document.querySelector<HTMLDivElement>('#chain-value')!
 const zenkeshiOverlay = document.querySelector<HTMLDivElement>('#zenkeshi-overlay')!
 const gameoverOverlay = document.querySelector<HTMLDivElement>('#gameover-overlay')!
-const finalScoreElement = document.querySelector<HTMLElement>('#final-score')!
+const finalScoreElement = document.querySelector('#final-score')!
 
 // 全消し演出コールバックを設定
 game.setZenkeshiCallback(() => {

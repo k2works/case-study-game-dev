@@ -56,6 +56,8 @@ export class Game {
 
   private handleLandedPuyo(): void {
     this.fixPuyoPair()
+    // 着地直後に重力処理を実行（横向きぷよなどが適切に落下するように）
+    this.applyGravity()
     this.resetChainCount()
     this.processChain()
     this.generateNewPuyoPair()
