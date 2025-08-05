@@ -1695,4 +1695,571 @@ describe('Game', () => {
       expect(callbackCount).toBe(2)
     })
   })
+
+  describe('ゲームオーバー判定機能', () => {
+    it('新しいぷよが初期位置に配置できない場合にゲームオーバーになること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 初期位置（2, 0）とその上（2, 0の衛星位置）にぷよを配置してブロック
+      field[0][2] = 1 // 軸の初期位置をブロック
+      field[1][2] = 2 // 衛星の初期位置もブロック
+
+      // 新しいぷよペアを生成しようとする
+      ;(game as any).generateNewPuyoPair()
+
+      // ゲームオーバー状態になることを確認
+      expect(game.isGameOver()).toBe(true)
+    })
+
+    it('初期位置が空いている場合はゲームオーバーにならないこと', () => {
+      const game = new Game()
+
+      // 初期状態では初期位置が空いているのでゲームオーバーではない
+      expect(game.isGameOver()).toBe(false)
+    })
+
+    it('ゲームオーバー状態では新しいぷよペアが生成されないこと', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 初期位置をブロック
+      field[0][2] = 1
+      field[1][2] = 2
+
+      // 新しいぷよペアを生成しようとする
+      ;(game as any).generateNewPuyoPair()
+
+      // ゲームオーバー状態で現在のぷよペアがnullになることを確認
+      expect(game.isGameOver()).toBe(true)
+      expect(game.getCurrentPuyoPair()).toBeNull()
+    })
+
+    it('ゲームオーバー状態では操作が無効になること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // ゲームオーバー状態にする
+      field[0][2] = 1
+      field[1][2] = 2
+      ;(game as any).generateNewPuyoPair()
+
+      // ゲームオーバー状態で操作を試行
+      game.handleInput('ArrowLeft')
+      game.handleInput('ArrowRight')
+      game.handleInput('ArrowUp')
+
+      // 操作が無効で状態が変わらないことを確認
+      expect(game.isGameOver()).toBe(true)
+      expect(game.getCurrentPuyoPair()).toBeNull()
+    })
+
+    it('ゲームを手動でゲームオーバー状態に設定できること', () => {
+      const game = new Game()
+
+      // 手動でゲームオーバー状態に設定
+      ;(game as any).setGameOver(true)
+
+      expect(game.isGameOver()).toBe(true)
+    })
+  })
+
+  describe('ゲームオーバー演出機能', () => {
+    it('ゲームオーバー演出コールバックを設定できること', () => {
+      const game = new Game()
+      let callbackCalled = false
+
+      // コールバック関数を設定
+      ;(game as any).setGameOverCallback(() => {
+        callbackCalled = true
+      })
+
+      // ゲームオーバー状態にする
+      const field = game.getField()
+      field[0][2] = 1
+      field[1][2] = 2
+
+      // 新しいぷよペアを生成しようとする（ゲームオーバーになる）
+      ;(game as any).generateNewPuyoPair()
+
+      // コールバックが呼ばれたことを確認
+      expect(callbackCalled).toBe(true)
+      expect(game.isGameOver()).toBe(true)
+    })
+
+    it('ゲームオーバーが発生しない場合は演出コールバックが呼ばれないこと', () => {
+      const game = new Game()
+      let callbackCalled = false
+
+      // コールバック関数を設定
+      ;(game as any).setGameOverCallback(() => {
+        callbackCalled = true
+      })
+
+      // 通常の新しいぷよペア生成（ゲームオーバーにならない）
+      ;(game as any).generateNewPuyoPair()
+
+      // コールバックが呼ばれていないことを確認
+      expect(callbackCalled).toBe(false)
+      expect(game.isGameOver()).toBe(false)
+    })
+
+    it('ゲームオーバー演出コールバックが複数回正しく動作すること', () => {
+      const game = new Game()
+      let callbackCount = 0
+
+      // コールバック関数を設定（呼ばれた回数をカウント）
+      ;(game as any).setGameOverCallback(() => {
+        callbackCount++
+      })
+
+      // 1回目のゲームオーバー
+      const field = game.getField()
+      field[0][2] = 1
+      field[1][2] = 2
+      ;(game as any).generateNewPuyoPair()
+
+      expect(callbackCount).toBe(1)
+      expect(game.isGameOver()).toBe(true)
+
+      // ゲーム状態をリセット
+      ;(game as any).setGameOver(false)
+      ;(game as any).currentPuyoPair = null
+
+      // 2回目のゲームオーバー（初期位置を再度ブロック）
+      field[0][2] = 3
+      field[1][2] = 4
+      ;(game as any).generateNewPuyoPair()
+
+      expect(callbackCount).toBe(2)
+      expect(game.isGameOver()).toBe(true)
+    })
+
+    it('ゲームオーバー時に最終スコアが正しく保持されること', () => {
+      const game = new Game()
+
+      // スコアを設定
+      ;(game as any).addScore(1500)
+      const finalScore = game.getScore()
+
+      // ゲームオーバー状態にする
+      const field = game.getField()
+      field[0][2] = 1
+      field[1][2] = 2
+      ;(game as any).generateNewPuyoPair()
+
+      // ゲームオーバー後もスコアが保持されていることを確認
+      expect(game.isGameOver()).toBe(true)
+      expect(game.getScore()).toBe(finalScore)
+    })
+  })
+
+  describe('リスタート機能', () => {
+    it('ゲームをリスタートできること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // ゲーム状態を変更する
+      field[11][0] = 1
+      field[10][2] = 2
+      ;(game as any).addScore(1500)
+      ;(game as any).chainCount = 3
+
+      // リスタート前の状態を確認
+      expect(game.getScore()).toBe(1500)
+      expect(game.getChainCount()).toBe(3)
+      expect(field[11][0]).toBe(1)
+      expect(field[10][2]).toBe(2)
+
+      // リスタートを実行
+      ;(game as any).restart()
+
+      // ゲーム状態がリセットされていることを確認
+      expect(game.isGameOver()).toBe(false)
+      expect(game.getScore()).toBe(0)
+      expect(game.getChainCount()).toBe(0)
+      expect(game.getCurrentPuyoPair()).not.toBeNull()
+
+      // フィールドがクリアされていることを確認
+      const newField = game.getField()
+      for (let y = 0; y < 12; y++) {
+        for (let x = 0; x < 6; x++) {
+          expect(newField[y][x]).toBe(0)
+        }
+      }
+    })
+
+    it('ゲームオーバー状態からリスタートできること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // ゲームオーバー状態にする
+      field[0][2] = 1
+      field[1][2] = 2
+      ;(game as any).addScore(2500)
+      ;(game as any).generateNewPuyoPair()
+
+      // ゲームオーバー状態であることを確認
+      expect(game.isGameOver()).toBe(true)
+      expect(game.getCurrentPuyoPair()).toBeNull()
+      expect(game.getScore()).toBe(2500)
+
+      // リスタートを実行
+      ;(game as any).restart()
+
+      // ゲーム状態がリセットされていることを確認
+      expect(game.isGameOver()).toBe(false)
+      expect(game.getScore()).toBe(0)
+      expect(game.getChainCount()).toBe(0)
+      expect(game.getCurrentPuyoPair()).not.toBeNull()
+
+      // フィールドがクリアされていることを確認
+      const newField = game.getField()
+      expect(newField[0][2]).toBe(0)
+      expect(newField[1][2]).toBe(0)
+    })
+
+    it('リスタート後に新しいぷよペアが正しい位置に生成されること', () => {
+      const game = new Game()
+
+      // リスタートを実行
+      ;(game as any).restart()
+
+      // 新しいぷよペアが初期位置に生成されていることを確認
+      const puyoPair = game.getCurrentPuyoPair()
+      expect(puyoPair).not.toBeNull()
+      expect(puyoPair!.axis.x).toBe(2)
+      expect(puyoPair!.axis.y).toBe(1)
+    })
+
+    it('リスタート時にタイマーがリセットされること', () => {
+      const game = new Game()
+
+      // 内部タイマーを変更（プライベートフィールドへのアクセス）
+      ;(game as any).dropTimer = 500
+      ;(game as any).fastDropTimer = 25
+
+      // リスタートを実行
+      ;(game as any).restart()
+
+      // タイマーがリセットされていることを確認
+      expect((game as any).dropTimer).toBe(0)
+      expect((game as any).fastDropTimer).toBe(0)
+    })
+
+    it('リスタート時にキー状態がリセットされること', () => {
+      const game = new Game()
+
+      // キー状態を変更
+      ;(game as any).keysPressed.add('ArrowDown')
+      ;(game as any).keysPressed.add('ArrowLeft')
+
+      // リスタート前はキーが押されている状態
+      expect((game as any).keysPressed.has('ArrowDown')).toBe(true)
+      expect((game as any).keysPressed.has('ArrowLeft')).toBe(true)
+
+      // リスタートを実行
+      ;(game as any).restart()
+
+      // キー状態がリセットされていることを確認
+      expect((game as any).keysPressed.size).toBe(0)
+    })
+  })
+
+  describe('リセットボタン機能', () => {
+    it('ゲームプレイ中にいつでもリセットできること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // ゲーム中の状態を作成
+      field[11][0] = 1
+      field[11][1] = 2
+      field[10][3] = 3
+      ;(game as any).addScore(800)
+      ;(game as any).chainCount = 2
+      ;(game as any).dropTimer = 750
+
+      // リセット前の状態を確認
+      expect(game.getScore()).toBe(800)
+      expect(game.getChainCount()).toBe(2)
+      expect(field[11][0]).toBe(1)
+      expect(field[11][1]).toBe(2)
+      expect(field[10][3]).toBe(3)
+      expect((game as any).dropTimer).toBe(750)
+
+      // リセットを実行（restart()と同じ機能）
+      ;(game as any).restart()
+
+      // ゲーム状態が完全にリセットされていることを確認
+      expect(game.isGameOver()).toBe(false)
+      expect(game.getScore()).toBe(0)
+      expect(game.getChainCount()).toBe(0)
+      expect((game as any).dropTimer).toBe(0)
+      expect(game.getCurrentPuyoPair()).not.toBeNull()
+
+      // フィールドがクリアされていることを確認
+      const newField = game.getField()
+      for (let y = 0; y < 12; y++) {
+        for (let x = 0; x < 6; x++) {
+          expect(newField[y][x]).toBe(0)
+        }
+      }
+    })
+
+    it('高得点ゲーム中でもリセットできること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 高得点状態を作成
+      ;(game as any).addScore(15000)
+      ;(game as any).chainCount = 5
+      // フィールドにぷよを配置
+      for (let x = 0; x < 6; x++) {
+        for (let y = 8; y < 12; y++) {
+          field[y][x] = (x % 4) + 1
+        }
+      }
+
+      // リセット前の状態を確認
+      expect(game.getScore()).toBe(15000)
+      expect(game.getChainCount()).toBe(5)
+
+      // リセットを実行
+      ;(game as any).restart()
+
+      // すべてがリセットされていることを確認
+      expect(game.getScore()).toBe(0)
+      expect(game.getChainCount()).toBe(0)
+      expect(game.isGameOver()).toBe(false)
+
+      // フィールドがクリアされていることを確認
+      const newField = game.getField()
+      for (let y = 0; y < 12; y++) {
+        for (let x = 0; x < 6; x++) {
+          expect(newField[y][x]).toBe(0)
+        }
+      }
+    })
+
+    it('連続でリセットしても正常に動作すること', () => {
+      const game = new Game()
+
+      // 1回目のリセット
+      ;(game as any).addScore(500)
+      ;(game as any).restart()
+      expect(game.getScore()).toBe(0)
+      expect(game.getCurrentPuyoPair()).not.toBeNull()
+
+      // 2回目のリセット
+      ;(game as any).addScore(1000)
+      ;(game as any).restart()
+      expect(game.getScore()).toBe(0)
+      expect(game.getCurrentPuyoPair()).not.toBeNull()
+
+      // 3回目のリセット
+      ;(game as any).addScore(250)
+      ;(game as any).restart()
+      expect(game.getScore()).toBe(0)
+      expect(game.getCurrentPuyoPair()).not.toBeNull()
+      expect(game.isGameOver()).toBe(false)
+    })
+  })
+
+  describe('重力処理の検証テスト', () => {
+    it('ぷよが重なったときに下に空間があれば落下すること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 重なった状態を作成：下に空間がある状態でぷよを配置
+      field[8][2] = 1 // 赤ぷよ（浮いている状態）
+      field[9][2] = 2 // 青ぷよ（浮いている状態）
+      field[11][2] = 3 // 緑ぷよ（底にある）
+
+      // 重力処理を実行
+      game.applyGravity()
+
+      // 重力処理後の期待される結果を確認
+      // 元の配置: [8][2]=1(赤), [9][2]=2(青), [10][2]=0(空), [11][2]=3(緑)
+      // 落下後: [8][2]=0, [9][2]=0, [10][2]=1(赤), [11][2]=3(緑)
+      // ただし、[9][2]=2(青)も[10][2]に落下するので、実際は青が[10][2]、赤が[9][2]になる
+      expect(field[8][2]).toBe(0) // 元の位置は空になる
+      expect(field[9][2]).toBe(1) // 赤ぷよが落下してここに
+      expect(field[10][2]).toBe(2) // 青ぷよが落下してここに
+      expect(field[11][2]).toBe(3) // 緑ぷよは元の位置（底）
+    })
+
+    it('複数列で同時に重力処理が正しく動作すること', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 複数列にわたって浮いているぷよを配置
+      field[8][1] = 1 // 列1: 赤ぷよ（浮いている）
+      field[9][1] = 2 // 列1: 青ぷよ（浮いている）
+      field[11][1] = 3 // 列1: 緑ぷよ（底）
+
+      field[7][3] = 4 // 列3: 黄ぷよ（浮いている）
+      field[10][3] = 1 // 列3: 赤ぷよ（浮いている）
+
+      // 重力処理を実行
+      game.applyGravity()
+
+      // 列1の結果確認
+      // 元の配置: [8][1]=1(赤), [9][1]=2(青), [10][1]=0(空), [11][1]=3(緑)
+      // 重力処理は底から上にスキャンして詰める：緑(3)は11に残り、青(2)は10に、赤(1)は9に詰まる
+      expect(field[8][1]).toBe(0) // 空
+      expect(field[9][1]).toBe(1) // 赤ぷよが落下してここに
+      expect(field[10][1]).toBe(2) // 青ぷよが落下してここに
+      expect(field[11][1]).toBe(3) // 緑ぷよは底に残る
+
+      // 列3の結果確認
+      // 元の配置: [7][3]=4(黄), [8][3]=0, [9][3]=0, [10][3]=1(赤), [11][3]=0
+      // 重力処理は底から上にスキャンして詰める：赤(1)が11に、黄(4)が10に詰まる
+      expect(field[7][3]).toBe(0) // 空
+      expect(field[8][3]).toBe(0) // 空
+      expect(field[9][3]).toBe(0) // 空
+      expect(field[10][3]).toBe(4) // 黄ぷよが落下してここに
+      expect(field[11][3]).toBe(1) // 赤ぷよが底に落下
+    })
+
+    it('段階的な落下が正しく動作することを確認', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // 階段状にぷよを配置
+      field[8][0] = 1 // 高い位置
+      field[10][0] = 2 // 中間位置
+      // 底は空
+
+      // 重力処理実行
+      game.applyGravity()
+
+      // 結果確認：全て底に詰まっているはず
+      // 元の配置: [8][0]=1(赤), [9][0]=0, [10][0]=2(青), [11][0]=0
+      // 落下後: 赤と青が底に詰まる（青が先に書き込まれるので底、赤が上）
+      expect(field[8][0]).toBe(0) // 元の位置は空
+      expect(field[9][0]).toBe(0) // 空
+      expect(field[10][0]).toBe(1) // 赤ぷよが上に積まれる
+      expect(field[11][0]).toBe(2) // 青ぷよが底
+    })
+  })
+
+  describe('実際のゲームプレイシナリオでの重力処理テスト', () => {
+    it('縦配置ぷよの上に横配置ぷよを重ねた場合の落下処理', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // シナリオ1: 最初に縦に配置されたぷよペア（軸が下、衛星が上）
+      field[10][2] = 1 // 軸ぷよ（赤）
+      field[9][2] = 2 // 衛星ぷよ（青）
+
+      // シナリオ2: 次に横向きに配置されたぷよペア（隣接配置）
+      field[8][2] = 3 // 軸ぷよ（緑）
+      field[8][3] = 4 // 衛星ぷよ（黄）- 横に配置
+
+      console.log('ゲームプレイシナリオの重力処理前:')
+      for (let y = 7; y < 12; y++) {
+        console.log(`Row ${y}: [${field[y].join(', ')}]`)
+      }
+
+      // 重力処理を実行
+      game.applyGravity()
+
+      console.log('ゲームプレイシナリオの重力処理後:')
+      for (let y = 7; y < 12; y++) {
+        console.log(`Row ${y}: [${field[y].join(', ')}]`)
+      }
+
+      // 期待される結果を確認
+      // 列2: すべてのぷよが下に詰まる
+      expect(field[8][2]).toBe(0) // 空
+      expect(field[9][2]).toBe(3) // 緑ぷよが落下
+      expect(field[10][2]).toBe(2) // 青ぷよ（元の位置）
+      expect(field[11][2]).toBe(1) // 赤ぷよ（底）
+
+      // 列3: 黄(4)が底に落下
+      expect(field[8][3]).toBe(0) // 元の位置は空
+      expect(field[11][3]).toBe(4) // 黄ぷよが底に落下
+    })
+
+    it('複雑な配置パターンでの重力処理（空間あり）', () => {
+      const game = new Game()
+      const field = game.getField()
+
+      // より複雑な配置を作成
+      field[8][1] = 1 // 浮いているぷよ
+      field[10][1] = 2 // 下に空間があるぷよ
+      field[11][1] = 3 // 底のぷよ
+
+      field[7][2] = 4 // 高い位置のぷよ
+      field[9][2] = 5 // 中間の浮いているぷよ
+      // [8][2], [10][2], [11][2] は空
+
+      // 重力処理実行
+      game.applyGravity()
+
+      // 列1の結果確認
+      expect(field[8][1]).toBe(0) // 空
+      expect(field[9][1]).toBe(1) // 1が落下
+      expect(field[10][1]).toBe(2) // 2が落下
+      expect(field[11][1]).toBe(3) // 3は底に残る
+
+      // 列2の結果確認
+      expect(field[7][2]).toBe(0) // 空
+      expect(field[8][2]).toBe(0) // 空
+      expect(field[9][2]).toBe(0) // 空
+      expect(field[10][2]).toBe(4) // 4が落下
+      expect(field[11][2]).toBe(5) // 5が底に落下
+    })
+
+    it('ゲーム中の実際の配置シミュレーション', () => {
+      const game = new Game()
+
+      // 最初のぷよペアを配置（縦配置）
+      let puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.axis.x = 2
+      puyoPair.axis.y = 10
+      puyoPair.satellite.x = 2
+      puyoPair.satellite.y = 9
+      puyoPair.axis.color = 1
+      puyoPair.satellite.color = 2
+
+      // 着地処理をシミュレート
+      ;(game as any).fixPuyoPair()
+      ;(game as any).generateNewPuyoPair()
+
+      // 2番目のぷよペアを配置（横配置）
+      puyoPair = game.getCurrentPuyoPair()!
+      puyoPair.rotation = 1 // 右向き（横配置）
+      puyoPair.axis.x = 2
+      puyoPair.axis.y = 8
+      puyoPair.updateSatellitePosition() // 横配置の位置を更新
+      puyoPair.axis.color = 3
+      puyoPair.satellite.color = 4
+
+      const field = game.getField()
+
+      console.log('ゲーム中シミュレーション前:')
+      for (let y = 7; y < 12; y++) {
+        console.log(`Row ${y}: [${field[y].join(', ')}]`)
+      }
+
+      // 2番目のぷよペアを固定
+      ;(game as any).fixPuyoPair()
+
+      // 重力処理を実行
+      game.applyGravity()
+
+      console.log('ゲーム中シミュレーション後:')
+      for (let y = 7; y < 12; y++) {
+        console.log(`Row ${y}: [${field[y].join(', ')}]`)
+      }
+
+      // 結果を確認
+      expect(field[8][2]).toBe(0) // 空
+      expect(field[9][2]).toBe(3) // 軸ぷよ（緑）が落下
+      expect(field[10][2]).toBe(2) // 衛星ぷよ（青）
+      expect(field[11][2]).toBe(1) // 軸ぷよ（赤）（底）
+      expect(field[11][3]).toBe(4) // 衛星ぷよ（黄）が底に落下
+    })
+  })
 })

@@ -213,6 +213,92 @@ button:focus-visible {
   }
 }
 
+/* ゲームオーバー演出 */
+.gameover-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.gameover-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gameover-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gameover-message {
+  text-align: center;
+  color: white;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  padding: 3rem 4rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: gameoverSlideIn 0.8s ease-out;
+}
+
+.gameover-message h2 {
+  font-size: 3rem;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  color: #e74c3c;
+}
+
+.gameover-message p {
+  font-size: 1.5rem;
+  margin: 0 0 2rem 0;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.restart-btn {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.restart-btn:hover {
+  background: linear-gradient(135deg, #2980b9, #3498db);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.restart-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes gameoverSlideIn {
+  0% {
+    transform: translateY(-100px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -238,6 +324,11 @@ button:focus-visible {
 
   .zenkeshi-message {
     background: linear-gradient(135deg, #e74c3c, #f39c12);
+    color: white;
+  }
+
+  .gameover-message {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
     color: white;
   }
 }

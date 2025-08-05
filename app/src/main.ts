@@ -23,6 +23,13 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <p>+2000点</p>
       </div>
     </div>
+    <div id="gameover-overlay" class="gameover-overlay hidden">
+      <div class="gameover-message">
+        <h2>ゲームオーバー</h2>
+        <p>最終スコア: <span id="final-score">0</span>点</p>
+        <button id="restart-gameover-btn" class="restart-btn">リスタート</button>
+      </div>
+    </div>
     <div class="controls">
       <p>操作方法:</p>
       <p>←→: 移動, ↑: 回転, ↓: 高速落下</p>
@@ -37,10 +44,17 @@ const game = new Game()
 const scoreElement = document.querySelector<HTMLDivElement>('#score-value')!
 const chainElement = document.querySelector<HTMLDivElement>('#chain-value')!
 const zenkeshiOverlay = document.querySelector<HTMLDivElement>('#zenkeshi-overlay')!
+const gameoverOverlay = document.querySelector<HTMLDivElement>('#gameover-overlay')!
+const finalScoreElement = document.querySelector<HTMLElement>('#final-score')!
 
 // 全消し演出コールバックを設定
 game.setZenkeshiCallback(() => {
   showZenkeshiAnimation()
+})
+
+// ゲームオーバー演出コールバックを設定
+game.setGameOverCallback(() => {
+  showGameOverAnimation()
 })
 
 // セルサイズ（各マスの大きさ）
@@ -132,6 +146,21 @@ function hideZenkeshiAnimation() {
   zenkeshiOverlay.classList.add('hidden')
 }
 
+// ゲームオーバー演出を表示する関数
+function showGameOverAnimation() {
+  // 最終スコアを表示
+  finalScoreElement.textContent = game.getScore().toString()
+
+  gameoverOverlay.classList.remove('hidden')
+  gameoverOverlay.classList.add('show')
+}
+
+// ゲームオーバー演出を非表示にする関数
+function hideGameOverAnimation() {
+  gameoverOverlay.classList.remove('show')
+  gameoverOverlay.classList.add('hidden')
+}
+
 // ゲームを描画する関数
 function draw() {
   drawField()
@@ -180,6 +209,15 @@ document.addEventListener('keyup', (event) => {
 
 // リスタートボタンの処理
 document.querySelector<HTMLButtonElement>('#restart-btn')!.addEventListener('click', () => {
-  // ここでゲームのリスタート処理を実装
-  console.log('Restart game')
+  ;(game as any).restart()
+  console.log('Game restarted')
 })
+
+// ゲームオーバー画面のリスタートボタンの処理
+document
+  .querySelector<HTMLButtonElement>('#restart-gameover-btn')!
+  .addEventListener('click', () => {
+    hideGameOverAnimation()
+    ;(game as any).restart()
+    console.log('Game restarted from game over screen')
+  })

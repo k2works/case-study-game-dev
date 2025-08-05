@@ -11,6 +11,7 @@ export class Game {
   private chainCount = 0 // 連鎖数
   private score = 0 // 現在のスコア
   private zenkeshiCallback: (() => void) | null = null // 全消し演出コールバック
+  private gameOverCallback: (() => void) | null = null // ゲームオーバー演出コールバック
 
   constructor() {
     // 6列x12行のフィールドを初期化
@@ -282,7 +283,37 @@ export class Game {
   }
 
   private generateNewPuyoPair(): void {
+    // ゲームオーバー判定：新しいぷよペアが初期位置に配置できるかチェック
+    if (!this.canPuyoPairSpawn(2, 1)) {
+      this.gameOver = true
+      this.currentPuyoPair = null
+      // ゲームオーバー演出をトリガー
+      if (this.gameOverCallback) {
+        this.gameOverCallback()
+      }
+      return
+    }
+
     this.currentPuyoPair = new PuyoPair(2, 1) // 中央上部に生成（衛星が上に来る場合を考慮してy=1）
+  }
+
+  private canPuyoPairSpawn(axisX: number, axisY: number): boolean {
+    // 新しいぷよペアが生成される位置をチェック
+    const tempPair = new PuyoPair(axisX, axisY)
+    const positions = tempPair.getPositions()
+
+    // 軸と衛星の両方が配置可能かチェック
+    for (const pos of positions) {
+      if (!this.canMoveTo(pos.x, pos.y)) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  public setGameOver(gameOver: boolean): void {
+    this.gameOver = gameOver
   }
 
   public findConnectedPuyos(x: number, y: number, color: number): Array<{ x: number; y: number }> {
@@ -540,6 +571,31 @@ export class Game {
 
   public setZenkeshiCallback(callback: () => void): void {
     this.zenkeshiCallback = callback
+  }
+
+  public setGameOverCallback(callback: () => void): void {
+    this.gameOverCallback = callback
+  }
+
+  public restart(): void {
+    // フィールドをクリア
+    this.field = Array.from({ length: 12 }, () => Array(6).fill(0))
+
+    // ゲーム状態をリセット
+    this.gameOver = false
+    this.score = 0
+    this.chainCount = 0
+    this.puyoLanded = false
+
+    // タイマーをリセット
+    this.dropTimer = 0
+    this.fastDropTimer = 0
+
+    // キー状態をリセット
+    this.keysPressed.clear()
+
+    // 新しいぷよペアを生成
+    this.generateNewPuyoPair()
   }
 }
 
