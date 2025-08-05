@@ -86,7 +86,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+    <a href="../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -193,7 +193,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../index.html" class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -212,13 +212,32 @@
   
   
     <li class="md-tabs__item">
-      <a href="../index.html" class="md-tabs__link">
+      <a href="../" class="md-tabs__link">
         
   
   
     
   
   Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
 
       </a>
     </li>
@@ -249,7 +268,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+    <a href="../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -279,7 +298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../index.html" class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -301,12 +320,34 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.html" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
     
   </span>
   
@@ -340,7 +381,7 @@
 <p>このディレクトリには、ぷよぷよゲーム開発プロジェクトで行われた技術的意思決定の記録（Architecture Decision Records）が含まれています。</p>
 <p>ADRは、プロジェクトの重要な技術選択の背景、理由、影響を体系的に記録し、将来の開発チームが決定の経緯を理解できるようにするためのドキュメントです。</p>
 <h2 id="adr">ADR一覧<a class="headerlink" href="#adr" title="Permanent link">&para;</a></h2>
-<h3 id="adr-0001-typescript"><a href="0001-adopt-typescript.html">ADR-0001: TypeScriptの採用</a><a class="headerlink" href="#adr-0001-typescript" title="Permanent link">&para;</a></h3>
+<h3 id="adr-0001-typescript"><a href="0001-adopt-typescript/">ADR-0001: TypeScriptの採用</a><a class="headerlink" href="#adr-0001-typescript" title="Permanent link">&para;</a></h3>
 <p><strong>決定</strong>: ぷよぷよゲーム開発でTypeScriptを主要プログラミング言語として採用する</p>
 <p><strong>背景</strong>: 高品質なコード、保守性、開発効率、チーム開発への対応が必要</p>
 <p><strong>主な理由</strong>:
@@ -350,7 +391,7 @@
 - テスト駆動開発との親和性</p>
 <p><strong>日付</strong>: 2025-07-31</p>
 <hr />
-<h3 id="adr-0002-vitest"><a href="0002-adopt-vitest.html">ADR-0002: Vitestの採用</a><a class="headerlink" href="#adr-0002-vitest" title="Permanent link">&para;</a></h3>
+<h3 id="adr-0002-vitest"><a href="0002-adopt-vitest/">ADR-0002: Vitestの採用</a><a class="headerlink" href="#adr-0002-vitest" title="Permanent link">&para;</a></h3>
 <p><strong>決定</strong>: テスト駆動開発のためのテストフレームワークとしてVitestを採用する</p>
 <p><strong>背景</strong>: TDD実践のための高速で効率的なテストフレームワークが必要</p>
 <p><strong>主な理由</strong>:
@@ -360,7 +401,7 @@
 - 豊富な内蔵機能（アサーション、モック、カバレッジ）</p>
 <p><strong>日付</strong>: 2025-07-31</p>
 <hr />
-<h3 id="adr-0003-ddd"><a href="0003-adopt-ddd-architecture.html">ADR-0003: DDDアーキテクチャの採用</a><a class="headerlink" href="#adr-0003-ddd" title="Permanent link">&para;</a></h3>
+<h3 id="adr-0003-ddd"><a href="0003-adopt-ddd-architecture/">ADR-0003: DDDアーキテクチャの採用</a><a class="headerlink" href="#adr-0003-ddd" title="Permanent link">&para;</a></h3>
 <p><strong>決定</strong>: ドメイン駆動設計（DDD）に基づく3層アーキテクチャを採用する</p>
 <p><strong>背景</strong>: 複雑なゲームルールの実装と段階的開発に対応するアーキテクチャが必要</p>
 <p><strong>主な理由</strong>:
@@ -376,7 +417,7 @@
 </code></pre></div></p>
 <p><strong>日付</strong>: 2025-07-31</p>
 <hr />
-<h3 id="adr-0004-canvas-api"><a href="0004-adopt-canvas-api.html">ADR-0004: Canvas APIの採用</a><a class="headerlink" href="#adr-0004-canvas-api" title="Permanent link">&para;</a></h3>
+<h3 id="adr-0004-canvas-api"><a href="0004-adopt-canvas-api/">ADR-0004: Canvas APIの採用</a><a class="headerlink" href="#adr-0004-canvas-api" title="Permanent link">&para;</a></h3>
 <p><strong>決定</strong>: ゲーム描画技術としてHTML5 Canvas APIを採用する</p>
 <p><strong>背景</strong>: リアルタイムなゲーム描画を実現するための技術選択が必要</p>
 <p><strong>主な理由</strong>:
@@ -387,7 +428,7 @@
 <p><strong>比較対象</strong>: DOM+CSS、SVG、WebGL</p>
 <p><strong>日付</strong>: 2025-07-31</p>
 <hr />
-<h3 id="adr-0005-vercel"><a href="0005-adopt-vercel-deployment.html">ADR-0005: Vercelデプロイの採用</a><a class="headerlink" href="#adr-0005-vercel" title="Permanent link">&para;</a></h3>
+<h3 id="adr-0005-vercel"><a href="0005-adopt-vercel-deployment/">ADR-0005: Vercelデプロイの採用</a><a class="headerlink" href="#adr-0005-vercel" title="Permanent link">&para;</a></h3>
 <p><strong>決定</strong>: 本番環境デプロイ基盤としてVercelを採用する</p>
 <p><strong>背景</strong>: 学習プロジェクトに適した効率的なデプロイ環境が必要</p>
 <p><strong>主な理由</strong>:
@@ -442,10 +483,10 @@
 </ul>
 <h2 id="_5">関連ドキュメント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../development/%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3.html">アーキテクチャ</a> - システム全体の構造</li>
-<li><a href="../development/%E8%A8%AD%E8%A8%88.html">設計</a> - 設計方針と実装パターン</li>
-<li><a href="../development/%E5%AE%9F%E8%A3%85.html">実装</a> - 具体的な実装方法</li>
-<li><a href="../requirements/%E8%A6%81%E4%BB%B6%E5%AE%9A%E7%BE%A9.html">要件定義</a> - プロジェクトの要件</li>
+<li><a href="../development/%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/">アーキテクチャ</a> - システム全体の構造</li>
+<li><a href="../development/%E8%A8%AD%E8%A8%88/">設計</a> - 設計方針と実装パターン</li>
+<li><a href="../development/%E5%AE%9F%E8%A3%85/">実装</a> - 具体的な実装方法</li>
+<li><a href="../requirements/%E8%A6%81%E4%BB%B6%E5%AE%9A%E7%BE%A9/">要件定義</a> - プロジェクトの要件</li>
 </ul>
 <h2 id="_6">統計情報<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">決定実績<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>

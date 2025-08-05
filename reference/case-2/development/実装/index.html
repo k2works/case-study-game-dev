@@ -1,0 +1,1227 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>実装 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              実装
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>このドキュメントは、ぷよぷよゲームの実装詳細について説明します。テスト駆動開発（TDD）のRed-Green-Refactorサイクルに従い、8つのイテレーションを通じて段階的に機能を実装しました。</p>
+<h2 id="_3">実装アプローチ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="tdd">テスト駆動開発（TDD）サイクル<a class="headerlink" href="#tdd" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IlNUQVRFIiBoZWlnaHQ9IjUxN3B4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6MzYxcHg7aGVpZ2h0OjUxN3B4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDM2MSA1MTciIHdpZHRoPSIzNjFweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxnIGlkPSJSRUQiPjxyZWN0IGZpbGw9IiNGMDgwODAiIGhlaWdodD0iNTAiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjUwIiB4PSIxNDIuMzUiIHk9IjEwOCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNDIuMzUiIHgyPSIxOTIuMzUiIHkxPSIxMzQuMjk2OSIgeTI9IjEzNC4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjcuMjI3NSIgeD0iMTUzLjczNjIiIHk9IjEyNS45OTUxIj5SZWQ8L3RleHQ+PC9nPjxnIGlkPSJHUkVFTiI+PHJlY3QgZmlsbD0iIzkwRUU5MCIgaGVpZ2h0PSI1MCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNjIuNzA0MSIgeD0iMTIiIHk9IjIzNSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMiIgeDI9Ijc0LjcwNDEiIHkxPSIyNjEuMjk2OSIgeTI9IjI2MS4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDIuNzA0MSIgeD0iMjIiIHk9IjI1Mi45OTUxIj5HcmVlbjwvdGV4dD48L2c+PGcgaWQ9IlJFRkFDVE9SIj48cmVjdCBmaWxsPSIjQUREOEU2IiBoZWlnaHQ9IjUwIiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI3OS4zNTY0IiB4PSIxMjcuNjciIHk9IjM2MiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjcuNjciIHgyPSIyMDcuMDI2NCIgeTE9IjM4OC4yOTY5IiB5Mj0iMzg4LjI5NjkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1OS4zNTY0IiB4PSIxMzcuNjciIHk9IjM3OS45OTUxIj5SZWZhY3RvcjwvdGV4dD48L2c+PGVsbGlwc2UgY3g9IjE2Ny4zNSIgY3k9IjIxIiBmaWxsPSIjRkZGRkZGIiByeD0iMTAiIHJ5PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxlbGxpcHNlIGN4PSIxNjcuMzUiIGN5PSI1MDAiIGZpbGw9Im5vbmUiIHJ4PSIxMSIgcnk9IjExIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGVsbGlwc2UgY3g9IjE2Ny4zNSIgY3k9IjUwMCIgZmlsbD0iI0ZGRkZGRiIgcng9IjYiIHJ5PSI2IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdNTjIiIGRhdGEtc291cmNlLWxpbmU9IjEzIiBkYXRhLXVpZD0iZW50MDAwMyIgaWQ9ImVudGl0eV9HTU4yIj48cGF0aCBkPSJNMjI3Ljg1LDExMi44NyBMMjI3Ljg1LDEyOSBMMTkyLjgyLDEzMyBMMjI3Ljg1LDEzNyBMMjI3Ljg1LDE1My4xMzU2IEEwLDAgMCAwIDAgMjI3Ljg1LDE1My4xMzU2IEwzNTIuODUwMSwxNTMuMTM1NiBBMCwwIDAgMCAwIDM1Mi44NTAxLDE1My4xMzU2IEwzNTIuODUwMSwxMjIuODcgTDM0Mi44NTAxLDExMi44NyBMMjI3Ljg1LDExMi44NyBBMCwwIDAgMCAwIDIyNy44NSwxMTIuODciIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48cGF0aCBkPSJNMzQyLjg1MDEsMTEyLjg3IEwzNDIuODUwMSwxMjIuODcgTDM1Mi44NTAxLDEyMi44NyBMMzQyLjg1MDEsMTEyLjg3IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA0LjAwMDEiIHg9IjIzMy44NSIgeT0iMTI5LjkzNjkiPiYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyYjMTI1MDE7JiMxMjQ0OTsmIzEyNTQwOyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNzguMDAwMSIgeD0iMjMzLjg1IiB5PSIxNDUuMDY5NyI+JiMyMDE4MTsmIzI3MDk2OyYjMTIzOTg7JiMyNjEyNjsmIzMwOTA2OyYjMjEyNzA7PC90ZXh0PjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iR01ONSIgZGF0YS1zb3VyY2UtbGluZT0iMTQiIGRhdGEtdWlkPSJlbnQwMDA2IiBpZD0iZW50aXR5X0dNTjUiPjxwYXRoIGQ9Ik0xMDkuMzUsMjM5Ljg3IEwxMDkuMzUsMjU2IEw3NC44MSwyNjAgTDEwOS4zNSwyNjQgTDEwOS4zNSwyODAuMTM1NiBBMCwwIDAgMCAwIDEwOS4zNSwyODAuMTM1NiBMMjIxLjM1MDEsMjgwLjEzNTYgQTAsMCAwIDAgMCAyMjEuMzUwMSwyODAuMTM1NiBMMjIxLjM1MDEsMjQ5Ljg3IEwyMTEuMzUwMSwyMzkuODcgTDEwOS4zNSwyMzkuODcgQTAsMCAwIDAgMCAxMDkuMzUsMjM5Ljg3IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTIxMS4zNTAxLDIzOS44NyBMMjExLjM1MDEsMjQ5Ljg3IEwyMjEuMzUwMSwyNDkuODcgTDIxMS4zNTAxLDIzOS44NyIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjkxLjAwMDEiIHg9IjExNS4zNSIgeT0iMjU2LjkzNjkiPiYjMjEyMDU7JiMyMDMxNjsmIzEyMzc3OyYjMTI0Mjc7JiMxMjQ2NzsmIzEyNTQwOyYjMTI0ODk7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjkxLjAwMDEiIHg9IjExNS4zNSIgeT0iMjcyLjA2OTciPiYjMjYzNjg7JiMzMDcwMTsmIzM2MzE3OyYjMzg2MjY7JiMxMjM5ODsmIzIzNDU1OyYjMzUwMTM7PC90ZXh0PjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iR01OOCIgZGF0YS1zb3VyY2UtbGluZT0iMTUiIGRhdGEtdWlkPSJlbnQwMDA5IiBpZD0iZW50aXR5X0dNTjgiPjxwYXRoIGQ9Ik0yNDIuMzUsMzY2Ljg3IEwyNDIuMzUsMzgzIEwyMDcuNTIsMzg3IEwyNDIuMzUsMzkxIEwyNDIuMzUsNDA3LjEzNTYgQTAsMCAwIDAgMCAyNDIuMzUsNDA3LjEzNTYgTDM1NC4zNTAxLDQwNy4xMzU2IEEwLDAgMCAwIDAgMzU0LjM1MDEsNDA3LjEzNTYgTDM1NC4zNTAxLDM3Ni44NyBMMzQ0LjM1MDEsMzY2Ljg3IEwyNDIuMzUsMzY2Ljg3IEEwLDAgMCAwIDAgMjQyLjM1LDM2Ni44NyIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwYXRoIGQ9Ik0zNDQuMzUwMSwzNjYuODcgTDM0NC4zNTAxLDM3Ni44NyBMMzU0LjM1MDEsMzc2Ljg3IEwzNDQuMzUwMSwzNjYuODciIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI5MS4wMDAxIiB4PSIyNDguMzUiIHk9IjM4My45MzY5Ij4mIzEyMzY1OyYjMTI0Mjg7JiMxMjM1NjsmIzEyMzk0OyYjMTI0Njc7JiMxMjU0MDsmIzEyNDg5OzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS4wMDAxIiB4PSIyNDguMzUiIHk9IjM5OS4wNjk3Ij4mIzM1MzczOyYjMzUzMzY7JiMxMjM5ODsmIzI1OTEzOyYjMjE4OTI7PC90ZXh0PjwvZz48IS0tbGluayAqc3RhcnQqIHRvIFJFRC0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSIuc3RhcnQuIiBkYXRhLWVudGl0eS0yPSJSRUQiIGRhdGEtc291cmNlLWxpbmU9IjciIGRhdGEtdWlkPSJsbmszIiBpZD0ibGlua18uc3RhcnQuX1JFRCI+PHBhdGggZD0iTTE2Ny4zNSwzMS4zOCBDMTY3LjM1LDQ4LjExIDE2Ny4zNSw3Ny41OSAxNjcuMzUsMTAxLjYzIiBmaWxsPSJub25lIiBpZD0iKnN0YXJ0Ki10by1SRUQiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjE2Ny4zNSwxMDcuNjMsMTcxLjM1LDk4LjYzLDE2Ny4zNSwxMDIuNjMsMTYzLjM1LDk4LjYzLDE2Ny4zNSwxMDcuNjMiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzAuMDAwMiIgeD0iMTY4LjM1IiB5PSI3NC4wNjY5Ij4mIzIyODMzOyYjMjU5NDM7JiMxMjM3NzsmIzEyNDI3OyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyYjMTI0MzQ7JiMyNjM2MDsmIzEyMzY3OzwvdGV4dD48L2c+PCEtLWxpbmsgUkVEIHRvIEdSRUVOLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9IlJFRCIgZGF0YS1lbnRpdHktMj0iR1JFRU4iIGRhdGEtc291cmNlLWxpbmU9IjgiIGRhdGEtdWlkPSJsbms0IiBpZD0ibGlua19SRURfR1JFRU4iPjxwYXRoIGQ9Ik0xNDMuMTUsMTU4LjQgQzEyMS4zLDE4MC40MiA5My41NDYyLDIwOC40MDA5IDcxLjcxNjIsMjMwLjQwMDkiIGZpbGw9Im5vbmUiIGlkPSJSRUQtdG8tR1JFRU4iIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjY3LjQ5LDIzNC42Niw3Ni42Njg2LDIzMS4wODg4LDcxLjAxMTgsMjMxLjExMDgsNzAuOTg5OSwyMjUuNDU0LDY3LjQ5LDIzNC42NiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijc4LjAwMDEiIHg9IjExMy43OCIgeT0iMjAxLjA2NjkiPiYjMjYzNjg7JiMyMzU2NzsmIzM4NDgwOyYjMTIzOTg7JiMyMzQ1NTsmIzM1MDEzOzwvdGV4dD48L2c+PCEtLWxpbmsgR1JFRU4gdG8gUkVGQUNUT1ItLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0iR1JFRU4iIGRhdGEtZW50aXR5LTI9IlJFRkFDVE9SIiBkYXRhLXNvdXJjZS1saW5lPSI5IiBkYXRhLXVpZD0ibG5rNSIgaWQ9ImxpbmtfR1JFRU5fUkVGQUNUT1IiPjxwYXRoIGQ9Ik02Ny41NSwyODUuNCBDODkuNCwzMDcuNDIgMTE3LjE1MzgsMzM1LjQwMDkgMTM4Ljk4MzgsMzU3LjQwMDkiIGZpbGw9Im5vbmUiIGlkPSJHUkVFTi10by1SRUZBQ1RPUiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iMTQzLjIxLDM2MS42NiwxMzkuNzEwMSwzNTIuNDU0LDEzOS42ODgyLDM1OC4xMTA4LDEzNC4wMzE0LDM1OC4wODg4LDE0My4yMSwzNjEuNjYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3OC4wMDAxIiB4PSIxMTMuNzgiIHk9IjMyOC4wNjY5Ij4mIzEyNDY3OyYjMTI1NDA7JiMxMjQ4OTsmIzEyNDM0OyYjMjU5MTM7JiMyMTg5Mjs8L3RleHQ+PC9nPjwhLS1saW5rIFJFRkFDVE9SIHRvIFJFRC0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJSRUZBQ1RPUiIgZGF0YS1lbnRpdHktMj0iUkVEIiBkYXRhLXNvdXJjZS1saW5lPSIxMCIgZGF0YS11aWQ9ImxuazYiIGlkPSJsaW5rX1JFRkFDVE9SX1JFRCI+PHBhdGggZD0iTTE5MS4yMSwzNjEuODggQzIwOC4zLDM0Mi44IDIyOS45LDMxNC41MyAyMzkuMzUsMjg1IEMyNDYuMTIsMjYzLjgzIDI0Ni4xMiwyNTYuMTcgMjM5LjM1LDIzNSBDMjI5LjksMjA1LjQ3IDIxMi4zMDMyLDE4MS42NjkzIDE5NS4yMTMyLDE2Mi41ODkzIiBmaWxsPSJub25lIiBpZD0iUkVGQUNUT1ItdG8tUkVEIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSIxOTEuMjEsMTU4LjEyLDE5NC4yMzUyLDE2Ny40OTI3LDE5NC41NDYsMTYxLjg0NDQsMjAwLjE5NDMsMTYyLjE1NTIsMTkxLjIxLDE1OC4xMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjUyLjAwMDEiIHg9IjI0NS40MyIgeT0iMjY0LjU2NjkiPiYjMjc0MjU7JiMxMjM5ODsmIzI3MjMxOyYjMzMwMjE7PC90ZXh0PjwvZz48IS0tbGluayBSRUZBQ1RPUiB0byAqZW5kKi0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJSRUZBQ1RPUiIgZGF0YS1lbnRpdHktMj0iLmVuZC4iIGRhdGEtc291cmNlLWxpbmU9IjExIiBkYXRhLXVpZD0ibG5rOCIgaWQ9ImxpbmtfUkVGQUNUT1JfLmVuZC4iPjxwYXRoIGQ9Ik0xNjcuMzUsNDEyLjM2IEMxNjcuMzUsNDM2LjIzIDE2Ny4zNSw0NjUuNDYgMTY3LjM1LDQ4Mi43MSIgZmlsbD0ibm9uZSIgaWQ9IlJFRkFDVE9SLXRvLSplbmQqIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSIxNjcuMzUsNDg4LjcxLDE3MS4zNSw0NzkuNzEsMTY3LjM1LDQ4My43MSwxNjMuMzUsNDc5LjcxLDE2Ny4zNSw0ODguNzEiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTcuMDAwMSIgeD0iMTY4LjM1IiB5PSI0NTUuMDY2OSI+JiMxMjQ1MjsmIzEyNDg2OyYjMTI1MjQ7JiMxMjU0MDsmIzEyNDcxOyYjMTI1MTk7JiMxMjUzMTsmIzIzNDM2OyYjMjAxMDI7PC90ZXh0PjwvZz48IS0tU1JDPVtOUDNESmk5MDdDSmwtbkdodGFudTBHdWNIZjZSOWVxdHlMMW4tS1hnUXFnenNycWE2NTJDaUdXMUdxMElxMDNIUzQxR2RrUkZibDhNaWdMT3ZSV3hpeC1Qc0dxWklTdTlsYjNhYjhmR3NmMERXV0NJRUdqV0VPc2J5MXhVTDVBOWYxN0pUNWJQb0g2VDRES3JIQUhtLUMycDlDSWpKdVpCQ0tGSkZTcC1wa3hIZVVHUEp2TEJXajNucldhRTFoVlRaMTNjaEdfUlVXQXAwWkdGQjBqcTEybTd6QzZrVmU5UEhDOGFwQ2t5NEJQaExfb3pFQV9TV3pkZF9SaHBTZXNNcWZCZW5PS21xMDZtUnMwdDBsS3V1Z0tDLWJOelNCbFJNNzNpcnhoMzlsenJLTDlHTWc4SndtZU03RzloMG5sbVZjNHdwWUFhUWVremtqWTVqUlc3ejFTbTJzWjNWSVFFS05Od1BUZGppYVdodHlzUU9ydWVoRzVNMnRkVWNhdmd0ZVVpTGFKTG5WMVBsVVNDZC1WTGZoenpsT0VfdHhtNU1XMHAwLVJSN3VoSndKY1RkNlpYX2lhRl0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_4">イテレーション開発プロセス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkFDVElWSVRZIiBoZWlnaHQ9Ijg2MnB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6MjM3cHg7aGVpZ2h0Ojg2MnB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDIzNyA4NjIiIHdpZHRoPSIyMzdweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxlbGxpcHNlIGN4PSI5Ni4wMjc3IiBjeT0iMTUiIGZpbGw9IiNGRkZGRkYiIHJ4PSIxMCIgcnk9IjEwIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxMjguMDAwOCIgeD0iMzIuMDI3MyIgeT0iNDUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDguMDAwOCIgeD0iNDIuMDI3MyIgeT0iNjYuMTM4NyI+JiMxMjQ1MjsmIzEyNDg2OyYjMTI1MjQ7JiMxMjU0MDsmIzEyNDcxOyYjMTI1MTk7JiMxMjUzMTsmIzM1MzM2OyYjMzAwMTE7PC90ZXh0PjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTE1LjQ2MTQiIHg9IjM4LjI5NyIgeT0iOTguOTY4OCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk1LjQ2MTQiIHg9IjQ4LjI5NyIgeT0iMTIwLjEwNzQiPlRPRE8mIzEyNTIyOyYjMTI0NzM7JiMxMjQ4ODsmIzIwMzE2OyYjMjUxMDQ7PC90ZXh0PjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNzkuNDYxMSIgeD0iNTYuMjk3MSIgeT0iMTk2LjkzNzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1OS40NjExIiB4PSI2Ni4yOTcxIiB5PSIyMTguMDc2MiI+VE9ETyYjMzY5ODQ7JiMyNTI0Njs8L3RleHQ+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxNDAuNTE2MyIgeD0iMjUuNzY5NiIgeT0iMjk0LjkwNjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMjAuNTE2MyIgeD0iMzUuNzY5NiIgeT0iMzE2LjA0NDkiPiYjMjI4MzM7JiMyNTk0MzsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODsmIzIwMzE2OyYjMjUxMDQ7IChSZWQpPC90ZXh0PjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTE3Ljc4MTYiIHg9IjM3LjEzNjkiIHk9IjM0OC44NzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI5Ny43ODE2IiB4PSI0Ny4xMzY5IiB5PSIzNzAuMDEzNyI+JiMyNjM2ODsmIzIzNTY3OyYjMjM0NTU7JiMzNTAxMzsgKEdyZWVuKTwvdGV4dD48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE4MC4wNTU0IiB4PSI2IiB5PSI0MDIuODQzOCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE2MC4wNTU0IiB4PSIxNiIgeT0iNDIzLjk4MjQiPiYjMTI1MjI7JiMxMjUwMTsmIzEyNDQ5OyYjMTI0NjM7JiMxMjQ3OTsmIzEyNTIyOyYjMTI1MzE7JiMxMjQ2NDsgKFJlZmFjdG9yKTwvdGV4dD48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjkyLjAwMDUiIHg9IjUwLjAyNzQiIHk9IjQ2Ni43OTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNzIuMDAwNSIgeD0iNjAuMDI3NCIgeT0iNDg3LjkzNTUiPiYjMjE2OTc7JiMzNjA3NDsmIzEyNDgxOyYjMTI0NTU7JiMxMjQ4MzsmIzEyNDYzOzwvdGV4dD48cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9Ijc0LjE3MjgsNTIwLjc2NTYsMTE3Ljg4MjYsNTIwLjc2NTYsMTI5Ljg4MjYsNTMyLjc2NTYsMTE3Ljg4MjYsNTQ0Ljc2NTYsNzQuMTcyOCw1NDQuNzY1Niw2Mi4xNzI4LDUzMi43NjU2LDc0LjE3MjgsNTIwLjc2NTYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0My43MDk4IiB4PSI3NC4xNzI4IiB5PSI1MzYuNTczNyI+JiMyMTY5NzsmIzM2MDc0O09LPzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxOS4wMDgzIiB4PSI0My4xNjQ1IiB5PSI1MzAuMTcxNCI+eWVzPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzLjcwMTciIHg9IjEyOS44ODI2IiB5PSI1MzAuMTcxNCI+bm88L3RleHQ+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI2OC4wMDA0IiB4PSIxOC4xNzI2IiB5PSI1NTQuNzY1NiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjQ4LjAwMDQiIHg9IjI4LjE3MjYiIHk9IjU3NS45MDQzIj4mIzEyNDY3OyYjMTI1MTE7JiMxMjQ4MzsmIzEyNDg4OzwvdGV4dD48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQ0LjAwMDIiIHg9IjExNy44ODI1IiB5PSI1NTQuNzY1NiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI0LjAwMDIiIHg9IjEyNy44ODI1IiB5PSI1NzUuOTA0MyI+JiMyMDQ2MjsmIzI3NDkxOzwvdGV4dD48cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9Ijk2LjAyNzcsNTk0LjczNDQsMTA4LjAyNzcsNjA2LjczNDQsOTYuMDI3Nyw2MTguNzM0NCw4NC4wMjc3LDYwNi43MzQ0LDk2LjAyNzcsNTk0LjczNDQiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9Ijk2LjAyNzcsMjUwLjkwNjMsMTA4LjAyNzcsMjYyLjkwNjMsOTYuMDI3NywyNzQuOTA2Myw4NC4wMjc3LDI2Mi45MDYzLDk2LjAyNzcsMjUwLjkwNjMiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjY1Ljg1NTcsNjM4LjczNDQsMTI2LjE5OTgsNjM4LjczNDQsMTM4LjE5OTgsNjUwLjczNDQsMTI2LjE5OTgsNjYyLjczNDQsNjUuODU1Nyw2NjIuNzM0NCw1My44NTU3LDY1MC43MzQ0LDY1Ljg1NTcsNjM4LjczNDQiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2MC4zNDQxIiB4PSI2NS44NTU3IiB5PSI2NTQuNTQyNSI+VE9ETyYjMjM0MzY7JiMyMDEwMjs/PC90ZXh0Pjxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iOTYuMDI3NywxNTIuOTM3NSwxMDguMDI3NywxNjQuOTM3NSw5Ni4wMjc3LDE3Ni45Mzc1LDg0LjAyNzcsMTY0LjkzNzUsOTYuMDI3NywxNTIuOTM3NSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNjAuMzU1Nyw2ODIuNzM0NCwxMzEuNjk5Nyw2ODIuNzM0NCwxNDMuNjk5Nyw2OTQuNzM0NCwxMzEuNjk5Nyw3MDYuNzM0NCw2MC4zNTU3LDcwNi43MzQ0LDQ4LjM1NTcsNjk0LjczNDQsNjAuMzU1Nyw2ODIuNzM0NCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcxLjM0NCIgeD0iNjAuMzU1NyIgeT0iNjk4LjU0MjUiPiYjMjA4NDA7VE9ETyYjMjM0MzY7JiMyMDEwMjs/PC90ZXh0PjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTUyLjAwMSIgeD0iMjAuMDI3MiIgeT0iNzI2LjczNDQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzIuMDAxIiB4PSIzMC4wMjcyIiB5PSI3NDcuODczIj4mIzEyNDUyOyYjMTI0ODY7JiMxMjUyNDsmIzEyNTQwOyYjMTI0NzE7JiMxMjUxOTsmIzEyNTMxOyYjMTI1MjQ7JiMxMjQ5OTsmIzEyNTE3OyYjMTI1NDA7PC90ZXh0PjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iODAuMDAwNSIgeD0iNTYuMDI3NSIgeT0iNzgwLjcwMzEiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2MC4wMDA1IiB4PSI2Ni4wMjc1IiB5PSI4MDEuODQxOCI+JiMxMjQwNTsmIzEyNDI2OyYjMTIzNjM7JiMxMjM2MDsmIzEyNDI2OzwvdGV4dD48ZWxsaXBzZSBjeD0iOTYuMDI3NyIgY3k9Ijg0NS42NzE5IiBmaWxsPSJub25lIiByeD0iMTEiIHJ5PSIxMSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxlbGxpcHNlIGN4PSI5Ni4wMjc3IiBjeT0iODQ1LjY3MTkiIGZpbGw9IiNGRkZGRkYiIHJ4PSI2IiByeT0iNiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI5Ni4wMjc3IiB4Mj0iOTYuMDI3NyIgeTE9IjI1IiB5Mj0iNDUiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsMzUsOTYuMDI3Nyw0NSwxMDAuMDI3NywzNSw5Ni4wMjc3LDM5IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9Ijk2LjAyNzciIHgyPSI5Ni4wMjc3IiB5MT0iNzguOTY4OCIgeTI9Ijk4Ljk2ODgiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsODguOTY4OCw5Ni4wMjc3LDk4Ljk2ODgsMTAwLjAyNzcsODguOTY4OCw5Ni4wMjc3LDkyLjk2ODgiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iOTYuMDI3NyIgeDI9Ijk2LjAyNzciIHkxPSIzMjguODc1IiB5Mj0iMzQ4Ljg3NSIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iOTIuMDI3NywzMzguODc1LDk2LjAyNzcsMzQ4Ljg3NSwxMDAuMDI3NywzMzguODc1LDk2LjAyNzcsMzQyLjg3NSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI5Ni4wMjc3IiB4Mj0iOTYuMDI3NyIgeTE9IjM4Mi44NDM4IiB5Mj0iNDAyLjg0MzgiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsMzkyLjg0MzgsOTYuMDI3Nyw0MDIuODQzOCwxMDAuMDI3NywzOTIuODQzOCw5Ni4wMjc3LDM5Ni44NDM4IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9Ijk2LjAyNzciIHgyPSI5Ni4wMjc3IiB5MT0iNDM2LjgxMjUiIHkyPSI0NjYuNzk2OSIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iOTIuMDI3Nyw0NTYuNzk2OSw5Ni4wMjc3LDQ2Ni43OTY5LDEwMC4wMjc3LDQ1Ni43OTY5LDk2LjAyNzcsNDYwLjc5NjkiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iNjIuMTcyOCIgeDI9IjUyLjE3MjgiIHkxPSI1MzIuNzY1NiIgeTI9IjUzMi43NjU2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9IjUyLjE3MjgiIHgyPSI1Mi4xNzI4IiB5MT0iNTMyLjc2NTYiIHkyPSI1NTQuNzY1NiIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iNDguMTcyOCw1NDQuNzY1Niw1Mi4xNzI4LDU1NC43NjU2LDU2LjE3MjgsNTQ0Ljc2NTYsNTIuMTcyOCw1NDguNzY1NiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuODgyNiIgeDI9IjEzOS44ODI2IiB5MT0iNTMyLjc2NTYiIHkyPSI1MzIuNzY1NiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzkuODgyNiIgeDI9IjEzOS44ODI2IiB5MT0iNTMyLjc2NTYiIHkyPSI1NTQuNzY1NiIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iMTM1Ljg4MjYsNTQ0Ljc2NTYsMTM5Ljg4MjYsNTU0Ljc2NTYsMTQzLjg4MjYsNTQ0Ljc2NTYsMTM5Ljg4MjYsNTQ4Ljc2NTYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iNTIuMTcyOCIgeDI9IjUyLjE3MjgiIHkxPSI1ODguNzM0NCIgeTI9IjYwNi43MzQ0Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9IjUyLjE3MjgiIHgyPSI4NC4wMjc3IiB5MT0iNjA2LjczNDQiIHkyPSI2MDYuNzM0NCIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iNzQuMDI3Nyw2MDIuNzM0NCw4NC4wMjc3LDYwNi43MzQ0LDc0LjAyNzcsNjEwLjczNDQsNzguMDI3Nyw2MDYuNzM0NCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzkuODgyNiIgeDI9IjEzOS44ODI2IiB5MT0iNTg4LjczNDQiIHkyPSI2MDYuNzM0NCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzkuODgyNiIgeDI9IjEwOC4wMjc3IiB5MT0iNjA2LjczNDQiIHkyPSI2MDYuNzM0NCIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iMTE4LjAyNzcsNjAyLjczNDQsMTA4LjAyNzcsNjA2LjczNDQsMTE4LjAyNzcsNjEwLjczNDQsMTE0LjAyNzcsNjA2LjczNDQiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iOTYuMDI3NyIgeDI9Ijk2LjAyNzciIHkxPSI1MDAuNzY1NiIgeTI9IjUyMC43NjU2Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSI5Mi4wMjc3LDUxMC43NjU2LDk2LjAyNzcsNTIwLjc2NTYsMTAwLjAyNzcsNTEwLjc2NTYsOTYuMDI3Nyw1MTQuNzY1NiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI5Ni4wMjc3IiB4Mj0iOTYuMDI3NyIgeTE9IjI3NC45MDYzIiB5Mj0iMjk0LjkwNjMiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsMjg0LjkwNjMsOTYuMDI3NywyOTQuOTA2MywxMDAuMDI3NywyODQuOTA2Myw5Ni4wMjc3LDI4OC45MDYzIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzOC4xOTk4IiB4Mj0iMTk4LjA1NTQiIHkxPSI2NTAuNzM0NCIgeTI9IjY1MC43MzQ0Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSIxOTQuMDU1NCw0NTYuODEyNSwxOTguMDU1NCw0NDYuODEyNSwyMDIuMDU1NCw0NTYuODEyNSwxOTguMDU1NCw0NTIuODEyNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxOTguMDU1NCIgeDI9IjE5OC4wNTU0IiB5MT0iMjYyLjkwNjMiIHkyPSI2NTAuNzM0NCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSIxOTguMDU1NCIgeDI9IjEwOC4wMjc3IiB5MT0iMjYyLjkwNjMiIHkyPSIyNjIuOTA2MyIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iMTE4LjAyNzcsMjU4LjkwNjMsMTA4LjAyNzcsMjYyLjkwNjMsMTE4LjAyNzcsMjY2LjkwNjMsMTE0LjAyNzcsMjYyLjkwNjMiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iOTYuMDI3NyIgeDI9Ijk2LjAyNzciIHkxPSI2MTguNzM0NCIgeTI9IjYzOC43MzQ0Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSI5Mi4wMjc3LDYyOC43MzQ0LDk2LjAyNzcsNjM4LjczNDQsMTAwLjAyNzcsNjI4LjczNDQsOTYuMDI3Nyw2MzIuNzM0NCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI5Ni4wMjc3IiB4Mj0iOTYuMDI3NyIgeTE9IjIzMC45MDYzIiB5Mj0iMjUwLjkwNjMiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsMjQwLjkwNjMsOTYuMDI3NywyNTAuOTA2MywxMDAuMDI3NywyNDAuOTA2Myw5Ni4wMjc3LDI0NC45MDYzIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9Ijk2LjAyNzciIHgyPSI5Ni4wMjc3IiB5MT0iMTc2LjkzNzUiIHkyPSIxOTYuOTM3NSIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iOTIuMDI3NywxODYuOTM3NSw5Ni4wMjc3LDE5Ni45Mzc1LDEwMC4wMjc3LDE4Ni45Mzc1LDk2LjAyNzcsMTkwLjkzNzUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTQzLjY5OTciIHgyPSIyMTYuMDU1NCIgeTE9IjY5NC43MzQ0IiB5Mj0iNjk0LjczNDQiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjIxMi4wNTU0LDQyNy4zNDM4LDIxNi4wNTU0LDQxNy4zNDM4LDIyMC4wNTU0LDQyNy4zNDM4LDIxNi4wNTU0LDQyMy4zNDM4IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9IjIxNi4wNTU0IiB4Mj0iMjE2LjA1NTQiIHkxPSIxNjQuOTM3NSIgeTI9IjY5NC43MzQ0Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9IjIxNi4wNTU0IiB4Mj0iMTA4LjAyNzciIHkxPSIxNjQuOTM3NSIgeTI9IjE2NC45Mzc1Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSIxMTguMDI3NywxNjAuOTM3NSwxMDguMDI3NywxNjQuOTM3NSwxMTguMDI3NywxNjguOTM3NSwxMTQuMDI3NywxNjQuOTM3NSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI5Ni4wMjc3IiB4Mj0iOTYuMDI3NyIgeTE9IjY2Mi43MzQ0IiB5Mj0iNjgyLjczNDQiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsNjcyLjczNDQsOTYuMDI3Nyw2ODIuNzM0NCwxMDAuMDI3Nyw2NzIuNzM0NCw5Ni4wMjc3LDY3Ni43MzQ0IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9Ijk2LjAyNzciIHgyPSI5Ni4wMjc3IiB5MT0iMTMyLjkzNzUiIHkyPSIxNTIuOTM3NSIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iOTIuMDI3NywxNDIuOTM3NSw5Ni4wMjc3LDE1Mi45Mzc1LDEwMC4wMjc3LDE0Mi45Mzc1LDk2LjAyNzcsMTQ2LjkzNzUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iOTYuMDI3NyIgeDI9Ijk2LjAyNzciIHkxPSI3MDYuNzM0NCIgeTI9IjcyNi43MzQ0Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSI5Mi4wMjc3LDcxNi43MzQ0LDk2LjAyNzcsNzI2LjczNDQsMTAwLjAyNzcsNzE2LjczNDQsOTYuMDI3Nyw3MjAuNzM0NCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI5Ni4wMjc3IiB4Mj0iOTYuMDI3NyIgeTE9Ijc2MC43MDMxIiB5Mj0iNzgwLjcwMzEiLz48cG9seWdvbiBmaWxsPSIjMDAwMDAwIiBwb2ludHM9IjkyLjAyNzcsNzcwLjcwMzEsOTYuMDI3Nyw3ODAuNzAzMSwxMDAuMDI3Nyw3NzAuNzAzMSw5Ni4wMjc3LDc3NC43MDMxIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9Ijk2LjAyNzciIHgyPSI5Ni4wMjc3IiB5MT0iODE0LjY3MTkiIHkyPSI4MzQuNjcxOSIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iOTIuMDI3Nyw4MjQuNjcxOSw5Ni4wMjc3LDgzNC42NzE5LDEwMC4wMjc3LDgyNC42NzE5LDk2LjAyNzcsODI4LjY3MTkiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48IS0tU1JDPVtSUDNGSWlEMDRDUmwtbkpoQk5jNXZqMkJ1QzUzRzdvMU8zU3E0OUVHMUNJUmtxREJnODkyQkx3QUhMZ25ZQ1BBQUZ3ZDNwRlA2RF8ydFRQMzVNeXh0LSAtUnNWYmM4c3NwVktPWnRfNDJHZkJLWUxGSUczNTF3MkJTOFJvWlU0QXVHSVpnUVZQdl9jUUhuZ3d6UUlGU2VkWDFvQ2dGT1BNVE1PSjRCNjlFa2c5Vl9CZGdOUXc5U2w5TzNJeHFwQktjUWtvbWJnYTZMaUNaRUprTC1RV1VUd1luNUpDTVE1ZF8wR0NLTG9XVUsyb01QTzVZZmxqU1BveURPLXNJVkx1TllkMEtRYWpHTmVqdUJaTE1raHRUREFjQTY1M1phMk1jWmJPV1pCR0hDZWltRnM3SzI0ODVvYUxVdE8tTDVCR3l6c1RuVWozc1Y2TkdjTUgtS2h2c2NvUnZtc0hkLVhsX1Z4cmJzS1V1TGdCRW5rU2VVaVlGYU1WZ09RZEJYejR0XS0tPjwvZz48L3N2Zz4=" class="uml" alt="uml diagram" title="" /></p>
+<h2 id="_5">イテレーション別実装詳細<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="1">イテレーション1: ゲーム開始の実装<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<h4 id="_6">実装戦略<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>インサイドアウトアプローチ</strong>: データモデルから実装開始</li>
+<li><strong>仮実装</strong>: 最小限のコードでテストを通す</li>
+<li><strong>三角測量</strong>: 複数のテストケースで一般化</li>
+</ul>
+<h4 id="_7">核心実装<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<p><strong>Game.ts（初期版）</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Game</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[][]</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">currentPuyo</span><span class="o">:</span><span class="w"> </span><span class="kt">Puyo</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+
+<span class="w">  </span><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 6列x12行のフィールドを初期化</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="p">(</span><span class="mf">12</span><span class="p">).</span><span class="nx">fill</span><span class="p">(</span><span class="kc">null</span><span class="p">).</span><span class="nx">map</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Array</span><span class="p">(</span><span class="mf">6</span><span class="p">).</span><span class="nx">fill</span><span class="p">(</span><span class="mf">0</span><span class="p">))</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">generateNewPuyo</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">generateNewPuyo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 仮実装: 固定位置に固定色のぷよを生成</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>テスト例</strong>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Game&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;ゲームフィールドが6列12行で初期化されること&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">game</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Game</span><span class="p">()</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">game</span><span class="p">.</span><span class="nx">getField</span><span class="p">()</span>
+
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">field</span><span class="p">[</span><span class="mf">0</span><span class="p">]).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mf">6</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;新しいぷよが生成されること&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">game</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Game</span><span class="p">()</span>
+
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeNull</span><span class="p">()</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="nx">x</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="nx">y</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></p>
+<h4 id="_8">リファクタリング成果<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>メソッドの抽出</strong>: 前処理の共通化（beforeEach）</li>
+<li><strong>変数名の変更</strong>: より意味のある名前への変更</li>
+<li><strong>型安全性の向上</strong>: TypeScriptの型定義活用</li>
+</ul>
+<h3 id="2">イテレーション2: ぷよの移動の実装<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<h4 id="_9">実装戦略<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>明白な実装</strong>: 移動ロジックの直接実装</li>
+<li><strong>時間管理</strong>: deltaTimeによるフレームレート独立</li>
+</ul>
+<h4 id="_10">核心実装<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<p><strong>時間ベースの落下処理</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Game</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">dropInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000</span><span class="w"> </span><span class="c1">// 1秒ごとに落下</span>
+
+<span class="w">  </span><span class="nx">update</span><span class="p">(</span><span class="nx">deltaTime</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">deltaTime</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">dropInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">canMoveTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">fixPuyo</span><span class="p">()</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">generateNewPuyo</span><span class="p">()</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>衝突判定の実装</strong>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="w"> </span><span class="nx">canMoveTo</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 境界チェック</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">width</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 既存ぷよとの衝突チェック</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h4 id="_11">テスト例<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;ぷよの移動&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;左矢印キーでぷよが左に移動すること&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">game</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Game</span><span class="p">()</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">initialX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()</span><span class="o">!</span><span class="p">.</span><span class="nx">x</span>
+
+<span class="w">    </span><span class="nx">game</span><span class="p">.</span><span class="nx">handleInput</span><span class="p">(</span><span class="s1">&#39;ArrowLeft&#39;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()</span><span class="o">!</span><span class="p">.</span><span class="nx">x</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">initialX</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;フィールドの左端で左に移動できないこと&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">game</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Game</span><span class="p">()</span>
+<span class="w">    </span><span class="c1">// ぷよを左端に移動</span>
+<span class="w">    </span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()</span><span class="o">!</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">game</span><span class="p">.</span><span class="nx">handleInput</span><span class="p">(</span><span class="s1">&#39;ArrowLeft&#39;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentPuyo</span><span class="p">()</span><span class="o">!</span><span class="p">.</span><span class="nx">x</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="c1">// 移動しない</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<h3 id="3">イテレーション3: ぷよの高速落下の実装<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<h4 id="_12">実装戦略<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>状態管理</strong>: キーの押下状態をSetで管理</li>
+<li><strong>タイマー分離</strong>: 通常落下と高速落下の独立管理</li>
+</ul>
+<h4 id="_13">核心実装<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<p><strong>キー状態管理</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Game</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">keysPressed</span><span class="o">:</span><span class="w"> </span><span class="kt">Set</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Set</span><span class="p">()</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">fastDropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">fastDropInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">50</span><span class="w"> </span><span class="c1">// 高速落下は50msごと</span>
+
+<span class="w">  </span><span class="nx">handleKeyDown</span><span class="p">(</span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">keysPressed</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nx">handleKeyUp</span><span class="p">(</span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">keysPressed</span><span class="p">.</span><span class="ow">delete</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// 高速落下キーが離された場合はタイマーをリセット</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">key</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;ArrowDown&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">fastDropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>高速落下処理</strong>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="w"> </span><span class="nx">updateWithTime</span><span class="p">(</span><span class="nx">deltaTime</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+
+<span class="w">  </span><span class="c1">// 高速落下処理</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">keysPressed</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s1">&#39;ArrowDown&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">fastDropTimer</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">deltaTime</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fastDropTimer</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">fastDropInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">canMoveTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyo</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">puyoLanded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">fastDropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 通常の落下処理</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">deltaTime</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">dropInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ... 通常落下ロジック</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="4">イテレーション4: ぷよの回転の実装<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<h4 id="_14">実装戦略<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>ペアオブジェクト</strong>: 軸-衛星構造の導入</li>
+<li><strong>状態パターン</strong>: 回転状態による位置計算</li>
+<li><strong>壁キック</strong>: 実際のぷよぷよゲームに近い操作感</li>
+</ul>
+<h4 id="_15">核心実装<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
+<p><strong>PuyoPairクラス</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">PuyoPair</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">axis</span><span class="o">:</span><span class="w"> </span><span class="kt">Puyo</span><span class="w">      </span><span class="c1">// 軸ぷよ</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">satellite</span><span class="o">:</span><span class="w"> </span><span class="kt">Puyo</span><span class="w"> </span><span class="c1">// 衛星ぷよ</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">rotation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="w">    </span><span class="c1">// 回転状態（0-3）</span>
+
+<span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">axis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">generateRandomColor</span><span class="p">())</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">satellite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">generateRandomColor</span><span class="p">())</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nx">rotate</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">rotation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rotation</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">4</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">updateSatellitePosition</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nx">updateSatellitePosition</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">offsets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// 上</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="w"> </span><span class="p">},</span><span class="w">  </span><span class="c1">// 右  </span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w">  </span><span class="c1">// 下</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="c1">// 左</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">offsets</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">rotation</span><span class="p">]</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">satellite</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">axis</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">offset</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">axis</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">offset</span><span class="p">.</span><span class="nx">y</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>壁キック処理</strong>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="w"> </span><span class="nx">tryWallKickPuyoPair</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">wallKickOffsets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// 左に1マス</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="w"> </span><span class="p">},</span><span class="w">  </span><span class="c1">// 右に1マス</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// 上に1マス</span>
+<span class="w">  </span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">offset</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">wallKickOffsets</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">testX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyoPair</span><span class="p">.</span><span class="nx">axis</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">offset</span><span class="p">.</span><span class="nx">x</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">testY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyoPair</span><span class="p">.</span><span class="nx">axis</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">offset</span><span class="p">.</span><span class="nx">y</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">canRotateAt</span><span class="p">(</span><span class="nx">testX</span><span class="p">,</span><span class="w"> </span><span class="nx">testY</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyoPair</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="nx">testX</span><span class="p">,</span><span class="w"> </span><span class="nx">testY</span><span class="p">)</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="5">イテレーション5: ぷよの消去の実装<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<h4 id="_16">実装戦略<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>DFS探索</strong>: 隣接する同色ぷよの効率的な検出</li>
+<li><strong>責務分離</strong>: 探索・判定・消去・重力の分離</li>
+<li><strong>循環的複雑度制限</strong>: メソッド分割による可読性向上</li>
+</ul>
+<h4 id="_17">核心実装<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h4>
+<p><strong>DFS探索アルゴリズム</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameField</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">findConnectedPuyos</span><span class="p">(</span><span class="nx">startX</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">startY</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Position</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">visited</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">[][]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">createVisitedArray</span><span class="p">()</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">connected</span><span class="o">:</span><span class="w"> </span><span class="kt">Position</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">dfsSearch</span><span class="p">(</span><span class="nx">startX</span><span class="p">,</span><span class="w"> </span><span class="nx">startY</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="p">,</span><span class="w"> </span><span class="nx">visited</span><span class="p">,</span><span class="w"> </span><span class="nx">connected</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">connected</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">dfsSearch</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">visited</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">[][],</span><span class="w"> </span><span class="nx">connected</span><span class="o">:</span><span class="w"> </span><span class="kt">Position</span><span class="p">[]</span>
+<span class="w">  </span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 境界チェックと訪問済みチェック</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isValidPosition</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">visited</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">])</span><span class="w"> </span><span class="k">return</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="nx">targetColor</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+
+<span class="w">    </span><span class="c1">// 現在位置をマーク</span>
+<span class="w">    </span><span class="nx">visited</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nx">connected</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="w"> </span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="p">})</span>
+
+<span class="w">    </span><span class="c1">// 4方向に再帰探索</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">dfsSearch</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="p">,</span><span class="w"> </span><span class="nx">visited</span><span class="p">,</span><span class="w"> </span><span class="nx">connected</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">dfsSearch</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="p">,</span><span class="w"> </span><span class="nx">visited</span><span class="p">,</span><span class="w"> </span><span class="nx">connected</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">dfsSearch</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="p">,</span><span class="w"> </span><span class="nx">visited</span><span class="p">,</span><span class="w"> </span><span class="nx">connected</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">dfsSearch</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">targetColor</span><span class="p">,</span><span class="w"> </span><span class="nx">visited</span><span class="p">,</span><span class="w"> </span><span class="nx">connected</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>消去処理の実装</strong>
+<div class="highlight"><pre><span></span><code><span class="nx">erasePuyos</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">erasableGroups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">findErasableGroups</span><span class="p">()</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">totalErased</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">group</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">erasableGroups</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">pos</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">group</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">[</span><span class="nx">pos</span><span class="p">.</span><span class="nx">y</span><span class="p">][</span><span class="nx">pos</span><span class="p">.</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">      </span><span class="nx">totalErased</span><span class="o">++</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">totalErased</span>
+<span class="p">}</span>
+
+<span class="k">private</span><span class="w"> </span><span class="nx">findErasableGroups</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">Position</span><span class="p">[][]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">erasableGroups</span><span class="o">:</span><span class="w"> </span><span class="kt">Position</span><span class="p">[][]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">processed</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">[][]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">createVisitedArray</span><span class="p">()</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span><span class="w"> </span><span class="nx">y</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">shouldCheckPosition</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="nx">processed</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">connected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">findConnectedPuyos</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">])</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">connected</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">4</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nx">erasableGroups</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">connected</span><span class="p">)</span>
+<span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">markAsProcessed</span><span class="p">(</span><span class="nx">connected</span><span class="p">,</span><span class="w"> </span><span class="nx">processed</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">erasableGroups</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="6">イテレーション6: 連鎖反応の実装<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
+<h4 id="_18">実装戦略<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>連鎖ループ</strong>: 消去が続く限り繰り返し処理</li>
+<li><strong>スコア計算</strong>: 連鎖ボーナスの段階的適用</li>
+<li><strong>UI統合</strong>: リアルタイムスコア更新</li>
+</ul>
+<h4 id="_19">核心実装<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<p><strong>連鎖処理エンジン</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameLogic</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">processChain</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">totalScore</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span><span class="w"> </span><span class="nx">chainCount</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">chainCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">totalScore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+
+<span class="w">    </span><span class="c1">// 連鎖処理：消去できるぷよがある限り繰り返す</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">erasedCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">gameField</span><span class="p">.</span><span class="nx">erasePuyos</span><span class="p">()</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">erasedCount</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="w"> </span><span class="c1">// 消去されるぷよがない場合は連鎖終了</span>
+
+<span class="w">      </span><span class="nx">chainCount</span><span class="o">++</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">erasureScore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ScoreCalculator</span><span class="p">.</span><span class="nx">calculateErasureScore</span><span class="p">(</span><span class="nx">erasedCount</span><span class="p">,</span><span class="w"> </span><span class="nx">chainCount</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">totalScore</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">erasureScore</span>
+
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">gameField</span><span class="p">.</span><span class="nx">applyGravity</span><span class="p">()</span><span class="w"> </span><span class="c1">// 重力処理を実行</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 全消しボーナスをチェック</span>
+<span class="w">    </span><span class="nx">totalScore</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">checkZenkeshiBonus</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">totalScore</span><span class="p">,</span><span class="w"> </span><span class="nx">chainCount</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>スコア計算システム</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">ScoreCalculator</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">CHAIN_BONUS_TABLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">8</span><span class="p">,</span><span class="w"> </span><span class="mf">16</span><span class="p">,</span><span class="w"> </span><span class="mf">32</span><span class="p">,</span><span class="w"> </span><span class="mf">64</span><span class="p">,</span><span class="w"> </span><span class="mf">128</span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="nx">calculateErasureScore</span><span class="p">(</span><span class="nx">erasedCount</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">chainCount</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">baseScore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">erasedCount</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">chainBonus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">getChainBonus</span><span class="p">(</span><span class="nx">chainCount</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">baseScore</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">chainBonus</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="nx">getChainBonus</span><span class="p">(</span><span class="nx">chainCount</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">chainCount</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">CHAIN_BONUS_TABLE</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span>
+<span class="w">      </span><span class="o">?</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">CHAIN_BONUS_TABLE</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span>
+<span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="mf">256</span><span class="w"> </span><span class="c1">// 8連鎖以降は固定</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="7">イテレーション7: 全消しボーナスの実装<a class="headerlink" href="#7" title="Permanent link">&para;</a></h3>
+<h4 id="_20">実装戦略<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>状態判定</strong>: フィールドの空状態検出</li>
+<li><strong>コールバック機能</strong>: 演出とロジックの疎結合</li>
+<li><strong>UI演出</strong>: グラデーションとアニメーション</li>
+</ul>
+<h4 id="_21">核心実装<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h4>
+<p><strong>全消し判定</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameField</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">isAllClear</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span><span class="w"> </span><span class="nx">y</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>演出システム</strong>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameController</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">showZenkeshiAnimation</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">zenkeshiOverlay</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;hidden&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">zenkeshiOverlay</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;show&#39;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// 3秒後に演出を非表示</span>
+<span class="w">    </span><span class="nb">window</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">hideZenkeshiAnimation</span><span class="p">()</span>
+<span class="w">    </span><span class="p">},</span><span class="w"> </span><span class="mf">3000</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>CSS演出</strong>
+<div class="highlight"><pre><span></span><code><span class="p">.</span><span class="nc">zenkeshi-overlay</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">position</span><span class="p">:</span><span class="w"> </span><span class="kc">fixed</span><span class="p">;</span>
+<span class="w">  </span><span class="k">top</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">left</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<span class="w">  </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">linear-gradient</span><span class="p">(</span><span class="mi">45</span><span class="kt">deg</span><span class="p">,</span><span class="w"> </span><span class="mh">#ff6b6b</span><span class="p">,</span><span class="w"> </span><span class="mh">#4ecdc4</span><span class="p">,</span><span class="w"> </span><span class="mh">#45b7d1</span><span class="p">,</span><span class="w"> </span><span class="mh">#96ceb4</span><span class="p">);</span>
+<span class="w">  </span><span class="k">background-size</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="kt">%</span><span class="w"> </span><span class="mi">400</span><span class="kt">%</span><span class="p">;</span>
+<span class="w">  </span><span class="k">animation</span><span class="p">:</span><span class="w"> </span><span class="n">gradientShift</span><span class="w"> </span><span class="mi">2</span><span class="kt">s</span><span class="w"> </span><span class="kc">ease</span><span class="w"> </span><span class="kc">infinite</span><span class="p">;</span>
+<span class="w">  </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
+<span class="w">  </span><span class="k">justify-content</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">  </span><span class="k">align-items</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">  </span><span class="k">z-index</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">zenkeshi-message</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="p">);</span>
+<span class="w">  </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">  </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">  </span><span class="k">animation</span><span class="p">:</span><span class="w"> </span><span class="n">slideIn</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">s</span><span class="w"> </span><span class="kc">ease-out</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="8">イテレーション8: ゲームオーバーの実装<a class="headerlink" href="#8" title="Permanent link">&para;</a></h3>
+<h4 id="_22">実装戦略<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>生成判定</strong>: 新ぷよの配置可能性チェック</li>
+<li><strong>状態管理</strong>: ゲーム状態の適切な遷移</li>
+<li><strong>リスタート機能</strong>: 完全な状態リセット</li>
+</ul>
+<h4 id="_23">核心実装<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h4>
+<p><strong>ゲームオーバー判定</strong>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="w"> </span><span class="nx">generateNewPuyoPair</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 初期位置に配置可能かチェック</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">canPuyoPairSpawn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">gameState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GameState</span><span class="p">.</span><span class="nx">GAME_OVER</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyoPair</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+
+<span class="w">    </span><span class="c1">// ゲームオーバー演出をトリガー</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gameOverCallback</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">gameOverCallback</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">currentPuyoPair</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">PuyoPair</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">private</span><span class="w"> </span><span class="nx">canPuyoPairSpawn</span><span class="p">(</span><span class="nx">axisX</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">axisY</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">tempPair</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">PuyoPair</span><span class="p">(</span><span class="nx">axisX</span><span class="p">,</span><span class="w"> </span><span class="nx">axisY</span><span class="p">)</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">positions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">tempPair</span><span class="p">.</span><span class="nx">getPositions</span><span class="p">()</span>
+
+<span class="w">  </span><span class="c1">// 軸と衛星の両方が配置可能かチェック</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">positions</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">pos</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">canMoveTo</span><span class="p">(</span><span class="nx">pos</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">pos</span><span class="p">.</span><span class="nx">y</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>完全リスタート機能</strong>
+<div class="highlight"><pre><span></span><code><span class="k">public</span><span class="w"> </span><span class="nx">restart</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// フィールドをクリア</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">gameField</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+
+<span class="w">  </span><span class="c1">// ゲーム状態をリセット</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">gameState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GameState</span><span class="p">.</span><span class="nx">PLAYING</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">chainCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">puyoLanded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="w">  </span><span class="c1">// タイマーをリセット</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">dropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">fastDropTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+
+<span class="w">  </span><span class="c1">// キー状態をリセット</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">keysPressed</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+
+<span class="w">  </span><span class="c1">// 新しいぷよペアを生成</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">generateNewPuyoPair</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="_24">リファクタリング実装詳細<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<h3 id="phase-4">Phase 4: クリーンアーキテクチャへの大規模リファクタリング<a class="headerlink" href="#phase-4" title="Permanent link">&para;</a></h3>
+<h4 id="_25">リファクタリング戦略<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>段階的移行</strong>: 既存機能を壊さない安全な変更</li>
+<li><strong>レイヤー分離</strong>: 責務の明確化と依存関係の整理</li>
+<li><strong>テスト維持</strong>: 121個のテストケースを全て維持</li>
+</ul>
+<h4 id="_26">実装手順<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h4>
+<p><strong>Step 1: ドメインクラスの抽出</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// 654行のMonolithicなGameクラスから分離</span>
+
+<span class="c1">// GameField.ts - フィールド管理の責務</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameField</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[][]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="p">(</span><span class="mf">12</span><span class="p">).</span><span class="nx">fill</span><span class="p">(</span><span class="kc">null</span><span class="p">).</span><span class="nx">map</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Array</span><span class="p">(</span><span class="mf">6</span><span class="p">).</span><span class="nx">fill</span><span class="p">(</span><span class="mf">0</span><span class="p">))</span>
+<span class="w">  </span><span class="c1">// フィールド操作メソッドを移行</span>
+<span class="p">}</span>
+
+<span class="c1">// GameLogic.ts - 連鎖処理の責務  </span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameLogic</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="k">private</span><span class="w"> </span><span class="nx">gameField</span><span class="o">:</span><span class="w"> </span><span class="kt">GameField</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="c1">// 連鎖関連メソッドを移行</span>
+<span class="p">}</span>
+
+<span class="c1">// ScoreCalculator.ts - スコア計算の責務</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">ScoreCalculator</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 静的メソッドとしてスコア計算ロジックを移行</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Step 2: レイヤー分離の実装</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// presentation/GameController.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameController</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">game</span><span class="o">:</span><span class="w"> </span><span class="kt">Game</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">renderer</span><span class="o">:</span><span class="w"> </span><span class="kt">GameRenderer</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">inputHandler</span><span class="o">:</span><span class="w"> </span><span class="kt">InputHandler</span>
+
+<span class="w">  </span><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">setupEventListeners</span><span class="p">()</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">startGameLoop</span><span class="p">()</span><span class="w"> </span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// infrastructure/GameRenderer.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameRenderer</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">render</span><span class="p">(</span><span class="nx">game</span><span class="o">:</span><span class="w"> </span><span class="kt">Game</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">drawField</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">drawCurrentPuyo</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// infrastructure/InputHandler.ts  </span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">InputHandler</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">keysPressed</span><span class="o">:</span><span class="w"> </span><span class="kt">Set</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Set</span><span class="p">()</span>
+
+<span class="w">  </span><span class="nx">setKeyHandler</span><span class="p">(</span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">handler</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">keyHandlers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">handler</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Step 3: main.tsの簡素化</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// Before: 235行</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;./style.css&#39;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Game</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./Game&#39;</span>
+<span class="c1">// ... 大量のレンダリングとイベント処理コード</span>
+
+<span class="c1">// After: 42行  </span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;./style.css&#39;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">GameController</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./presentation/GameController&#39;</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="o">&lt;</span><span class="nx">HTMLDivElement</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span><span class="o">!</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">  &lt;!-- HTMLテンプレート --&gt;</span>
+<span class="sb">`</span>
+
+<span class="c1">// GameControllerを初期化（全ての処理を委譲）</span>
+<span class="ow">new</span><span class="w"> </span><span class="nx">GameController</span><span class="p">()</span>
+</code></pre></div></p>
+<h4 id="_27">循環的複雑度の改善<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h4>
+<p><strong>Before（複雑度8）:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="w"> </span><span class="nx">handleInput</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;KeyR&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">GameState</span><span class="p">.</span><span class="nx">GAME_OVER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">restart</span><span class="p">()</span>
+<span class="w">    </span><span class="k">return</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">GameState</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;ArrowLeft&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">movePuyo</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;ArrowRight&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">movePuyo</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyPressed</span><span class="p">(</span><span class="s1">&#39;ArrowDown&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">movePuyo</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;ArrowUp&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">rotatePuyo</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>After（各メソッド複雑度1-3）:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="w"> </span><span class="nx">handleInput</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">handleGameOverInput</span><span class="p">()</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">handleGamePlayInput</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">private</span><span class="w"> </span><span class="nx">handleGameOverInput</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;KeyR&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">GameState</span><span class="p">.</span><span class="nx">GAME_OVER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">restart</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">private</span><span class="w"> </span><span class="nx">handleGamePlayInput</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">GameState</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">handleMovementInput</span><span class="p">()</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">handleRotationInput</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">private</span><span class="w"> </span><span class="nx">handleMovementInput</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;ArrowLeft&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">movePuyo</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;ArrowRight&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">movePuyo</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyPressed</span><span class="p">(</span><span class="s1">&#39;ArrowDown&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">movePuyo</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">private</span><span class="w"> </span><span class="nx">handleRotationInput</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">isKeyJustPressed</span><span class="p">(</span><span class="s1">&#39;ArrowUp&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">rotatePuyo</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="_28">品質管理の実装<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h2>
+<h3 id="_29">自動化パイプライン<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># package.json scripts</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;scripts&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;test&quot;</span>:<span class="w"> </span><span class="s2">&quot;vitest run&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;test:watch&quot;</span>:<span class="w"> </span><span class="s2">&quot;vitest&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;test:coverage&quot;</span>:<span class="w"> </span><span class="s2">&quot;c8 vitest run&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;lint&quot;</span>:<span class="w"> </span><span class="s2">&quot;eslint . --ext .ts,.tsx&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;lint:fix&quot;</span>:<span class="w"> </span><span class="s2">&quot;eslint . --ext .ts,.tsx --fix&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;format&quot;</span>:<span class="w"> </span><span class="s2">&quot;prettier --write .&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;format:check&quot;</span>:<span class="w"> </span><span class="s2">&quot;prettier --check .&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;check&quot;</span>:<span class="w"> </span><span class="s2">&quot;gulp checkAndFix&quot;</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="gulp">Gulpタスクランナー<a class="headerlink" href="#gulp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// gulpfile.js</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">checkAndFix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">series</span><span class="p">(</span><span class="nx">lintFix</span><span class="p">,</span><span class="w"> </span><span class="nx">format</span><span class="p">,</span><span class="w"> </span><span class="nx">test</span><span class="p">)</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">guard</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;🔍 Guard is watching for file changes...&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">watch</span><span class="p">(</span><span class="s1">&#39;src/**/*.ts&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">series</span><span class="p">(</span><span class="nx">lintFix</span><span class="p">,</span><span class="w"> </span><span class="nx">format</span><span class="p">,</span><span class="w"> </span><span class="nx">test</span><span class="p">))</span>
+<span class="w">  </span><span class="nx">watch</span><span class="p">(</span><span class="s1">&#39;**/*.test.ts&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">series</span><span class="p">(</span><span class="nx">test</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="eslint">ESLint設定<a class="headerlink" href="#eslint" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// eslint.config.js</span>
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">files</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;**/*.ts&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;**/*.tsx&#39;</span><span class="p">],</span>
+<span class="w">    </span><span class="nx">rules</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// 循環的複雑度の制限</span>
+<span class="w">      </span><span class="s1">&#39;complexity&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">max</span><span class="o">:</span><span class="w"> </span><span class="mf">7</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">      </span><span class="s1">&#39;@typescript-eslint/no-unused-vars&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;warn&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="s1">&#39;prettier/prettier&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h2 id="_30">パフォーマンス最適化の実装<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h2>
+<h3 id="_31">メモリ管理<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameController</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">destroy</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">stopGameLoop</span><span class="p">()</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">inputHandler</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span>
+<span class="w">    </span><span class="c1">// メモリリーク防止のためのクリーンアップ</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">InputHandler</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">destroy</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;keydown&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">handleKeyDown</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;keyup&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">handleKeyUp</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">keysPressed</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">keyHandlers</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="_32">レンダリング最適化<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">GameRenderer</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">CELL_SIZE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">40</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">colors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;#ff6b6b&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;#4ecdc4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;#45b7d1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;#96ceb4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;#ffeaa7&#39;</span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nx">render</span><span class="p">(</span><span class="nx">game</span><span class="o">:</span><span class="w"> </span><span class="kt">Game</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 必要な部分のみ再描画</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">drawField</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">drawCurrentPuyo</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">drawPuyoCell</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 効率的な円描画</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">centerX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">CELL_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">CELL_SIZE</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">centerY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">CELL_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">CELL_SIZE</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">radius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">CELL_SIZE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">6</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2</span>
+
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">fillStyle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">colors</span><span class="p">[</span><span class="nx">color</span><span class="p">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;#999&#39;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">beginPath</span><span class="p">()</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">arc</span><span class="p">(</span><span class="nx">centerX</span><span class="p">,</span><span class="w"> </span><span class="nx">centerY</span><span class="p">,</span><span class="w"> </span><span class="nx">radius</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">fill</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="_33">テスト実装の詳細<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h2>
+<h3 id="_34">テストケースの分類<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjUxNnB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6OTg4cHg7aGVpZ2h0OjUxNnB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDk4OCA1MTYiIHdpZHRoPSI5ODhweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjwhLS1jbHVzdGVyIDEyMT8/Pz8/Pz8/LS0+PGcgY2xhc3M9ImNsdXN0ZXIiIGRhdGEtZW50aXR5PSIxMjEuLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMyIgZGF0YS11aWQ9ImVudDAwMDIiIGlkPSJjbHVzdGVyXzEyMS4uLi4uLi4uIj48cGF0aCBkPSJNMTMuNSwxMSBMMTU1LjcyMzEsMTEgQTMuNzUsMy43NSAwIDAgMSAxNTguMjIzMSwxMy41IEwxNjUuMjIzMSwzMy4yOTY5IEw5NzguNSwzMy4yOTY5IEEyLjUsMi41IDAgMCAxIDk4MSwzNS43OTY5IEw5ODEsNTA2LjY5IEEyLjUsMi41IDAgMCAxIDk3OC41LDUwOS4xOSBMMTMuNSw1MDkuMTkgQTIuNSwyLjUgMCAwIDEgMTEsNTA2LjY5IEwxMSwxMy41IEEyLjUsMi41IDAgMCAxIDEzLjUsMTEiIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTEiIHgyPSIxNjUuMjIzMSIgeTE9IjMzLjI5NjkiIHkyPSIzMy4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE0MS4yMjMxIiB4PSIxNSIgeT0iMjUuOTk1MSI+MTIxJiMyMDQ5MTsmIzEyMzk4OyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyYjMTI0NjU7JiMxMjU0MDsmIzEyNDczOzwvdGV4dD48L2c+PCEtLWNsdXN0ZXIgPz8/Pz8/Py0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0iLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iNSIgZGF0YS11aWQ9ImVudDAwMDMiIGlkPSJjbHVzdGVyXy4uLi4uLi4iPjxwYXRoIGQ9Ik0zNy41LDU0IEwxMzYuNDk5Niw1NCBBMy43NSwzLjc1IDAgMCAxIDEzOC45OTk2LDU2LjUgTDE0NS45OTk2LDc2LjI5NjkgTDM5Mi41LDc2LjI5NjkgQTIuNSwyLjUgMCAwIDEgMzk1LDc4Ljc5NjkgTDM5NSwyNTUuMSBBMi41LDIuNSAwIDAgMSAzOTIuNSwyNTcuNiBMMzcuNSwyNTcuNiBBMi41LDIuNSAwIDAgMSAzNSwyNTUuMSBMMzUsNTYuNSBBMi41LDIuNSAwIDAgMSAzNy41LDU0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgeDE9IjM1IiB4Mj0iMTQ1Ljk5OTYiIHkxPSI3Ni4yOTY5IiB5Mj0iNzYuMjk2OSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI5Ny45OTk2IiB4PSIzOSIgeT0iNjguOTk1MSI+JiMyMjUyMjsmIzI2NDEyOyYjMjcyMzE7JiMzMzAyMTsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PC9nPjwhLS1jbHVzdGVyID8/Pz8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjEyIiBkYXRhLXVpZD0iZW50MDAwOCIgaWQ9ImNsdXN0ZXJfLi4uLi4uLiI+PHBhdGggZD0iTTQyMS41LDU0IEw1MjAuNDk5Niw1NCBBMy43NSwzLjc1IDAgMCAxIDUyMi45OTk2LDU2LjUgTDUyOS45OTk2LDc2LjI5NjkgTDc3MC41LDc2LjI5NjkgQTIuNSwyLjUgMCAwIDEgNzczLDc4Ljc5NjkgTDc3MywyNTUuMSBBMi41LDIuNSAwIDAgMSA3NzAuNSwyNTcuNiBMNDIxLjUsMjU3LjYgQTIuNSwyLjUgMCAwIDEgNDE5LDI1NS4xIEw0MTksNTYuNSBBMi41LDIuNSAwIDAgMSA0MjEuNSw1NCIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHgxPSI0MTkiIHgyPSI1MjkuOTk5NiIgeTE9Ijc2LjI5NjkiIHkyPSI3Ni4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk3Ljk5OTYiIHg9IjQyMyIgeT0iNjguOTk1MSI+JiMxMjQ2NjsmIzEyNTQwOyYjMTI1MTI7JiMxMjUyNTsmIzEyNDcyOyYjMTI0ODM7JiMxMjQ2Mzs8L3RleHQ+PC9nPjwhLS1jbHVzdGVyID8/Pz8/LS0+PGcgY2xhc3M9ImNsdXN0ZXIiIGRhdGEtZW50aXR5PSIuLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMTkiIGRhdGEtdWlkPSJlbnQwMDEzIiBpZD0iY2x1c3Rlcl8uLi4uLiI+PHBhdGggZD0iTTM3LjUsMjgxLjYgTDEwOC40OTk3LDI4MS42IEEzLjc1LDMuNzUgMCAwIDEgMTEwLjk5OTcsMjg0LjEgTDExNy45OTk3LDMwMy44OTY5IEw0MTEuNSwzMDMuODk2OSBBMi41LDIuNSAwIDAgMSA0MTQsMzA2LjM5NjkgTDQxNCw0ODIuNjkgQTIuNSwyLjUgMCAwIDEgNDExLjUsNDg1LjE5IEwzNy41LDQ4NS4xOSBBMi41LDIuNSAwIDAgMSAzNSw0ODIuNjkgTDM1LDI4NC4xIEEyLjUsMi41IDAgMCAxIDM3LjUsMjgxLjYiIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzUiIHgyPSIxMTcuOTk5NyIgeTE9IjMwMy44OTY5IiB5Mj0iMzAzLjg5NjkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjkuOTk5NyIgeD0iMzkiIHk9IjI5Ni41OTUxIj4mIzEyNDY2OyYjMTI1NDA7JiMxMjUxMjsmIzI5MzY2OyYjMjQ5MDc7PC90ZXh0PjwvZz48IS0tY2x1c3RlciA/Pz8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMjUiIGRhdGEtdWlkPSJlbnQwMDE3IiBpZD0iY2x1c3Rlcl8uLi4uLi4iPjxwYXRoIGQ9Ik03OTkuNSw1NCBMODg0LjQ5OTYsNTQgQTMuNzUsMy43NSAwIDAgMSA4ODYuOTk5Niw1Ni41IEw4OTMuOTk5Niw3Ni4yOTY5IEw5NTQuNSw3Ni4yOTY5IEEyLjUsMi41IDAgMCAxIDk1Nyw3OC43OTY5IEw5NTcsMTQ4LjggQTIuNSwyLjUgMCAwIDEgOTU0LjUsMTUxLjMgTDc5OS41LDE1MS4zIEEyLjUsMi41IDAgMCAxIDc5NywxNDguOCBMNzk3LDU2LjUgQTIuNSwyLjUgMCAwIDEgNzk5LjUsNTQiIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iNzk3IiB4Mj0iODkzLjk5OTYiIHkxPSI3Ni4yOTY5IiB5Mj0iNzYuMjk2OSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My45OTk2IiB4PSI4MDEiIHk9IjY4Ljk5NTEiPiYjMTI0NTY7JiMxMjQ4MzsmIzEyNDcyOyYjMTI0NjU7JiMxMjU0MDsmIzEyNDczOzwvdGV4dD48L2c+PCEtLWVudGl0eSA/Pz8/Pz86IDU/LS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9Ii4uLi4uLi4gNS4iIGRhdGEtc291cmNlLWxpbmU9IjYiIGRhdGEtdWlkPSJlbnQwMDA0IiBpZD0iZW50aXR5Xy4uLi4uLi4gNS4iPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1Ni4wNzM4IiB4PSI1MC45NiIgeT0iODkiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTUiIHg9IjE4Ny4wMzM4IiB5PSI5NCIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQiIHg9IjE4NS4wMzM4IiB5PSI5NiIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQiIHg9IjE4NS4wMzM4IiB5PSIxMDAiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTYuMDczOCIgeD0iNjUuOTYiIHk9IjEyMS45OTUxIj4mIzEyNDY2OyYjMTI1NDA7JiMxMjUxMjsmIzIxMDIxOyYjMjYzOTk7JiMyMTI3MDs6IDUmIzIwNDkxOzwvdGV4dD48L2c+PCEtLWVudGl0eSA/Pz8/OiAxMj8tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4gMTIuIiBkYXRhLXNvdXJjZS1saW5lPSI3IiBkYXRhLXVpZD0iZW50MDAwNSIgaWQ9ImVudGl0eV8uLi4uLiAxMi4iPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjEzNi45ODExIiB4PSIyNDIuNTEiIHk9Ijg5Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1IiB4PSIzNTkuNDkxMSIgeT0iOTQiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIzNTcuNDkxMSIgeT0iOTYiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIzNTcuNDkxMSIgeT0iMTAwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTYuOTgxMSIgeD0iMjU3LjUxIiB5PSIxMjEuOTk1MSI+JiMxMjQwNzsmIzEyNDI0OyYjMzEyMjc7JiMyMTIwNTs6IDEyJiMyMDQ5MTs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgPz8/PzogOD8tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4gOC4iIGRhdGEtc291cmNlLWxpbmU9IjgiIGRhdGEtdWlkPSJlbnQwMDA2IiBpZD0iZW50aXR5Xy4uLi4uIDguIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxMjguMDczOSIgeD0iNjcuOTYiIHk9IjE5NS4zIi8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1IiB4PSIxNzYuMDMzOSIgeT0iMjAwLjMiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIxNzQuMDMzOSIgeT0iMjAyLjMiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIxNzQuMDMzOSIgeT0iMjA2LjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4OC4wNzM5IiB4PSI4Mi45NiIgeT0iMjI4LjI5NTEiPiYjMTI0MDc7JiMxMjQyNDsmIzIyMjM4OyYjMzY1Nzg7OiA4JiMyMDQ5MTs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgPz8/PzogND8tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4gNC4iIGRhdGEtc291cmNlLWxpbmU9IjkiIGRhdGEtdWlkPSJlbnQwMDA3IiBpZD0iZW50aXR5Xy4uLi4uIDQuIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxMjguMDczOSIgeD0iMjMwLjk2IiB5PSIxOTUuMyIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxNSIgeD0iMzM5LjAzMzkiIHk9IjIwMC4zIi8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNCIgeD0iMzM3LjAzMzkiIHk9IjIwMi4zIi8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNCIgeD0iMzM3LjAzMzkiIHk9IjIwNi4zIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODguMDczOSIgeD0iMjQ1Ljk2IiB5PSIyMjguMjk1MSI+JiMzOTY0MDsmIzM2ODk1OyYjMzM4NTM7JiMxOTk3OTs6IDQmIzIwNDkxOzwvdGV4dD48L2c+PCEtLWVudGl0eSA/Pz8/OiAxNT8tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4gMTUuIiBkYXRhLXNvdXJjZS1saW5lPSIxMyIgZGF0YS11aWQ9ImVudDAwMDkiIGlkPSJlbnRpdHlfLi4uLi4gMTUuIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxMzYuOTgxMSIgeD0iNDM0LjUxIiB5PSI4OSIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxNSIgeD0iNTUxLjQ5MTEiIHk9Ijk0Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNCIgeD0iNTQ5LjQ5MTEiIHk9Ijk2Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNCIgeD0iNTQ5LjQ5MTEiIHk9IjEwMCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk2Ljk4MTEiIHg9IjQ0OS41MSIgeT0iMTIxLjk5NTEiPiYjMjgwNDA7JiMyMTQzNTsmIzIxMDI4OyYjMjM0NTA7OiAxNSYjMjA0OTE7PC90ZXh0PjwvZz48IS0tZW50aXR5ID8/Pz86IDIwPy0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLiAyMC4iIGRhdGEtc291cmNlLWxpbmU9IjE0IiBkYXRhLXVpZD0iZW50MDAxMCIgaWQ9ImVudGl0eV8uLi4uLiAyMC4iPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjEzNi45ODExIiB4PSI2MDYuNTEiIHk9Ijg5Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1IiB4PSI3MjMuNDkxMSIgeT0iOTQiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSI3MjEuNDkxMSIgeT0iOTYiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSI3MjEuNDkxMSIgeT0iMTAwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTYuOTgxMSIgeD0iNjIxLjUxIiB5PSIxMjEuOTk1MSI+JiMzNjg5OTsmIzM3NzgyOyYjMjA5NjY7JiMyOTcwMjs6IDIwJiMyMDQ5MTs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgPz8/PzogMTg/LS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9Ii4uLi4uIDE4LiIgZGF0YS1zb3VyY2UtbGluZT0iMTUiIGRhdGEtdWlkPSJlbnQwMDExIiBpZD0iZW50aXR5Xy4uLi4uIDE4LiI+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTM2Ljk4MTEiIHg9IjQzNC41MSIgeT0iMTk1LjMiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTUiIHg9IjU1MS40OTExIiB5PSIyMDAuMyIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQiIHg9IjU0OS40OTExIiB5PSIyMDIuMyIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQiIHg9IjU0OS40OTExIiB5PSIyMDYuMyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk2Ljk4MTEiIHg9IjQ0OS41MSIgeT0iMjI4LjI5NTEiPiYjMzczMjU7JiMyMTE0NzsmIzIwOTY2OyYjMjk3MDI7OiAxOCYjMjA0OTE7PC90ZXh0PjwvZz48IS0tZW50aXR5ID8/Pz8/OiAxMj8tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4uIDEyLiIgZGF0YS1zb3VyY2UtbGluZT0iMTYiIGRhdGEtdWlkPSJlbnQwMDEyIiBpZD0iZW50aXR5Xy4uLi4uLiAxMi4iPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1MC45ODExIiB4PSI2MDYuNTEiIHk9IjE5NS4zIi8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1IiB4PSI3MzcuNDkxMSIgeT0iMjAwLjMiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSI3MzUuNDkxMSIgeT0iMjAyLjMiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSI3MzUuNDkxMSIgeT0iMjA2LjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTAuOTgxMSIgeD0iNjIxLjUxIiB5PSIyMjguMjk1MSI+JiMxMjQ3MzsmIzEyNDY3OyYjMTI0NTA7JiMzNTMzNjsmIzMxNjM5OzogMTImIzIwNDkxOzwvdGV4dD48L2c+PCEtLWVudGl0eSA/Pz8/Pz8/OiA4Py0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLi4uLiA4LiIgZGF0YS1zb3VyY2UtbGluZT0iMjAiIGRhdGEtdWlkPSJlbnQwMDE0IiBpZD0iZW50aXR5Xy4uLi4uLi4uIDguIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxNzAuMDczNyIgeD0iNTAuOTYiIHk9IjMxNi42Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1IiB4PSIyMDEuMDMzNyIgeT0iMzIxLjYiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIxOTkuMDMzNyIgeT0iMzIzLjYiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIxOTkuMDMzNyIgeT0iMzI3LjYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzAuMDczNyIgeD0iNjUuOTYiIHk9IjM0OS41OTUxIj4mIzEyNDY2OyYjMTI1NDA7JiMxMjUxMjsmIzEyNDU4OyYjMTI1NDA7JiMxMjQ5NjsmIzEyNTQwOzogOCYjMjA0OTE7PC90ZXh0PjwvZz48IS0tZW50aXR5ID8/Pz8/OiA2Py0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLi4gNi4iIGRhdGEtc291cmNlLWxpbmU9IjIxIiBkYXRhLXVpZD0iZW50MDAxNSIgaWQ9ImVudGl0eV8uLi4uLi4gNi4iPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE0Mi4wNzM5IiB4PSIyNTUuOTYiIHk9IjMxNi42Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjE1IiB4PSIzNzguMDMzOSIgeT0iMzIxLjYiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIzNzYuMDMzOSIgeT0iMzIzLjYiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI0IiB4PSIzNzYuMDMzOSIgeT0iMzI3LjYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDIuMDczOSIgeD0iMjcwLjk2IiB5PSIzNDkuNTk1MSI+JiMxMjUyMjsmIzEyNDczOyYjMTI0Nzk7JiMxMjU0MDsmIzEyNDg4OzogNiYjMjA0OTE7PC90ZXh0PjwvZz48IS0tZW50aXR5ID8/PzogNz8tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLiA3LiIgZGF0YS1zb3VyY2UtbGluZT0iMjIiIGRhdGEtdWlkPSJlbnQwMDE2IiBpZD0iZW50aXR5Xy4uLi4gNy4iPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjExNC4wNzQiIHg9Ijc4Ljk2IiB5PSI0MjIuODkiLz48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMTUiIHg9IjE3My4wMzQiIHk9IjQyNy44OSIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQiIHg9IjE3MS4wMzQiIHk9IjQyOS44OSIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjQiIHg9IjE3MS4wMzQiIHk9IjQzMy44OSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijc0LjA3NCIgeD0iOTMuOTYiIHk9IjQ1NS44ODUxIj4mIzIwODQwOyYjMjgwNDA7JiMxMjM3NTs6IDcmIzIwNDkxOzwvdGV4dD48L2c+PCEtLWVudGl0eSA/Pz8/OiA2Py0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLiA2LiIgZGF0YS1zb3VyY2UtbGluZT0iMjYiIGRhdGEtdWlkPSJlbnQwMDE4IiBpZD0iZW50aXR5Xy4uLi4uIDYuIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxMjguMDczOSIgeD0iODEyLjk2IiB5PSI4OSIvPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIxNSIgeD0iOTIxLjAzMzkiIHk9Ijk0Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNCIgeD0iOTE5LjAzMzkiIHk9Ijk2Ii8+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNCIgeD0iOTE5LjAzMzkiIHk9IjEwMCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijg4LjA3MzkiIHg9IjgyNy45NiIgeT0iMTIxLjk5NTEiPiYjMjI2NTk7JiMzMDAyODsmIzI2NDY1OyYjMjAyMTQ7OiA2JiMyMDQ5MTs8L3RleHQ+PC9nPjwhLS1TUkM9W1JQN1JKaTkwNDhSbFVPZ0w5eDM0S19QTFkxVURRVEh1MjFWVTZQQW82czEzYVZHNkQwOU1xSVkyT2pJYUxZbG5PT1JmdUlyU2JqOTBtaXJjeWlfaV95c1ZNSml4QzR1Q0taWk0zcXlwY09BLVR3Smw2b0lodkpHcUJJWURXNVUwVkdDTm1EdzFfeWV3SXl1TjFqN3YySmVsbVJDSnlONHdFbnQ5MF9rT1ZrMnRBQmYxbnk1d1l2OURRUmVoTXdLbE8yOXl5ajVnS2dCYjViTGl0cUgtWnZBVGNIV0Zoc0JKWVVwbm5CQ2VzTDFZU082VktlMl8wbEUwU3MxbFlYLXUwWGktWVdTU05LajhXZXhELXhaSG1rZlpRNVNlb1FxZFFsSzJRLXN2Z1lOaVFIWnMyUW1OektLdWthbXROU2FGUXN2R2pmUUowbmtlbWZQbGNXWnVHMWRfZ1BRV1A2a2NPeGFsTHVRSXY2b2xtRkhMRDZfZjM3ZGl5UjFQM3hmdDR6LVQ2bktwbk55MF0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_35">代表的なテストケース<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h3>
+<p><strong>DFS探索のテスト</strong>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;DFS探索による隣接ぷよの検出&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;L字型に配置された同色ぷよを正しく検出すること&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">gameField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">GameField</span><span class="p">()</span>
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">      配置パターン:</span>
+<span class="cm">      [1][1][0]</span>
+<span class="cm">      [0][1][0]</span>
+<span class="cm">      [0][1][0]</span>
+<span class="cm">    */</span>
+<span class="w">    </span><span class="nx">gameField</span><span class="p">.</span><span class="nx">setPuyo</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">9</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">gameField</span><span class="p">.</span><span class="nx">setPuyo</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">9</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">gameField</span><span class="p">.</span><span class="nx">setPuyo</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">gameField</span><span class="p">.</span><span class="nx">setPuyo</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">11</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">connected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">gameField</span><span class="p">.</span><span class="nx">findConnectedPuyos</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">9</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">connected</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">connected</span><span class="p">).</span><span class="nx">toContainEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">9</span><span class="w"> </span><span class="p">})</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">connected</span><span class="p">).</span><span class="nx">toContainEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">9</span><span class="w"> </span><span class="p">})</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">connected</span><span class="p">).</span><span class="nx">toContainEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">10</span><span class="w"> </span><span class="p">})</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">connected</span><span class="p">).</span><span class="nx">toContainEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">11</span><span class="w"> </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></p>
+<p><strong>連鎖処理の統合テスト</strong>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;連鎖処理の統合テスト&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;2連鎖が正しく動作すること&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange: 2連鎖が発生する配置を作成</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">game</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Game</span><span class="p">()</span>
+<span class="w">    </span><span class="c1">// 複雑な配置ロジック...</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">chainResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">game</span><span class="p">.</span><span class="nx">processChain</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">chainResult</span><span class="p">.</span><span class="nx">chainCount</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">chainResult</span><span class="p">.</span><span class="nx">totalScore</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span><span class="w"> </span><span class="c1">// 1連鎖(40点) + 2連鎖(20点)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></p>
+<h2 id="_36">まとめ<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h2>
+<h3 id="_37">実装成果<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h3>
+<h4 id="_38">量的成果<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>コード行数</strong>: 総計2,000+行（テスト含む）</li>
+<li><strong>テストケース</strong>: 121個（100%成功）</li>
+<li><strong>コミット数</strong>: 50+回</li>
+<li><strong>イテレーション</strong>: 8回完走</li>
+</ul>
+<h4 id="_39">質的成果<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>循環的複雑度</strong>: 全メソッド7以下</li>
+<li><strong>テストカバレッジ</strong>: 包括的なユニットテスト</li>
+<li><strong>コード品質</strong>: ESLint・Prettier完全準拠</li>
+<li><strong>型安全性</strong>: TypeScript厳密モード</li>
+</ul>
+<h4 id="_40">アーキテクチャ成果<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>レイヤー分離</strong>: クリーンアーキテクチャの実現</li>
+<li><strong>責務分離</strong>: SOLID原則の適用</li>
+<li><strong>保守性</strong>: 変更の影響範囲を限定</li>
+<li><strong>拡張性</strong>: 新機能追加の容易さ</li>
+</ul>
+<h3 id="_41">学習価値<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h3>
+<h4 id="_42">技術的スキル<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>TDD</strong>: Red-Green-Refactorサイクルの習得</li>
+<li><strong>設計</strong>: クリーンアーキテクチャとSOLID原則の実践</li>
+<li><strong>アルゴリズム</strong>: DFS探索、重力処理の実装</li>
+<li><strong>TypeScript</strong>: 型安全性を活用した開発</li>
+</ol>
+<h4 id="_43">プロセススキル<a class="headerlink" href="#_43" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>イテレーション開発</strong>: 段階的な機能実装</li>
+<li><strong>品質管理</strong>: 自動化による継続的品質保証</li>
+<li><strong>リファクタリング</strong>: 既存機能を保持した構造改善</li>
+<li><strong>ドキュメント化</strong>: 開発過程の体系的記録</li>
+</ol>
+<p>この実装により、<strong>変更を楽に安全にできて役に立つソフトウェア</strong>という目標を達成し、実践的な開発スキルを身につけることができました。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>
