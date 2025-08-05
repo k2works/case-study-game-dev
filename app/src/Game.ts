@@ -1,7 +1,14 @@
+import { GameField } from './GameField'
+import { GameLogic } from './GameLogic'
+import { PuyoPair } from './Puyo'
+import { GameState } from './GameState'
+import { ScoreCalculator } from './ScoreCalculator'
+
 export class Game {
-  private field: number[][]
+  private gameField: GameField
+  private gameLogic: GameLogic
   private currentPuyoPair: PuyoPair | null = null
-  private gameOver = false
+  private gameState = GameState.PLAYING
   private dropTimer = 0
   private dropInterval = 1000 // 1秒ごとに落下
   private puyoLanded = false
@@ -10,21 +17,28 @@ export class Game {
   private fastDropInterval = 50 // 高速落下は50msごと
   private chainCount = 0 // 連鎖数
   private score = 0 // 現在のスコア
-  private zenkeshiCallback: (() => void) | null = null // 全消し演出コールバック
   private gameOverCallback: (() => void) | null = null // ゲームオーバー演出コールバック
 
   constructor() {
-    // 6列x12行のフィールドを初期化
-    this.field = Array.from({ length: 12 }, () => Array(6).fill(0))
+    this.gameField = new GameField()
+    this.gameLogic = new GameLogic(
+      this.gameField,
+      (score) => this.addScore(score),
+      this.triggerZenkeshiCallback.bind(this)
+    )
     this.generateNewPuyoPair()
   }
 
   isGameOver(): boolean {
-    return this.gameOver
+    return this.gameState === GameState.GAME_OVER
+  }
+
+  getState(): GameState {
+    return this.gameState
   }
 
   getField(): number[][] {
-    return this.field
+    return this.gameField.getField()
   }
 
   getCurrentPuyoPair(): PuyoPair | null {
@@ -36,7 +50,7 @@ export class Game {
   }
 
   update(deltaTime?: number): void {
-    if (!this.currentPuyoPair || this.gameOver) return
+    if (!this.currentPuyoPair || this.gameState === GameState.GAME_OVER) return
 
     // 着地済みのぷよを処理
     if (this.puyoLanded) {
@@ -57,9 +71,10 @@ export class Game {
   private handleLandedPuyo(): void {
     this.fixPuyoPair()
     // 着地直後に重力処理を実行（横向きぷよなどが適切に落下するように）
-    this.applyGravity()
+    this.gameField.applyGravity()
     this.resetChainCount()
-    this.processChain()
+    const chainResult = this.gameLogic.processChain()
+    this.chainCount = chainResult.chainCount
     this.generateNewPuyoPair()
     this.puyoLanded = false
     this.dropTimer = 0
@@ -109,7 +124,7 @@ export class Game {
   }
 
   handleInput(key: string): void {
-    if (!this.currentPuyoPair || this.gameOver) return
+    if (!this.currentPuyoPair || this.gameState === GameState.GAME_OVER) return
 
     switch (key) {
       case 'ArrowLeft':
@@ -128,7 +143,7 @@ export class Game {
   }
 
   handleKeyDown(key: string): void {
-    if (!this.currentPuyoPair || this.gameOver) return
+    if (!this.currentPuyoPair || this.gameState === GameState.GAME_OVER) return
 
     this.keysPressed.add(key)
 
@@ -176,12 +191,7 @@ export class Game {
   }
 
   private canMoveTo(x: number, y: number): boolean {
-    // フィールドの範囲内かチェック
-    if (x < 0 || x >= 6 || y < 0 || y >= 12) {
-      return false
-    }
-    // 既存のぷよがないかチェック
-    return this.field[y][x] === 0
+    return this.gameField.canMoveTo(x, y)
   }
 
   private canPuyoPairMoveTo(axisX: number, axisY: number): boolean {
@@ -210,7 +220,7 @@ export class Game {
     // ペアぷよの両方をフィールドに固定
     const positions = this.currentPuyoPair.getPositions()
     for (const pos of positions) {
-      this.field[pos.y][pos.x] = pos.color
+      this.gameField.setPuyo(pos.x, pos.y, pos.color)
     }
   }
 
@@ -287,7 +297,7 @@ export class Game {
   private generateNewPuyoPair(): void {
     // ゲームオーバー判定：新しいぷよペアが初期位置に配置できるかチェック
     if (!this.canPuyoPairSpawn(2, 1)) {
-      this.gameOver = true
+      this.gameState = GameState.GAME_OVER
       this.currentPuyoPair = null
       // ゲームオーバー演出をトリガー
       if (this.gameOverCallback) {
@@ -315,171 +325,23 @@ export class Game {
   }
 
   public setGameOver(gameOver: boolean): void {
-    this.gameOver = gameOver
+    this.gameState = gameOver ? GameState.GAME_OVER : GameState.PLAYING
   }
 
   public findConnectedPuyos(x: number, y: number, color: number): Array<{ x: number; y: number }> {
-    // 空のセルや色が0の場合は何も返さない
-    if (color === 0 || this.field[y][x] !== color) {
-      return []
-    }
-
-    const visited: boolean[][] = Array.from({ length: 12 }, () => Array(6).fill(false))
-    const result: Array<{ x: number; y: number }> = []
-
-    this.dfsConnectedPuyos(x, y, color, visited, result)
-    return result
-  }
-
-  private dfsConnectedPuyos(
-    currentX: number,
-    currentY: number,
-    color: number,
-    visited: boolean[][],
-    result: Array<{ x: number; y: number }>
-  ): void {
-    // 範囲外または無効な条件をチェック
-    if (!this.isValidDfsPosition(currentX, currentY, color, visited)) {
-      return
-    }
-
-    // 訪問済みにマークして結果に追加
-    visited[currentY][currentX] = true
-    result.push({ x: currentX, y: currentY })
-
-    // 隣接する4方向を再帰的に探索
-    this.exploreDfsDirections(currentX, currentY, color, visited, result)
-  }
-
-  private isValidDfsPosition(x: number, y: number, color: number, visited: boolean[][]): boolean {
-    // 範囲外チェック
-    if (x < 0 || x >= 6 || y < 0 || y >= 12) return false
-    // 既に訪問済みまたは異なる色の場合
-    if (visited[y][x] || this.field[y][x] !== color) return false
-    return true
-  }
-
-  private exploreDfsDirections(
-    x: number,
-    y: number,
-    color: number,
-    visited: boolean[][],
-    result: Array<{ x: number; y: number }>
-  ): void {
-    const directions = [
-      { dx: 0, dy: -1 }, // 上
-      { dx: 1, dy: 0 }, // 右
-      { dx: 0, dy: 1 }, // 下
-      { dx: -1, dy: 0 }, // 左
-    ]
-
-    for (const dir of directions) {
-      this.dfsConnectedPuyos(x + dir.dx, y + dir.dy, color, visited, result)
-    }
+    return this.gameField.findConnectedPuyos(x, y, color)
   }
 
   public findErasableGroups(): Array<Array<{ x: number; y: number }>> {
-    const visited: boolean[][] = Array.from({ length: 12 }, () => Array(6).fill(false))
-    const erasableGroups: Array<Array<{ x: number; y: number }>> = []
-
-    // フィールド全体をスキャンして消去対象グループを検出
-    for (let y = 0; y < 12; y++) {
-      for (let x = 0; x < 6; x++) {
-        if (!visited[y][x] && this.field[y][x] !== 0) {
-          const group = this.findConnectedPuyosForErasure(x, y, this.field[y][x], visited)
-          // 4つ以上のグループは消去対象
-          if (group.length >= 4) {
-            erasableGroups.push(group)
-          }
-        }
-      }
-    }
-
-    return erasableGroups
-  }
-
-  private findConnectedPuyosForErasure(
-    x: number,
-    y: number,
-    color: number,
-    visited: boolean[][]
-  ): Array<{ x: number; y: number }> {
-    const result: Array<{ x: number; y: number }> = []
-    this.dfsConnectedPuyos(x, y, color, visited, result)
-    return result
+    return this.gameField.findErasableGroups()
   }
 
   public erasePuyos(): number {
-    const erasableGroups = this.findErasableGroups()
-
-    // 消去対象グループがない場合は0を返す
-    if (erasableGroups.length === 0) {
-      return 0
-    }
-
-    // 消去されるぷよの総数を計算
-    let totalErasedCount = 0
-    for (const group of erasableGroups) {
-      totalErasedCount += group.length
-    }
-
-    // 消去対象のぷよをすべて消去（0にセット）
-    for (const group of erasableGroups) {
-      for (const puyo of group) {
-        this.field[puyo.y][puyo.x] = 0
-      }
-    }
-
-    return totalErasedCount
+    return this.gameField.erasePuyos()
   }
 
   public applyGravity(): void {
-    // 各列に対して重力を適用
-    for (let x = 0; x < 6; x++) {
-      this.applyGravityToColumn(x)
-    }
-  }
-
-  private applyGravityToColumn(x: number): void {
-    // 各列の底から上に向かって、空いているスペースを詰める
-    let writePos = 11 // 書き込み位置（底から開始）
-
-    // 底から上に向かってスキャン
-    for (let y = 11; y >= 0; y--) {
-      if (this.field[y][x] !== 0) {
-        // ぷよがある場合は書き込み位置に移動
-        if (y !== writePos) {
-          this.field[writePos][x] = this.field[y][x]
-          this.field[y][x] = 0
-        }
-        writePos-- // 次の書き込み位置を上に移動
-      }
-    }
-  }
-
-  private processChain(): void {
-    // 連鎖処理：消去できるぷよがある限り繰り返す
-    while (true) {
-      // 消去処理を実行
-      const erasedCount = this.erasePuyos()
-
-      // 消去されるぷよがない場合は連鎖終了
-      if (erasedCount === 0) {
-        break
-      }
-
-      // 連鎖数をカウント
-      this.chainCount++
-
-      // スコアを加算
-      this.addErasureScore(erasedCount, this.chainCount)
-
-      // 重力処理を実行
-      this.applyGravity()
-    }
-
-    // 連鎖処理終了後、全消しボーナスをチェック
-    this.addZenkeshiScore()
+    this.gameField.applyGravity()
   }
 
   public getChainCount(): number {
@@ -488,30 +350,6 @@ export class Game {
 
   private resetChainCount(): void {
     this.chainCount = 0
-  }
-
-  public getChainBonus(chainCount: number): number {
-    // 連鎖ボーナス倍率の計算
-    // 1連鎖: 1倍, 2連鎖: 2倍, 3連鎖: 4倍, 4連鎖: 8倍, 5連鎖以上: 16倍
-    switch (chainCount) {
-      case 0:
-        return 1 // 連鎖なしでも1倍
-      case 1:
-        return 1
-      case 2:
-        return 2
-      case 3:
-        return 4
-      case 4:
-        return 8
-      default:
-        return 16 // 5連鎖以上は16倍
-    }
-  }
-
-  public calculateChainScore(baseScore: number, chainCount: number): number {
-    // 基本スコアに連鎖ボーナスを適用
-    return baseScore * this.getChainBonus(chainCount)
   }
 
   public getScore(): number {
@@ -526,53 +364,47 @@ export class Game {
     this.score = 0
   }
 
-  public calculateErasureScore(erasedCount: number, chainCount: number): number {
-    // 基本スコア: 消去したぷよ数 × 10点
-    const baseScore = erasedCount * 10
-    // 連鎖ボーナスを適用
-    return this.calculateChainScore(baseScore, chainCount)
-  }
-
-  private addErasureScore(erasedCount: number, chainCount: number): void {
-    const points = this.calculateErasureScore(erasedCount, chainCount)
-    this.addScore(points)
-  }
-
   public isAllClear(): boolean {
-    // フィールド全体をスキャンして、すべてのセルが空（0）かどうかを確認
-    for (let y = 0; y < 12; y++) {
-      for (let x = 0; x < 6; x++) {
-        if (this.field[y][x] !== 0) {
-          return false // 空でないセルが見つかった場合は全消しではない
-        }
-      }
-    }
-    return true // すべてのセルが空の場合は全消し
-  }
-
-  public getZenkeshiBonus(): number {
-    // 全消しボーナスは固定で2000点
-    return 2000
-  }
-
-  public calculateZenkeshiScore(): number {
-    // 全消し状態の場合は2000点、そうでなければ0点
-    return this.isAllClear() ? this.getZenkeshiBonus() : 0
-  }
-
-  private addZenkeshiScore(): void {
-    // 全消し状態の場合はボーナスを加算
-    if (this.isAllClear()) {
-      this.addScore(this.getZenkeshiBonus())
-      // 全消し演出をトリガー
-      if (this.zenkeshiCallback) {
-        this.zenkeshiCallback()
-      }
-    }
+    return this.gameField.isAllClear()
   }
 
   public setZenkeshiCallback(callback: () => void): void {
-    this.zenkeshiCallback = callback
+    this.gameLogic.setZenkeshiCallback(callback)
+  }
+
+  private triggerZenkeshiCallback(): void {
+    // 全消し演出のトリガー（GameLogicから呼び出される）
+  }
+
+  // 後方互換性のためのメソッド
+  public getChainBonus(chainCount: number): number {
+    return ScoreCalculator.getChainBonus(chainCount)
+  }
+
+  public calculateChainScore(baseScore: number, chainCount: number): number {
+    return ScoreCalculator.calculateChainScore(baseScore, chainCount)
+  }
+
+  public calculateErasureScore(erasedCount: number, chainCount: number): number {
+    return ScoreCalculator.calculateErasureScore(erasedCount, chainCount)
+  }
+
+  public getZenkeshiBonus(): number {
+    return ScoreCalculator.getZenkeshiBonus()
+  }
+
+  public calculateZenkeshiScore(): number {
+    return ScoreCalculator.calculateZenkeshiScore(this.isAllClear())
+  }
+
+  public processChain(): void {
+    const chainResult = this.gameLogic.processChain()
+    this.chainCount = chainResult.chainCount
+  }
+
+  public addErasureScore(erasedCount: number, chainCount: number): void {
+    const points = ScoreCalculator.calculateErasureScore(erasedCount, chainCount)
+    this.addScore(points)
   }
 
   public setGameOverCallback(callback: () => void): void {
@@ -581,10 +413,10 @@ export class Game {
 
   public restart(): void {
     // フィールドをクリア
-    this.field = Array.from({ length: 12 }, () => Array(6).fill(0))
+    this.gameField.clear()
 
     // ゲーム状態をリセット
-    this.gameOver = false
+    this.gameState = GameState.PLAYING
     this.score = 0
     this.chainCount = 0
     this.puyoLanded = false
@@ -598,56 +430,5 @@ export class Game {
 
     // 新しいぷよペアを生成
     this.generateNewPuyoPair()
-  }
-}
-
-export class Puyo {
-  constructor(
-    public x: number,
-    public y: number,
-    public color: number = Math.floor(Math.random() * 4) + 1 // 1-4のランダムな色
-  ) {}
-}
-
-export class PuyoPair {
-  public axis: Puyo
-  public satellite: Puyo
-  public rotation: number = 0 // 0:上, 1:右, 2:下, 3:左
-
-  constructor(x: number, y: number) {
-    this.axis = new Puyo(x, y)
-    this.satellite = new Puyo(x, y + 1) // 軸の下に衛星ぷよを配置（初期状態）
-    this.updateSatellitePosition() // 正しい位置に更新
-  }
-
-  rotate(): void {
-    this.rotation = (this.rotation + 1) % 4
-    this.updateSatellitePosition()
-  }
-
-  public updateSatellitePosition(): void {
-    const offsets = [
-      { x: 0, y: -1 }, // 上
-      { x: 1, y: 0 }, // 右
-      { x: 0, y: 1 }, // 下
-      { x: -1, y: 0 }, // 左
-    ]
-
-    const offset = offsets[this.rotation]
-    this.satellite.x = this.axis.x + offset.x
-    this.satellite.y = this.axis.y + offset.y
-  }
-
-  getPositions(): Array<{ x: number; y: number; color: number }> {
-    return [
-      { x: this.axis.x, y: this.axis.y, color: this.axis.color },
-      { x: this.satellite.x, y: this.satellite.y, color: this.satellite.color },
-    ]
-  }
-
-  moveTo(x: number, y: number): void {
-    this.axis.x = x
-    this.axis.y = y
-    this.updateSatellitePosition()
   }
 }
