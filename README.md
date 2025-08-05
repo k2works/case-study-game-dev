@@ -1,5 +1,7 @@
 # ゲーム開発のケーススタディ
 
+[![codecov](https://codecov.io/github/k2works/case-study-game-dev/branch/case-2/graph/badge.svg?token=PXJYRHMUWO)](https://codecov.io/github/k2works/case-study-game-dev)
+
 ## 概要
 
 AI プログラミング学習の一環として、ぷよぷよゲーム開発を題材にしたケーススタディプロジェクトです。テスト駆動開発（TDD）とクリーンアーキテクチャの原則に従い、8つのイテレーションを通じて段階的に機能を実装しました。
@@ -66,6 +68,8 @@ npm run docs:serve
 ```
 
 ドキュメントは http://localhost:8000 でアクセス可能です。
+
+🎮 **デモ**: [オンラインでプレイ](https://case-study-game-dev-5ltf-2csu7a7xd-k2works-projects.vercel.app/) (デプロイ済み)
 
 #### アプリケーション開発環境
 

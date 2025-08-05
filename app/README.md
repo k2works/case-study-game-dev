@@ -1,7 +1,5 @@
 # ぷよぷよゲーム
 
-[![codecov](https://codecov.io/github/k2works/case-study-game-dev/branch/case-2/graph/badge.svg?token=PXJYRHMUWO)](https://codecov.io/github/k2works/case-study-game-dev)
-
 ## 概要
 
 TypeScriptとViteを使用して開発されたぷよぷよゲームです。テスト駆動開発（TDD）によりクリーンで保守性の高いコードを実現しています。
