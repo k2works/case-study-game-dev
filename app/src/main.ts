@@ -220,7 +220,7 @@ document.addEventListener('keyup', (event) => {
 
 // リスタートボタンの処理
 document.querySelector<HTMLButtonElement>('#restart-btn')!.addEventListener('click', () => {
-  ;(game as any).restart()
+  game.restart()
   console.log('Game restarted')
 })
 
@@ -229,6 +229,6 @@ document
   .querySelector<HTMLButtonElement>('#restart-gameover-btn')!
   .addEventListener('click', () => {
     hideGameOverAnimation()
-    ;(game as any).restart()
+    game.restart()
     console.log('Game restarted from game over screen')
   })

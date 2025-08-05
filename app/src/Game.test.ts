@@ -343,9 +343,6 @@ describe('Game', () => {
     })
 
     it('回転処理が正しく呼び出されること', () => {
-      // rotatePuyoPairメソッドが存在することを確認
-      expect(typeof (game as any).rotatePuyoPair).toBe('function')
-
       // 回転が実際に実行されることを確認
       const initialRotation = game.getCurrentPuyoPair()!.rotation
       game.handleInput('ArrowUp')
@@ -401,26 +398,26 @@ describe('Game', () => {
       }
     })
 
-    it('canRotateメソッドが存在し正しく動作すること', () => {
-      // canRotatePuyoPairメソッドが存在することを確認
-      expect(typeof (game as any).canRotatePuyoPair).toBe('function')
-
-      // 中央の安全な位置では回転可能
-      expect((game as any).canRotatePuyoPair()).toBe(true)
+    it('中央の安全な位置では回転可能であること', () => {
+      // 中央の安全な位置では回転可能（パブリックAPIを通じて確認）
+      const initialRotation = game.getCurrentPuyoPair()!.rotation
+      game.handleInput('ArrowUp')
+      const afterRotation = game.getCurrentPuyoPair()!.rotation
+      expect(afterRotation).toBe((initialRotation + 1) % 4)
     })
 
     it('壁キック処理が正しく動作すること', () => {
-      // 壁キック処理メソッドが存在することを確認
-      expect(typeof (game as any).tryWallKickPuyoPair).toBe('function')
-
-      // 中央の安全な位置では壁キックは不要（通常回転で成功するため呼び出されない）
       // 右端に移動してから壁キックをテスト
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight') // x=5に移動
 
-      // PuyoPairの壁キック処理をテスト（右端では壁キックが成功するはず）
-      expect((game as any).tryWallKickPuyoPair()).toBe(true)
+      // 右端で回転を試行（壁キックが成功すれば回転が実行される）
+      const initialRotation = game.getCurrentPuyoPair()!.rotation
+      game.handleInput('ArrowUp')
+      const afterRotation = game.getCurrentPuyoPair()!.rotation
+      // 壁キックが成功すれば回転が実行される
+      expect(afterRotation).toBe((initialRotation + 1) % 4)
     })
 
     it('左端での壁キック処理を試みること', () => {
@@ -428,8 +425,12 @@ describe('Game', () => {
       game.handleInput('ArrowLeft')
       game.handleInput('ArrowLeft')
 
-      // 左端で壁キックをテスト（成功するはず）
-      expect((game as any).tryWallKickPuyoPair()).toBe(true)
+      // 左端で回転を試行（壁キックが成功すれば回転が実行される）
+      const initialRotation = game.getCurrentPuyoPair()!.rotation
+      game.handleInput('ArrowUp')
+      const afterRotation = game.getCurrentPuyoPair()!.rotation
+      // 壁キックが成功すれば回転が実行される
+      expect(afterRotation).toBe((initialRotation + 1) % 4)
     })
 
     it('右端での壁キック処理を試みること', () => {
@@ -438,8 +439,12 @@ describe('Game', () => {
       game.handleInput('ArrowRight')
       game.handleInput('ArrowRight')
 
-      // 右端で壁キックをテスト（成功するはず）
-      expect((game as any).tryWallKickPuyoPair()).toBe(true)
+      // 右端で回転を試行（壁キックが成功すれば回転が実行される）
+      const initialRotation = game.getCurrentPuyoPair()!.rotation
+      game.handleInput('ArrowUp')
+      const afterRotation = game.getCurrentPuyoPair()!.rotation
+      // 壁キックが成功すれば回転が実行される
+      expect(afterRotation).toBe((initialRotation + 1) % 4)
     })
 
     it('回転操作が画面に正しく反映されること', () => {
