@@ -1,9 +1,11 @@
 import { Game } from '../domain/entities/Game'
 import { GameRenderer } from '../infrastructure/GameRenderer'
+import { InputHandler } from '../infrastructure/InputHandler'
 
 export class GameController {
   private game: Game
   private renderer: GameRenderer
+  private inputHandler: InputHandler
   private scoreElement: HTMLDivElement
   private chainElement: HTMLDivElement
   private zenkeshiOverlay: HTMLDivElement
@@ -15,8 +17,10 @@ export class GameController {
   constructor() {
     this.game = new Game()
     this.renderer = new GameRenderer('#game-canvas')
+    this.inputHandler = new InputHandler()
     this.initializeDOM()
     this.setupEventListeners()
+    this.setupInputHandlers()
     this.setupGameCallbacks()
     this.startGameLoop()
   }
@@ -30,10 +34,6 @@ export class GameController {
   }
 
   private setupEventListeners(): void {
-    // キーボード入力の処理
-    document.addEventListener('keydown', (event) => this.handleKeyDown(event))
-    document.addEventListener('keyup', (event) => this.handleKeyUp(event))
-
     // リスタートボタンの処理
     document.querySelector<HTMLButtonElement>('#restart-btn')!.addEventListener('click', () => {
       this.restartGame()
@@ -48,6 +48,32 @@ export class GameController {
       })
   }
 
+  private setupInputHandlers(): void {
+    // 左右移動
+    this.inputHandler.setKeyHandler('ArrowLeft', () => {
+      this.game.handleInput('ArrowLeft')
+    })
+    this.inputHandler.setKeyHandler('ArrowRight', () => {
+      this.game.handleInput('ArrowRight')
+    })
+
+    // 回転
+    this.inputHandler.setKeyHandler('ArrowUp', () => {
+      this.game.handleInput('ArrowUp')
+    })
+
+    // 高速落下は特別な処理（押下状態を確認）
+    // ゲームループでinputHandler.isKeyPressed('ArrowDown')を使用
+  }
+
+  private handleFastDrop(): void {
+    if (this.inputHandler.isKeyPressed('ArrowDown')) {
+      this.game.handleKeyDown('ArrowDown')
+    } else {
+      this.game.handleKeyUp('ArrowDown')
+    }
+  }
+
   private setupGameCallbacks(): void {
     // 全消し演出コールバックを設定
     this.game.setZenkeshiCallback(() => {
@@ -58,23 +84,6 @@ export class GameController {
     this.game.setGameOverCallback(() => {
       this.showGameOverAnimation()
     })
-  }
-
-  private handleKeyDown(event: KeyboardEvent): void {
-    // 既存のhandleInputは一回押し用（左右移動、一回落下）
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      // 左右移動は一回押しで処理
-      if (!event.repeat) {
-        this.game.handleInput(event.key)
-      }
-    } else {
-      // その他のキーは押下状態を管理
-      this.game.handleKeyDown(event.key)
-    }
-  }
-
-  private handleKeyUp(event: KeyboardEvent): void {
-    this.game.handleKeyUp(event.key)
   }
 
   private updateUI(): void {
@@ -119,6 +128,9 @@ export class GameController {
       const deltaTime = currentTime - this.lastTime
       this.lastTime = currentTime
 
+      // 高速落下処理
+      this.handleFastDrop()
+
       // ゲームの更新
       this.game.update(deltaTime)
 
@@ -152,6 +164,7 @@ export class GameController {
 
   public destroy(): void {
     this.stopGameLoop()
+    this.inputHandler.destroy()
     // イベントリスナーの削除は省略（通常はメモリリーク対策のため必要）
   }
 }
