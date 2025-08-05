@@ -111,13 +111,24 @@ function drawCurrentPuyo() {
 function drawPuyoCell(x: number, y: number, color: number) {
   const colors = ['', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7']
 
+  // 円の中心座標と半径を計算
+  const centerX = x * CELL_SIZE + CELL_SIZE / 2
+  const centerY = y * CELL_SIZE + CELL_SIZE / 2
+  const radius = (CELL_SIZE - 6) / 2 // 少し小さくしてマージンを確保
+
   ctx.fillStyle = colors[color] || '#999'
-  ctx.fillRect(x * CELL_SIZE + 2, y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4)
+  
+  // 円を描画
+  ctx.beginPath()
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+  ctx.fill()
 
   // ぷよの境界線を描画
   ctx.strokeStyle = '#333'
   ctx.lineWidth = 2
-  ctx.strokeRect(x * CELL_SIZE + 2, y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4)
+  ctx.beginPath()
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+  ctx.stroke()
 }
 
 // UIを更新する関数
