@@ -17,9 +17,10 @@ describe('App', () => {
     ).toBeInTheDocument()
   })
 
-  it('ゲーム準備中メッセージが表示されること', () => {
+  it('GameBoardとコントロールが表示されること', () => {
     render(<App />)
 
-    expect(screen.getByText('ゲームを準備中...')).toBeInTheDocument()
+    expect(screen.getByTestId('game-board')).toBeInTheDocument()
+    expect(screen.getByText('ゲーム開始')).toBeInTheDocument()
   })
 })
