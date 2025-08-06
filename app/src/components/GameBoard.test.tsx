@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { GameBoard } from './GameBoard'
-import { Game } from '../domain/Game'
+import { Game, GameState } from '../domain/Game'
 
 describe('GameBoard', () => {
   describe('GameBoardを作成する', () => {
@@ -64,6 +64,18 @@ describe('GameBoard', () => {
       const subPos = game.currentPair!.getSubPosition()
       const subPuyoCell = screen.getByTestId(`cell-${subPos.x}-${subPos.y}`)
       expect(subPuyoCell).toHaveClass('puyo')
+    })
+
+    it('ゲームオーバー状態を表示する', () => {
+      const game = new Game()
+      game.start()
+
+      // ゲームオーバー状態にする
+      game.state = GameState.GAME_OVER
+
+      render(<GameBoard game={game} />)
+
+      expect(screen.getByText('Game Over')).toBeInTheDocument()
     })
   })
 })

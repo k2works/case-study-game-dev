@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { Game, GameState } from './Game'
-import { PuyoColor } from './Puyo'
+import { Puyo, PuyoColor } from './Puyo'
 
 describe('Game', () => {
   describe('Gameを作成する', () => {
@@ -136,6 +136,36 @@ describe('Game', () => {
       expect(game.currentPair).not.toBe(originalPair)
       expect(game.currentPair!.x).toBe(2)
       expect(game.currentPair!.y).toBe(1)
+    })
+  })
+
+  describe('ゲームオーバー判定', () => {
+    it('新しいぷよペアの初期位置に既存のぷよがある場合ゲームオーバーになる', () => {
+      const game = new Game()
+      game.start()
+
+      // フィールド上部にぷよを配置してゲームオーバー状態を作る
+      game.field.setPuyo(2, 1, new Puyo(PuyoColor.RED))
+
+      // 新しいペアを生成しようとする
+      game.generateNewPair()
+
+      expect(game.state).toBe(GameState.GAME_OVER)
+    })
+
+    it('ゲームオーバー状態では操作が無効になる', () => {
+      const game = new Game()
+      game.start()
+
+      // ゲームオーバー状態にする
+      game.field.setPuyo(2, 1, new Puyo(PuyoColor.RED))
+      game.generateNewPair()
+
+      // 操作が無効になることを確認
+      expect(game.moveLeft()).toBe(false)
+      expect(game.moveRight()).toBe(false)
+      expect(game.rotate()).toBe(false)
+      expect(game.drop()).toBe(false)
     })
   })
 })

@@ -3,6 +3,7 @@ import './App.css'
 import { GameBoard } from './components/GameBoard'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
+import { useAutoDrop } from './hooks/useAutoDrop'
 
 function App() {
   const [game] = useState(() => new Game())
@@ -57,11 +58,30 @@ function App() {
         game.fixCurrentPair()
         forceRender()
       }
-    }, [game, forceRender])
+    }, [game, forceRender]),
   }
 
   // キーボードイベントを登録
   useKeyboard(keyboardHandlers)
+
+  // 自動落下システム
+  const handleAutoDrop = useCallback(() => {
+    if (game.state === GameState.PLAYING) {
+      const dropped = game.drop()
+      if (!dropped) {
+        // これ以上落下できない場合、ぷよを固定
+        game.fixCurrentPair()
+      }
+      forceRender()
+    }
+  }, [game, forceRender])
+
+  // 自動落下を設定（1秒間隔）
+  useAutoDrop({
+    onDrop: handleAutoDrop,
+    interval: 1000,
+    enabled: game.state === GameState.PLAYING,
+  })
 
   return (
     <div className="app">

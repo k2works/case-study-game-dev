@@ -133,7 +133,7 @@ export class Game {
     return this.field.getPuyo(position.x, position.y) === null
   }
 
-  private generateNewPair(): void {
+  generateNewPair(): void {
     const colors = [
       PuyoColor.RED,
       PuyoColor.BLUE,
@@ -147,6 +147,26 @@ export class Game {
     const subPuyo = new Puyo(subColor)
 
     // 初期位置: フィールド中央上部（y=1にしてsubが y=0 に配置されるようにする）
-    this.currentPair = new PuyoPair(mainPuyo, subPuyo, 2, 1)
+    const newPair = new PuyoPair(mainPuyo, subPuyo, 2, 1)
+
+    // ゲームオーバー判定：新しいペアが配置できない場合
+    if (!this.canPlacePair(newPair)) {
+      this.state = GameState.GAME_OVER
+      this.currentPair = null
+      return
+    }
+
+    this.currentPair = newPair
+  }
+
+  private canPlacePair(pair: PuyoPair): boolean {
+    const mainPos = pair.getMainPosition()
+    const subPos = pair.getSubPosition()
+
+    // 初期位置に既存のぷよがある場合は配置不可
+    return (
+      this.field.getPuyo(mainPos.x, mainPos.y) === null &&
+      this.field.getPuyo(subPos.x, subPos.y) === null
+    )
   }
 }
