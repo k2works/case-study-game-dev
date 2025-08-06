@@ -57,3 +57,38 @@ plugins:
 
 nav:
   - Home: index.md
+  
+  - 要件:
+    - 概要: requirements/index.md
+    - 仕様: requirements/要件.md
+    - テスト戦略: requirements/テスト戦略.md
+    - 非機能要件: requirements/非機能要件.md
+    - 技術スタック: requirements/技術スタック.md
+  
+  - 設計:
+    - 概要: design/index.md
+    - アーキテクチャ: design/アーキテクチャ.md
+    - データモデル: design/データモデル.md
+    - ドメインモデル: design/ドメインモデル.md
+    - ユーザーインターフェース設計: design/ユーザーインターフェース設計.md
+  
+  - ADR:
+    - 概要: adr/index.md
+    - フロントエンド技術スタック選定: adr/001-フロントエンド技術スタック選定.md
+    - 状態管理アーキテクチャ: adr/002-状態管理アーキテクチャ.md
+    - レンダリング手法: adr/003-レンダリング手法.md
+    - テスティング戦略: adr/004-テスティング戦略.md
+    - デプロイメント戦略: adr/005-デプロイメント戦略.md
+  
+  - 運用:
+    - 概要: operation/index.md
+    - 運用要件: operation/運用要件.md
+    - セットアップ: operation/セットアップ.md
+    - MkDocs GitHub Actions設定: operation/MkDocs_GitHub_Actions設定.md
+
+  - 参照:
+    - よいソフトウェアとは: reference/よいソフトウェアとは.md
+    - 開発ガイド: reference/開発ガイド.md
+    - テスト駆動開発から始めるTypeScript入門1: reference/テスト駆動開発から始めるTypeScript入門1.md
+    - テスト駆動開発から始めるTypeScript入門2: reference/テスト駆動開発から始めるTypeScript入門2.md
+    - テスト駆動開発から始めるTypeScript入門3: reference/テスト駆動開発から始めるTypeScript入門3.md
