@@ -95,4 +95,61 @@ describe('Game Integration', () => {
       expect(screen.getByText('スペース: ハードドロップ')).toBeInTheDocument()
     })
   })
+
+  describe('NEXTぷよ機能の統合テスト', () => {
+    it('ゲーム開始後にNEXTぷよが表示される', () => {
+      render(<App />)
+
+      const startButton = screen.getByText('ゲーム開始')
+      fireEvent.click(startButton)
+
+      // NEXTぷよエリアが表示される
+      expect(screen.getByTestId('next-puyo-area')).toBeInTheDocument()
+      expect(screen.getByText('NEXT')).toBeInTheDocument()
+
+      // NEXTぷよのメインとサブが表示される
+      expect(screen.getByTestId('next-main-puyo')).toBeInTheDocument()
+      expect(screen.getByTestId('next-sub-puyo')).toBeInTheDocument()
+
+      // 色クラスが設定されている
+      const nextMainPuyo = screen.getByTestId('next-main-puyo')
+      const nextSubPuyo = screen.getByTestId('next-sub-puyo')
+      expect(nextMainPuyo).toHaveClass('puyo')
+      expect(nextSubPuyo).toHaveClass('puyo')
+    })
+
+    it('ハードドロップ後にNEXTぷよが現在のぷよペアになる', () => {
+      render(<App />)
+
+      const startButton = screen.getByText('ゲーム開始')
+      fireEvent.click(startButton)
+
+      // NEXTぷよの色を記録
+      const nextMainElement = screen.getByTestId('next-main-puyo')
+      const nextSubElement = screen.getByTestId('next-sub-puyo')
+
+      const nextMainColor = Array.from(nextMainElement.classList).find((cls) =>
+        ['red', 'blue', 'green', 'yellow'].includes(cls)
+      )
+      const nextSubColor = Array.from(nextSubElement.classList).find((cls) =>
+        ['red', 'blue', 'green', 'yellow'].includes(cls)
+      )
+
+      // ハードドロップを実行
+      fireEvent.keyDown(document, { key: ' ' })
+
+      // 新しい現在のぷよペアの色を確認
+      const currentMainElement = screen.getByTestId('cell-2-1')
+      const currentSubElement = screen.getByTestId('cell-2-0')
+
+      // 元のNEXTぷよの色と一致することを確認
+      expect(currentMainElement).toHaveClass(nextMainColor!)
+      expect(currentSubElement).toHaveClass(nextSubColor!)
+
+      // 新しいNEXTぷよが生成されていることを確認
+      expect(screen.getByTestId('next-puyo-area')).toBeInTheDocument()
+      expect(screen.getByTestId('next-main-puyo')).toBeInTheDocument()
+      expect(screen.getByTestId('next-sub-puyo')).toBeInTheDocument()
+    })
+  })
 })

@@ -77,5 +77,26 @@ describe('GameBoard', () => {
 
       expect(screen.getByText('Game Over')).toBeInTheDocument()
     })
+
+    it('NEXTぷよが表示される', () => {
+      const game = new Game()
+      game.start()
+
+      render(<GameBoard game={game} />)
+
+      // NEXTぷよエリアが存在する
+      const nextArea = screen.getByTestId('next-puyo-area')
+      expect(nextArea).toBeInTheDocument()
+
+      // NEXTぷよのメインとサブが表示される
+      const nextMainPuyo = screen.getByTestId('next-main-puyo')
+      const nextSubPuyo = screen.getByTestId('next-sub-puyo')
+      expect(nextMainPuyo).toBeInTheDocument()
+      expect(nextSubPuyo).toBeInTheDocument()
+
+      // 色が設定されている
+      expect(nextMainPuyo).toHaveClass('puyo')
+      expect(nextSubPuyo).toHaveClass('puyo')
+    })
   })
 })

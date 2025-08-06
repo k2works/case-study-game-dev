@@ -13,6 +13,7 @@ export class Game {
   public score: number = 0
   public field: Field
   public currentPair: PuyoPair | null = null
+  public nextPair: PuyoPair | null = null
 
   constructor() {
     this.field = new Field()
@@ -20,6 +21,7 @@ export class Game {
 
   start(): void {
     this.state = GameState.PLAYING
+    this.generateNextPair()
     this.generateNewPair()
   }
 
@@ -95,8 +97,20 @@ export class Game {
     this.field.setPuyo(mainPos.x, mainPos.y, this.currentPair.main)
     this.field.setPuyo(subPos.x, subPos.y, this.currentPair.sub)
 
-    // 新しいペアを生成
-    this.generateNewPair()
+    // NEXTぷよを現在のぷよペアにして、新しいNEXTを生成
+    this.currentPair = this.nextPair
+    if (this.currentPair) {
+      this.currentPair.x = 2
+      this.currentPair.y = 1
+      this.currentPair.rotation = 0
+    }
+    this.generateNextPair()
+
+    // ゲームオーバー判定
+    if (this.currentPair && !this.canPlacePair(this.currentPair)) {
+      this.state = GameState.GAME_OVER
+      this.currentPair = null
+    }
   }
 
   private isValidPosition(x: number, y: number, rotation: number): boolean {
@@ -134,6 +148,32 @@ export class Game {
   }
 
   generateNewPair(): void {
+    // NEXTぷよがあればそれを使用、なければ新規生成
+    if (this.nextPair) {
+      this.currentPair = this.nextPair
+      this.currentPair.x = 2
+      this.currentPair.y = 1
+      this.currentPair.rotation = 0
+    } else {
+      this.currentPair = this.createRandomPuyoPair(2, 1)
+    }
+
+    // ゲームオーバー判定
+    if (this.currentPair && !this.canPlacePair(this.currentPair)) {
+      this.state = GameState.GAME_OVER
+      this.currentPair = null
+      return
+    }
+
+    // 新しいNEXTぷよを生成
+    this.generateNextPair()
+  }
+
+  generateNextPair(): void {
+    this.nextPair = this.createRandomPuyoPair(0, 0)
+  }
+
+  private createRandomPuyoPair(x: number, y: number): PuyoPair {
     const colors = [
       PuyoColor.RED,
       PuyoColor.BLUE,
@@ -146,17 +186,7 @@ export class Game {
     const mainPuyo = new Puyo(mainColor)
     const subPuyo = new Puyo(subColor)
 
-    // 初期位置: フィールド中央上部（y=1にしてsubが y=0 に配置されるようにする）
-    const newPair = new PuyoPair(mainPuyo, subPuyo, 2, 1)
-
-    // ゲームオーバー判定：新しいペアが配置できない場合
-    if (!this.canPlacePair(newPair)) {
-      this.state = GameState.GAME_OVER
-      this.currentPair = null
-      return
-    }
-
-    this.currentPair = newPair
+    return new PuyoPair(mainPuyo, subPuyo, x, y)
   }
 
   private canPlacePair(pair: PuyoPair): boolean {

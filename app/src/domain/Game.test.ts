@@ -168,4 +168,54 @@ describe('Game', () => {
       expect(game.drop()).toBe(false)
     })
   })
+
+  describe('NEXTぷよ機能', () => {
+    it('ゲーム開始時にNEXTぷよが生成される', () => {
+      const game = new Game()
+
+      game.start()
+
+      expect(game.nextPair).toBeDefined()
+      expect(game.nextPair).not.toBeNull()
+      expect(game.nextPair!.main.color).toBeOneOf([
+        PuyoColor.RED,
+        PuyoColor.BLUE,
+        PuyoColor.GREEN,
+        PuyoColor.YELLOW,
+      ])
+    })
+
+    it('現在のぷよペアを固定すると、NEXTぷよが現在のぷよペアになる', () => {
+      const game = new Game()
+      game.start()
+
+      const originalNextPair = game.nextPair
+
+      // 底まで落下させる
+      while (game.drop()) {
+        // 落下し続ける
+      }
+
+      // ぷよペアを固定
+      game.fixCurrentPair()
+
+      // 元のNEXTぷよが現在のぷよペアになっている
+      expect(game.currentPair!.main.color).toBe(originalNextPair!.main.color)
+      expect(game.currentPair!.sub.color).toBe(originalNextPair!.sub.color)
+
+      // 新しいNEXTぷよが生成されている
+      expect(game.nextPair).toBeDefined()
+      expect(game.nextPair).not.toBe(originalNextPair)
+    })
+
+    it('NEXTぷよは初期位置に配置されない', () => {
+      const game = new Game()
+      game.start()
+
+      // NEXTぷよは表示用のため、初期位置を持たない
+      expect(game.nextPair!.x).toBe(0)
+      expect(game.nextPair!.y).toBe(0)
+      expect(game.nextPair!.rotation).toBe(0)
+    })
+  })
 })

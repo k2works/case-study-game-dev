@@ -83,11 +83,36 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
   }
 
+  const renderNextPuyo = () => {
+    if (!game.nextPair) {
+      return null
+    }
+
+    return (
+      <div data-testid="next-puyo-area" className="next-puyo-area">
+        <h3>NEXT</h3>
+        <div className="next-puyo-display">
+          <div
+            data-testid="next-main-puyo"
+            className={`puyo ${game.nextPair.main.color}`}
+          />
+          <div
+            data-testid="next-sub-puyo"
+            className={`puyo ${game.nextPair.sub.color}`}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div data-testid="game-board" className="game-board">
-      <div className="game-status">
-        <span>{getGameStateText()}</span>
-        <span>Score: {game.score}</span>
+      <div className="game-info">
+        <div className="game-status">
+          <span>{getGameStateText()}</span>
+          <span>Score: {game.score}</span>
+        </div>
+        {renderNextPuyo()}
       </div>
       <div className="field">{renderField()}</div>
     </div>
