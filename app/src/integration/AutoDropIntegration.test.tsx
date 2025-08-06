@@ -11,9 +11,10 @@ describe('Auto Drop Integration', () => {
   })
 
   afterEach(() => {
-    vi.runOnlyPendingTimers()
-    vi.useRealTimers()
-    vi.useFakeTimers()
+    // タイマーをクリーンアップしてact()警告を回避
+    act(() => {
+      vi.runOnlyPendingTimers()
+    })
   })
 
   describe('自動落下システムの統合テスト', () => {
@@ -22,7 +23,9 @@ describe('Auto Drop Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // 初期位置のぷよを確認
       const initialPuyo = screen.getByTestId('cell-2-1')
@@ -56,7 +59,9 @@ describe('Auto Drop Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // 十分な時間を経過させて底まで落下させ、新しいペアを生成
       await act(async () => {
@@ -81,10 +86,14 @@ describe('Auto Drop Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // 手動で下に移動
-      fireEvent.keyDown(document, { key: 'ArrowDown' })
+      act(() => {
+        fireEvent.keyDown(document, { key: 'ArrowDown' })
+      })
 
       // さらに自動落下で下に移動
       await act(async () => {
