@@ -96,6 +96,28 @@ describe('Game Integration', () => {
     })
   })
 
+  describe('壁蹴り処理の統合テスト', () => {
+    it('壁際で回転しても適切に位置調整される', () => {
+      render(<App />)
+
+      const startButton = screen.getByText('ゲーム開始')
+      fireEvent.click(startButton)
+
+      // 左端まで移動
+      fireEvent.keyDown(document, { key: 'ArrowLeft' })
+      fireEvent.keyDown(document, { key: 'ArrowLeft' })
+      fireEvent.keyDown(document, { key: 'ArrowLeft' })
+
+      // 回転を実行（壁蹴りが発生）
+      fireEvent.keyDown(document, { key: 'z' })
+
+      // ぷよが表示され続けていることを確認
+      const cells = screen.getAllByTestId(/cell-\d+-\d+/)
+      const puyoCells = cells.filter((cell) => cell.classList.contains('puyo'))
+      expect(puyoCells.length).toBeGreaterThanOrEqual(2)
+    })
+  })
+
   describe('NEXTぷよ機能の統合テスト', () => {
     it('ゲーム開始後にNEXTぷよが表示される', () => {
       render(<App />)

@@ -61,12 +61,33 @@ export class Game {
     }
 
     const newRotation = (this.currentPair.rotation + 90) % 360
-    if (
-      this.isValidPosition(this.currentPair.x, this.currentPair.y, newRotation)
-    ) {
+    const currentX = this.currentPair.x
+    const currentY = this.currentPair.y
+
+    // まず現在位置で回転を試みる
+    if (this.isValidPosition(currentX, currentY, newRotation)) {
       this.currentPair.rotate()
       return true
     }
+
+    // 壁蹴り処理: 左右にずらして回転を試みる
+    const kickOffsets = [
+      -1, // 左にずらす
+      1, // 右にずらす
+      -2, // さらに左にずらす（端の場合）
+      2, // さらに右にずらす（端の場合）
+    ]
+
+    for (const offset of kickOffsets) {
+      const newX = currentX + offset
+      if (this.isValidPosition(newX, currentY, newRotation)) {
+        this.currentPair.x = newX
+        this.currentPair.rotate()
+        return true
+      }
+    }
+
+    // どの位置でも回転できない場合
     return false
   }
 

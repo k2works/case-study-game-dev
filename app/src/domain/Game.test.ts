@@ -86,6 +86,89 @@ describe('Game', () => {
       expect(game.currentPair!.rotation).toBe(90)
     })
 
+    describe('壁蹴り処理', () => {
+      it('左壁に接触時、右にずらして回転する', () => {
+        const game = new Game()
+        game.start()
+
+        // 左壁近くでの衝突をシミュレート
+        // x=0の位置に障害物を置く
+        game.field.setPuyo(0, 2, new Puyo(PuyoColor.RED))
+
+        // x=0, y=2の位置にぷよペアを配置
+        game.currentPair!.x = 0
+        game.currentPair!.y = 2
+        // 180度回転状態（サブぷよが下）
+        game.currentPair!.rotation = 180
+
+        // 回転を実行（270度になろうとするが、サブぷよがx=-1になるので壁蹴り）
+        const rotated = game.rotate()
+
+        expect(rotated).toBe(true)
+        // kickOffsetsの順番により、最初の成功位置が使われる
+        // 障害物があるため、x=1も使えず、x=2になる
+        expect(game.currentPair!.x).toBeGreaterThan(0) // 右にずれる
+        expect(game.currentPair!.rotation).toBe(270)
+      })
+
+      it('右壁に接触時、左にずらして回転する', () => {
+        const game = new Game()
+        game.start()
+
+        // 右端に移動
+        game.currentPair!.x = 5
+
+        // 回転を実行
+        const rotated = game.rotate()
+
+        expect(rotated).toBe(true)
+        expect(game.currentPair!.x).toBe(4) // 左にずれる
+        expect(game.currentPair!.rotation).toBe(90)
+      })
+
+      it('他のぷよに接触時、横にずらして回転を試みる', () => {
+        const game = new Game()
+        game.start()
+
+        // 障害物を配置
+        game.field.setPuyo(3, 1, new Puyo(PuyoColor.RED))
+
+        // 障害物の隣に配置
+        game.currentPair!.x = 2
+        game.currentPair!.y = 1
+
+        // 回転を実行
+        const rotated = game.rotate()
+
+        expect(rotated).toBe(true)
+        expect(game.currentPair!.x).toBe(1) // 左にずれる
+        expect(game.currentPair!.rotation).toBe(90)
+      })
+
+      it('どの位置でも回転できない場合は回転しない', () => {
+        const game = new Game()
+        game.start()
+
+        // 周囲を完全にブロック（回転できないパターン）
+        // 左右と上下をブロック
+        game.field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(1, 1, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(3, 1, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(4, 1, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(5, 1, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(2, 2, new Puyo(PuyoColor.RED))
+
+        game.currentPair!.x = 2
+        game.currentPair!.y = 1
+
+        // 回転を実行
+        const rotated = game.rotate()
+
+        expect(rotated).toBe(false)
+        expect(game.currentPair!.rotation).toBe(0) // 回転しない
+      })
+    })
+
     it('ぷよペアを下に落下できる', () => {
       const game = new Game()
       game.start()
