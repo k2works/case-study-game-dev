@@ -84,6 +84,7 @@ nav:
   - 運用:
     - 概要: operation/index.md
     - 運用要件: operation/運用要件.md
+    - CI/CD設定: operation/ci-cd設定.md
     - セットアップ: operation/セットアップ.md
     - MkDocs GitHub Actions設定: operation/MkDocs_GitHub_Actions設定.md
 

@@ -104,7 +104,7 @@ jobs:
     
     - name: Run tests
       working-directory: ./app
-      run: npm run test
+      run: npm run test:report
     
     - name: Run test coverage
       working-directory: ./app
@@ -114,14 +114,16 @@ jobs:
       working-directory: ./app
       run: npm run build
     
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/test-results-action@v1
       with:
-        file: ./app/coverage/lcov.info
-        fail_ci_if_error: false
         token: ${{ secrets.CODECOV_TOKEN }}
-        flags: unittests
-        name: codecov-umbrella
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   build-and-deploy:
     needs: test
