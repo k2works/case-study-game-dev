@@ -1,5 +1,7 @@
 # Iteration 1 ふりかえり（KPT方式）
 
+🎮 **[デモプレイ](https://case-study-game-dev-5ltf-45cexozkh-k2works-projects.vercel.app/)**
+
 ## 📅 実施概要
 
 - **実施日**: 2025年1月6日
