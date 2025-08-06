@@ -177,4 +177,22 @@ stop
 
 ## 運用
 
+### 構築・配置
 
+```plantuml
+@startuml "Phase 1"
+|構築|
+start
+:環境構築;
+:CI/CD構築;
+
+|配置|
+:デプロイ設定;
+
+|構築|
+:ドキュメント更新;
+
+stop
+
+@enduml
+```
