@@ -57,24 +57,3 @@ plugins:
 
 nav:
   - Home: index.md
-  - 要件:
-      - 概要: requirements/要件.md
-      - ユーザーストーリー詳細: requirements/ユーザーストーリー詳細.md
-      - ユースケース詳細: requirements/ユースケース詳細.md
-      - 非機能要件: requirements/非機能要件.md
-      - 運用要件とリリース計画: requirements/運用要件とリリース計画.md
-  - 設計:
-      - 概要: design/index.md
-      - アーキテクチャ設計: design/アーキテクチャ設計.md
-      - データモデル設計: design/データモデル設計.md
-      - ドメインモデル設計: design/ドメインモデル設計.md
-      - ユーザーインターフェース設計: design/ユーザーインターフェース設計.md
-      - テスト戦略: design/テスト戦略.md
-  - ADR:
-    - 概要: adr/index.md
-    - TypeScriptの採用: adr/0001-adopt-typescript.md
-    - Vitestの採用: adr/0002-adopt-vitest.md
-    - Canvas APIの採用: adr/0003-adopt-canvas-api.md
-    - TDDアプローチの採用: adr/0004-adopt-tdd-approach.md
-    - GitHub Actionsの採用: adr/0005-adopt-github-actions.md
-    - Vercelの採用: adr/0006-adopt-vercel.md
