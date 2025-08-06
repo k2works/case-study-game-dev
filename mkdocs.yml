@@ -88,6 +88,9 @@ nav:
     - セットアップ: operation/セットアップ.md
     - MkDocs GitHub Actions設定: operation/MkDocs_GitHub_Actions設定.md
 
+  - 開発:
+    - ふりかえり:     development/index.md
+
   - 参照:
     - よいソフトウェアとは: reference/よいソフトウェアとは.md
     - 開発ガイド: reference/開発ガイド.md
