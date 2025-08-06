@@ -100,6 +100,9 @@ GitHub Actionsを使用して以下を自動化：
 # 全品質チェック実行
 npm run check
 
+# E2Eテストを含む完全チェック実行
+npm run check:full
+
 # 個別実行
 npm run format:check  # フォーマット確認
 npm run lint          # リンター実行
@@ -122,6 +125,15 @@ npm run test:watch
 
 # カバレッジ付きテスト実行
 npm run test:coverage
+
+# E2Eテスト実行
+npm run test:e2e
+
+# E2EテストをUIモードで実行
+npm run test:e2e:ui
+
+# E2Eテストレポート表示
+npm run test:e2e:report
 ```
 
 #### 技術スタック
@@ -129,7 +141,7 @@ npm run test:coverage
 - **フレームワーク**: React 18
 - **言語**: TypeScript
 - **ビルドツール**: Vite
-- **テスティング**: Vitest + React Testing Library
+- **テスティング**: Vitest + React Testing Library + Playwright
 - **リンター**: ESLint
 - **フォーマッター**: Prettier
 - **デプロイ**: Vercel

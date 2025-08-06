@@ -93,7 +93,9 @@ function App() {
         <div className="game-container">
           <GameBoard key={renderKey} game={game} />
           <div className="controls">
-            <button onClick={handleStartGame}>ゲーム開始</button>
+            <button data-testid="start-button" onClick={handleStartGame}>
+              ゲーム開始
+            </button>
           </div>
           <div className="instructions">
             <h3>操作方法</h3>

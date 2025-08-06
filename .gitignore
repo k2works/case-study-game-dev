@@ -139,3 +139,5 @@ site
 !docs/**/CLAUDE.local.md
 
 test-report.junit.xml
+playwright-report/
+test-results/

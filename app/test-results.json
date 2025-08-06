@@ -1,0 +1,883 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\playwright.config.ts",
+    "rootDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 8
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.2",
+    "workers": 8,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "game-basic.spec.ts",
+      "file": "game-basic.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "ぷよぷよゲーム基本機能",
+          "file": "game-basic.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "ゲーム開始から基本操作まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1709,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.682Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲーム開始から基本操作まで-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-952916b6ce2df87c6736",
+              "file": "game-basic.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "キーボード操作でぷよを移動できる",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2620,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.667Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-キーボード操作でぷよを移動できる-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-bf633cf6bce00e6c3c65",
+              "file": "game-basic.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "ゲームオーバーまでのフロー",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 2,
+                      "status": "timedOut",
+                      "duration": 31414,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.699Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲームオーバーまでのフロー-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲームオーバーまでのフロー-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲームオーバーまでのフロー-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-06c62aab041672aed256",
+              "file": "game-basic.spec.ts",
+              "line": 66,
+              "column": 3
+            },
+            {
+              "title": "連鎖が発生するシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 5488,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.666Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-連鎖が発生するシナリオ-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-b1d7cbb623324c58bc36",
+              "file": "game-basic.spec.ts",
+              "line": 98,
+              "column": 3
+            },
+            {
+              "title": "レスポンシブ表示の確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1666,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.667Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-レスポンシブ表示の確認-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-9fc64b948b2715e0ca44",
+              "file": "game-basic.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "アクセシビリティ基本チェック",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 6163,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m()\u001b[22m\n\nLocator: getByTestId('start-button')\nExpected: focused\nReceived: inactive\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    9 × locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m()\u001b[22m\n\nLocator: getByTestId('start-button')\nExpected: focused\nReceived: inactive\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    9 × locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n\n    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts:152:31",
+                        "location": {
+                          "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                          "column": 31,
+                          "line": 152
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[90m// キーボードナビゲーション\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Tab'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     \u001b[36mawait\u001b[39m expect(startButton)\u001b[33m.\u001b[39mtoBeFocused()\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m\n \u001b[90m 154 |\u001b[39m     \u001b[90m// Enterキーでボタンを押下できることを確認\u001b[39m\n \u001b[90m 155 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                            "column": 31,
+                            "line": 152
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m()\u001b[22m\n\nLocator: getByTestId('start-button')\nExpected: focused\nReceived: inactive\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    9 × locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[90m// キーボードナビゲーション\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Tab'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     \u001b[36mawait\u001b[39m expect(startButton)\u001b[33m.\u001b[39mtoBeFocused()\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m\n \u001b[90m 154 |\u001b[39m     \u001b[90m// Enterキーでボタンを押下できることを確認\u001b[39m\n \u001b[90m 155 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts:152:31\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.710Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-アクセシビリティ基本チェック-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-アクセシビリティ基本チェック-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-アクセシビリティ基本チェック-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                        "column": 31,
+                        "line": 152
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-68f5d5892256a6d64378",
+              "file": "game-basic.spec.ts",
+              "line": 142,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "user-scenarios.spec.ts",
+      "file": "user-scenarios.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "ぷよぷよゲーム ユーザーシナリオ",
+          "file": "user-scenarios.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "ゲーム開始から連鎖まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 1504,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.710Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-ゲーム開始から連鎖まで-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-76be5f0f33b013349ddb",
+              "file": "user-scenarios.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "新規プレイヤーの完全なゲームプレイ",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 7,
+                      "status": "failed",
+                      "duration": 8960,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('score-display')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('score-display')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('score-display')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('score-display')\u001b[22m\n\n    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:70:32",
+                        "location": {
+                          "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                          "column": 32,
+                          "line": 70
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 68 |\u001b[39m\n \u001b[90m 69 |\u001b[39m     \u001b[36mconst\u001b[39m scoreDisplay \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'score-display'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     \u001b[36mawait\u001b[39m expect(scoreDisplay)\u001b[33m.\u001b[39mtoBeVisible()\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m   })\n \u001b[90m 72 |\u001b[39m\n \u001b[90m 73 |\u001b[39m   test(\u001b[32m'長時間プレイのシナリオ'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 32,
+                            "line": 70
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('score-display')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('score-display')\u001b[22m\n\n\n\u001b[0m \u001b[90m 68 |\u001b[39m\n \u001b[90m 69 |\u001b[39m     \u001b[36mconst\u001b[39m scoreDisplay \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'score-display'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     \u001b[36mawait\u001b[39m expect(scoreDisplay)\u001b[33m.\u001b[39mtoBeVisible()\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m   })\n \u001b[90m 72 |\u001b[39m\n \u001b[90m 73 |\u001b[39m   test(\u001b[32m'長時間プレイのシナリオ'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:70:32\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:32.789Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-新規プレイヤーの完全なゲームプレイ-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-新規プレイヤーの完全なゲームプレイ-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-新規プレイヤーの完全なゲームプレイ-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                        "column": 32,
+                        "line": 70
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e664d56086de158d6226-c71df07750bbc3f3ad36",
+              "file": "user-scenarios.spec.ts",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "title": "長時間プレイのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 5926,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:34.674Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-長時間プレイのシナリオ-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-d123a350549546de2d9f",
+              "file": "user-scenarios.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "復帰プレイヤーのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2230,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:34.917Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-復帰プレイヤーのシナリオ-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-8a34e18ba415c7b56f3f",
+              "file": "user-scenarios.spec.ts",
+              "line": 120,
+              "column": 3
+            },
+            {
+              "title": "エラーリカバリーシナリオ",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 6,
+                      "status": "failed",
+                      "duration": 5709,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n\n    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:187:31",
+                        "location": {
+                          "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                          "column": 31,
+                          "line": 187
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 185 |\u001b[39m     } \u001b[36mcatch\u001b[39m {\n \u001b[90m 186 |\u001b[39m       \u001b[90m// ネットワーク制御ができない場合はスキップ\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 187 |\u001b[39m       console\u001b[33m.\u001b[39mlog(\u001b[32m'Network control not available, skipping network test'\u001b[39m)\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 188 |\u001b[39m     }\n \u001b[90m 189 |\u001b[39m\n \u001b[90m 190 |\u001b[39m     \u001b[90m// 無効な操作を試行\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 31,
+                            "line": 187
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n\n\n\u001b[0m \u001b[90m 185 |\u001b[39m     } \u001b[36mcatch\u001b[39m {\n \u001b[90m 186 |\u001b[39m       \u001b[90m// ネットワーク制御ができない場合はスキップ\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 187 |\u001b[39m       console\u001b[33m.\u001b[39mlog(\u001b[32m'Network control not available, skipping network test'\u001b[39m)\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 188 |\u001b[39m     }\n \u001b[90m 189 |\u001b[39m\n \u001b[90m 190 |\u001b[39m     \u001b[90m// 無効な操作を試行\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:187:31\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:34.907Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-エラーリカバリーシナリオ-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-エラーリカバリーシナリオ-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-エラーリカバリーシナリオ-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                        "column": 31,
+                        "line": 187
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e664d56086de158d6226-6f76d9c6ac89fe3a404f",
+              "file": "user-scenarios.spec.ts",
+              "line": 160,
+              "column": 3
+            },
+            {
+              "title": "パフォーマンステストシナリオ",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 6353,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n\n    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:221:31",
+                        "location": {
+                          "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                          "column": 31,
+                          "line": 221
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 219 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'ArrowRight'\u001b[39m)\n \u001b[90m 220 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'ArrowUp'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 221 |\u001b[39m     }\n \u001b[90m     |\u001b[39m      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 222 |\u001b[39m\n \u001b[90m 223 |\u001b[39m     \u001b[36mconst\u001b[39m operationTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m operationStartTime\n \u001b[90m 224 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 31,
+                            "line": 221
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n\n\n\u001b[0m \u001b[90m 219 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'ArrowRight'\u001b[39m)\n \u001b[90m 220 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'ArrowUp'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 221 |\u001b[39m     }\n \u001b[90m     |\u001b[39m      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 222 |\u001b[39m\n \u001b[90m 223 |\u001b[39m     \u001b[36mconst\u001b[39m operationTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m operationStartTime\n \u001b[90m 224 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:221:31\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:35.895Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-パフォーマンステストシナリオ-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-パフォーマンステストシナリオ-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-パフォーマンステストシナリオ-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                        "column": 31,
+                        "line": 221
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e664d56086de158d6226-c0c32f93d324dad66521",
+              "file": "user-scenarios.spec.ts",
+              "line": 190,
+              "column": 3
+            },
+            {
+              "title": "マルチブラウザ互換性確認",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5964,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n\n    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:243:31",
+                        "location": {
+                          "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                          "column": 31,
+                          "line": 243
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 241 |\u001b[39m\n \u001b[90m 242 |\u001b[39m     \u001b[90m// CSS レイアウトが正しく表示されることを確認\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 243 |\u001b[39m     \u001b[36mconst\u001b[39m gameBoard \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'game-board'\u001b[39m)\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 244 |\u001b[39m     \u001b[36mawait\u001b[39m expect(gameBoard)\u001b[33m.\u001b[39mtoBeVisible()\n \u001b[90m 245 |\u001b[39m\n \u001b[90m 246 |\u001b[39m     \u001b[90m// キーボード操作が機能することを確認\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 31,
+                            "line": 243
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('current-puyo')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('current-puyo')\u001b[22m\n\n\n\u001b[0m \u001b[90m 241 |\u001b[39m\n \u001b[90m 242 |\u001b[39m     \u001b[90m// CSS レイアウトが正しく表示されることを確認\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 243 |\u001b[39m     \u001b[36mconst\u001b[39m gameBoard \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'game-board'\u001b[39m)\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 244 |\u001b[39m     \u001b[36mawait\u001b[39m expect(gameBoard)\u001b[33m.\u001b[39mtoBeVisible()\n \u001b[90m 245 |\u001b[39m\n \u001b[90m 246 |\u001b[39m     \u001b[90m// キーボード操作が機能することを確認\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:243:31\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-06T06:32:37.319Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-マルチブラウザ互換性確認-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-マルチブラウザ互換性確認-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-マルチブラウザ互換性確認-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                        "column": 31,
+                        "line": 243
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e664d56086de158d6226-09689d2fbc01a8daa152",
+              "file": "user-scenarios.spec.ts",
+              "line": 224,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-06T06:32:30.991Z",
+    "duration": 34831.452999999994,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}
