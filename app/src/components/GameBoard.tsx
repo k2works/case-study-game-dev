@@ -1,5 +1,6 @@
 import React from 'react'
 import { Game, GameState } from '../domain/Game'
+import { Puyo } from '../domain/Puyo'
 import './GameBoard.css'
 
 interface GameBoardProps {
@@ -7,34 +8,54 @@ interface GameBoardProps {
 }
 
 export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
+  const getFixedPuyoStyle = (puyo: Puyo | null) => {
+    if (puyo) {
+      return { puyoClass: 'puyo', puyoColor: puyo.color }
+    }
+    return null
+  }
+
+  const getCurrentPairStyle = (x: number, y: number) => {
+    if (!game.currentPair || game.state !== GameState.PLAYING) {
+      return null
+    }
+
+    const mainPos = game.currentPair.getMainPosition()
+    const subPos = game.currentPair.getSubPosition()
+
+    if (x === mainPos.x && y === mainPos.y) {
+      return { puyoClass: 'puyo', puyoColor: game.currentPair.main.color }
+    } else if (x === subPos.x && y === subPos.y) {
+      return { puyoClass: 'puyo', puyoColor: game.currentPair.sub.color }
+    }
+
+    return null
+  }
+
+  const getCellStyle = (x: number, y: number) => {
+    const puyo = game.field.getPuyo(x, y)
+
+    // フィールドに固定されたぷよを表示
+    const fixedStyle = getFixedPuyoStyle(puyo)
+    if (fixedStyle) {
+      return fixedStyle
+    }
+
+    // 現在のぷよペアを表示
+    const currentStyle = getCurrentPairStyle(x, y)
+    if (currentStyle) {
+      return currentStyle
+    }
+
+    return { puyoClass: '', puyoColor: '' }
+  }
+
   const renderField = () => {
     const cells = []
 
     for (let y = 0; y < game.field.height; y++) {
       for (let x = 0; x < game.field.width; x++) {
-        const puyo = game.field.getPuyo(x, y)
-        let puyoClass = ''
-        let puyoColor = ''
-
-        // フィールドに固定されたぷよを表示
-        if (puyo) {
-          puyoClass = 'puyo'
-          puyoColor = puyo.color
-        }
-
-        // 現在のぷよペアを表示
-        if (game.currentPair && game.state === GameState.PLAYING) {
-          const mainPos = game.currentPair.getMainPosition()
-          const subPos = game.currentPair.getSubPosition()
-
-          if (x === mainPos.x && y === mainPos.y) {
-            puyoClass = 'puyo'
-            puyoColor = game.currentPair.main.color
-          } else if (x === subPos.x && y === subPos.y) {
-            puyoClass = 'puyo'
-            puyoColor = game.currentPair.sub.color
-          }
-        }
+        const { puyoClass, puyoColor } = getCellStyle(x, y)
 
         cells.push(
           <div

@@ -58,16 +58,20 @@ describe('Auto Drop Integration', () => {
       const startButton = screen.getByText('ゲーム開始')
       fireEvent.click(startButton)
 
-      // 十分な時間を経過させて底まで落下
+      // 十分な時間を経過させて底まで落下させ、新しいペアを生成
       await act(async () => {
-        vi.advanceTimersByTime(15000) // 15秒
+        vi.advanceTimersByTime(12000) // 12秒で底まで落下
       })
 
       // フィールド底部にぷよが固定されていることを確認
       const bottomPuyo = screen.getByTestId('cell-2-11')
       expect(bottomPuyo).toHaveClass('puyo')
 
-      // 新しいぷよペアが上部に生成されていることを確認
+      // 新しいぷよペアが上部に生成されていることを確認（少し待つ）
+      await act(async () => {
+        vi.advanceTimersByTime(100) // 新しいペア生成を待つ
+      })
+
       const newPuyo = screen.getByTestId('cell-2-1')
       expect(newPuyo).toHaveClass('puyo')
     })

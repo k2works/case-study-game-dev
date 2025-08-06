@@ -24,7 +24,7 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       // 複雑度チェック
-      complexity: ['error', { max: 10 }],
+      complexity: ['error', { max: 7 }],
       // その他のルール
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',

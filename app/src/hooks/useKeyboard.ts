@@ -8,33 +8,39 @@ interface KeyboardHandlers {
   onHardDrop: () => void
 }
 
+const handleMoveKeys = (key: string, handlers: KeyboardHandlers) => {
+  switch (key) {
+    case 'ArrowLeft':
+      handlers.onMoveLeft()
+      break
+    case 'ArrowRight':
+      handlers.onMoveRight()
+      break
+  }
+}
+
+const handleActionKeys = (key: string, handlers: KeyboardHandlers) => {
+  switch (key) {
+    case 'ArrowUp':
+    case 'z':
+    case 'Z':
+      handlers.onRotate()
+      break
+    case 'ArrowDown':
+      handlers.onDrop()
+      break
+    case ' ': // スペースキー
+      handlers.onHardDrop()
+      break
+  }
+}
+
 export const useKeyboard = (handlers: KeyboardHandlers) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case 'ArrowLeft':
-          event.preventDefault()
-          handlers.onMoveLeft()
-          break
-        case 'ArrowRight':
-          event.preventDefault()
-          handlers.onMoveRight()
-          break
-        case 'ArrowUp':
-        case 'z':
-        case 'Z':
-          event.preventDefault()
-          handlers.onRotate()
-          break
-        case 'ArrowDown':
-          event.preventDefault()
-          handlers.onDrop()
-          break
-        case ' ': // スペースキー
-          event.preventDefault()
-          handlers.onHardDrop()
-          break
-      }
+      event.preventDefault()
+      handleMoveKeys(event.key, handlers)
+      handleActionKeys(event.key, handlers)
     }
 
     document.addEventListener('keydown', handleKeyDown)
