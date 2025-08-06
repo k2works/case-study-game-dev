@@ -137,3 +137,5 @@ site
 .vercel
 
 !docs/**/CLAUDE.local.md
+
+test-report.junit.xml

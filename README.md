@@ -47,6 +47,21 @@ npm run docs:serve
 
 ドキュメントは http://localhost:8000 でアクセス可能です。
 
+#### アプリケーション起動
+
+```bash
+# アプリケーションディレクトリに移動
+cd app
+
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
+npm run dev
+```
+
+アプリケーションは http://localhost:5173 でアクセス可能です。
+
 詳細な手順は [セットアップドキュメント](./docs/operation/セットアップ.md) を参照してください。
 
 **[⬆ back to top](#構成)**
@@ -77,6 +92,24 @@ npm run docs:build
 | `npm run docs:stop` | ドキュメントサーバーの停止 |
 | `npm run docs:build` | ドキュメントのビルド |
 
+#### アプリケーション運用
+
+アプリケーションの品質管理：
+
+```bash
+cd app
+
+# 全品質チェック実行
+npm run check
+
+# CI/CDパイプライン
+# GitHub Actionsで自動実行：
+# - フォーマット検証
+# - リンター実行  
+# - テスト実行
+# - ビルド確認
+```
+
 **[⬆ back to top](#構成)**
 
 ### 開発
@@ -87,6 +120,29 @@ npm run docs:build
 - [開発ドキュメント](./docs/development/) - 開発の具体的な手順やガイドライン
 - [要件定義](./docs/requirements/) - システムの要件とユーザーストーリー
 - [アーキテクチャ決定ログ](./docs/adr/) - 重要な技術的決定の記録
+
+#### アプリケーション開発
+
+```bash
+cd app
+
+# テスト駆動開発サイクル
+npm run test:watch    # テストウォッチモード
+npm run dev          # 開発サーバー起動
+
+# 品質管理
+npm run format       # コードフォーマット
+npm run lint         # リント実行
+npm run test:coverage # カバレッジ付きテスト
+```
+
+技術スタック：
+- **フレームワーク**: React 18 + TypeScript
+- **ビルドツール**: Vite
+- **テスティング**: Vitest + React Testing Library
+- **デプロイ**: Vercel
+
+詳細は [アプリケーション README](./app/README.md) を参照してください。
 
 **[⬆ back to top](#構成)**
 
