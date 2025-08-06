@@ -1,4 +1,18 @@
 import '@testing-library/jest-dom'
+import { expect } from 'vitest'
+
+expect.extend({
+  toBeOneOf(received: unknown, items: unknown[]) {
+    const pass = items.includes(received)
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `expected ${received} not to be one of [${items.join(', ')}]`
+          : `expected ${received} to be one of [${items.join(', ')}]`,
+    }
+  },
+})
 
 // Mock matchMedia for tests
 Object.defineProperty(window, 'matchMedia', {
