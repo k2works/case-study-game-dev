@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import './App.css'
 import { GameBoard } from './components/GameBoard'
 import { ScoreDisplay } from './components/ScoreDisplay'
+import { GameOverDisplay } from './components/GameOverDisplay'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
@@ -15,6 +16,13 @@ function App() {
   }, [])
 
   const handleStartGame = () => {
+    game.start()
+    forceRender()
+  }
+
+  const handleRestart = () => {
+    // 新しいゲームインスタンスを作成してリスタート
+    Object.assign(game, new Game())
     game.start()
     forceRender()
   }
@@ -114,6 +122,9 @@ function App() {
               <div>スペース: ハードドロップ</div>
             </div>
           </div>
+          {game.state === GameState.GAME_OVER && (
+            <GameOverDisplay score={game.score} onRestart={handleRestart} />
+          )}
         </div>
       </main>
     </div>

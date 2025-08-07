@@ -1,0 +1,78 @@
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.game-over-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 2px solid #4ecdc4;
+  min-width: 300px;
+  backdrop-filter: blur(10px);
+}
+
+.game-over-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 2rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.final-score-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.final-score-label {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.final-score-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #4ecdc4;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 2px 4px rgba(78, 205, 196, 0.3);
+}
+
+.restart-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, #4ecdc4, #44a08d);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+}
+
+.restart-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(78, 205, 196, 0.4);
+  background: linear-gradient(45deg, #5fd9d1, #4ba896);
+}
+
+.restart-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(78, 205, 196, 0.3);
+}
