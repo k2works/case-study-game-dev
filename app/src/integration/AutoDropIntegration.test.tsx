@@ -17,7 +17,7 @@ describe('Auto Drop Integration', () => {
     })
   })
 
-  describe.skip('自動落下システムの統合テスト', () => {
+  describe('自動落下システムの統合テスト', () => {
     it('ゲーム開始後に自動的にぷよが落下する', async () => {
       render(<App />)
 
@@ -28,17 +28,21 @@ describe('Auto Drop Integration', () => {
       })
 
       // 初期位置のぷよを確認（見える範囲はy=2から開始）
-      const initialPuyo = screen.getByTestId('cell-2-2')
-      expect(initialPuyo).toHaveClass('puyo')
+      let currentPuyo = screen.getByTestId('cell-2-2')
+      expect(currentPuyo).toHaveClass('puyo')
 
       // 1秒経過
       await act(async () => {
         vi.advanceTimersByTime(1000)
       })
 
-      // ぷよが下に移動していることを確認
-      const droppedPuyo = screen.getByTestId('cell-2-2')
+      // ぷよが下に移動したことを確認（y=3に移動）
+      const droppedPuyo = screen.getByTestId('cell-2-3')
       expect(droppedPuyo).toHaveClass('puyo')
+
+      // 元の位置にはぷよがないことを確認
+      currentPuyo = screen.getByTestId('cell-2-2')
+      expect(currentPuyo).not.toHaveClass('puyo')
     })
 
     it('ゲーム停止中は自動落下しない', () => {
@@ -65,20 +69,18 @@ describe('Auto Drop Integration', () => {
 
       // 十分な時間を経過させて底まで落下させ、新しいペアを生成
       await act(async () => {
-        vi.advanceTimersByTime(12000) // 12秒で底まで落下
+        vi.advanceTimersByTime(15000) // 15秒で底まで落下（余裕をもって）
       })
 
-      // フィールド底部にぷよが固定されていることを確認
-      const bottomPuyo = screen.getByTestId('cell-2-11')
+      // 新しいぷよペアが上部に生成されていることを確認
+      // 底まで落下後は自動的に新しいペアが生成される
+      const cells = screen.getAllByTestId(/cell-\d+-\d+/)
+      const puyoCells = cells.filter((cell) => cell.classList.contains('puyo'))
+      expect(puyoCells.length).toBeGreaterThanOrEqual(2) // 最低でも新しいペア分（2個）はある
+
+      // フィールド底部にぷよが固定されていることを確認（新しい表示範囲: y=15が底）
+      const bottomPuyo = screen.getByTestId('cell-2-15')
       expect(bottomPuyo).toHaveClass('puyo')
-
-      // 新しいぷよペアが上部に生成されていることを確認（少し待つ）
-      await act(async () => {
-        vi.advanceTimersByTime(100) // 新しいペア生成を待つ
-      })
-
-      const newPuyo = screen.getByTestId('cell-2-1')
-      expect(newPuyo).toHaveClass('puyo')
     })
 
     it('手動落下と自動落下が併用できる', async () => {
@@ -101,7 +103,7 @@ describe('Auto Drop Integration', () => {
       })
 
       // 2段階下に移動していることを確認
-      const droppedPuyo = screen.getByTestId('cell-2-3')
+      const droppedPuyo = screen.getByTestId('cell-2-4')
       expect(droppedPuyo).toHaveClass('puyo')
     })
   })

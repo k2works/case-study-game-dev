@@ -14,15 +14,15 @@ describe('Game Integration', () => {
       // Playing状態になることを確認
       expect(screen.getByText('Playing')).toBeInTheDocument()
 
-      // 現在のぷよペアの位置を取得
-      const currentPuyoMain = screen.getByTestId('cell-2-1')
+      // 現在のぷよペアの位置を取得（初期位置はy=2）
+      const currentPuyoMain = screen.getByTestId('cell-2-2')
       expect(currentPuyoMain).toHaveClass('puyo')
 
       // 左移動キーを押す
       fireEvent.keyDown(document, { key: 'ArrowLeft' })
 
       // ぷよが左に移動したことを確認
-      const movedPuyoMain = screen.getByTestId('cell-1-1')
+      const movedPuyoMain = screen.getByTestId('cell-1-2')
       expect(movedPuyoMain).toHaveClass('puyo')
 
       // mainの位置が移動したことを確認
@@ -40,7 +40,7 @@ describe('Game Integration', () => {
       fireEvent.keyDown(document, { key: 'z' })
 
       // 回転後の位置にぷよがあることを確認（回転後はsub puyoが右に移動）
-      const rotatedSubPuyo = screen.getByTestId('cell-3-1')
+      const rotatedSubPuyo = screen.getByTestId('cell-3-2')
       expect(rotatedSubPuyo).toHaveClass('puyo')
     })
 
@@ -55,7 +55,7 @@ describe('Game Integration', () => {
       fireEvent.keyDown(document, { key: 'ArrowDown' })
 
       // ぷよが下に移動したことを確認
-      const droppedPuyo = screen.getByTestId('cell-2-2')
+      const droppedPuyo = screen.getByTestId('cell-2-3')
       expect(droppedPuyo).toHaveClass('puyo')
     })
 
@@ -70,16 +70,16 @@ describe('Game Integration', () => {
       fireEvent.keyDown(document, { key: ' ' })
 
       // 新しいぷよペアが生成されていることを確認（前のぷよは底まで落ちて固定済み）
-      // 新しいペアは初期位置(2,1)に生成される
-      const newPuyoPair = screen.getByTestId('cell-2-1')
+      // 新しいペアは初期位置(2,2)に生成される
+      const newPuyoPair = screen.getByTestId('cell-2-2')
       expect(newPuyoPair).toHaveClass('puyo')
 
       // フィールド底部に前のぷよが固定されていることを確認
-      // 底は11行目なので、main puyoは(2,11)、sub puyoは(2,10)に固定される
-      const fixedMainPuyo = screen.getByTestId('cell-2-11')
+      // 底は15行目なので、main puyoは(2,15)、sub puyoは(2,14)に固定される
+      const fixedMainPuyo = screen.getByTestId('cell-2-15')
       expect(fixedMainPuyo).toHaveClass('puyo')
 
-      const fixedSubPuyo = screen.getByTestId('cell-2-10')
+      const fixedSubPuyo = screen.getByTestId('cell-2-14')
       expect(fixedSubPuyo).toHaveClass('puyo')
     })
   })
