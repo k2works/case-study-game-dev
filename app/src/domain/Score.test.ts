@@ -56,4 +56,50 @@ describe('Score', () => {
       expect(score.getCurrentScore()).toBe(0)
     })
   })
+
+  describe('連鎖ボーナス計算', () => {
+    it('1連鎖では連鎖ボーナスなし', () => {
+      const score = new Score()
+
+      const addedScore = score.calculateScoreWithChain(4, 1)
+
+      expect(addedScore).toBe(40) // 4つ × 10 × 1倍
+    })
+
+    it('2連鎖では8倍ボーナス', () => {
+      const score = new Score()
+
+      const addedScore = score.calculateScoreWithChain(4, 2)
+
+      expect(addedScore).toBe(320) // 4つ × 10 × 8倍
+    })
+
+    it('3連鎖では16倍ボーナス', () => {
+      const score = new Score()
+
+      const addedScore = score.calculateScoreWithChain(4, 3)
+
+      expect(addedScore).toBe(640) // 4つ × 10 × 16倍
+    })
+
+    it('高連鎖では大幅なボーナス', () => {
+      const score = new Score()
+
+      expect(score.calculateScoreWithChain(4, 5)).toBe(2560) // 4つ × 10 × 64倍
+      expect(score.calculateScoreWithChain(4, 10)).toBe(8960) // 4つ × 10 × 224倍
+    })
+
+    it('13連鎖以上では最大倍率が適用される', () => {
+      const score = new Score()
+
+      expect(score.calculateScoreWithChain(4, 13)).toBe(12800) // 4つ × 10 × 320倍
+      expect(score.calculateScoreWithChain(4, 20)).toBe(12800) // 4つ × 10 × 320倍（上限）
+    })
+
+    it('連鎖ありでも4つ未満では0点', () => {
+      const score = new Score()
+
+      expect(score.calculateScoreWithChain(3, 5)).toBe(0)
+    })
+  })
 })
