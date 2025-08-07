@@ -31,4 +31,40 @@ export class Field {
   private isValidPosition(x: number, y: number): boolean {
     return x >= 0 && x < this.width && y >= 0 && y < this.height
   }
+
+  findConnectedPuyos(x: number, y: number): [number, number][] {
+    const puyo = this.getPuyo(x, y)
+    if (!puyo) return []
+
+    const visited = new Set<string>()
+    const result: [number, number][] = []
+
+    this.dfs(x, y, puyo.color, visited, result)
+
+    return result
+  }
+
+  private dfs(
+    x: number,
+    y: number,
+    color: string,
+    visited: Set<string>,
+    result: [number, number][]
+  ): void {
+    const key = `${x},${y}`
+    if (visited.has(key)) return
+    if (!this.isValidPosition(x, y)) return
+
+    const puyo = this.getPuyo(x, y)
+    if (!puyo || puyo.color !== color) return
+
+    visited.add(key)
+    result.push([x, y])
+
+    // 上下左右を探索
+    this.dfs(x - 1, y, color, visited, result)
+    this.dfs(x + 1, y, color, visited, result)
+    this.dfs(x, y - 1, color, visited, result)
+    this.dfs(x, y + 1, color, visited, result)
+  }
 }

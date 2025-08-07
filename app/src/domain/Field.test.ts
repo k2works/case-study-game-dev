@@ -42,4 +42,72 @@ describe('Field', () => {
       expect(field.getPuyo(5, 11)).toBeNull()
     })
   })
+
+  describe('連結ぷよを検索する', () => {
+    it('同じ色の連結ぷよを検索できる', () => {
+      const field = new Field()
+      // 2×2の赤いぷよを配置
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 1, new Puyo(PuyoColor.RED))
+
+      const connectedPuyos = field.findConnectedPuyos(0, 0)
+      expect(connectedPuyos).toHaveLength(4)
+      expect(connectedPuyos).toEqual(
+        expect.arrayContaining([
+          [0, 0],
+          [1, 0],
+          [0, 1],
+          [1, 1],
+        ])
+      )
+    })
+
+    it('異なる色のぷよは連結されない', () => {
+      const field = new Field()
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 0, new Puyo(PuyoColor.BLUE))
+
+      const connectedPuyos = field.findConnectedPuyos(0, 0)
+      expect(connectedPuyos).toHaveLength(1)
+      expect(connectedPuyos).toEqual([[0, 0]])
+    })
+
+    it('L字型の連結ぷよを正しく検索できる', () => {
+      const field = new Field()
+      // L字型に配置
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 2, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 2, new Puyo(PuyoColor.RED))
+
+      const connectedPuyos = field.findConnectedPuyos(0, 0)
+      expect(connectedPuyos).toHaveLength(4)
+      expect(connectedPuyos).toEqual(
+        expect.arrayContaining([
+          [0, 0],
+          [0, 1],
+          [0, 2],
+          [1, 2],
+        ])
+      )
+    })
+
+    it('空の位置では空配列を返す', () => {
+      const field = new Field()
+
+      const connectedPuyos = field.findConnectedPuyos(0, 0)
+      expect(connectedPuyos).toHaveLength(0)
+    })
+
+    it('単独のぷよでも自分自身を返す', () => {
+      const field = new Field()
+      field.setPuyo(2, 2, new Puyo(PuyoColor.GREEN))
+
+      const connectedPuyos = field.findConnectedPuyos(2, 2)
+      expect(connectedPuyos).toHaveLength(1)
+      expect(connectedPuyos).toEqual([[2, 2]])
+    })
+  })
 })
