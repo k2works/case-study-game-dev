@@ -1,5 +1,7 @@
 # ゲーム開発のケーススタディ
 
+[![codecov](https://codecov.io/gh/k2works/case-study-game-dev/branch/case-3/graph/badge.svg?token=PXJYRHMUWO)](https://codecov.io/gh/k2works/case-study-game-dev)
+
 ## 概要
 
 AI プログラミング学習の一環として、ゲーム開発を題材にしたケーススタディプロジェクトです。
