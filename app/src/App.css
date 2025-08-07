@@ -54,6 +54,23 @@
   gap: 1rem;
 }
 
+.game-play-area {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.game-board-area {
+  /* ゲームボード専用エリア */
+}
+
+.game-info-area {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 140px;
+}
+
 .game-container p {
   font-size: 1.2rem;
   opacity: 0.7;

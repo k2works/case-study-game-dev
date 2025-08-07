@@ -1,0 +1,27 @@
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 120px;
+}
+
+.score-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.score-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4ecdc4;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  min-width: 80px;
+}

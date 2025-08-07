@@ -45,9 +45,7 @@
         "name": "chromium",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": [
-          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
-        ],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
         "timeout": 30000
       },
       {
@@ -61,9 +59,7 @@
         "name": "firefox",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": [
-          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
-        ],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
         "timeout": 30000
       },
       {
@@ -77,9 +73,7 @@
         "name": "webkit",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": [
-          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
-        ],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
         "timeout": 30000
       },
       {
@@ -93,9 +87,7 @@
         "name": "Mobile Chrome",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": [
-          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
-        ],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
         "timeout": 30000
       },
       {
@@ -109,9 +101,7 @@
         "name": "Mobile Safari",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": [
-          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
-        ],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
         "timeout": 30000
       }
     ],
@@ -157,12 +147,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 746,
+                      "duration": 724,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.511Z",
+                      "startTime": "2025-08-07T01:33:20.788Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -191,12 +181,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 1609,
+                      "duration": 1584,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.478Z",
+                      "startTime": "2025-08-07T01:33:20.755Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -225,12 +215,12 @@
                       "workerIndex": 2,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 4574,
+                      "duration": 4341,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.494Z",
+                      "startTime": "2025-08-07T01:33:20.754Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -259,12 +249,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 4005,
+                      "duration": 3857,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.510Z",
+                      "startTime": "2025-08-07T01:33:20.771Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -293,12 +283,12 @@
                       "workerIndex": 4,
                       "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 681,
+                      "duration": 611,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.493Z",
+                      "startTime": "2025-08-07T01:33:20.749Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -327,12 +317,12 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 650,
+                      "duration": 704,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.547Z",
+                      "startTime": "2025-08-07T01:33:20.755Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -359,14 +349,14 @@
                   "results": [
                     {
                       "workerIndex": 8,
-                      "parallelIndex": 1,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2095,
+                      "duration": 1593,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:47.192Z",
+                      "startTime": "2025-08-07T01:33:22.921Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -393,14 +383,14 @@
                   "results": [
                     {
                       "workerIndex": 9,
-                      "parallelIndex": 6,
+                      "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 3228,
+                      "duration": 2725,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:47.207Z",
+                      "startTime": "2025-08-07T01:33:23.251Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -429,12 +419,12 @@
                       "workerIndex": 10,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 6775,
+                      "duration": 5268,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:47.551Z",
+                      "startTime": "2025-08-07T01:33:23.406Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -461,14 +451,14 @@
                   "results": [
                     {
                       "workerIndex": 11,
-                      "parallelIndex": 0,
+                      "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 5998,
+                      "duration": 4881,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:48.149Z",
+                      "startTime": "2025-08-07T01:33:24.006Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -483,7 +473,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -494,20 +484,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 12,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 2447,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:49.195Z",
+                      "startTime": "2025-08-07T01:33:23.838Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-75676a16f8dcadcffcf1",
@@ -517,7 +514,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -528,20 +525,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 13,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 2475,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:52.499Z",
+                      "startTime": "2025-08-07T01:33:23.840Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-8b05249307da8d6e35a9",
@@ -551,7 +555,7 @@
             },
             {
               "title": "ゲーム開始から基本操作まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -562,20 +566,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 16,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 1310,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:57.501Z",
+                      "startTime": "2025-08-07T01:33:23.909Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-d81314e0d832843354ef",
@@ -585,7 +596,7 @@
             },
             {
               "title": "キーボード操作でぷよを移動できる",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -596,20 +607,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 17,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 2359,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:57.736Z",
+                      "startTime": "2025-08-07T01:33:23.909Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-a70a58d877fbd2d150c5",
@@ -619,7 +637,7 @@
             },
             {
               "title": "ゲームオーバーまでのフロー",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -630,20 +648,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 19,
-                      "parallelIndex": 5,
-                      "status": "passed",
-                      "duration": 8705,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:58.394Z",
+                      "startTime": "2025-08-07T01:33:23.923Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-8d857056ce7466f7656d",
@@ -653,7 +678,7 @@
             },
             {
               "title": "連鎖が発生するシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -664,20 +689,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 18,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 5898,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:58.444Z",
+                      "startTime": "2025-08-07T01:33:23.924Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-703e35c485c78ba0bf26",
@@ -687,7 +719,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -698,20 +730,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 20,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 998,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:58.380Z",
+                      "startTime": "2025-08-07T01:33:23.936Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-0e5d1b91a44884864b67",
@@ -721,7 +760,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -732,20 +771,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 21,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 1635,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:58.814Z",
+                      "startTime": "2025-08-07T01:33:23.937Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-93785cb1b8cc4b0fc178",
@@ -755,7 +801,7 @@
             },
             {
               "title": "ゲーム開始から基本操作まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -766,20 +812,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 24,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 809,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:04.709Z",
+                      "startTime": "2025-08-07T01:33:24.006Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-72455786329822daa8c2",
@@ -789,7 +842,7 @@
             },
             {
               "title": "キーボード操作でぷよを移動できる",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -800,20 +853,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 23,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 1627,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:04.632Z",
+                      "startTime": "2025-08-07T01:33:24.007Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-8ea3dd7772f8e55c51e5",
@@ -823,7 +883,7 @@
             },
             {
               "title": "ゲームオーバーまでのフロー",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -834,20 +894,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 25,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 4603,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:04.838Z",
+                      "startTime": "2025-08-07T01:33:24.021Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-8da47272e5f79587b44e",
@@ -857,7 +924,7 @@
             },
             {
               "title": "連鎖が発生するシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -868,20 +935,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 26,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 4072,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:05.299Z",
+                      "startTime": "2025-08-07T01:33:24.022Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-7df59901c00795059d53",
@@ -891,7 +965,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -902,20 +976,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 27,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 540,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:06.045Z",
+                      "startTime": "2025-08-07T01:33:24.036Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-baf46057df4bb91be79a",
@@ -925,7 +1006,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -936,20 +1017,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 28,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 568,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:06.140Z",
+                      "startTime": "2025-08-07T01:33:24.037Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-c7e912bf42056b4ffe61",
@@ -959,7 +1047,7 @@
             },
             {
               "title": "ゲーム開始から基本操作まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -970,20 +1058,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 31,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 904,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:08.437Z",
+                      "startTime": "2025-08-07T01:33:24.124Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-c68623bb30249a84e737",
@@ -993,7 +1088,7 @@
             },
             {
               "title": "キーボード操作でぷよを移動できる",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1004,20 +1099,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 32,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 2210,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:09.591Z",
+                      "startTime": "2025-08-07T01:33:24.125Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-debbe46b46d820e9eda8",
@@ -1027,7 +1129,7 @@
             },
             {
               "title": "ゲームオーバーまでのフロー",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1038,20 +1140,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 33,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 6919,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:10.263Z",
+                      "startTime": "2025-08-07T01:33:24.140Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-a5f9ec41dfe7625f748d",
@@ -1061,7 +1170,7 @@
             },
             {
               "title": "連鎖が発生するシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1072,20 +1181,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 34,
-                      "parallelIndex": 5,
-                      "status": "passed",
-                      "duration": 5204,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:10.384Z",
+                      "startTime": "2025-08-07T01:33:24.141Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-830ef690b4eb4f1dfcc2",
@@ -1095,7 +1211,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1106,20 +1222,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 35,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1321,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:10.765Z",
+                      "startTime": "2025-08-07T01:33:24.156Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-bea83619a430d3d09af7",
@@ -1129,7 +1252,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1140,20 +1263,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 31,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 745,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:09.422Z",
+                      "startTime": "2025-08-07T01:33:24.157Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-a6d2f934af6d6f72be86",
@@ -1194,12 +1324,12 @@
                       "workerIndex": 6,
                       "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 828,
+                      "duration": 654,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.549Z",
+                      "startTime": "2025-08-07T01:33:20.771Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1228,12 +1358,12 @@
                       "workerIndex": 7,
                       "parallelIndex": 7,
                       "status": "passed",
-                      "duration": 2737,
+                      "duration": 2747,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:44.562Z",
+                      "startTime": "2025-08-07T01:33:20.787Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1262,12 +1392,12 @@
                       "workerIndex": 4,
                       "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 5431,
+                      "duration": 4926,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:45.329Z",
+                      "startTime": "2025-08-07T01:33:21.498Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1293,15 +1423,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 1535,
+                      "duration": 1469,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:45.440Z",
+                      "startTime": "2025-08-07T01:33:21.560Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1330,12 +1460,12 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 413,
+                      "duration": 361,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:45.456Z",
+                      "startTime": "2025-08-07T01:33:21.622Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1361,15 +1491,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 6,
-                      "parallelIndex": 6,
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 663,
+                      "duration": 524,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:45.574Z",
+                      "startTime": "2025-08-07T01:33:21.671Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1398,7 +1528,7 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 664,
+                      "duration": 607,
                       "errors": [],
                       "stdout": [
                         {
@@ -1407,7 +1537,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:45.875Z",
+                      "startTime": "2025-08-07T01:33:21.987Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1422,7 +1552,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1433,20 +1563,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 14,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 3183,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:53.213Z",
+                      "startTime": "2025-08-07T01:33:23.851Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-22c85362617703ec4c90",
@@ -1456,7 +1593,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1467,20 +1604,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 8,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 3326,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:49.883Z",
+                      "startTime": "2025-08-07T01:33:23.853Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-0598d3becda2f2513b8f",
@@ -1490,7 +1634,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1501,20 +1645,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 15,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 7393,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:53.519Z",
+                      "startTime": "2025-08-07T01:33:23.865Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-a3ae5f103ff4dff68a43",
@@ -1524,7 +1675,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1535,20 +1686,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 9,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 2426,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:52.362Z",
+                      "startTime": "2025-08-07T01:33:23.866Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-d5876b94150068d238ef",
@@ -1558,7 +1716,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1569,20 +1727,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 8,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 918,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:53.215Z",
+                      "startTime": "2025-08-07T01:33:23.879Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-16aa28607e236dc0e865",
@@ -1592,7 +1757,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1603,20 +1768,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 12,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 1402,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:53.434Z",
+                      "startTime": "2025-08-07T01:33:23.881Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-98e5cde6441abe55c54b",
@@ -1626,7 +1798,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1637,24 +1809,27 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 8,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 1433,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
                         {
-                          "text": "Test completed on firefox\n"
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:54.138Z",
+                      "startTime": "2025-08-07T01:33:23.895Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-b510ec9c46bec4b10cfc",
@@ -1664,7 +1839,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1675,20 +1850,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 22,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 2048,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:59.877Z",
+                      "startTime": "2025-08-07T01:33:23.951Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-b6adb953e48ffbdd6516",
@@ -1698,7 +1880,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1709,20 +1891,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 16,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 4491,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:58.992Z",
+                      "startTime": "2025-08-07T01:33:23.951Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-83d5d5c2a9813001dae9",
@@ -1732,7 +1921,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1743,20 +1932,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 20,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 7850,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:23:59.473Z",
+                      "startTime": "2025-08-07T01:33:23.963Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-1d3fdf9052ba6f1f4add",
@@ -1766,7 +1962,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1777,20 +1973,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 17,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 3101,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:00.235Z",
+                      "startTime": "2025-08-07T01:33:23.963Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-e3f6c7bf1422c093d664",
@@ -1800,7 +2003,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1811,20 +2014,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 21,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 1470,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:00.578Z",
+                      "startTime": "2025-08-07T01:33:23.976Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-410beb7e3f7b6ef484f6",
@@ -1834,7 +2044,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1845,20 +2055,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 22,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 2492,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:02.022Z",
+                      "startTime": "2025-08-07T01:33:23.977Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-bc5789add3459358ac4d",
@@ -1868,7 +2085,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1879,24 +2096,27 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 21,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 1671,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
                         {
-                          "text": "Test completed on webkit\n"
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:02.054Z",
+                      "startTime": "2025-08-07T01:33:23.991Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-5a1a15360720e568af59",
@@ -1906,7 +2126,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1917,20 +2137,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 24,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 662,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:05.682Z",
+                      "startTime": "2025-08-07T01:33:24.053Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-cbe52f022cc192444485",
@@ -1940,7 +2167,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1951,20 +2178,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 24,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 2715,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:06.349Z",
+                      "startTime": "2025-08-07T01:33:24.054Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-b29f00fb6e16d6453590",
@@ -1974,7 +2208,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1985,20 +2219,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 23,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 5272,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:06.411Z",
+                      "startTime": "2025-08-07T01:33:24.073Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-6c5780cc4cac88903189",
@@ -2008,7 +2249,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2019,20 +2260,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 27,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 1616,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:06.742Z",
+                      "startTime": "2025-08-07T01:33:24.074Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-8d0540d1992b86353b98",
@@ -2042,7 +2290,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2053,20 +2301,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 28,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 471,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:06.921Z",
+                      "startTime": "2025-08-07T01:33:24.091Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-9b75bf9f79f1ceb581d6",
@@ -2076,7 +2331,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2087,20 +2342,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 29,
-                      "parallelIndex": 5,
-                      "status": "passed",
-                      "duration": 864,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:08.175Z",
+                      "startTime": "2025-08-07T01:33:24.092Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-4d9c19e8574e1aabe186",
@@ -2110,7 +2372,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2121,24 +2383,27 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": 30,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 884,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
                         {
-                          "text": "Test completed on chromium\n"
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:08.319Z",
+                      "startTime": "2025-08-07T01:33:24.108Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-7325269b712917532ab0",
@@ -2148,7 +2413,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2159,20 +2424,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 36,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 1754,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:10.982Z",
+                      "startTime": "2025-08-07T01:33:24.170Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-ef55641fb918630c168d",
@@ -2182,7 +2454,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2193,20 +2465,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 37,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 3858,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:11.035Z",
+                      "startTime": "2025-08-07T01:33:24.170Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-0cba4e125d15e425f13a",
@@ -2216,7 +2495,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2227,20 +2506,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 31,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 6988,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:10.191Z",
+                      "startTime": "2025-08-07T01:33:24.183Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-011448e948cbd340a56c",
@@ -2250,7 +2536,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2261,20 +2547,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 38,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 2390,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:13.493Z",
+                      "startTime": "2025-08-07T01:33:24.184Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-2cf85029b2b2e4c3b0eb",
@@ -2284,7 +2577,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2295,20 +2588,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 32,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 1312,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:11.903Z",
+                      "startTime": "2025-08-07T01:33:24.196Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-942aedea520ac43c3baa",
@@ -2318,7 +2618,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2329,20 +2629,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 35,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2127,
-                      "errors": [],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:12.198Z",
+                      "startTime": "2025-08-07T01:33:24.196Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-7a3124331370e5190112",
@@ -2352,7 +2659,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2363,24 +2670,27 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": 36,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 1317,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                      },
+                      "errors": [
                         {
-                          "text": "Test completed on webkit\n"
+                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:24:12.928Z",
+                      "startTime": "2025-08-07T01:33:24.208Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "e664d56086de158d6226-b3725daa2555b79b0cb6",
@@ -2395,11 +2705,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-07T01:23:43.294Z",
-    "duration": 34025.441,
-    "expected": 65,
+    "startTime": "2025-08-07T01:33:19.892Z",
+    "duration": 10505.048,
+    "expected": 17,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 48,
     "flaky": 0
   }
 }

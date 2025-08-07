@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import './App.css'
 import { GameBoard } from './components/GameBoard'
+import { ScoreDisplay } from './components/ScoreDisplay'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
@@ -91,7 +92,14 @@ function App() {
       </header>
       <main className="app-main">
         <div className="game-container">
-          <GameBoard key={renderKey} game={game} />
+          <div className="game-play-area">
+            <div className="game-board-area">
+              <GameBoard key={renderKey} game={game} />
+            </div>
+            <div className="game-info-area">
+              <ScoreDisplay score={game.score} />
+            </div>
+          </div>
           <div className="controls">
             <button data-testid="start-button" onClick={handleStartGame}>
               ゲーム開始
