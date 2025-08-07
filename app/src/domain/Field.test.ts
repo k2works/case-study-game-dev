@@ -110,4 +110,80 @@ describe('Field', () => {
       expect(connectedPuyos).toEqual([[2, 2]])
     })
   })
+
+  describe('ぷよを消去する', () => {
+    it('4つ以上連結したぷよを消去できる', () => {
+      const field = new Field()
+      // 2×2の赤いぷよを配置（4つ）
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 1, new Puyo(PuyoColor.RED))
+
+      const removedPuyos = field.removePuyos()
+      expect(removedPuyos).toHaveLength(4)
+      expect(removedPuyos).toEqual(
+        expect.arrayContaining([
+          [0, 0],
+          [1, 0],
+          [0, 1],
+          [1, 1],
+        ])
+      )
+
+      // 消去後はフィールドが空になる
+      expect(field.isEmpty()).toBe(true)
+    })
+
+    it('3つ以下の連結は消去されない', () => {
+      const field = new Field()
+      // 3つの赤いぷよを配置
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+
+      const removedPuyos = field.removePuyos()
+      expect(removedPuyos).toHaveLength(0)
+
+      // ぷよは残っている
+      expect(field.getPuyo(0, 0)).toBeTruthy()
+      expect(field.getPuyo(1, 0)).toBeTruthy()
+      expect(field.getPuyo(0, 1)).toBeTruthy()
+    })
+
+    it('複数の消去グループが同時に消去される', () => {
+      const field = new Field()
+      // 左側に4つの赤いぷよ
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+      field.setPuyo(1, 1, new Puyo(PuyoColor.RED))
+
+      // 右側に4つの青いぷよ
+      field.setPuyo(4, 0, new Puyo(PuyoColor.BLUE))
+      field.setPuyo(5, 0, new Puyo(PuyoColor.BLUE))
+      field.setPuyo(4, 1, new Puyo(PuyoColor.BLUE))
+      field.setPuyo(5, 1, new Puyo(PuyoColor.BLUE))
+
+      const removedPuyos = field.removePuyos()
+      expect(removedPuyos).toHaveLength(8)
+
+      // 全て消去されている
+      expect(field.isEmpty()).toBe(true)
+    })
+
+    it('消去対象がない場合は空配列を返す', () => {
+      const field = new Field()
+      // 単独ぷよのみ配置
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(2, 2, new Puyo(PuyoColor.BLUE))
+
+      const removedPuyos = field.removePuyos()
+      expect(removedPuyos).toHaveLength(0)
+
+      // ぷよは残っている
+      expect(field.getPuyo(0, 0)).toBeTruthy()
+      expect(field.getPuyo(2, 2)).toBeTruthy()
+    })
+  })
 })

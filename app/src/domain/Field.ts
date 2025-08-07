@@ -67,4 +67,28 @@ export class Field {
     this.dfs(x, y - 1, color, visited, result)
     this.dfs(x, y + 1, color, visited, result)
   }
+
+  removePuyos(): [number, number][] {
+    const removedPositions: [number, number][] = []
+    const visited = new Set<string>()
+
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const key = `${x},${y}`
+        if (visited.has(key) || !this.getPuyo(x, y)) continue
+
+        const connectedPuyos = this.findConnectedPuyos(x, y)
+        connectedPuyos.forEach(([px, py]) => visited.add(`${px},${py}`))
+
+        if (connectedPuyos.length >= 4) {
+          connectedPuyos.forEach(([px, py]) => {
+            this.grid[py][px] = null
+            removedPositions.push([px, py])
+          })
+        }
+      }
+    }
+
+    return removedPositions
+  }
 }
