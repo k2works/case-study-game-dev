@@ -52,7 +52,8 @@ describe('GameBoard', () => {
 
       render(<GameBoard game={game} />)
 
-      expect(screen.getByText('Playing')).toBeInTheDocument()
+      // Playing状態ではステータステキストは表示されない（空文字列）
+      expect(screen.queryByText('Playing')).not.toBeInTheDocument()
 
       // 現在のぷよペアが表示される（main puyo）
       const mainPuyoCell = screen.getByTestId(
@@ -76,27 +77,6 @@ describe('GameBoard', () => {
       render(<GameBoard game={game} />)
 
       expect(screen.getByText('Game Over')).toBeInTheDocument()
-    })
-
-    it('NEXTぷよが表示される', () => {
-      const game = new Game()
-      game.start()
-
-      render(<GameBoard game={game} />)
-
-      // NEXTぷよエリアが存在する
-      const nextArea = screen.getByTestId('next-puyo-area')
-      expect(nextArea).toBeInTheDocument()
-
-      // NEXTぷよのメインとサブが表示される
-      const nextMainPuyo = screen.getByTestId('next-main-puyo')
-      const nextSubPuyo = screen.getByTestId('next-sub-puyo')
-      expect(nextMainPuyo).toBeInTheDocument()
-      expect(nextSubPuyo).toBeInTheDocument()
-
-      // 色が設定されている
-      expect(nextMainPuyo).toHaveClass('puyo')
-      expect(nextSubPuyo).toHaveClass('puyo')
     })
   })
 })

@@ -1,0 +1,49 @@
+.next-puyo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 120px;
+}
+
+.next-puyo-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.next-puyo-display {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.next-puyo-display .puyo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #333;
+}
+
+/* ぷよの色設定 */
+.next-puyo-display .puyo.red {
+  background-color: #ff6b6b;
+}
+
+.next-puyo-display .puyo.blue {
+  background-color: #4ecdc4;
+}
+
+.next-puyo-display .puyo.green {
+  background-color: #45b7d1;
+}
+
+.next-puyo-display .puyo.yellow {
+  background-color: #f9ca24;
+}

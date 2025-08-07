@@ -79,7 +79,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
       case GameState.READY:
         return 'Ready'
       case GameState.PLAYING:
-        return 'Playing'
+        return '' // Playing表示を削除
       case GameState.GAME_OVER:
         return 'Game Over'
       default:
@@ -87,37 +87,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
   }
 
-  const renderNextPuyo = () => {
-    if (!game.nextPair) {
-      return null
-    }
-
-    return (
-      <div data-testid="next-puyo-area" className="next-puyo-area">
-        <h3>NEXT</h3>
-        <div className="next-puyo-display">
-          <div
-            data-testid="next-main-puyo"
-            className={`puyo ${game.nextPair.main.color}`}
-          />
-          <div
-            data-testid="next-sub-puyo"
-            className={`puyo ${game.nextPair.sub.color}`}
-          />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div data-testid="game-board" className="game-board">
-      <div className="game-info">
-        <div className="game-status">
-          <span>{getGameStateText()}</span>
-          <span>Score: {game.score}</span>
+      {getGameStateText() && (
+        <div className="game-info">
+          <div className="game-status">
+            <span>{getGameStateText()}</span>
+          </div>
         </div>
-        {renderNextPuyo()}
-      </div>
+      )}
       <div className="field">{renderField()}</div>
     </div>
   )

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import './App.css'
 import { GameBoard } from './components/GameBoard'
 import { ScoreDisplay } from './components/ScoreDisplay'
+import { NextPuyoDisplay } from './components/NextPuyoDisplay'
 import { GameOverDisplay } from './components/GameOverDisplay'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
@@ -106,6 +107,7 @@ function App() {
             </div>
             <div className="game-info-area">
               <ScoreDisplay score={game.score} />
+              <NextPuyoDisplay nextPair={game.nextPair} />
             </div>
           </div>
           <div className="controls">

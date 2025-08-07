@@ -11,8 +11,11 @@ describe('Game Integration', () => {
       const startButton = screen.getByText('ゲーム開始')
       fireEvent.click(startButton)
 
-      // Playing状態になることを確認
-      expect(screen.getByText('Playing')).toBeInTheDocument()
+      // ゲームが開始されていることを確認（現在のぷよペアが存在する）
+      const puyoCells = screen
+        .getAllByTestId(/cell-\d+-\d+/)
+        .filter((cell) => cell.classList.contains('puyo'))
+      expect(puyoCells.length).toBeGreaterThanOrEqual(2) // 最低でも現在のペア分
 
       // 現在のぷよペアの位置を取得（初期位置はy=2）
       const currentPuyoMain = screen.getByTestId('cell-2-2')
