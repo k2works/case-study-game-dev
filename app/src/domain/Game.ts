@@ -1,6 +1,7 @@
 import { Field } from './Field'
 import { PuyoPair } from './PuyoPair'
 import { Puyo, PuyoColor } from './Puyo'
+import { Score } from './Score'
 
 export enum GameState {
   READY = 'ready',
@@ -14,9 +15,11 @@ export class Game {
   public field: Field
   public currentPair: PuyoPair | null = null
   public nextPair: PuyoPair | null = null
+  private scoreCalculator: Score
 
   constructor() {
     this.field = new Field()
+    this.scoreCalculator = new Score()
   }
 
   start(): void {
@@ -117,6 +120,9 @@ export class Game {
     // フィールドにぷよを配置
     this.field.setPuyo(mainPos.x, mainPos.y, this.currentPair.main)
     this.field.setPuyo(subPos.x, subPos.y, this.currentPair.sub)
+
+    // 消去・連鎖処理を実行
+    this.processChain()
 
     // NEXTぷよを現在のぷよペアにして、新しいNEXTを生成
     this.currentPair = this.nextPair
@@ -219,5 +225,32 @@ export class Game {
       this.field.getPuyo(mainPos.x, mainPos.y) === null &&
       this.field.getPuyo(subPos.x, subPos.y) === null
     )
+  }
+
+  processChain(): void {
+    let chainCount = 0
+
+    while (true) {
+      // 重力を適用
+      this.field.applyGravity()
+
+      // ぷよを消去
+      const removedPuyos = this.field.removePuyos()
+
+      // 消去されるぷよがない場合は連鎖終了
+      if (removedPuyos.length === 0) {
+        break
+      }
+
+      // 連鎖カウントを増加
+      chainCount++
+
+      // スコア計算と加算
+      const chainScore = this.scoreCalculator.calculateScoreWithChain(
+        removedPuyos.length,
+        chainCount
+      )
+      this.score += chainScore
+    }
   }
 }

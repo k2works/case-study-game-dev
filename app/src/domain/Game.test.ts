@@ -301,4 +301,26 @@ describe('Game', () => {
       expect(game.nextPair!.rotation).toBe(0)
     })
   })
+
+  describe('消去・連鎖システム統合', () => {
+    it('ぷよ固定後に4つ以上連結したぷよが自動消去される', () => {
+      const game = new Game()
+      game.start()
+
+      // 2×2の赤いぷよ配置をシミュレート（手動でフィールドに配置）
+      game.field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      game.field.setPuyo(1, 0, new Puyo(PuyoColor.RED))
+      game.field.setPuyo(0, 1, new Puyo(PuyoColor.RED))
+
+      // 最後の1つを固定で追加
+      game.field.setPuyo(1, 1, new Puyo(PuyoColor.RED))
+
+      // 消去・連鎖処理を実行
+      game.processChain()
+
+      // 4つのぷよが消去される
+      expect(game.field.isEmpty()).toBe(true)
+      expect(game.score).toBeGreaterThan(0)
+    })
+  })
 })
