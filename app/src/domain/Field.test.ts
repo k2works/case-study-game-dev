@@ -186,4 +186,75 @@ describe('Field', () => {
       expect(field.getPuyo(2, 2)).toBeTruthy()
     })
   })
+
+  describe('重力を適用する', () => {
+    it('空いた空間にぷよが落下する', () => {
+      const field = new Field()
+      // 縦一列に配置
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.BLUE))
+      field.setPuyo(0, 3, new Puyo(PuyoColor.GREEN)) // 2の位置が空
+
+      field.applyGravity()
+
+      // 下に詰まって配置される
+      expect(field.getPuyo(0, 0)).toBeTruthy()
+      expect(field.getPuyo(0, 1)).toBeTruthy()
+      expect(field.getPuyo(0, 2)).toBeTruthy()
+      expect(field.getPuyo(0, 3)).toBeNull()
+
+      // 色の順序は維持される
+      expect(field.getPuyo(0, 0)?.color).toBe(PuyoColor.RED)
+      expect(field.getPuyo(0, 1)?.color).toBe(PuyoColor.BLUE)
+      expect(field.getPuyo(0, 2)?.color).toBe(PuyoColor.GREEN)
+    })
+
+    it('複数の列で独立して重力が適用される', () => {
+      const field = new Field()
+      // 列0: 下から赤、空、青
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 2, new Puyo(PuyoColor.BLUE))
+
+      // 列1: 下から空、緑、空、黄
+      field.setPuyo(1, 1, new Puyo(PuyoColor.GREEN))
+      field.setPuyo(1, 3, new Puyo(PuyoColor.YELLOW))
+
+      field.applyGravity()
+
+      // 列0の結果
+      expect(field.getPuyo(0, 0)?.color).toBe(PuyoColor.RED)
+      expect(field.getPuyo(0, 1)?.color).toBe(PuyoColor.BLUE)
+      expect(field.getPuyo(0, 2)).toBeNull()
+
+      // 列1の結果
+      expect(field.getPuyo(1, 0)?.color).toBe(PuyoColor.GREEN)
+      expect(field.getPuyo(1, 1)?.color).toBe(PuyoColor.YELLOW)
+      expect(field.getPuyo(1, 2)).toBeNull()
+      expect(field.getPuyo(1, 3)).toBeNull()
+    })
+
+    it('重力適用済みのフィールドは変化しない', () => {
+      const field = new Field()
+      // 下から順にぷよを配置（既に重力適用済み）
+      field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+      field.setPuyo(0, 1, new Puyo(PuyoColor.BLUE))
+      field.setPuyo(0, 2, new Puyo(PuyoColor.GREEN))
+
+      field.applyGravity()
+
+      // 変化なし
+      expect(field.getPuyo(0, 0)?.color).toBe(PuyoColor.RED)
+      expect(field.getPuyo(0, 1)?.color).toBe(PuyoColor.BLUE)
+      expect(field.getPuyo(0, 2)?.color).toBe(PuyoColor.GREEN)
+      expect(field.getPuyo(0, 3)).toBeNull()
+    })
+
+    it('空のフィールドでは何も起こらない', () => {
+      const field = new Field()
+
+      field.applyGravity()
+
+      expect(field.isEmpty()).toBe(true)
+    })
+  })
 })

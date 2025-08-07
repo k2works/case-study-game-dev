@@ -91,4 +91,21 @@ export class Field {
 
     return removedPositions
   }
+
+  applyGravity(): void {
+    for (let x = 0; x < this.width; x++) {
+      // 各列について下から上へスキャンして詰める
+      let writeIndex = 0
+      for (let y = 0; y < this.height; y++) {
+        const puyo = this.grid[y][x]
+        if (puyo !== null) {
+          this.grid[writeIndex][x] = puyo
+          if (writeIndex !== y) {
+            this.grid[y][x] = null
+          }
+          writeIndex++
+        }
+      }
+    }
+  }
 }
