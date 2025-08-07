@@ -147,12 +147,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 724,
+                      "duration": 779,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.788Z",
+                      "startTime": "2025-08-07T01:54:00.779Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -181,12 +181,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 1584,
+                      "duration": 1697,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.755Z",
+                      "startTime": "2025-08-07T01:54:00.903Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -215,12 +215,12 @@
                       "workerIndex": 2,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 4341,
+                      "duration": 4899,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.754Z",
+                      "startTime": "2025-08-07T01:54:00.886Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -249,12 +249,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 3857,
+                      "duration": 4293,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.771Z",
+                      "startTime": "2025-08-07T01:54:00.872Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -283,12 +283,12 @@
                       "workerIndex": 4,
                       "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 611,
+                      "duration": 594,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.749Z",
+                      "startTime": "2025-08-07T01:54:00.974Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -317,12 +317,12 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 704,
+                      "duration": 1010,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.755Z",
+                      "startTime": "2025-08-07T01:54:00.885Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -349,14 +349,14 @@
                   "results": [
                     {
                       "workerIndex": 8,
-                      "parallelIndex": 0,
+                      "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 1593,
+                      "duration": 2328,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:22.921Z",
+                      "startTime": "2025-08-07T01:54:03.825Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -385,12 +385,12 @@
                       "workerIndex": 9,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 2725,
+                      "duration": 3752,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.251Z",
+                      "startTime": "2025-08-07T01:54:03.861Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -419,12 +419,12 @@
                       "workerIndex": 10,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 5268,
+                      "duration": 7136,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.406Z",
+                      "startTime": "2025-08-07T01:54:04.215Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -451,14 +451,14 @@
                   "results": [
                     {
                       "workerIndex": 11,
-                      "parallelIndex": 6,
+                      "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 4881,
+                      "duration": 6327,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.006Z",
+                      "startTime": "2025-08-07T01:54:04.713Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -473,7 +473,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -484,27 +484,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 12,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 2548,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.838Z",
+                      "startTime": "2025-08-07T01:54:05.676Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-75676a16f8dcadcffcf1",
@@ -514,7 +507,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -525,27 +518,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 13,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2456,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.840Z",
+                      "startTime": "2025-08-07T01:54:07.918Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-8b05249307da8d6e35a9",
@@ -555,7 +541,7 @@
             },
             {
               "title": "ゲーム開始から基本操作まで",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -566,27 +552,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 16,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 1531,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.909Z",
+                      "startTime": "2025-08-07T01:54:13.913Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-d81314e0d832843354ef",
@@ -596,7 +575,7 @@
             },
             {
               "title": "キーボード操作でぷよを移動できる",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -607,27 +586,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 17,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2558,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.909Z",
+                      "startTime": "2025-08-07T01:54:13.954Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-a70a58d877fbd2d150c5",
@@ -637,7 +609,7 @@
             },
             {
               "title": "ゲームオーバーまでのフロー",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -648,27 +620,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 18,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 8226,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.923Z",
+                      "startTime": "2025-08-07T01:54:14.405Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-8d857056ce7466f7656d",
@@ -678,7 +643,7 @@
             },
             {
               "title": "連鎖が発生するシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -689,27 +654,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 19,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 5939,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.924Z",
+                      "startTime": "2025-08-07T01:54:14.823Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-703e35c485c78ba0bf26",
@@ -719,7 +677,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -730,27 +688,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 20,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1116,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.936Z",
+                      "startTime": "2025-08-07T01:54:14.862Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-0e5d1b91a44884864b67",
@@ -760,7 +711,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -771,27 +722,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 22,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 1514,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.937Z",
+                      "startTime": "2025-08-07T01:54:15.082Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-93785cb1b8cc4b0fc178",
@@ -812,24 +756,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 24,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30153,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                            "column": 23,
+                            "line": 19
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 17 |\u001b[39m\n \u001b[90m 18 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 19 |\u001b[39m     \u001b[36mawait\u001b[39m startButton\u001b[33m.\u001b[39mclick()\n \u001b[90m    |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 20 |\u001b[39m\n \u001b[90m 21 |\u001b[39m     \u001b[90m// ゲームボードが表示される\u001b[39m\n \u001b[90m 22 |\u001b[39m     \u001b[36mconst\u001b[39m gameBoard \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'game-board'\u001b[39m)\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts:19:23\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.006Z",
+                      "startTime": "2025-08-07T01:54:21.096Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲーム開始から基本操作まで-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲーム開始から基本操作まで-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -853,24 +817,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 23,
+                      "parallelIndex": 5,
+                      "status": "timedOut",
+                      "duration": 30171,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                            "column": 44,
+                            "line": 39
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 37 |\u001b[39m   test(\u001b[32m'キーボード操作でぷよを移動できる'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 38 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 39 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m    |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 40 |\u001b[39m\n \u001b[90m 41 |\u001b[39m     \u001b[90m// 初期位置を記録\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[36mconst\u001b[39m gameBoard \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'game-board'\u001b[39m)\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts:39:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.007Z",
+                      "startTime": "2025-08-07T01:54:21.095Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-キーボード操作でぷよを移動できる-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-キーボード操作でぷよを移動できる-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -894,24 +878,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 25,
+                      "parallelIndex": 3,
+                      "status": "timedOut",
+                      "duration": 30169,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                            "column": 44,
+                            "line": 68
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 66 |\u001b[39m   test(\u001b[32m'ゲームオーバーまでのフロー'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 67 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 68 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m    |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 69 |\u001b[39m\n \u001b[90m 70 |\u001b[39m     \u001b[90m// フィールドの高さを調べて、ゲームオーバーまでぷよを積み上げる\u001b[39m\n \u001b[90m 71 |\u001b[39m     \u001b[36mlet\u001b[39m attempts \u001b[33m=\u001b[39m \u001b[35m0\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts:68:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.021Z",
+                      "startTime": "2025-08-07T01:54:21.408Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲームオーバーまでのフロー-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲームオーバーまでのフロー-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -935,24 +939,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 26,
+                      "parallelIndex": 7,
+                      "status": "timedOut",
+                      "duration": 30181,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts",
+                            "column": 44,
+                            "line": 104
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 102 |\u001b[39m   test(\u001b[32m'連鎖が発生するシナリオ'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 103 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 104 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 105 |\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[90m// 連鎖を起こすためのぷよ配置（実際の実装では手動配置は困難なので、\u001b[39m\n \u001b[90m 107 |\u001b[39m     \u001b[90m// 基本的な操作を行って連鎖の可能性を確認）\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\game-basic.spec.ts:104:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.022Z",
+                      "startTime": "2025-08-07T01:54:21.425Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-連鎖が発生するシナリオ-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-連鎖が発生するシナリオ-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -965,7 +989,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -976,27 +1000,20 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 27,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 508,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.036Z",
+                      "startTime": "2025-08-07T01:54:21.547Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-baf46057df4bb91be79a",
@@ -1006,7 +1023,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1017,27 +1034,20 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 28,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 495,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.037Z",
+                      "startTime": "2025-08-07T01:54:22.293Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-c7e912bf42056b4ffe61",
@@ -1047,7 +1057,7 @@
             },
             {
               "title": "ゲーム開始から基本操作まで",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1058,27 +1068,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 34,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 877,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.124Z",
+                      "startTime": "2025-08-07T01:54:52.824Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-c68623bb30249a84e737",
@@ -1088,7 +1091,7 @@
             },
             {
               "title": "キーボード操作でぷよを移動できる",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1099,27 +1102,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 35,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1863,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.125Z",
+                      "startTime": "2025-08-07T01:54:53.650Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-debbe46b46d820e9eda8",
@@ -1129,7 +1125,7 @@
             },
             {
               "title": "ゲームオーバーまでのフロー",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1140,27 +1136,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 36,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 6556,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.140Z",
+                      "startTime": "2025-08-07T01:54:54.223Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-a5f9ec41dfe7625f748d",
@@ -1170,7 +1159,7 @@
             },
             {
               "title": "連鎖が発生するシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1181,27 +1170,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 34,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4806,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.141Z",
+                      "startTime": "2025-08-07T01:54:53.761Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-830ef690b4eb4f1dfcc2",
@@ -1211,7 +1193,7 @@
             },
             {
               "title": "レスポンシブ表示の確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1222,27 +1204,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 37,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 834,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.156Z",
+                      "startTime": "2025-08-07T01:54:54.978Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-bea83619a430d3d09af7",
@@ -1252,7 +1227,7 @@
             },
             {
               "title": "アクセシビリティ基本チェック",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1263,27 +1238,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 38,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 738,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.157Z",
+                      "startTime": "2025-08-07T01:54:56.098Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-a6d2f934af6d6f72be86",
@@ -1324,12 +1292,12 @@
                       "workerIndex": 6,
                       "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 654,
+                      "duration": 806,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.771Z",
+                      "startTime": "2025-08-07T01:54:00.936Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1358,12 +1326,12 @@
                       "workerIndex": 7,
                       "parallelIndex": 7,
                       "status": "passed",
-                      "duration": 2747,
+                      "duration": 3147,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:20.787Z",
+                      "startTime": "2025-08-07T01:54:00.922Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1389,15 +1357,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4926,
+                      "duration": 5411,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:21.498Z",
+                      "startTime": "2025-08-07T01:54:01.751Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1423,15 +1391,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 6,
-                      "parallelIndex": 6,
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 1469,
+                      "duration": 1544,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:21.560Z",
+                      "startTime": "2025-08-07T01:54:02.043Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1460,12 +1428,12 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 361,
+                      "duration": 440,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:21.622Z",
+                      "startTime": "2025-08-07T01:54:02.058Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1491,15 +1459,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 524,
+                      "duration": 696,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:21.671Z",
+                      "startTime": "2025-08-07T01:54:02.124Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1528,7 +1496,7 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 607,
+                      "duration": 680,
                       "errors": [],
                       "stdout": [
                         {
@@ -1537,7 +1505,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:21.987Z",
+                      "startTime": "2025-08-07T01:54:02.504Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1552,7 +1520,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1563,27 +1531,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 14,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2788,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.851Z",
+                      "startTime": "2025-08-07T01:54:08.406Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-22c85362617703ec4c90",
@@ -1593,7 +1554,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1604,27 +1565,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 8,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 3562,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.853Z",
+                      "startTime": "2025-08-07T01:54:06.838Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-0598d3becda2f2513b8f",
@@ -1634,7 +1588,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1645,27 +1599,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7435,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.865Z",
+                      "startTime": "2025-08-07T01:54:10.322Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-a3ae5f103ff4dff68a43",
@@ -1675,7 +1622,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1686,27 +1633,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2345,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.866Z",
+                      "startTime": "2025-08-07T01:54:08.845Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-d5876b94150068d238ef",
@@ -1716,7 +1656,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1727,27 +1667,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 12,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 1150,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.879Z",
+                      "startTime": "2025-08-07T01:54:10.201Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-16aa28607e236dc0e865",
@@ -1757,7 +1690,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1768,27 +1701,20 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 8,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 1836,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.881Z",
+                      "startTime": "2025-08-07T01:54:10.407Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-98e5cde6441abe55c54b",
@@ -1798,7 +1724,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1809,27 +1735,24 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1417,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "text": "Test completed on firefox\n"
                         }
                       ],
-                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.895Z",
+                      "startTime": "2025-08-07T01:54:11.196Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-b510ec9c46bec4b10cfc",
@@ -1839,7 +1762,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1850,27 +1773,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 21,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 2175,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.951Z",
+                      "startTime": "2025-08-07T01:54:15.068Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-b6adb953e48ffbdd6516",
@@ -1880,7 +1796,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1891,27 +1807,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 16,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 4501,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.951Z",
+                      "startTime": "2025-08-07T01:54:15.632Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-83d5d5c2a9813001dae9",
@@ -1921,7 +1830,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1932,27 +1841,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 20,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 7741,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.963Z",
+                      "startTime": "2025-08-07T01:54:16.098Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-1d3fdf9052ba6f1f4add",
@@ -1962,7 +1864,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1973,27 +1875,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 17,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3440,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.963Z",
+                      "startTime": "2025-08-07T01:54:16.643Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-e3f6c7bf1422c093d664",
@@ -2003,7 +1898,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2014,27 +1909,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 22,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 1474,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.976Z",
+                      "startTime": "2025-08-07T01:54:16.705Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-410beb7e3f7b6ef484f6",
@@ -2044,7 +1932,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2055,27 +1943,20 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 21,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 2912,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.977Z",
+                      "startTime": "2025-08-07T01:54:17.337Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-bc5789add3459358ac4d",
@@ -2085,7 +1966,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2096,27 +1977,24 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
+                      "workerIndex": 22,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 1623,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "text": "Test completed on webkit\n"
                         }
                       ],
-                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:23.991Z",
+                      "startTime": "2025-08-07T01:54:18.185Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-5a1a15360720e568af59",
@@ -2137,24 +2015,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 27,
+                      "parallelIndex": 4,
+                      "status": "timedOut",
+                      "duration": 30191,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 44,
+                            "line": 12
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 12 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m    |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m     \u001b[90m// ぷよ操作\u001b[39m\n \u001b[90m 15 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'ArrowLeft'\u001b[39m)\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:12:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.053Z",
+                      "startTime": "2025-08-07T01:54:22.302Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-ゲーム開始から連鎖まで-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-ゲーム開始から連鎖まで-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2178,24 +2076,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 29,
+                      "parallelIndex": 6,
+                      "status": "timedOut",
+                      "duration": 30175,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 44,
+                            "line": 46
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 44 |\u001b[39m\n \u001b[90m 45 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m    |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 47 |\u001b[39m\n \u001b[90m 48 |\u001b[39m     \u001b[90m// 最初のゲームプレイを模擬\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[36mfor\u001b[39m (\u001b[36mlet\u001b[39m move \u001b[33m=\u001b[39m \u001b[35m0\u001b[39m\u001b[33m;\u001b[39m move \u001b[33m<\u001b[39m \u001b[35m5\u001b[39m\u001b[33m;\u001b[39m move\u001b[33m++\u001b[39m) {\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:46:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.054Z",
+                      "startTime": "2025-08-07T01:54:23.613Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-新規プレイヤーの完全なゲームプレイ-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-新規プレイヤーの完全なゲームプレイ-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2219,24 +2137,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 28,
+                      "parallelIndex": 2,
+                      "status": "timedOut",
+                      "duration": 30189,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 44,
+                            "line": 72
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 70 |\u001b[39m   test(\u001b[32m'長時間プレイのシナリオ'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 71 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 72 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m    |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 73 |\u001b[39m\n \u001b[90m 74 |\u001b[39m     \u001b[36mconst\u001b[39m moveCount \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m performLongPlayTest(page)\n \u001b[90m 75 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:72:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.073Z",
+                      "startTime": "2025-08-07T01:54:22.924Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-長時間プレイのシナリオ-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-長時間プレイのシナリオ-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2260,24 +2198,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 30,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30193,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 44,
+                            "line": 138
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m     \u001b[90m// ゲーム開始\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 138 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 139 |\u001b[39m\n \u001b[90m 140 |\u001b[39m     \u001b[90m// 熟練プレイヤーの操作パターン（素早い操作）\u001b[39m\n \u001b[90m 141 |\u001b[39m     \u001b[36mconst\u001b[39m quickMoves \u001b[33m=\u001b[39m [\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:138:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.074Z",
+                      "startTime": "2025-08-07T01:54:24.623Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-復帰プレイヤーのシナリオ-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-復帰プレイヤーのシナリオ-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2301,24 +2259,48 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 31,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30156,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 25,
+                            "line": 191
+                          },
+                          "message": "Error: keyboard.press: Target page, context or browser has been closed\n\n\u001b[0m \u001b[90m 189 |\u001b[39m\n \u001b[90m 190 |\u001b[39m     \u001b[90m// 無効な操作を試行\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 191 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Escape'\u001b[39m)\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'F5'\u001b[39m)\n \u001b[90m 193 |\u001b[39m\n \u001b[90m 194 |\u001b[39m     \u001b[90m// ゲームが安定していることを確認（NEXTぷよが表示されている）\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:191:25\u001b[22m"
                         }
                       ],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "Network control not available, skipping network test\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.091Z",
+                      "startTime": "2025-08-07T01:54:52.325Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-エラーリカバリーシナリオ-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-エラーリカバリーシナリオ-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2342,24 +2324,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 32,
+                      "parallelIndex": 5,
+                      "status": "timedOut",
+                      "duration": 30152,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 44,
+                            "line": 205
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 203 |\u001b[39m     \u001b[36mconst\u001b[39m startTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow()\n \u001b[90m 204 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 205 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 206 |\u001b[39m\n \u001b[90m 207 |\u001b[39m     \u001b[90m// 初回レンダリング時間の計測\u001b[39m\n \u001b[90m 208 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'game-board'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:205:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.092Z",
+                      "startTime": "2025-08-07T01:54:52.340Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-パフォーマンステストシナリオ-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-パフォーマンステストシナリオ-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2383,24 +2385,44 @@
                   "projectName": "Mobile Chrome",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
+                      "workerIndex": 33,
+                      "parallelIndex": 7,
+                      "status": "timedOut",
+                      "duration": 30161,
                       "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
                       },
                       "errors": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts",
+                            "column": 44,
+                            "line": 240
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('start-button')\u001b[22m\n\u001b[2m    - locator resolved to <button data-testid=\"start-button\">ゲーム開始</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  13 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"game-board\" data-testid=\"game-board\">…</div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"cell  \" data-testid=\"cell-2-9\"></div> from <div class=\"game-play-area\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n\u001b[0m \u001b[90m 238 |\u001b[39m\n \u001b[90m 239 |\u001b[39m     \u001b[90m// 基本操作が全ブラウザで動作することを確認\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 240 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'start-button'\u001b[39m)\u001b[33m.\u001b[39mclick()\n \u001b[90m     |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 241 |\u001b[39m\n \u001b[90m 242 |\u001b[39m     \u001b[90m// CSS レイアウトが正しく表示されることを確認\u001b[39m\n \u001b[90m 243 |\u001b[39m     \u001b[36mconst\u001b[39m gameBoard \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'game-board'\u001b[39m)\u001b[0m\n\u001b[2m    at C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\tests\\user-scenarios.spec.ts:240:44\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.108Z",
+                      "startTime": "2025-08-07T01:54:52.791Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-マルチブラウザ互換性確認-Mobile-Chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-マルチブラウザ互換性確認-Mobile-Chrome\\error-context.md"
+                        }
+                      ]
                     }
                   ],
                   "status": "unexpected"
@@ -2413,7 +2435,7 @@
             },
             {
               "title": "ゲーム開始から連鎖まで",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2424,27 +2446,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 35,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1101,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.170Z",
+                      "startTime": "2025-08-07T01:54:55.594Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-ef55641fb918630c168d",
@@ -2454,7 +2469,7 @@
             },
             {
               "title": "新規プレイヤーの完全なゲームプレイ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2465,27 +2480,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 37,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 3487,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.170Z",
+                      "startTime": "2025-08-07T01:54:55.891Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-0cba4e125d15e425f13a",
@@ -2495,7 +2503,7 @@
             },
             {
               "title": "長時間プレイのシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2506,27 +2514,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 35,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 6333,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.183Z",
+                      "startTime": "2025-08-07T01:54:56.700Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-011448e948cbd340a56c",
@@ -2536,7 +2537,7 @@
             },
             {
               "title": "復帰プレイヤーのシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2547,27 +2548,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 38,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2171,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.184Z",
+                      "startTime": "2025-08-07T01:54:56.915Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-2cf85029b2b2e4c3b0eb",
@@ -2577,7 +2571,7 @@
             },
             {
               "title": "エラーリカバリーシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2588,27 +2582,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 34,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 878,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.196Z",
+                      "startTime": "2025-08-07T01:54:58.591Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-942aedea520ac43c3baa",
@@ -2618,7 +2605,7 @@
             },
             {
               "title": "パフォーマンステストシナリオ",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2629,27 +2616,20 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                        }
-                      ],
+                      "workerIndex": 38,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1477,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.196Z",
+                      "startTime": "2025-08-07T01:54:59.093Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-7a3124331370e5190112",
@@ -2659,7 +2639,7 @@
             },
             {
               "title": "マルチブラウザ互換性確認",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2670,27 +2650,24 @@
                   "projectName": "Mobile Safari",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
-                      },
-                      "errors": [
+                      "workerIndex": 37,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 1151,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "message": "Error: worker process exited unexpectedly (code=3221225794, signal=null)"
+                          "text": "Test completed on webkit\n"
                         }
                       ],
-                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-07T01:33:24.208Z",
+                      "startTime": "2025-08-07T01:54:59.383Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e664d56086de158d6226-b3725daa2555b79b0cb6",
@@ -2705,11 +2682,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-07T01:33:19.892Z",
-    "duration": 10505.048,
-    "expected": 17,
+    "startTime": "2025-08-07T01:53:59.027Z",
+    "duration": 84088.111,
+    "expected": 54,
     "skipped": 0,
-    "unexpected": 48,
+    "unexpected": 11,
     "flaky": 0
   }
 }
