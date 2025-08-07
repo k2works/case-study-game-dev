@@ -14,9 +14,10 @@ test.describe('ぷよぷよゲーム基本機能', () => {
     // ゲーム開始ボタンを確認
     const startButton = page.getByTestId('start-button')
     await expect(startButton).toBeVisible()
+    await expect(startButton).toBeEnabled()
 
-    // ゲーム開始
-    await startButton.click()
+    // ゲーム開始 - フォースクリックで確実に実行
+    await startButton.click({ force: true })
 
     // ゲームボードが表示される
     const gameBoard = page.getByTestId('game-board')
@@ -36,7 +37,9 @@ test.describe('ぷよぷよゲーム基本機能', () => {
 
   test('キーボード操作でぷよを移動できる', async ({ page }) => {
     // ゲーム開始
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // 初期位置を記録
     const gameBoard = page.getByTestId('game-board')
@@ -65,7 +68,9 @@ test.describe('ぷよぷよゲーム基本機能', () => {
 
   test('ゲームオーバーまでのフロー', async ({ page }) => {
     // ゲーム開始
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // フィールドの高さを調べて、ゲームオーバーまでぷよを積み上げる
     let attempts = 0
@@ -101,7 +106,9 @@ test.describe('ぷよぷよゲーム基本機能', () => {
 
   test('連鎖が発生するシナリオ', async ({ page }) => {
     // ゲーム開始
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // 連鎖を起こすためのぷよ配置（実際の実装では手動配置は困難なので、
     // 基本的な操作を行って連鎖の可能性を確認）

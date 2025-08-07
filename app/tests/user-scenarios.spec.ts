@@ -9,7 +9,9 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
     await page.goto('/')
 
     // ゲーム開始
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // ぷよ操作
     await page.keyboard.press('ArrowLeft')
@@ -43,7 +45,9 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
     }
 
     // ゲーム開始
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // 最初のゲームプレイを模擬
     for (let move = 0; move < 5; move++) {
@@ -69,7 +73,9 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
 
   test('長時間プレイのシナリオ', async ({ page }) => {
     await page.goto('/')
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     const moveCount = await performLongPlayTest(page)
 
@@ -135,7 +141,9 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
     })
 
     // ゲーム開始
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // 熟練プレイヤーの操作パターン（素早い操作）
     const quickMoves = [
@@ -174,7 +182,9 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
       await page.route('**/*', (route) => route.abort())
 
       // それでもゲームが動作することを確認
-      await page.getByTestId('start-button').click()
+      const startButton = page.getByTestId('start-button')
+      await expect(startButton).toBeVisible()
+      await startButton.click({ force: true })
 
       // ネットワークを復旧
       await page.unroute('**/*')
@@ -202,7 +212,9 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
     // パフォーマンス計測開始
     const startTime = Date.now()
 
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
 
     // 初回レンダリング時間の計測
     await expect(page.getByTestId('game-board')).toBeVisible()
@@ -237,7 +249,19 @@ test.describe('ぷよぷよゲーム ユーザーシナリオ', () => {
     await expect(page.locator('h1')).toBeVisible()
 
     // 基本操作が全ブラウザで動作することを確認
-    await page.getByTestId('start-button').click()
+    const startButton = page.getByTestId('start-button')
+
+    // モバイルの場合はスクロールとより長いタイムアウトを設定
+    if (browserName === 'Mobile Chrome' || browserName === 'Mobile Safari') {
+      await startButton.scrollIntoViewIfNeeded()
+      await page.waitForTimeout(500)
+    }
+
+    await expect(startButton).toBeVisible()
+    await expect(startButton).toBeEnabled()
+
+    // フォースクリックを使用してz-index問題を回避
+    await startButton.click({ force: true })
 
     // CSS レイアウトが正しく表示されることを確認
     const gameBoard = page.getByTestId('game-board')

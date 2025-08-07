@@ -1,5 +1,7 @@
 # Iteration 2: 消去・連鎖システム ふりかえり
 
+🎮 **[デモプレイ](https://case-study-game-dev-5ltf-45cexozkh-k2works-projects.vercel.app/)**
+
 **期間:** 2025-01-07  
 **イテレーション目標:** 消去・連鎖システムの完全実装とUI改善  
 **成果:** 全12個のTODO完了、107個のテスト全通過

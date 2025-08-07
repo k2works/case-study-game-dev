@@ -132,3 +132,46 @@
   border-radius: 4px;
   text-align: center;
 }
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .app {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .game-play-area {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .game-container {
+    padding: 1rem;
+    min-height: auto;
+    position: static; /* position: relative を解除してスタック問題を回避 */
+  }
+
+  .controls {
+    position: relative;
+    z-index: 100; /* ボタンを最前面に配置 */
+    margin-top: 1.5rem;
+  }
+
+  .controls button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-height: 48px; /* タッチターゲットサイズ確保 */
+    min-width: 120px;
+  }
+
+  .key-instructions {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .key-instructions div {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+}

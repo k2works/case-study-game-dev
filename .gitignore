@@ -141,3 +141,4 @@ site
 test-report.junit.xml
 playwright-report/
 test-results/
+test-results.json

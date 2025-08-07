@@ -32,7 +32,6 @@ describe('Next Puyo Integration', () => {
       const nextSubPuyo = screen.getByTestId('next-sub-puyo')
       expect(nextMainPuyo).toHaveClass('puyo')
       expect(nextSubPuyo).toHaveClass('puyo')
-
     })
 
     it('スコア表示の下にNEXTぷよが配置される', () => {
