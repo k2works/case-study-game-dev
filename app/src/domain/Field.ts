@@ -1,8 +1,10 @@
 import { Puyo } from './Puyo'
 
 export class Field {
-  public readonly height = 12
+  public readonly height = 16 // 隠しライン2行 + 表示フィールド14行
   public readonly width = 6
+  public readonly visibleHeight = 14 // 実際に表示されるフィールドの高さ
+  public readonly hiddenLines = 2 // 上部の隠しライン数
   private grid: (Puyo | null)[][]
 
   constructor() {
@@ -94,16 +96,19 @@ export class Field {
 
   applyGravity(): void {
     for (let x = 0; x < this.width; x++) {
-      // 各列について下から上へスキャンして詰める
-      let writeIndex = 0
-      for (let y = 0; y < this.height; y++) {
-        const puyo = this.grid[y][x]
-        if (puyo !== null) {
-          this.grid[writeIndex][x] = puyo
-          if (writeIndex !== y) {
-            this.grid[y][x] = null
+      const visibleBottom = this.height - 1 // 見える範囲の底（y=15）
+
+      // 下から上にスキャンして、隙間があれば上のぷよを下に落とす
+      for (let targetY = visibleBottom; targetY > 0; targetY--) {
+        if (this.grid[targetY][x] === null) {
+          // 空の位置を見つけた場合、その上にあるぷよを探して落とす
+          for (let sourceY = targetY - 1; sourceY >= 0; sourceY--) {
+            if (this.grid[sourceY][x] !== null) {
+              this.grid[targetY][x] = this.grid[sourceY][x]
+              this.grid[sourceY][x] = null
+              break // 最初に見つけたぷよを落として次の空きを探す
+            }
           }
-          writeIndex++
         }
       }
     }

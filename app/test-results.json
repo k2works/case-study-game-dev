@@ -45,7 +45,9 @@
         "name": "chromium",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
         "timeout": 30000
       },
       {
@@ -59,7 +61,9 @@
         "name": "firefox",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
         "timeout": 30000
       },
       {
@@ -73,7 +77,9 @@
         "name": "webkit",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
         "timeout": 30000
       },
       {
@@ -87,7 +93,9 @@
         "name": "Mobile Chrome",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
         "timeout": 30000
       },
       {
@@ -101,7 +109,9 @@
         "name": "Mobile Safari",
         "testDir": "C:/Users/PC202411-1/IdeaProjects/case-study-game-dev/app/tests",
         "testIgnore": [],
-        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
         "timeout": 30000
       }
     ],
@@ -147,20 +157,14 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1101,
+                      "duration": 746,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.240Z",
+                      "startTime": "2025-08-07T01:23:44.511Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲーム開始から基本操作まで-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -187,20 +191,14 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 2167,
+                      "duration": 1609,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.239Z",
+                      "startTime": "2025-08-07T01:23:44.478Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-キーボード操作でぷよを移動できる-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -227,20 +225,14 @@
                       "workerIndex": 2,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 5182,
+                      "duration": 4574,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.240Z",
+                      "startTime": "2025-08-07T01:23:44.494Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-ゲームオーバーまでのフロー-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -267,20 +259,14 @@
                       "workerIndex": 3,
                       "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 4650,
+                      "duration": 4005,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.239Z",
+                      "startTime": "2025-08-07T01:23:44.510Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-連鎖が発生するシナリオ-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -307,20 +293,14 @@
                       "workerIndex": 4,
                       "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 861,
+                      "duration": 681,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.240Z",
+                      "startTime": "2025-08-07T01:23:44.493Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-レスポンシブ表示の確認-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -347,26 +327,836 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 962,
+                      "duration": 650,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.305Z",
+                      "startTime": "2025-08-07T01:23:44.547Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\game-basic-ぷよぷよゲーム基本機能-アクセシビリティ基本チェック-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
                 }
               ],
               "id": "3247b6570f1d52c2c662-68f5d5892256a6d64378",
+              "file": "game-basic.spec.ts",
+              "line": 146,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から基本操作まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2095,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:47.192Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-4bb0f815145f7e39b6e2",
+              "file": "game-basic.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "キーボード操作でぷよを移動できる",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 3228,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:47.207Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-6a90a8004d1a593c24fd",
+              "file": "game-basic.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "ゲームオーバーまでのフロー",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 6775,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:47.551Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-6493024987e1639437a4",
+              "file": "game-basic.spec.ts",
+              "line": 66,
+              "column": 3
+            },
+            {
+              "title": "連鎖が発生するシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5998,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:48.149Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-8d8545edbac321c83fa1",
+              "file": "game-basic.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "レスポンシブ表示の確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 2447,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:49.195Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-75676a16f8dcadcffcf1",
+              "file": "game-basic.spec.ts",
+              "line": 128,
+              "column": 3
+            },
+            {
+              "title": "アクセシビリティ基本チェック",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2475,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:52.499Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-8b05249307da8d6e35a9",
+              "file": "game-basic.spec.ts",
+              "line": 146,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から基本操作まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 1310,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:57.501Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-d81314e0d832843354ef",
+              "file": "game-basic.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "キーボード操作でぷよを移動できる",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 2359,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:57.736Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-a70a58d877fbd2d150c5",
+              "file": "game-basic.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "ゲームオーバーまでのフロー",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 8705,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:58.394Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-8d857056ce7466f7656d",
+              "file": "game-basic.spec.ts",
+              "line": 66,
+              "column": 3
+            },
+            {
+              "title": "連鎖が発生するシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5898,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:58.444Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-703e35c485c78ba0bf26",
+              "file": "game-basic.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "レスポンシブ表示の確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 998,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:58.380Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-0e5d1b91a44884864b67",
+              "file": "game-basic.spec.ts",
+              "line": 128,
+              "column": 3
+            },
+            {
+              "title": "アクセシビリティ基本チェック",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1635,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:58.814Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-93785cb1b8cc4b0fc178",
+              "file": "game-basic.spec.ts",
+              "line": 146,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から基本操作まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 809,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:04.709Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-72455786329822daa8c2",
+              "file": "game-basic.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "キーボード操作でぷよを移動できる",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 23,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 1627,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:04.632Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-8ea3dd7772f8e55c51e5",
+              "file": "game-basic.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "ゲームオーバーまでのフロー",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 25,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 4603,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:04.838Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-8da47272e5f79587b44e",
+              "file": "game-basic.spec.ts",
+              "line": 66,
+              "column": 3
+            },
+            {
+              "title": "連鎖が発生するシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4072,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:05.299Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-7df59901c00795059d53",
+              "file": "game-basic.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "レスポンシブ表示の確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 27,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 540,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:06.045Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-baf46057df4bb91be79a",
+              "file": "game-basic.spec.ts",
+              "line": 128,
+              "column": 3
+            },
+            {
+              "title": "アクセシビリティ基本チェック",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 28,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 568,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:06.140Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-c7e912bf42056b4ffe61",
+              "file": "game-basic.spec.ts",
+              "line": 146,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から基本操作まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 31,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 904,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:08.437Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-c68623bb30249a84e737",
+              "file": "game-basic.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "キーボード操作でぷよを移動できる",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 32,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2210,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:09.591Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-debbe46b46d820e9eda8",
+              "file": "game-basic.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "ゲームオーバーまでのフロー",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 33,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 6919,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:10.263Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-a5f9ec41dfe7625f748d",
+              "file": "game-basic.spec.ts",
+              "line": 66,
+              "column": 3
+            },
+            {
+              "title": "連鎖が発生するシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 34,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 5204,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:10.384Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-830ef690b4eb4f1dfcc2",
+              "file": "game-basic.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "レスポンシブ表示の確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 35,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1321,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:10.765Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-bea83619a430d3d09af7",
+              "file": "game-basic.spec.ts",
+              "line": 128,
+              "column": 3
+            },
+            {
+              "title": "アクセシビリティ基本チェック",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 31,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 745,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:09.422Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3247b6570f1d52c2c662-a6d2f934af6d6f72be86",
               "file": "game-basic.spec.ts",
               "line": 146,
               "column": 3
@@ -404,20 +1194,14 @@
                       "workerIndex": 6,
                       "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 1171,
+                      "duration": 828,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.257Z",
+                      "startTime": "2025-08-07T01:23:44.549Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-ゲーム開始から連鎖まで-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -444,20 +1228,14 @@
                       "workerIndex": 7,
                       "parallelIndex": 7,
                       "status": "passed",
-                      "duration": 3409,
+                      "duration": 2737,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:26.280Z",
+                      "startTime": "2025-08-07T01:23:44.562Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-新規プレイヤーの完全なゲームプレイ-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -484,20 +1262,14 @@
                       "workerIndex": 4,
                       "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 5419,
+                      "duration": 5431,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:27.413Z",
+                      "startTime": "2025-08-07T01:23:45.329Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-長時間プレイのシナリオ-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -524,20 +1296,14 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1832,
+                      "duration": 1535,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:27.583Z",
+                      "startTime": "2025-08-07T01:23:45.440Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-復帰プレイヤーのシナリオ-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -545,7 +1311,7 @@
               ],
               "id": "e664d56086de158d6226-8a34e18ba415c7b56f3f",
               "file": "user-scenarios.spec.ts",
-              "line": 126,
+              "line": 129,
               "column": 3
             },
             {
@@ -564,20 +1330,14 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 614,
+                      "duration": 413,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:27.629Z",
+                      "startTime": "2025-08-07T01:23:45.456Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-エラーリカバリーシナリオ-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -585,7 +1345,7 @@
               ],
               "id": "e664d56086de158d6226-6f76d9c6ac89fe3a404f",
               "file": "user-scenarios.spec.ts",
-              "line": 166,
+              "line": 169,
               "column": 3
             },
             {
@@ -604,20 +1364,14 @@
                       "workerIndex": 6,
                       "parallelIndex": 6,
                       "status": "passed",
-                      "duration": 1003,
+                      "duration": 663,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:27.736Z",
+                      "startTime": "2025-08-07T01:23:45.574Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-パフォーマンステストシナリオ-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -625,7 +1379,7 @@
               ],
               "id": "e664d56086de158d6226-c0c32f93d324dad66521",
               "file": "user-scenarios.spec.ts",
-              "line": 196,
+              "line": 199,
               "column": 3
             },
             {
@@ -644,7 +1398,7 @@
                       "workerIndex": 5,
                       "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 853,
+                      "duration": 664,
                       "errors": [],
                       "stdout": [
                         {
@@ -653,15 +1407,9 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T06:48:28.334Z",
+                      "startTime": "2025-08-07T01:23:45.875Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\test-results\\user-scenarios-ぷよぷよゲーム-ユーザーシナリオ-マルチブラウザ互換性確認-chromium\\trace.zip"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
                   "status": "expected"
@@ -669,7 +1417,975 @@
               ],
               "id": "e664d56086de158d6226-09689d2fbc01a8daa152",
               "file": "user-scenarios.spec.ts",
-              "line": 230,
+              "line": 233,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から連鎖まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 3183,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:53.213Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-22c85362617703ec4c90",
+              "file": "user-scenarios.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "新規プレイヤーの完全なゲームプレイ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3326,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:49.883Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-0598d3becda2f2513b8f",
+              "file": "user-scenarios.spec.ts",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "title": "長時間プレイのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 7393,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:53.519Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-a3ae5f103ff4dff68a43",
+              "file": "user-scenarios.spec.ts",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "復帰プレイヤーのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 2426,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:52.362Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-d5876b94150068d238ef",
+              "file": "user-scenarios.spec.ts",
+              "line": 129,
+              "column": 3
+            },
+            {
+              "title": "エラーリカバリーシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 918,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:53.215Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-16aa28607e236dc0e865",
+              "file": "user-scenarios.spec.ts",
+              "line": 169,
+              "column": 3
+            },
+            {
+              "title": "パフォーマンステストシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 1402,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:53.434Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-98e5cde6441abe55c54b",
+              "file": "user-scenarios.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "マルチブラウザ互換性確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1433,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Test completed on firefox\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:54.138Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-b510ec9c46bec4b10cfc",
+              "file": "user-scenarios.spec.ts",
+              "line": 233,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から連鎖まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2048,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:59.877Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-b6adb953e48ffbdd6516",
+              "file": "user-scenarios.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "新規プレイヤーの完全なゲームプレイ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 4491,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:58.992Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-83d5d5c2a9813001dae9",
+              "file": "user-scenarios.spec.ts",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "title": "長時間プレイのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7850,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:23:59.473Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-1d3fdf9052ba6f1f4add",
+              "file": "user-scenarios.spec.ts",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "復帰プレイヤーのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 3101,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:00.235Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-e3f6c7bf1422c093d664",
+              "file": "user-scenarios.spec.ts",
+              "line": 129,
+              "column": 3
+            },
+            {
+              "title": "エラーリカバリーシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1470,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:00.578Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-410beb7e3f7b6ef484f6",
+              "file": "user-scenarios.spec.ts",
+              "line": 169,
+              "column": 3
+            },
+            {
+              "title": "パフォーマンステストシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2492,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:02.022Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-bc5789add3459358ac4d",
+              "file": "user-scenarios.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "マルチブラウザ互換性確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1671,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Test completed on webkit\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:02.054Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-5a1a15360720e568af59",
+              "file": "user-scenarios.spec.ts",
+              "line": 233,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から連鎖まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 662,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:05.682Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-cbe52f022cc192444485",
+              "file": "user-scenarios.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "新規プレイヤーの完全なゲームプレイ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 2715,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:06.349Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-b29f00fb6e16d6453590",
+              "file": "user-scenarios.spec.ts",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "title": "長時間プレイのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 23,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 5272,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:06.411Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-6c5780cc4cac88903189",
+              "file": "user-scenarios.spec.ts",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "復帰プレイヤーのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 27,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1616,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:06.742Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-8d0540d1992b86353b98",
+              "file": "user-scenarios.spec.ts",
+              "line": 129,
+              "column": 3
+            },
+            {
+              "title": "エラーリカバリーシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 28,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 471,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:06.921Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-9b75bf9f79f1ceb581d6",
+              "file": "user-scenarios.spec.ts",
+              "line": 169,
+              "column": 3
+            },
+            {
+              "title": "パフォーマンステストシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 29,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 864,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:08.175Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-4d9c19e8574e1aabe186",
+              "file": "user-scenarios.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "マルチブラウザ互換性確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 30,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 884,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Test completed on chromium\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:08.319Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-7325269b712917532ab0",
+              "file": "user-scenarios.spec.ts",
+              "line": 233,
+              "column": 3
+            },
+            {
+              "title": "ゲーム開始から連鎖まで",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 36,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1754,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:10.982Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-ef55641fb918630c168d",
+              "file": "user-scenarios.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "新規プレイヤーの完全なゲームプレイ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 37,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 3858,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:11.035Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-0cba4e125d15e425f13a",
+              "file": "user-scenarios.spec.ts",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "title": "長時間プレイのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 31,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 6988,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:10.191Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-011448e948cbd340a56c",
+              "file": "user-scenarios.spec.ts",
+              "line": 70,
+              "column": 3
+            },
+            {
+              "title": "復帰プレイヤーのシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 38,
+                      "parallelIndex": 7,
+                      "status": "passed",
+                      "duration": 2390,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:13.493Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-2cf85029b2b2e4c3b0eb",
+              "file": "user-scenarios.spec.ts",
+              "line": 129,
+              "column": 3
+            },
+            {
+              "title": "エラーリカバリーシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 32,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1312,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:11.903Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-942aedea520ac43c3baa",
+              "file": "user-scenarios.spec.ts",
+              "line": 169,
+              "column": 3
+            },
+            {
+              "title": "パフォーマンステストシナリオ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 35,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2127,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:12.198Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-7a3124331370e5190112",
+              "file": "user-scenarios.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "マルチブラウザ互換性確認",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 36,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1317,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Test completed on webkit\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-07T01:24:12.928Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e664d56086de158d6226-b3725daa2555b79b0cb6",
+              "file": "user-scenarios.spec.ts",
+              "line": 233,
               "column": 3
             }
           ]
@@ -679,9 +2395,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-06T06:48:24.773Z",
-    "duration": 8405.644,
-    "expected": 13,
+    "startTime": "2025-08-07T01:23:43.294Z",
+    "duration": 34025.441,
+    "expected": 65,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

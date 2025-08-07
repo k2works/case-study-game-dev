@@ -128,8 +128,8 @@ export class Game {
     this.currentPair = this.nextPair
     if (this.currentPair) {
       this.currentPair.x = 2
-      this.currentPair.y = 1
-      this.currentPair.rotation = 0
+      this.currentPair.y = 2 // 見える位置（表示フィールドの上部）に配置
+      this.currentPair.rotation = 180 // subぷよを下に配置
     }
     this.generateNextPair()
 
@@ -179,10 +179,10 @@ export class Game {
     if (this.nextPair) {
       this.currentPair = this.nextPair
       this.currentPair.x = 2
-      this.currentPair.y = 1
-      this.currentPair.rotation = 0
+      this.currentPair.y = 2 // 見える位置（表示フィールドの上部）に配置
+      this.currentPair.rotation = 180 // subぷよを下に配置
     } else {
-      this.currentPair = this.createRandomPuyoPair(2, 1)
+      this.currentPair = this.createRandomPuyoPair(2, 2)
     }
 
     // ゲームオーバー判定
@@ -220,11 +220,24 @@ export class Game {
     const mainPos = pair.getMainPosition()
     const subPos = pair.getSubPosition()
 
-    // 初期位置に既存のぷよがある場合は配置不可
-    return (
-      this.field.getPuyo(mainPos.x, mainPos.y) === null &&
-      this.field.getPuyo(subPos.x, subPos.y) === null
-    )
+    // 見える範囲（y >= 2）での配置チェックのみ
+    // 隠しライン内（y < 2）での重複は許容してゲームオーバーとしない
+    const visibleLineStart = 2
+
+    if (
+      mainPos.y >= visibleLineStart &&
+      this.field.getPuyo(mainPos.x, mainPos.y) !== null
+    ) {
+      return false
+    }
+    if (
+      subPos.y >= visibleLineStart &&
+      this.field.getPuyo(subPos.x, subPos.y) !== null
+    ) {
+      return false
+    }
+
+    return true
   }
 
   processChain(): void {

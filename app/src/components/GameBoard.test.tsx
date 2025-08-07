@@ -19,9 +19,9 @@ describe('GameBoard', () => {
 
       render(<GameBoard game={game} />)
 
-      // 12x6 = 72個のセルが存在する
+      // 14x6 = 84個のセルが存在する（見える範囲のみ）
       const cells = screen.getAllByTestId(/^cell-/)
-      expect(cells).toHaveLength(72)
+      expect(cells).toHaveLength(84)
     })
 
     it('空のフィールドが表示される', () => {
@@ -33,7 +33,7 @@ describe('GameBoard', () => {
       const emptyCells = screen
         .getAllByTestId(/^cell-/)
         .filter((cell) => !cell.classList.contains('puyo'))
-      expect(emptyCells).toHaveLength(72)
+      expect(emptyCells).toHaveLength(84)
     })
   })
 

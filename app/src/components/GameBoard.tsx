@@ -53,7 +53,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   const renderField = () => {
     const cells = []
 
-    for (let y = 0; y < game.field.height; y++) {
+    // 隠しライン（y < 2）は表示しない、見えるフィールド部分のみ表示
+    const visibleStartY = 2
+    const visibleHeight = 14 // y=2からy=15まで（14行）を表示
+
+    for (let y = visibleStartY; y < visibleStartY + visibleHeight; y++) {
       for (let x = 0; x < game.field.width; x++) {
         const { puyoClass, puyoColor } = getCellStyle(x, y)
 
