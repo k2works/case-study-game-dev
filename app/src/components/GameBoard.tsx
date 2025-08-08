@@ -5,6 +5,7 @@ import { AnimatedPuyo } from './AnimatedPuyo'
 import { DisappearEffect } from './DisappearEffect'
 // import { ChainDisplay } from './ChainDisplay' // 完全に削除 - 使用しない
 import { soundEffect, SoundType } from '../services/SoundEffect'
+import { gameSettingsService } from '../services/GameSettingsService'
 import './GameBoard.css'
 
 interface GameBoardProps {
@@ -45,6 +46,26 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   const lastProcessedScore = useRef<number>(0)
   const chainTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isProcessingChain = useRef<boolean>(false)
+  
+  // ゲーム設定を取得（設定変更時に再レンダリングするため、stateで管理）
+  const [gameSettings, setGameSettings] = useState(() => gameSettingsService.getSettings())
+
+  // 設定変更を監視
+  useEffect(() => {
+    const updateSettings = () => {
+      setGameSettings(gameSettingsService.getSettings())
+    }
+    
+    // 設定パネルが閉じられたときなどに設定を再読み込み
+    window.addEventListener('storage', updateSettings)
+    // 設定変更イベントをリッスン
+    window.addEventListener('settingsChanged', updateSettings)
+    
+    return () => {
+      window.removeEventListener('storage', updateSettings)
+      window.removeEventListener('settingsChanged', updateSettings)
+    }
+  }, [])
   const [previousPairPosition, setPreviousPairPosition] = useState<{
     mainX: number
     mainY: number
@@ -367,8 +388,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     return []
   }
 
+  // クラス名を動的に生成
+  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''}`
+  const fieldClass = `field ${gameSettings.showShadow ? 'show-shadow' : ''}`
+
   return (
-    <div data-testid="game-board" className="game-board">
+    <div data-testid="game-board" className={gameBoardClass}>
       {getGameStateText() && (
         <div className="game-info">
           <div className="game-status">
@@ -376,7 +401,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
           </div>
         </div>
       )}
-      <div className="field">
+      <div className={fieldClass}>
         {renderField()}
         <div className="animated-puyos-container">
           {renderAnimatedPuyos()}

@@ -59,10 +59,30 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(14, 1fr);
-  gap: 1px;
+  gap: 0;
   border: 2px solid #333;
-  background-color: #333;
+  background-color: #f8f8f8;
   padding: 4px;
+}
+
+/* グリッド線を表示する場合 */
+.game-board.show-grid .field {
+  gap: 2px !important;
+  background-color: #666 !important;
+}
+
+.game-board.show-grid .cell {
+  border: 1px solid #999 !important;
+}
+
+/* グリッド線を非表示にする場合（デフォルト） */
+.game-board:not(.show-grid) .field {
+  gap: 0 !important;
+  background-color: #f8f8f8 !important;
+}
+
+.game-board:not(.show-grid) .cell {
+  border: none !important;
 }
 
 .animated-puyos-container {
@@ -76,7 +96,7 @@
   width: 32px;
   height: 32px;
   background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;

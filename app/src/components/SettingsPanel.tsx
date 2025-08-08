@@ -100,6 +100,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   const handleSave = () => {
     saveSettings()
+    // 設定変更を通知するために設定更新イベントを発行
+    window.dispatchEvent(new Event('settingsChanged'))
     onClose()
   }
 

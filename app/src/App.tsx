@@ -18,6 +18,7 @@ function App() {
   const [game] = useState(() => new Game())
   const [renderKey, setRenderKey] = useState(0)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsKey, setSettingsKey] = useState(0) // 設定変更を反映するためのキー
   const [highScores, setHighScores] = useState<HighScoreRecord[]>([])
   const [currentScore, setCurrentScore] = useState<number | undefined>(
     undefined
@@ -274,7 +275,7 @@ function App() {
         <div className="game-container">
           <div className="game-play-area">
             <div className="game-board-area">
-              <GameBoard key={renderKey} game={game} />
+              <GameBoard key={`${renderKey}-${settingsKey}`} game={game} />
             </div>
             <div className="game-info-area">
               <ScoreDisplay score={game.score} />
@@ -314,7 +315,11 @@ function App() {
 
       <SettingsPanel
         isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
+        onClose={() => {
+          setSettingsOpen(false)
+          // 設定変更後にGameBoardの再レンダリングを強制
+          setSettingsKey(prev => prev + 1)
+        }}
       />
     </div>
   )
