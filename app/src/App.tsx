@@ -5,18 +5,19 @@ import { ScoreDisplay } from './components/ScoreDisplay'
 import { NextPuyoDisplay } from './components/NextPuyoDisplay'
 import { GameOverDisplay } from './components/GameOverDisplay'
 import { HighScoreDisplay } from './components/HighScoreDisplay'
-import { AudioSettingsPanel } from './components/AudioSettingsPanel'
+import { SettingsPanel } from './components/SettingsPanel'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
 import { soundEffect, SoundType } from './services/SoundEffect'
 import { backgroundMusic, MusicType } from './services/BackgroundMusic'
 import { highScoreService, HighScoreRecord } from './services/HighScoreService'
+import { gameSettingsService } from './services/GameSettingsService'
 
 function App() {
   const [game] = useState(() => new Game())
   const [renderKey, setRenderKey] = useState(0)
-  const [audioSettingsOpen, setAudioSettingsOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [highScores, setHighScores] = useState<HighScoreRecord[]>([])
   const [currentScore, setCurrentScore] = useState<number | undefined>(
     undefined
@@ -165,12 +166,12 @@ function App() {
 
     buttons.push(
       <button
-        key="audio"
-        data-testid="audio-settings-button"
-        onClick={() => setAudioSettingsOpen(true)}
-        className="audio-settings-toggle"
+        key="settings"
+        data-testid="settings-button"
+        onClick={() => setSettingsOpen(true)}
+        className="settings-toggle"
       >
-        🔊 音響設定
+        ⚙️ 設定
       </button>
     )
 
@@ -192,10 +193,11 @@ function App() {
     }
   }, [game, forceRender])
 
-  // 自動落下を設定（1秒間隔） - ポーズ中は停止
+  // 自動落下を設定（設定から取得した間隔） - ポーズ中は停止
+  const autoDropSpeed = gameSettingsService.getSetting('autoDropSpeed')
   useAutoDrop({
     onDrop: handleAutoDrop,
-    interval: 1000,
+    interval: autoDropSpeed,
     enabled: game.state === GameState.PLAYING,
   })
 
@@ -310,9 +312,9 @@ function App() {
         </div>
       </main>
 
-      <AudioSettingsPanel
-        isOpen={audioSettingsOpen}
-        onClose={() => setAudioSettingsOpen(false)}
+      <SettingsPanel
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
       />
     </div>
   )

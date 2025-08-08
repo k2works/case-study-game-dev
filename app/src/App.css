@@ -105,11 +105,11 @@
   transform: translateY(0);
 }
 
-.audio-settings-toggle {
+.settings-toggle {
   background: linear-gradient(45deg, #ff6b6b, #ffa726) !important;
 }
 
-.audio-settings-toggle:hover {
+.settings-toggle:hover {
   box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4) !important;
 }
 
