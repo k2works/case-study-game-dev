@@ -55,6 +55,7 @@
 }
 
 .field {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(14, 1fr);
@@ -62,6 +63,13 @@
   border: 2px solid #333;
   background-color: #333;
   padding: 4px;
+}
+
+.animated-puyos-container {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  pointer-events: none;
 }
 
 .cell {

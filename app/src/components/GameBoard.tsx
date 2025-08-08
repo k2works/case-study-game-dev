@@ -1,13 +1,96 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Game, GameState } from '../domain/Game'
 import { Puyo } from '../domain/Puyo'
+import { AnimatedPuyo } from './AnimatedPuyo'
 import './GameBoard.css'
 
 interface GameBoardProps {
   game: Game
 }
 
+interface FallingPuyo {
+  id: string
+  color: string
+  x: number
+  y: number
+  targetY: number
+}
+
 export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
+  const [fallingPuyos, setFallingPuyos] = useState<FallingPuyo[]>([])
+  const [previousPairPosition, setPreviousPairPosition] = useState<{
+    mainX: number
+    mainY: number
+    subX: number
+    subY: number
+  } | null>(null)
+
+  const processFallingAnimation = (
+    mainPos: { x: number; y: number },
+    subPos: { x: number; y: number },
+    prevPosition: typeof previousPairPosition
+  ) => {
+    if (!prevPosition || !game.currentPair) return
+
+    const newFallingPuyos: FallingPuyo[] = []
+
+    if (mainPos.y > prevPosition.mainY) {
+      newFallingPuyos.push({
+        id: `main-${Date.now()}`,
+        color: game.currentPair.main.color,
+        x: mainPos.x,
+        y: prevPosition.mainY,
+        targetY: mainPos.y,
+      })
+    }
+
+    if (subPos.y > prevPosition.subY) {
+      newFallingPuyos.push({
+        id: `sub-${Date.now()}`,
+        color: game.currentPair.sub.color,
+        x: subPos.x,
+        y: prevPosition.subY,
+        targetY: subPos.y,
+      })
+    }
+
+    if (newFallingPuyos.length > 0) {
+      setFallingPuyos((prev) => [...prev, ...newFallingPuyos])
+
+      // アニメーション完了後にクリーンアップ
+      setTimeout(() => {
+        setFallingPuyos((prev) =>
+          prev.filter((p) => !newFallingPuyos.some((np) => np.id === p.id))
+        )
+      }, 300)
+    }
+  }
+
+  useEffect(() => {
+    if (game.currentPair && game.state === GameState.PLAYING) {
+      const mainPos = game.currentPair.getMainPosition()
+      const subPos = game.currentPair.getSubPosition()
+
+      if (
+        previousPairPosition &&
+        (mainPos.y > previousPairPosition.mainY ||
+          subPos.y > previousPairPosition.subY)
+      ) {
+        processFallingAnimation(mainPos, subPos, previousPairPosition)
+      }
+
+      setPreviousPairPosition({
+        mainX: mainPos.x,
+        mainY: mainPos.y,
+        subX: subPos.x,
+        subY: subPos.y,
+      })
+    } else {
+      setPreviousPairPosition(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game.currentPair, game.state])
+
   const getFixedPuyoStyle = (puyo: Puyo | null) => {
     if (puyo) {
       return { puyoClass: 'puyo', puyoColor: puyo.color }
@@ -87,6 +170,19 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
   }
 
+  const renderAnimatedPuyos = () => {
+    return fallingPuyos.map((puyo) => (
+      <AnimatedPuyo
+        key={puyo.id}
+        color={puyo.color}
+        x={puyo.x}
+        y={puyo.targetY - 2} // 表示オフセットを考慮
+        isFalling={true}
+        fallDuration={0.3}
+      />
+    ))
+  }
+
   return (
     <div data-testid="game-board" className="game-board">
       {getGameStateText() && (
@@ -96,7 +192,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
           </div>
         </div>
       )}
-      <div className="field">{renderField()}</div>
+      <div className="field">
+        {renderField()}
+        <div className="animated-puyos-container">{renderAnimatedPuyos()}</div>
+      </div>
     </div>
   )
 }
