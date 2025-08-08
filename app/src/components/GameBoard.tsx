@@ -84,6 +84,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     prevPosition: typeof previousPairPosition
   ) => {
     if (!prevPosition || !game.currentPair) return
+    
+    // アニメーションが無効化されている場合は処理しない
+    if (!gameSettings.animationsEnabled) return
 
     const newFallingPuyos: FallingPuyo[] = []
 
@@ -214,17 +217,20 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     )
 
     if (newDisappearingPuyos.length > 0) {
-      setDisappearingPuyos((prev) => [...prev, ...newDisappearingPuyos])
+      // アニメーションが有効な場合のみエフェクト処理を実行
+      if (gameSettings.animationsEnabled) {
+        setDisappearingPuyos((prev) => [...prev, ...newDisappearingPuyos])
 
-      // ぷよ消去音を再生
+        // エフェクト完了後にクリーンアップ
+        setTimeout(() => {
+          setDisappearingPuyos((prev) =>
+            prev.filter((p) => !newDisappearingPuyos.some((np) => np.id === p.id))
+          )
+        }, 500)
+      }
+
+      // ぷよ消去音を再生（アニメーション設定に関わらず）
       soundEffect.play(SoundType.PUYO_ERASE)
-
-      // エフェクト完了後にクリーンアップ
-      setTimeout(() => {
-        setDisappearingPuyos((prev) =>
-          prev.filter((p) => !newDisappearingPuyos.some((np) => np.id === p.id))
-        )
-      }, 500)
     }
 
     // 現在のフィールド状態を保存
@@ -359,6 +365,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   }
 
   const renderAnimatedPuyos = () => {
+    // アニメーションが無効化されている場合は何も表示しない
+    if (!gameSettings.animationsEnabled) {
+      return []
+    }
+    
     return fallingPuyos.map((puyo) => (
       <AnimatedPuyo
         key={puyo.id}
@@ -372,6 +383,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   }
 
   const renderDisappearEffects = () => {
+    // アニメーションが無効化されている場合は何も表示しない
+    if (!gameSettings.animationsEnabled) {
+      return []
+    }
+    
     return disappearingPuyos.map((puyo) => (
       <DisappearEffect
         key={puyo.id}
@@ -389,7 +405,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   }
 
   // クラス名を動的に生成
-  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''} ${gameSettings.showShadow ? 'show-shadow' : ''}`
+  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''} ${gameSettings.showShadow ? 'show-shadow' : ''} ${gameSettings.animationsEnabled ? 'animations-enabled' : ''}`
   const fieldClass = `field ${gameSettings.showShadow ? 'show-shadow' : ''}`
 
   return (

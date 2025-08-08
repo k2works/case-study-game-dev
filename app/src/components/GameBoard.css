@@ -102,6 +102,16 @@
   transition: all 0.1s ease;
 }
 
+/* アニメーション無効時はtransitionを無効化 */
+.game-board:not(.animations-enabled) .cell {
+  transition: none !important;
+}
+
+.game-board:not(.animations-enabled) * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
 /* ぷよの色スタイリング */
 .cell.puyo {
   border-radius: 50%;
