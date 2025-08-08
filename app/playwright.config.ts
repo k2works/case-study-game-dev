@@ -33,14 +33,6 @@ export default defineConfig({
     /* タイムアウト設定 */
     actionTimeout: 10000,
     navigationTimeout: 30000,
-    /* 音響系の自動再生を許可 */
-    launchOptions: {
-      args: [
-        '--autoplay-policy=no-user-gesture-required',
-        '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
-      ],
-    },
   },
 
   /* テスト実行前にローカルサーバーを起動 */
@@ -55,7 +47,17 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        /* Chrome固有のオプション */
+        launchOptions: {
+          args: [
+            '--autoplay-policy=no-user-gesture-required',
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+          ],
+        },
+      },
     },
     {
       name: 'firefox',
@@ -63,10 +65,6 @@ export default defineConfig({
         ...devices['Desktop Firefox'],
         /* Firefoxでの安定性向上 */
         launchOptions: {
-          args: [
-            '--autoplay-policy=no-user-gesture-required',
-            '--disable-web-security',
-          ],
           timeout: 60000,
         },
         /* Firefox専用のタイムアウト拡張 */
@@ -76,16 +74,37 @@ export default defineConfig({
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { 
+        ...devices['Desktop Safari'],
+        /* WebKit（Safari）での安定性向上 */
+        launchOptions: {
+          timeout: 60000,
+        },
+      },
     },
     /* モバイルテスト */
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: { 
+        ...devices['Pixel 5'],
+        /* Mobile Chrome固有のオプション */
+        launchOptions: {
+          args: [
+            '--autoplay-policy=no-user-gesture-required',
+            '--disable-web-security',
+          ],
+        },
+      },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: { 
+        ...devices['iPhone 12'],
+        /* Mobile Safari（WebKit）での安定性向上 */
+        launchOptions: {
+          timeout: 60000,
+        },
+      },
     },
   ],
 })
