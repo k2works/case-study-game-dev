@@ -6,6 +6,8 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './tests',
+  /* テストタイムアウト設定（60秒） */
+  timeout: 60000,
   /* 並列テスト実行 */
   fullyParallel: true,
   /* CI環境でのテスト失敗時の再試行を無効 */
@@ -28,6 +30,9 @@ export default defineConfig({
     trace: 'on-first-retry',
     /* スクリーンショット設定 */
     screenshot: 'only-on-failure',
+    /* タイムアウト設定 */
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
     /* 音響系の自動再生を許可 */
     launchOptions: {
       args: [
@@ -54,7 +59,20 @@ export default defineConfig({
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { 
+        ...devices['Desktop Firefox'],
+        /* Firefoxでの安定性向上 */
+        launchOptions: {
+          args: [
+            '--autoplay-policy=no-user-gesture-required',
+            '--disable-web-security',
+          ],
+          timeout: 60000,
+        },
+        /* Firefox専用のタイムアウト拡張 */
+        actionTimeout: 15000,
+        navigationTimeout: 45000,
+      },
     },
     {
       name: 'webkit',
