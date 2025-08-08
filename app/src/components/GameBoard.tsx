@@ -389,7 +389,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   }
 
   // クラス名を動的に生成
-  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''}`
+  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''} ${gameSettings.showShadow ? 'show-shadow' : ''}`
   const fieldClass = `field ${gameSettings.showShadow ? 'show-shadow' : ''}`
 
   return (

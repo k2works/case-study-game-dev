@@ -51,7 +51,6 @@
   height: 30px;
   border-radius: 50%;
   border: 2px solid #fff;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .field {
@@ -107,7 +106,16 @@
 .cell.puyo {
   border-radius: 50%;
   border: 2px solid #fff;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 影を表示する場合 */
+.field.show-shadow .cell.puyo {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 影を非表示にする場合（デフォルト） */
+.field:not(.show-shadow) .cell.puyo {
+  box-shadow: none !important;
 }
 
 .cell.puyo.red {
@@ -124,6 +132,16 @@
 
 .cell.puyo.yellow {
   background: linear-gradient(135deg, #ffd93d 0%, #ff9f43 100%);
+}
+
+
+/* NEXTぷよの影表示設定 */
+.next-puyo-area.show-shadow .next-puyo-display .puyo {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.next-puyo-area:not(.show-shadow) .next-puyo-display .puyo {
+  box-shadow: none !important;
 }
 
 /* NEXTぷよの色スタイリング */

@@ -279,7 +279,11 @@ function App() {
             </div>
             <div className="game-info-area">
               <ScoreDisplay score={game.score} />
-              <NextPuyoDisplay nextPair={game.nextPair} />
+              <NextPuyoDisplay 
+                key={settingsKey}
+                nextPair={game.nextPair} 
+                showShadow={gameSettingsService.getSetting('showShadow')}
+              />
               <HighScoreDisplay
                 highScores={highScores}
                 currentScore={currentScore}
