@@ -18,7 +18,7 @@
 }
 
 .chain-animation {
-  animation: chainPop 0.5s ease-out;
+  animation: chainPop 0.5s ease-out forwards;
 }
 
 @keyframes chainPop {
@@ -42,9 +42,7 @@
 .large-chain {
   font-size: 2.5rem;
   color: #ffeb3b;
-  animation:
-    largechainPop 0.7s ease-out,
-    glow 1s ease-in-out infinite alternate;
+  animation: largechainPop 0.7s ease-out forwards;
 }
 
 .super-chain {
@@ -53,10 +51,7 @@
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation:
-    superChainPop 1s ease-out,
-    rainbow 3s ease-in-out infinite,
-    pulse 0.5s ease-in-out infinite alternate;
+  animation: superChainPop 1s ease-out forwards;
 }
 
 @keyframes largechainPop {

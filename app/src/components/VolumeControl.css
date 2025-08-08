@@ -1,0 +1,154 @@
+.volume-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.volume-control--bgm {
+  background-color: #e8f4f8;
+  border-color: #b3d8e8;
+}
+
+.volume-control--sound {
+  background-color: #f8e8f4;
+  border-color: #e8b3d8;
+}
+
+.volume-control__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.volume-control__label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  cursor: pointer;
+}
+
+.volume-control__percentage {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  min-width: 50px;
+  text-align: right;
+}
+
+.volume-control__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.volume-control__mute {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.volume-control__mute:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.volume-control__mute:focus {
+  outline: 2px solid #007acc;
+  outline-offset: 2px;
+}
+
+.volume-control__mute--active {
+  background-color: #ff4444;
+  color: white;
+  border-radius: 4px;
+}
+
+.volume-control__mute--active:hover {
+  background-color: #cc0000;
+}
+
+.volume-control__slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.volume-control__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007acc;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s;
+}
+
+.volume-control__slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.volume-control__slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007acc;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.volume-control__slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.volume-control__slider:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  background: #ccc;
+}
+
+.volume-control__slider:disabled::-moz-range-thumb {
+  cursor: not-allowed;
+  background: #ccc;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .volume-control {
+    padding: 10px;
+  }
+
+  .volume-control__label {
+    font-size: 13px;
+  }
+
+  .volume-control__percentage {
+    font-size: 11px;
+  }
+
+  .volume-control__mute {
+    font-size: 18px;
+    min-width: 28px;
+    height: 28px;
+  }
+}

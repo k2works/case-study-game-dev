@@ -1,49 +1,30 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import './ChainDisplay.css'
 
 interface ChainDisplayProps {
   chainCount: number
   x?: number
   y?: number
-  duration?: number
-  onComplete?: () => void
 }
 
 export const ChainDisplay: React.FC<ChainDisplayProps> = ({
   chainCount,
   x,
   y,
-  duration = 1500,
-  onComplete,
 }) => {
-  const [isVisible, setIsVisible] = useState(true)
-
-  useEffect(() => {
-    if (chainCount > 0) {
-      setIsVisible(true)
-      const timer = setTimeout(() => {
-        setIsVisible(false)
-        if (onComplete) {
-          onComplete()
-        }
-      }, duration)
-
-      return () => clearTimeout(timer)
-    } else {
-      setIsVisible(false)
-    }
-  }, [chainCount, duration, onComplete])
-
-  if (chainCount === 0 || !isVisible) {
+  if (chainCount === 0) {
     return null
   }
 
   const getChainClass = () => {
-    let classes = 'chain-display chain-animation'
+    let classes = 'chain-display'
 
     if (x === undefined || y === undefined) {
       classes += ' center-position'
     }
+
+    // アニメーションクラスを一度だけ適用
+    classes += ' chain-animation'
 
     if (chainCount >= 10) {
       classes += ' super-chain'
@@ -63,7 +44,12 @@ export const ChainDisplay: React.FC<ChainDisplayProps> = ({
   }
 
   return (
-    <div data-testid="chain-display" className={getChainClass()} style={style}>
+    <div
+      data-testid="chain-display"
+      className={getChainClass()}
+      style={style}
+      key={`chain-${chainCount}-${Date.now()}`} // 強制的に再レンダリングを防ぐ
+    >
       <span className="chain-text">{chainCount}連鎖!</span>
     </div>
   )

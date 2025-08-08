@@ -3,7 +3,7 @@ import { Game, GameState } from '../domain/Game'
 import { Puyo } from '../domain/Puyo'
 import { AnimatedPuyo } from './AnimatedPuyo'
 import { DisappearEffect } from './DisappearEffect'
-import { ChainDisplay } from './ChainDisplay'
+// import { ChainDisplay } from './ChainDisplay' // 完全に削除 - 使用しない
 import { soundEffect, SoundType } from '../services/SoundEffect'
 import './GameBoard.css'
 
@@ -26,19 +26,25 @@ interface DisappearingPuyo {
   y: number
 }
 
-interface ChainInfo {
-  id: string
-  chainCount: number
-  x: number
-  y: number
-}
+// 連鎖表示インターフェース - 完全に削除
+// interface ChainInfo {
+//   id: string
+//   chainCount: number
+//   x: number
+//   y: number
+//   timestamp: number
+// }
 
 export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   const [fallingPuyos, setFallingPuyos] = useState<FallingPuyo[]>([])
   const [disappearingPuyos, setDisappearingPuyos] = useState<
     DisappearingPuyo[]
   >([])
-  const [chainDisplays, setChainDisplays] = useState<ChainInfo[]>([])
+  // 連鎖表示状態は完全に削除 - 使用しない
+  // const [chainDisplays, setChainDisplays] = useState<ChainInfo[]>([])
+  const lastProcessedScore = useRef<number>(0)
+  const chainTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isProcessingChain = useRef<boolean>(false)
   const [previousPairPosition, setPreviousPairPosition] = useState<{
     mainX: number
     mainY: number
@@ -50,7 +56,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
       .fill(null)
       .map(() => Array(game.field.height).fill(null))
   )
-  const previousScore = useRef<number>(0)
 
   const processFallingAnimation = (
     mainPos: { x: number; y: number },
@@ -96,6 +101,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
   }
 
+  // ぷよペア位置の処理
   useEffect(() => {
     if (game.currentPair && game.state === GameState.PLAYING) {
       const mainPos = game.currentPair.getMainPosition()
@@ -120,6 +126,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.currentPair, game.state])
+
+  // ゲーム状態リセット処理
+  useEffect(() => {
+    if (game.state === GameState.READY) {
+      lastProcessedScore.current = 0
+      isProcessingChain.current = false
+      if (chainTimeoutRef.current) {
+        clearTimeout(chainTimeoutRef.current)
+        chainTimeoutRef.current = null
+      }
+    }
+  }, [game.state])
 
   const getCurrentFieldState = (): (Puyo | null)[][] => {
     const fieldState: (Puyo | null)[][] = Array(game.field.width)
@@ -193,43 +211,52 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, game.field])
 
-  // 連鎖表示の検出（スコア変化で推測）
-  useEffect(() => {
-    if (!game) {
-      return
+  // スコアリセット処理
+  const handleScoreReset = () => {
+    lastProcessedScore.current = 0
+    isProcessingChain.current = false
+    if (chainTimeoutRef.current) {
+      clearTimeout(chainTimeoutRef.current)
+      chainTimeoutRef.current = null
     }
+  }
+
+  // 連鎖音再生処理
+  const handleChainSound = (currentScore: number) => {
+    const scoreDiff = currentScore - lastProcessedScore.current
+    if (scoreDiff >= 40) {
+      soundEffect.play(SoundType.CHAIN)
+    }
+    lastProcessedScore.current = currentScore
+  }
+
+  // 連鎖表示の検出（スコア変化で推測） - 完全に無効化
+  useEffect(() => {
+    if (!game) return
 
     const currentScore = game.score
 
-    if (currentScore > previousScore.current) {
-      const scoreDiff = currentScore - previousScore.current
-
-      // スコア差から連鎖数を推測（簡易計算）
-      const estimatedChainCount = Math.max(1, Math.floor(scoreDiff / 100))
-
-      // 中央位置に連鎖表示
-      const newChainDisplay: ChainInfo = {
-        id: `chain-${Date.now()}`,
-        chainCount: estimatedChainCount,
-        x: 3, // フィールドの中央
-        y: 8, // 画面の中央付近
-      }
-
-      setChainDisplays((prev) => [...prev, newChainDisplay])
-
-      // 連鎖音を再生
-      soundEffect.play(SoundType.CHAIN)
-
-      // 表示完了後にクリーンアップ
-      setTimeout(() => {
-        setChainDisplays((prev) =>
-          prev.filter((chain) => chain.id !== newChainDisplay.id)
-        )
-      }, 1500)
+    // スコアがリセットされた場合
+    if (currentScore === 0 && lastProcessedScore.current > 0) {
+      handleScoreReset()
+      return
     }
 
-    previousScore.current = currentScore
-  }, [game, game.score])
+    // スコア増加時は音のみ再生（表示は一切しない）
+    if (currentScore > lastProcessedScore.current && currentScore > 0) {
+      handleChainSound(currentScore)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game.score])
+
+  // クリーンアップ
+  useEffect(() => {
+    return () => {
+      if (chainTimeoutRef.current) {
+        clearTimeout(chainTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const getFixedPuyoStyle = (puyo: Puyo | null) => {
     if (puyo) {
@@ -336,15 +363,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   }
 
   const renderChainDisplays = () => {
-    return chainDisplays.map((chain) => (
-      <ChainDisplay
-        key={chain.id}
-        chainCount={chain.chainCount}
-        x={chain.x}
-        y={chain.y - 2} // 表示オフセットを考慮
-        duration={1500}
-      />
-    ))
+    // 連鎖表示を完全に無効化 - 絶対に何も表示しない
+    return []
   }
 
   return (

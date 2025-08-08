@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { vi } from 'vitest'
 import { ChainDisplay } from './ChainDisplay'
 
 describe('ChainDisplay', () => {
@@ -87,23 +86,14 @@ describe('ChainDisplay', () => {
     })
   })
 
-  describe('自動非表示', () => {
-    it('指定時間後に非表示コールバックが呼ばれる', () => {
-      // Arrange
-      vi.useFakeTimers()
-      const onComplete = vi.fn()
-
+  describe('表示制御', () => {
+    it('連鎖数が0でない場合に表示される', () => {
       // Act
-      render(
-        <ChainDisplay chainCount={3} duration={2000} onComplete={onComplete} />
-      )
-      vi.advanceTimersByTime(2000)
+      render(<ChainDisplay chainCount={3} />)
 
       // Assert
-      expect(onComplete).toHaveBeenCalledTimes(1)
-
-      // Cleanup
-      vi.useRealTimers()
+      expect(screen.getByTestId('chain-display')).toBeInTheDocument()
+      expect(screen.getByText('3連鎖!')).toBeInTheDocument()
     })
   })
 })

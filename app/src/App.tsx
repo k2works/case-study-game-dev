@@ -4,6 +4,7 @@ import { GameBoard } from './components/GameBoard'
 import { ScoreDisplay } from './components/ScoreDisplay'
 import { NextPuyoDisplay } from './components/NextPuyoDisplay'
 import { GameOverDisplay } from './components/GameOverDisplay'
+import { AudioSettingsPanel } from './components/AudioSettingsPanel'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
@@ -13,6 +14,7 @@ import { backgroundMusic, MusicType } from './services/BackgroundMusic'
 function App() {
   const [game] = useState(() => new Game())
   const [renderKey, setRenderKey] = useState(0)
+  const [audioSettingsOpen, setAudioSettingsOpen] = useState(false)
   const previousGameState = useRef<GameState>(GameState.READY)
 
   const forceRender = useCallback(() => {
@@ -164,6 +166,13 @@ function App() {
             <button data-testid="start-button" onClick={handleStartGame}>
               ゲーム開始
             </button>
+            <button
+              data-testid="audio-settings-button"
+              onClick={() => setAudioSettingsOpen(true)}
+              className="audio-settings-toggle"
+            >
+              🔊 音響設定
+            </button>
           </div>
           <div className="instructions">
             <h3>操作方法</h3>
@@ -179,6 +188,11 @@ function App() {
           )}
         </div>
       </main>
+
+      <AudioSettingsPanel
+        isOpen={audioSettingsOpen}
+        onClose={() => setAudioSettingsOpen(false)}
+      />
     </div>
   )
 }

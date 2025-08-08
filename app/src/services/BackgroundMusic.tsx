@@ -11,7 +11,7 @@ interface AudioFactory {
 // 標準のHTMLAudioElementファクトリー
 class StandardAudioFactory implements AudioFactory {
   create(): HTMLAudioElement {
-    return new HTMLAudioElement()
+    return document.createElement('audio') as HTMLAudioElement
   }
 }
 
@@ -27,12 +27,21 @@ export class BackgroundMusic {
     this.initializeMusic()
   }
 
-  private initializeMusic(): void {
-    // テスト環境では音響初期化をスキップ
-    if (
+  private isTestEnvironment(): boolean {
+    // テスト環境では音響を無効化（Playwright E2Eテスト及びJSDOMユニットテスト）
+    return (
       typeof window !== 'undefined' &&
-      window.location.hostname === '127.0.0.1'
-    ) {
+      (window.navigator.userAgent.includes('Playwright') ||
+        window.navigator.webdriver === true ||
+        process.env.NODE_ENV === 'test' ||
+        // JSDOMでは window.HTMLMediaElement が存在しない
+        !window.HTMLMediaElement)
+    )
+  }
+
+  private initializeMusic(): void {
+    // E2Eテスト環境では音響初期化をスキップ
+    if (this.isTestEnvironment()) {
       return
     }
 
@@ -55,12 +64,8 @@ export class BackgroundMusic {
   }
 
   private shouldSkipPlayback(): boolean {
-    // テスト環境では音響を無効化
-    return (
-      (typeof window !== 'undefined' && 
-        window.location.hostname === '127.0.0.1') ||
-      this.muted
-    )
+    // E2Eテスト環境では音響を無効化
+    return this.isTestEnvironment() || this.muted
   }
 
   private async playAudioElement(musicType: MusicType): Promise<void> {
