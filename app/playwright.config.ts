@@ -47,7 +47,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         /* Chrome固有のオプション */
         launchOptions: {
@@ -74,7 +74,7 @@ export default defineConfig({
     },
     {
       name: 'webkit',
-      use: { 
+      use: {
         ...devices['Desktop Safari'],
         /* WebKit（Safari）での安定性向上 */
         launchOptions: {
@@ -85,7 +85,7 @@ export default defineConfig({
     /* モバイルテスト */
     {
       name: 'Mobile Chrome',
-      use: { 
+      use: {
         ...devices['Pixel 5'],
         /* Mobile Chrome固有のオプション */
         launchOptions: {
@@ -98,7 +98,7 @@ export default defineConfig({
     },
     {
       name: 'Mobile Safari',
-      use: { 
+      use: {
         ...devices['iPhone 12'],
         /* Mobile Safari（WebKit）での安定性向上 */
         launchOptions: {
