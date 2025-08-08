@@ -146,7 +146,7 @@ describe('HighScoreService', () => {
       // Assert
       const stored = localStorage.getItem('puyo-puyo-high-scores')
       expect(stored).toBeDefined()
-      
+
       const parsed: HighScoreRecord[] = JSON.parse(stored!)
       expect(parsed).toHaveLength(1)
       expect(parsed[0].score).toBe(1000)

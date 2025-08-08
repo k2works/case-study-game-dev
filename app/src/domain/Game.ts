@@ -6,6 +6,7 @@ import { Score } from './Score'
 export enum GameState {
   READY = 'ready',
   PLAYING = 'playing',
+  PAUSED = 'paused',
   GAME_OVER = 'game_over',
 }
 
@@ -26,6 +27,32 @@ export class Game {
     this.state = GameState.PLAYING
     this.generateNextPair()
     this.generateNewPair()
+  }
+
+  pause(): void {
+    if (this.state === GameState.PLAYING) {
+      this.state = GameState.PAUSED
+    }
+  }
+
+  resume(): void {
+    if (this.state === GameState.PAUSED) {
+      this.state = GameState.PLAYING
+    }
+  }
+
+  restart(): void {
+    this.reset()
+    this.start()
+  }
+
+  reset(): void {
+    this.state = GameState.READY
+    this.score = 0
+    this.field = new Field()
+    this.currentPair = null
+    this.nextPair = null
+    this.scoreCalculator = new Score()
   }
 
   moveLeft(): boolean {

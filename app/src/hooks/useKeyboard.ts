@@ -6,6 +6,8 @@ interface KeyboardHandlers {
   onRotate: () => void
   onDrop: () => void
   onHardDrop: () => void
+  onPause: () => void
+  onRestart: () => void
 }
 
 const handleMoveKeys = (key: string, handlers: KeyboardHandlers) => {
@@ -35,12 +37,26 @@ const handleActionKeys = (key: string, handlers: KeyboardHandlers) => {
   }
 }
 
+const handleControlKeys = (key: string, handlers: KeyboardHandlers) => {
+  switch (key) {
+    case 'p':
+    case 'P':
+      handlers.onPause()
+      break
+    case 'r':
+    case 'R':
+      handlers.onRestart()
+      break
+  }
+}
+
 export const useKeyboard = (handlers: KeyboardHandlers) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       event.preventDefault()
       handleMoveKeys(event.key, handlers)
       handleActionKeys(event.key, handlers)
+      handleControlKeys(event.key, handlers)
     }
 
     document.addEventListener('keydown', handleKeyDown)

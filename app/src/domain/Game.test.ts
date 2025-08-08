@@ -325,4 +325,185 @@ describe('Game', () => {
       expect(game.score).toBeGreaterThan(0)
     })
   })
+
+  describe('ポーズ・リスタート機能', () => {
+    describe('ポーズ機能', () => {
+      it('プレイ中にポーズできる', () => {
+        const game = new Game()
+        game.start()
+
+        expect(game.state).toBe(GameState.PLAYING)
+
+        game.pause()
+
+        expect(game.state).toBe(GameState.PAUSED)
+      })
+
+      it('プレイ中以外はポーズできない', () => {
+        const game = new Game()
+
+        // READY状態ではポーズできない
+        expect(game.state).toBe(GameState.READY)
+        game.pause()
+        expect(game.state).toBe(GameState.READY)
+
+        // GAME_OVER状態ではポーズできない
+        game.state = GameState.GAME_OVER
+        game.pause()
+        expect(game.state).toBe(GameState.GAME_OVER)
+      })
+
+      it('ポーズ中は操作が無効になる', () => {
+        const game = new Game()
+        game.start()
+        game.pause()
+
+        expect(game.state).toBe(GameState.PAUSED)
+
+        // 各操作が無効になることを確認
+        expect(game.moveLeft()).toBe(false)
+        expect(game.moveRight()).toBe(false)
+        expect(game.rotate()).toBe(false)
+        expect(game.drop()).toBe(false)
+      })
+    })
+
+    describe('レジューム機能', () => {
+      it('ポーズ中にレジュームできる', () => {
+        const game = new Game()
+        game.start()
+        game.pause()
+
+        expect(game.state).toBe(GameState.PAUSED)
+
+        game.resume()
+
+        expect(game.state).toBe(GameState.PLAYING)
+      })
+
+      it('ポーズ中以外はレジュームできない', () => {
+        const game = new Game()
+
+        // READY状態ではレジュームできない
+        expect(game.state).toBe(GameState.READY)
+        game.resume()
+        expect(game.state).toBe(GameState.READY)
+
+        // PLAYING状態ではレジュームしても状態は変わらない
+        game.start()
+        expect(game.state).toBe(GameState.PLAYING)
+        game.resume()
+        expect(game.state).toBe(GameState.PLAYING)
+
+        // GAME_OVER状態ではレジュームできない
+        game.state = GameState.GAME_OVER
+        game.resume()
+        expect(game.state).toBe(GameState.GAME_OVER)
+      })
+
+      it('レジューム後は操作が有効になる', () => {
+        const game = new Game()
+        game.start()
+        game.pause()
+        game.resume()
+
+        expect(game.state).toBe(GameState.PLAYING)
+
+        // 操作が有効になることを確認（currentPairがあることが前提）
+        expect(game.currentPair).not.toBeNull()
+
+        // 実際に操作してみる（境界内での移動）
+        const initialX = game.currentPair!.x
+        if (initialX > 0) {
+          expect(game.moveLeft()).toBe(true)
+        }
+        if (initialX < 5) {
+          expect(game.moveRight()).toBe(true)
+        }
+        expect(game.rotate()).toBe(true)
+        expect(game.drop()).toBe(true)
+      })
+    })
+
+    describe('リスタート機能', () => {
+      it('リスタートでゲームが初期状態に戻る', () => {
+        const game = new Game()
+        game.start()
+
+        // スコアを変更
+        game.score = 1000
+
+        // フィールドにぷよを配置
+        game.field.setPuyo(0, 0, new Puyo(PuyoColor.RED))
+
+        game.restart()
+
+        // 初期状態にリセットされてゲームが開始される
+        expect(game.state).toBe(GameState.PLAYING)
+        expect(game.score).toBe(0)
+        expect(game.field.isEmpty()).toBe(true)
+        expect(game.currentPair).not.toBeNull()
+        expect(game.nextPair).not.toBeNull()
+      })
+
+      it('どの状態からでもリスタートできる', () => {
+        const game = new Game()
+
+        // READY状態からリスタート
+        game.restart()
+        expect(game.state).toBe(GameState.PLAYING)
+
+        // PLAYING状態からリスタート
+        game.restart()
+        expect(game.state).toBe(GameState.PLAYING)
+
+        // PAUSED状態からリスタート
+        game.pause()
+        game.restart()
+        expect(game.state).toBe(GameState.PLAYING)
+
+        // GAME_OVER状態からリスタート
+        game.state = GameState.GAME_OVER
+        game.restart()
+        expect(game.state).toBe(GameState.PLAYING)
+      })
+    })
+
+    describe('リセット機能', () => {
+      it('リセットでゲームが初期状態に戻る', () => {
+        const game = new Game()
+        game.start()
+
+        // スコアを変更
+        game.score = 1500
+
+        // フィールドにぷよを配置
+        game.field.setPuyo(1, 1, new Puyo(PuyoColor.BLUE))
+
+        game.reset()
+
+        // 完全に初期状態にリセットされる
+        expect(game.state).toBe(GameState.READY)
+        expect(game.score).toBe(0)
+        expect(game.field.isEmpty()).toBe(true)
+        expect(game.currentPair).toBeNull()
+        expect(game.nextPair).toBeNull()
+      })
+
+      it('リセット後はstart()でゲームを開始できる', () => {
+        const game = new Game()
+        game.start()
+        game.score = 2000
+        game.reset()
+
+        expect(game.state).toBe(GameState.READY)
+
+        game.start()
+
+        expect(game.state).toBe(GameState.PLAYING)
+        expect(game.currentPair).not.toBeNull()
+        expect(game.nextPair).not.toBeNull()
+      })
+    })
+  })
 })

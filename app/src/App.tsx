@@ -18,7 +18,9 @@ function App() {
   const [renderKey, setRenderKey] = useState(0)
   const [audioSettingsOpen, setAudioSettingsOpen] = useState(false)
   const [highScores, setHighScores] = useState<HighScoreRecord[]>([])
-  const [currentScore, setCurrentScore] = useState<number | undefined>(undefined)
+  const [currentScore, setCurrentScore] = useState<number | undefined>(
+    undefined
+  )
   const previousGameState = useRef<GameState>(GameState.READY)
 
   // 初期化：ハイスコアを読み込み
@@ -36,14 +38,24 @@ function App() {
     forceRender()
   }
 
-  const handleRestart = () => {
+  const handlePause = useCallback(() => {
+    game.pause()
+    forceRender()
+  }, [game, forceRender])
+
+  const handleResume = useCallback(() => {
+    game.resume()
+    forceRender()
+  }, [game, forceRender])
+
+  const handleRestart = useCallback(() => {
     // 新しいゲームインスタンスを作成してリスタート
     Object.assign(game, new Game())
     game.start()
     // 現在のスコアハイライトをクリア
     setCurrentScore(undefined)
     forceRender()
-  }
+  }, [game, forceRender])
 
   // キーボード操作のハンドラー
   const keyboardHandlers = {
@@ -95,6 +107,74 @@ function App() {
         forceRender()
       }
     }, [game, forceRender]),
+    onPause: useCallback(() => {
+      if (game.state === GameState.PLAYING) {
+        handlePause()
+      } else if (game.state === GameState.PAUSED) {
+        handleResume()
+      }
+    }, [game, handlePause, handleResume]),
+    onRestart: useCallback(() => {
+      handleRestart()
+    }, [handleRestart]),
+  }
+
+  // ゲーム状態に応じたコントロールボタンを表示
+  const renderControlButtons = () => {
+    const buttons = []
+
+    if (game.state === GameState.READY) {
+      buttons.push(
+        <button
+          key="start"
+          data-testid="start-button"
+          onClick={handleStartGame}
+        >
+          ゲーム開始
+        </button>
+      )
+    }
+
+    if (game.state === GameState.PLAYING) {
+      buttons.push(
+        <button key="pause" data-testid="pause-button" onClick={handlePause}>
+          ⏸️ ポーズ
+        </button>
+      )
+    }
+
+    if (game.state === GameState.PAUSED) {
+      buttons.push(
+        <button key="resume" data-testid="resume-button" onClick={handleResume}>
+          ▶️ 再開
+        </button>
+      )
+    }
+
+    if (game.state === GameState.PLAYING || game.state === GameState.PAUSED) {
+      buttons.push(
+        <button
+          key="restart"
+          data-testid="restart-button"
+          onClick={handleRestart}
+        >
+          🔄 リスタート
+        </button>
+      )
+    }
+
+    buttons.push(
+      <button
+        key="audio"
+        data-testid="audio-settings-button"
+        onClick={() => setAudioSettingsOpen(true)}
+        className="audio-settings-toggle"
+      >
+        🔊 音響設定
+      </button>
+    )
+
+    return buttons
   }
 
   // キーボードイベントを登録
@@ -112,7 +192,7 @@ function App() {
     }
   }, [game, forceRender])
 
-  // 自動落下を設定（1秒間隔）
+  // 自動落下を設定（1秒間隔） - ポーズ中は停止
   useAutoDrop({
     onDrop: handleAutoDrop,
     interval: 1000,
@@ -130,7 +210,7 @@ function App() {
     backgroundMusic.fadeOut(1000).then(() => {
       backgroundMusic.play(MusicType.GAME_OVER_THEME)
     })
-    
+
     // ハイスコア処理
     const finalScore = game.score
     if (finalScore > 0 && highScoreService.isHighScore(finalScore)) {
@@ -197,25 +277,14 @@ function App() {
             <div className="game-info-area">
               <ScoreDisplay score={game.score} />
               <NextPuyoDisplay nextPair={game.nextPair} />
-              <HighScoreDisplay 
-                highScores={highScores} 
+              <HighScoreDisplay
+                highScores={highScores}
                 currentScore={currentScore}
                 maxDisplay={5}
               />
             </div>
           </div>
-          <div className="controls">
-            <button data-testid="start-button" onClick={handleStartGame}>
-              ゲーム開始
-            </button>
-            <button
-              data-testid="audio-settings-button"
-              onClick={() => setAudioSettingsOpen(true)}
-              className="audio-settings-toggle"
-            >
-              🔊 音響設定
-            </button>
-          </div>
+          <div className="controls">{renderControlButtons()}</div>
           <div className="instructions">
             <h3>操作方法</h3>
             <div className="key-instructions">
@@ -223,8 +292,18 @@ function App() {
               <div>↑/Z: 回転</div>
               <div>↓: 高速落下</div>
               <div>スペース: ハードドロップ</div>
+              <div>P: ポーズ/再開</div>
+              <div>R: リスタート</div>
             </div>
           </div>
+          {game.state === GameState.PAUSED && (
+            <div className="pause-overlay" data-testid="pause-overlay">
+              <div className="pause-message">
+                <h2>⏸️ ポーズ中</h2>
+                <p>Pキーまたは再開ボタンでゲームを再開</p>
+              </div>
+            </div>
+          )}
           {game.state === GameState.GAME_OVER && (
             <GameOverDisplay score={game.score} onRestart={handleRestart} />
           )}

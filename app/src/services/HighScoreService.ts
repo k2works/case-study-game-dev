@@ -60,7 +60,7 @@ class HighScoreService {
    */
   isHighScore(score: number): boolean {
     const highScores = this.getHighScores()
-    
+
     // 記録数が上限未満なら自動的にハイスコア
     if (highScores.length < this.MAX_RECORDS) {
       return true

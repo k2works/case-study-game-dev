@@ -7,12 +7,12 @@ interface HighScoreDisplayProps {
    * ハイスコアリスト
    */
   highScores: HighScoreRecord[]
-  
+
   /**
    * 現在のスコア（ハイライト用）
    */
   currentScore?: number
-  
+
   /**
    * 表示するスコア数
    */
@@ -93,15 +93,24 @@ export const HighScoreDisplay: React.FC<HighScoreDisplayProps> = ({
               {getRankIcon(record.rank)}
             </div>
             <div className="score-details">
-              <div className="score-value" data-testid={`score-value-${record.rank}`}>
+              <div
+                className="score-value"
+                data-testid={`score-value-${record.rank}`}
+              >
                 {formatScore(record.score)}
               </div>
-              <div className="score-date" data-testid={`score-date-${record.rank}`}>
+              <div
+                className="score-date"
+                data-testid={`score-date-${record.rank}`}
+              >
                 {formatDate(record.date)}
               </div>
             </div>
             {isCurrentScore(record.score) && (
-              <div className="current-indicator" data-testid="current-indicator">
+              <div
+                className="current-indicator"
+                data-testid="current-indicator"
+              >
                 NEW!
               </div>
             )}
