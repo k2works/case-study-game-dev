@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import App from '../App'
 
 describe('連鎖表示統合テスト', () => {
@@ -9,8 +9,10 @@ describe('連鎖表示統合テスト', () => {
       render(<App />)
 
       // Act
-      const startButton = screen.getByText('ゲーム開始')
-      startButton.click()
+      act(() => {
+        const startButton = screen.getByText('ゲーム開始')
+        startButton.click()
+      })
 
       // Assert
       const animatedContainer = document.querySelector(
@@ -24,8 +26,10 @@ describe('連鎖表示統合テスト', () => {
       render(<App />)
 
       // Act
-      const startButton = screen.getByText('ゲーム開始')
-      startButton.click()
+      act(() => {
+        const startButton = screen.getByText('ゲーム開始')
+        startButton.click()
+      })
 
       // Assert
       const gameBoard = screen.getByTestId('game-board')
@@ -46,8 +50,10 @@ describe('連鎖表示統合テスト', () => {
       render(<App />)
 
       // Act
-      const startButton = screen.getByText('ゲーム開始')
-      startButton.click()
+      act(() => {
+        const startButton = screen.getByText('ゲーム開始')
+        startButton.click()
+      })
 
       // Assert - ゲームボードが正常に機能していることを確認
       const gameBoard = screen.getByTestId('game-board')

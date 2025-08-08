@@ -110,7 +110,7 @@ class GameSettingsService {
    */
   hasChanges(current: GameSettings, original?: GameSettings): boolean {
     const compareWith = original || this.getSettings()
-    
+
     return (
       current.soundVolume !== compareWith.soundVolume ||
       current.musicVolume !== compareWith.musicVolume ||

@@ -1,7 +1,7 @@
 import { Field } from './Field'
 import { PuyoPair } from './PuyoPair'
 import { Puyo, PuyoColor } from './Puyo'
-import { Score } from './Score'
+import { Chain, ChainResult } from './Chain'
 
 export enum GameState {
   READY = 'ready',
@@ -16,11 +16,12 @@ export class Game {
   public field: Field
   public currentPair: PuyoPair | null = null
   public nextPair: PuyoPair | null = null
-  private scoreCalculator: Score
+  public lastChainResult: ChainResult | null = null
+  private chain: Chain
 
   constructor() {
     this.field = new Field()
-    this.scoreCalculator = new Score()
+    this.chain = new Chain(this.field)
   }
 
   start(): void {
@@ -48,11 +49,12 @@ export class Game {
 
   reset(): void {
     this.state = GameState.READY
+    this.lastChainResult = null
     this.score = 0
     this.field = new Field()
+    this.chain = new Chain(this.field)
     this.currentPair = null
     this.nextPair = null
-    this.scoreCalculator = new Score()
   }
 
   moveLeft(): boolean {
@@ -268,29 +270,13 @@ export class Game {
   }
 
   processChain(): void {
-    let chainCount = 0
+    // 新しいChainクラスで連鎖処理を実行
+    const chainResult = this.chain.processChain()
 
-    while (true) {
-      // 重力を適用
-      this.field.applyGravity()
+    // 連鎖結果を保存
+    this.lastChainResult = chainResult
 
-      // ぷよを消去
-      const removedPuyos = this.field.removePuyos()
-
-      // 消去されるぷよがない場合は連鎖終了
-      if (removedPuyos.length === 0) {
-        break
-      }
-
-      // 連鎖カウントを増加
-      chainCount++
-
-      // スコア計算と加算
-      const chainScore = this.scoreCalculator.calculateScoreWithChain(
-        removedPuyos.length,
-        chainCount
-      )
-      this.score += chainScore
-    }
+    // スコアを加算
+    this.score += chainResult.score
   }
 }

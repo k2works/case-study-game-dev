@@ -43,7 +43,8 @@ describe('DisappearEffect', () => {
       // Assert
       const effect = screen.getByTestId('disappear-effect')
       expect(effect).toHaveStyle({
-        transform: 'translate(96px, 224px)',
+        left: '96px',
+        top: '224px',
       })
     })
 
@@ -59,10 +60,12 @@ describe('DisappearEffect', () => {
       // Assert
       const effects = container.querySelectorAll('.disappear-effect')
       expect(effects[0]).toHaveStyle({
-        transform: 'translate(0px, 320px)',
+        left: '0px',
+        top: '320px',
       })
       expect(effects[1]).toHaveStyle({
-        transform: 'translate(160px, 480px)',
+        left: '160px',
+        top: '480px',
       })
     })
   })

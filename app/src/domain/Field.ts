@@ -23,6 +23,12 @@ export class Field {
     }
   }
 
+  clearPuyo(x: number, y: number): void {
+    if (this.isValidPosition(x, y)) {
+      this.grid[y][x] = null
+    }
+  }
+
   getPuyo(x: number, y: number): Puyo | null {
     if (this.isValidPosition(x, y)) {
       return this.grid[y][x]

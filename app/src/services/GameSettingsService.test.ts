@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { gameSettingsService, DEFAULT_SETTINGS, GameSettings } from './GameSettingsService'
+import {
+  gameSettingsService,
+  DEFAULT_SETTINGS,
+  GameSettings,
+} from './GameSettingsService'
 
 // localStorageのモック
 const mockLocalStorage = {
@@ -46,7 +50,9 @@ describe('GameSettingsService', () => {
       const settings = gameSettingsService.getSettings()
 
       expect(settings).toEqual(savedSettings)
-      expect(mockLocalStorage.getItem).toHaveBeenCalledWith('puyo-puyo-settings')
+      expect(mockLocalStorage.getItem).toHaveBeenCalledWith(
+        'puyo-puyo-settings'
+      )
     })
 
     it('部分的な設定データの場合はデフォルト値で補完する', () => {
@@ -119,7 +125,7 @@ describe('GameSettingsService', () => {
       const result = gameSettingsService.saveSettings(settings)
 
       expect(result).toBe(true)
-      
+
       const savedData = JSON.parse(mockLocalStorage.setItem.mock.calls[0][1])
       expect(savedData.soundVolume).toBe(1.0)
       expect(savedData.musicVolume).toBe(0.0)
@@ -169,7 +175,7 @@ describe('GameSettingsService', () => {
       const result = gameSettingsService.updateSetting('soundVolume', 0.9)
 
       expect(result).toBe(true)
-      
+
       const savedData = JSON.parse(mockLocalStorage.setItem.mock.calls[0][1])
       expect(savedData.soundVolume).toBe(0.9)
     })
@@ -252,7 +258,9 @@ describe('GameSettingsService', () => {
     it('設定をクリアできる', () => {
       gameSettingsService.clearSettings()
 
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('puyo-puyo-settings')
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(
+        'puyo-puyo-settings'
+      )
     })
 
     it('クリアエラーをハンドリングする', () => {

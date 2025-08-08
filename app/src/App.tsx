@@ -279,9 +279,9 @@ function App() {
             </div>
             <div className="game-info-area">
               <ScoreDisplay score={game.score} />
-              <NextPuyoDisplay 
+              <NextPuyoDisplay
                 key={settingsKey}
-                nextPair={game.nextPair} 
+                nextPair={game.nextPair}
                 showShadow={gameSettingsService.getSetting('showShadow')}
               />
               <HighScoreDisplay
@@ -322,7 +322,7 @@ function App() {
         onClose={() => {
           setSettingsOpen(false)
           // 設定変更後にGameBoardの再レンダリングを強制
-          setSettingsKey(prev => prev + 1)
+          setSettingsKey((prev) => prev + 1)
         }}
       />
     </div>

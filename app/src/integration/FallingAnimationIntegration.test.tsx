@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import App from '../App'
 
 describe('落下アニメーション統合テスト', () => {
@@ -10,7 +10,9 @@ describe('落下アニメーション統合テスト', () => {
 
       // Act
       const startButton = screen.getByText('ゲーム開始')
-      startButton.click()
+      act(() => {
+        startButton.click()
+      })
 
       // Assert
       const animatedContainer = document.querySelector(
@@ -38,7 +40,9 @@ describe('落下アニメーション統合テスト', () => {
 
       // Act
       const startButton = screen.getByText('ゲーム開始')
-      startButton.click()
+      act(() => {
+        startButton.click()
+      })
 
       // Assert - AnimatedPuyoがレンダリング可能な構造が存在
       const gameBoard = screen.getByTestId('game-board')

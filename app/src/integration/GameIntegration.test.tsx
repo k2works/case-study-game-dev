@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import App from '../App'
 
 describe('Game Integration', () => {
@@ -9,7 +9,9 @@ describe('Game Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // ゲームが開始されていることを確認（現在のぷよペアが存在する）
       const puyoCells = screen
@@ -37,7 +39,9 @@ describe('Game Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // Zキーで回転
       fireEvent.keyDown(document, { key: 'z' })
@@ -52,7 +56,9 @@ describe('Game Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // 下矢印キーを押す
       fireEvent.keyDown(document, { key: 'ArrowDown' })
@@ -67,7 +73,9 @@ describe('Game Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // スペースキーでハードドロップ
       fireEvent.keyDown(document, { key: ' ' })
@@ -104,7 +112,9 @@ describe('Game Integration', () => {
       render(<App />)
 
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // 左端まで移動
       fireEvent.keyDown(document, { key: 'ArrowLeft' })
@@ -126,7 +136,9 @@ describe('Game Integration', () => {
       render(<App />)
 
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // NEXTぷよエリアが表示される
       expect(screen.getByTestId('next-puyo-area')).toBeInTheDocument()
@@ -147,7 +159,9 @@ describe('Game Integration', () => {
       render(<App />)
 
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // NEXTぷよの色を記録
       const nextMainElement = screen.getByTestId('next-main-puyo')

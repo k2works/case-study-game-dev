@@ -6,7 +6,10 @@ interface NextPuyoDisplayProps {
   showShadow?: boolean
 }
 
-export const NextPuyoDisplay = ({ nextPair, showShadow = true }: NextPuyoDisplayProps) => {
+export const NextPuyoDisplay = ({
+  nextPair,
+  showShadow = true,
+}: NextPuyoDisplayProps) => {
   if (!nextPair) {
     return null
   }

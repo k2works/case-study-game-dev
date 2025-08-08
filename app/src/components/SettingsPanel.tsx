@@ -9,7 +9,7 @@ interface SettingsPanelProps {
    * パネルの表示状態
    */
   isOpen: boolean
-  
+
   /**
    * パネルを閉じるコールバック
    */
@@ -71,13 +71,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const saveSettings = () => {
     try {
       localStorage.setItem('puyo-puyo-settings', JSON.stringify(settings))
-      
+
       // 音量設定を即座に適用
       soundEffect.setVolume(settings.soundVolume)
       backgroundMusic.setVolume(settings.musicVolume)
-      
+
       setHasChanges(false)
-      
+
       // 設定保存完了の通知
       console.log('設定を保存しました')
     } catch (error) {
@@ -146,24 +146,22 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <VolumeControl
                 type="sound"
                 initialVolume={settings.soundVolume}
-                onVolumeChange={(volume: number) => handleSettingChange('soundVolume', volume)}
+                onVolumeChange={(volume: number) =>
+                  handleSettingChange('soundVolume', volume)
+                }
                 onMuteChange={() => {}}
               />
-              <span className="volume-value">
-                {Math.round(settings.soundVolume * 100)}%
-              </span>
             </div>
             <div className="setting-item">
               <label htmlFor="music-volume">BGM音量</label>
               <VolumeControl
                 type="bgm"
                 initialVolume={settings.musicVolume}
-                onVolumeChange={(volume: number) => handleSettingChange('musicVolume', volume)}
+                onVolumeChange={(volume: number) =>
+                  handleSettingChange('musicVolume', volume)
+                }
                 onMuteChange={() => {}}
               />
-              <span className="volume-value">
-                {Math.round(settings.musicVolume * 100)}%
-              </span>
             </div>
           </section>
 

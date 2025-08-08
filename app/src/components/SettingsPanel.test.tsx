@@ -73,8 +73,8 @@ describe('SettingsPanel', () => {
 
       expect(screen.getByText('効果音音量')).toBeInTheDocument()
       expect(screen.getByText('BGM音量')).toBeInTheDocument()
-      expect(screen.getByTestId('sound-volume-control')).toBeInTheDocument()
-      expect(screen.getByTestId('music-volume-control')).toBeInTheDocument()
+      expect(screen.getByTestId('volume-control-sound')).toBeInTheDocument()
+      expect(screen.getByTestId('volume-control-bgm')).toBeInTheDocument()
     })
 
     it('音量がパーセンテージで表示される', () => {
@@ -153,9 +153,15 @@ describe('SettingsPanel', () => {
 
       render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
 
-      expect(mockLocalStorage.getItem).toHaveBeenCalledWith('puyo-puyo-settings')
-      expect(screen.getByText('80%')).toBeInTheDocument()
-      expect(screen.getByText('60%')).toBeInTheDocument()
+      expect(mockLocalStorage.getItem).toHaveBeenCalledWith(
+        'puyo-puyo-settings'
+      )
+      expect(screen.getByTestId('volume-percentage-sound')).toHaveTextContent(
+        '80%'
+      )
+      expect(screen.getByTestId('volume-percentage-bgm')).toHaveTextContent(
+        '60%'
+      )
     })
 
     it('保存ボタンクリックで設定を保存する', async () => {

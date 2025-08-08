@@ -32,6 +32,19 @@ describe('BackgroundMusic', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockPlay.mockResolvedValue(undefined)
+    // テスト環境での音響無効化をスキップするため、NODE_ENVを一時的に変更
+    process.env.NODE_ENV = 'development'
+    // HTMLMediaElementをモックして存在させる
+    Object.defineProperty(window, 'HTMLMediaElement', {
+      value: function () {},
+      writable: true,
+      configurable: true,
+    })
+  })
+
+  afterEach(() => {
+    // テスト後にNODE_ENVを元に戻す
+    process.env.NODE_ENV = 'test'
   })
 
   describe('BGMの再生制御', () => {

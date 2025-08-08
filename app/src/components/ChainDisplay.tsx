@@ -12,7 +12,10 @@ export const ChainDisplay: React.FC<ChainDisplayProps> = ({
   x,
   y,
 }) => {
+  console.log('ChainDisplay render:', { chainCount, x, y })
+
   if (chainCount === 0) {
+    console.log('ChainDisplay: chainCount is 0, returning null')
     return null
   }
 
@@ -41,12 +44,16 @@ export const ChainDisplay: React.FC<ChainDisplayProps> = ({
     style.left = `${x * cellSize}px`
     style.top = `${y * cellSize}px`
     style.position = 'absolute'
+    style.zIndex = 1000 // z-indexを確実に設定
   }
+
+  const className = getChainClass()
+  console.log('ChainDisplay レンダリング:', { chainCount, className, style })
 
   return (
     <div
       data-testid="chain-display"
-      className={getChainClass()}
+      className={className}
       style={style}
       key={`chain-${chainCount}-${Date.now()}`} // 強制的に再レンダリングを防ぐ
     >

@@ -17,7 +17,7 @@ export const DisappearEffect: React.FC<DisappearEffectProps> = ({
   onComplete,
 }) => {
   const cellSize = 32
-  
+
   const style: React.CSSProperties = {
     left: `${x * cellSize}px`,
     top: `${y * cellSize}px`,

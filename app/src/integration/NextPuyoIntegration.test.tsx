@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import App from '../App'
 
 describe('Next Puyo Integration', () => {
@@ -17,7 +17,9 @@ describe('Next Puyo Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // NEXTぷよエリアが表示される
       expect(screen.getByTestId('next-puyo-area')).toBeInTheDocument()
@@ -39,7 +41,9 @@ describe('Next Puyo Integration', () => {
 
       // ゲーム開始
       const startButton = screen.getByText('ゲーム開始')
-      fireEvent.click(startButton)
+      act(() => {
+        fireEvent.click(startButton)
+      })
 
       // スコア表示とNEXTぷよ表示の両方が存在する
       expect(screen.getByTestId('score-value')).toBeInTheDocument()

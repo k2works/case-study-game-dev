@@ -89,6 +89,9 @@
   top: 4px;
   left: 4px;
   pointer-events: none;
+  z-index: 1000;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
 }
 
 .cell {
@@ -150,7 +153,6 @@
 .cell.puyo.yellow {
   background: linear-gradient(135deg, #ffd93d 0%, #ff9f43 100%);
 }
-
 
 /* NEXTぷよの影表示設定 */
 .next-puyo-area.show-shadow .next-puyo-display .puyo {

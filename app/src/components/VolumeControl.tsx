@@ -90,6 +90,12 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
     }
   }
 
+  // 外部からの初期音量の同期
+  useEffect(() => {
+    setVolume(initialVolume)
+    setPreviousVolume(initialVolume)
+  }, [initialVolume])
+
   // 外部からのミュート状態の同期
   useEffect(() => {
     setMuted(initialMuted)
