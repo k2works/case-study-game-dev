@@ -8,6 +8,7 @@ import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
 import { soundEffect, SoundType } from './services/SoundEffect'
+import { backgroundMusic, MusicType } from './services/BackgroundMusic'
 
 function App() {
   const [game] = useState(() => new Game())
@@ -104,15 +105,39 @@ function App() {
     enabled: game.state === GameState.PLAYING,
   })
 
-  // ゲーム状態の変化を検出してゲームオーバー音を再生
-  useEffect(() => {
-    if (
-      previousGameState.current !== GameState.GAME_OVER &&
-      game.state === GameState.GAME_OVER
-    ) {
-      soundEffect.play(SoundType.GAME_OVER)
+  // ゲーム状態変化時のBGM制御処理を分離
+  const handleGameStateChange = (currentState: GameState, previousState: GameState) => {
+    switch (currentState) {
+      case GameState.PLAYING:
+        if (previousState === GameState.READY) {
+          backgroundMusic.play(MusicType.MAIN_THEME)
+        }
+        break
+      case GameState.GAME_OVER:
+        if (previousState !== GameState.GAME_OVER) {
+          soundEffect.play(SoundType.GAME_OVER)
+          backgroundMusic.fadeOut(1000).then(() => {
+            backgroundMusic.play(MusicType.GAME_OVER_THEME)
+          })
+        }
+        break
+      case GameState.READY:
+        if (previousState === GameState.GAME_OVER) {
+          backgroundMusic.stop()
+        }
+        break
     }
-    previousGameState.current = game.state
+  }
+
+  // ゲーム状態の変化を検出してBGMと効果音を制御
+  useEffect(() => {
+    const currentState = game.state
+    const previousState = previousGameState.current
+
+    if (previousState !== currentState) {
+      handleGameStateChange(currentState, previousState)
+      previousGameState.current = currentState
+    }
   }, [game.state])
 
   return (
