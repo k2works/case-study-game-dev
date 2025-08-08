@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Game, GameState } from '../domain/Game'
 import { Puyo } from '../domain/Puyo'
 import { AnimatedPuyo } from './AnimatedPuyo'
+import { DisappearEffect } from './DisappearEffect'
 import './GameBoard.css'
 
 interface GameBoardProps {
@@ -16,14 +17,29 @@ interface FallingPuyo {
   targetY: number
 }
 
+interface DisappearingPuyo {
+  id: string
+  color: string
+  x: number
+  y: number
+}
+
 export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
   const [fallingPuyos, setFallingPuyos] = useState<FallingPuyo[]>([])
+  const [disappearingPuyos, setDisappearingPuyos] = useState<
+    DisappearingPuyo[]
+  >([])
   const [previousPairPosition, setPreviousPairPosition] = useState<{
     mainX: number
     mainY: number
     subX: number
     subY: number
   } | null>(null)
+  const previousFieldState = useRef<(Puyo | null)[][]>(
+    Array(game.field.width)
+      .fill(null)
+      .map(() => Array(game.field.height).fill(null))
+  )
 
   const processFallingAnimation = (
     mainPos: { x: number; y: number },
@@ -90,6 +106,75 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.currentPair, game.state])
+
+  const getCurrentFieldState = (): (Puyo | null)[][] => {
+    const fieldState: (Puyo | null)[][] = Array(game.field.width)
+      .fill(null)
+      .map(() => Array(game.field.height).fill(null))
+    
+    for (let x = 0; x < game.field.width; x++) {
+      for (let y = 0; y < game.field.height; y++) {
+        fieldState[x][y] = game.field.getPuyo(x, y)
+      }
+    }
+    
+    return fieldState
+  }
+
+  const detectDisappearedPuyos = (
+    currentField: (Puyo | null)[][],
+    previousField: (Puyo | null)[][]
+  ): DisappearingPuyo[] => {
+    const disappearedPuyos: DisappearingPuyo[] = []
+
+    for (let x = 0; x < game.field.width; x++) {
+      for (let y = 0; y < game.field.height; y++) {
+        const prevPuyo = previousField[x][y]
+        const currentPuyo = currentField[x][y]
+
+        if (prevPuyo && !currentPuyo) {
+          disappearedPuyos.push({
+            id: `disappear-${x}-${y}-${Date.now()}`,
+            color: prevPuyo.color,
+            x,
+            y,
+          })
+        }
+      }
+    }
+
+    return disappearedPuyos
+  }
+
+  // 消去エフェクトの検出
+  useEffect(() => {
+    // gameまたはgame.fieldが存在しない場合は早期リターン
+    if (!game || !game.field) {
+      return
+    }
+
+    const currentField = getCurrentFieldState()
+
+    const newDisappearingPuyos = detectDisappearedPuyos(
+      currentField,
+      previousFieldState.current
+    )
+
+    if (newDisappearingPuyos.length > 0) {
+      setDisappearingPuyos((prev) => [...prev, ...newDisappearingPuyos])
+
+      // エフェクト完了後にクリーンアップ
+      setTimeout(() => {
+        setDisappearingPuyos((prev) =>
+          prev.filter((p) => !newDisappearingPuyos.some((np) => np.id === p.id))
+        )
+      }, 500)
+    }
+
+    // 現在のフィールド状態を保存
+    previousFieldState.current = currentField
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game, game.field])
 
   const getFixedPuyoStyle = (puyo: Puyo | null) => {
     if (puyo) {
@@ -183,6 +268,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     ))
   }
 
+  const renderDisappearEffects = () => {
+    return disappearingPuyos.map((puyo) => (
+      <DisappearEffect
+        key={puyo.id}
+        color={puyo.color}
+        x={puyo.x}
+        y={puyo.y - 2} // 表示オフセットを考慮
+        duration={0.5}
+      />
+    ))
+  }
+
   return (
     <div data-testid="game-board" className="game-board">
       {getGameStateText() && (
@@ -194,7 +291,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
       )}
       <div className="field">
         {renderField()}
-        <div className="animated-puyos-container">{renderAnimatedPuyos()}</div>
+        <div className="animated-puyos-container">
+          {renderAnimatedPuyos()}
+          {renderDisappearEffects()}
+        </div>
       </div>
     </div>
   )

@@ -1,0 +1,129 @@
+.disappear-effect {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.disappear-effect.disappearing {
+  animation: disappear 0.5s ease-out forwards;
+}
+
+@keyframes disappear {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+@keyframes burst {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2) rotate(360deg);
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    filter: brightness(1.5);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+    filter: brightness(2);
+  }
+  75% {
+    filter: brightness(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: brightness(1);
+  }
+}
+
+.disappear-effect.red {
+  background: radial-gradient(
+    circle,
+    rgba(255, 107, 107, 0.9) 0%,
+    rgba(238, 90, 82, 0.6) 50%,
+    transparent 70%
+  );
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+}
+
+.disappear-effect.blue {
+  background: radial-gradient(
+    circle,
+    rgba(78, 205, 196, 0.9) 0%,
+    rgba(68, 160, 141, 0.6) 50%,
+    transparent 70%
+  );
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.8);
+}
+
+.disappear-effect.green {
+  background: radial-gradient(
+    circle,
+    rgba(149, 225, 211, 0.9) 0%,
+    rgba(95, 179, 163, 0.6) 50%,
+    transparent 70%
+  );
+  box-shadow: 0 0 20px rgba(149, 225, 211, 0.8);
+}
+
+.disappear-effect.yellow {
+  background: radial-gradient(
+    circle,
+    rgba(255, 217, 61, 0.9) 0%,
+    rgba(255, 159, 67, 0.6) 50%,
+    transparent 70%
+  );
+  box-shadow: 0 0 20px rgba(255, 217, 61, 0.8);
+}
+
+.disappear-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: inherit;
+  animation: pulse 0.5s ease-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
