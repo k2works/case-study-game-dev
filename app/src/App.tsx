@@ -4,18 +4,28 @@ import { GameBoard } from './components/GameBoard'
 import { ScoreDisplay } from './components/ScoreDisplay'
 import { NextPuyoDisplay } from './components/NextPuyoDisplay'
 import { GameOverDisplay } from './components/GameOverDisplay'
+import { HighScoreDisplay } from './components/HighScoreDisplay'
 import { AudioSettingsPanel } from './components/AudioSettingsPanel'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
 import { soundEffect, SoundType } from './services/SoundEffect'
 import { backgroundMusic, MusicType } from './services/BackgroundMusic'
+import { highScoreService, HighScoreRecord } from './services/HighScoreService'
 
 function App() {
   const [game] = useState(() => new Game())
   const [renderKey, setRenderKey] = useState(0)
   const [audioSettingsOpen, setAudioSettingsOpen] = useState(false)
+  const [highScores, setHighScores] = useState<HighScoreRecord[]>([])
+  const [currentScore, setCurrentScore] = useState<number | undefined>(undefined)
   const previousGameState = useRef<GameState>(GameState.READY)
+
+  // 初期化：ハイスコアを読み込み
+  useEffect(() => {
+    const scores = highScoreService.getHighScores()
+    setHighScores(scores)
+  }, [])
 
   const forceRender = useCallback(() => {
     setRenderKey((prev) => prev + 1)
@@ -30,6 +40,8 @@ function App() {
     // 新しいゲームインスタンスを作成してリスタート
     Object.assign(game, new Game())
     game.start()
+    // 現在のスコアハイライトをクリア
+    setCurrentScore(undefined)
     forceRender()
   }
 
@@ -107,32 +119,56 @@ function App() {
     enabled: game.state === GameState.PLAYING,
   })
 
-  // ゲーム状態変化時のBGM制御処理を分離
-  const handleGameStateChange = (
-    currentState: GameState,
-    previousState: GameState
-  ) => {
-    switch (currentState) {
-      case GameState.PLAYING:
-        if (previousState === GameState.READY) {
-          backgroundMusic.play(MusicType.MAIN_THEME)
-        }
-        break
-      case GameState.GAME_OVER:
-        if (previousState !== GameState.GAME_OVER) {
-          soundEffect.play(SoundType.GAME_OVER)
-          backgroundMusic.fadeOut(1000).then(() => {
-            backgroundMusic.play(MusicType.GAME_OVER_THEME)
-          })
-        }
-        break
-      case GameState.READY:
-        if (previousState === GameState.GAME_OVER) {
-          backgroundMusic.stop()
-        }
-        break
+  // ゲーム開始時の処理
+  const handleGameStart = () => {
+    backgroundMusic.play(MusicType.MAIN_THEME)
+  }
+
+  // ゲームオーバー時の処理
+  const handleGameOver = () => {
+    soundEffect.play(SoundType.GAME_OVER)
+    backgroundMusic.fadeOut(1000).then(() => {
+      backgroundMusic.play(MusicType.GAME_OVER_THEME)
+    })
+    
+    // ハイスコア処理
+    const finalScore = game.score
+    if (finalScore > 0 && highScoreService.isHighScore(finalScore)) {
+      const updatedScores = highScoreService.addScore(finalScore)
+      setHighScores(updatedScores)
+      setCurrentScore(finalScore)
     }
   }
+
+  // ゲームリセット時の処理
+  const handleGameReset = () => {
+    backgroundMusic.stop()
+  }
+
+  // ゲーム状態変化時のBGM制御処理を分離
+  const handleGameStateChange = useCallback(
+    (currentState: GameState, previousState: GameState) => {
+      switch (currentState) {
+        case GameState.PLAYING:
+          if (previousState === GameState.READY) {
+            handleGameStart()
+          }
+          break
+        case GameState.GAME_OVER:
+          if (previousState !== GameState.GAME_OVER) {
+            handleGameOver()
+          }
+          break
+        case GameState.READY:
+          if (previousState === GameState.GAME_OVER) {
+            handleGameReset()
+          }
+          break
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [game.score]
+  )
 
   // ゲーム状態の変化を検出してBGMと効果音を制御
   useEffect(() => {
@@ -143,6 +179,7 @@ function App() {
       handleGameStateChange(currentState, previousState)
       previousGameState.current = currentState
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.state])
 
   return (
@@ -160,6 +197,11 @@ function App() {
             <div className="game-info-area">
               <ScoreDisplay score={game.score} />
               <NextPuyoDisplay nextPair={game.nextPair} />
+              <HighScoreDisplay 
+                highScores={highScores} 
+                currentScore={currentScore}
+                maxDisplay={5}
+              />
             </div>
           </div>
           <div className="controls">
