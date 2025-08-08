@@ -59,7 +59,7 @@ export default defineConfig({
     },
     {
       name: 'firefox',
-      use: { 
+      use: {
         ...devices['Desktop Firefox'],
         /* Firefoxでの安定性向上 */
         launchOptions: {
