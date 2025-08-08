@@ -107,9 +107,16 @@
   transition: none !important;
 }
 
-.game-board:not(.animations-enabled) * {
-  animation-duration: 0s !important;
-  transition-duration: 0s !important;
+/* アニメーション有効時は明示的に有効化 */
+.game-board.animations-enabled .disappear-effect.disappearing {
+  animation-name: disappear !important;
+  animation-duration: 0.8s !important;
+  animation-timing-function: ease-out !important;
+  animation-fill-mode: forwards !important;
+}
+
+.game-board.animations-enabled .animated-puyo {
+  animation-duration: 0.3s !important;
 }
 
 /* ぷよの色スタイリング */

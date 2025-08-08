@@ -17,10 +17,10 @@ export const DisappearEffect: React.FC<DisappearEffectProps> = ({
   onComplete,
 }) => {
   const cellSize = 32
-  const transform = `translate(${x * cellSize}px, ${y * cellSize}px)`
-
+  
   const style: React.CSSProperties = {
-    transform,
+    left: `${x * cellSize}px`,
+    top: `${y * cellSize}px`,
     animationDuration: `${duration}s`,
   }
 

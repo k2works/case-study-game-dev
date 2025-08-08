@@ -202,6 +202,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     return disappearedPuyos
   }
 
+  // フィールドの状態を文字列化して変化を検出
+  const getFieldSignature = () => {
+    let signature = ''
+    for (let x = 0; x < game.field.width; x++) {
+      for (let y = 0; y < game.field.height; y++) {
+        const puyo = game.field.getPuyo(x, y)
+        signature += puyo ? puyo.color[0] : '-'
+      }
+    }
+    return signature
+  }
+
   // 消去エフェクトの検出
   useEffect(() => {
     // gameまたはgame.fieldが存在しない場合は早期リターン
@@ -221,12 +233,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
       if (gameSettings.animationsEnabled) {
         setDisappearingPuyos((prev) => [...prev, ...newDisappearingPuyos])
 
-        // エフェクト完了後にクリーンアップ
+        // エフェクト完了後にクリーンアップ（アニメーション時間を延長）
         setTimeout(() => {
           setDisappearingPuyos((prev) =>
             prev.filter((p) => !newDisappearingPuyos.some((np) => np.id === p.id))
           )
-        }, 500)
+        }, 1000)
       }
 
       // ぷよ消去音を再生（アニメーション設定に関わらず）
@@ -236,7 +248,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     // 現在のフィールド状態を保存
     previousFieldState.current = currentField
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game, game.field])
+  }, [getFieldSignature()])
 
   // スコアリセット処理
   const handleScoreReset = () => {
@@ -394,7 +406,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
         color={puyo.color}
         x={puyo.x}
         y={puyo.y - 2} // 表示オフセットを考慮
-        duration={0.5}
+        duration={0.8}
       />
     ))
   }
