@@ -106,7 +106,10 @@ function App() {
   })
 
   // ゲーム状態変化時のBGM制御処理を分離
-  const handleGameStateChange = (currentState: GameState, previousState: GameState) => {
+  const handleGameStateChange = (
+    currentState: GameState,
+    previousState: GameState
+  ) => {
     switch (currentState) {
       case GameState.PLAYING:
         if (previousState === GameState.READY) {

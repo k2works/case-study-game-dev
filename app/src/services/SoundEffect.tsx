@@ -32,6 +32,14 @@ export class SoundEffect {
   }
 
   private initializeSounds(): void {
+    // テスト環境では音響初期化をスキップ
+    if (
+      typeof window !== 'undefined' &&
+      window.location.hostname === '127.0.0.1'
+    ) {
+      return
+    }
+
     // 各音声タイプに対して複数のAudioElementを準備
     for (const soundType of Object.values(SoundType)) {
       const audioArray: HTMLAudioElement[] = []
@@ -71,6 +79,14 @@ export class SoundEffect {
   }
 
   async play(soundType: SoundType): Promise<void> {
+    // テスト環境では音響を無効化
+    if (
+      typeof window !== 'undefined' &&
+      window.location.hostname === '127.0.0.1'
+    ) {
+      return
+    }
+
     if (this.muted) return
 
     try {

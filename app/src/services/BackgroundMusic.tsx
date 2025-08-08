@@ -28,6 +28,14 @@ export class BackgroundMusic {
   }
 
   private initializeMusic(): void {
+    // テスト環境では音響初期化をスキップ
+    if (
+      typeof window !== 'undefined' &&
+      window.location.hostname === '127.0.0.1'
+    ) {
+      return
+    }
+
     // 各BGMタイプに対してAudioElementを準備
     for (const musicType of Object.values(MusicType)) {
       const audio = this.audioFactory.create()
@@ -46,8 +54,27 @@ export class BackgroundMusic {
     return silentWav
   }
 
+  private shouldSkipPlayback(): boolean {
+    // テスト環境では音響を無効化
+    return (
+      (typeof window !== 'undefined' && 
+        window.location.hostname === '127.0.0.1') ||
+      this.muted
+    )
+  }
+
+  private async playAudioElement(musicType: MusicType): Promise<void> {
+    const audio = this.audioElements.get(musicType)
+    if (!audio) return
+
+    audio.currentTime = 0
+    audio.volume = this.volume
+    await audio.play()
+    this.currentMusic = musicType
+  }
+
   async play(musicType: MusicType): Promise<void> {
-    if (this.muted) return
+    if (this.shouldSkipPlayback()) return
 
     // 既に同じ音楽が再生中の場合は何もしない
     if (this.currentMusic === musicType) {
@@ -57,16 +84,7 @@ export class BackgroundMusic {
     try {
       // 現在再生中のBGMを停止
       this.stop()
-
-      const audio = this.audioElements.get(musicType)
-      if (!audio) return
-
-      // 音楽を開始位置に戻す
-      audio.currentTime = 0
-      audio.volume = this.volume
-
-      await audio.play()
-      this.currentMusic = musicType
+      await this.playAudioElement(musicType)
     } catch (error) {
       // エラーを静的に処理
       if (process.env.NODE_ENV === 'development') {

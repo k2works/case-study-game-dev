@@ -28,6 +28,14 @@ export default defineConfig({
     trace: 'on-first-retry',
     /* スクリーンショット設定 */
     screenshot: 'only-on-failure',
+    /* 音響系の自動再生を許可 */
+    launchOptions: {
+      args: [
+        '--autoplay-policy=no-user-gesture-required',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+      ],
+    },
   },
 
   /* テスト実行前にローカルサーバーを起動 */
