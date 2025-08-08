@@ -505,5 +505,118 @@ describe('Game', () => {
         expect(game.nextPair).not.toBeNull()
       })
     })
+
+    describe('重力処理', () => {
+      it('ぷよ配置後に重力が適用されて浮いたぷよが落下する', () => {
+        const game = new Game()
+        game.start()
+
+        // 下段にベースぷよを配置
+        game.field.setPuyo(2, 15, new Puyo(PuyoColor.RED))
+
+        // 上段に浮いたぷよを配置（重力により落下すべき）
+        game.field.setPuyo(2, 5, new Puyo(PuyoColor.BLUE))
+
+        // ぷよペアを適当な位置に配置してfixCurrentPairを呼び出す
+        // この処理で重力が適用される
+        const currentPair = game.currentPair!
+        currentPair.x = 1
+        currentPair.y = 15 // 下に配置
+        game.fixCurrentPair()
+
+        // 浮いていたブルーぷよが落下していることを確認
+        expect(game.field.getPuyo(2, 5)).toBeNull() // 元の位置は空
+        expect(game.field.getPuyo(2, 14)).not.toBeNull() // 落下先にある（ベースの上）
+        expect(game.field.getPuyo(2, 14)!.color).toBe(PuyoColor.BLUE)
+      })
+
+      it('複数の浮いたぷよが正しく落下する', () => {
+        const game = new Game()
+        game.start()
+
+        // 下段にベースを配置
+        game.field.setPuyo(1, 15, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(2, 15, new Puyo(PuyoColor.GREEN))
+
+        // 中段と上段に浮いたぷよを配置
+        game.field.setPuyo(1, 8, new Puyo(PuyoColor.BLUE))
+        game.field.setPuyo(1, 5, new Puyo(PuyoColor.YELLOW))
+        game.field.setPuyo(2, 7, new Puyo(PuyoColor.BLUE))
+
+        // ぷよペアを配置してfixCurrentPairを実行
+        const currentPair = game.currentPair!
+        currentPair.x = 0
+        currentPair.y = 15
+        game.fixCurrentPair()
+
+        // 浮いたぷよがすべて落下していることを確認
+        // 列1: YELLOW(5) -> (13), BLUE(8) -> (14)
+        expect(game.field.getPuyo(1, 5)).toBeNull()
+        expect(game.field.getPuyo(1, 8)).toBeNull()
+        expect(game.field.getPuyo(1, 13)!.color).toBe(PuyoColor.YELLOW)
+        expect(game.field.getPuyo(1, 14)!.color).toBe(PuyoColor.BLUE)
+
+        // 列2: BLUE(7) -> (14)
+        expect(game.field.getPuyo(2, 7)).toBeNull()
+        expect(game.field.getPuyo(2, 14)!.color).toBe(PuyoColor.BLUE)
+      })
+
+      it('重なったぷよペアの配置後に両方のぷよが正しく落下する', () => {
+        const game = new Game()
+        game.start()
+
+        // ベースとなるぷよを下段に配置
+        game.field.setPuyo(2, 15, new Puyo(PuyoColor.GREEN))
+
+        // 重なったぷよペアを作成（縦向き）
+        const currentPair = game.currentPair!
+        currentPair.x = 2
+        currentPair.y = 3 // 上部の空中に配置
+        currentPair.rotation = 180 // 縦向き（subが下）
+
+        // ぷよペアを固定 - この時点で両方のぷよが落下すべき
+        game.fixCurrentPair()
+
+        // mainぷよとsubぷよの両方が正しく落下していることを確認
+        expect(game.field.getPuyo(2, 3)).toBeNull() // 元のmain位置は空
+        expect(game.field.getPuyo(2, 4)).toBeNull() // 元のsub位置は空
+
+        // 落下後の位置確認（ベースの上に積まれる）
+        expect(game.field.getPuyo(2, 14)).not.toBeNull() // mainが落下
+        expect(game.field.getPuyo(2, 13)).not.toBeNull() // subが落下
+      })
+
+      it('連鎖発生時以外でも重力が適用される', () => {
+        const game = new Game()
+        game.start()
+
+        // 連鎖が起こらない配置を作成
+        game.field.setPuyo(1, 15, new Puyo(PuyoColor.RED))
+        game.field.setPuyo(3, 15, new Puyo(PuyoColor.BLUE))
+
+        // 浮いたぷよを配置
+        game.field.setPuyo(2, 6, new Puyo(PuyoColor.GREEN))
+
+        // 連鎖が起こらないぷよペアを配置
+        const currentPair = game.currentPair!
+        currentPair.main = new Puyo(PuyoColor.YELLOW)
+        currentPair.sub = new Puyo(PuyoColor.BLUE)
+        currentPair.x = 4
+        currentPair.y = 15
+
+        // 配置前の連鎖結果をリセット
+        game.lastChainResult = null
+
+        game.fixCurrentPair()
+
+        // 連鎖が発生していないことを確認
+        expect(game.lastChainResult?.chainCount || 0).toBe(0)
+
+        // それでも重力により浮いたぷよが落下していることを確認
+        expect(game.field.getPuyo(2, 6)).toBeNull() // 元の位置は空
+        expect(game.field.getPuyo(2, 15)).not.toBeNull() // 落下先にある
+        expect(game.field.getPuyo(2, 15)!.color).toBe(PuyoColor.GREEN)
+      })
+    })
   })
 })

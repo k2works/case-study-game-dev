@@ -150,6 +150,9 @@ export class Game {
     this.field.setPuyo(mainPos.x, mainPos.y, this.currentPair.main)
     this.field.setPuyo(subPos.x, subPos.y, this.currentPair.sub)
 
+    // 重要: 配置後に必ず重力を適用してぷよを落下させる
+    this.applyGravity()
+
     // 消去・連鎖処理を実行
     this.processChain()
 
@@ -278,5 +281,10 @@ export class Game {
 
     // スコアを加算
     this.score += chainResult.score
+  }
+
+  private applyGravity(): void {
+    // Chainクラスの重力処理を再利用
+    this.chain.applyGravity()
   }
 }

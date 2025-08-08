@@ -156,4 +156,78 @@ describe('Chain', () => {
       expect(result.score).toBe(0)
     })
   })
+
+  describe('重力処理', () => {
+    test('浮いたぷよが重力により落下する', () => {
+      // Given: 下段にベースぷよ、上段に浮いたぷよ
+      field.setPuyo(2, 15, new Puyo('red'))
+      field.setPuyo(2, 10, new Puyo('blue'))
+      field.setPuyo(2, 8, new Puyo('green'))
+
+      // When: 重力処理を実行
+      chain.applyGravity()
+
+      // Then: 浮いたぷよが落下している
+      expect(field.getPuyo(2, 10)).toBeNull() // 元の位置は空
+      expect(field.getPuyo(2, 8)).toBeNull() // 元の位置は空
+      expect(field.getPuyo(2, 15)).not.toBeNull() // ベースはそのまま
+      expect(field.getPuyo(2, 14)).not.toBeNull() // 青が落下
+      expect(field.getPuyo(2, 13)).not.toBeNull() // 緑が落下
+
+      expect(field.getPuyo(2, 14)!.color).toBe('blue')
+      expect(field.getPuyo(2, 13)!.color).toBe('green')
+    })
+
+    test('複数列で同時に重力処理が正しく動作する', () => {
+      // Given: 各列に浮いたぷよ
+      field.setPuyo(1, 15, new Puyo('red')) // ベース
+      field.setPuyo(1, 12, new Puyo('blue')) // 浮いたぷよ
+      field.setPuyo(2, 15, new Puyo('green')) // ベース
+      field.setPuyo(2, 10, new Puyo('yellow')) // 浮いたぷよ
+      field.setPuyo(3, 15, new Puyo('red')) // ベース
+
+      // When: 重力処理を実行
+      chain.applyGravity()
+
+      // Then: 各列で正しく落下
+      // 列1: blue(12) -> (14)
+      expect(field.getPuyo(1, 12)).toBeNull()
+      expect(field.getPuyo(1, 14)!.color).toBe('blue')
+
+      // 列2: yellow(10) -> (14)
+      expect(field.getPuyo(2, 10)).toBeNull()
+      expect(field.getPuyo(2, 14)!.color).toBe('yellow')
+
+      // ベースは変わらず
+      expect(field.getPuyo(1, 15)!.color).toBe('red')
+      expect(field.getPuyo(2, 15)!.color).toBe('green')
+      expect(field.getPuyo(3, 15)!.color).toBe('red')
+    })
+
+    test('空のフィールドに重力処理を適用しても問題ない', () => {
+      // Given: 空のフィールド
+      expect(field.isEmpty()).toBe(true)
+
+      // When: 重力処理を実行
+      chain.applyGravity()
+
+      // Then: フィールドは空のまま
+      expect(field.isEmpty()).toBe(true)
+    })
+
+    test('すべてのぷよが既に最下段にある場合は変化しない', () => {
+      // Given: 最下段に配置されたぷよ
+      field.setPuyo(1, 15, new Puyo('red'))
+      field.setPuyo(2, 15, new Puyo('blue'))
+      field.setPuyo(3, 15, new Puyo('green'))
+
+      // When: 重力処理を実行
+      chain.applyGravity()
+
+      // Then: 位置は変わらない
+      expect(field.getPuyo(1, 15)!.color).toBe('red')
+      expect(field.getPuyo(2, 15)!.color).toBe('blue')
+      expect(field.getPuyo(3, 15)!.color).toBe('green')
+    })
+  })
 })

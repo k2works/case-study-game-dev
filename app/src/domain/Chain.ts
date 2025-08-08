@@ -313,7 +313,7 @@ export class Chain {
   /**
    * 重力を適用してぷよを下に落とす
    */
-  private applyGravity(): void {
+  applyGravity(): void {
     for (let x = 0; x < this.field.width; x++) {
       // 下から上へスキャンして、空きスペースを埋める
       let writeIndex = this.field.height - 1

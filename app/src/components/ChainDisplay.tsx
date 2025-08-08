@@ -12,8 +12,6 @@ export const ChainDisplay: React.FC<ChainDisplayProps> = ({
   x,
   y,
 }) => {
-  console.log('ChainDisplay render:', { chainCount, x, y })
-
   if (chainCount === 0) {
     console.log('ChainDisplay: chainCount is 0, returning null')
     return null
@@ -48,7 +46,6 @@ export const ChainDisplay: React.FC<ChainDisplayProps> = ({
   }
 
   const className = getChainClass()
-  console.log('ChainDisplay レンダリング:', { chainCount, className, style })
 
   return (
     <div
