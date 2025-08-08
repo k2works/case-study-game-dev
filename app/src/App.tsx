@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import './App.css'
 import { GameBoard } from './components/GameBoard'
 import { ScoreDisplay } from './components/ScoreDisplay'
@@ -7,10 +7,12 @@ import { GameOverDisplay } from './components/GameOverDisplay'
 import { Game, GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
+import { soundEffect, SoundType } from './services/SoundEffect'
 
 function App() {
   const [game] = useState(() => new Game())
   const [renderKey, setRenderKey] = useState(0)
+  const previousGameState = useRef<GameState>(GameState.READY)
 
   const forceRender = useCallback(() => {
     setRenderKey((prev) => prev + 1)
@@ -32,19 +34,28 @@ function App() {
   const keyboardHandlers = {
     onMoveLeft: useCallback(() => {
       if (game.state === GameState.PLAYING) {
-        game.moveLeft()
+        const moved = game.moveLeft()
+        if (moved) {
+          soundEffect.play(SoundType.PUYO_MOVE)
+        }
         forceRender()
       }
     }, [game, forceRender]),
     onMoveRight: useCallback(() => {
       if (game.state === GameState.PLAYING) {
-        game.moveRight()
+        const moved = game.moveRight()
+        if (moved) {
+          soundEffect.play(SoundType.PUYO_MOVE)
+        }
         forceRender()
       }
     }, [game, forceRender]),
     onRotate: useCallback(() => {
       if (game.state === GameState.PLAYING) {
-        game.rotate()
+        const rotated = game.rotate()
+        if (rotated) {
+          soundEffect.play(SoundType.PUYO_ROTATE)
+        }
         forceRender()
       }
     }, [game, forceRender]),
@@ -92,6 +103,17 @@ function App() {
     interval: 1000,
     enabled: game.state === GameState.PLAYING,
   })
+
+  // ゲーム状態の変化を検出してゲームオーバー音を再生
+  useEffect(() => {
+    if (
+      previousGameState.current !== GameState.GAME_OVER &&
+      game.state === GameState.GAME_OVER
+    ) {
+      soundEffect.play(SoundType.GAME_OVER)
+    }
+    previousGameState.current = game.state
+  }, [game.state])
 
   return (
     <div className="app">
