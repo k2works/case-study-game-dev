@@ -152,9 +152,10 @@ repeat
       :修正;
     endif
   repeat while (TODO完了?)
+  :アーキテクチャリファクタリング;
   
 repeat while (全TODO完了?)
-
+:アーキテクチャリファクタリング;
 :イテレーションレビュー;
 :ふりかえり;
 stop
