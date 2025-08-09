@@ -241,20 +241,21 @@
 /* 緑: 格子パターン */
 .game-board.color-blind-mode .cell.puyo.green::before,
 .next-puyo-area.color-blind-mode .next-puyo-display .puyo.green::before {
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(255, 255, 255, 0.6) 3px,
-    rgba(255, 255, 255, 0.6) 4px
-  ),
-  repeating-linear-gradient(
-    90deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(255, 255, 255, 0.6) 3px,
-    rgba(255, 255, 255, 0.6) 4px
-  );
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 255, 255, 0.6) 3px,
+      rgba(255, 255, 255, 0.6) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 255, 255, 0.6) 3px,
+      rgba(255, 255, 255, 0.6) 4px
+    );
 }
 
 /* 黄: 斜線パターン */
@@ -275,7 +276,7 @@
     font-size: 12px;
     inset: 2px;
   }
-  
+
   .next-puyo-area.color-blind-mode .next-puyo-display .puyo::before {
     font-size: 10px;
     inset: 2px;

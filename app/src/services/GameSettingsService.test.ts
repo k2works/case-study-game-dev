@@ -43,6 +43,7 @@ describe('GameSettingsService', () => {
         showGridLines: true,
         showShadow: false,
         animationsEnabled: false,
+        colorBlindMode: true,
       }
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(savedSettings))
@@ -104,6 +105,7 @@ describe('GameSettingsService', () => {
         showGridLines: true,
         showShadow: false,
         animationsEnabled: true,
+        colorBlindMode: false,
       }
 
       const result = gameSettingsService.saveSettings(settings)

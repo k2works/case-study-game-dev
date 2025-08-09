@@ -347,12 +347,16 @@ describe('SettingsPanel', () => {
       render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
 
       // ARIAの説明テキストが存在する
-      expect(screen.getByText('色覚多様性対応（パターン表示）')).toBeInTheDocument()
-      
+      expect(
+        screen.getByText('色覚多様性対応（パターン表示）')
+      ).toBeInTheDocument()
+
       // スクリーンリーダー用の説明文も存在する
       const description = document.getElementById('color-blind-desc')
       expect(description).toBeInTheDocument()
-      expect(description?.textContent).toContain('ぷよにパターンを追加して、色での区別が困難な方でもゲームを楽しめるようにします')
+      expect(description?.textContent).toContain(
+        'ぷよにパターンを追加して、色での区別が困難な方でもゲームを楽しめるようにします'
+      )
     })
 
     it('保存された色覚多様性対応設定が読み込まれる', () => {

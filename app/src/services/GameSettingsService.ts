@@ -114,33 +114,48 @@ class GameSettingsService {
   hasChanges(current: GameSettings, original?: GameSettings): boolean {
     const compareWith = original || this.getSettings()
 
-    return this.checkVolumeChanges(current, compareWith) ||
-           this.checkDisplayChanges(current, compareWith) ||
-           this.checkGameplayChanges(current, compareWith)
+    return (
+      this.checkVolumeChanges(current, compareWith) ||
+      this.checkDisplayChanges(current, compareWith) ||
+      this.checkGameplayChanges(current, compareWith)
+    )
   }
 
   /**
    * 音量設定の変更をチェック
    */
-  private checkVolumeChanges(current: GameSettings, compareWith: GameSettings): boolean {
-    return current.soundVolume !== compareWith.soundVolume ||
-           current.musicVolume !== compareWith.musicVolume
+  private checkVolumeChanges(
+    current: GameSettings,
+    compareWith: GameSettings
+  ): boolean {
+    return (
+      current.soundVolume !== compareWith.soundVolume ||
+      current.musicVolume !== compareWith.musicVolume
+    )
   }
 
   /**
    * 表示設定の変更をチェック
    */
-  private checkDisplayChanges(current: GameSettings, compareWith: GameSettings): boolean {
-    return current.showGridLines !== compareWith.showGridLines ||
-           current.showShadow !== compareWith.showShadow ||
-           current.animationsEnabled !== compareWith.animationsEnabled ||
-           current.colorBlindMode !== compareWith.colorBlindMode
+  private checkDisplayChanges(
+    current: GameSettings,
+    compareWith: GameSettings
+  ): boolean {
+    return (
+      current.showGridLines !== compareWith.showGridLines ||
+      current.showShadow !== compareWith.showShadow ||
+      current.animationsEnabled !== compareWith.animationsEnabled ||
+      current.colorBlindMode !== compareWith.colorBlindMode
+    )
   }
 
   /**
    * ゲームプレイ設定の変更をチェック
    */
-  private checkGameplayChanges(current: GameSettings, compareWith: GameSettings): boolean {
+  private checkGameplayChanges(
+    current: GameSettings,
+    compareWith: GameSettings
+  ): boolean {
     return current.autoDropSpeed !== compareWith.autoDropSpeed
   }
 

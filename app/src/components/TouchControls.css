@@ -1,0 +1,150 @@
+.touch-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none; /* デフォルトは非表示 */
+  background: rgba(0, 0, 0, 0.8);
+  padding: 1rem;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* タッチデバイスでのみ表示 */
+@media (hover: none) and (pointer: coarse) {
+  .touch-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+/* 小画面でも表示 */
+@media (max-width: 768px) {
+  .touch-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.touch-controls-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.touch-controls-group.movement {
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.touch-controls-group.actions {
+  flex: 2;
+  justify-content: flex-end;
+}
+
+.touch-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.touch-button:active:not(:disabled) {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.touch-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ボタンの種類別スタイル */
+.touch-button.left,
+.touch-button.right {
+  background: rgba(78, 205, 196, 0.2);
+  border-color: #4ecdc4;
+}
+
+.touch-button.left:active:not(:disabled),
+.touch-button.right:active:not(:disabled) {
+  background: rgba(78, 205, 196, 0.4);
+}
+
+.touch-button.rotate {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+}
+
+.touch-button.rotate:active:not(:disabled) {
+  background: rgba(255, 107, 107, 0.4);
+}
+
+.touch-button.drop {
+  background: rgba(255, 217, 61, 0.2);
+  border-color: #ffd93d;
+}
+
+.touch-button.drop:active:not(:disabled) {
+  background: rgba(255, 217, 61, 0.4);
+}
+
+.touch-button.hard-drop {
+  background: rgba(149, 225, 211, 0.2);
+  border-color: #95e1d3;
+  width: 70px;
+  height: 70px;
+}
+
+.touch-button.hard-drop:active:not(:disabled) {
+  background: rgba(149, 225, 211, 0.4);
+}
+
+/* アイコンサイズ調整 */
+.touch-button svg {
+  pointer-events: none;
+}
+
+/* 横画面対応 */
+@media (orientation: landscape) and (max-height: 600px) {
+  .touch-controls {
+    padding: 0.5rem;
+  }
+
+  .touch-button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .touch-button.hard-drop {
+    width: 60px;
+    height: 60px;
+  }
+
+  .touch-button svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* アクセシビリティ: フォーカス表示 */
+.touch-button:focus-visible {
+  outline: 3px solid #4ecdc4;
+  outline-offset: 2px;
+}

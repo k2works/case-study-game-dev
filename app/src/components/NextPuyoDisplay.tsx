@@ -9,7 +9,11 @@ interface NextPuyoDisplayProps {
 }
 
 export const NextPuyoDisplay = React.memo(
-  ({ nextPair, showShadow = true, colorBlindMode = false }: NextPuyoDisplayProps) => {
+  ({
+    nextPair,
+    showShadow = true,
+    colorBlindMode = false,
+  }: NextPuyoDisplayProps) => {
     if (!nextPair) {
       return null
     }

@@ -13,7 +13,7 @@ describe('色覚多様性対応機能', () => {
   beforeEach(() => {
     // テスト前にローカルストレージをクリア
     localStorage.clear()
-    
+
     game = new Game()
     game.start()
   })
@@ -21,7 +21,7 @@ describe('色覚多様性対応機能', () => {
   describe('設定変更', () => {
     it('色覚多様性対応設定を有効にできる', () => {
       expect(gameSettingsService.getSetting('colorBlindMode')).toBe(false)
-      
+
       gameSettingsService.updateSetting('colorBlindMode', true)
       expect(gameSettingsService.getSetting('colorBlindMode')).toBe(true)
     })
@@ -30,18 +30,18 @@ describe('色覚多様性対応機能', () => {
   describe('GameBoardの色覚多様性対応', () => {
     it('colorBlindMode無効時はcolor-blind-modeクラスが適用されない', () => {
       gameSettingsService.updateSetting('colorBlindMode', false)
-      
+
       render(<GameBoard game={game} />)
-      
+
       const gameBoard = screen.getByTestId('game-board')
       expect(gameBoard).not.toHaveClass('color-blind-mode')
     })
 
     it('colorBlindMode有効時はcolor-blind-modeクラスが適用される', () => {
       gameSettingsService.updateSetting('colorBlindMode', true)
-      
+
       render(<GameBoard game={game} />)
-      
+
       const gameBoard = screen.getByTestId('game-board')
       expect(gameBoard).toHaveClass('color-blind-mode')
     })
@@ -54,44 +54,29 @@ describe('色覚多様性対応機能', () => {
     )
 
     it('colorBlindMode無効時はcolor-blind-modeクラスが適用されない', () => {
-      render(
-        <NextPuyoDisplay 
-          nextPair={testNextPair} 
-          colorBlindMode={false} 
-        />
-      )
-      
+      render(<NextPuyoDisplay nextPair={testNextPair} colorBlindMode={false} />)
+
       const nextPuyoArea = screen.getByTestId('next-puyo-area')
       expect(nextPuyoArea).not.toHaveClass('color-blind-mode')
     })
 
     it('colorBlindMode有効時はcolor-blind-modeクラスが適用される', () => {
-      render(
-        <NextPuyoDisplay 
-          nextPair={testNextPair} 
-          colorBlindMode={true} 
-        />
-      )
-      
+      render(<NextPuyoDisplay nextPair={testNextPair} colorBlindMode={true} />)
+
       const nextPuyoArea = screen.getByTestId('next-puyo-area')
       expect(nextPuyoArea).toHaveClass('color-blind-mode')
     })
 
     it('色とパターンの組み合わせでぷよが表示される', () => {
-      render(
-        <NextPuyoDisplay 
-          nextPair={testNextPair} 
-          colorBlindMode={true} 
-        />
-      )
-      
+      render(<NextPuyoDisplay nextPair={testNextPair} colorBlindMode={true} />)
+
       const mainPuyo = screen.getByTestId('next-main-puyo')
       const subPuyo = screen.getByTestId('next-sub-puyo')
-      
+
       // 色クラスが適用されている
       expect(mainPuyo).toHaveClass('red')
       expect(subPuyo).toHaveClass('blue')
-      
+
       // ぷよクラスが適用されている
       expect(mainPuyo).toHaveClass('puyo')
       expect(subPuyo).toHaveClass('puyo')
@@ -102,19 +87,19 @@ describe('色覚多様性対応機能', () => {
     it('color-blind-modeが有効な時にCSS疑似要素がパターンを表示する', () => {
       // この部分は実際のブラウザ環境でのみ完全にテストできます
       // JSDOM環境では疑似要素のスタイル計算が制限されています
-      
+
       const testElement = document.createElement('div')
       testElement.className = 'cell puyo red'
-      
+
       const parentElement = document.createElement('div')
       parentElement.className = 'game-board color-blind-mode'
       parentElement.appendChild(testElement)
-      
+
       document.body.appendChild(parentElement)
-      
+
       expect(testElement).toHaveClass('cell', 'puyo', 'red')
       expect(parentElement).toHaveClass('game-board', 'color-blind-mode')
-      
+
       document.body.removeChild(parentElement)
     })
   })
@@ -122,10 +107,10 @@ describe('色覚多様性対応機能', () => {
   describe('設定の永続化', () => {
     it('色覚多様性対応設定がlocalStorageに保存される', () => {
       gameSettingsService.updateSetting('colorBlindMode', true)
-      
+
       const savedSettings = localStorage.getItem('puyo-puyo-settings')
       expect(savedSettings).toBeTruthy()
-      
+
       const parsedSettings = JSON.parse(savedSettings!)
       expect(parsedSettings.colorBlindMode).toBe(true)
     })
@@ -142,7 +127,7 @@ describe('色覚多様性対応機能', () => {
         animationsEnabled: true,
       }
       localStorage.setItem('puyo-puyo-settings', JSON.stringify(testSettings))
-      
+
       // 設定を読み込み
       const settings = gameSettingsService.getSettings()
       expect(settings.colorBlindMode).toBe(true)
@@ -159,7 +144,9 @@ describe('色覚多様性対応機能', () => {
     it('設定値を変更できる', () => {
       const initialValue = gameSettingsService.getSetting('colorBlindMode')
       gameSettingsService.updateSetting('colorBlindMode', !initialValue)
-      expect(gameSettingsService.getSetting('colorBlindMode')).toBe(!initialValue)
+      expect(gameSettingsService.getSetting('colorBlindMode')).toBe(
+        !initialValue
+      )
     })
   })
 })

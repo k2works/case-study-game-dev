@@ -6,9 +6,11 @@ import { NextPuyoDisplay } from './components/NextPuyoDisplay'
 import { GameOverDisplay } from './components/GameOverDisplay'
 import { HighScoreDisplay } from './components/HighScoreDisplay'
 import { SettingsPanel } from './components/SettingsPanel'
+import { TouchControls } from './components/TouchControls'
 import { GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
+import { useTouch } from './hooks/useTouch'
 import { SoundType } from './services/SoundEffect'
 import { MusicType } from './services/BackgroundMusic'
 import { HighScoreRecord } from './services/HighScoreService'
@@ -230,6 +232,22 @@ function App() {
   // キーボードイベントを登録
   useKeyboard(keyboardHandlers)
 
+  // タッチ操作のハンドラー
+  const touchHandlers = {
+    onSwipeLeft: keyboardHandlers.onMoveLeft,
+    onSwipeRight: keyboardHandlers.onMoveRight,
+    onSwipeDown: keyboardHandlers.onDrop,
+    onTap: keyboardHandlers.onRotate,
+    onDoubleTap: keyboardHandlers.onHardDrop,
+  }
+
+  // タッチイベントを登録（ゲームフィールドに限定）
+  const gameBoardRef = useRef<HTMLDivElement>(null)
+  useTouch(touchHandlers, {
+    element: gameBoardRef.current,
+    enabled: gameUseCase.isPlaying(),
+  })
+
   // 自動落下システム
   const handleAutoDrop = useCallback(() => {
     if (gameUseCase.isPlaying()) {
@@ -341,7 +359,7 @@ function App() {
       <main className="app-main">
         <div className="game-container">
           <div className="game-play-area">
-            <div className="game-board-area">
+            <div className="game-board-area" ref={gameBoardRef}>
               <GameBoard
                 key={`${renderKey}-${settingsKey}`}
                 game={gameUseCase.getGameInstance()}
@@ -427,6 +445,16 @@ function App() {
           // 設定変更後にGameBoardの再レンダリングを強制
           setSettingsKey((prev) => prev + 1)
         }}
+      />
+
+      {/* モバイル用タッチコントロール */}
+      <TouchControls
+        onMoveLeft={keyboardHandlers.onMoveLeft}
+        onMoveRight={keyboardHandlers.onMoveRight}
+        onRotate={keyboardHandlers.onRotate}
+        onDrop={keyboardHandlers.onDrop}
+        onHardDrop={keyboardHandlers.onHardDrop}
+        isPlaying={gameUseCase.isPlaying()}
       />
     </div>
   )

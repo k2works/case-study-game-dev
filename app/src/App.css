@@ -235,4 +235,16 @@ kbd {
     padding: 0.5rem;
     font-size: 0.8rem;
   }
+
+  /* タッチデバイスではキーボード操作説明を非表示 */
+  @media (hover: none) and (pointer: coarse) {
+    .instructions {
+      display: none;
+    }
+  }
+
+  /* タッチコントロール表示時の調整 */
+  .app-main {
+    padding-bottom: 100px; /* タッチコントロール分の余白 */
+  }
 }
