@@ -25,28 +25,28 @@ const handleMoveKeys = (key: string, handlers: KeyboardHandlers) => {
 
 const handleActionKeys = (key: string, handlers: KeyboardHandlers) => {
   const actionMap: { [key: string]: () => void } = {
-    'ArrowUp': handlers.onRotate,
-    'z': handlers.onRotate,
-    'Z': handlers.onRotate,
-    'ArrowDown': handlers.onDrop,
+    ArrowUp: handlers.onRotate,
+    z: handlers.onRotate,
+    Z: handlers.onRotate,
+    ArrowDown: handlers.onDrop,
     ' ': handlers.onHardDrop,
   }
-  
+
   const handler = actionMap[key]
   if (handler) handler()
 }
 
 const handleControlKeys = (key: string, handlers: KeyboardHandlers) => {
   const controlMap: { [key: string]: (() => void) | undefined } = {
-    'p': handlers.onPause,
-    'P': handlers.onPause,
-    'r': handlers.onRestart,
-    'R': handlers.onRestart,
-    's': handlers.onOpenSettings,
-    'S': handlers.onOpenSettings,
-    'Escape': handlers.onCloseModal,
+    p: handlers.onPause,
+    P: handlers.onPause,
+    r: handlers.onRestart,
+    R: handlers.onRestart,
+    s: handlers.onOpenSettings,
+    S: handlers.onOpenSettings,
+    Escape: handlers.onCloseModal,
   }
-  
+
   const handler = controlMap[key]
   if (handler) handler()
 }
@@ -61,7 +61,15 @@ const checkModalState = () => {
 }
 
 const isGameKey = (key: string) => {
-  return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'z', 'Z'].includes(key)
+  return [
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowUp',
+    'ArrowDown',
+    ' ',
+    'z',
+    'Z',
+  ].includes(key)
 }
 
 // eslint-disable-next-line complexity
@@ -87,7 +95,7 @@ const shouldPreventDefault = (key: string) => {
   const gameKeys = isGameKey(key)
   const controlKeys = isControlKey(key)
   const buttonSpace = isButtonSpaceKey(key)
-  
+
   return (gameKeys || controlKeys) && !buttonSpace
 }
 
@@ -101,15 +109,19 @@ export const useKeyboard = (
     const shouldSkipForModal = (key: string) => {
       return checkModalState() && isGameKey(key) && !options.gameOnly
     }
-    
+
     const shouldSkipForForm = (key: string) => {
       return isFormElementFocused() && isGameKey(key)
     }
-    
+
     const shouldSkipKeyProcessing = (key: string) => {
-      return shouldSkipForModal(key) || shouldSkipForForm(key) || isButtonSpaceKey(key)
+      return (
+        shouldSkipForModal(key) ||
+        shouldSkipForForm(key) ||
+        isButtonSpaceKey(key)
+      )
     }
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (shouldSkipKeyProcessing(event.key)) {
         return

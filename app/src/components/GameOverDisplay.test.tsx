@@ -26,7 +26,9 @@ describe('GameOverDisplay', () => {
     it('リトライボタンが表示される', () => {
       render(<GameOverDisplay score={0} onRestart={mockOnRestart} />)
 
-      const retryButton = screen.getByRole('button', { name: 'もう一度プレイ' })
+      const retryButton = screen.getByRole('button', {
+        name: 'ゲームを再開してもう一度プレイします',
+      })
       expect(retryButton).toBeInTheDocument()
     })
   })
@@ -35,7 +37,9 @@ describe('GameOverDisplay', () => {
     it('リトライボタンをクリックするとonRestartが呼ばれる', () => {
       render(<GameOverDisplay score={2500} onRestart={mockOnRestart} />)
 
-      const retryButton = screen.getByRole('button', { name: 'もう一度プレイ' })
+      const retryButton = screen.getByRole('button', {
+        name: 'ゲームを再開してもう一度プレイします',
+      })
       fireEvent.click(retryButton)
 
       expect(mockOnRestart).toHaveBeenCalledTimes(1)

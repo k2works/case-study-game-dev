@@ -8,25 +8,25 @@ describe('ScoreDisplay', () => {
       render(<ScoreDisplay score={0} />)
 
       expect(screen.getByText('スコア')).toBeInTheDocument()
-      expect(screen.getByText('0')).toBeInTheDocument()
+      expect(screen.getByText('0点')).toBeInTheDocument()
     })
 
     it('スコアが正しく表示される', () => {
       render(<ScoreDisplay score={1000} />)
 
-      expect(screen.getByText('1,000')).toBeInTheDocument()
+      expect(screen.getByText('1,000点')).toBeInTheDocument()
     })
 
     it('大きなスコアでもカンマ区切りで表示される', () => {
       render(<ScoreDisplay score={12345678} />)
 
-      expect(screen.getByText('12,345,678')).toBeInTheDocument()
+      expect(screen.getByText('12,345,678点')).toBeInTheDocument()
     })
 
     it('負のスコアも表示できる（テスト用）', () => {
       render(<ScoreDisplay score={-500} />)
 
-      expect(screen.getByText('-500')).toBeInTheDocument()
+      expect(screen.getByText('-500点')).toBeInTheDocument()
     })
   })
 
@@ -35,7 +35,7 @@ describe('ScoreDisplay', () => {
       render(<ScoreDisplay score={2500} />)
 
       expect(screen.getByTestId('score-value')).toBeInTheDocument()
-      expect(screen.getByTestId('score-value')).toHaveTextContent('2,500')
+      expect(screen.getByTestId('score-value')).toHaveTextContent('2,500点')
     })
 
     it('スコアラベルに適切なテストIDが設定されている', () => {

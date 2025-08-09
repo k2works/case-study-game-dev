@@ -40,7 +40,16 @@ export const useFocusTrap = ({ isActive, onEscape }: UseFocusTrapOptions) => {
             htmlElement instanceof HTMLTextAreaElement
 
           return (
-            !(isInput && (htmlElement as HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement).disabled) &&
+            !(
+              isInput &&
+              (
+                htmlElement as
+                  | HTMLInputElement
+                  | HTMLButtonElement
+                  | HTMLSelectElement
+                  | HTMLTextAreaElement
+              ).disabled
+            ) &&
             htmlElement.tabIndex !== -1 &&
             htmlElement.offsetParent !== null // 表示されている要素のみ
           )
@@ -63,41 +72,41 @@ export const useFocusTrap = ({ isActive, onEscape }: UseFocusTrapOptions) => {
       const currentFocusIndex = focusableElements.indexOf(
         document.activeElement as HTMLElement
       )
-      
+
       if (document.activeElement === firstElement || currentFocusIndex === -1) {
         return lastElement
       }
       return null
     }
-    
+
     const handleRegularTab = (focusableElements: HTMLElement[]) => {
       const firstElement = focusableElements[0]
       const lastElement = focusableElements[focusableElements.length - 1]
       const currentFocusIndex = focusableElements.indexOf(
         document.activeElement as HTMLElement
       )
-      
+
       if (document.activeElement === lastElement || currentFocusIndex === -1) {
         return firstElement
       }
       return null
     }
-    
+
     const handleTabNavigation = (event: KeyboardEvent) => {
       if (event.key !== 'Tab') return false
 
       const focusableElements = getFocusableElements()
       if (focusableElements.length === 0) return true
 
-      const elementToFocus = event.shiftKey 
+      const elementToFocus = event.shiftKey
         ? handleShiftTab(focusableElements)
         : handleRegularTab(focusableElements)
-        
+
       if (elementToFocus) {
         event.preventDefault()
         elementToFocus.focus()
       }
-      
+
       return true
     }
 
@@ -110,8 +119,9 @@ export const useFocusTrap = ({ isActive, onEscape }: UseFocusTrapOptions) => {
     const focusableElements = getFocusableElements()
     if (focusableElements.length > 0) {
       // autoFocus属性を持つ要素、またはfirst focusable elementにフォーカス
-      const autoFocusElement = focusableElements.find((element) =>
-        element.hasAttribute('autoFocus')
+      const autoFocusElement = focusableElements.find(
+        (element) =>
+          element.hasAttribute('autoFocus') || element.hasAttribute('autofocus')
       )
       const elementToFocus = autoFocusElement || focusableElements[0]
 

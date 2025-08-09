@@ -100,10 +100,28 @@ describe('Game Integration', () => {
       render(<App />)
 
       expect(screen.getByText('操作方法')).toBeInTheDocument()
-      expect(screen.getByText('←→: 移動')).toBeInTheDocument()
-      expect(screen.getByText('↑/Z: 回転')).toBeInTheDocument()
-      expect(screen.getByText('↓: 高速落下')).toBeInTheDocument()
-      expect(screen.getByText('スペース: ハードドロップ')).toBeInTheDocument()
+
+      // instructionsのコンテナが存在することを確認
+      const instructionsContainer = document.querySelector('.key-instructions')
+      expect(instructionsContainer).toBeInTheDocument()
+
+      // 主要なキーが表示されていることを確認
+      expect(screen.getByText('←→')).toBeInTheDocument()
+      expect(screen.getByText('↑')).toBeInTheDocument()
+      expect(screen.getByText('Z')).toBeInTheDocument()
+      expect(screen.getByText('↓')).toBeInTheDocument()
+      expect(screen.getByText('スペース')).toBeInTheDocument()
+      expect(screen.getByText('P')).toBeInTheDocument()
+      expect(screen.getByText('R')).toBeInTheDocument()
+
+      // key-instructions内に特定の説明があることを確認
+      const keyInstructions = instructionsContainer!
+      expect(keyInstructions.textContent).toContain(': 移動')
+      expect(keyInstructions.textContent).toContain(': 回転')
+      expect(keyInstructions.textContent).toContain(': 高速落下')
+      expect(keyInstructions.textContent).toContain(': ハードドロップ')
+      expect(keyInstructions.textContent).toContain(': ポーズ/再開')
+      expect(keyInstructions.textContent).toContain(': リスタート')
     })
   })
 

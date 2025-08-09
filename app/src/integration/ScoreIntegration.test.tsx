@@ -11,14 +11,14 @@ describe('Score Integration', () => {
       expect(screen.getByTestId('score-label')).toBeInTheDocument()
       expect(screen.getByTestId('score-value')).toBeInTheDocument()
       expect(screen.getByText('スコア')).toBeInTheDocument()
-      expect(screen.getByText('0')).toBeInTheDocument()
+      expect(screen.getByText('0点')).toBeInTheDocument()
     })
 
     it('スコア値が正しくフォーマット表示される', () => {
       render(<App />)
 
       // 初期スコア0が表示される
-      expect(screen.getByTestId('score-value')).toHaveTextContent('0')
+      expect(screen.getByTestId('score-value')).toHaveTextContent('0点')
     })
   })
 
@@ -29,7 +29,7 @@ describe('Score Integration', () => {
       // Ready状態でもスコア表示は表示される
       expect(screen.getByText('Ready')).toBeInTheDocument()
       expect(screen.getByTestId('score-value')).toBeInTheDocument()
-      expect(screen.getByText('0')).toBeInTheDocument()
+      expect(screen.getByText('0点')).toBeInTheDocument()
     })
   })
 })

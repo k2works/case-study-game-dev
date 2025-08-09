@@ -30,7 +30,7 @@ describe('GameOver Integration', () => {
 
       // スコア表示が存在することを確認
       expect(screen.getByTestId('score-value')).toBeInTheDocument()
-      expect(screen.getByText('0')).toBeInTheDocument()
+      expect(screen.getByText('0点')).toBeInTheDocument()
     })
   })
 
