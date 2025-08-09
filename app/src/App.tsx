@@ -220,7 +220,9 @@ function App() {
   const gameSettingsServiceInstance = container.resolve<GameSettingsService>(
     GAME_SETTINGS_SERVICE
   )
-  const autoDropSpeed = gameSettingsServiceInstance.getSetting('autoDropSpeed') as number
+  const autoDropSpeed = gameSettingsServiceInstance.getSetting(
+    'autoDropSpeed'
+  ) as number
   useAutoDrop({
     onDrop: handleAutoDrop,
     interval: autoDropSpeed,
@@ -324,9 +326,11 @@ function App() {
               <NextPuyoDisplay
                 key={settingsKey}
                 nextPair={gameUseCase.getNextPairs()[0] || null}
-                showShadow={gameSettingsServiceInstance.getSetting(
-                  'showShadow'
-                ) as boolean}
+                showShadow={
+                  gameSettingsServiceInstance.getSetting(
+                    'showShadow'
+                  ) as boolean
+                }
               />
               <HighScoreDisplay
                 highScores={highScores}

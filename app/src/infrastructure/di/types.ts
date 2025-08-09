@@ -22,4 +22,3 @@ export interface GameSettingsService {
   getSetting(key: 'showShadow'): boolean
   getSetting(key: string): unknown
 }
-
