@@ -64,6 +64,7 @@
   height: 30px;
   border-radius: 50%;
   border: 2px solid #fff;
+  position: relative; /* パターン表示のための相対位置指定を追加 */
 }
 
 .field {
@@ -116,6 +117,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.1s ease;
+  position: relative; /* パターン表示のための相対位置指定を追加 */
 }
 
 /* アニメーション無効時はtransitionを無効化 */
@@ -191,6 +193,93 @@
 
 .next-puyo-display .puyo.yellow {
   background: linear-gradient(135deg, #ffd93d 0%, #ff9f43 100%);
+}
+
+/* 色覚多様性対応: パターン・形状追加 */
+.game-board.color-blind-mode .cell.puyo::before,
+.next-puyo-area.color-blind-mode .next-puyo-display .puyo::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* 赤: 縦線パターン */
+.game-board.color-blind-mode .cell.puyo.red::before,
+.next-puyo-area.color-blind-mode .next-puyo-display .puyo.red::before {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(255, 255, 255, 0.6) 2px,
+    rgba(255, 255, 255, 0.6) 4px
+  );
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* 青: 円形パターン */
+.game-board.color-blind-mode .cell.puyo.blue::before,
+.next-puyo-area.color-blind-mode .next-puyo-display .puyo.blue::before {
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.8) 20%,
+    transparent 22%,
+    transparent 35%,
+    rgba(255, 255, 255, 0.6) 37%,
+    rgba(255, 255, 255, 0.6) 39%,
+    transparent 41%
+  );
+}
+
+/* 緑: 格子パターン */
+.game-board.color-blind-mode .cell.puyo.green::before,
+.next-puyo-area.color-blind-mode .next-puyo-display .puyo.green::before {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255, 255, 255, 0.6) 3px,
+    rgba(255, 255, 255, 0.6) 4px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255, 255, 255, 0.6) 3px,
+    rgba(255, 255, 255, 0.6) 4px
+  );
+}
+
+/* 黄: 斜線パターン */
+.game-board.color-blind-mode .cell.puyo.yellow::before,
+.next-puyo-area.color-blind-mode .next-puyo-display .puyo.yellow::before {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(255, 255, 255, 0.7) 2px,
+    rgba(255, 255, 255, 0.7) 4px
+  );
+}
+
+/* モバイルサイズのパターン調整 */
+@media (max-width: 768px) {
+  .game-board.color-blind-mode .cell.puyo::before {
+    font-size: 12px;
+    inset: 2px;
+  }
+  
+  .next-puyo-area.color-blind-mode .next-puyo-display .puyo::before {
+    font-size: 10px;
+    inset: 2px;
+  }
 }
 
 /* ホバー効果（デバッグ用） */

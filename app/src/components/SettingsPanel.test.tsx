@@ -316,6 +316,86 @@ describe('SettingsPanel', () => {
       expect(screen.getByTestId('save-button')).toBeInTheDocument()
       expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
       expect(screen.getByTestId('reset-defaults')).toBeInTheDocument()
+      expect(screen.getByTestId('color-blind-mode')).toBeInTheDocument()
+    })
+  })
+
+  describe('色覚多様性対応設定', () => {
+    it('色覚多様性対応のチェックボックスが表示される', () => {
+      render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
+
+      const colorBlindModeCheckbox = screen.getByTestId('color-blind-mode')
+      expect(colorBlindModeCheckbox).toBeInTheDocument()
+      expect(colorBlindModeCheckbox).not.toBeChecked() // デフォルトはfalse
+    })
+
+    it('色覚多様性対応の設定を変更できる', () => {
+      render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
+
+      const colorBlindModeCheckbox = screen.getByTestId('color-blind-mode')
+
+      // チェック
+      fireEvent.click(colorBlindModeCheckbox)
+      expect(colorBlindModeCheckbox).toBeChecked()
+
+      // チェック解除
+      fireEvent.click(colorBlindModeCheckbox)
+      expect(colorBlindModeCheckbox).not.toBeChecked()
+    })
+
+    it('色覚多様性対応の設定説明が表示される', () => {
+      render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
+
+      // ARIAの説明テキストが存在する
+      expect(screen.getByText('色覚多様性対応（パターン表示）')).toBeInTheDocument()
+      
+      // スクリーンリーダー用の説明文も存在する
+      const description = document.getElementById('color-blind-desc')
+      expect(description).toBeInTheDocument()
+      expect(description?.textContent).toContain('ぷよにパターンを追加して、色での区別が困難な方でもゲームを楽しめるようにします')
+    })
+
+    it('保存された色覚多様性対応設定が読み込まれる', () => {
+      const savedSettings = {
+        soundVolume: 0.5,
+        musicVolume: 0.3,
+        autoDropSpeed: 1000,
+        showGridLines: false,
+        showShadow: true,
+        animationsEnabled: true,
+        colorBlindMode: true, // 有効な設定で保存
+      }
+      mockLocalStorage.getItem.mockReturnValue(JSON.stringify(savedSettings))
+
+      render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
+
+      const colorBlindModeCheckbox = screen.getByTestId('color-blind-mode')
+      expect(colorBlindModeCheckbox).toBeChecked()
+    })
+
+    it('色覚多様性対応設定が保存される', () => {
+      render(<SettingsPanel isOpen={true} onClose={mockOnClose} />)
+
+      // 設定を変更
+      const colorBlindModeCheckbox = screen.getByTestId('color-blind-mode')
+      fireEvent.click(colorBlindModeCheckbox)
+
+      // 保存
+      const saveButton = screen.getByTestId('save-button')
+      fireEvent.click(saveButton)
+
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        'puyo-puyo-settings',
+        JSON.stringify({
+          soundVolume: 0.7,
+          musicVolume: 0.5,
+          autoDropSpeed: 1000,
+          showGridLines: false,
+          showShadow: true,
+          animationsEnabled: true,
+          colorBlindMode: true, // 変更された設定
+        })
+      )
     })
   })
 })

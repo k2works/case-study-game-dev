@@ -24,6 +24,7 @@ export interface GameSettings {
   showGridLines: boolean
   showShadow: boolean
   animationsEnabled: boolean
+  colorBlindMode: boolean
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -33,6 +34,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   showGridLines: false,
   showShadow: true,
   animationsEnabled: true,
+  colorBlindMode: false,
 }
 
 /**
@@ -281,6 +283,23 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               </label>
               <div id="animations-desc" className="sr-only">
                 ぷよの落下や消去のアニメーションを有効にします
+              </div>
+            </div>
+            <div className="setting-item">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={settings.colorBlindMode}
+                  onChange={(e) =>
+                    handleSettingChange('colorBlindMode', e.target.checked)
+                  }
+                  data-testid="color-blind-mode"
+                  aria-describedby="color-blind-desc"
+                />
+                色覚多様性対応（パターン表示）
+              </label>
+              <div id="color-blind-desc" className="sr-only">
+                ぷよにパターンを追加して、色での区別が困難な方でもゲームを楽しめるようにします
               </div>
             </div>
           </section>

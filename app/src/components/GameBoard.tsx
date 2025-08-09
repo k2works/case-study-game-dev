@@ -458,7 +458,7 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
   }
 
   // クラス名を動的に生成
-  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''} ${gameSettings.showShadow ? 'show-shadow' : ''} ${gameSettings.animationsEnabled ? 'animations-enabled' : ''}`
+  const gameBoardClass = `game-board ${gameSettings.showGridLines ? 'show-grid' : ''} ${gameSettings.showShadow ? 'show-shadow' : ''} ${gameSettings.animationsEnabled ? 'animations-enabled' : ''} ${gameSettings.colorBlindMode ? 'color-blind-mode' : ''}`
   const fieldClass = `field ${gameSettings.showShadow ? 'show-shadow' : ''}`
 
   return (

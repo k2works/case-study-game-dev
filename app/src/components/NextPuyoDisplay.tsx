@@ -5,15 +5,16 @@ import './NextPuyoDisplay.css'
 interface NextPuyoDisplayProps {
   nextPair: PuyoPair | null
   showShadow?: boolean
+  colorBlindMode?: boolean
 }
 
 export const NextPuyoDisplay = React.memo(
-  ({ nextPair, showShadow = true }: NextPuyoDisplayProps) => {
+  ({ nextPair, showShadow = true, colorBlindMode = false }: NextPuyoDisplayProps) => {
     if (!nextPair) {
       return null
     }
 
-    const containerClass = `next-puyo-area ${showShadow ? 'show-shadow' : ''}`
+    const containerClass = `next-puyo-area ${showShadow ? 'show-shadow' : ''} ${colorBlindMode ? 'color-blind-mode' : ''}`
 
     return (
       <div

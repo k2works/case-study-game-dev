@@ -5,6 +5,7 @@ export interface GameSettings {
   showGridLines: boolean
   showShadow: boolean
   animationsEnabled: boolean
+  colorBlindMode: boolean
 }
 
 export const DEFAULT_SETTINGS: GameSettings = {
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   showGridLines: false,
   showShadow: true,
   animationsEnabled: true,
+  colorBlindMode: false,
 }
 
 /**
@@ -95,6 +97,7 @@ class GameSettingsService {
       showGridLines: Boolean(settings.showGridLines),
       showShadow: Boolean(settings.showShadow),
       animationsEnabled: Boolean(settings.animationsEnabled),
+      colorBlindMode: Boolean(settings.colorBlindMode),
     }
   }
 
@@ -111,14 +114,34 @@ class GameSettingsService {
   hasChanges(current: GameSettings, original?: GameSettings): boolean {
     const compareWith = original || this.getSettings()
 
-    return (
-      current.soundVolume !== compareWith.soundVolume ||
-      current.musicVolume !== compareWith.musicVolume ||
-      current.autoDropSpeed !== compareWith.autoDropSpeed ||
-      current.showGridLines !== compareWith.showGridLines ||
-      current.showShadow !== compareWith.showShadow ||
-      current.animationsEnabled !== compareWith.animationsEnabled
-    )
+    return this.checkVolumeChanges(current, compareWith) ||
+           this.checkDisplayChanges(current, compareWith) ||
+           this.checkGameplayChanges(current, compareWith)
+  }
+
+  /**
+   * 音量設定の変更をチェック
+   */
+  private checkVolumeChanges(current: GameSettings, compareWith: GameSettings): boolean {
+    return current.soundVolume !== compareWith.soundVolume ||
+           current.musicVolume !== compareWith.musicVolume
+  }
+
+  /**
+   * 表示設定の変更をチェック
+   */
+  private checkDisplayChanges(current: GameSettings, compareWith: GameSettings): boolean {
+    return current.showGridLines !== compareWith.showGridLines ||
+           current.showShadow !== compareWith.showShadow ||
+           current.animationsEnabled !== compareWith.animationsEnabled ||
+           current.colorBlindMode !== compareWith.colorBlindMode
+  }
+
+  /**
+   * ゲームプレイ設定の変更をチェック
+   */
+  private checkGameplayChanges(current: GameSettings, compareWith: GameSettings): boolean {
+    return current.autoDropSpeed !== compareWith.autoDropSpeed
   }
 
   /**

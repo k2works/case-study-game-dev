@@ -357,6 +357,11 @@ function App() {
                     'showShadow'
                   ) as boolean
                 }
+                colorBlindMode={
+                  gameSettingsServiceInstance.getSetting(
+                    'colorBlindMode'
+                  ) as boolean
+                }
               />
               <HighScoreDisplay
                 highScores={highScores}
