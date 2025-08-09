@@ -219,14 +219,7 @@ describe('AccessibilityAuditor', () => {
       await auditor.auditGameSpecific()
 
       expect(mockAxe.run).toHaveBeenCalledWith(document, {
-        tags: ['wcag2a', 'wcag2aa', 'wcag21aa'],
-        rules: {
-          'color-contrast': { enabled: true },
-          keyboard: { enabled: true },
-          'focus-order-semantics': { enabled: true },
-          'aria-roles': { enabled: true },
-          'aria-required-attr': { enabled: true },
-        },
+        tags: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
       })
     })
   })

@@ -244,16 +244,11 @@ ${index + 1}. ${violation.help}
    * ゲーム固有のアクセシビリティチェック
    */
   public async auditGameSpecific(): Promise<AccessibilityReport> {
+    // タグベースの設定でより安全にルール選択
     const gameSpecificOptions = {
-      tags: ['wcag2a', 'wcag2aa', 'wcag21aa'],
-      rules: {
-        // ゲーム関連で特に重要なルール
-        'color-contrast': { enabled: true },
-        keyboard: { enabled: true },
-        'focus-order-semantics': { enabled: true },
-        'aria-roles': { enabled: true },
-        'aria-required-attr': { enabled: true },
-      },
+      tags: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
+      // rulesは特定のルール名に依存しないようコメントアウト
+      // 代わりにtagベースで包括的にチェック
     }
 
     return this.auditPage(document, gameSpecificOptions)
