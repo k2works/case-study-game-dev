@@ -124,14 +124,23 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   }
 
   return (
-    <div className="settings-overlay" data-testid="settings-overlay">
+    <div
+      className="settings-overlay"
+      data-testid="settings-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-title"
+    >
       <div className="settings-panel" data-testid="settings-panel">
         <div className="settings-header">
-          <h2>⚙️ ゲーム設定</h2>
+          <h2 id="settings-title" role="heading" aria-level={2}>
+            ⚙️ ゲーム設定
+          </h2>
           <button
             className="settings-close"
             onClick={handleCancel}
             data-testid="settings-close"
+            aria-label="設定パネルを閉じます"
           >
             ✕
           </button>
@@ -139,8 +148,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
         <div className="settings-content">
           {/* 音響設定 */}
-          <section className="settings-section">
-            <h3>🔊 音響設定</h3>
+          <section
+            className="settings-section"
+            role="group"
+            aria-labelledby="sound-settings-title"
+          >
+            <h3 id="sound-settings-title" role="heading" aria-level={3}>
+              🔊 音響設定
+            </h3>
             <div className="setting-item">
               <label htmlFor="sound-volume">効果音音量</label>
               <VolumeControl
@@ -166,8 +181,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           </section>
 
           {/* ゲームプレイ設定 */}
-          <section className="settings-section">
-            <h3>🎮 ゲームプレイ</h3>
+          <section
+            className="settings-section"
+            role="group"
+            aria-labelledby="gameplay-settings-title"
+          >
+            <h3 id="gameplay-settings-title" role="heading" aria-level={3}>
+              🎮 ゲームプレイ
+            </h3>
             <div className="setting-item">
               <label htmlFor="auto-drop-speed">自動落下速度</label>
               <select
@@ -177,6 +198,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   handleSettingChange('autoDropSpeed', parseInt(e.target.value))
                 }
                 data-testid="auto-drop-speed"
+                aria-describedby="auto-drop-speed-desc"
               >
                 <option value={2000}>遅い (2秒)</option>
                 <option value={1500}>やや遅い (1.5秒)</option>
@@ -184,12 +206,21 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <option value={750}>やや速い (0.75秒)</option>
                 <option value={500}>速い (0.5秒)</option>
               </select>
+              <div id="auto-drop-speed-desc" className="sr-only">
+                ぷよが自動的に落下する速度を設定します
+              </div>
             </div>
           </section>
 
           {/* 表示設定 */}
-          <section className="settings-section">
-            <h3>👁️ 表示設定</h3>
+          <section
+            className="settings-section"
+            role="group"
+            aria-labelledby="display-settings-title"
+          >
+            <h3 id="display-settings-title" role="heading" aria-level={3}>
+              👁️ 表示設定
+            </h3>
             <div className="setting-item">
               <label>
                 <input
@@ -199,9 +230,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     handleSettingChange('showGridLines', e.target.checked)
                   }
                   data-testid="show-grid-lines"
+                  aria-describedby="grid-lines-desc"
                 />
                 グリッド線を表示
               </label>
+              <div id="grid-lines-desc" className="sr-only">
+                ゲームフィールドにグリッド線を表示して、セルの区切りを明確にします
+              </div>
             </div>
             <div className="setting-item">
               <label>
@@ -212,9 +247,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     handleSettingChange('showShadow', e.target.checked)
                   }
                   data-testid="show-shadow"
+                  aria-describedby="shadow-desc"
                 />
                 ぷよの影を表示
               </label>
+              <div id="shadow-desc" className="sr-only">
+                ぷよに影効果を追加して、立体的な表示にします
+              </div>
             </div>
             <div className="setting-item">
               <label>
@@ -225,18 +264,27 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     handleSettingChange('animationsEnabled', e.target.checked)
                   }
                   data-testid="animations-enabled"
+                  aria-describedby="animations-desc"
                 />
                 アニメーションを有効化
               </label>
+              <div id="animations-desc" className="sr-only">
+                ぷよの落下や消去のアニメーションを有効にします
+              </div>
             </div>
           </section>
         </div>
 
-        <div className="settings-footer">
+        <div
+          className="settings-footer"
+          role="group"
+          aria-label="設定アクション"
+        >
           <button
             className="settings-button secondary"
             onClick={resetToDefaults}
             data-testid="reset-defaults"
+            aria-label="すべての設定をデフォルト値にリセットします"
           >
             デフォルトに戻す
           </button>
@@ -245,6 +293,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               className="settings-button secondary"
               onClick={handleCancel}
               data-testid="cancel-button"
+              aria-label="変更を破棄して設定パネルを閉じます"
             >
               キャンセル
             </button>
@@ -252,8 +301,19 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               className={`settings-button primary ${hasChanges ? 'has-changes' : ''}`}
               onClick={handleSave}
               data-testid="save-button"
+              aria-label="変更した設定を保存します"
+              aria-describedby={hasChanges ? 'changes-indicator' : undefined}
             >
               保存
+              {hasChanges && (
+                <span
+                  id="changes-indicator"
+                  className="sr-only"
+                  aria-live="polite"
+                >
+                  未保存の変更があります
+                </span>
+              )}
             </button>
           </div>
         </div>

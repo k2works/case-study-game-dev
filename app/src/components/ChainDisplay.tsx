@@ -53,8 +53,13 @@ export const ChainDisplay: React.FC<ChainDisplayProps> = ({
       className={className}
       style={style}
       key={`chain-${chainCount}-${Date.now()}`} // 強制的に再レンダリングを防ぐ
+      role="alert"
+      aria-live="assertive"
+      aria-label={`${chainCount}連鎖が発生しました`}
     >
-      <span className="chain-text">{chainCount}連鎖!</span>
+      <span className="chain-text" aria-hidden="true">
+        {chainCount}連鎖!
+      </span>
     </div>
   )
 }

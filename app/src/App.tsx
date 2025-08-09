@@ -153,6 +153,7 @@ function App() {
           key="start"
           data-testid="start-button"
           onClick={handleStartGame}
+          aria-label="新しいゲームを開始します"
         >
           ゲーム開始
         </button>
@@ -161,7 +162,12 @@ function App() {
 
     if (gameState === GameState.PLAYING) {
       buttons.push(
-        <button key="pause" data-testid="pause-button" onClick={handlePause}>
+        <button
+          key="pause"
+          data-testid="pause-button"
+          onClick={handlePause}
+          aria-label="ゲームを一時停止します"
+        >
           ⏸️ ポーズ
         </button>
       )
@@ -169,7 +175,12 @@ function App() {
 
     if (gameState === GameState.PAUSED) {
       buttons.push(
-        <button key="resume" data-testid="resume-button" onClick={handleResume}>
+        <button
+          key="resume"
+          data-testid="resume-button"
+          onClick={handleResume}
+          aria-label="ゲームを再開します"
+        >
           ▶️ 再開
         </button>
       )
@@ -181,6 +192,7 @@ function App() {
           key="restart"
           data-testid="restart-button"
           onClick={handleRestart}
+          aria-label="ゲームをリスタートします"
         >
           🔄 リスタート
         </button>
@@ -193,6 +205,8 @@ function App() {
         data-testid="settings-button"
         onClick={() => setSettingsOpen(true)}
         className="settings-toggle"
+        aria-label="ゲーム設定を開きます"
+        aria-expanded={settingsOpen}
       >
         ⚙️ 設定
       </button>

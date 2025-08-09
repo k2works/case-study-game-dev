@@ -69,9 +69,26 @@ export const HighScoreDisplay: React.FC<HighScoreDisplayProps> = ({
 
   if (displayScores.length === 0) {
     return (
-      <div className="high-score-display" data-testid="high-score-display">
-        <h3 className="high-score-title">ハイスコア</h3>
-        <div className="no-scores" data-testid="no-scores">
+      <div
+        className="high-score-display"
+        data-testid="high-score-display"
+        role="complementary"
+        aria-labelledby="high-score-title"
+      >
+        <h3
+          id="high-score-title"
+          className="high-score-title"
+          role="heading"
+          aria-level={3}
+        >
+          ハイスコア
+        </h3>
+        <div
+          className="no-scores"
+          data-testid="no-scores"
+          role="status"
+          aria-live="polite"
+        >
           <p>まだスコアがありません</p>
           <p className="no-scores-hint">最初のスコアを記録しましょう！</p>
         </div>
@@ -80,28 +97,48 @@ export const HighScoreDisplay: React.FC<HighScoreDisplayProps> = ({
   }
 
   return (
-    <div className="high-score-display" data-testid="high-score-display">
-      <h3 className="high-score-title">ハイスコア</h3>
-      <div className="score-list">
+    <div
+      className="high-score-display"
+      data-testid="high-score-display"
+      role="complementary"
+      aria-labelledby="high-score-title"
+    >
+      <h3
+        id="high-score-title"
+        className="high-score-title"
+        role="heading"
+        aria-level={3}
+      >
+        ハイスコア
+      </h3>
+      <div className="score-list" role="list" aria-label="ハイスコアランキング">
         {displayScores.map((record) => (
           <div
             key={`${record.score}-${record.date}`}
             className={`score-item ${isCurrentScore(record.score) ? 'current-score' : ''}`}
             data-testid={`score-item-${record.rank}`}
+            role="listitem"
+            aria-label={`第${record.rank}位: ${formatScore(record.score)}点, ${formatDate(record.date)}`}
           >
-            <div className="rank-icon" data-testid={`rank-icon-${record.rank}`}>
+            <div
+              className="rank-icon"
+              data-testid={`rank-icon-${record.rank}`}
+              aria-hidden="true"
+            >
               {getRankIcon(record.rank)}
             </div>
             <div className="score-details">
               <div
                 className="score-value"
                 data-testid={`score-value-${record.rank}`}
+                aria-hidden="true"
               >
                 {formatScore(record.score)}
               </div>
               <div
                 className="score-date"
                 data-testid={`score-date-${record.rank}`}
+                aria-hidden="true"
               >
                 {formatDate(record.date)}
               </div>
@@ -110,6 +147,9 @@ export const HighScoreDisplay: React.FC<HighScoreDisplayProps> = ({
               <div
                 className="current-indicator"
                 data-testid="current-indicator"
+                role="status"
+                aria-live="polite"
+                aria-label="新記録達成"
               >
                 NEW!
               </div>

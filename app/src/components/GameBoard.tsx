@@ -462,21 +462,46 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
   const fieldClass = `field ${gameSettings.showShadow ? 'show-shadow' : ''}`
 
   return (
-    <div data-testid="game-board" className={gameBoardClass}>
+    <div
+      data-testid="game-board"
+      className={gameBoardClass}
+      role="application"
+      aria-label="ぷよぷよゲームフィールド"
+      aria-describedby="game-instructions"
+    >
       {getGameStateText() && (
-        <div className="game-info">
+        <div
+          className="game-info"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           <div className="game-status">
             <span>{getGameStateText()}</span>
           </div>
         </div>
       )}
-      <div className={fieldClass}>
+      <div
+        className={fieldClass}
+        role="grid"
+        aria-label="ぷよぷよゲームフィールド (6列 × 14行)"
+        aria-readonly="true"
+      >
         {renderedField}
-        <div className="animated-puyos-container">
+        <div
+          className="animated-puyos-container"
+          aria-live="assertive"
+          aria-label="アニメーション表示エリア"
+        >
           {renderAnimatedPuyos()}
           {renderDisappearEffects()}
           {renderChainDisplays()}
         </div>
+      </div>
+
+      {/* スクリーンリーダー用の隠しテキスト */}
+      <div id="game-instructions" className="sr-only" aria-hidden="false">
+        矢印キーでぷよを移動、上キーまたはZキーで回転、スペースキーでハードドロップ、Pキーでポーズ
       </div>
     </div>
   )
