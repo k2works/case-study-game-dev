@@ -6,7 +6,8 @@ import { NextPuyoDisplay } from './components/NextPuyoDisplay'
 import { GameOverDisplay } from './components/GameOverDisplay'
 import { HighScoreDisplay } from './components/HighScoreDisplay'
 import { SettingsPanel } from './components/SettingsPanel'
-import { Game, GameState } from './domain/Game'
+import { GameState } from './domain/Game'
+import { GameUseCase } from './application/GameUseCase'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
 import { soundEffect, SoundType } from './services/SoundEffect'
@@ -15,7 +16,7 @@ import { highScoreService, HighScoreRecord } from './services/HighScoreService'
 import { gameSettingsService } from './services/GameSettingsService'
 
 function App() {
-  const [game] = useState(() => new Game())
+  const [gameUseCase] = useState(() => new GameUseCase())
   const [renderKey, setRenderKey] = useState(0)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsKey, setSettingsKey] = useState(0) // 設定変更を反映するためのキー
@@ -36,86 +37,76 @@ function App() {
   }, [])
 
   const handleStartGame = () => {
-    game.start()
+    gameUseCase.startNewGame()
     forceRender()
   }
 
   const handlePause = useCallback(() => {
-    game.pause()
+    gameUseCase.pauseGame()
     forceRender()
-  }, [game, forceRender])
+  }, [gameUseCase, forceRender])
 
   const handleResume = useCallback(() => {
-    game.resume()
+    gameUseCase.resumeGame()
     forceRender()
-  }, [game, forceRender])
+  }, [gameUseCase, forceRender])
 
   const handleRestart = useCallback(() => {
-    // 新しいゲームインスタンスを作成してリスタート
-    Object.assign(game, new Game())
-    game.start()
+    gameUseCase.restartGame()
     // 現在のスコアハイライトをクリア
     setCurrentScore(undefined)
     forceRender()
-  }, [game, forceRender])
+  }, [gameUseCase, forceRender])
 
   // キーボード操作のハンドラー
   const keyboardHandlers = {
     onMoveLeft: useCallback(() => {
-      if (game.state === GameState.PLAYING) {
-        const moved = game.moveLeft()
+      if (gameUseCase.isPlaying()) {
+        const moved = gameUseCase.moveLeft()
         if (moved) {
           soundEffect.play(SoundType.PUYO_MOVE)
         }
         forceRender()
       }
-    }, [game, forceRender]),
+    }, [gameUseCase, forceRender]),
     onMoveRight: useCallback(() => {
-      if (game.state === GameState.PLAYING) {
-        const moved = game.moveRight()
+      if (gameUseCase.isPlaying()) {
+        const moved = gameUseCase.moveRight()
         if (moved) {
           soundEffect.play(SoundType.PUYO_MOVE)
         }
         forceRender()
       }
-    }, [game, forceRender]),
+    }, [gameUseCase, forceRender]),
     onRotate: useCallback(() => {
-      if (game.state === GameState.PLAYING) {
-        const rotated = game.rotate()
+      if (gameUseCase.isPlaying()) {
+        const rotated = gameUseCase.rotate()
         if (rotated) {
           soundEffect.play(SoundType.PUYO_ROTATE)
         }
         forceRender()
       }
-    }, [game, forceRender]),
+    }, [gameUseCase, forceRender]),
     onDrop: useCallback(() => {
-      if (game.state === GameState.PLAYING) {
-        const dropped = game.drop()
+      if (gameUseCase.isPlaying()) {
+        const dropped = gameUseCase.moveDown()
         if (!dropped) {
           // これ以上落下できない場合、ぷよを固定
-          game.fixCurrentPair()
+          gameUseCase.getGameInstance().fixCurrentPair()
         }
         forceRender()
       }
-    }, [game, forceRender]),
+    }, [gameUseCase, forceRender]),
     onHardDrop: useCallback(() => {
-      if (game.state === GameState.PLAYING) {
-        // 落ちるところまで一気に落下
-        while (game.drop()) {
-          // 落下し続ける
-        }
-        // 固定
-        game.fixCurrentPair()
+      if (gameUseCase.isPlaying()) {
+        gameUseCase.hardDrop()
         forceRender()
       }
-    }, [game, forceRender]),
+    }, [gameUseCase, forceRender]),
     onPause: useCallback(() => {
-      if (game.state === GameState.PLAYING) {
-        handlePause()
-      } else if (game.state === GameState.PAUSED) {
-        handleResume()
-      }
-    }, [game, handlePause, handleResume]),
+      gameUseCase.togglePause()
+      forceRender()
+    }, [gameUseCase, forceRender]),
     onRestart: useCallback(() => {
       handleRestart()
     }, [handleRestart]),
@@ -124,8 +115,9 @@ function App() {
   // ゲーム状態に応じたコントロールボタンを表示
   const renderControlButtons = () => {
     const buttons = []
+    const gameState = gameUseCase.getGameState()
 
-    if (game.state === GameState.READY) {
+    if (gameState === GameState.READY) {
       buttons.push(
         <button
           key="start"
@@ -137,7 +129,7 @@ function App() {
       )
     }
 
-    if (game.state === GameState.PLAYING) {
+    if (gameState === GameState.PLAYING) {
       buttons.push(
         <button key="pause" data-testid="pause-button" onClick={handlePause}>
           ⏸️ ポーズ
@@ -145,7 +137,7 @@ function App() {
       )
     }
 
-    if (game.state === GameState.PAUSED) {
+    if (gameState === GameState.PAUSED) {
       buttons.push(
         <button key="resume" data-testid="resume-button" onClick={handleResume}>
           ▶️ 再開
@@ -153,7 +145,7 @@ function App() {
       )
     }
 
-    if (game.state === GameState.PLAYING || game.state === GameState.PAUSED) {
+    if (gameState === GameState.PLAYING || gameState === GameState.PAUSED) {
       buttons.push(
         <button
           key="restart"
@@ -184,22 +176,22 @@ function App() {
 
   // 自動落下システム
   const handleAutoDrop = useCallback(() => {
-    if (game.state === GameState.PLAYING) {
-      const dropped = game.drop()
+    if (gameUseCase.isPlaying()) {
+      const dropped = gameUseCase.moveDown()
       if (!dropped) {
         // これ以上落下できない場合、ぷよを固定
-        game.fixCurrentPair()
+        gameUseCase.getGameInstance().fixCurrentPair()
       }
       forceRender()
     }
-  }, [game, forceRender])
+  }, [gameUseCase, forceRender])
 
   // 自動落下を設定（設定から取得した間隔） - ポーズ中は停止
   const autoDropSpeed = gameSettingsService.getSetting('autoDropSpeed')
   useAutoDrop({
     onDrop: handleAutoDrop,
     interval: autoDropSpeed,
-    enabled: game.state === GameState.PLAYING,
+    enabled: gameUseCase.isPlaying(),
   })
 
   // ゲーム開始時の処理
@@ -215,7 +207,7 @@ function App() {
     })
 
     // ハイスコア処理
-    const finalScore = game.score
+    const finalScore = gameUseCase.getScore().current
     if (finalScore > 0 && highScoreService.isHighScore(finalScore)) {
       const updatedScores = highScoreService.addScore(finalScore)
       setHighScores(updatedScores)
@@ -250,12 +242,12 @@ function App() {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [game.score]
+    [gameUseCase]
   )
 
   // ゲーム状態の変化を検出してBGMと効果音を制御
   useEffect(() => {
-    const currentState = game.state
+    const currentState = gameUseCase.getGameState()
     const previousState = previousGameState.current
 
     if (previousState !== currentState) {
@@ -263,7 +255,7 @@ function App() {
       previousGameState.current = currentState
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game.state])
+  }, [renderKey])
 
   return (
     <div className="app">
@@ -275,13 +267,16 @@ function App() {
         <div className="game-container">
           <div className="game-play-area">
             <div className="game-board-area">
-              <GameBoard key={`${renderKey}-${settingsKey}`} game={game} />
+              <GameBoard
+                key={`${renderKey}-${settingsKey}`}
+                game={gameUseCase.getGameInstance()}
+              />
             </div>
             <div className="game-info-area">
-              <ScoreDisplay score={game.score} />
+              <ScoreDisplay score={gameUseCase.getScore().current} />
               <NextPuyoDisplay
                 key={settingsKey}
-                nextPair={game.nextPair}
+                nextPair={gameUseCase.getNextPairs()[0] || null}
                 showShadow={gameSettingsService.getSetting('showShadow')}
               />
               <HighScoreDisplay
@@ -303,7 +298,7 @@ function App() {
               <div>R: リスタート</div>
             </div>
           </div>
-          {game.state === GameState.PAUSED && (
+          {gameUseCase.isPaused() && (
             <div className="pause-overlay" data-testid="pause-overlay">
               <div className="pause-message">
                 <h2>⏸️ ポーズ中</h2>
@@ -311,8 +306,11 @@ function App() {
               </div>
             </div>
           )}
-          {game.state === GameState.GAME_OVER && (
-            <GameOverDisplay score={game.score} onRestart={handleRestart} />
+          {gameUseCase.isGameOver() && (
+            <GameOverDisplay
+              score={gameUseCase.getScore().current}
+              onRestart={handleRestart}
+            />
           )}
         </div>
       </main>
