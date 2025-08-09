@@ -477,6 +477,13 @@
   background: #a8a8a8;
 }
 
+.setting-description {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
 /* スクリーンリーダー専用（視覚的に隠す） */
 .sr-only {
   position: absolute;

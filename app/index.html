@@ -4,6 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- PWAアイコン -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+
+    <!-- パフォーマンス最適化のためのResource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+    <!-- 重要なリソースのプリロード -->
+    <link rel="modulepreload" href="/src/main.tsx" />
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- テーマカラー -->
+    <meta name="theme-color" content="#4ecdc4" />
+
+    <!-- Apple PWA設定 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ぷよぷよ" />
+
     <title>ぷよぷよゲーム</title>
   </head>
   <body>

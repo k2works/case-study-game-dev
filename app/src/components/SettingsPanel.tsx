@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { VolumeControl } from './VolumeControl'
+import WebVitalsDisplay from './WebVitalsDisplay'
 import { soundEffect } from '../services/SoundEffect'
 import { backgroundMusic } from '../services/BackgroundMusic'
 import { useFocusTrap } from '../hooks/useFocusTrap'
@@ -47,6 +48,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 }) => {
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS)
   const [hasChanges, setHasChanges] = useState(false)
+  const [showWebVitals, setShowWebVitals] = useState(false)
 
   // 設定の読み込み
   useEffect(() => {
@@ -303,6 +305,30 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               </div>
             </div>
           </section>
+
+          {/* パフォーマンス設定 */}
+          <section
+            className="settings-section"
+            role="group"
+            aria-labelledby="performance-settings-title"
+          >
+            <h3 id="performance-settings-title" role="heading" aria-level={3}>
+              📊 パフォーマンス
+            </h3>
+            <div className="setting-item">
+              <button
+                className="settings-button secondary"
+                onClick={() => setShowWebVitals(true)}
+                data-testid="show-web-vitals"
+                aria-label="Core Web Vitalsのパフォーマンス指標を表示します"
+              >
+                Core Web Vitals を表示
+              </button>
+              <div className="setting-description">
+                Webパフォーマンス指標を確認できます
+              </div>
+            </div>
+          </section>
         </div>
 
         <div
@@ -348,6 +374,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           </div>
         </div>
       </div>
+
+      <WebVitalsDisplay
+        isOpen={showWebVitals}
+        onClose={() => setShowWebVitals(false)}
+      />
     </div>
   )
 }
