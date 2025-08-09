@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -7,7 +8,7 @@ import { webVitalsReporter } from './utils/webVitals'
 // Web Vitalsの測定開始
 webVitalsReporter.onMetric((metric) => {
   // パフォーマンス指標をコンソールに出力（開発用）
-  if ((import.meta as any).env?.DEV) {
+  if (import.meta.env.DEV) {
     console.log(
       `Web Vital: ${metric.name} = ${metric.value} (${metric.rating})`
     )

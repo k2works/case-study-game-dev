@@ -66,6 +66,7 @@
     "workbox-window": "^7.3.0"
   },
   "dependencies": {
+    "axe-core": "^4.10.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "web-vitals": "^5.1.0"

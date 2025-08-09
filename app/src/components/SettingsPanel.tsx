@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { VolumeControl } from './VolumeControl'
 import WebVitalsDisplay from './WebVitalsDisplay'
+import AccessibilityAuditDisplay from './AccessibilityAuditDisplay'
 import { soundEffect } from '../services/SoundEffect'
 import { backgroundMusic } from '../services/BackgroundMusic'
 import { useFocusTrap } from '../hooks/useFocusTrap'
@@ -49,6 +50,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS)
   const [hasChanges, setHasChanges] = useState(false)
   const [showWebVitals, setShowWebVitals] = useState(false)
+  const [showAccessibilityAudit, setShowAccessibilityAudit] = useState(false)
 
   // 設定の読み込み
   useEffect(() => {
@@ -328,6 +330,19 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 Webパフォーマンス指標を確認できます
               </div>
             </div>
+            <div className="setting-item">
+              <button
+                className="settings-button secondary"
+                onClick={() => setShowAccessibilityAudit(true)}
+                data-testid="show-accessibility-audit"
+                aria-label="アクセシビリティ監査を実行してスコアを表示します"
+              >
+                アクセシビリティ監査
+              </button>
+              <div className="setting-description">
+                WCAG 2.1 AA基準でアクセシビリティを評価します
+              </div>
+            </div>
           </section>
         </div>
 
@@ -378,6 +393,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       <WebVitalsDisplay
         isOpen={showWebVitals}
         onClose={() => setShowWebVitals(false)}
+      />
+
+      <AccessibilityAuditDisplay
+        isOpen={showAccessibilityAudit}
+        onClose={() => setShowAccessibilityAudit(false)}
       />
     </div>
   )

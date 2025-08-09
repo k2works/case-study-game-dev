@@ -45,7 +45,6 @@ describe('WebVitalsReporter', () => {
     it('メトリクスが設定されると取得できる', () => {
       // プライベートメソッドのテストのため、リフレクションを使用
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handleMetric = (reporter as any).handleMetric.bind(reporter)
 
       const mockMetric = {
