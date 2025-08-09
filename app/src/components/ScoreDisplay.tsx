@@ -1,12 +1,13 @@
+import React, { useMemo } from 'react'
 import './ScoreDisplay.css'
 
 interface ScoreDisplayProps {
   score: number
 }
 
-export const ScoreDisplay = ({ score }: ScoreDisplayProps) => {
-  // スコアをカンマ区切りでフォーマット
-  const formattedScore = score.toLocaleString()
+export const ScoreDisplay = React.memo(({ score }: ScoreDisplayProps) => {
+  // スコアをカンマ区切りでフォーマット（memoization）
+  const formattedScore = useMemo(() => score.toLocaleString(), [score])
 
   return (
     <div className="score-display">
@@ -18,4 +19,4 @@ export const ScoreDisplay = ({ score }: ScoreDisplayProps) => {
       </div>
     </div>
   )
-}
+})

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Game, GameState } from '../domain/Game'
 import { Puyo } from '../domain/Puyo'
 import { AnimatedPuyo } from './AnimatedPuyo'
@@ -36,7 +36,7 @@ interface ChainInfo {
   timestamp: number
 }
 
-export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
+export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
   const [fallingPuyos, setFallingPuyos] = useState<FallingPuyo[]>([])
   const [disappearingPuyos, setDisappearingPuyos] = useState<
     DisappearingPuyo[]
@@ -163,7 +163,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
   }, [game.state])
 
-  const getCurrentFieldState = (): (Puyo | null)[][] => {
+  const getCurrentFieldState = useCallback((): (Puyo | null)[][] => {
     const fieldState: (Puyo | null)[][] = Array(game.field.width)
       .fill(null)
       .map(() => Array(game.field.height).fill(null))
@@ -175,35 +175,38 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
 
     return fieldState
-  }
+  }, [game.field])
 
-  const detectDisappearedPuyos = (
-    currentField: (Puyo | null)[][],
-    previousField: (Puyo | null)[][]
-  ): DisappearingPuyo[] => {
-    const disappearedPuyos: DisappearingPuyo[] = []
+  const detectDisappearedPuyos = useCallback(
+    (
+      currentField: (Puyo | null)[][],
+      previousField: (Puyo | null)[][]
+    ): DisappearingPuyo[] => {
+      const disappearedPuyos: DisappearingPuyo[] = []
 
-    for (let x = 0; x < game.field.width; x++) {
-      for (let y = 0; y < game.field.height; y++) {
-        const prevPuyo = previousField[x][y]
-        const currentPuyo = currentField[x][y]
+      for (let x = 0; x < game.field.width; x++) {
+        for (let y = 0; y < game.field.height; y++) {
+          const prevPuyo = previousField[x][y]
+          const currentPuyo = currentField[x][y]
 
-        if (prevPuyo && !currentPuyo) {
-          disappearedPuyos.push({
-            id: `disappear-${x}-${y}-${Date.now()}`,
-            color: prevPuyo.color,
-            x,
-            y,
-          })
+          if (prevPuyo && !currentPuyo) {
+            disappearedPuyos.push({
+              id: `disappear-${x}-${y}-${Date.now()}`,
+              color: prevPuyo.color,
+              x,
+              y,
+            })
+          }
         }
       }
-    }
 
-    return disappearedPuyos
-  }
+      return disappearedPuyos
+    },
+    [game.field]
+  )
 
-  // フィールドの状態を文字列化して変化を検出
-  const getFieldSignature = () => {
+  // フィールドの状態を文字列化して変化を検出（memoization）
+  const fieldSignature = useMemo(() => {
     let signature = ''
     for (let x = 0; x < game.field.width; x++) {
       for (let y = 0; y < game.field.height; y++) {
@@ -212,7 +215,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
       }
     }
     return signature
-  }
+  }, [game.field])
 
   // 消去エフェクトの検出
   useEffect(() => {
@@ -250,7 +253,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     // 現在のフィールド状態を保存
     previousFieldState.current = currentField
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getFieldSignature()])
+  }, [fieldSignature])
 
   // 新しい連鎖結果ベースの連鎖表示検出
   useEffect(() => {
@@ -344,7 +347,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     return { puyoClass: '', puyoColor: '' }
   }
 
-  const renderField = () => {
+  // フィールド描画の最適化（memoization）
+  const renderedField = useMemo(() => {
     const cells = []
 
     // 隠しライン（y < 2）は表示しない、見えるフィールド部分のみ表示
@@ -366,7 +370,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
     }
 
     return cells
-  }
+  }, [game.field, game.currentPair, game.state])
 
   const getGameStateText = () => {
     switch (game.state) {
@@ -446,7 +450,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
         </div>
       )}
       <div className={fieldClass}>
-        {renderField()}
+        {renderedField}
         <div className="animated-puyos-container">
           {renderAnimatedPuyos()}
           {renderDisappearEffects()}
@@ -455,6 +459,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
       </div>
     </div>
   )
-}
+})
 
 export default GameBoard
