@@ -1,0 +1,228 @@
+/* レスポンシブデザイン: 共通スタイル */
+
+/* カスタムプロパティ: ブレークポイント定義 */
+:root {
+  /* ブレークポイント (CSS Variablesでは使用できないが、コメントとして記録) */
+  /*
+    --mobile-small: 480px;
+    --mobile-large: 768px;
+    --tablet: 1024px;
+    --desktop: 1200px;
+  */
+
+  /* レスポンシブ用の基本スペーシング */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* レスポンシブ用のフォントサイズ */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+
+  /* タッチターゲットサイズ (アクセシビリティ対応) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+}
+
+/* レスポンシブフォントサイズ調整 */
+@media (max-width: 480px) {
+  :root {
+    --space-md: 0.75rem;
+    --space-lg: 1rem;
+    --space-xl: 1.5rem;
+    --text-sm: 0.8rem;
+    --text-md: 0.9rem;
+    --text-lg: 1rem;
+    --text-xl: 1.1rem;
+    --text-2xl: 1.3rem;
+    --text-3xl: 1.8rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --space-lg: 2rem;
+    --space-xl: 2.5rem;
+    --text-lg: 1.2rem;
+    --text-xl: 1.375rem;
+    --text-2xl: 1.75rem;
+    --text-3xl: 2.5rem;
+  }
+}
+
+/* 共通レスポンシブユーティリティクラス */
+
+/* 表示制御 */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
+
+/* スペーシング調整 */
+.responsive-padding {
+  padding: var(--space-md);
+}
+
+.responsive-margin {
+  margin: var(--space-md);
+}
+
+.responsive-gap {
+  gap: var(--space-md);
+}
+
+/* テキストサイズ調整 */
+.responsive-text {
+  font-size: var(--text-md);
+}
+
+.responsive-text-large {
+  font-size: var(--text-lg);
+}
+
+.responsive-text-xlarge {
+  font-size: var(--text-xl);
+}
+
+/* レスポンシブ・フレキシブル・レイアウト */
+.responsive-flex {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.responsive-flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .responsive-flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* タッチターゲット最適化 */
+.touch-target {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+}
+
+.touch-target-comfortable {
+  min-height: var(--touch-target-comfortable);
+  min-width: var(--touch-target-comfortable);
+}
+
+/* アスペクト比保持 */
+.aspect-ratio-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-ratio-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-ratio-1-1 {
+  aspect-ratio: 1 / 1;
+}
+
+/* 現代的な CSS Grid レスポンシブレイアウト */
+.responsive-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.responsive-grid-2 {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@media (max-width: 480px) {
+  .responsive-grid,
+  .responsive-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ビューポートに基づく最大幅制限 */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+@media (max-width: 480px) {
+  .container,
+  .container-narrow,
+  .container-wide {
+    padding: 0 var(--space-sm);
+  }
+}
+
+/* 印刷対応 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .responsive-flex,
+  .responsive-flex-column {
+    break-inside: avoid;
+  }
+}
+
+/* ハイコントラスト対応 */
+@media (prefers-contrast: high) {
+  .responsive-text {
+    font-weight: 600;
+  }
+}
+
+/* アニメーション制限対応 */
+@media (prefers-reduced-motion: reduce) {
+  .responsive-flex,
+  .responsive-flex-column,
+  .responsive-grid {
+    transition: none !important;
+    animation: none !important;
+  }
+}

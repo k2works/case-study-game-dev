@@ -1,3 +1,6 @@
+/* レスポンシブデザイン共通スタイルをインポート */
+@import './styles/responsive.css';
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -23,9 +26,72 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  /* スクロールバーのスタイリング */
+  overflow-x: hidden;
+}
+
+/* レスポンシブデザイン: ビューポート対応 */
+/* iOS Safariの100vh問題対応 */
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* フォントサイズのレスポンシブ調整 */
+@media (max-width: 480px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  :root {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 769px) {
+  :root {
+    font-size: 16px;
+  }
+}
+
+/* 高解像度ディスプレイ対応 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 #root {
   width: 100%;
   text-align: center;
+  /* レスポンシブデザイン: 最大幅制限 */
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* アクセシビリティ: モーションを優先しないユーザー向け */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ダークモード対応 (将来的な拡張用) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* コントラスト優先ユーザー対応 */
+@media (prefers-contrast: high) {
+  :root {
+    --contrast-multiplier: 1.3;
+  }
 }

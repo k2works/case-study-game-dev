@@ -1,0 +1,117 @@
+/* レスポンシブデザインテスト用CSS */
+
+.responsive-test-container {
+  padding: 1rem;
+  margin: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.breakpoint-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  z-index: 9999;
+  display: none;
+}
+
+/* ブレークポイント表示 */
+@media (max-width: 480px) {
+  .breakpoint-indicator::after {
+    content: 'Mobile S (≤480px)';
+  }
+  .breakpoint-indicator {
+    display: block;
+    background: #ff6b6b;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .breakpoint-indicator::after {
+    content: 'Mobile L (481px-768px)';
+  }
+  .breakpoint-indicator {
+    display: block;
+    background: #ffa726;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .breakpoint-indicator::after {
+    content: 'Tablet (769px-1024px)';
+  }
+  .breakpoint-indicator {
+    display: block;
+    background: #4ecdc4;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1199px) {
+  .breakpoint-indicator::after {
+    content: 'Desktop S (1025px-1199px)';
+  }
+  .breakpoint-indicator {
+    display: block;
+    background: #45b7d1;
+  }
+}
+
+@media (min-width: 1200px) {
+  .breakpoint-indicator::after {
+    content: 'Desktop L (≥1200px)';
+  }
+  .breakpoint-indicator {
+    display: block;
+    background: #96ceb4;
+  }
+}
+
+/* 横画面表示 */
+@media (orientation: landscape) and (max-height: 600px) {
+  .breakpoint-indicator::before {
+    content: 'Landscape ';
+  }
+  .breakpoint-indicator {
+    background: #9c27b0 !important;
+  }
+}
+
+/* テストグリッド */
+.test-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin: 1rem 0;
+}
+
+.test-grid-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* デバッグモード用（開発時のみ使用） */
+.debug-mode * {
+  outline: 1px solid red !important;
+  outline-offset: 1px !important;
+}
+
+.debug-mode .touch-target {
+  background: rgba(255, 0, 0, 0.1) !important;
+}
+
+.debug-mode .responsive-flex {
+  background: rgba(0, 255, 0, 0.1) !important;
+}
+
+.debug-mode .responsive-grid {
+  background: rgba(0, 0, 255, 0.1) !important;
+}
