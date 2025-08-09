@@ -135,29 +135,57 @@ state イテレーション {
 @startuml "イテレーション開発プロセス"
 
 start
-:ユースケース作成;
-:TODOリスト作成;
 
-repeat
-  :TODO選択;
-  
-  repeat
-    :失敗テスト作成 (Red);
-    :最小実装 (Green);
-    :リファクタリング (Refactor);
-    :品質チェック;
-    if (品質OK?) then (yes)
-      :コミット;
+partition "イテレーション開始" {
+}
+
+repeat :TODO確認;
+partition "TDD実装サイクル" {
+    repeat
+      :TODO選択;
+      
+      repeat
+        :失敗テスト作成 (Red);
+        :最小実装 (Green);
+        :リファクタリング (Refactor);
+        :品質チェック;
+        if (品質OK?) then (yes)
+          :コミット;
+        else (no)
+          :修正;
+        endif
+      repeat while (TODO完了?)
+      partition "コードレビュー" {
+      }
+    repeat while (全TODO完了?)
+}
+
+if (イテレーション完了?) then (yes)
+  partition "受け入れ" {
+    partition "ユーザーレビュー" {
+    }
+    if (受け入れOK?) then (yes)
+      partition "ふりかえり" {
+      }
     else (no)
-      :修正;
+      partition "修正対応" {
+      }
     endif
-  repeat while (TODO完了?)
-  :設計リファクタリング;
-  
-repeat while (全TODO完了?)
-:設計リファクタリング;
-:イテレーションレビュー;
-:ふりかえり;
+  }
+else (no)
+  partition "設計リファクタリング" {
+      partition "アーキテクチャリファクタリング" {
+      }
+      partition "データモデルリファクタリング" {
+      }
+      partition "ドメインモデルリファクタリング" {
+      }
+      partition "UIリファクタリング" {
+      }
+  }
+endif
+repeat while (次のTODO?)
+
 stop
 
 @enduml
