@@ -7,6 +7,7 @@ import { GameOverDisplay } from './components/GameOverDisplay'
 import { HighScoreDisplay } from './components/HighScoreDisplay'
 import { SettingsPanel } from './components/SettingsPanel'
 import { TouchControls } from './components/TouchControls'
+import { PWANotification } from './components/PWANotification'
 import { GameState } from './domain/Game'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useAutoDrop } from './hooks/useAutoDrop'
@@ -23,6 +24,7 @@ import {
   GAME_SETTINGS_SERVICE,
   initializeApplication,
 } from './infrastructure/di'
+import { pwaService } from './services/PWAService'
 import type { GameUseCase } from './application/GameUseCase'
 import type {
   SoundEffectService,
@@ -56,6 +58,9 @@ function App() {
       container.resolve<HighScoreService>(HIGH_SCORE_SERVICE)
     const scores = highScoreServiceInstance.getHighScores()
     setHighScores(scores)
+
+    // PWA Service Workerの登録
+    pwaService.registerSW().catch(console.error)
   }, [])
 
   const forceRender = useCallback(() => {
@@ -456,6 +461,9 @@ function App() {
         onHardDrop={keyboardHandlers.onHardDrop}
         isPlaying={gameUseCase.isPlaying()}
       />
+
+      {/* PWA通知 */}
+      <PWANotification />
     </div>
   )
 }

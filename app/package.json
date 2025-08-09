@@ -61,7 +61,9 @@
     "typescript-eslint": "^8.39.0",
     "vite": "^7.0.6",
     "vite-bundle-analyzer": "^1.2.0",
-    "vitest": "^3.2.4"
+    "vite-plugin-pwa": "^1.0.2",
+    "vitest": "^3.2.4",
+    "workbox-window": "^7.3.0"
   },
   "dependencies": {
     "react": "^19.1.1",

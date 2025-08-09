@@ -8,6 +8,7 @@ export default tseslint.config(
   {
     ignores: [
       'dist',
+      'dev-dist',
       'src/test/templates/**',
       'test-results/**',
       'playwright-report/**',

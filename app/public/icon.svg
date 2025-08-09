@@ -1,0 +1,52 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#242424" rx="64"/>
+  
+  <!-- ぷよのグリッド -->
+  <!-- 赤いぷよ -->
+  <circle cx="150" cy="200" r="48" fill="url(#redGrad)" stroke="#fff" stroke-width="4"/>
+  <circle cx="150" cy="300" r="48" fill="url(#redGrad)" stroke="#fff" stroke-width="4"/>
+  
+  <!-- 青いぷよ -->
+  <circle cx="250" cy="150" r="48" fill="url(#blueGrad)" stroke="#fff" stroke-width="4"/>
+  <circle cx="250" cy="250" r="48" fill="url(#blueGrad)" stroke="#fff" stroke-width="4"/>
+  <circle cx="250" cy="350" r="48" fill="url(#blueGrad)" stroke="#fff" stroke-width="4"/>
+  
+  <!-- 緑のぷよ -->
+  <circle cx="350" cy="200" r="48" fill="url(#greenGrad)" stroke="#fff" stroke-width="4"/>
+  <circle cx="350" cy="300" r="48" fill="url(#greenGrad)" stroke="#fff" stroke-width="4"/>
+  
+  <!-- 黄色いぷよ -->
+  <circle cx="200" cy="100" r="48" fill="url(#yellowGrad)" stroke="#fff" stroke-width="4"/>
+  <circle cx="300" cy="100" r="48" fill="url(#yellowGrad)" stroke="#fff" stroke-width="4"/>
+  
+  <!-- グラデーション定義 -->
+  <defs>
+    <!-- 赤のグラデーション -->
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="100%" stop-color="#ee5a52"/>
+    </linearGradient>
+    
+    <!-- 青のグラデーション -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ecdc4"/>
+      <stop offset="100%" stop-color="#44a08d"/>
+    </linearGradient>
+    
+    <!-- 緑のグラデーション -->
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#95e1d3"/>
+      <stop offset="100%" stop-color="#5fb3a3"/>
+    </linearGradient>
+    
+    <!-- 黄色のグラデーション -->
+    <linearGradient id="yellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd93d"/>
+      <stop offset="100%" stop-color="#ff9f43"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- タイトルテキスト -->
+  <text x="256" y="450" text-anchor="middle" fill="#4ecdc4" font-family="Arial, sans-serif" font-size="36" font-weight="bold">ぷよぷよ</text>
+</svg>
