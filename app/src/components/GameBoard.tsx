@@ -45,6 +45,9 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
   const lastProcessedChainId = useRef<string | null>(null)
   const chainTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // タイマーIDを保持してメモリリークを防ぐ
+  const animationTimersRef = useRef<Set<NodeJS.Timeout>>(new Set())
+
   // ゲーム設定を取得（設定変更時に再レンダリングするため、stateで管理）
   const [gameSettings, setGameSettings] = useState(() =>
     gameSettingsService.getSettings()
@@ -116,12 +119,14 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
       // ぷよ落下音を再生
       soundEffect.play(SoundType.PUYO_DROP)
 
-      // アニメーション完了後にクリーンアップ
-      setTimeout(() => {
+      // アニメーション完了後にクリーンアップ（メモリリーク防止）
+      const timer = setTimeout(() => {
         setFallingPuyos((prev) =>
           prev.filter((p) => !newFallingPuyos.some((np) => np.id === p.id))
         )
+        animationTimersRef.current.delete(timer)
       }, 300)
+      animationTimersRef.current.add(timer)
     }
   }
 
@@ -236,14 +241,16 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
       if (gameSettings.animationsEnabled) {
         setDisappearingPuyos((prev) => [...prev, ...newDisappearingPuyos])
 
-        // エフェクト完了後にクリーンアップ（アニメーション時間を延長）
-        setTimeout(() => {
+        // エフェクト完了後にクリーンアップ（メモリリーク防止）
+        const timer = setTimeout(() => {
           setDisappearingPuyos((prev) =>
             prev.filter(
               (p) => !newDisappearingPuyos.some((np) => np.id === p.id)
             )
           )
+          animationTimersRef.current.delete(timer)
         }, 1000)
+        animationTimersRef.current.add(timer)
       }
 
       // ぷよ消去音を再生（アニメーション設定に関わらず）
@@ -283,12 +290,14 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
 
       setChainDisplays((prev) => [...prev, chainInfo])
 
-      // 2秒後にクリーンアップ
-      setTimeout(() => {
+      // 2秒後にクリーンアップ（メモリリーク防止）
+      const timer = setTimeout(() => {
         setChainDisplays((prev) =>
           prev.filter((chain) => chain.id !== chainInfo.id)
         )
+        animationTimersRef.current.delete(timer)
       }, 2000)
+      animationTimersRef.current.add(timer)
     }
 
     // 処理済みIDを更新
@@ -296,11 +305,21 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.lastChainResult, gameSettings.animationsEnabled])
 
-  // クリーンアップ
+  // コンポーネントアンマウント時の総合的なクリーンアップ（メモリリーク防止）
   useEffect(() => {
+    const animationTimers = animationTimersRef.current
+    const chainTimeout = chainTimeoutRef.current
+
     return () => {
-      if (chainTimeoutRef.current) {
-        clearTimeout(chainTimeoutRef.current)
+      // 全アニメーションタイマーのクリアアップ
+      animationTimers.forEach((timer) => {
+        clearTimeout(timer)
+      })
+      animationTimers.clear()
+
+      // チェーン用タイマーのクリーンアップ
+      if (chainTimeout) {
+        clearTimeout(chainTimeout)
       }
     }
   }, [])
@@ -370,6 +389,8 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
     }
 
     return cells
+    // getCellStyleは毎回同じロジックなので依存関係から除外
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.field, game.currentPair, game.state])
 
   const getGameStateText = () => {
