@@ -1,5 +1,3 @@
-import { GameUseCase } from '../../application/GameUseCase'
-
 /**
  * DIコンテナで管理するサービスの型定義
  */
@@ -14,22 +12,14 @@ export interface BackgroundMusicService {
 }
 
 export interface HighScoreService {
-  getHighScores(): Array<{ score: number; date: string }>
+  getHighScores(): Array<{ score: number; date: string; rank: number }>
   isHighScore(score: number): boolean
-  addScore(score: number): Array<{ score: number; date: string }>
+  addScore(score: number): Array<{ score: number; date: string; rank: number }>
 }
 
 export interface GameSettingsService {
+  getSetting(key: 'autoDropSpeed'): number
+  getSetting(key: 'showShadow'): boolean
   getSetting(key: string): unknown
 }
 
-/**
- * DIコンテナの型マッピング
- */
-export interface ServiceMap {
-  GameUseCase: GameUseCase
-  SoundEffectService: SoundEffectService
-  BackgroundMusicService: BackgroundMusicService
-  HighScoreService: HighScoreService
-  GameSettingsService: GameSettingsService
-}

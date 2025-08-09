@@ -22,6 +22,12 @@ import {
   initializeApplication,
 } from './infrastructure/di'
 import type { GameUseCase } from './application/GameUseCase'
+import type {
+  SoundEffectService,
+  BackgroundMusicService,
+  HighScoreService,
+  GameSettingsService,
+} from './infrastructure/di/types'
 
 function App() {
   // DIコンテナの初期化
@@ -44,7 +50,8 @@ function App() {
 
   // 初期化：ハイスコアを読み込み
   useEffect(() => {
-    const highScoreServiceInstance = container.resolve<any>(HIGH_SCORE_SERVICE)
+    const highScoreServiceInstance =
+      container.resolve<HighScoreService>(HIGH_SCORE_SERVICE)
     const scores = highScoreServiceInstance.getHighScores()
     setHighScores(scores)
   }, [])
@@ -82,7 +89,7 @@ function App() {
         const moved = gameUseCase.moveLeft()
         if (moved) {
           const soundEffectService =
-            container.resolve<any>(SOUND_EFFECT_SERVICE)
+            container.resolve<SoundEffectService>(SOUND_EFFECT_SERVICE)
           soundEffectService.play(SoundType.PUYO_MOVE)
         }
         forceRender()
@@ -93,7 +100,7 @@ function App() {
         const moved = gameUseCase.moveRight()
         if (moved) {
           const soundEffectService =
-            container.resolve<any>(SOUND_EFFECT_SERVICE)
+            container.resolve<SoundEffectService>(SOUND_EFFECT_SERVICE)
           soundEffectService.play(SoundType.PUYO_MOVE)
         }
         forceRender()
@@ -104,7 +111,7 @@ function App() {
         const rotated = gameUseCase.rotate()
         if (rotated) {
           const soundEffectService =
-            container.resolve<any>(SOUND_EFFECT_SERVICE)
+            container.resolve<SoundEffectService>(SOUND_EFFECT_SERVICE)
           soundEffectService.play(SoundType.PUYO_ROTATE)
         }
         forceRender()
@@ -210,10 +217,10 @@ function App() {
   }, [gameUseCase, forceRender])
 
   // 自動落下を設定（設定から取得した間隔） - ポーズ中は停止
-  const gameSettingsServiceInstance = container.resolve<any>(
+  const gameSettingsServiceInstance = container.resolve<GameSettingsService>(
     GAME_SETTINGS_SERVICE
   )
-  const autoDropSpeed = gameSettingsServiceInstance.getSetting('autoDropSpeed')
+  const autoDropSpeed = gameSettingsServiceInstance.getSetting('autoDropSpeed') as number
   useAutoDrop({
     onDrop: handleAutoDrop,
     interval: autoDropSpeed,
@@ -222,7 +229,7 @@ function App() {
 
   // ゲーム開始時の処理
   const handleGameStart = () => {
-    const backgroundMusicService = container.resolve<any>(
+    const backgroundMusicService = container.resolve<BackgroundMusicService>(
       BACKGROUND_MUSIC_SERVICE
     )
     backgroundMusicService.play(MusicType.MAIN_THEME)
@@ -230,11 +237,13 @@ function App() {
 
   // ゲームオーバー時の処理
   const handleGameOver = () => {
-    const soundEffectService = container.resolve<any>(SOUND_EFFECT_SERVICE)
-    const backgroundMusicService = container.resolve<any>(
+    const soundEffectService =
+      container.resolve<SoundEffectService>(SOUND_EFFECT_SERVICE)
+    const backgroundMusicService = container.resolve<BackgroundMusicService>(
       BACKGROUND_MUSIC_SERVICE
     )
-    const highScoreServiceInstance = container.resolve<any>(HIGH_SCORE_SERVICE)
+    const highScoreServiceInstance =
+      container.resolve<HighScoreService>(HIGH_SCORE_SERVICE)
 
     soundEffectService.play(SoundType.GAME_OVER)
     backgroundMusicService.fadeOut(1000).then(() => {
@@ -252,7 +261,7 @@ function App() {
 
   // ゲームリセット時の処理
   const handleGameReset = () => {
-    const backgroundMusicService = container.resolve<any>(
+    const backgroundMusicService = container.resolve<BackgroundMusicService>(
       BACKGROUND_MUSIC_SERVICE
     )
     backgroundMusicService.stop()
@@ -317,7 +326,7 @@ function App() {
                 nextPair={gameUseCase.getNextPairs()[0] || null}
                 showShadow={gameSettingsServiceInstance.getSetting(
                   'showShadow'
-                )}
+                ) as boolean}
               />
               <HighScoreDisplay
                 highScores={highScores}

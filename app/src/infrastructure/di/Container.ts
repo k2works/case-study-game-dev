@@ -1,5 +1,3 @@
-import type { ServiceMap } from './types'
-
 /**
  * 依存性注入コンテナ
  * サービスの登録と解決を管理
@@ -33,9 +31,7 @@ export class Container {
   /**
    * サービスを解決（型安全）
    */
-  resolve<K extends keyof ServiceMap>(token: K): ServiceMap[K]
-  resolve<T>(token: string | symbol): T
-  resolve<T>(token: string | symbol): T {
+  resolve<T>(token: symbol): T {
     // シングルトンをチェック
     if (this.singletons.has(token)) {
       return this.singletons.get(token) as T
