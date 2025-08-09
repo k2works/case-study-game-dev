@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { VolumeControl } from './VolumeControl'
 import { soundEffect } from '../services/SoundEffect'
 import { backgroundMusic } from '../services/BackgroundMusic'
+import { useFocusTrap } from '../hooks/useFocusTrap'
 import './SettingsPanel.css'
 
 interface SettingsPanelProps {
@@ -119,6 +120,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     }
   }
 
+  // フォーカストラップを設定
+  const focusTrapRef = useFocusTrap({
+    isActive: isOpen,
+    onEscape: handleCancel,
+  })
+
   if (!isOpen) {
     return null
   }
@@ -131,7 +138,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       aria-modal="true"
       aria-labelledby="settings-title"
     >
-      <div className="settings-panel" data-testid="settings-panel">
+      <div
+        ref={focusTrapRef}
+        className="settings-panel"
+        data-testid="settings-panel"
+      >
         <div className="settings-header">
           <h2 id="settings-title" role="heading" aria-level={2}>
             ⚙️ ゲーム設定

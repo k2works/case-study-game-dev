@@ -1,0 +1,102 @@
+/* キーボードフォーカスの改善 */
+:root {
+  --focus-color: #4ecdc4;
+  --focus-width: 2px;
+  --focus-offset: 2px;
+}
+
+/* 全体的なフォーカススタイルのリセット */
+*:focus {
+  outline: none;
+}
+
+/* キーボードフォーカス表示 - :focus-visibleを使用してキーボードによるフォーカスのみ表示 */
+*:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+  border-radius: 4px;
+}
+
+/* ボタン要素の特別なフォーカススタイル */
+button:focus-visible,
+.settings-button:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.3);
+}
+
+/* 入力要素のフォーカススタイル */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: 1px;
+  border-color: var(--focus-color);
+}
+
+/* チェックボックスとラジオボタンのフォーカススタイル */
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+/* ゲームボードのフォーカス（デバッグ用） */
+.game-board:focus-visible {
+  outline: var(--focus-width) solid rgba(78, 205, 196, 0.6);
+  outline-offset: 4px;
+}
+
+/* モーダルダイアログのフォーカストラップ表示 */
+[role='dialog']:focus-within {
+  /* ダイアログ内にフォーカスがある場合の視覚的フィードバック */
+  box-shadow: 0 0 0 1px rgba(78, 205, 196, 0.2);
+}
+
+/* ハイコントラストモード対応 */
+@media (prefers-contrast: high) {
+  :root {
+    --focus-color: #000000;
+    --focus-width: 3px;
+  }
+
+  button:focus-visible,
+  .settings-button:focus-visible {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* レデュースドモーション対応 */
+@media (prefers-reduced-motion: reduce) {
+  button:focus-visible,
+  .settings-button:focus-visible {
+    transition: none;
+  }
+}
+
+/* スキップリンク（後で追加する場合のスタイル） */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--focus-color);
+  color: white;
+  padding: 8px;
+  z-index: 9999;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* タッチデバイスでのフォーカス表示調整 */
+@media (hover: none) and (pointer: coarse) {
+  /* タッチデバイスではフォーカス表示を控えめに */
+  *:focus-visible {
+    outline-width: 1px;
+    outline-offset: 1px;
+  }
+}

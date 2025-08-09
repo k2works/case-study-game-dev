@@ -1,3 +1,4 @@
+import { useFocusTrap } from '../hooks/useFocusTrap'
 import './GameOverDisplay.css'
 
 interface GameOverDisplayProps {
@@ -8,6 +9,11 @@ interface GameOverDisplayProps {
 export const GameOverDisplay = ({ score, onRestart }: GameOverDisplayProps) => {
   const formattedScore = score.toLocaleString()
 
+  // フォーカストラップを設定
+  const focusTrapRef = useFocusTrap({
+    isActive: true, // GameOverDisplayが表示されているときは常にactive
+  })
+
   return (
     <div
       className="game-over-overlay"
@@ -17,7 +23,7 @@ export const GameOverDisplay = ({ score, onRestart }: GameOverDisplayProps) => {
       aria-labelledby="game-over-title"
       aria-describedby="final-score-section"
     >
-      <div className="game-over-content">
+      <div ref={focusTrapRef} className="game-over-content">
         <h2
           id="game-over-title"
           className="game-over-title"

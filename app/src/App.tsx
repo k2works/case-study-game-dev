@@ -82,6 +82,16 @@ function App() {
     forceRender()
   }, [gameUseCase, forceRender])
 
+  const handleOpenSettings = useCallback(() => {
+    setSettingsOpen(true)
+  }, [])
+
+  const handleCloseModal = useCallback(() => {
+    if (settingsOpen) {
+      setSettingsOpen(false)
+    }
+  }, [settingsOpen])
+
   // キーボード操作のハンドラー
   const keyboardHandlers = {
     onMoveLeft: useCallback(() => {
@@ -140,6 +150,8 @@ function App() {
     onRestart: useCallback(() => {
       handleRestart()
     }, [handleRestart]),
+    onOpenSettings: handleOpenSettings,
+    onCloseModal: handleCloseModal,
   }
 
   // ゲーム状態に応じたコントロールボタンを表示
@@ -357,12 +369,33 @@ function App() {
           <div className="instructions">
             <h3>操作方法</h3>
             <div className="key-instructions">
-              <div>←→: 移動</div>
-              <div>↑/Z: 回転</div>
-              <div>↓: 高速落下</div>
-              <div>スペース: ハードドロップ</div>
-              <div>P: ポーズ/再開</div>
-              <div>R: リスタート</div>
+              <div>
+                <kbd>←→</kbd>: 移動
+              </div>
+              <div>
+                <kbd>↑</kbd>/<kbd>Z</kbd>: 回転
+              </div>
+              <div>
+                <kbd>↓</kbd>: 高速落下
+              </div>
+              <div>
+                <kbd>スペース</kbd>: ハードドロップ
+              </div>
+              <div>
+                <kbd>P</kbd>: ポーズ/再開
+              </div>
+              <div>
+                <kbd>R</kbd>: リスタート
+              </div>
+              <div>
+                <kbd>S</kbd>: 設定画面
+              </div>
+              <div>
+                <kbd>Esc</kbd>: モーダルを閉じる
+              </div>
+              <div>
+                <kbd>Tab</kbd>: フォーカス移動
+              </div>
             </div>
           </div>
           {gameUseCase.isPaused() && (
