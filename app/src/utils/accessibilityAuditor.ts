@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as axe from 'axe-core'
 
 export interface AccessibilityViolation {
