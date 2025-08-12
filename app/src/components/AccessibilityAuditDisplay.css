@@ -44,7 +44,7 @@
 .accessibility-audit__close {
   background: none;
   border: none;
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   font-size: 2rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -69,7 +69,7 @@
 }
 
 .accessibility-audit__intro p {
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   margin-bottom: 1rem;
 }
 
@@ -176,11 +176,11 @@
 
 .accessibility-audit__score-label {
   font-size: 1rem;
-  opacity: 0.8;
+  opacity: 1; /* opacityを無くしてコントラストを上げる */
 }
 
 .accessibility-audit__score-description {
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
 }
@@ -218,7 +218,7 @@
 }
 
 .accessibility-audit__stat-label {
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   font-size: 0.9rem;
 }
 
@@ -291,13 +291,13 @@
 }
 
 .accessibility-audit__violation-description {
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   margin: 0 0 1rem 0;
   line-height: 1.5;
 }
 
 .accessibility-audit__violation-nodes {
-  color: #888;
+  color: #999; /* #888からやや濃い色に変更してコントラスト改善 */
   font-size: 0.9rem;
   margin-bottom: 1rem;
 }
@@ -361,7 +361,7 @@
 
 .accessibility-audit__metadata {
   text-align: center;
-  color: #888;
+  color: #999; /* #888からやや濃い色に変更してコントラスト改善 */
   font-size: 0.8rem;
   border-top: 1px solid #333;
   padding-top: 1rem;

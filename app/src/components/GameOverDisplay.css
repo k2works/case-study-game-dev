@@ -40,7 +40,7 @@
 
 .final-score-label {
   font-size: 1.2rem;
-  color: #666;
+  color: #444; /* #666からより濃い色に変更してコントラスト改善 */
   margin-bottom: 0.5rem;
   font-weight: 600;
 }

@@ -395,7 +395,7 @@ function App() {
           </div>
           <div className="controls">{renderControlButtons()}</div>
           <div className="instructions">
-            <h3>操作方法</h3>
+            <h2>操作方法</h2>
             <div className="key-instructions">
               <div>
                 <kbd>←→</kbd>: 移動

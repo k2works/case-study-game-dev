@@ -124,7 +124,7 @@
 
 .setting-item label {
   flex: 1;
-  color: #555;
+  color: #333; /* #555からより濃い色に変更してコントラスト改善 */
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -160,7 +160,7 @@
   min-width: 45px;
   text-align: right;
   font-size: 0.9rem;
-  color: #666;
+  color: #444; /* #666からより濃い色に変更してコントラスト改善 */
   font-weight: 500;
 }
 
@@ -478,7 +478,7 @@
 }
 
 .setting-description {
-  color: #888;
+  color: #555; /* #888からより濃い色に変更してコントラスト改善 */
   font-size: 0.8rem;
   margin-top: 0.25rem;
   font-style: italic;

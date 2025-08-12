@@ -38,7 +38,7 @@
 .web-vitals__close {
   background: none;
   border: none;
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   font-size: 2rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -78,11 +78,11 @@
 
 .web-vitals__score-label {
   font-size: 1rem;
-  opacity: 0.8;
+  opacity: 1; /* opacityを無くしてコントラストを上げる */
 }
 
 .web-vitals__score-description {
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
 }
@@ -131,7 +131,7 @@
 }
 
 .web-vitals__metric-description {
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   font-size: 0.8rem;
   margin-top: 0.25rem;
 }
@@ -153,7 +153,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
   font-size: 0.85rem;
 }
 

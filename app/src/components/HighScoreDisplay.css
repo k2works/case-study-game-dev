@@ -19,7 +19,7 @@
 .no-scores {
   text-align: center;
   padding: 2rem 1rem;
-  color: #ccc;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
 }
 
 .no-scores p {
@@ -92,8 +92,8 @@
 
 .score-date {
   font-size: 0.8rem;
-  color: #ccc;
-  opacity: 0.9;
+  color: #bbb; /* #cccからやや濃い色に変更してコントラスト改善 */
+  opacity: 1; /* opacityを無くしてコントラストを上げる */
 }
 
 .current-indicator {
