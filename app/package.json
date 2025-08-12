@@ -10,7 +10,7 @@
     "build:analyze": "ANALYZE=true npm run build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:report": "vitest --reporter=junit --outputFile=test-report.junit.xml",
+    "test:report": "vitest --run --reporter=junit --outputFile=test-report.junit.xml",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test ",

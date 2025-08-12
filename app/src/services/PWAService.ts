@@ -13,6 +13,14 @@ class PWAService {
    * Service Workerを登録
    */
   async registerSW(): Promise<void> {
+    // 開発環境では Service Worker の登録をスキップ
+    if (import.meta.env.DEV) {
+      console.log(
+        'PWA: Service Worker registration skipped in development mode'
+      )
+      return
+    }
+
     if ('serviceWorker' in navigator) {
       try {
         this.wb = new Workbox('/sw.js')

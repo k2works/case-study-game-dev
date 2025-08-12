@@ -35,7 +35,7 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: true, // 開発環境でもPWAを有効化
+        enabled: false, // 開発環境ではPWAを無効化（MIME typeエラー回避）
       },
       manifest: {
         name: 'ぷよぷよゲーム - パズルゲーム',
