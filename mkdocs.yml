@@ -59,3 +59,4 @@ nav:
   - Home: index.md
   - Case1: ./reference/case-1/index.md
   - Case2: ./reference/case-2/index.md
+  - Case3: ./reference/case-3/index.md
