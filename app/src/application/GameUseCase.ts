@@ -1,6 +1,7 @@
 import { Game, GameState } from '../domain/Game'
 import { PuyoPair } from '../domain/PuyoPair'
 import { ChainResult } from '../domain/Chain'
+import type { PuyoData, PuyoPairData, GameStateData, ChainData } from '../types'
 
 /**
  * ゲームのユースケースを管理するクラス
@@ -194,5 +195,86 @@ export class GameUseCase {
    */
   public getGameInstance(): Game {
     return this.game
+  }
+
+  // ==============================================================================
+  // プレゼンテーション層用のメソッド（Clean Architectureに準拠）
+  // ==============================================================================
+
+  /**
+   * プレゼンテーション層用のゲーム状態データを取得
+   */
+  public getGameStateData(): GameStateData {
+    const fieldData: PuyoData[][] = []
+    const field = this.game.getField()
+    
+    for (let y = 0; y < field.getHeight(); y++) {
+      fieldData[y] = []
+      for (let x = 0; x < field.getWidth(); x++) {
+        const puyo = field.getPuyo(x, y)
+        fieldData[y][x] = {
+          color: puyo ? puyo.color : 'empty'
+        }
+      }
+    }
+
+    const nextPair = this.game.getNextPair()
+    const nextPairData: PuyoPairData | null = nextPair ? {
+      main: { color: nextPair.main.color },
+      sub: { color: nextPair.sub.color }
+    } : null
+
+    return {
+      isPlaying: this.isPlaying(),
+      isPaused: this.isPaused(),
+      isGameOver: this.isGameOver(),
+      currentScore: this.game.score,
+      chainCount: this.game.lastChainResult?.chainCount || 0,
+      fieldData,
+      nextPair: nextPairData
+    }
+  }
+
+  /**
+   * プレゼンテーション層用の次のぷよペアデータを取得
+   */
+  public getNextPairData(): PuyoPairData | null {
+    const nextPair = this.game.getNextPair()
+    return nextPair ? {
+      main: { color: nextPair.main.color },
+      sub: { color: nextPair.sub.color }
+    } : null
+  }
+
+  /**
+   * プレゼンテーション層用の連鎖データを取得
+   */
+  public getChainData(): ChainData {
+    const chainResult = this.game.lastChainResult
+    return {
+      count: chainResult?.chainCount || 0,
+      score: chainResult?.score || 0,
+      isActive: !!chainResult && chainResult.chainCount > 0
+    }
+  }
+
+  /**
+   * プレゼンテーション層用のフィールドデータを取得
+   */
+  public getFieldData(): PuyoData[][] {
+    const fieldData: PuyoData[][] = []
+    const field = this.game.getField()
+    
+    for (let y = 0; y < field.getHeight(); y++) {
+      fieldData[y] = []
+      for (let x = 0; x < field.getWidth(); x++) {
+        const puyo = field.getPuyo(x, y)
+        fieldData[y][x] = {
+          color: puyo ? puyo.color : 'empty'
+        }
+      }
+    }
+
+    return fieldData
   }
 }

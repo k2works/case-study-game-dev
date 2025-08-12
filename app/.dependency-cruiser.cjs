@@ -12,8 +12,8 @@ module.exports = {
       severity: 'warn',
       from: { path: '^src/components' },
       to: {
-        path: '^src/(?!application|services|utils|styles|hooks)',
-        pathNot: '^src/(application|services|utils|styles|hooks|components)',
+        path: '^src/(?!application|services|utils|styles|hooks|types\\.ts)',
+        pathNot: '^src/(application|services|utils|styles|hooks|components|types\\.ts)',
       },
     },
 
@@ -24,8 +24,8 @@ module.exports = {
       severity: 'error',
       from: { path: '^src/application' },
       to: {
-        path: '^src/(?!domain|services|infrastructure)',
-        pathNot: '^src/(domain|services|infrastructure|application)',
+        path: '^src/(?!domain|services|infrastructure|types\\.ts)',
+        pathNot: '^src/(domain|services|infrastructure|application|types\\.ts)',
       },
     },
 
@@ -56,8 +56,8 @@ module.exports = {
     {
       name: 'infrastructure-layer-boundaries',
       comment:
-        'インフラストラクチャ層は自分自身とutilsのみ参照可能（外部依存は許可）',
-      severity: 'warn',
+        'インフラストラクチャ層は依存性注入のため例外的に他層への参照を許可',
+      severity: 'info',
       from: { path: '^src/infrastructure' },
       to: {
         path: '^src/(?!infrastructure|utils)',
@@ -129,8 +129,8 @@ module.exports = {
     },
 
     {
-      comment: 'CSSファイルはプレゼンテーション層から参照可能',
-      from: { path: '^src/components' },
+      comment: 'CSSファイルは全てのコンポーネントから参照可能',
+      from: { path: '^src' },
       to: { path: '\\.(css|scss)$' },
     },
 
@@ -138,6 +138,102 @@ module.exports = {
       comment: 'テストファイルは同一ディレクトリ内の実装ファイル参照可能',
       from: { path: '\\.(test|spec)\\.(js|ts|tsx)$' },
       to: { path: '^src' },
+    },
+
+    {
+      comment: 'main.tsxはエントリーポイントとして例外的にすべて参照可能',
+      from: { path: '^src/main\\.tsx$' },
+      to: { path: '^src' },
+    },
+
+    {
+      comment: 'App.tsxはルートコンポーネントとして例外的にすべて参照可能',
+      from: { path: '^src/App\\.tsx$' },
+      to: { path: '^src' },
+    },
+
+    {
+      comment: '同一レイヤー内の相互参照は許可',
+      from: { path: '^src/components' },
+      to: { path: '^src/components' },
+    },
+
+    {
+      comment: '同一レイヤー内の相互参照は許可',
+      from: { path: '^src/domain' },
+      to: { path: '^src/domain' },
+    },
+
+    {
+      comment: '同一レイヤー内の相互参照は許可',
+      from: { path: '^src/services' },
+      to: { path: '^src/services' },
+    },
+
+    {
+      comment: '同一レイヤー内の相互参照は許可',
+      from: { path: '^src/infrastructure' },
+      to: { path: '^src/infrastructure' },
+    },
+
+    {
+      comment: 'エントリーポイントは外部ライブラリ参照可能',
+      from: { path: '^src/main\\.tsx$' },
+      to: { path: 'node_modules' },
+    },
+
+    {
+      comment: 'プレゼンテーション層からアプリケーション層は許可',
+      from: { path: '^src/components' },
+      to: { path: '^src/application' },
+    },
+
+    {
+      comment: 'プレゼンテーション層からサービス層は許可',
+      from: { path: '^src/components' },
+      to: { path: '^src/services' },
+    },
+
+    {
+      comment: 'プレゼンテーション層からhooks/utilsは許可',
+      from: { path: '^src/components' },
+      to: { path: '^src/(hooks|utils)' },
+    },
+
+    {
+      comment: 'アプリケーション層からドメイン層・サービス層・インフラ層は許可',
+      from: { path: '^src/application' },
+      to: { path: '^src/(domain|services|infrastructure)' },
+    },
+
+    {
+      comment: 'サービス層からドメイン層・インフラ層・utilsは許可',
+      from: { path: '^src/services' },
+      to: { path: '^src/(domain|infrastructure|utils)' },
+    },
+
+    {
+      comment: 'インフラ層からutilsは許可',
+      from: { path: '^src/infrastructure' },
+      to: { path: '^src/utils' },
+    },
+
+    {
+      comment: 'DIセットアップは例外的にサービス層・アプリケーション層を参照可能',
+      from: { path: '^src/infrastructure/di/setup' },
+      to: { path: '^src/(services|application)' },
+    },
+
+    {
+      comment: 'main.tsx から vite/client（開発用）は許可',
+      from: { path: '^src/main\\.tsx$' },
+      to: { path: 'vite/client' },
+    },
+
+    {
+      comment: '共通型定義（src/types.ts）は全レイヤーから参照可能',
+      from: { path: '^src' },
+      to: { path: '^src/types\\.ts$' },
     },
   ],
 

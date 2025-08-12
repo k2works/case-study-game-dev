@@ -1,9 +1,9 @@
 import React from 'react'
-import { PuyoPair } from '../domain/PuyoPair'
+import type { PuyoPairData } from '../types'
 import './NextPuyoDisplay.css'
 
 interface NextPuyoDisplayProps {
-  nextPair: PuyoPair | null
+  nextPair: PuyoPairData | null
   showShadow?: boolean
   colorBlindMode?: boolean
 }
