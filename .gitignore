@@ -143,3 +143,7 @@ playwright-report/
 test-results/
 test-results.json
 dev-dist/
+architecture-graph.png
+architecture-graph.svg
+dependency-report.html
+dependency-report.json

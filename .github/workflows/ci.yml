@@ -36,6 +36,28 @@ jobs:
         working-directory: ./app
         run: npm run format:check
 
+      - name: Architecture Rule Check
+        working-directory: ./app
+        run: npm run arch:check
+
+      - name: Generate Architecture Reports
+        if: failure()
+        working-directory: ./app
+        run: |
+          npm run arch:report
+          npm run arch:json
+        continue-on-error: true
+
+      - name: Upload Architecture Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-violations-${{ matrix.node-version }}
+          path: |
+            app/dependency-report.html
+            app/dependency-report.json
+          retention-days: 30
+
       - name: Run tests
         working-directory: ./app
         run: npm run test:report
