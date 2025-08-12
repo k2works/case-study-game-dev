@@ -22,8 +22,8 @@ import {
   BACKGROUND_MUSIC_SERVICE,
   HIGH_SCORE_SERVICE,
   GAME_SETTINGS_SERVICE,
-  initializeApplication,
 } from './infrastructure/di'
+import { DIConfiguration } from './application/DIConfiguration'
 import { pwaService } from './services/PWAService'
 import type { GameUseCase } from './application/GameUseCase'
 import type {
@@ -36,7 +36,7 @@ import type {
 function App() {
   // DIコンテナの初期化
   useState(() => {
-    initializeApplication()
+    DIConfiguration.initializeApplication()
     return null
   })
 

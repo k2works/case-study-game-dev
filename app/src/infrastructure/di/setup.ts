@@ -1,34 +1,23 @@
-import { container } from './Container'
-import {
-  GAME_USE_CASE,
-  SOUND_EFFECT_SERVICE,
-  BACKGROUND_MUSIC_SERVICE,
-  HIGH_SCORE_SERVICE,
-  GAME_SETTINGS_SERVICE,
-} from './tokens'
-import { GameUseCase } from '../../application/GameUseCase'
-import { soundEffect } from '../../services/SoundEffect'
-import { backgroundMusic } from '../../services/BackgroundMusic'
-import { highScoreService } from '../../services/HighScoreService'
-import { gameSettingsService } from '../../services/GameSettingsService'
-
 /**
- * DIコンテナにサービスを登録
+ * インフラストラクチャ層のDIセットアップ
+ * Clean Architectureに準拠し、具象クラスへの直接依存を避ける
+ *
+ * @deprecated アプリケーション層のDIConfigurationを使用してください
  */
-export function setupContainer(): void {
-  // アプリケーション層のサービス
-  container.registerFactory(GAME_USE_CASE, () => new GameUseCase())
 
-  // サービス層のサービス（シングルトン）
-  container.registerSingleton(SOUND_EFFECT_SERVICE, soundEffect)
-  container.registerSingleton(BACKGROUND_MUSIC_SERVICE, backgroundMusic)
-  container.registerSingleton(HIGH_SCORE_SERVICE, highScoreService)
-  container.registerSingleton(GAME_SETTINGS_SERVICE, gameSettingsService)
+// 後方互換性のため、アプリケーション層の設定を呼び出す
+export function setupContainer(): void {
+  // この関数は非推奨です
+  // 代わりにアプリケーション層のDIConfiguration.setupContainer()を使用してください
+  console.warn(
+    'setupContainer() is deprecated. Use DIConfiguration.setupContainer() instead.'
+  )
 }
 
-/**
- * アプリケーション初期化
- */
 export function initializeApplication(): void {
-  setupContainer()
+  // この関数は非推奨です
+  // 代わりにアプリケーション層のDIConfiguration.initializeApplication()を使用してください
+  console.warn(
+    'initializeApplication() is deprecated. Use DIConfiguration.initializeApplication() instead.'
+  )
 }

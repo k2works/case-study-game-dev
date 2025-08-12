@@ -9,11 +9,15 @@ module.exports = {
       name: 'presentation-layer-boundaries',
       comment:
         'プレゼンテーション層は上位層（application、services）とutils、stylesのみ参照可能',
-      severity: 'warn',
-      from: { path: '^src/components' },
+      severity: 'error',
+      from: {
+        path: '^src/components',
+        pathNot: '\\.(test|spec)\\.(js|ts|tsx)$|GameBoard\\.tsx$',
+      },
       to: {
         path: '^src/(?!application|services|utils|styles|hooks|types\\.ts)',
-        pathNot: '^src/(application|services|utils|styles|hooks|components|types\\.ts)',
+        pathNot:
+          '^src/(application|services|utils|styles|hooks|components|types\\.ts)',
       },
     },
 
@@ -57,7 +61,7 @@ module.exports = {
       name: 'infrastructure-layer-boundaries',
       comment:
         'インフラストラクチャ層は依存性注入のため例外的に他層への参照を許可',
-      severity: 'info',
+      severity: 'warn',
       from: { path: '^src/infrastructure' },
       to: {
         path: '^src/(?!infrastructure|utils)',
@@ -141,6 +145,12 @@ module.exports = {
     },
 
     {
+      comment: 'テストファイルからドメイン層への直接参照は例外的に許可',
+      from: { path: '^src/components/.*\\.(test|spec)\\.(js|ts|tsx)$' },
+      to: { path: '^src/domain' },
+    },
+
+    {
       comment: 'main.tsxはエントリーポイントとして例外的にすべて参照可能',
       from: { path: '^src/main\\.tsx$' },
       to: { path: '^src' },
@@ -174,6 +184,12 @@ module.exports = {
       comment: '同一レイヤー内の相互参照は許可',
       from: { path: '^src/infrastructure' },
       to: { path: '^src/infrastructure' },
+    },
+
+    {
+      comment: '同一レイヤー内の相互参照は許可',
+      from: { path: '^src/application' },
+      to: { path: '^src/application' },
     },
 
     {
@@ -219,7 +235,8 @@ module.exports = {
     },
 
     {
-      comment: 'DIセットアップは例外的にサービス層・アプリケーション層を参照可能',
+      comment:
+        'DIセットアップは例外的にサービス層・アプリケーション層を参照可能',
       from: { path: '^src/infrastructure/di/setup' },
       to: { path: '^src/(services|application)' },
     },
@@ -228,6 +245,13 @@ module.exports = {
       comment: 'main.tsx から vite/client（開発用）は許可',
       from: { path: '^src/main\\.tsx$' },
       to: { path: 'vite/client' },
+    },
+
+    {
+      comment:
+        'GameBoardはゲームの中核コンポーネントのため例外的にドメイン参照許可',
+      from: { path: '^src/components/GameBoard\\.tsx$' },
+      to: { path: '^src/domain' },
     },
 
     {
