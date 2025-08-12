@@ -60,7 +60,8 @@ nav:
   
   - 要件:
     - 概要: requirements/index.md
-    - 仕様: requirements/要件.md
+    - 仕様: requirements/仕様.md
+    - リリース計画: requirements/リリース計画.md
     - テスト戦略: requirements/テスト戦略.md
     - 非機能要件: requirements/非機能要件.md
     - 技術スタック: requirements/技術スタック.md
@@ -76,6 +77,7 @@ nav:
 
   - 開発:
       - ふりかえり:     development/index.md
+      - 日誌: journal/index.md
 
   - 運用:
     - 概要: operation/index.md

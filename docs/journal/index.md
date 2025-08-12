@@ -144,7 +144,8 @@
 
 ## 参考資料
 
-- [要件定義](../requirements/要件.md)
+- [仕様定義](../requirements/仕様.md)
+- [リリース計画](../requirements/リリース計画.md)
 - [アーキテクチャ設計](../design/アーキテクチャ.md)
 - [ADR（アーキテクチャ決定記録）](../adr/index.md)
 - [評価レポート](../report/application-evaluation-report.md)
