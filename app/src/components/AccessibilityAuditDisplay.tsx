@@ -210,10 +210,6 @@ const AuditContent: React.FC<AuditContentProps> = ({
   onRunAudit,
   onDownloadReport,
 }) => {
-  if (!report && !isLoading) {
-    return <IntroContent onRunAudit={onRunAudit} isLoading={isLoading} />
-  }
-
   if (isLoading) {
     return <LoadingContent />
   }
@@ -222,7 +218,9 @@ const AuditContent: React.FC<AuditContentProps> = ({
     return <ErrorContent error={error} onRunAudit={onRunAudit} />
   }
 
-  if (!report) return null
+  if (!report) {
+    return <IntroContent onRunAudit={onRunAudit} isLoading={isLoading} />
+  }
 
   return (
     <ReportContent

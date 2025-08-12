@@ -6,6 +6,7 @@ vi.mock('web-vitals', () => ({
   onCLS: vi.fn(),
   onFCP: vi.fn(),
   onFID: vi.fn(),
+  onINP: vi.fn(),
   onLCP: vi.fn(),
   onTTFB: vi.fn(),
 }))
@@ -14,7 +15,9 @@ describe('WebVitalsReporter', () => {
   let reporter: WebVitalsReporter
 
   beforeEach(() => {
-    // シングルトンパターンのため、新しいインスタンスを取得
+    // シングルトンインスタンスをリセット
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(WebVitalsReporter as any).instance = undefined
     reporter = WebVitalsReporter.getInstance()
   })
 

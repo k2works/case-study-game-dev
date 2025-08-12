@@ -1,6 +1,13 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+  cleanup,
+} from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import AccessibilityAuditDisplay from './AccessibilityAuditDisplay'
 import { accessibilityAuditor } from '../utils/accessibilityAuditor'
 
@@ -57,6 +64,11 @@ describe('AccessibilityAuditDisplay', () => {
     vi.clearAllMocks()
   })
 
+  afterEach(() => {
+    cleanup()
+    vi.restoreAllMocks()
+  })
+
   describe('表示制御', () => {
     it('isOpenがfalseの場合は表示されない', () => {
       render(<AccessibilityAuditDisplay isOpen={false} onClose={mockOnClose} />)
@@ -107,19 +119,30 @@ describe('AccessibilityAuditDisplay', () => {
 
   describe('監査実行', () => {
     it('監査実行ボタンをクリックすると監査が開始される', async () => {
-      mockAccessibilityAuditor.auditGameSpecific.mockResolvedValue(mockReport)
+      // より長い遅延でローディング状態をテストできるようにする
+      let resolvePromise: (value: typeof mockReport) => void
+      const auditPromise = new Promise((resolve) => {
+        resolvePromise = resolve
+      })
+      mockAccessibilityAuditor.auditGameSpecific.mockReturnValue(auditPromise)
 
       render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
 
       const runButton = screen.getByText('監査を実行')
       fireEvent.click(runButton)
 
+      // ローディング状態を確認
       expect(
         screen.getByText('アクセシビリティを監査中...')
       ).toBeInTheDocument()
       expect(mockAccessibilityAuditor.auditGameSpecific).toHaveBeenCalledTimes(
         1
       )
+
+      // Promiseを解決してクリーンアップ
+      await act(async () => {
+        resolvePromise!(mockReport)
+      })
     })
 
     it('監査成功時にレポートが表示される', async () => {
@@ -128,7 +151,10 @@ describe('AccessibilityAuditDisplay', () => {
       render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
 
       const runButton = screen.getByText('監査を実行')
-      fireEvent.click(runButton)
+
+      await act(async () => {
+        fireEvent.click(runButton)
+      })
 
       await waitFor(() => {
         expect(screen.getByText('85')).toBeInTheDocument()
@@ -147,17 +173,21 @@ describe('AccessibilityAuditDisplay', () => {
       render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
 
       const runButton = screen.getByText('監査を実行')
-      
+
       await act(async () => {
         fireEvent.click(runButton)
       })
 
+      // エラー状態になるまで待機（ローディング状態は省略し、最終結果を確認）
       await waitFor(() => {
         expect(screen.getByText('エラーが発生しました')).toBeInTheDocument()
       })
 
       expect(screen.getByText('監査エラー')).toBeInTheDocument()
       expect(screen.getByText('再試行')).toBeInTheDocument()
+      expect(mockAccessibilityAuditor.auditGameSpecific).toHaveBeenCalledTimes(
+        1
+      )
     })
   })
 
@@ -168,7 +198,10 @@ describe('AccessibilityAuditDisplay', () => {
       render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
 
       const runButton = screen.getByText('監査を実行')
-      fireEvent.click(runButton)
+
+      await act(async () => {
+        fireEvent.click(runButton)
+      })
 
       await waitFor(() => {
         expect(screen.getByText('85')).toBeInTheDocument()
@@ -226,31 +259,32 @@ describe('AccessibilityAuditDisplay', () => {
         'Mock text report'
       )
 
-      const { container } = render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
-
-      // DOM環境の確認
-      if (!container || !document.body) {
-        throw new Error('DOM environment not available')
-      }
+      render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
 
       // DOM操作のモック
-      const mockAppendChild = vi.fn()
-      const mockRemoveChild = vi.fn()
       const mockClick = vi.fn()
-      const mockCreateElement = vi.spyOn(document, 'createElement')
 
-      const mockAnchor = {
-        href: '',
-        download: '',
-        click: mockClick,
-      } as HTMLAnchorElement
+      // HTMLAnchorElementのモック
+      const mockAnchor = document.createElement('a')
+      mockAnchor.click = mockClick
 
-      mockCreateElement.mockReturnValue(mockAnchor)
-      document.body.appendChild = mockAppendChild
-      document.body.removeChild = mockRemoveChild
+      const originalCreateElement = document.createElement.bind(document)
+      vi.spyOn(document, 'createElement').mockImplementation(
+        (tagName: string) => {
+          if (tagName === 'a') {
+            return mockAnchor
+          }
+          return originalCreateElement(tagName)
+        }
+      )
+
+      const originalAppendChild = document.body.appendChild
+      const originalRemoveChild = document.body.removeChild
+      document.body.appendChild = vi.fn()
+      document.body.removeChild = vi.fn()
 
       const runButton = screen.getByText('監査を実行')
-      
+
       await act(async () => {
         fireEvent.click(runButton)
       })
@@ -268,6 +302,11 @@ describe('AccessibilityAuditDisplay', () => {
       expect(mockCreateObjectURL).toHaveBeenCalled()
       expect(mockClick).toHaveBeenCalled()
       expect(mockRevokeObjectURL).toHaveBeenCalled()
+
+      // クリーンアップ
+      document.body.appendChild = originalAppendChild
+      document.body.removeChild = originalRemoveChild
+      vi.restoreAllMocks()
     })
   })
 
@@ -283,15 +322,10 @@ describe('AccessibilityAuditDisplay', () => {
         perfectReport
       )
 
-      const { container } = render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
-      
-      // DOM環境の確認
-      if (!container) {
-        throw new Error('DOM environment not available')
-      }
+      render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
 
       const runButton = screen.getByText('監査を実行')
-      
+
       await act(async () => {
         fireEvent.click(runButton)
       })
@@ -309,12 +343,7 @@ describe('AccessibilityAuditDisplay', () => {
 
   describe('アクセシビリティ', () => {
     beforeEach(() => {
-      const { container } = render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
-      
-      // DOM環境の確認
-      if (!container) {
-        throw new Error('DOM environment not available')
-      }
+      render(<AccessibilityAuditDisplay isOpen={true} onClose={mockOnClose} />)
     })
 
     it('dialogロールが設定されている', () => {

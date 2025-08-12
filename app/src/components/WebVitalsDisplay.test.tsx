@@ -2,17 +2,18 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import WebVitalsDisplay from './WebVitalsDisplay'
+import { webVitalsReporter } from '../utils/webVitals'
 
 // Web Vitals reporterのモック
-const mockWebVitalsReporter = {
-  getVitals: vi.fn(),
-  getOverallScore: vi.fn(),
-  onMetric: vi.fn(),
-}
-
 vi.mock('../utils/webVitals', () => ({
-  webVitalsReporter: mockWebVitalsReporter,
+  webVitalsReporter: {
+    getVitals: vi.fn(),
+    getOverallScore: vi.fn(),
+    onMetric: vi.fn(),
+  },
 }))
+
+const mockWebVitalsReporter = vi.mocked(webVitalsReporter)
 
 describe('WebVitalsDisplay', () => {
   const mockOnClose = vi.fn()
