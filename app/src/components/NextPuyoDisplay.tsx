@@ -27,14 +27,9 @@ export const NextPuyoDisplay = React.memo(
         role="complementary"
         aria-labelledby="next-puyo-label"
       >
-        <div
-          id="next-puyo-label"
-          className="next-puyo-label"
-          role="heading"
-          aria-level={3}
-        >
+        <h3 id="next-puyo-label" className="next-puyo-label">
           NEXT
-        </div>
+        </h3>
         <div
           className="next-puyo-display"
           role="img"

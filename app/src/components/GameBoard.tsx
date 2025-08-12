@@ -483,9 +483,7 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({ game }) => {
       )}
       <div
         className={fieldClass}
-        role="grid"
         aria-label="ぷよぷよゲームフィールド (6列 × 14行)"
-        aria-readonly="true"
       >
         {renderedField}
         <div

@@ -75,12 +75,7 @@ export const HighScoreDisplay: React.FC<HighScoreDisplayProps> = ({
         role="complementary"
         aria-labelledby="high-score-title"
       >
-        <h3
-          id="high-score-title"
-          className="high-score-title"
-          role="heading"
-          aria-level={3}
-        >
+        <h3 id="high-score-title" className="high-score-title">
           ハイスコア
         </h3>
         <div
@@ -103,12 +98,7 @@ export const HighScoreDisplay: React.FC<HighScoreDisplayProps> = ({
       role="complementary"
       aria-labelledby="high-score-title"
     >
-      <h3
-        id="high-score-title"
-        className="high-score-title"
-        role="heading"
-        aria-level={3}
-      >
+      <h3 id="high-score-title" className="high-score-title">
         ハイスコア
       </h3>
       <div className="score-list" role="list" aria-label="ハイスコアランキング">

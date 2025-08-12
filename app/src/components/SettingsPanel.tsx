@@ -150,9 +150,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         data-testid="settings-panel"
       >
         <div className="settings-header">
-          <h2 id="settings-title" role="heading" aria-level={2}>
-            ⚙️ ゲーム設定
-          </h2>
+          <h2 id="settings-title">⚙️ ゲーム設定</h2>
           <button
             className="settings-close"
             onClick={handleCancel}
@@ -170,9 +168,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             role="group"
             aria-labelledby="sound-settings-title"
           >
-            <h3 id="sound-settings-title" role="heading" aria-level={3}>
-              🔊 音響設定
-            </h3>
+            <h3 id="sound-settings-title">🔊 音響設定</h3>
             <div className="setting-item">
               <label htmlFor="sound-volume">効果音音量</label>
               <VolumeControl
@@ -203,9 +199,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             role="group"
             aria-labelledby="gameplay-settings-title"
           >
-            <h3 id="gameplay-settings-title" role="heading" aria-level={3}>
-              🎮 ゲームプレイ
-            </h3>
+            <h3 id="gameplay-settings-title">🎮 ゲームプレイ</h3>
             <div className="setting-item">
               <label htmlFor="auto-drop-speed">自動落下速度</label>
               <select
@@ -235,9 +229,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             role="group"
             aria-labelledby="display-settings-title"
           >
-            <h3 id="display-settings-title" role="heading" aria-level={3}>
-              👁️ 表示設定
-            </h3>
+            <h3 id="display-settings-title">👁️ 表示設定</h3>
             <div className="setting-item">
               <label>
                 <input
@@ -314,9 +306,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             role="group"
             aria-labelledby="performance-settings-title"
           >
-            <h3 id="performance-settings-title" role="heading" aria-level={3}>
-              📊 パフォーマンス
-            </h3>
+            <h3 id="performance-settings-title">📊 パフォーマンス</h3>
             <div className="setting-item">
               <button
                 className="settings-button secondary"

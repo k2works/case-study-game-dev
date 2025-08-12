@@ -24,12 +24,7 @@ export const GameOverDisplay = ({ score, onRestart }: GameOverDisplayProps) => {
       aria-describedby="final-score-section"
     >
       <div ref={focusTrapRef} className="game-over-content">
-        <h2
-          id="game-over-title"
-          className="game-over-title"
-          role="heading"
-          aria-level={2}
-        >
+        <h2 id="game-over-title" className="game-over-title">
           ゲームオーバー
         </h2>
         <div
