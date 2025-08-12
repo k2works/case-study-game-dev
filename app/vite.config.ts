@@ -204,6 +204,9 @@ export default defineConfig({
         '**/*.config.{js,ts}',
         '**/types/**',
         'src/test/**',
+        'src/main.tsx',
+        '.dependency-cruiser.cjs',
+        'dev-dist/**',
       ],
       thresholds: {
         global: {
