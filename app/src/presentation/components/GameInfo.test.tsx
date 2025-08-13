@@ -1,0 +1,199 @@
+import { describe, expect, it } from 'vitest'
+
+import { render, screen } from '@testing-library/react'
+
+import {
+  createGame,
+  updateGameState,
+  updateScore,
+} from '../../domain/models/Game'
+import { GameInfo } from './GameInfo'
+
+describe('GameInfoコンポーネント', () => {
+  describe('基本表示テスト', () => {
+    it('ゲーム情報コンテナが表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('game-info')).toBeInTheDocument()
+    })
+
+    it('スコア表示エリアが表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('score-display')).toBeInTheDocument()
+      expect(screen.getByText('スコア')).toBeInTheDocument()
+    })
+
+    it('レベル表示エリアが表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('level-display')).toBeInTheDocument()
+      expect(screen.getByText('レベル')).toBeInTheDocument()
+    })
+
+    it('ゲーム状態表示エリアが表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('state-display')).toBeInTheDocument()
+      expect(screen.getByText('状態')).toBeInTheDocument()
+    })
+  })
+
+  describe('スコア表示テスト', () => {
+    it('初期スコア0が表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('score-value')).toHaveTextContent('0')
+    })
+
+    it('更新されたスコアが表示される', () => {
+      // Arrange
+      const game = createGame()
+      const updatedGame = updateScore(game, 1500)
+
+      // Act
+      render(<GameInfo game={updatedGame} />)
+
+      // Assert
+      expect(screen.getByTestId('score-value')).toHaveTextContent('1500')
+    })
+
+    it('大きなスコアが正しく表示される', () => {
+      // Arrange
+      const game = createGame()
+      const updatedGame = updateScore(game, 999999)
+
+      // Act
+      render(<GameInfo game={updatedGame} />)
+
+      // Assert
+      expect(screen.getByTestId('score-value')).toHaveTextContent('999999')
+    })
+  })
+
+  describe('レベル表示テスト', () => {
+    it('初期レベル1が表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('level-value')).toHaveTextContent('1')
+    })
+  })
+
+  describe('ゲーム状態表示テスト', () => {
+    it('ready状態が日本語で表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveTextContent('準備中')
+    })
+
+    it('playing状態が日本語で表示される', () => {
+      // Arrange
+      const game = createGame()
+      const playingGame = updateGameState(game, 'playing')
+
+      // Act
+      render(<GameInfo game={playingGame} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveTextContent('プレイ中')
+    })
+
+    it('paused状態が日本語で表示される', () => {
+      // Arrange
+      const game = createGame()
+      const pausedGame = updateGameState(game, 'paused')
+
+      // Act
+      render(<GameInfo game={pausedGame} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveTextContent('一時停止')
+    })
+
+    it('gameOver状態が日本語で表示される', () => {
+      // Arrange
+      const game = createGame()
+      const gameOverGame = updateGameState(game, 'gameOver')
+
+      // Act
+      render(<GameInfo game={gameOverGame} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveTextContent(
+        'ゲームオーバー',
+      )
+    })
+  })
+
+  describe('状態別スタイルテスト', () => {
+    it('ready状態で適切なクラスが設定される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveClass('state-ready')
+    })
+
+    it('playing状態で適切なクラスが設定される', () => {
+      // Arrange
+      const game = createGame()
+      const playingGame = updateGameState(game, 'playing')
+
+      // Act
+      render(<GameInfo game={playingGame} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveClass('state-playing')
+    })
+
+    it('gameOver状態で適切なクラスが設定される', () => {
+      // Arrange
+      const game = createGame()
+      const gameOverGame = updateGameState(game, 'gameOver')
+
+      // Act
+      render(<GameInfo game={gameOverGame} />)
+
+      // Assert
+      expect(screen.getByTestId('state-value')).toHaveClass('state-gameOver')
+    })
+  })
+})
