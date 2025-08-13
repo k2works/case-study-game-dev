@@ -11,7 +11,7 @@ const getPuyoColorClass = (color: PuyoColor): string => {
   if (color === null) {
     return 'bg-gray-500 border-gray-600'
   }
-  
+
   const colorClasses: Record<Exclude<PuyoColor, null>, string> = {
     red: 'bg-red-500 border-red-600',
     blue: 'bg-blue-500 border-blue-600',
