@@ -96,6 +96,50 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
   }
 }
 
+// ヘルパー関数: PuyoPairの衝突チェック
+const checkPuyoPairCollision = (game: Game, puyoPair: PuyoPair): boolean => {
+  const mainCollision =
+    puyoPair.main.position.y >= 0 &&
+    !game.field.isEmpty(puyoPair.main.position.x, puyoPair.main.position.y)
+  const subCollision =
+    puyoPair.sub.position.y >= 0 &&
+    !game.field.isEmpty(puyoPair.sub.position.x, puyoPair.sub.position.y)
+  
+  return mainCollision || subCollision
+}
+
+
+// ヘルパー関数: PuyoPairの境界チェック（垂直移動用）
+const checkVerticalBounds = (puyoPair: PuyoPair, fieldHeight: number): boolean => {
+  return (
+    puyoPair.main.position.y >= fieldHeight ||
+    puyoPair.sub.position.y >= fieldHeight
+  )
+}
+
+// ヘルパー関数: 単一ぷよの境界チェック
+const isPuyoOutOfBounds = (x: number, y: number, fieldWidth: number, fieldHeight: number): boolean => {
+  return x < 0 || x >= fieldWidth || y < 0 || y >= fieldHeight
+}
+
+// ヘルパー関数: PuyoPairの回転境界チェック
+const checkRotationBounds = (puyoPair: PuyoPair, fieldWidth: number, fieldHeight: number): boolean => {
+  const mainOutOfBounds = isPuyoOutOfBounds(
+    puyoPair.main.position.x,
+    puyoPair.main.position.y,
+    fieldWidth,
+    fieldHeight
+  )
+  const subOutOfBounds = isPuyoOutOfBounds(
+    puyoPair.sub.position.x,
+    puyoPair.sub.position.y,
+    fieldWidth,
+    fieldHeight
+  )
+  
+  return mainOutOfBounds || subOutOfBounds
+}
+
 // ぷよペア移動・回転ロジック
 export const movePuyoLeft = (game: Game): Game => {
   if (!game.currentPuyoPair) {
@@ -104,20 +148,13 @@ export const movePuyoLeft = (game: Game): Game => {
 
   const movedPair = movePuyoPair(game.currentPuyoPair, -1, 0)
 
-  // フィールド境界チェック
+  // 左端チェック
   if (movedPair.main.position.x < 0 || movedPair.sub.position.x < 0) {
     return game
   }
 
-  // 衝突チェック（y座標が負の場合はスキップ）
-  const mainCollision =
-    movedPair.main.position.y >= 0 &&
-    !game.field.isEmpty(movedPair.main.position.x, movedPair.main.position.y)
-  const subCollision =
-    movedPair.sub.position.y >= 0 &&
-    !game.field.isEmpty(movedPair.sub.position.x, movedPair.sub.position.y)
-
-  if (mainCollision || subCollision) {
+  // 衝突チェック
+  if (checkPuyoPairCollision(game, movedPair)) {
     return game
   }
 
@@ -135,7 +172,7 @@ export const movePuyoRight = (game: Game): Game => {
 
   const movedPair = movePuyoPair(game.currentPuyoPair, 1, 0)
 
-  // フィールド境界チェック
+  // 右端チェック
   if (
     movedPair.main.position.x >= game.field.getWidth() ||
     movedPair.sub.position.x >= game.field.getWidth()
@@ -143,15 +180,8 @@ export const movePuyoRight = (game: Game): Game => {
     return game
   }
 
-  // 衝突チェック（y座標が負の場合はスキップ）
-  const mainCollision =
-    movedPair.main.position.y >= 0 &&
-    !game.field.isEmpty(movedPair.main.position.x, movedPair.main.position.y)
-  const subCollision =
-    movedPair.sub.position.y >= 0 &&
-    !game.field.isEmpty(movedPair.sub.position.x, movedPair.sub.position.y)
-
-  if (mainCollision || subCollision) {
+  // 衝突チェック
+  if (checkPuyoPairCollision(game, movedPair)) {
     return game
   }
 
@@ -169,23 +199,13 @@ export const dropPuyoFast = (game: Game): Game => {
 
   const movedPair = movePuyoPair(game.currentPuyoPair, 0, 1)
 
-  // フィールド境界チェック
-  if (
-    movedPair.main.position.y >= game.field.getHeight() ||
-    movedPair.sub.position.y >= game.field.getHeight()
-  ) {
+  // 垃直境界チェック
+  if (checkVerticalBounds(movedPair, game.field.getHeight())) {
     return game
   }
 
-  // 衝突チェック（y座標が負の場合はスキップ）
-  const mainCollision =
-    movedPair.main.position.y >= 0 &&
-    !game.field.isEmpty(movedPair.main.position.x, movedPair.main.position.y)
-  const subCollision =
-    movedPair.sub.position.y >= 0 &&
-    !game.field.isEmpty(movedPair.sub.position.x, movedPair.sub.position.y)
-
-  if (mainCollision || subCollision) {
+  // 衝突チェック
+  if (checkPuyoPairCollision(game, movedPair)) {
     return game
   }
 
@@ -212,32 +232,13 @@ export const rotatePuyo = (game: Game): Game => {
 
   const rotatedPair = rotatePuyoPair(game.currentPuyoPair, 'clockwise')
 
-  // 回転後の位置が有効かチェック
-  if (
-    rotatedPair.main.position.x < 0 ||
-    rotatedPair.main.position.x >= game.field.getWidth() ||
-    rotatedPair.main.position.y < 0 ||
-    rotatedPair.main.position.y >= game.field.getHeight() ||
-    rotatedPair.sub.position.x < 0 ||
-    rotatedPair.sub.position.x >= game.field.getWidth() ||
-    rotatedPair.sub.position.y < 0 ||
-    rotatedPair.sub.position.y >= game.field.getHeight()
-  ) {
+  // 回転後の境界チェック
+  if (checkRotationBounds(rotatedPair, game.field.getWidth(), game.field.getHeight())) {
     return game
   }
 
-  // 衝突チェック（y座標が負の場合はスキップ）
-  const mainCollision =
-    rotatedPair.main.position.y >= 0 &&
-    !game.field.isEmpty(
-      rotatedPair.main.position.x,
-      rotatedPair.main.position.y,
-    )
-  const subCollision =
-    rotatedPair.sub.position.y >= 0 &&
-    !game.field.isEmpty(rotatedPair.sub.position.x, rotatedPair.sub.position.y)
-
-  if (mainCollision || subCollision) {
+  // 衝突チェック
+  if (checkPuyoPairCollision(game, rotatedPair)) {
     return game
   }
 

@@ -24,46 +24,61 @@ export const GameBoard = ({ game }: GameBoardProps) => {
     }
   }
 
-  const getCellPuyo = (x: number, y: number) => {
-    const fieldPuyo = field.getPuyo(x, y)
-
-    // PuyoPairからの表示チェック
-    let currentPuyo = null
-    let isCurrentPuyo = false
-
-    if (game.currentPuyoPair) {
-      // メインぷよの位置チェック
-      if (
-        game.currentPuyoPair.main.position.x === x &&
-        game.currentPuyoPair.main.position.y === y
-      ) {
-        currentPuyo = game.currentPuyoPair.main
-        isCurrentPuyo = true
-      }
-      // サブぷよの位置チェック
-      else if (
-        game.currentPuyoPair.sub.position.x === x &&
-        game.currentPuyoPair.sub.position.y === y
-      ) {
-        currentPuyo = game.currentPuyoPair.sub
-        isCurrentPuyo = true
-      }
+  // ヘルパー関数: PuyoPairから現在位置のぷよを取得
+  const getCurrentPuyoFromPair = (x: number, y: number) => {
+    if (!game.currentPuyoPair) {
+      return { puyo: null, isCurrentPuyo: false }
     }
 
-    // 古いcurrentPuyoとの後方互換性（一応残しておく）
+    // メインぷよの位置チェック
     if (
-      !isCurrentPuyo &&
+      game.currentPuyoPair.main.position.x === x &&
+      game.currentPuyoPair.main.position.y === y
+    ) {
+      return { puyo: game.currentPuyoPair.main, isCurrentPuyo: true }
+    }
+
+    // サブぷよの位置チェック
+    if (
+      game.currentPuyoPair.sub.position.x === x &&
+      game.currentPuyoPair.sub.position.y === y
+    ) {
+      return { puyo: game.currentPuyoPair.sub, isCurrentPuyo: true }
+    }
+
+    return { puyo: null, isCurrentPuyo: false }
+  }
+
+  // ヘルパー関数: 後方互換性のためのcurrentPuyoチェック
+  const getCurrentPuyoLegacy = (x: number, y: number) => {
+    if (
       game.currentPuyo &&
       game.currentPuyo.position.x === x &&
       game.currentPuyo.position.y === y
     ) {
-      currentPuyo = game.currentPuyo
-      isCurrentPuyo = true
+      return { puyo: game.currentPuyo, isCurrentPuyo: true }
+    }
+    return { puyo: null, isCurrentPuyo: false }
+  }
+
+  const getCellPuyo = (x: number, y: number) => {
+    const fieldPuyo = field.getPuyo(x, y)
+
+    // PuyoPairからの表示チェック
+    const pairResult = getCurrentPuyoFromPair(x, y)
+    if (pairResult.isCurrentPuyo) {
+      return pairResult
+    }
+
+    // 古いcurrentPuyoとの後方互換性
+    const legacyResult = getCurrentPuyoLegacy(x, y)
+    if (legacyResult.isCurrentPuyo) {
+      return legacyResult
     }
 
     return {
-      puyo: isCurrentPuyo ? currentPuyo : fieldPuyo,
-      isCurrentPuyo,
+      puyo: fieldPuyo,
+      isCurrentPuyo: false,
     }
   }
 
