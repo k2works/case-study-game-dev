@@ -1,4 +1,3 @@
-import { Field } from './Field'
 import type { ImmutableField } from './ImmutableField'
 import {
   createField,
@@ -16,11 +15,10 @@ import type { Puyo } from './Puyo'
  * 既存のFieldクラスとImmutableFieldの間のアダプター
  * 既存のコードとの互換性を保ちながらImmutableFieldの利点を活用
  */
-export class FieldAdapter extends Field {
+export class FieldAdapter {
   private immutableField: ImmutableField
 
   constructor(field?: ImmutableField) {
-    super()
     this.immutableField = field ?? createField()
   }
 

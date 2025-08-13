@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { Field } from './Field'
+import { FieldAdapter } from './FieldAdapter'
 import { createPuyo } from './Puyo'
 import {
   canPlaceOn,
@@ -90,7 +90,7 @@ describe('PuyoPair', () => {
   describe('配置可能判定', () => {
     it('空きフィールドに配置可能', () => {
       // Arrange
-      const field = new Field()
+      const field = new FieldAdapter()
       const pair = createPuyoPair('red', 'blue', 2, 5)
 
       // Act
@@ -102,7 +102,7 @@ describe('PuyoPair', () => {
 
     it('占有済みフィールドに配置不可', () => {
       // Arrange
-      const field = new Field()
+      const field = new FieldAdapter()
       field.setPuyo(2, 5, createPuyo('green', { x: 2, y: 5 }))
       const pair = createPuyoPair('red', 'blue', 2, 5)
 
@@ -115,7 +115,7 @@ describe('PuyoPair', () => {
 
     it('フィールド外に配置不可', () => {
       // Arrange
-      const field = new Field()
+      const field = new FieldAdapter()
       const pair = createPuyoPair('red', 'blue', -1, 5)
 
       // Act

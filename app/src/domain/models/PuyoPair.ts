@@ -1,4 +1,4 @@
-import type { Field } from './Field'
+import type { FieldAdapter } from './FieldAdapter'
 import type { Position } from './Position'
 import { createPosition } from './Position'
 import type { Puyo, PuyoColor } from './Puyo'
@@ -76,7 +76,7 @@ export const getOccupiedPositions = (pair: PuyoPair): Position[] => [
   pair.sub.position,
 ]
 
-export const canPlaceOn = (pair: PuyoPair, field: Field): boolean => {
+export const canPlaceOn = (pair: PuyoPair, field: FieldAdapter): boolean => {
   const positions = getOccupiedPositions(pair)
 
   return positions.every(
