@@ -8,7 +8,6 @@ import {
   movePuyoRight,
   rotatePuyo,
   startGame,
-  spawnNextPuyo,
   updateGameScore,
   updateGameState,
 } from './Game'
@@ -415,32 +414,5 @@ describe('Game', () => {
     })
   })
 
-  describe('spawnNextPuyo', () => {
-    it('新しいぷよを生成する', () => {
-      // Arrange
-      const game = createGame()
-
-      // Act
-      const gameWithPuyo = spawnNextPuyo(game)
-
-      // Assert
-      expect(gameWithPuyo.currentPuyo).not.toBeNull()
-      expect(gameWithPuyo.currentPuyo?.color).toBeDefined()
-    })
-
-    it('生成位置が占有されている場合はゲームオーバーになる', () => {
-      // Arrange
-      const game = createGame()
-      const centerX = Math.floor(game.field.getWidth() / 2)
-      const blockingPuyo = createPuyo('red', { x: centerX, y: 0 })
-      game.field.setPuyo(centerX, 0, blockingPuyo)
-
-      // Act
-      const result = spawnNextPuyo(game)
-
-      // Assert
-      expect(result.state).toBe('gameOver')
-      expect(result.currentPuyo).toBeNull()
-    })
-  })
+  // spawnNextPuyoPairのテストはGame.PuyoPair.test.tsに移動
 })

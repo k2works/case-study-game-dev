@@ -1,6 +1,7 @@
 import { Field } from './Field'
-import { type Puyo, type PuyoColor, createPuyo, movePuyo } from './Puyo'
+import { type Puyo, type PuyoColor } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
+import { createPuyoPair, movePuyoPair, rotatePuyoPair } from './PuyoPair'
 import type { Score } from './Score'
 import { createScore } from './Score'
 
@@ -95,117 +96,154 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
   }
 }
 
-// ぷよ移動・回転ロジック
+// ぷよペア移動・回転ロジック
 export const movePuyoLeft = (game: Game): Game => {
-  if (!game.currentPuyo) {
+  if (!game.currentPuyoPair) {
     return game
   }
 
-  const newX = game.currentPuyo.position.x - 1
+  const movedPair = movePuyoPair(game.currentPuyoPair, -1, 0)
 
-  // 左端チェック
-  if (newX < 0) {
+  // フィールド境界チェック
+  if (movedPair.main.position.x < 0 || movedPair.sub.position.x < 0) {
     return game
   }
 
-  // 衝突チェック
-  if (!game.field.isEmpty(newX, game.currentPuyo.position.y)) {
+  // 衝突チェック（y座標が負の場合はスキップ）
+  const mainCollision =
+    movedPair.main.position.y >= 0 &&
+    !game.field.isEmpty(movedPair.main.position.x, movedPair.main.position.y)
+  const subCollision =
+    movedPair.sub.position.y >= 0 &&
+    !game.field.isEmpty(movedPair.sub.position.x, movedPair.sub.position.y)
+
+  if (mainCollision || subCollision) {
     return game
   }
-
-  // 移動実行
-  const newPosition = { x: newX, y: game.currentPuyo.position.y }
-  const movedPuyo = movePuyo(game.currentPuyo, newPosition)
 
   return {
     ...game,
-    currentPuyo: movedPuyo,
+    currentPuyoPair: movedPair,
     updatedAt: new Date(),
   }
 }
 
 export const movePuyoRight = (game: Game): Game => {
-  if (!game.currentPuyo) {
+  if (!game.currentPuyoPair) {
     return game
   }
 
-  const newX = game.currentPuyo.position.x + 1
+  const movedPair = movePuyoPair(game.currentPuyoPair, 1, 0)
 
-  // 右端チェック
-  if (newX >= game.field.getWidth()) {
+  // フィールド境界チェック
+  if (
+    movedPair.main.position.x >= game.field.getWidth() ||
+    movedPair.sub.position.x >= game.field.getWidth()
+  ) {
     return game
   }
 
-  // 衝突チェック
-  if (!game.field.isEmpty(newX, game.currentPuyo.position.y)) {
+  // 衝突チェック（y座標が負の場合はスキップ）
+  const mainCollision =
+    movedPair.main.position.y >= 0 &&
+    !game.field.isEmpty(movedPair.main.position.x, movedPair.main.position.y)
+  const subCollision =
+    movedPair.sub.position.y >= 0 &&
+    !game.field.isEmpty(movedPair.sub.position.x, movedPair.sub.position.y)
+
+  if (mainCollision || subCollision) {
     return game
   }
-
-  // 移動実行
-  const newPosition = { x: newX, y: game.currentPuyo.position.y }
-  const movedPuyo = movePuyo(game.currentPuyo, newPosition)
 
   return {
     ...game,
-    currentPuyo: movedPuyo,
+    currentPuyoPair: movedPair,
     updatedAt: new Date(),
   }
 }
 
 export const dropPuyoFast = (game: Game): Game => {
-  if (!game.currentPuyo) {
+  if (!game.currentPuyoPair) {
     return game
   }
 
-  const newY = game.currentPuyo.position.y + 1
+  const movedPair = movePuyoPair(game.currentPuyoPair, 0, 1)
 
-  // 最下段チェック
-  if (newY >= game.field.getHeight()) {
+  // フィールド境界チェック
+  if (
+    movedPair.main.position.y >= game.field.getHeight() ||
+    movedPair.sub.position.y >= game.field.getHeight()
+  ) {
     return game
   }
 
-  // 衝突チェック
-  if (!game.field.isEmpty(game.currentPuyo.position.x, newY)) {
+  // 衝突チェック（y座標が負の場合はスキップ）
+  const mainCollision =
+    movedPair.main.position.y >= 0 &&
+    !game.field.isEmpty(movedPair.main.position.x, movedPair.main.position.y)
+  const subCollision =
+    movedPair.sub.position.y >= 0 &&
+    !game.field.isEmpty(movedPair.sub.position.x, movedPair.sub.position.y)
+
+  if (mainCollision || subCollision) {
     return game
   }
-
-  // 移動実行
-  const newPosition = { x: game.currentPuyo.position.x, y: newY }
-  const movedPuyo = movePuyo(game.currentPuyo, newPosition)
 
   return {
     ...game,
-    currentPuyo: movedPuyo,
+    currentPuyoPair: movedPair,
     updatedAt: new Date(),
   }
 }
 
-// 色の回転順序
-const colorRotationOrder: PuyoColor[] = [
-  'red',
-  'blue',
-  'green',
-  'yellow',
-  'purple',
-]
+// 色の回転順序（将来の機能拡張用に保持）
+// const colorRotationOrder: PuyoColor[] = [
+//   'red',
+//   'blue',
+//   'green',
+//   'yellow',
+//   'purple',
+// ]
 
 export const rotatePuyo = (game: Game): Game => {
-  if (!game.currentPuyo || !game.currentPuyo.color) {
+  if (!game.currentPuyoPair) {
     return game
   }
 
-  const currentColorIndex = colorRotationOrder.indexOf(game.currentPuyo.color)
-  const nextColorIndex = (currentColorIndex + 1) % colorRotationOrder.length
-  const nextColor = colorRotationOrder[nextColorIndex]
+  const rotatedPair = rotatePuyoPair(game.currentPuyoPair, 'clockwise')
 
-  const rotatedPuyo = {
-    ...game.currentPuyo,
-    color: nextColor,
+  // 回転後の位置が有効かチェック
+  if (
+    rotatedPair.main.position.x < 0 ||
+    rotatedPair.main.position.x >= game.field.getWidth() ||
+    rotatedPair.main.position.y < 0 ||
+    rotatedPair.main.position.y >= game.field.getHeight() ||
+    rotatedPair.sub.position.x < 0 ||
+    rotatedPair.sub.position.x >= game.field.getWidth() ||
+    rotatedPair.sub.position.y < 0 ||
+    rotatedPair.sub.position.y >= game.field.getHeight()
+  ) {
+    return game
+  }
+
+  // 衝突チェック（y座標が負の場合はスキップ）
+  const mainCollision =
+    rotatedPair.main.position.y >= 0 &&
+    !game.field.isEmpty(
+      rotatedPair.main.position.x,
+      rotatedPair.main.position.y,
+    )
+  const subCollision =
+    rotatedPair.sub.position.y >= 0 &&
+    !game.field.isEmpty(rotatedPair.sub.position.x, rotatedPair.sub.position.y)
+
+  if (mainCollision || subCollision) {
+    return game
   }
 
   return {
     ...game,
-    currentPuyo: rotatedPuyo,
+    currentPuyoPair: rotatedPair,
     updatedAt: new Date(),
   }
 }
@@ -222,67 +260,85 @@ export const startGame = (game: Game): Game => {
     return game
   }
 
-  // 初期ぷよを生成（フィールド上部中央に配置）
+  // 初期ぷよペアを生成（フィールド上部中央に配置）
   const startX = Math.floor(game.field.getWidth() / 2)
   const startY = 0
-  const initialPuyo = createPuyo(getRandomColor(), { x: startX, y: startY })
+  const mainColor = getRandomColor()
+  const subColor = getRandomColor()
+  const initialPuyoPair = createPuyoPair(mainColor!, subColor!, startX, startY)
 
   return {
     ...game,
     state: 'playing',
-    currentPuyo: initialPuyo,
+    currentPuyoPair: initialPuyoPair,
+    currentPuyo: null, // PuyoPairを使う場合はcurrentPuyoはnull
     updatedAt: new Date(),
   }
 }
 
-// 次のぷよを生成
-export const spawnNextPuyo = (game: Game): Game => {
+// 次のぷよペアを生成
+export const spawnNextPuyoPair = (game: Game): Game => {
   const startX = Math.floor(game.field.getWidth() / 2)
   const startY = 0
-  
-  // 生成位置が空いているかチェック
+
+  // 生成位置が空いているかチェック（メインのみ、サブは画面外なのでチェック不要）
   if (!game.field.isEmpty(startX, startY)) {
     return {
       ...game,
       state: 'gameOver',
+      currentPuyoPair: null,
       currentPuyo: null,
       updatedAt: new Date(),
     }
   }
 
-  const newPuyo = createPuyo(getRandomColor(), { x: startX, y: startY })
+  const mainColor = getRandomColor()
+  const subColor = getRandomColor()
+  const newPuyoPair = createPuyoPair(mainColor!, subColor!, startX, startY)
 
   return {
     ...game,
-    currentPuyo: newPuyo,
+    currentPuyoPair: newPuyoPair,
+    currentPuyo: null,
     updatedAt: new Date(),
   }
 }
 
-// 現在のぷよをフィールドに固定
-export const placePuyo = (game: Game): Game => {
-  if (!game.currentPuyo) {
+// 現在のぷよペアをフィールドに固定
+export const placePuyoPair = (game: Game): Game => {
+  if (!game.currentPuyoPair) {
     return game
   }
 
-  const puyo = game.currentPuyo
-  
-  // フィールドにぷよを配置
+  const puyoPair = game.currentPuyoPair
+
+  // フィールドにぷよペアを配置
   try {
-    game.field.setPuyo(puyo.position.x, puyo.position.y, puyo)
+    game.field.setPuyo(
+      puyoPair.main.position.x,
+      puyoPair.main.position.y,
+      puyoPair.main,
+    )
+    game.field.setPuyo(
+      puyoPair.sub.position.x,
+      puyoPair.sub.position.y,
+      puyoPair.sub,
+    )
   } catch {
     // 配置できない場合はゲームオーバー
     return {
       ...game,
       state: 'gameOver',
+      currentPuyoPair: null,
       currentPuyo: null,
       updatedAt: new Date(),
     }
   }
 
-  // 次のぷよを生成
-  return spawnNextPuyo({
+  // 次のぷよペアを生成
+  return spawnNextPuyoPair({
     ...game,
+    currentPuyoPair: null,
     currentPuyo: null,
     updatedAt: new Date(),
   })

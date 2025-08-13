@@ -26,14 +26,44 @@ export const GameBoard = ({ game }: GameBoardProps) => {
 
   const getCellPuyo = (x: number, y: number) => {
     const fieldPuyo = field.getPuyo(x, y)
-    const isCurrentPuyoPosition =
+
+    // PuyoPairからの表示チェック
+    let currentPuyo = null
+    let isCurrentPuyo = false
+
+    if (game.currentPuyoPair) {
+      // メインぷよの位置チェック
+      if (
+        game.currentPuyoPair.main.position.x === x &&
+        game.currentPuyoPair.main.position.y === y
+      ) {
+        currentPuyo = game.currentPuyoPair.main
+        isCurrentPuyo = true
+      }
+      // サブぷよの位置チェック
+      else if (
+        game.currentPuyoPair.sub.position.x === x &&
+        game.currentPuyoPair.sub.position.y === y
+      ) {
+        currentPuyo = game.currentPuyoPair.sub
+        isCurrentPuyo = true
+      }
+    }
+
+    // 古いcurrentPuyoとの後方互換性（一応残しておく）
+    if (
+      !isCurrentPuyo &&
       game.currentPuyo &&
       game.currentPuyo.position.x === x &&
       game.currentPuyo.position.y === y
+    ) {
+      currentPuyo = game.currentPuyo
+      isCurrentPuyo = true
+    }
 
     return {
-      puyo: isCurrentPuyoPosition ? game.currentPuyo : fieldPuyo,
-      isCurrentPuyo: Boolean(isCurrentPuyoPosition),
+      puyo: isCurrentPuyo ? currentPuyo : fieldPuyo,
+      isCurrentPuyo,
     }
   }
 
