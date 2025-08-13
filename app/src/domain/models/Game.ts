@@ -1,5 +1,5 @@
 import { Field } from './Field'
-import { type Puyo, type PuyoColor, movePuyo } from './Puyo'
+import { type Puyo, type PuyoColor, createPuyo, movePuyo } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
 import type { Score } from './Score'
 import { createScore } from './Score'
@@ -208,4 +208,82 @@ export const rotatePuyo = (game: Game): Game => {
     currentPuyo: rotatedPuyo,
     updatedAt: new Date(),
   }
+}
+
+// ランダムな色を生成
+const getRandomColor = (): PuyoColor => {
+  const colors: PuyoColor[] = ['red', 'blue', 'green', 'yellow', 'purple']
+  return colors[Math.floor(Math.random() * colors.length)]
+}
+
+// ゲーム開始
+export const startGame = (game: Game): Game => {
+  if (game.state !== 'ready') {
+    return game
+  }
+
+  // 初期ぷよを生成（フィールド上部中央に配置）
+  const startX = Math.floor(game.field.getWidth() / 2)
+  const startY = 0
+  const initialPuyo = createPuyo(getRandomColor(), { x: startX, y: startY })
+
+  return {
+    ...game,
+    state: 'playing',
+    currentPuyo: initialPuyo,
+    updatedAt: new Date(),
+  }
+}
+
+// 次のぷよを生成
+export const spawnNextPuyo = (game: Game): Game => {
+  const startX = Math.floor(game.field.getWidth() / 2)
+  const startY = 0
+  
+  // 生成位置が空いているかチェック
+  if (!game.field.isEmpty(startX, startY)) {
+    return {
+      ...game,
+      state: 'gameOver',
+      currentPuyo: null,
+      updatedAt: new Date(),
+    }
+  }
+
+  const newPuyo = createPuyo(getRandomColor(), { x: startX, y: startY })
+
+  return {
+    ...game,
+    currentPuyo: newPuyo,
+    updatedAt: new Date(),
+  }
+}
+
+// 現在のぷよをフィールドに固定
+export const placePuyo = (game: Game): Game => {
+  if (!game.currentPuyo) {
+    return game
+  }
+
+  const puyo = game.currentPuyo
+  
+  // フィールドにぷよを配置
+  try {
+    game.field.setPuyo(puyo.position.x, puyo.position.y, puyo)
+  } catch {
+    // 配置できない場合はゲームオーバー
+    return {
+      ...game,
+      state: 'gameOver',
+      currentPuyo: null,
+      updatedAt: new Date(),
+    }
+  }
+
+  // 次のぷよを生成
+  return spawnNextPuyo({
+    ...game,
+    currentPuyo: null,
+    updatedAt: new Date(),
+  })
 }

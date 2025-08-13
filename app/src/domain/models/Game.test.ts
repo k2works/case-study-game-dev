@@ -7,6 +7,8 @@ import {
   movePuyoLeft,
   movePuyoRight,
   rotatePuyo,
+  startGame,
+  spawnNextPuyo,
   updateGameScore,
   updateGameState,
 } from './Game'
@@ -357,6 +359,88 @@ describe('Game', () => {
       // Assert
       expect(originalGame.score).toEqual(originalScore)
       expect(updatedGame.score.current).toBe(2000)
+    })
+  })
+
+  describe('startGame', () => {
+    it('ready状態からplaying状態に変更される', () => {
+      // Arrange
+      const game = createGame()
+      expect(game.state).toBe('ready')
+
+      // Act
+      const startedGame = startGame(game)
+
+      // Assert
+      expect(startedGame.state).toBe('playing')
+    })
+
+    it('currentPuyoが生成される', () => {
+      // Arrange
+      const game = createGame()
+      expect(game.currentPuyo).toBeNull()
+
+      // Act
+      const startedGame = startGame(game)
+
+      // Assert
+      expect(startedGame.currentPuyo).not.toBeNull()
+      expect(startedGame.currentPuyo?.color).toBeDefined()
+      expect(startedGame.currentPuyo?.position).toBeDefined()
+    })
+
+    it('ぷよがフィールド中央上部に配置される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      const startedGame = startGame(game)
+
+      // Assert
+      const expectedX = Math.floor(game.field.getWidth() / 2)
+      expect(startedGame.currentPuyo?.position.x).toBe(expectedX)
+      expect(startedGame.currentPuyo?.position.y).toBe(0)
+    })
+
+    it('ready状態以外では何もしない', () => {
+      // Arrange
+      const game = createGame()
+      const playingGame = updateGameState(game, 'playing')
+
+      // Act
+      const result = startGame(playingGame)
+
+      // Assert
+      expect(result).toBe(playingGame)
+    })
+  })
+
+  describe('spawnNextPuyo', () => {
+    it('新しいぷよを生成する', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      const gameWithPuyo = spawnNextPuyo(game)
+
+      // Assert
+      expect(gameWithPuyo.currentPuyo).not.toBeNull()
+      expect(gameWithPuyo.currentPuyo?.color).toBeDefined()
+    })
+
+    it('生成位置が占有されている場合はゲームオーバーになる', () => {
+      // Arrange
+      const game = createGame()
+      const centerX = Math.floor(game.field.getWidth() / 2)
+      const blockingPuyo = createPuyo('red', { x: centerX, y: 0 })
+      game.field.setPuyo(centerX, 0, blockingPuyo)
+
+      // Act
+      const result = spawnNextPuyo(game)
+
+      // Assert
+      expect(result.state).toBe('gameOver')
+      expect(result.currentPuyo).toBeNull()
     })
   })
 })
