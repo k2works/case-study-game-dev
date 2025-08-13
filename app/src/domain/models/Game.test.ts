@@ -7,8 +7,8 @@ import {
   movePuyoLeft,
   movePuyoRight,
   rotatePuyo,
+  updateGameScore,
   updateGameState,
-  updateScore,
 } from './Game'
 import { createPuyo } from './Puyo'
 
@@ -22,7 +22,8 @@ describe('Game', () => {
       expect(game.id).toBeDefined()
       expect(game.state).toBe('ready')
       expect(game.field).toBeDefined()
-      expect(game.score).toBe(0)
+      expect(game.score.current).toBe(0)
+      expect(game.score.multiplier).toBe(1)
       expect(game.level).toBe(1)
       expect(game.currentPuyo).toBeNull()
       expect(game.createdAt).toBeInstanceOf(Date)
@@ -309,17 +310,20 @@ describe('Game', () => {
     })
   })
 
-  describe('updateScore', () => {
+  describe('updateGameScore', () => {
     it('スコアを更新できる', () => {
       // Arrange
       const game = createGame()
       const newScore = 1500
 
       // Act
-      const updatedGame = updateScore(game, newScore)
+      const updatedGame = updateGameScore(game, {
+        current: newScore,
+        multiplier: 1,
+      })
 
       // Assert
-      expect(updatedGame.score).toBe(newScore)
+      expect(updatedGame.score.current).toBe(newScore)
     })
 
     it('updatedAtが更新される', () => {
@@ -328,7 +332,10 @@ describe('Game', () => {
       const originalUpdatedAt = game.updatedAt
 
       // Act
-      const updatedGame = updateScore(game, 1000)
+      const updatedGame = updateGameScore(game, {
+        current: 1000,
+        multiplier: 1,
+      })
 
       // Assert
       expect(updatedGame.updatedAt.getTime()).toBeGreaterThanOrEqual(
@@ -342,11 +349,14 @@ describe('Game', () => {
       const originalScore = originalGame.score
 
       // Act
-      const updatedGame = updateScore(originalGame, 2000)
+      const updatedGame = updateGameScore(originalGame, {
+        current: 2000,
+        multiplier: 1,
+      })
 
       // Assert
-      expect(originalGame.score).toBe(originalScore)
-      expect(updatedGame).not.toBe(originalGame)
+      expect(originalGame.score).toEqual(originalScore)
+      expect(updatedGame.score.current).toBe(2000)
     })
   })
 })

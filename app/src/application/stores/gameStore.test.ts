@@ -20,7 +20,7 @@ describe('gameStore', () => {
       // Assert
       expect(result.current.game).toBeDefined()
       expect(result.current.game.state).toBe('ready')
-      expect(result.current.game.score).toBe(0)
+      expect(result.current.game.score.current).toBe(0)
       expect(result.current.game.level).toBe(1)
       expect(result.current.currentPuyo).toBeNull()
       expect(result.current.score).toBe(0)

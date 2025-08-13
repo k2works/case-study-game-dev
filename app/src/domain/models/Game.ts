@@ -1,5 +1,8 @@
 import { Field } from './Field'
 import { type Puyo, type PuyoColor, movePuyo } from './Puyo'
+import type { PuyoPair } from './PuyoPair'
+import type { Score } from './Score'
+import { createScore } from './Score'
 
 export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 
@@ -7,8 +10,9 @@ export interface Game {
   readonly id: string
   readonly state: GameState
   readonly field: Field
-  readonly score: number
+  readonly score: Score
   readonly level: number
+  readonly currentPuyoPair: PuyoPair | null
   readonly currentPuyo: Puyo | null
   readonly createdAt: Date
   readonly updatedAt: Date
@@ -18,8 +22,9 @@ export const createGame = (): Game => ({
   id: crypto.randomUUID(),
   state: 'ready',
   field: new Field(),
-  score: 0,
+  score: createScore(),
   level: 1,
+  currentPuyoPair: null,
   currentPuyo: null,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -31,9 +36,18 @@ export const updateGameState = (game: Game, newState: GameState): Game => ({
   updatedAt: new Date(),
 })
 
-export const updateScore = (game: Game, newScore: number): Game => ({
+export const updateGameScore = (game: Game, newScore: Score): Game => ({
   ...game,
   score: newScore,
+  updatedAt: new Date(),
+})
+
+export const updateCurrentPuyoPair = (
+  game: Game,
+  puyoPair: PuyoPair | null,
+): Game => ({
+  ...game,
+  currentPuyoPair: puyoPair,
   updatedAt: new Date(),
 })
 

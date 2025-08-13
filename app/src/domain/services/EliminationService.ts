@@ -75,7 +75,7 @@ export class EliminationService {
 
     while (stack.length > 0) {
       const position = stack.pop()!
-      
+
       if (this.shouldSkipPosition(position, color, field, visited)) {
         continue
       }
@@ -97,7 +97,7 @@ export class EliminationService {
     const positionKey = positionToString(position)
     if (visited.has(positionKey)) return true
     if (!field.isValidPosition(position.x, position.y)) return true
-    
+
     const puyo = field.getPuyo(position.x, position.y)
     return !puyo || puyo.color !== color
   }

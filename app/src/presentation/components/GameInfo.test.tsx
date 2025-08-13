@@ -4,9 +4,10 @@ import { render, screen } from '@testing-library/react'
 
 import {
   createGame,
+  updateGameScore,
   updateGameState,
-  updateScore,
 } from '../../domain/models/Game'
+import { createScore } from '../../domain/models/Score'
 import { GameInfo } from './GameInfo'
 
 describe('GameInfoコンポーネント', () => {
@@ -74,7 +75,7 @@ describe('GameInfoコンポーネント', () => {
     it('更新されたスコアが表示される', () => {
       // Arrange
       const game = createGame()
-      const updatedGame = updateScore(game, 1500)
+      const updatedGame = updateGameScore(game, createScore(1500))
 
       // Act
       render(<GameInfo game={updatedGame} />)
@@ -86,7 +87,7 @@ describe('GameInfoコンポーネント', () => {
     it('大きなスコアが正しく表示される', () => {
       // Arrange
       const game = createGame()
-      const updatedGame = updateScore(game, 999999)
+      const updatedGame = updateGameScore(game, createScore(999999))
 
       // Act
       render(<GameInfo game={updatedGame} />)
