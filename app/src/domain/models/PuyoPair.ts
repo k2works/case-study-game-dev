@@ -10,13 +10,13 @@ export interface PuyoPair {
 }
 
 export const createPuyoPair = (
-  mainColor: string,
-  subColor: string,
+  mainColor: PuyoColor,
+  subColor: PuyoColor,
   centerX: number,
   centerY: number,
 ): PuyoPair => ({
-  main: createPuyo(mainColor as PuyoColor, createPosition(centerX, centerY)),
-  sub: createPuyo(subColor as PuyoColor, createPosition(centerX, centerY - 1)),
+  main: createPuyo(mainColor, createPosition(centerX, centerY)),
+  sub: createPuyo(subColor, createPosition(centerX, centerY - 1)),
 })
 
 export const rotatePuyoPair = (

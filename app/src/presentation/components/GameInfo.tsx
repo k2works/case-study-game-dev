@@ -1,5 +1,6 @@
 import type { Game, GameState } from '../../domain/models/Game'
 import { getDisplayScore } from '../../domain/models/Score'
+import { NextPuyoPair } from './NextPuyoPair'
 
 interface GameInfoProps {
   game: Game
@@ -74,6 +75,16 @@ export const GameInfo = ({ game, onRestart }: GameInfoProps) => {
           className={`info-value state-${game.state} px-3 py-2 rounded-md text-center font-semibold ${getStateColor(game.state)}`}
         >
           {getStateLabel(game.state)}
+        </div>
+      </div>
+
+      <div
+        data-testid="next-puyo-display"
+        className="info-section bg-white/5 rounded-lg p-4 border border-white/10"
+      >
+        <div className="info-label text-sm text-gray-300 mb-3">次のぷよ</div>
+        <div className="flex justify-center">
+          <NextPuyoPair puyoPair={game.nextPuyoPair} />
         </div>
       </div>
 

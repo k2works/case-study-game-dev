@@ -19,6 +19,7 @@ export interface Game {
   readonly score: Score
   readonly level: number
   readonly currentPuyoPair: PuyoPair | null
+  readonly nextPuyoPair: PuyoPair | null
   readonly currentPuyo: Puyo | null
   readonly createdAt: Date
   readonly updatedAt: Date
@@ -31,6 +32,7 @@ export const createGame = (): Game => ({
   score: createScore(),
   level: 1,
   currentPuyoPair: null,
+  nextPuyoPair: null,
   currentPuyo: null,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -131,8 +133,6 @@ const checkVerticalBounds = (
     puyoPair.sub.position.y >= fieldHeight
   )
 }
-
-
 
 // ぷよペア移動・回転ロジック
 export const movePuyoLeft = (game: Game): Game => {
@@ -246,7 +246,8 @@ export const rotatePuyo = (game: Game): Game => {
 // ランダムな色を生成
 const getRandomColor = (): PuyoColor => {
   const colors: PuyoColor[] = ['red', 'blue', 'green', 'yellow', 'purple']
-  return colors[Math.floor(Math.random() * colors.length)]
+  const randomIndex = Math.floor(Math.random() * colors.length)
+  return colors[randomIndex]!
 }
 
 // ゲーム開始
@@ -260,12 +261,23 @@ export const startGame = (game: Game): Game => {
   const startY = 0
   const mainColor = getRandomColor()
   const subColor = getRandomColor()
-  const initialPuyoPair = createPuyoPair(mainColor!, subColor!, startX, startY)
+  const initialPuyoPair = createPuyoPair(mainColor, subColor, startX, startY)
+
+  // 次のぷよペアも生成
+  const nextMainColor = getRandomColor()
+  const nextSubColor = getRandomColor()
+  const nextPuyoPair = createPuyoPair(
+    nextMainColor,
+    nextSubColor,
+    startX,
+    startY,
+  )
 
   return {
     ...game,
     state: 'playing',
     currentPuyoPair: initialPuyoPair,
+    nextPuyoPair: nextPuyoPair,
     currentPuyo: null, // PuyoPairを使う場合はcurrentPuyoはnull
     updatedAt: new Date(),
   }
@@ -282,18 +294,31 @@ export const spawnNextPuyoPair = (game: Game): Game => {
       ...game,
       state: 'gameOver',
       currentPuyoPair: null,
+      nextPuyoPair: null,
       currentPuyo: null,
       updatedAt: new Date(),
     }
   }
 
-  const mainColor = getRandomColor()
-  const subColor = getRandomColor()
-  const newPuyoPair = createPuyoPair(mainColor!, subColor!, startX, startY)
+  // nextPuyoPairをcurrentPuyoPairに移動し、新しいnextPuyoPairを生成
+  // nextPuyoPairがnullの場合は新しく生成
+  const newCurrentPuyoPair =
+    game.nextPuyoPair ||
+    createPuyoPair(getRandomColor(), getRandomColor(), startX, startY)
+
+  const nextMainColor = getRandomColor()
+  const nextSubColor = getRandomColor()
+  const newNextPuyoPair = createPuyoPair(
+    nextMainColor,
+    nextSubColor,
+    startX,
+    startY,
+  )
 
   return {
     ...game,
-    currentPuyoPair: newPuyoPair,
+    currentPuyoPair: newCurrentPuyoPair,
+    nextPuyoPair: newNextPuyoPair,
     currentPuyo: null,
     updatedAt: new Date(),
   }

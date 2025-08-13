@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 
 import {
   createGame,
+  startGame,
   updateGameScore,
   updateGameState,
 } from '../../domain/models/Game'
@@ -58,6 +59,18 @@ describe('GameInfoコンポーネント', () => {
       // Assert
       expect(screen.getByTestId('state-display')).toBeInTheDocument()
       expect(screen.getByText('状態')).toBeInTheDocument()
+    })
+
+    it('次のぷよペア表示エリアが表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('next-puyo-display')).toBeInTheDocument()
+      expect(screen.getByText('次のぷよ')).toBeInTheDocument()
     })
   })
 
@@ -244,6 +257,30 @@ describe('GameInfoコンポーネント', () => {
 
       // Assert
       expect(mockOnRestart).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('次のぷよペア表示テスト', () => {
+    it('ゲーム未開始時は次のぷよペアが空表示される', () => {
+      // Arrange
+      const game = createGame()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('next-puyo-pair-empty')).toBeInTheDocument()
+    })
+
+    it('ゲーム開始時は次のぷよペアが表示される', () => {
+      // Arrange
+      const game = startGame(createGame())
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('next-puyo-pair')).toBeInTheDocument()
     })
   })
 })
