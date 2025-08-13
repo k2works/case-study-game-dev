@@ -1,0 +1,251 @@
+# 開発ドキュメント
+
+## 概要
+
+ぷよぷよゲームプロジェクトの開発プロセス、手順、成果物をまとめたドキュメント群です。アジャイル開発手法（XP）に基づく開発サイクルと品質管理を記録しています。
+
+## ドキュメント一覧
+
+### Phase別開発記録
+- [Phase 2レビュー](phase2-review.md) - 構築・配置フェーズの包括的レビュー
+  - **内容:**
+    環境構築、技術スタック実装、品質管理ツール導入、CI/CD構築
+  - **成果:**
+    開発基盤完成、ADR策定、テスト・デプロイ環境構築
+
+## 開発プロセス
+
+### Phase 2: 構築・配置（完了済み）✅
+
+```plantuml
+@startuml "Phase 2 開発フロー"
+start
+
+partition "環境構築" {
+  :Vite + React + TypeScript環境構築;
+  :Vitest テスト環境構築;
+  :ESLint + Prettier 品質管理;
+  :ヘキサゴナルアーキテクチャ基盤作成;
+}
+
+partition "品質管理強化" {
+  :サイクロマティック複雑度制限(7);
+  :dependency-cruiser導入;
+  :Playwright E2Eテスト環境;
+  :Codecov カバレッジ管理;
+}
+
+partition "CI/CD構築" {
+  :GitHub Actions設定;
+  :マトリックステスト(Node 20.x, 22.x);
+  :アーキテクチャ検証自動化;
+  :Vercel自動デプロイ;
+}
+
+stop
+@enduml
+```
+
+### 開発品質指標
+
+| 品質項目 | 目標値 | 現在値 | ステータス |
+| :--- | :--- | :--- | :--- |
+| **テストカバレッジ** | 80% | 40%* | 🔄 Phase 3で向上 |
+| **サイクロマティック複雑度** | ≤7 | ≤7 | ✅ 達成 |
+| **アーキテクチャ違反** | 0件 | 0件 | ✅ 達成 |
+| **型安全性** | 100% | 100% | ✅ 達成 |
+| **ビルド成功率** | 100% | 100% | ✅ 達成 |
+
+*Phase 2は環境構築フェーズのため、実装コードの増加とともにカバレッジ目標達成予定
+
+### Phase 3: 開発（準備完了）
+
+```plantuml
+@startuml "Phase 3 イテレーション計画"
+start
+
+repeat
+  partition "イテレーション開始" {
+    :TODOリスト作成;
+    :受け入れ基準確認;
+    :設計レビュー;
+  }
+  
+  repeat
+    partition "TDD実装サイクル" {
+      :失敗テスト作成 (Red);
+      :最小実装 (Green);
+      :リファクタリング (Refactor);
+      
+      partition "品質チェック" {
+        :コードフォーマット確認;
+        :リント実行;
+        :アーキテクチャ検証;
+        :テスト実行;
+        :ビルド確認;
+      }
+      
+      :TODO単位でコミット;
+    }
+  repeat while (イテレーション完了?)
+  
+  partition "受け入れ処理" {
+    :E2Eテスト実行;
+    :品質基準チェック;
+    :ドキュメント更新;
+    :ユーザーレビュー;
+  }
+  
+  if (受け入れOK?) then (yes)
+    partition "ふりかえり" {
+      :KPT方式ふりかえり;
+      :改善案策定;
+      :次イテレーション計画;
+    }
+  else (no)
+    :修正対応;
+  endif
+  
+repeat while (全イテレーション完了?)
+
+stop
+@enduml
+```
+
+## 技術実装状況
+
+### 実装済み技術スタック
+
+```plantuml
+@startuml "技術スタック構成"
+!define FRAMEWORK_COLOR #E6F3FF
+!define TOOL_COLOR #FFE6CC
+!define QUALITY_COLOR #E6FFE6
+
+package "フロントエンド" FRAMEWORK_COLOR {
+  [React 19.1.1]
+  [TypeScript 5.8.3]
+  [Vite 7.1.2]
+  [Zustand 5.0.7]
+}
+
+package "品質管理" QUALITY_COLOR {
+  [ESLint + Prettier]
+  [Vitest 3.2.4]
+  [Playwright 1.54.2]
+  [dependency-cruiser]
+  [Codecov]
+}
+
+package "CI/CD" TOOL_COLOR {
+  [GitHub Actions]
+  [Vercel]
+  [Node.js 20.x/22.x]
+}
+
+[React 19.1.1] --> [TypeScript 5.8.3]
+[TypeScript 5.8.3] --> [Vite 7.1.2]
+[Zustand 5.0.7] --> [React 19.1.1]
+[Vitest 3.2.4] --> [TypeScript 5.8.3]
+[Playwright 1.54.2] --> [React 19.1.1]
+
+@enduml
+```
+
+### アーキテクチャ実装
+
+```plantuml
+@startuml "実装済みアーキテクチャ"
+package "src/" {
+  package "domain/" {
+    package "models/" {
+      [Puyo.ts]
+    }
+    package "types/" {
+      [GameTypes.ts]
+    }
+  }
+  
+  package "application/" {
+    package "stores/" {
+      [gameStore.ts]
+    }
+  }
+  
+  package "infrastructure/" {
+    [README.md]
+  }
+  
+  package "presentation/" {
+    [README.md]
+  }
+  
+  package "test/" {
+    [setup.ts]
+  }
+}
+
+[gameStore.ts] --> [Puyo.ts]
+[gameStore.ts] --> [GameTypes.ts]
+
+@enduml
+```
+
+## 開発ガイドライン
+
+### コーディング規約
+- **TypeScript strict mode:**
+  型安全性の徹底
+- **関数型プログラミング:**
+  イミュータブルデータ、純粋関数
+- **命名規約:**
+  ドメイン用語の一貫使用
+- **コメント:**
+  必要時のみ、自明でないロジックに限定
+
+### テスト戦略
+- **TDD開発サイクル:**
+  Red-Green-Refactor
+- **3A手法:**
+  Arrange-Act-Assert
+- **日本語テスト記述:**
+  ビジネス要件に対応したテスト名
+- **カバレッジ目標:**
+  80%（Phase 3で達成）
+
+### 品質管理
+- **品質ゲート:**
+  すべてのチェックが通過してからコミット
+- **継続的統合:**
+  プッシュ時の自動テスト・ビルド
+- **コードレビュー:**
+  アーキテクチャ・設計・実装の整合性確認
+
+## 次のステップ
+
+### Iteration 1: ゲーム基盤（MVP）
+- **ドメインモデル実装:**
+  Puyo, Field, Game クラスの詳細実装
+- **基本UI実装:**
+  GameBoard コンポーネント
+- **操作システム:**
+  キーボード入力処理
+
+### 開発継続のための準備
+- ✅ 開発環境完全構築
+- ✅ 品質管理ツール導入
+- ✅ CI/CD パイプライン構築
+- ✅ アーキテクチャ基盤実装
+- ✅ テスト環境構築
+
+## 関連ドキュメント
+
+- [要件定義](../requirements/index.md)
+- [設計ドキュメント](../design/index.md)
+- [アーキテクチャ決定記録 (ADR)](../adr/index.md)
+- [運用ドキュメント](../operation/index.md)
+
+---
+
+**最終更新:** Phase 2 完了時  
+**更新者:** Claude Code Assistant

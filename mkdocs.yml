@@ -58,6 +58,7 @@ plugins:
 nav:
   - Home: index.md
   - 要件:
+    - 要件定義概要: requirements/index.md
     - リリース計画: requirements/リリース計画.md
     - 仕様: requirements/仕様.md
     - ユーザーストーリー: requirements/ユーザーストーリー.md
@@ -67,11 +68,20 @@ nav:
     - 運用要件: requirements/運用要件.md
     - 技術スタック: requirements/技術スタック.md
   - 設計:
+    - 設計概要: design/index.md
     - アーキテクチャ設計: design/アーキテクチャ設計.md
     - データモデル設計: design/データモデル設計.md
     - ドメインモデル設計: design/ドメインモデル設計.md
     - ユーザーインターフェース設計: design/ユーザーインターフェース設計.md
     - 実装戦略: design/実装戦略.md
+  - 開発:
+    - 開発概要: development/index.md
+    - Phase 2レビュー: development/phase2-review.md
+  - 運用:
+    - 運用概要: operation/index.md
+    - セットアップ: operation/セットアップ.md
+    - 環境構築: operation/環境構築.md
+    - MkDocs GitHub Actions設定: operation/MkDocs_GitHub_Actions設定.md
   - ADR:
     - ADR一覧: adr/index.md
     - アーキテクチャ選定: adr/001-アーキテクチャ選定.md
@@ -81,3 +91,6 @@ nav:
     - Vercelデプロイメント採用: adr/005-Vercelデプロイメント採用.md
     - 関数型プログラミング採用: adr/006-関数型プログラミング採用.md
     - テストライブラリ変更: adr/007-テストライブラリ変更.md
+    - サイクロマティック複雑度制限: adr/008-サイクロマティック複雑度制限.md
+    - dependency-cruiser採用: adr/009-dependency-cruiser採用.md
+    - Codecov採用: adr/010-Codecov採用.md

@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Testing
+coverage
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+
+# Dependencies
+dependency-graph.svg
+
+test-report.junit.xml
