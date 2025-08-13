@@ -12,5 +12,7 @@ import journalTasks from './script/journal.js';
 mkdocsTasks(gulp);
 journalTasks(gulp);
 
+export const dev = gulp.series('mkdocs:serve', 'mkdocs:open');
+
 // Export gulp to make it available to the gulp CLI
 export default gulp;
