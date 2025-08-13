@@ -1,35 +1,41 @@
-import { useState } from 'react'
-
-import './App.css'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useGameStore } from './application/stores/gameStore'
+import { GameBoard } from './presentation/components/GameBoard'
+import { GameInfo } from './presentation/components/GameInfo'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { game } = useGameStore()
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4">
+      <div className="max-w-4xl mx-auto">
+        <header className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">ぷよぷよ</h1>
+          <p className="text-blue-200">AI対戦ぷよぷよゲーム</p>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* ゲーム情報パネル */}
+          <div className="lg:col-span-1">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+              <GameInfo game={game} />
+            </div>
+          </div>
+
+          {/* ゲームボード */}
+          <div className="lg:col-span-2">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+              <GameBoard field={game.field} />
+            </div>
+          </div>
+        </div>
+
+        <footer className="text-center mt-8">
+          <p className="text-white/60 text-sm">
+            テスト駆動開発で作られたぷよぷよゲーム
+          </p>
+        </footer>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 

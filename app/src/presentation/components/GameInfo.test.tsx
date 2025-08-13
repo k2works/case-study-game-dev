@@ -80,7 +80,7 @@ describe('GameInfoコンポーネント', () => {
       render(<GameInfo game={updatedGame} />)
 
       // Assert
-      expect(screen.getByTestId('score-value')).toHaveTextContent('1500')
+      expect(screen.getByTestId('score-value')).toHaveTextContent('1,500')
     })
 
     it('大きなスコアが正しく表示される', () => {
@@ -92,7 +92,7 @@ describe('GameInfoコンポーネント', () => {
       render(<GameInfo game={updatedGame} />)
 
       // Assert
-      expect(screen.getByTestId('score-value')).toHaveTextContent('999999')
+      expect(screen.getByTestId('score-value')).toHaveTextContent('999,999')
     })
   })
 

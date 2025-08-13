@@ -17,7 +17,10 @@ describe('gameStore', () => {
       const { result } = renderHook(() => useGameStore())
 
       // Assert
-      expect(result.current.game).toBeNull()
+      expect(result.current.game).toBeDefined()
+      expect(result.current.game.state).toBe('ready')
+      expect(result.current.game.score).toBe(0)
+      expect(result.current.game.level).toBe(1)
       expect(result.current.currentPuyo).toBeNull()
       expect(result.current.score).toBe(0)
       expect(result.current.isGameOver).toBe(false)
@@ -36,6 +39,8 @@ describe('gameStore', () => {
       })
 
       // Assert
+      expect(result.current.game).toBeDefined()
+      expect(result.current.game.state).toBe('ready')
       expect(result.current.isGameOver).toBe(false)
       expect(result.current.isPaused).toBe(false)
       expect(result.current.score).toBe(0)
@@ -151,6 +156,8 @@ describe('gameStore', () => {
       })
 
       // Assert
+      expect(result.current.game).toBeDefined()
+      expect(result.current.game.state).toBe('ready')
       expect(result.current.score).toBe(0)
       expect(result.current.isGameOver).toBe(false)
       expect(result.current.isPaused).toBe(false)

@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
+import { createGame } from '../../domain/models/Game'
 import type { Game } from '../../domain/models/Game'
 import type { Puyo } from '../../domain/models/Puyo'
 
 interface GameStore {
   // State
-  game: Game | null
+  game: Game
   currentPuyo: Puyo | null
   score: number
   isGameOver: boolean
@@ -24,7 +25,7 @@ interface GameStore {
 
 // 初期状態の定義
 const initialState = {
-  game: null,
+  game: createGame(),
   currentPuyo: null,
   score: 0,
   isGameOver: false,
@@ -40,8 +41,7 @@ export const useGameStore = create<GameStore>()(
         set(
           () => ({
             ...initialState,
-            // TODO: Gameモデル実装後にGame.create()を呼び出し
-            game: null, // createGame() を実装予定
+            game: createGame(),
           }),
           false,
           'initializeGame',
