@@ -1,0 +1,35 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 2%
+    patch:
+      default:
+        target: 80%
+        threshold: 10%
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
+
+flag_management:
+  default_rules:
+    carryforward: true
+
+ignore:
+  - "**/*.config.ts"
+  - "**/*.config.js"
+  - "**/*.d.ts"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/e2e/**"
+  - "**/playwright-report/**"
+  - "**/coverage/**"
+  - "**/dist/**"
+  - "**/node_modules/**"
