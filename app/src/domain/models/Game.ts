@@ -1,4 +1,5 @@
-import { Field } from './Field'
+import { processChain } from '../services/ImmutableChainService'
+import { FieldAdapter } from './FieldAdapter'
 import { type Puyo, type PuyoColor } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
 import { createPuyoPair, movePuyoPair, rotatePuyoPair } from './PuyoPair'
@@ -10,7 +11,7 @@ export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 export interface Game {
   readonly id: string
   readonly state: GameState
-  readonly field: Field
+  readonly field: FieldAdapter
   readonly score: Score
   readonly level: number
   readonly currentPuyoPair: PuyoPair | null
@@ -22,7 +23,7 @@ export interface Game {
 export const createGame = (): Game => ({
   id: crypto.randomUUID(),
   state: 'ready',
-  field: new Field(),
+  field: new FieldAdapter(),
   score: createScore(),
   level: 1,
   currentPuyoPair: null,
@@ -73,18 +74,8 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
     }
   }
 
-  // 新しいFieldを作成（イミュータブル）
-  const newField = new Field()
-
-  // 現在のフィールドの状態をコピー
-  for (let x = 0; x < game.field.getWidth(); x++) {
-    for (let y = 0; y < game.field.getHeight(); y++) {
-      const existingPuyo = game.field.getPuyo(x, y)
-      if (existingPuyo) {
-        newField.setPuyo(x, y, existingPuyo)
-      }
-    }
-  }
+  // 新しいFieldAdapterを作成（イミュータブル）
+  const newField = game.field.clone()
 
   // ぷよを配置
   newField.setPuyo(column, dropPosition, puyo)
@@ -330,14 +321,16 @@ export const placePuyoPair = (game: Game): Game => {
 
   const puyoPair = game.currentPuyoPair
 
-  // フィールドにぷよペアを配置
+  // 新しいフィールドを作成してぷよペアを配置
+  const newField = game.field.clone()
+
   try {
-    game.field.setPuyo(
+    newField.setPuyo(
       puyoPair.main.position.x,
       puyoPair.main.position.y,
       puyoPair.main,
     )
-    game.field.setPuyo(
+    newField.setPuyo(
       puyoPair.sub.position.x,
       puyoPair.sub.position.y,
       puyoPair.sub,
@@ -353,9 +346,21 @@ export const placePuyoPair = (game: Game): Game => {
     }
   }
 
+  // 連鎖処理を実行
+  const chainResult = processChain(newField.getImmutableField())
+  const fieldAfterChain = FieldAdapter.fromImmutableField(chainResult.field)
+
+  // スコア更新
+  const newScore = {
+    current: game.score.current + chainResult.totalScore,
+    multiplier: game.score.multiplier,
+  }
+
   // 次のぷよペアを生成
   return spawnNextPuyoPair({
     ...game,
+    field: fieldAfterChain,
+    score: newScore,
     currentPuyoPair: null,
     currentPuyo: null,
     updatedAt: new Date(),
