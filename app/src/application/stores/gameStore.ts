@@ -1,7 +1,12 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-import { createGame, startGame } from '../../domain/models/Game'
+import { 
+  createGame, 
+  startGame,
+  pauseGame as pauseGameDomain,
+  resumeGame as resumeGameDomain,
+} from '../../domain/models/Game'
 import type { Game } from '../../domain/models/Game'
 import type { Puyo } from '../../domain/models/Puyo'
 
@@ -62,11 +67,27 @@ export const useGameStore = create<GameStore>()(
       },
 
       pauseGame: () => {
-        set((state) => ({ ...state, isPaused: true }), false, 'pauseGame')
+        set(
+          (state) => ({
+            ...state,
+            game: pauseGameDomain(state.game),
+            isPaused: true,
+          }),
+          false,
+          'pauseGame'
+        )
       },
 
       resumeGame: () => {
-        set((state) => ({ ...state, isPaused: false }), false, 'resumeGame')
+        set(
+          (state) => ({
+            ...state,
+            game: resumeGameDomain(state.game),
+            isPaused: false,
+          }),
+          false,
+          'resumeGame'
+        )
       },
 
       resetGame: () => {

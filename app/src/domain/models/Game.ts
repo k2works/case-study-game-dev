@@ -38,6 +38,20 @@ export const updateGameState = (game: Game, newState: GameState): Game => ({
   updatedAt: new Date(),
 })
 
+export const pauseGame = (game: Game): Game => {
+  if (game.state !== 'playing') {
+    return game
+  }
+  return updateGameState(game, 'paused')
+}
+
+export const resumeGame = (game: Game): Game => {
+  if (game.state !== 'paused') {
+    return game
+  }
+  return updateGameState(game, 'playing')
+}
+
 export const updateGameScore = (game: Game, newScore: Score): Game => ({
   ...game,
   score: newScore,

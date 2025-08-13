@@ -6,6 +6,8 @@ import {
   dropPuyoFast,
   movePuyoLeft,
   movePuyoRight,
+  pauseGame,
+  resumeGame,
   rotatePuyo,
   startGame,
   updateGameScore,
@@ -417,6 +419,92 @@ describe('Game', () => {
 
       // Assert
       expect(result).toBe(playingGame)
+    })
+  })
+
+  describe('pauseGame', () => {
+    it('playing状態からpaused状態に変更される', () => {
+      // Arrange
+      const game = createGame()
+      const playingGame = updateGameState(game, 'playing')
+
+      // Act
+      const pausedGame = pauseGame(playingGame)
+
+      // Assert
+      expect(pausedGame.state).toBe('paused')
+      expect(pausedGame.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        playingGame.updatedAt.getTime(),
+      )
+    })
+
+    it('playing状態以外では何もしない', () => {
+      // Arrange
+      const readyGame = createGame()
+      const pausedGame = updateGameState(readyGame, 'paused')
+      const gameOverGame = updateGameState(readyGame, 'gameOver')
+
+      // Act & Assert
+      expect(pauseGame(readyGame)).toBe(readyGame)
+      expect(pauseGame(pausedGame)).toBe(pausedGame)
+      expect(pauseGame(gameOverGame)).toBe(gameOverGame)
+    })
+
+    it('元のゲームオブジェクトは変更されない（イミュータブル）', () => {
+      // Arrange
+      const game = createGame()
+      const playingGame = updateGameState(game, 'playing')
+      const originalState = playingGame.state
+
+      // Act
+      const pausedGame = pauseGame(playingGame)
+
+      // Assert
+      expect(playingGame.state).toBe(originalState)
+      expect(pausedGame).not.toBe(playingGame)
+    })
+  })
+
+  describe('resumeGame', () => {
+    it('paused状態からplaying状態に変更される', () => {
+      // Arrange
+      const game = createGame()
+      const pausedGame = updateGameState(game, 'paused')
+
+      // Act
+      const resumedGame = resumeGame(pausedGame)
+
+      // Assert
+      expect(resumedGame.state).toBe('playing')
+      expect(resumedGame.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        pausedGame.updatedAt.getTime(),
+      )
+    })
+
+    it('paused状態以外では何もしない', () => {
+      // Arrange
+      const readyGame = createGame()
+      const playingGame = updateGameState(readyGame, 'playing')
+      const gameOverGame = updateGameState(readyGame, 'gameOver')
+
+      // Act & Assert
+      expect(resumeGame(readyGame)).toBe(readyGame)
+      expect(resumeGame(playingGame)).toBe(playingGame)
+      expect(resumeGame(gameOverGame)).toBe(gameOverGame)
+    })
+
+    it('元のゲームオブジェクトは変更されない（イミュータブル）', () => {
+      // Arrange
+      const game = createGame()
+      const pausedGame = updateGameState(game, 'paused')
+      const originalState = pausedGame.state
+
+      // Act
+      const resumedGame = resumeGame(pausedGame)
+
+      // Assert
+      expect(pausedGame.state).toBe(originalState)
+      expect(resumedGame).not.toBe(pausedGame)
     })
   })
 
