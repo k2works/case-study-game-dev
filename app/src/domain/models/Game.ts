@@ -1,5 +1,5 @@
-import type { Puyo } from './Puyo'
 import { Field } from './Field'
+import type { Puyo } from './Puyo'
 
 export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 
@@ -58,7 +58,7 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
 
   // 新しいFieldを作成（イミュータブル）
   const newField = new Field()
-  
+
   // 現在のフィールドの状態をコピー
   for (let x = 0; x < game.field.getWidth(); x++) {
     for (let y = 0; y < game.field.getHeight(); y++) {

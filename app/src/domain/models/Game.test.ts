@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  createGame,
-  updateGameState,
-  updateScore,
-  dropPuyo,
-} from './Game'
+import { createGame, dropPuyo, updateGameState, updateScore } from './Game'
 import { createPuyo } from './Puyo'
 
 describe('Game', () => {
@@ -53,7 +48,7 @@ describe('Game', () => {
       let game = createGame()
       const bottomPuyo = createPuyo('blue', { x: 2, y: 11 })
       const topPuyo = createPuyo('red', { x: 2, y: 0 })
-      
+
       // 最下部にぷよを配置
       game = dropPuyo(game, bottomPuyo, 2)
 
@@ -68,7 +63,7 @@ describe('Game', () => {
     it.skip('列が満杯の場合はゲームオーバーになる', () => {
       // Arrange
       let game = createGame()
-      
+
       // 列を満杯にする - dropPuyo関数を使ってイミュータブルに
       for (let y = 0; y < 12; y++) {
         const puyo = createPuyo('red', { x: 2, y })
