@@ -152,4 +152,79 @@ describe('Chain', () => {
       expect(eliminationResult.groups).toHaveLength(0)
     })
   })
+
+  describe('重力適用', () => {
+    it('浮いているぷよを下に落とす', () => {
+      // Arrange
+      const field = new Field()
+      field.setPuyo(0, 9, createPuyo('red', { x: 0, y: 9 }))
+      field.setPuyo(0, 7, createPuyo('blue', { x: 0, y: 7 }))
+
+      const chain = new Chain()
+
+      // Act
+      chain.applyGravity(field)
+
+      // Assert
+      expect(field.isEmpty(0, 9)).toBe(true)
+      expect(field.isEmpty(0, 7)).toBe(true)
+      expect(field.getPuyo(0, 11)).not.toBeNull()
+      expect(field.getPuyo(0, 11)?.color).toBe('red')
+      expect(field.getPuyo(0, 10)).not.toBeNull()
+      expect(field.getPuyo(0, 10)?.color).toBe('blue')
+    })
+
+    it('異なる列のぷよが独立して落下する', () => {
+      // Arrange
+      const field = new Field()
+      field.setPuyo(0, 8, createPuyo('red', { x: 0, y: 8 }))
+      field.setPuyo(1, 6, createPuyo('blue', { x: 1, y: 6 }))
+      field.setPuyo(2, 11, createPuyo('green', { x: 2, y: 11 })) // 既に底にある
+
+      const chain = new Chain()
+
+      // Act
+      chain.applyGravity(field)
+
+      // Assert
+      expect(field.getPuyo(0, 11)?.color).toBe('red')
+      expect(field.getPuyo(1, 11)?.color).toBe('blue')
+      expect(field.getPuyo(2, 11)?.color).toBe('green')
+    })
+
+    it('複数のぷよが同じ列で正しい順序で積み重なる', () => {
+      // Arrange
+      const field = new Field()
+      field.setPuyo(0, 5, createPuyo('red', { x: 0, y: 5 }))
+      field.setPuyo(0, 3, createPuyo('blue', { x: 0, y: 3 }))
+      field.setPuyo(0, 1, createPuyo('green', { x: 0, y: 1 }))
+
+      const chain = new Chain()
+
+      // Act
+      chain.applyGravity(field)
+
+      // Assert
+      expect(field.getPuyo(0, 11)?.color).toBe('red') // 最初に置かれたもの
+      expect(field.getPuyo(0, 10)?.color).toBe('blue') // 2番目
+      expect(field.getPuyo(0, 9)?.color).toBe('green') // 3番目
+    })
+
+    it('隙間があっても正しく詰まる', () => {
+      // Arrange
+      const field = new Field()
+      field.setPuyo(0, 11, createPuyo('red', { x: 0, y: 11 })) // 底
+      field.setPuyo(0, 8, createPuyo('blue', { x: 0, y: 8 })) // 隙間をあけて配置
+
+      const chain = new Chain()
+
+      // Act
+      chain.applyGravity(field)
+
+      // Assert
+      expect(field.getPuyo(0, 11)?.color).toBe('red')
+      expect(field.getPuyo(0, 10)?.color).toBe('blue') // 隙間が詰まる
+      expect(field.isEmpty(0, 8)).toBe(true)
+    })
+  })
 })
