@@ -1,8 +1,8 @@
-import type { PuyoPair } from '../../domain/models/PuyoPair'
+import type { PuyoPairViewModel } from '../../application/viewmodels/GameViewModel'
 import { PuyoDisplay } from './PuyoDisplay'
 
 interface NextPuyoPairProps {
-  puyoPair: PuyoPair | null
+  puyoPair: PuyoPairViewModel | null
 }
 
 export const NextPuyoPair = ({ puyoPair }: NextPuyoPairProps) => {

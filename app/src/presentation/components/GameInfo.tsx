@@ -1,14 +1,16 @@
-import type { Game, GameState } from '../../domain/models/Game'
-import { getDisplayScore } from '../../domain/models/Score'
+import type {
+  GameStateViewModel,
+  GameViewModel,
+} from '../../application/viewmodels/GameViewModel'
 import { NextPuyoPair } from './NextPuyoPair'
 
 interface GameInfoProps {
-  game: Game
+  game: GameViewModel
   onRestart?: () => void
 }
 
-const getStateLabel = (state: GameState): string => {
-  const stateLabels: Record<GameState, string> = {
+const getStateLabel = (state: GameStateViewModel): string => {
+  const stateLabels: Record<GameStateViewModel, string> = {
     ready: '準備中',
     playing: 'プレイ中',
     paused: '一時停止',
@@ -18,7 +20,7 @@ const getStateLabel = (state: GameState): string => {
 }
 
 export const GameInfo = ({ game, onRestart }: GameInfoProps) => {
-  const getStateColor = (state: GameState): string => {
+  const getStateColor = (state: GameStateViewModel): string => {
     switch (state) {
       case 'ready':
         return 'text-blue-400 bg-blue-900/30'
@@ -48,7 +50,7 @@ export const GameInfo = ({ game, onRestart }: GameInfoProps) => {
           data-testid="score-value"
           className="info-value text-2xl font-bold text-white"
         >
-          {getDisplayScore(game.score).toLocaleString()}
+          {game.score.display.toLocaleString()}
         </div>
       </div>
 

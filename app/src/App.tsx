@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
-import type { Game } from './domain/models/Game'
+import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
@@ -21,10 +21,10 @@ interface KeyboardHandlers {
 
 // キーボード操作ハンドラーを生成するフック
 const useKeyboardHandlers = (
-  game: Game,
+  game: GameViewModel,
   gameService: GamePort,
   inputService: InputPort,
-  updateGame: (newGame: Game) => void,
+  updateGame: (newGame: GameViewModel) => void,
 ): KeyboardHandlers => {
   return {
     handleLeft: () => {
@@ -147,9 +147,9 @@ const GameLayout = ({
   updateGame,
   handleReset,
 }: {
-  game: Game
+  game: GameViewModel
   gameService: GamePort
-  updateGame: (game: Game) => void
+  updateGame: (game: GameViewModel) => void
   handleReset: () => void
 }) => {
   const startGame = () => {
@@ -265,7 +265,7 @@ function App() {
   const inputService = defaultContainer.getInputService()
 
   // ゲーム状態を管理（Reactの状態として）
-  const [game, setGame] = useState<Game>(() => {
+  const [game, setGame] = useState<GameViewModel>(() => {
     // 初期状態では準備状態の新しいゲームを作成
     return gameService.createReadyGame()
   })
@@ -283,7 +283,7 @@ function App() {
     ;(window as any).setGame = setGame
   }
 
-  const updateGame = (newGame: Game) => {
+  const updateGame = (newGame: GameViewModel) => {
     setGame(newGame)
   }
 

@@ -2,7 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { renderHook } from '@testing-library/react'
 
-import { createGame, startGame } from '../../domain/models/Game'
+import type { GameStateViewModel } from '../../application/viewmodels/GameViewModel'
+import {
+  createTestGameViewModel,
+  createTestPuyoPairViewModel,
+} from '../../test/helpers/gameViewModelHelpers'
 import { useAutoFall } from './useAutoFall'
 
 // タイマーをモック化
@@ -23,7 +27,7 @@ describe('useAutoFall', () => {
   describe('ゲーム状態によるタイマー制御', () => {
     it('ゲームがready状態の場合はタイマーが動作しない', () => {
       // Arrange
-      const game = createGame() // ready状態
+      const game = createTestGameViewModel() // ready状態
 
       // Act
       renderHook(() =>
@@ -43,11 +47,10 @@ describe('useAutoFall', () => {
 
     it('ゲームがplaying状態でcurrentPuyoPairがnullの場合は新しいペアを生成', () => {
       // Arrange
-      const game = {
-        ...createGame(),
-        state: 'playing' as const,
+      const game = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
         currentPuyoPair: null,
-      }
+      })
 
       // Act
       renderHook(() =>
@@ -65,10 +68,10 @@ describe('useAutoFall', () => {
 
     it('ゲームがpaused状態の場合はタイマーが停止する', () => {
       // Arrange
-      const game = {
-        ...startGame(createGame()),
-        state: 'paused' as const,
-      }
+      const game = createTestGameViewModel({
+        state: 'paused' as GameStateViewModel,
+        currentPuyoPair: createTestPuyoPairViewModel(),
+      })
 
       // Act
       renderHook(() =>
@@ -90,7 +93,10 @@ describe('useAutoFall', () => {
   describe('自動落下ロジック', () => {
     it('playing状態でcurrentPuyoPairがある場合、指定間隔でupdateGameが呼ばれる', () => {
       // Arrange
-      const game = startGame(createGame())
+      const game = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+        currentPuyoPair: createTestPuyoPairViewModel(),
+      })
 
       // Act
       renderHook(() =>
@@ -113,7 +119,10 @@ describe('useAutoFall', () => {
 
     it('カスタムfallSpeedが正しく適用される', () => {
       // Arrange
-      const game = startGame(createGame())
+      const game = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+        currentPuyoPair: createTestPuyoPairViewModel(),
+      })
 
       // Act
       renderHook(() =>
@@ -137,7 +146,10 @@ describe('useAutoFall', () => {
 
     it('デフォルトのfallSpeedは1000msである', () => {
       // Arrange
-      const game = startGame(createGame())
+      const game = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+        currentPuyoPair: createTestPuyoPairViewModel(),
+      })
 
       // Act
       renderHook(() =>
@@ -163,7 +175,10 @@ describe('useAutoFall', () => {
   describe('クリーンアップ', () => {
     it('コンポーネントのアンマウント時にタイマーがクリアされる', () => {
       // Arrange
-      const game = startGame(createGame())
+      const game = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+        currentPuyoPair: createTestPuyoPairViewModel(),
+      })
 
       const { unmount } = renderHook(() =>
         useAutoFall({

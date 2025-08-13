@@ -1,18 +1,18 @@
-import type { PuyoColor } from '../../domain/models/Puyo'
+import type { PuyoColorViewModel } from '../../application/viewmodels/GameViewModel'
 
 interface PuyoDisplayProps {
-  color: PuyoColor
+  color: PuyoColorViewModel
   size?: 'small' | 'medium' | 'large'
   className?: string
   'data-testid'?: string
 }
 
-const getPuyoColorClass = (color: PuyoColor): string => {
+const getPuyoColorClass = (color: PuyoColorViewModel): string => {
   if (color === null) {
     return 'bg-gray-500 border-gray-600'
   }
 
-  const colorClasses: Record<Exclude<PuyoColor, null>, string> = {
+  const colorClasses: Record<Exclude<PuyoColorViewModel, null>, string> = {
     red: 'bg-red-500 border-red-600',
     blue: 'bg-blue-500 border-blue-600',
     green: 'bg-green-500 border-green-600',

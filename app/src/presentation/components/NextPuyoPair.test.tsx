@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { render, screen } from '@testing-library/react'
 
-import { createPuyoPair } from '../../domain/models/PuyoPair'
+import { createTestPuyoPairViewModel } from '../../test/helpers/gameViewModelHelpers'
 import { NextPuyoPair } from './NextPuyoPair'
 
 describe('NextPuyoPairコンポーネント', () => {
@@ -17,7 +17,7 @@ describe('NextPuyoPairコンポーネント', () => {
 
     it('次のぷよペアが設定されている場合、ぷよペアが表示される', () => {
       // Arrange
-      const puyoPair = createPuyoPair('red', 'blue', 2, 0)
+      const puyoPair = createTestPuyoPairViewModel(2, 0, 'red', 'blue')
 
       // Act
       render(<NextPuyoPair puyoPair={puyoPair} />)
@@ -30,7 +30,7 @@ describe('NextPuyoPairコンポーネント', () => {
 
     it('メインぷよとサブぷよが正しく表示される', () => {
       // Arrange
-      const puyoPair = createPuyoPair('yellow', 'green', 2, 0)
+      const puyoPair = createTestPuyoPairViewModel(2, 0, 'yellow', 'green')
 
       // Act
       render(<NextPuyoPair puyoPair={puyoPair} />)
@@ -47,7 +47,7 @@ describe('NextPuyoPairコンポーネント', () => {
 
     it('サブぷよが上、メインぷよが下に配置される', () => {
       // Arrange
-      const puyoPair = createPuyoPair('red', 'blue', 2, 0)
+      const puyoPair = createTestPuyoPairViewModel(2, 0, 'red', 'blue')
 
       // Act
       render(<NextPuyoPair puyoPair={puyoPair} />)
@@ -64,7 +64,7 @@ describe('NextPuyoPairコンポーネント', () => {
 
     it('異なる色の組み合わせで正しく表示される', () => {
       // Arrange
-      const puyoPair = createPuyoPair('purple', 'green', 2, 0)
+      const puyoPair = createTestPuyoPairViewModel(2, 0, 'purple', 'green')
 
       // Act
       render(<NextPuyoPair puyoPair={puyoPair} />)
@@ -107,7 +107,7 @@ describe('NextPuyoPairコンポーネント', () => {
   describe('レイアウトテスト', () => {
     it('ぷよペアコンテナが適切なスタイルを持つ', () => {
       // Arrange
-      const puyoPair = createPuyoPair('red', 'blue', 2, 0)
+      const puyoPair = createTestPuyoPairViewModel(2, 0, 'red', 'blue')
 
       // Act
       render(<NextPuyoPair puyoPair={puyoPair} />)

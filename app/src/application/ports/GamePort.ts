@@ -1,5 +1,4 @@
-import type { Game } from '../../domain/models/Game'
-import type { PuyoPair } from '../../domain/models/PuyoPair'
+import type { GameViewModel } from '../viewmodels/GameViewModel'
 
 /**
  * ゲーム状態管理のためのポートインターフェース
@@ -10,35 +9,45 @@ export interface GamePort {
    * 準備状態の新しいゲームを作成する（まだ開始はしない）
    * @returns 準備状態のゲーム状態
    */
-  createReadyGame(): Game
+  createReadyGame(): GameViewModel
 
   /**
    * 新しいゲームを開始する
    * @returns 初期化されたゲーム状態
    */
-  startNewGame(): Game
+  startNewGame(): GameViewModel
 
   /**
    * ゲーム状態を更新する
-   * @param game 現在のゲーム状態
+   * @param gameViewModel 現在のゲーム状態のViewModel
    * @param action 実行するアクション
    * @returns 更新されたゲーム状態
    */
-  updateGameState(game: Game, action: GameAction): Game
-
-  /**
-   * 次のぷよペアを生成する
-   * @param game 現在のゲーム状態
-   * @returns 次のぷよペア
-   */
-  generateNextPuyoPair(game: Game): PuyoPair
+  updateGameState(
+    gameViewModel: GameViewModel,
+    action: GameAction,
+  ): GameViewModel
 
   /**
    * ゲーム状態を検証する
-   * @param game 検証対象のゲーム状態
+   * @param gameViewModel 検証対象のゲーム状態
    * @returns 検証結果
    */
-  validateGameState(game: Game): GameValidationResult
+  validateGameState(gameViewModel: GameViewModel): GameValidationResult
+
+  /**
+   * 自動落下処理を実行する
+   * @param gameViewModel 現在のゲーム状態
+   * @returns 更新されたゲーム状態
+   */
+  processAutoFall(gameViewModel: GameViewModel): GameViewModel
+
+  /**
+   * 新しいぷよペアを生成する
+   * @param gameViewModel 現在のゲーム状態
+   * @returns 新しいぷよペアが生成されたゲーム状態
+   */
+  spawnNewPuyoPair(gameViewModel: GameViewModel): GameViewModel
 }
 
 /**

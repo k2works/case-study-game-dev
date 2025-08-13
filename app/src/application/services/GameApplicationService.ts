@@ -5,11 +5,12 @@ import {
   movePuyoLeft,
   movePuyoRight,
   pauseGame,
+  placePuyoPair,
   resumeGame,
   rotatePuyo,
+  spawnNextPuyoPair,
   startGame,
 } from '../../domain/models/Game'
-import type { PuyoPair } from '../../domain/models/PuyoPair'
 import type {
   GameAction,
   GamePort,
@@ -17,6 +18,8 @@ import type {
 } from '../ports/GamePort'
 import type { StoragePort } from '../ports/StoragePort'
 import type { TimerId, TimerPort } from '../ports/TimerPort'
+import type { GameViewModel } from '../viewmodels/GameViewModel'
+import { GameViewModelMapper } from '../viewmodels/GameViewModelMapper'
 
 /**
  * ゲームアプリケーションサービス
@@ -34,15 +37,15 @@ export class GameApplicationService implements GamePort {
     this.timerAdapter = timerAdapter
   }
 
-  createReadyGame(): Game {
+  createReadyGame(): GameViewModel {
     // 準備状態の新しいゲームを作成（開始はしない）
     const newGame = createGame()
     this.currentGame = newGame
     this.saveGameState(newGame)
-    return newGame
+    return GameViewModelMapper.toGameViewModel(newGame)
   }
 
-  startNewGame(): Game {
+  startNewGame(): GameViewModel {
     // 既存のゲームタイマーを停止
     this.stopGameTimer()
 
@@ -54,15 +57,21 @@ export class GameApplicationService implements GamePort {
     this.startGameTimer()
     this.saveGameState(startedGame)
 
-    return startedGame
+    return GameViewModelMapper.toGameViewModel(startedGame)
   }
 
-  updateGameState(game: Game, action: GameAction): Game {
+  updateGameState(
+    gameViewModel: GameViewModel,
+    action: GameAction,
+  ): GameViewModel {
+    // ViewModelから内部Gameエンティティを再構築
+    const game = this.reconstructGameFromViewModel(gameViewModel)
+
     // アクションの妥当性を検証
-    const validationResult = this.validateGameState(game)
+    const validationResult = this.validateGameState(gameViewModel)
     if (!validationResult.isValid) {
       console.warn('Invalid game state detected:', validationResult.errors)
-      return game
+      return gameViewModel
     }
 
     // アクションに応じてゲーム状態を更新
@@ -77,27 +86,16 @@ export class GameApplicationService implements GamePort {
       this.stopGameTimer()
     }
 
-    return updatedGame
+    return GameViewModelMapper.toGameViewModel(updatedGame)
   }
 
-  generateNextPuyoPair(game: Game): PuyoPair {
-    // ドメインモデルのspawnNextPuyoPairロジックを使用
-    // 実際の実装はドメイン層に移譲
-    // TODO: 実装を完了させる
-    import('../../domain/models/Game').then(({ spawnNextPuyoPair }) => {
-      return spawnNextPuyoPair(game)
-    })
-    // 一時的にダミーを返す（実装完了まで）
-    return null as unknown as PuyoPair
-  }
-
-  validateGameState(game: Game): GameValidationResult {
+  validateGameState(gameViewModel: GameViewModel): GameValidationResult {
     const errors: string[] = []
     const warnings: string[] = []
 
     // 基本的な整合性チェック
-    this.validateBasicGameProperties(game, errors)
-    this.validateGameFieldProperties(game, errors, warnings)
+    this.validateBasicGameViewModelProperties(gameViewModel, errors)
+    this.validateGameFieldViewModelProperties(gameViewModel, errors, warnings)
 
     return {
       isValid: errors.length === 0,
@@ -106,38 +104,41 @@ export class GameApplicationService implements GamePort {
     }
   }
 
-  private validateBasicGameProperties(game: Game, errors: string[]): void {
-    if (!game.id) {
+  private validateBasicGameViewModelProperties(
+    gameViewModel: GameViewModel,
+    errors: string[],
+  ): void {
+    if (!gameViewModel.id) {
       errors.push('Game ID is missing')
     }
 
-    if (game.state === 'playing' && !game.currentPuyoPair) {
+    if (gameViewModel.state === 'playing' && !gameViewModel.currentPuyoPair) {
       errors.push('Playing game must have a current puyo pair')
     }
 
-    if (game.score.current < 0) {
+    if (gameViewModel.score.current < 0) {
       errors.push('Score cannot be negative')
     }
 
-    if (game.level < 1) {
+    if (gameViewModel.level < 1) {
       errors.push('Level must be at least 1')
     }
   }
 
-  private validateGameFieldProperties(
-    game: Game,
+  private validateGameFieldViewModelProperties(
+    gameViewModel: GameViewModel,
     errors: string[],
     warnings: string[],
   ): void {
-    if (!game.field) {
+    if (!gameViewModel.field) {
       errors.push('Game field is missing')
       return
     }
 
-    if (game.field.getWidth() !== 6) {
+    if (gameViewModel.field.width !== 6) {
       warnings.push('Field width is not standard (6)')
     }
-    if (game.field.getHeight() !== 12) {
+    if (gameViewModel.field.height !== 12) {
       warnings.push('Field height is not standard (12)')
     }
   }
@@ -148,6 +149,23 @@ export class GameApplicationService implements GamePort {
    */
   getCurrentGame(): Game | null {
     return this.currentGame
+  }
+
+  /**
+   * ViewModelから内部のGameエンティティを再構築
+   * @param _gameViewModel ViewModelとしてのゲーム状態（現在未使用）
+   * @returns 再構築されたGameエンティティ
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private reconstructGameFromViewModel(_gameViewModel: GameViewModel): Game {
+    // 現在保持している内部Game状態を返す
+    // （実際の実装では、ViewModelからGameエンティティを完全に再構築する必要があるが、
+    //  現在のアーキテクチャでは内部状態を維持している）
+    if (this.currentGame) {
+      return this.currentGame
+    }
+    // フォールバック（通常は到達しない）
+    return createGame()
   }
 
   /**
@@ -268,9 +286,13 @@ export class GameApplicationService implements GamePort {
         }
         return resumedGame
       }
-      case 'RESTART':
+      case 'RESTART': {
         this.stopGameTimer()
-        return this.createReadyGame()
+        const newGame = createGame()
+        this.currentGame = newGame
+        this.saveGameState(newGame)
+        return newGame
+      }
       case 'QUIT':
         this.stopGameTimer()
         return { ...game, state: 'gameOver' }
@@ -326,6 +348,55 @@ export class GameApplicationService implements GamePort {
       this.timerAdapter.stopTimer(this.gameTimer)
       this.gameTimer = null
     }
+  }
+
+  /**
+   * 自動落下処理を実行する
+   */
+  processAutoFall(gameViewModel: GameViewModel): GameViewModel {
+    const game = this.reconstructGameFromViewModel(gameViewModel)
+
+    if (game.state !== 'playing' || !game.currentPuyoPair) {
+      return gameViewModel
+    }
+
+    // 下に移動を試行
+    const fallenGame = dropPuyoFast(game)
+
+    // 移動できた場合（位置が変わった場合）
+    if (
+      fallenGame.currentPuyoPair &&
+      game.currentPuyoPair &&
+      fallenGame.currentPuyoPair.main.position.y >
+        game.currentPuyoPair.main.position.y
+    ) {
+      this.currentGame = fallenGame
+      this.saveGameState(fallenGame)
+      return GameViewModelMapper.toGameViewModel(fallenGame)
+    }
+
+    // 移動できなかった場合（着地した場合）
+    // 現在のぷよペアをフィールドに固定し、次のペアを生成
+    const placedGame = placePuyoPair(game)
+    this.currentGame = placedGame
+    this.saveGameState(placedGame)
+    return GameViewModelMapper.toGameViewModel(placedGame)
+  }
+
+  /**
+   * 新しいぷよペアを生成する
+   */
+  spawnNewPuyoPair(gameViewModel: GameViewModel): GameViewModel {
+    const game = this.reconstructGameFromViewModel(gameViewModel)
+
+    if (!game.currentPuyoPair) {
+      const gameWithPair = spawnNextPuyoPair(game)
+      this.currentGame = gameWithPair
+      this.saveGameState(gameWithPair)
+      return GameViewModelMapper.toGameViewModel(gameWithPair)
+    }
+
+    return gameViewModel
   }
 
   /**
