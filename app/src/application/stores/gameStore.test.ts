@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { act, renderHook } from '@testing-library/react'
 
+import { createGame } from '../../domain/models/Game'
 import { createPuyo } from '../../domain/models/Puyo'
 import { useGameStore } from './gameStore'
 
@@ -104,6 +105,22 @@ describe('gameStore', () => {
 
       // Assert
       expect(result.current.score).toBe(newScore)
+    })
+  })
+
+  describe('ゲーム更新', () => {
+    it('ゲームを更新できる', () => {
+      // Arrange
+      const { result } = renderHook(() => useGameStore())
+      const newGame = createGame()
+
+      // Act
+      act(() => {
+        result.current.updateGame(newGame)
+      })
+
+      // Assert
+      expect(result.current.game.id).toBe(newGame.id)
     })
   })
 

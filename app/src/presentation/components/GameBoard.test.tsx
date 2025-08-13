@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { render, screen } from '@testing-library/react'
 
-import { Field } from '../../domain/models/Field'
+import { createGame } from '../../domain/models/Game'
 import { createPuyo } from '../../domain/models/Puyo'
 import { GameBoard } from './GameBoard'
 
@@ -10,10 +10,10 @@ describe('GameBoardコンポーネント', () => {
   describe('初期表示テスト', () => {
     it('空のフィールドを表示できる', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       expect(screen.getByTestId('game-board')).toBeInTheDocument()
@@ -22,10 +22,10 @@ describe('GameBoardコンポーネント', () => {
 
     it('6×12のセルが表示される', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       const cells = screen.getAllByTestId(/^cell-\d+-\d+$/)
@@ -34,10 +34,10 @@ describe('GameBoardコンポーネント', () => {
 
     it('各セルに正しい座標が設定される', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       expect(screen.getByTestId('cell-0-0')).toBeInTheDocument()
@@ -49,12 +49,12 @@ describe('GameBoardコンポーネント', () => {
   describe('ぷよ表示テスト', () => {
     it('フィールド上のぷよを表示できる', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
       const redPuyo = createPuyo('red', { x: 2, y: 5 })
-      field.setPuyo(2, 5, redPuyo)
+      game.field.setPuyo(2, 5, redPuyo)
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       const cell = screen.getByTestId('cell-2-5')
@@ -63,17 +63,17 @@ describe('GameBoardコンポーネント', () => {
 
     it('複数のぷよを正しい位置に表示できる', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
       const redPuyo = createPuyo('red', { x: 1, y: 3 })
       const bluePuyo = createPuyo('blue', { x: 3, y: 7 })
       const greenPuyo = createPuyo('green', { x: 5, y: 1 })
 
-      field.setPuyo(1, 3, redPuyo)
-      field.setPuyo(3, 7, bluePuyo)
-      field.setPuyo(5, 1, greenPuyo)
+      game.field.setPuyo(1, 3, redPuyo)
+      game.field.setPuyo(3, 7, bluePuyo)
+      game.field.setPuyo(5, 1, greenPuyo)
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       expect(screen.getByTestId('cell-1-3')).toHaveClass('puyo-red')
@@ -83,10 +83,10 @@ describe('GameBoardコンポーネント', () => {
 
     it('空のセルには特別なクラスが設定される', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       const emptyCell = screen.getByTestId('cell-2-5')
@@ -97,12 +97,12 @@ describe('GameBoardコンポーネント', () => {
   describe('ぷよ色の表示テスト', () => {
     it('赤ぷよに正しいクラスが設定される', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
-      field.setPuyo(0, 0, redPuyo)
+      game.field.setPuyo(0, 0, redPuyo)
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       expect(screen.getByTestId('cell-0-0')).toHaveClass('puyo-red')
@@ -110,12 +110,12 @@ describe('GameBoardコンポーネント', () => {
 
     it('青ぷよに正しいクラスが設定される', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
       const bluePuyo = createPuyo('blue', { x: 1, y: 1 })
-      field.setPuyo(1, 1, bluePuyo)
+      game.field.setPuyo(1, 1, bluePuyo)
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       expect(screen.getByTestId('cell-1-1')).toHaveClass('puyo-blue')
@@ -123,7 +123,7 @@ describe('GameBoardコンポーネント', () => {
 
     it('全ての色のぷよが正しく表示される', () => {
       // Arrange
-      const field = new Field()
+      const game = createGame()
       const colors: Array<'red' | 'blue' | 'green' | 'yellow' | 'purple'> = [
         'red',
         'blue',
@@ -134,11 +134,11 @@ describe('GameBoardコンポーネント', () => {
 
       colors.forEach((color, index) => {
         const puyo = createPuyo(color, { x: index, y: 0 })
-        field.setPuyo(index, 0, puyo)
+        game.field.setPuyo(index, 0, puyo)
       })
 
       // Act
-      render(<GameBoard field={field} />)
+      render(<GameBoard game={game} />)
 
       // Assert
       colors.forEach((color, index) => {

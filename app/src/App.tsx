@@ -2,29 +2,47 @@ import { useGameStore } from './application/stores/gameStore'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
+import { 
+  movePuyoLeft, 
+  movePuyoRight, 
+  dropPuyoFast, 
+  rotatePuyo 
+} from './domain/models/Game'
 
 function App() {
-  const { game, pauseGame, resumeGame, resetGame } = useGameStore()
+  const { game, pauseGame, resumeGame, resetGame, updateGame } = useGameStore()
 
   // キーボード入力ハンドラー
   const handleLeft = () => {
     console.log('Left key pressed')
-    // TODO: ぷよ移動ロジック実装
+    if (game.state === 'playing') {
+      const updatedGame = movePuyoLeft(game)
+      updateGame(updatedGame)
+    }
   }
 
   const handleRight = () => {
     console.log('Right key pressed')
-    // TODO: ぷよ移動ロジック実装
+    if (game.state === 'playing') {
+      const updatedGame = movePuyoRight(game)
+      updateGame(updatedGame)
+    }
   }
 
   const handleDown = () => {
     console.log('Down key pressed')
-    // TODO: ぷよ高速落下ロジック実装
+    if (game.state === 'playing') {
+      const updatedGame = dropPuyoFast(game)
+      updateGame(updatedGame)
+    }
   }
 
   const handleRotate = () => {
     console.log('Rotate key pressed')
-    // TODO: ぷよ回転ロジック実装
+    if (game.state === 'playing') {
+      const updatedGame = rotatePuyo(game)
+      updateGame(updatedGame)
+    }
   }
 
   const handlePause = () => {
@@ -70,7 +88,7 @@ function App() {
           {/* ゲームボード */}
           <div className="lg:col-span-2">
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-              <GameBoard field={game.field} />
+              <GameBoard game={game} />
             </div>
           </div>
         </div>

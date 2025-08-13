@@ -18,6 +18,7 @@ interface GameStore {
   pauseGame: () => void
   resumeGame: () => void
   resetGame: () => void
+  updateGame: (newGame: Game) => void
   updateScore: (newScore: number) => void
   setCurrentPuyo: (puyo: Puyo | null) => void
   setGameOver: (isOver: boolean) => void
@@ -58,6 +59,10 @@ export const useGameStore = create<GameStore>()(
 
       resetGame: () => {
         set(() => ({ ...initialState }), false, 'resetGame')
+      },
+
+      updateGame: (newGame: Game) => {
+        set((state) => ({ ...state, game: newGame }), false, 'updateGame')
       },
 
       updateScore: (newScore: number) => {

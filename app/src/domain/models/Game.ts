@@ -1,5 +1,5 @@
 import { Field } from './Field'
-import type { Puyo } from './Puyo'
+import { movePuyo, type Puyo, type PuyoColor } from './Puyo'
 
 export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 
@@ -9,6 +9,7 @@ export interface Game {
   readonly field: Field
   readonly score: number
   readonly level: number
+  readonly currentPuyo: Puyo | null
   readonly createdAt: Date
   readonly updatedAt: Date
 }
@@ -19,6 +20,7 @@ export const createGame = (): Game => ({
   field: new Field(),
   score: 0,
   level: 1,
+  currentPuyo: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 })
@@ -75,6 +77,115 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
   return {
     ...game,
     field: newField,
+    updatedAt: new Date(),
+  }
+}
+
+// ぷよ移動・回転ロジック
+export const movePuyoLeft = (game: Game): Game => {
+  if (!game.currentPuyo) {
+    return game
+  }
+
+  const newX = game.currentPuyo.position.x - 1
+  
+  // 左端チェック
+  if (newX < 0) {
+    return game
+  }
+
+  // 衝突チェック
+  if (!game.field.isEmpty(newX, game.currentPuyo.position.y)) {
+    return game
+  }
+
+  // 移動実行
+  const newPosition = { x: newX, y: game.currentPuyo.position.y }
+  const movedPuyo = movePuyo(game.currentPuyo, newPosition)
+
+  return {
+    ...game,
+    currentPuyo: movedPuyo,
+    updatedAt: new Date(),
+  }
+}
+
+export const movePuyoRight = (game: Game): Game => {
+  if (!game.currentPuyo) {
+    return game
+  }
+
+  const newX = game.currentPuyo.position.x + 1
+  
+  // 右端チェック
+  if (newX >= game.field.getWidth()) {
+    return game
+  }
+
+  // 衝突チェック
+  if (!game.field.isEmpty(newX, game.currentPuyo.position.y)) {
+    return game
+  }
+
+  // 移動実行
+  const newPosition = { x: newX, y: game.currentPuyo.position.y }
+  const movedPuyo = movePuyo(game.currentPuyo, newPosition)
+
+  return {
+    ...game,
+    currentPuyo: movedPuyo,
+    updatedAt: new Date(),
+  }
+}
+
+export const dropPuyoFast = (game: Game): Game => {
+  if (!game.currentPuyo) {
+    return game
+  }
+
+  const newY = game.currentPuyo.position.y + 1
+  
+  // 最下段チェック
+  if (newY >= game.field.getHeight()) {
+    return game
+  }
+
+  // 衝突チェック
+  if (!game.field.isEmpty(game.currentPuyo.position.x, newY)) {
+    return game
+  }
+
+  // 移動実行
+  const newPosition = { x: game.currentPuyo.position.x, y: newY }
+  const movedPuyo = movePuyo(game.currentPuyo, newPosition)
+
+  return {
+    ...game,
+    currentPuyo: movedPuyo,
+    updatedAt: new Date(),
+  }
+}
+
+// 色の回転順序
+const colorRotationOrder: PuyoColor[] = ['red', 'blue', 'green', 'yellow', 'purple']
+
+export const rotatePuyo = (game: Game): Game => {
+  if (!game.currentPuyo || !game.currentPuyo.color) {
+    return game
+  }
+
+  const currentColorIndex = colorRotationOrder.indexOf(game.currentPuyo.color)
+  const nextColorIndex = (currentColorIndex + 1) % colorRotationOrder.length
+  const nextColor = colorRotationOrder[nextColorIndex]
+
+  const rotatedPuyo = {
+    ...game.currentPuyo,
+    color: nextColor,
+  }
+
+  return {
+    ...game,
+    currentPuyo: rotatedPuyo,
     updatedAt: new Date(),
   }
 }

@@ -27,6 +27,7 @@ vi.mock('./application/stores/gameStore', () => ({
     pauseGame: vi.fn(),
     resumeGame: vi.fn(),
     resetGame: vi.fn(),
+    updateGame: vi.fn(),
   })),
 }))
 

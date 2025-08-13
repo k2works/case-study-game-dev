@@ -1,10 +1,12 @@
-import type { Field } from '../../domain/models/Field'
+import type { Game } from '../../domain/models/Game'
+import type { Puyo } from '../../domain/models/Puyo'
 
 interface GameBoardProps {
-  field: Field
+  game: Game
 }
 
-export const GameBoard = ({ field }: GameBoardProps) => {
+export const GameBoard = ({ game }: GameBoardProps) => {
+  const field = game.field
   const getPuyoColorClasses = (color: string): string => {
     switch (color) {
       case 'red':
@@ -22,8 +24,19 @@ export const GameBoard = ({ field }: GameBoardProps) => {
     }
   }
 
-  const renderCell = (x: number, y: number) => {
-    const puyo = field.getPuyo(x, y)
+  const getCellPuyo = (x: number, y: number) => {
+    const fieldPuyo = field.getPuyo(x, y)
+    const isCurrentPuyoPosition = game.currentPuyo && 
+      game.currentPuyo.position.x === x && 
+      game.currentPuyo.position.y === y
+    
+    return {
+      puyo: isCurrentPuyoPosition ? game.currentPuyo : fieldPuyo,
+      isCurrentPuyo: Boolean(isCurrentPuyoPosition)
+    }
+  }
+
+  const buildCellClasses = (puyo: Puyo | null, isCurrentPuyo: boolean) => {
     const cellClasses = [
       'cell',
       'w-8 h-8 border border-gray-300/30 flex items-center justify-center rounded-sm transition-all duration-200',
@@ -32,9 +45,20 @@ export const GameBoard = ({ field }: GameBoardProps) => {
     if (puyo && puyo.color) {
       cellClasses.push(`puyo-${puyo.color}`)
       cellClasses.push(getPuyoColorClasses(puyo.color))
+      
+      if (isCurrentPuyo) {
+        cellClasses.push('opacity-80 ring-2 ring-white/50')
+      }
     } else {
       cellClasses.push('cell-empty', 'bg-gray-800/50 hover:bg-gray-700/50')
     }
+
+    return cellClasses
+  }
+
+  const renderCell = (x: number, y: number) => {
+    const { puyo, isCurrentPuyo } = getCellPuyo(x, y)
+    const cellClasses = buildCellClasses(puyo, isCurrentPuyo)
 
     return (
       <div
