@@ -6,6 +6,11 @@ export interface ConnectedGroup {
   positions: Array<{ x: number; y: number }>
 }
 
+export interface EliminationResult {
+  eliminatedCount: number
+  groups: ConnectedGroup[]
+}
+
 export class Chain {
   findConnectedGroups(field: Field): ConnectedGroup[] {
     const visited = new Set<string>()
@@ -32,6 +37,23 @@ export class Chain {
     return groups
   }
 
+  eliminateConnectedGroups(field: Field): EliminationResult {
+    const groupsToEliminate = this.findConnectedGroups(field)
+    let eliminatedCount = 0
+
+    for (const group of groupsToEliminate) {
+      for (const position of group.positions) {
+        field.removePuyo(position.x, position.y)
+        eliminatedCount++
+      }
+    }
+
+    return {
+      eliminatedCount,
+      groups: groupsToEliminate,
+    }
+  }
+
   private exploreConnectedPuyos(
     field: Field,
     startX: number,
@@ -44,7 +66,7 @@ export class Chain {
 
     while (stack.length > 0) {
       const { x, y } = stack.pop()!
-      
+
       if (this.shouldSkipPosition(x, y, color, field, visited)) {
         continue
       }

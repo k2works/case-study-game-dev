@@ -85,4 +85,71 @@ describe('Chain', () => {
       expect(connectedGroups[0].size).toBe(4)
     })
   })
+
+  describe('消去判定', () => {
+    it('連結グループを正しく消去する', () => {
+      // Arrange
+      const field = new Field()
+      field.setPuyo(0, 11, createPuyo('red', { x: 0, y: 11 }))
+      field.setPuyo(1, 11, createPuyo('red', { x: 1, y: 11 }))
+      field.setPuyo(0, 10, createPuyo('red', { x: 0, y: 10 }))
+      field.setPuyo(1, 10, createPuyo('red', { x: 1, y: 10 }))
+      field.setPuyo(2, 11, createPuyo('blue', { x: 2, y: 11 }))
+
+      const chain = new Chain()
+
+      // Act
+      const eliminationResult = chain.eliminateConnectedGroups(field)
+
+      // Assert
+      expect(eliminationResult.eliminatedCount).toBe(4)
+      expect(field.isEmpty(0, 11)).toBe(true)
+      expect(field.isEmpty(1, 11)).toBe(true)
+      expect(field.isEmpty(0, 10)).toBe(true)
+      expect(field.isEmpty(1, 10)).toBe(true)
+      expect(field.getPuyo(2, 11)).not.toBeNull() // blue should remain
+    })
+
+    it('複数の連結グループを同時に消去する', () => {
+      // Arrange
+      const field = new Field()
+      // Red group
+      field.setPuyo(0, 11, createPuyo('red', { x: 0, y: 11 }))
+      field.setPuyo(1, 11, createPuyo('red', { x: 1, y: 11 }))
+      field.setPuyo(0, 10, createPuyo('red', { x: 0, y: 10 }))
+      field.setPuyo(1, 10, createPuyo('red', { x: 1, y: 10 }))
+
+      // Blue group
+      field.setPuyo(3, 11, createPuyo('blue', { x: 3, y: 11 }))
+      field.setPuyo(4, 11, createPuyo('blue', { x: 4, y: 11 }))
+      field.setPuyo(3, 10, createPuyo('blue', { x: 3, y: 10 }))
+      field.setPuyo(4, 10, createPuyo('blue', { x: 4, y: 10 }))
+
+      const chain = new Chain()
+
+      // Act
+      const eliminationResult = chain.eliminateConnectedGroups(field)
+
+      // Assert
+      expect(eliminationResult.eliminatedCount).toBe(8)
+      expect(eliminationResult.groups).toHaveLength(2)
+    })
+
+    it('消去対象がない場合は何も消去しない', () => {
+      // Arrange
+      const field = new Field()
+      field.setPuyo(0, 11, createPuyo('red', { x: 0, y: 11 }))
+      field.setPuyo(1, 11, createPuyo('blue', { x: 1, y: 11 }))
+      field.setPuyo(0, 10, createPuyo('green', { x: 0, y: 10 }))
+
+      const chain = new Chain()
+
+      // Act
+      const eliminationResult = chain.eliminateConnectedGroups(field)
+
+      // Assert
+      expect(eliminationResult.eliminatedCount).toBe(0)
+      expect(eliminationResult.groups).toHaveLength(0)
+    })
+  })
 })
