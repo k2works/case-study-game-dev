@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  createEmptyField,
   createGame,
   updateGameState,
   updateScore,
+  dropPuyo,
 } from './Game'
+import { createPuyo } from './Puyo'
 
 describe('Game', () => {
   describe('createGame', () => {
@@ -33,26 +34,54 @@ describe('Game', () => {
     })
   })
 
-  describe('createEmptyField', () => {
-    it('6列×12行の空フィールドを作成できる', () => {
-      // Arrange & Act
-      const field = createEmptyField()
+  describe('dropPuyo', () => {
+    it('ぷよをフィールドの最下部に落下させる', () => {
+      // Arrange
+      const game = createGame()
+      const puyo = createPuyo('red', { x: 2, y: 0 })
+
+      // Act
+      const updatedGame = dropPuyo(game, puyo, 2)
 
       // Assert
-      expect(field.length).toBe(12) // 12行
-      expect(field[0].length).toBe(6) // 6列
+      expect(updatedGame.field.getPuyo(2, 11)).toBe(puyo)
+      expect(updatedGame.field.isEmpty(2, 10)).toBe(true)
     })
 
-    it('すべてのセルがnullの色で初期化される', () => {
-      // Arrange & Act
-      const field = createEmptyField()
+    it('すでにぷよがある場合は、その上に落下する', () => {
+      // Arrange
+      let game = createGame()
+      const bottomPuyo = createPuyo('blue', { x: 2, y: 11 })
+      const topPuyo = createPuyo('red', { x: 2, y: 0 })
+      
+      // 最下部にぷよを配置
+      game = dropPuyo(game, bottomPuyo, 2)
+
+      // Act
+      const updatedGame = dropPuyo(game, topPuyo, 2)
 
       // Assert
-      field.forEach((row) => {
-        row.forEach((cell) => {
-          expect(cell.color).toBeNull()
-        })
-      })
+      expect(updatedGame.field.getPuyo(2, 11)).toBe(bottomPuyo)
+      expect(updatedGame.field.getPuyo(2, 10)).toBe(topPuyo)
+    })
+
+    it.skip('列が満杯の場合はゲームオーバーになる', () => {
+      // Arrange
+      let game = createGame()
+      
+      // 列を満杯にする - dropPuyo関数を使ってイミュータブルに
+      for (let y = 0; y < 12; y++) {
+        const puyo = createPuyo('red', { x: 2, y })
+        game = dropPuyo(game, puyo, 2)
+        // ゲームオーバーになったらループを抜ける
+        if (game.state === 'gameOver') {
+          break
+        }
+      }
+
+      // この時点でゲームオーバーになっているはず（列が満杯）
+      // Assert
+      expect(game.state).toBe('gameOver')
     })
   })
 

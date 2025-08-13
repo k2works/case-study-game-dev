@@ -1,11 +1,12 @@
 import type { Puyo } from './Puyo'
+import { Field } from './Field'
 
 export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 
 export interface Game {
   readonly id: string
   readonly state: GameState
-  readonly field: Puyo[][]
+  readonly field: Field
   readonly score: number
   readonly level: number
   readonly createdAt: Date
@@ -15,22 +16,12 @@ export interface Game {
 export const createGame = (): Game => ({
   id: crypto.randomUUID(),
   state: 'ready',
-  field: createEmptyField(),
+  field: new Field(),
   score: 0,
   level: 1,
   createdAt: new Date(),
   updatedAt: new Date(),
 })
-
-export const createEmptyField = (): Puyo[][] => {
-  // 6列×12行のフィールドを作成
-  return Array.from({ length: 12 }, () =>
-    Array.from({ length: 6 }, () => ({
-      color: null,
-      position: { x: 0, y: 0 },
-    })),
-  )
-}
 
 export const updateGameState = (game: Game, newState: GameState): Game => ({
   ...game,
@@ -43,3 +34,47 @@ export const updateScore = (game: Game, newScore: number): Game => ({
   score: newScore,
   updatedAt: new Date(),
 })
+
+export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
+  // 指定した列でぷよを落下させる
+  let dropPosition = game.field.getHeight() - 1
+
+  // 下から上に向かって空きセルを探す
+  for (let y = game.field.getHeight() - 1; y >= 0; y--) {
+    if (!game.field.isEmpty(column, y)) {
+      dropPosition = y - 1
+      break
+    }
+  }
+
+  // 列が満杯でゲームオーバー
+  if (dropPosition < 0) {
+    return {
+      ...game,
+      state: 'gameOver',
+      updatedAt: new Date(),
+    }
+  }
+
+  // 新しいFieldを作成（イミュータブル）
+  const newField = new Field()
+  
+  // 現在のフィールドの状態をコピー
+  for (let x = 0; x < game.field.getWidth(); x++) {
+    for (let y = 0; y < game.field.getHeight(); y++) {
+      const existingPuyo = game.field.getPuyo(x, y)
+      if (existingPuyo) {
+        newField.setPuyo(x, y, existingPuyo)
+      }
+    }
+  }
+
+  // ぷよを配置
+  newField.setPuyo(column, dropPosition, puyo)
+
+  return {
+    ...game,
+    field: newField,
+    updatedAt: new Date(),
+  }
+}
