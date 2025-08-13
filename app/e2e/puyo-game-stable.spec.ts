@@ -138,16 +138,16 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
     await page.waitForTimeout(500)
     await expect(page.getByTestId('state-value')).toHaveText('プレイ中')
     
-    // 手動でゲームオーバー状態を作る（モックまたは開発者ツール使用）
-    // ここでは簡単のため、リセットボタンをクリックしてからgameOverにする
-    // 実際の実装では、フィールドを埋めるかAPIを使ってゲームオーバーにする
+    // 手動でゲームオーバー状態を作る（新しいヘキサゴナルアーキテクチャ使用）
     await page.evaluate(() => {
-      // ゲームストアを直接操作してゲームオーバー状態にする
+      // 新しいアーキテクチャのAPIを使用してゲームオーバー状態にする
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const gameStore = (window as any).useGameStore?.getState?.()
-      if (gameStore) {
-        gameStore.updateGame({
-          ...gameStore.game,
+      const game = (window as any).game
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const setGame = (window as any).setGame
+      if (game && setGame) {
+        setGame({
+          ...game,
           state: 'gameOver'
         })
       }
@@ -170,13 +170,16 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
     
     await page.waitForTimeout(500)
     
-    // ゲームオーバー状態にする
+    // ゲームオーバー状態にする（新しいヘキサゴナルアーキテクチャ使用）
     await page.evaluate(() => {
+      // 新しいアーキテクチャのAPIを使用してゲームオーバー状態にする
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const gameStore = (window as any).useGameStore?.getState?.()
-      if (gameStore) {
-        gameStore.updateGame({
-          ...gameStore.game,
+      const game = (window as any).game
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const setGame = (window as any).setGame
+      if (game && setGame) {
+        setGame({
+          ...game,
           state: 'gameOver'
         })
       }

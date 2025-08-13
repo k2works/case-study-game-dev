@@ -80,4 +80,20 @@ export class DefaultContainer {
  * グローバルコンテナインスタンス
  * アプリケーション全体で共有される依存性注入コンテナ
  */
-export const defaultContainer = DefaultContainer.create()
+class DefaultContainerWrapper {
+  private container: Container
+
+  constructor() {
+    this.container = DefaultContainer.create()
+  }
+
+  getGameService(): GamePort {
+    return this.container.resolve<GamePort>('GamePort')
+  }
+
+  getInputService(): InputPort {
+    return this.container.resolve<InputPort>('InputPort')
+  }
+}
+
+export const defaultContainer = new DefaultContainerWrapper()

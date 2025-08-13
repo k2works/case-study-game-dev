@@ -9,17 +9,16 @@ import { type PuyoPair, createPuyoPair } from '../models/PuyoPair'
 export class PuyoSpawningService {
   private colorHistory: PuyoColor[] = []
   private readonly maxHistoryLength = 4
+  private readonly availableColors: PuyoColor[]
+  private readonly gameBalanceConfig: SpawningConfig
 
   constructor(
-    private readonly availableColors: PuyoColor[] = [
-      'red',
-      'blue',
-      'green',
-      'yellow',
-      'purple',
-    ],
-    private readonly gameBalanceConfig: SpawningConfig = DEFAULT_SPAWNING_CONFIG,
-  ) {}
+    availableColors: PuyoColor[] = ['red', 'blue', 'green', 'yellow', 'purple'],
+    gameBalanceConfig: SpawningConfig = DEFAULT_SPAWNING_CONFIG,
+  ) {
+    this.availableColors = availableColors
+    this.gameBalanceConfig = gameBalanceConfig
+  }
 
   /**
    * 新しいぷよペアを生成

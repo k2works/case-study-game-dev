@@ -89,28 +89,54 @@ export class ChainDetectionService {
     while (stack.length > 0) {
       const current = stack.pop()!
 
-      if (visited[current.x][current.y]) {
+      if (this.shouldSkipPosition(current, visited, field, targetColor)) {
         continue
       }
 
-      const puyo = field.getPuyo(current.x, current.y)
-      if (!puyo || puyo.color !== targetColor) {
-        continue
-      }
-
-      visited[current.x][current.y] = true
-      connected.push(puyo)
-
-      // 隣接する4方向をチェック
-      const neighbors = this.getNeighborPositions(current, field)
-      for (const neighbor of neighbors) {
-        if (!visited[neighbor.x][neighbor.y]) {
-          stack.push(neighbor)
-        }
-      }
+      this.processValidPosition(current, field, visited, connected)
+      this.addUnvisitedNeighbors(current, field, visited, stack)
     }
 
     return connected
+  }
+
+  private shouldSkipPosition(
+    position: Position,
+    visited: boolean[][],
+    field: FieldAdapter,
+    targetColor: PuyoColor,
+  ): boolean {
+    if (visited[position.x][position.y]) {
+      return true
+    }
+
+    const puyo = field.getPuyo(position.x, position.y)
+    return !puyo || puyo.color !== targetColor
+  }
+
+  private processValidPosition(
+    position: Position,
+    field: FieldAdapter,
+    visited: boolean[][],
+    connected: Puyo[],
+  ): void {
+    visited[position.x][position.y] = true
+    const puyo = field.getPuyo(position.x, position.y)!
+    connected.push(puyo)
+  }
+
+  private addUnvisitedNeighbors(
+    position: Position,
+    field: FieldAdapter,
+    visited: boolean[][],
+    stack: Position[],
+  ): void {
+    const neighbors = this.getNeighborPositions(position, field)
+    for (const neighbor of neighbors) {
+      if (!visited[neighbor.x][neighbor.y]) {
+        stack.push(neighbor)
+      }
+    }
   }
 
   /**

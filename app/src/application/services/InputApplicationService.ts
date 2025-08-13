@@ -108,6 +108,19 @@ export class InputApplicationService implements InputPort {
     keyCode: string,
     shiftPressed: boolean,
   ): GameInputAction | null {
+    // 移動系アクション
+    const movementAction = this.mapMovementAction(keyCode)
+    if (movementAction) return movementAction
+
+    // 回転系アクション
+    const rotationAction = this.mapRotationAction(keyCode, shiftPressed)
+    if (rotationAction) return rotationAction
+
+    // その他のアクション
+    return this.mapOtherAction(keyCode)
+  }
+
+  private mapMovementAction(keyCode: string): GameInputAction | null {
     const { keyboard } = this.config
 
     if (keyboard.moveLeft.includes(keyCode)) {
@@ -118,8 +131,16 @@ export class InputApplicationService implements InputPort {
       return { type: 'MOVE_RIGHT' }
     }
 
+    return null
+  }
+
+  private mapRotationAction(
+    keyCode: string,
+    shiftPressed: boolean,
+  ): GameInputAction | null {
+    const { keyboard } = this.config
+
     if (keyboard.rotateClockwise.includes(keyCode)) {
-      // Shiftが押されている場合は反時計回り
       return shiftPressed
         ? { type: 'ROTATE_COUNTERCLOCKWISE' }
         : { type: 'ROTATE_CLOCKWISE' }
@@ -128,6 +149,12 @@ export class InputApplicationService implements InputPort {
     if (keyboard.rotateCounterclockwise.includes(keyCode)) {
       return { type: 'ROTATE_COUNTERCLOCKWISE' }
     }
+
+    return null
+  }
+
+  private mapOtherAction(keyCode: string): GameInputAction | null {
+    const { keyboard } = this.config
 
     if (keyboard.softDrop.includes(keyCode)) {
       return { type: 'SOFT_DROP' }

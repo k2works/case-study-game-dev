@@ -26,10 +26,21 @@ export class GameApplicationService implements GamePort {
   private currentGame: Game | null = null
   private gameTimer: TimerId | null = null
 
-  constructor(
-    private readonly storageAdapter: StoragePort,
-    private readonly timerAdapter: TimerPort,
-  ) {}
+  private readonly storageAdapter: StoragePort
+  private readonly timerAdapter: TimerPort
+
+  constructor(storageAdapter: StoragePort, timerAdapter: TimerPort) {
+    this.storageAdapter = storageAdapter
+    this.timerAdapter = timerAdapter
+  }
+
+  createReadyGame(): Game {
+    // 準備状態の新しいゲームを作成（開始はしない）
+    const newGame = createGame()
+    this.currentGame = newGame
+    this.saveGameState(newGame)
+    return newGame
+  }
 
   startNewGame(): Game {
     // 既存のゲームタイマーを停止
@@ -85,6 +96,17 @@ export class GameApplicationService implements GamePort {
     const warnings: string[] = []
 
     // 基本的な整合性チェック
+    this.validateBasicGameProperties(game, errors)
+    this.validateGameFieldProperties(game, errors, warnings)
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+    }
+  }
+
+  private validateBasicGameProperties(game: Game, errors: string[]): void {
     if (!game.id) {
       errors.push('Game ID is missing')
     }
@@ -100,23 +122,23 @@ export class GameApplicationService implements GamePort {
     if (game.level < 1) {
       errors.push('Level must be at least 1')
     }
+  }
 
-    // フィールドの整合性チェック
+  private validateGameFieldProperties(
+    game: Game,
+    errors: string[],
+    warnings: string[],
+  ): void {
     if (!game.field) {
       errors.push('Game field is missing')
-    } else {
-      if (game.field.getWidth() !== 6) {
-        warnings.push('Field width is not standard (6)')
-      }
-      if (game.field.getHeight() !== 12) {
-        warnings.push('Field height is not standard (12)')
-      }
+      return
     }
 
-    return {
-      isValid: errors.length === 0,
-      errors,
-      warnings,
+    if (game.field.getWidth() !== 6) {
+      warnings.push('Field width is not standard (6)')
+    }
+    if (game.field.getHeight() !== 12) {
+      warnings.push('Field height is not standard (12)')
     }
   }
 
@@ -156,23 +178,89 @@ export class GameApplicationService implements GamePort {
    * @returns 更新されたゲーム状態
    */
   private applyAction(game: Game, action: GameAction): Game {
+    // アクションをカテゴリ分けして処理
+    return this.processActionByCategory(game, action)
+  }
+
+  private processActionByCategory(game: Game, action: GameAction): Game {
+    if (this.isMovementAction(action)) {
+      return this.applyMovementAction(game, action)
+    }
+
+    if (this.isGameStateAction(action)) {
+      return this.applyGameStateAction(game, action)
+    }
+
+    console.warn('Unknown action type:', action)
+    return game
+  }
+
+  private isMovementAction(action: GameAction): boolean {
+    const movementTypes = [
+      'MOVE_LEFT',
+      'MOVE_RIGHT',
+      'ROTATE',
+      'ROTATE_CLOCKWISE',
+      'ROTATE_COUNTERCLOCKWISE',
+      'DROP',
+      'SOFT_DROP',
+      'HARD_DROP',
+    ]
+    return movementTypes.includes(action.type)
+  }
+
+  private isGameStateAction(action: GameAction): boolean {
+    const stateTypes = ['PAUSE', 'RESUME', 'RESTART', 'QUIT']
+    return stateTypes.includes(action.type)
+  }
+
+  private applyMovementAction(game: Game, action: GameAction): Game {
+    if (this.isMoveAction(action)) {
+      return this.handleMoveAction(game, action)
+    }
+
+    if (this.isRotateAction(action)) {
+      return rotatePuyo(game)
+    }
+
+    if (this.isDropAction(action)) {
+      return dropPuyoFast(game)
+    }
+
+    return game
+  }
+
+  private isMoveAction(action: GameAction): boolean {
+    return action.type === 'MOVE_LEFT' || action.type === 'MOVE_RIGHT'
+  }
+
+  private isRotateAction(action: GameAction): boolean {
+    return (
+      action.type === 'ROTATE' ||
+      action.type === 'ROTATE_CLOCKWISE' ||
+      action.type === 'ROTATE_COUNTERCLOCKWISE'
+    )
+  }
+
+  private isDropAction(action: GameAction): boolean {
+    return (
+      action.type === 'DROP' ||
+      action.type === 'SOFT_DROP' ||
+      action.type === 'HARD_DROP'
+    )
+  }
+
+  private handleMoveAction(game: Game, action: GameAction): Game {
+    return action.type === 'MOVE_LEFT'
+      ? movePuyoLeft(game)
+      : movePuyoRight(game)
+  }
+
+  private applyGameStateAction(game: Game, action: GameAction): Game {
     switch (action.type) {
-      case 'MOVE_LEFT':
-        return movePuyoLeft(game)
-
-      case 'MOVE_RIGHT':
-        return movePuyoRight(game)
-
-      case 'ROTATE':
-        return rotatePuyo(game)
-
-      case 'DROP':
-        return dropPuyoFast(game)
-
       case 'PAUSE':
         this.stopGameTimer()
         return pauseGame(game)
-
       case 'RESUME': {
         const resumedGame = resumeGame(game)
         if (resumedGame.state === 'playing') {
@@ -180,13 +268,13 @@ export class GameApplicationService implements GamePort {
         }
         return resumedGame
       }
-
       case 'RESTART':
         this.stopGameTimer()
-        return this.startNewGame()
-
+        return this.createReadyGame()
+      case 'QUIT':
+        this.stopGameTimer()
+        return { ...game, state: 'gameOver' }
       default:
-        console.warn('Unknown action type:', action)
         return game
     }
   }
