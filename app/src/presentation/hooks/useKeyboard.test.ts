@@ -1,10 +1,14 @@
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { act, renderHook } from '@testing-library/react'
 
 import { useKeyboard } from './useKeyboard'
 
 // キーボードイベントをモック
-const createKeyboardEvent = (key: string, type: 'keydown' | 'keyup' = 'keydown') => {
+const createKeyboardEvent = (
+  key: string,
+  type: 'keydown' | 'keyup' = 'keydown',
+) => {
   return new KeyboardEvent(type, { key })
 }
 
@@ -27,7 +31,7 @@ describe('useKeyboardフック', () => {
       const handleLeft = vi.fn(() => {
         triggeredAction = 'left'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onLeft: handleLeft,
@@ -51,7 +55,7 @@ describe('useKeyboardフック', () => {
       const handleRight = vi.fn(() => {
         triggeredAction = 'right'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onRight: handleRight,
@@ -75,7 +79,7 @@ describe('useKeyboardフック', () => {
       const handleDown = vi.fn(() => {
         triggeredAction = 'down'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onDown: handleDown,
@@ -99,7 +103,7 @@ describe('useKeyboardフック', () => {
       const handleRotate = vi.fn(() => {
         triggeredAction = 'rotate'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onRotate: handleRotate,
@@ -125,7 +129,7 @@ describe('useKeyboardフック', () => {
       const handleRotate = vi.fn(() => {
         triggeredAction = 'rotate'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onRotate: handleRotate,
@@ -151,7 +155,7 @@ describe('useKeyboardフック', () => {
       const handlePause = vi.fn(() => {
         triggeredAction = 'pause'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onPause: handlePause,
@@ -175,7 +179,7 @@ describe('useKeyboardフック', () => {
       const handleReset = vi.fn(() => {
         triggeredAction = 'reset'
       })
-      
+
       renderHook(() =>
         useKeyboard({
           onReset: handleReset,
@@ -201,7 +205,7 @@ describe('useKeyboardフック', () => {
       const handleRight = vi.fn()
       const handleDown = vi.fn()
       const handleRotate = vi.fn()
-      
+
       renderHook(() =>
         useKeyboard({
           onLeft: handleLeft,
@@ -231,7 +235,7 @@ describe('useKeyboardフック', () => {
     it('定義されていないキーは無視される', () => {
       // Arrange
       const handleLeft = vi.fn()
-      
+
       renderHook(() =>
         useKeyboard({
           onLeft: handleLeft,
@@ -255,7 +259,7 @@ describe('useKeyboardフック', () => {
       // Arrange
       const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener')
       const handleLeft = vi.fn()
-      
+
       const { unmount } = renderHook(() =>
         useKeyboard({
           onLeft: handleLeft,
@@ -266,7 +270,10 @@ describe('useKeyboardフック', () => {
       unmount()
 
       // Assert
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'keydown',
+        expect.any(Function),
+      )
     })
   })
 })

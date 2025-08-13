@@ -26,13 +26,14 @@ export const GameBoard = ({ game }: GameBoardProps) => {
 
   const getCellPuyo = (x: number, y: number) => {
     const fieldPuyo = field.getPuyo(x, y)
-    const isCurrentPuyoPosition = game.currentPuyo && 
-      game.currentPuyo.position.x === x && 
+    const isCurrentPuyoPosition =
+      game.currentPuyo &&
+      game.currentPuyo.position.x === x &&
       game.currentPuyo.position.y === y
-    
+
     return {
       puyo: isCurrentPuyoPosition ? game.currentPuyo : fieldPuyo,
-      isCurrentPuyo: Boolean(isCurrentPuyoPosition)
+      isCurrentPuyo: Boolean(isCurrentPuyoPosition),
     }
   }
 
@@ -45,7 +46,7 @@ export const GameBoard = ({ game }: GameBoardProps) => {
     if (puyo && puyo.color) {
       cellClasses.push(`puyo-${puyo.color}`)
       cellClasses.push(getPuyoColorClasses(puyo.color))
-      
+
       if (isCurrentPuyo) {
         cellClasses.push('opacity-80 ring-2 ring-white/50')
       }

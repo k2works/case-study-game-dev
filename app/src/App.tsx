@@ -1,13 +1,13 @@
 import { useGameStore } from './application/stores/gameStore'
+import {
+  dropPuyoFast,
+  movePuyoLeft,
+  movePuyoRight,
+  rotatePuyo,
+} from './domain/models/Game'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
-import { 
-  movePuyoLeft, 
-  movePuyoRight, 
-  dropPuyoFast, 
-  rotatePuyo 
-} from './domain/models/Game'
 
 function App() {
   const { game, pauseGame, resumeGame, resetGame, updateGame } = useGameStore()

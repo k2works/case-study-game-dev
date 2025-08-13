@@ -1,5 +1,5 @@
 import { Field } from './Field'
-import { movePuyo, type Puyo, type PuyoColor } from './Puyo'
+import { type Puyo, type PuyoColor, movePuyo } from './Puyo'
 
 export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 
@@ -88,7 +88,7 @@ export const movePuyoLeft = (game: Game): Game => {
   }
 
   const newX = game.currentPuyo.position.x - 1
-  
+
   // 左端チェック
   if (newX < 0) {
     return game
@@ -116,7 +116,7 @@ export const movePuyoRight = (game: Game): Game => {
   }
 
   const newX = game.currentPuyo.position.x + 1
-  
+
   // 右端チェック
   if (newX >= game.field.getWidth()) {
     return game
@@ -144,7 +144,7 @@ export const dropPuyoFast = (game: Game): Game => {
   }
 
   const newY = game.currentPuyo.position.y + 1
-  
+
   // 最下段チェック
   if (newY >= game.field.getHeight()) {
     return game
@@ -167,7 +167,13 @@ export const dropPuyoFast = (game: Game): Game => {
 }
 
 // 色の回転順序
-const colorRotationOrder: PuyoColor[] = ['red', 'blue', 'green', 'yellow', 'purple']
+const colorRotationOrder: PuyoColor[] = [
+  'red',
+  'blue',
+  'green',
+  'yellow',
+  'purple',
+]
 
 export const rotatePuyo = (game: Game): Game => {
   if (!game.currentPuyo || !game.currentPuyo.color) {

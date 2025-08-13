@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
-import { 
-  createGame, 
-  dropPuyo, 
-  updateGameState, 
-  updateScore,
+import {
+  createGame,
+  dropPuyo,
+  dropPuyoFast,
   movePuyoLeft,
   movePuyoRight,
-  dropPuyoFast,
-  rotatePuyo
+  rotatePuyo,
+  updateGameState,
+  updateScore,
 } from './Game'
 import { createPuyo } from './Puyo'
 
@@ -76,7 +76,7 @@ describe('Game', () => {
         const game = createGame()
         const bluePuyo = createPuyo('blue', { x: 1, y: 10 })
         game.field.setPuyo(1, 10, bluePuyo)
-        
+
         const redPuyo = createPuyo('red', { x: 2, y: 10 })
         const gameWithPuyo = { ...game, currentPuyo: redPuyo }
 
@@ -125,7 +125,7 @@ describe('Game', () => {
         const game = createGame()
         const bluePuyo = createPuyo('blue', { x: 3, y: 10 })
         game.field.setPuyo(3, 10, bluePuyo)
-        
+
         const redPuyo = createPuyo('red', { x: 2, y: 10 })
         const gameWithPuyo = { ...game, currentPuyo: redPuyo }
 
@@ -158,7 +158,7 @@ describe('Game', () => {
         const game = createGame()
         const bluePuyo = createPuyo('blue', { x: 2, y: 9 })
         game.field.setPuyo(2, 9, bluePuyo)
-        
+
         const redPuyo = createPuyo('red', { x: 2, y: 8 })
         const gameWithPuyo = { ...game, currentPuyo: redPuyo }
 
