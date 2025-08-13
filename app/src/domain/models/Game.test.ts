@@ -41,7 +41,9 @@ describe('Game', () => {
     })
   })
 
-  describe('ぷよ移動・回転ロジック', () => {
+  // 注意: 以下のテストは古いcurrentPuyoシステム用です
+  // 新しいPuyoPairシステムのテストはGame.PuyoPair.test.tsを参照してください
+  describe.skip('ぷよ移動・回転ロジック（廃止予定 - PuyoPairシステムに移行済み）', () => {
     describe('movePuyoLeft関数', () => {
       it('左に移動できる場合は移動する', () => {
         // Arrange
@@ -374,21 +376,23 @@ describe('Game', () => {
       expect(startedGame.state).toBe('playing')
     })
 
-    it('currentPuyoが生成される', () => {
+    // 新しいPuyoPairシステムテスト
+    it('currentPuyoPairが生成される', () => {
       // Arrange
       const game = createGame()
-      expect(game.currentPuyo).toBeNull()
+      expect(game.currentPuyoPair).toBeNull()
 
       // Act
       const startedGame = startGame(game)
 
       // Assert
-      expect(startedGame.currentPuyo).not.toBeNull()
-      expect(startedGame.currentPuyo?.color).toBeDefined()
-      expect(startedGame.currentPuyo?.position).toBeDefined()
+      expect(startedGame.currentPuyoPair).not.toBeNull()
+      expect(startedGame.currentPuyoPair?.main.color).toBeDefined()
+      expect(startedGame.currentPuyoPair?.sub.color).toBeDefined()
+      expect(startedGame.currentPuyo).toBeNull() // PuyoPairシステムではnull
     })
 
-    it('ぷよがフィールド中央上部に配置される', () => {
+    it('ぷよペアがフィールド中央上部に配置される', () => {
       // Arrange
       const game = createGame()
 
@@ -397,8 +401,10 @@ describe('Game', () => {
 
       // Assert
       const expectedX = Math.floor(game.field.getWidth() / 2)
-      expect(startedGame.currentPuyo?.position.x).toBe(expectedX)
-      expect(startedGame.currentPuyo?.position.y).toBe(0)
+      expect(startedGame.currentPuyoPair?.main.position.x).toBe(expectedX)
+      expect(startedGame.currentPuyoPair?.main.position.y).toBe(0)
+      expect(startedGame.currentPuyoPair?.sub.position.x).toBe(expectedX)
+      expect(startedGame.currentPuyoPair?.sub.position.y).toBe(-1) // サブは上に配置
     })
 
     it('ready状態以外では何もしない', () => {
