@@ -5,10 +5,7 @@ import {
   isValidPosition,
   removePuyos,
 } from '../models/ImmutableField'
-import {
-  getAdjacentPositions,
-  positionToString,
-} from '../models/Position'
+import { getAdjacentPositions, positionToString } from '../models/Position'
 import type { PuyoColor } from '../models/Puyo'
 import type { PuyoGroup } from '../models/PuyoGroup'
 import { createPuyoGroup, isEliminable } from '../models/PuyoGroup'

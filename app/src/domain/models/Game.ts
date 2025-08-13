@@ -104,13 +104,15 @@ const checkPuyoPairCollision = (game: Game, puyoPair: PuyoPair): boolean => {
   const subCollision =
     puyoPair.sub.position.y >= 0 &&
     !game.field.isEmpty(puyoPair.sub.position.x, puyoPair.sub.position.y)
-  
+
   return mainCollision || subCollision
 }
 
-
 // ヘルパー関数: PuyoPairの境界チェック（垂直移動用）
-const checkVerticalBounds = (puyoPair: PuyoPair, fieldHeight: number): boolean => {
+const checkVerticalBounds = (
+  puyoPair: PuyoPair,
+  fieldHeight: number,
+): boolean => {
   return (
     puyoPair.main.position.y >= fieldHeight ||
     puyoPair.sub.position.y >= fieldHeight
@@ -118,25 +120,34 @@ const checkVerticalBounds = (puyoPair: PuyoPair, fieldHeight: number): boolean =
 }
 
 // ヘルパー関数: 単一ぷよの境界チェック
-const isPuyoOutOfBounds = (x: number, y: number, fieldWidth: number, fieldHeight: number): boolean => {
+const isPuyoOutOfBounds = (
+  x: number,
+  y: number,
+  fieldWidth: number,
+  fieldHeight: number,
+): boolean => {
   return x < 0 || x >= fieldWidth || y < 0 || y >= fieldHeight
 }
 
 // ヘルパー関数: PuyoPairの回転境界チェック
-const checkRotationBounds = (puyoPair: PuyoPair, fieldWidth: number, fieldHeight: number): boolean => {
+const checkRotationBounds = (
+  puyoPair: PuyoPair,
+  fieldWidth: number,
+  fieldHeight: number,
+): boolean => {
   const mainOutOfBounds = isPuyoOutOfBounds(
     puyoPair.main.position.x,
     puyoPair.main.position.y,
     fieldWidth,
-    fieldHeight
+    fieldHeight,
   )
   const subOutOfBounds = isPuyoOutOfBounds(
     puyoPair.sub.position.x,
     puyoPair.sub.position.y,
     fieldWidth,
-    fieldHeight
+    fieldHeight,
   )
-  
+
   return mainOutOfBounds || subOutOfBounds
 }
 
@@ -233,7 +244,13 @@ export const rotatePuyo = (game: Game): Game => {
   const rotatedPair = rotatePuyoPair(game.currentPuyoPair, 'clockwise')
 
   // 回転後の境界チェック
-  if (checkRotationBounds(rotatedPair, game.field.getWidth(), game.field.getHeight())) {
+  if (
+    checkRotationBounds(
+      rotatedPair,
+      game.field.getWidth(),
+      game.field.getHeight(),
+    )
+  ) {
     return game
   }
 
