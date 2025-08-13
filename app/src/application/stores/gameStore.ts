@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-import { 
-  createGame, 
-  startGame,
+import {
+  createGame,
   pauseGame as pauseGameDomain,
   resumeGame as resumeGameDomain,
+  startGame,
 } from '../../domain/models/Game'
 import type { Game } from '../../domain/models/Game'
 import type { Puyo } from '../../domain/models/Puyo'
@@ -74,7 +74,7 @@ export const useGameStore = create<GameStore>()(
             isPaused: true,
           }),
           false,
-          'pauseGame'
+          'pauseGame',
         )
       },
 
@@ -86,7 +86,7 @@ export const useGameStore = create<GameStore>()(
             isPaused: false,
           }),
           false,
-          'resumeGame'
+          'resumeGame',
         )
       },
 
