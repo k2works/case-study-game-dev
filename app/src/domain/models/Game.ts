@@ -52,6 +52,10 @@ export const resumeGame = (game: Game): Game => {
   return updateGameState(game, 'playing')
 }
 
+export const resetGame = (): Game => {
+  return createGame()
+}
+
 export const updateGameScore = (game: Game, newScore: Score): Game => ({
   ...game,
   score: newScore,

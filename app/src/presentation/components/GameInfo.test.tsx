@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import {
   createGame,
@@ -195,6 +196,54 @@ describe('GameInfoコンポーネント', () => {
 
       // Assert
       expect(screen.getByTestId('state-value')).toHaveClass('state-gameOver')
+    })
+  })
+
+  describe('リスタートボタンテスト', () => {
+    it('ゲームオーバー時にリスタートボタンが表示される', () => {
+      // Arrange
+      const game = updateGameState(createGame(), 'gameOver')
+      const mockOnRestart = vi.fn()
+
+      // Act
+      render(<GameInfo game={game} onRestart={mockOnRestart} />)
+
+      // Assert
+      expect(screen.getByTestId('restart-button')).toBeInTheDocument()
+      expect(screen.getByText('リスタート')).toBeInTheDocument()
+    })
+
+    it('ゲームオーバー以外では リスタートボタンが表示されない', () => {
+      // Arrange
+      const readyGame = createGame()
+      const playingGame = updateGameState(createGame(), 'playing')
+      const pausedGame = updateGameState(createGame(), 'paused')
+      const mockOnRestart = vi.fn()
+
+      // Act & Assert
+      render(<GameInfo game={readyGame} onRestart={mockOnRestart} />)
+      expect(screen.queryByTestId('restart-button')).not.toBeInTheDocument()
+
+      render(<GameInfo game={playingGame} onRestart={mockOnRestart} />)
+      expect(screen.queryByTestId('restart-button')).not.toBeInTheDocument()
+
+      render(<GameInfo game={pausedGame} onRestart={mockOnRestart} />)
+      expect(screen.queryByTestId('restart-button')).not.toBeInTheDocument()
+    })
+
+    it('リスタートボタンクリック時にonRestartが呼ばれる', async () => {
+      // Arrange
+      const user = userEvent.setup()
+      const game = updateGameState(createGame(), 'gameOver')
+      const mockOnRestart = vi.fn()
+
+      // Act
+      render(<GameInfo game={game} onRestart={mockOnRestart} />)
+      const restartButton = screen.getByTestId('restart-button')
+      await user.click(restartButton)
+
+      // Assert
+      expect(mockOnRestart).toHaveBeenCalledOnce()
     })
   })
 })

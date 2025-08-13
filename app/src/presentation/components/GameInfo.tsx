@@ -3,6 +3,7 @@ import { getDisplayScore } from '../../domain/models/Score'
 
 interface GameInfoProps {
   game: Game
+  onRestart?: () => void
 }
 
 const getStateLabel = (state: GameState): string => {
@@ -15,7 +16,7 @@ const getStateLabel = (state: GameState): string => {
   return stateLabels[state]
 }
 
-export const GameInfo = ({ game }: GameInfoProps) => {
+export const GameInfo = ({ game, onRestart }: GameInfoProps) => {
   const getStateColor = (state: GameState): string => {
     switch (state) {
       case 'ready':
@@ -75,6 +76,18 @@ export const GameInfo = ({ game }: GameInfoProps) => {
           {getStateLabel(game.state)}
         </div>
       </div>
+
+      {game.state === 'gameOver' && onRestart && (
+        <div className="info-section bg-white/5 rounded-lg p-4 border border-white/10">
+          <button
+            data-testid="restart-button"
+            onClick={onRestart}
+            className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+          >
+            リスタート
+          </button>
+        </div>
+      )}
     </div>
   )
 }

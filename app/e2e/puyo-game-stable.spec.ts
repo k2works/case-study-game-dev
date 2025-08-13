@@ -127,4 +127,78 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
     await expect(page.locator('footer')).toBeVisible()
     await expect(page.locator('text=テスト駆動開発で作られたぷよぷよゲーム')).toBeVisible()
   })
+
+  test('ゲームオーバー時にリスタートボタンが表示される', async ({ page }) => {
+    // ゲーム開始ボタンを押してゲームを開始
+    const startButton = page.locator('button', { hasText: 'ゲーム開始' })
+    await expect(startButton).toBeVisible()
+    await startButton.click()
+    
+    // ゲーム状態が「プレイ中」になることを確認
+    await page.waitForTimeout(500)
+    await expect(page.getByTestId('state-value')).toHaveText('プレイ中')
+    
+    // 手動でゲームオーバー状態を作る（モックまたは開発者ツール使用）
+    // ここでは簡単のため、リセットボタンをクリックしてからgameOverにする
+    // 実際の実装では、フィールドを埋めるかAPIを使ってゲームオーバーにする
+    await page.evaluate(() => {
+      // ゲームストアを直接操作してゲームオーバー状態にする
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gameStore = (window as any).useGameStore?.getState?.()
+      if (gameStore) {
+        gameStore.updateGame({
+          ...gameStore.game,
+          state: 'gameOver'
+        })
+      }
+    })
+    
+    // ゲームオーバー状態になることを確認
+    await page.waitForTimeout(100)
+    await expect(page.getByTestId('state-value')).toHaveText('ゲームオーバー')
+    
+    // GameInfoコンポーネント内のリスタートボタンが表示されることを確認
+    await expect(page.getByTestId('restart-button')).toBeVisible()
+    await expect(page.getByTestId('restart-button')).toHaveText('リスタート')
+  })
+
+  test('リスタートボタンクリックでゲームがリセットされる', async ({ page }) => {
+    // ゲーム開始
+    const startButton = page.locator('button', { hasText: 'ゲーム開始' })
+    await expect(startButton).toBeVisible()
+    await startButton.click()
+    
+    await page.waitForTimeout(500)
+    
+    // ゲームオーバー状態にする
+    await page.evaluate(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gameStore = (window as any).useGameStore?.getState?.()
+      if (gameStore) {
+        gameStore.updateGame({
+          ...gameStore.game,
+          state: 'gameOver'
+        })
+      }
+    })
+    
+    await page.waitForTimeout(100)
+    await expect(page.getByTestId('state-value')).toHaveText('ゲームオーバー')
+    
+    // リスタートボタンをクリック
+    const restartButton = page.getByTestId('restart-button')
+    await expect(restartButton).toBeVisible()
+    await restartButton.click()
+    
+    // ゲーム状態が「準備中」にリセットされることを確認
+    await page.waitForTimeout(100)
+    await expect(page.getByTestId('state-value')).toHaveText('準備中')
+    
+    // スコアとレベルがリセットされることを確認
+    await expect(page.getByTestId('score-value')).toHaveText('0')
+    await expect(page.getByTestId('level-value')).toHaveText('1')
+    
+    // ゲーム開始ボタンが再び表示されることを確認
+    await expect(page.locator('button', { hasText: 'ゲーム開始' })).toBeVisible()
+  })
 })
