@@ -7,10 +7,12 @@ import {
 } from './domain/models/Game'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
+import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
 
 function App() {
-  const { game, pauseGame, resumeGame, resetGame, updateGame } = useGameStore()
+  const { game, startGame, pauseGame, resumeGame, resetGame, updateGame } =
+    useGameStore()
 
   // キーボード入力ハンドラー
   const handleLeft = () => {
@@ -69,6 +71,13 @@ function App() {
     onReset: handleReset,
   })
 
+  // 自動落下システム
+  useAutoFall({
+    game,
+    updateGame,
+    fallSpeed: 1000, // 1秒間隔で落下
+  })
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4">
       <div className="max-w-4xl mx-auto">
@@ -82,6 +91,45 @@ function App() {
           <div className="lg:col-span-1">
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
               <GameInfo game={game} />
+
+              {/* ゲーム制御ボタン */}
+              <div className="mt-6 space-y-3">
+                {game.state === 'ready' && (
+                  <button
+                    onClick={startGame}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    ゲーム開始
+                  </button>
+                )}
+
+                {game.state === 'playing' && (
+                  <button
+                    onClick={pauseGame}
+                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    一時停止
+                  </button>
+                )}
+
+                {game.state === 'paused' && (
+                  <button
+                    onClick={resumeGame}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    再開
+                  </button>
+                )}
+
+                {(game.state === 'gameOver' || game.state === 'paused') && (
+                  <button
+                    onClick={resetGame}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    リセット
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 

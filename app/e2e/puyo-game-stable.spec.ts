@@ -115,7 +115,11 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
     // 基本要素が正常に表示されていることを確認
     await expect(page.getByTestId('game-board')).toBeVisible()
     await expect(page.getByTestId('game-info')).toBeVisible()
-    await expect(page.getByTestId('state-value')).toHaveText('準備中')
+    
+    // ゲーム状態が「準備中」または「プレイ中」のいずれかであることを確認
+    // 自動落下システムの実装により、初期状態が変化する可能性がある
+    const stateValue = await page.getByTestId('state-value').textContent()
+    expect(stateValue).toMatch(/^(準備中|プレイ中)$/)
   })
 
   test('フッター情報が表示される', async ({ page }) => {

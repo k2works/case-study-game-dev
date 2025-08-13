@@ -1,4 +1,5 @@
 import type { Game, GameState } from '../../domain/models/Game'
+import { getDisplayScore } from '../../domain/models/Score'
 
 interface GameInfoProps {
   game: Game
@@ -45,7 +46,7 @@ export const GameInfo = ({ game }: GameInfoProps) => {
           data-testid="score-value"
           className="info-value text-2xl font-bold text-white"
         >
-          {game.score.toLocaleString()}
+          {getDisplayScore(game.score).toLocaleString()}
         </div>
       </div>
 
