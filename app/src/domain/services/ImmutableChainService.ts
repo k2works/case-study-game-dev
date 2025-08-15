@@ -1,4 +1,4 @@
-import { curry, flow, sum } from 'lodash/fp'
+import { curry, flow } from 'lodash/fp'
 
 import type { ImmutableField } from '../models/ImmutableField'
 import type { PuyoGroup } from '../models/PuyoGroup'
@@ -115,29 +115,6 @@ export const calculateChainScore = curry(
   (chainCount: number, baseScore: number): number =>
     flow(calculateChainBonus, (bonus: number) => baseScore * bonus)(chainCount),
 )
-
-/**
- * 複数の連鎖スコアを合計する
- */
-export const sumChainScores = (scores: number[]): number => sum(scores)
-
-/**
- * 連鎖結果の変換関数
- */
-export const mapChainResult = curry(
-  (
-    transform: (result: ImmutableChainResult) => ImmutableChainResult,
-    result: ImmutableChainResult,
-  ): ImmutableChainResult => transform(result),
-)
-
-/**
- * 連鎖結果のバリデーション
- */
-export const isValidChainResult = (result: ImmutableChainResult): boolean =>
-  result.chainCount >= 0 &&
-  result.totalScore >= 0 &&
-  result.eliminatedGroups.length >= 0
 
 /**
  * 連鎖可能性を判定する（純粋関数）

@@ -1,4 +1,4 @@
-import { curry, filter, pipe, reduce } from 'lodash/fp'
+import { curry } from 'lodash/fp'
 
 import type { Position } from './Position'
 import type { Puyo } from './Puyo'
@@ -146,67 +146,6 @@ export const getAllPuyos = (
     }
   }
   return puyos
-}
-
-/**
- * フィールドの特定の条件に一致するぷよを取得する
- */
-export const findPuyos = curry(
-  (
-    predicate: (puyo: Puyo, position: Position) => boolean,
-    field: ImmutableField,
-  ): Array<{ puyo: Puyo; position: Position }> => {
-    return pipe(
-      getAllPuyos,
-      filter(({ puyo, position }) => predicate(puyo, position)),
-    )(field)
-  },
-)
-
-/**
- * フィールドに対して複数の変換を適用する
- */
-export const transformField = curry(
-  (
-    transforms: Array<(field: ImmutableField) => ImmutableField>,
-    field: ImmutableField,
-  ): ImmutableField => {
-    return pipe(...transforms)(field)
-  },
-)
-
-/**
- * 特定の色のぷよを全て取得する
- */
-export const getPuyosByColor = curry(
-  (
-    color: string,
-    field: ImmutableField,
-  ): Array<{ puyo: Puyo; position: Position }> => {
-    return findPuyos((puyo) => puyo.color === color, field)
-  },
-)
-
-/**
- * フィールドの統計情報を取得する
- */
-export const getFieldStats = (field: ImmutableField) => {
-  const allPuyos = getAllPuyos(field)
-  const colorCounts = reduce(
-    (acc: Record<string, number>, { puyo }) => {
-      const color = puyo.color || 'empty'
-      acc[color] = (acc[color] || 0) + 1
-      return acc
-    },
-    {},
-    allPuyos,
-  )
-
-  return {
-    totalPuyos: allPuyos.length,
-    emptySpaces: field.width * field.height - allPuyos.length,
-    colorDistribution: colorCounts,
-  }
 }
 
 /**
