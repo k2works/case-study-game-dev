@@ -7,19 +7,23 @@ import { Container } from './Container'
 
 // モックサービス
 class MockStorageService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data = new Map<string, any>()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async save(key: string, value: any): Promise<boolean> {
     this.data.set(key, value)
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async load(key: string): Promise<any> {
     return this.data.get(key) || null
   }
 }
 
 class MockTimerService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private timers = new Map<string, any>()
 
   startInterval(callback: () => void, interval: number): string {

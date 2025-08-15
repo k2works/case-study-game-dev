@@ -146,11 +146,13 @@ describe('CollisionService', () => {
         ...rotatedPair,
         sub: {
           ...rotatedPair.sub,
-          position: { x: 3, y: 10 }
-        }
+          position: { x: 3, y: 10 },
+        },
       }
 
-      expect(service.canRotate(originalPair, rotatedPairRotated, field)).toBe(true)
+      expect(service.canRotate(originalPair, rotatedPairRotated, field)).toBe(
+        true,
+      )
     })
 
     it('ぷよがある場所への回転は不可能', () => {
@@ -164,11 +166,13 @@ describe('CollisionService', () => {
         ...rotatedPair,
         sub: {
           ...rotatedPair.sub,
-          position: { x: 3, y: 10 }
-        }
+          position: { x: 3, y: 10 },
+        },
       }
 
-      expect(service.canRotate(originalPair, rotatedPairRotated, field)).toBe(false)
+      expect(service.canRotate(originalPair, rotatedPairRotated, field)).toBe(
+        false,
+      )
     })
   })
 
@@ -180,8 +184,8 @@ describe('CollisionService', () => {
         ...rotatedPair,
         sub: {
           ...rotatedPair.sub,
-          position: { x: 6, y: 10 }
-        }
+          position: { x: 6, y: 10 },
+        },
       }
 
       const kickOffsets = [
@@ -209,8 +213,8 @@ describe('CollisionService', () => {
         ...rotatedPair,
         sub: {
           ...rotatedPair.sub,
-          position: { x: 6, y: 10 }
-        }
+          position: { x: 6, y: 10 },
+        },
       }
 
       const kickOffsets = [

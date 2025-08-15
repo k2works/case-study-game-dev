@@ -170,9 +170,9 @@ describe('PuyoSpawningService', () => {
     it('色の統計情報を正しく計算する', () => {
       service.generateSpecificPuyoPair('red', 'blue', spawnPosition)
       // 手動で履歴に追加
-      // @ts-expect-error
+      // @ts-expect-error - private methodへのアクセス
       service.addToHistory('red')
-      // @ts-expect-error
+      // @ts-expect-error - private methodへのアクセス
       service.addToHistory('blue')
 
       const stats = service.getColorStatistics()

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { FieldAdapter } from '../models/FieldAdapter'
 import { createField } from '../models/ImmutableField'
-import { createPuyo, type PuyoColor } from '../models/Puyo'
+import { type PuyoColor, createPuyo } from '../models/Puyo'
 import { ChainDetectionService } from './ChainDetectionService'
 
 describe('ChainDetectionService', () => {
