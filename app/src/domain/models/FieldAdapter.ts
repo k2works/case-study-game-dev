@@ -46,12 +46,12 @@ export class FieldAdapter {
 
   getPuyo(x: number, y: number): Puyo | null {
     const position: Position = { x, y }
-    return getPuyo(this.immutableField, position)
+    return getPuyo(position, this.immutableField)
   }
 
   setPuyo(x: number, y: number, puyo: Puyo): FieldAdapter {
     const position: Position = { x, y }
-    this.immutableField = setPuyo(this.immutableField, position, puyo)
+    this.immutableField = setPuyo(position, puyo, this.immutableField)
     return this
   }
 
@@ -60,23 +60,23 @@ export class FieldAdapter {
    */
   withPuyo(x: number, y: number, puyo: Puyo): FieldAdapter {
     const position: Position = { x, y }
-    const newField = setPuyo(this.immutableField, position, puyo)
+    const newField = setPuyo(position, puyo, this.immutableField)
     return new FieldAdapter(newField)
   }
 
   removePuyo(x: number, y: number): void {
     const position: Position = { x, y }
-    this.immutableField = removePuyo(this.immutableField, position)
+    this.immutableField = removePuyo(position, this.immutableField)
   }
 
   isEmpty(x: number, y: number): boolean {
     const position: Position = { x, y }
-    return isEmpty(this.immutableField, position)
+    return isEmpty(position, this.immutableField)
   }
 
   isValidPosition(x: number, y: number): boolean {
     const position: Position = { x, y }
-    return isValidPosition(this.immutableField, position)
+    return isValidPosition(position, this.immutableField)
   }
 
   /**

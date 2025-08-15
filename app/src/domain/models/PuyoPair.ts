@@ -47,7 +47,7 @@ export const rotatePuyoPair = (
 
   return {
     main: pair.main,
-    sub: movePuyo(pair.sub, newSubPosition),
+    sub: movePuyo(newSubPosition, pair.sub),
   }
 }
 
@@ -66,8 +66,8 @@ export const movePuyoPair = (
   )
 
   return {
-    main: movePuyo(pair.main, newMainPosition),
-    sub: movePuyo(pair.sub, newSubPosition),
+    main: movePuyo(newMainPosition, pair.main),
+    sub: movePuyo(newSubPosition, pair.sub),
   }
 }
 

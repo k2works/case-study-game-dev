@@ -37,7 +37,7 @@ describe('Puyo', () => {
       const newPosition: PuyoPosition = { x: 3, y: 11 }
 
       // Act
-      const movedPuyo = movePuyo(puyo, newPosition)
+      const movedPuyo = movePuyo(newPosition, puyo)
 
       // Assert
       expect(movedPuyo.position).toEqual({ x: 3, y: 11 })
@@ -50,7 +50,7 @@ describe('Puyo', () => {
       const newPosition: PuyoPosition = { x: 2, y: 6 }
 
       // Act
-      const movedPuyo = movePuyo(originalPuyo, newPosition)
+      const movedPuyo = movePuyo(newPosition, originalPuyo)
 
       // Assert
       expect(originalPuyo.position).toEqual({ x: 1, y: 5 })

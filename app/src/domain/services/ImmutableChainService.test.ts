@@ -53,24 +53,24 @@ describe('ImmutableChainService', () => {
 
       // 4つの赤ぷよを縦に並べる（消去可能）
       field = setPuyo(
-        field,
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
+        field,
       )
 
       // Act
@@ -86,19 +86,19 @@ describe('ImmutableChainService', () => {
 
       // 3つの赤ぷよを縦に並べる（消去不可能）
       field = setPuyo(
-        field,
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
+        field,
       )
 
       // Act
@@ -116,24 +116,24 @@ describe('ImmutableChainService', () => {
 
       // 4つの赤ぷよを縦に並べる
       field = setPuyo(
-        field,
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
+        field,
       )
 
       // Act
@@ -166,24 +166,24 @@ describe('ImmutableChainService', () => {
 
       // 4つの赤ぷよを縦に並べる
       field = setPuyo(
-        field,
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
+        field,
       )
 
       // Act
@@ -225,24 +225,24 @@ describe('ImmutableChainService', () => {
 
       // 4つの赤ぷよを縦に並べる
       field = setPuyo(
-        field,
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
+        field,
       )
       field = setPuyo(
-        field,
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
+        field,
       )
 
       // Act

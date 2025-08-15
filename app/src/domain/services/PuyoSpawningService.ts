@@ -1,3 +1,5 @@
+import { curry, map, reduce, sumBy } from 'lodash/fp'
+
 // import { createPosition } from '../models/Position' // 現在未使用
 import type { PuyoColor } from '../models/Puyo'
 import { type PuyoPair, createPuyoPair } from '../models/PuyoPair'
@@ -125,17 +127,19 @@ export class PuyoSpawningService {
    * @returns 色ごとの出現頻度
    */
   private calculateColorFrequency(colors: PuyoColor[]): Map<PuyoColor, number> {
-    const frequency = new Map<PuyoColor, number>()
-
+    const initialFrequency = new Map<PuyoColor, number>()
     for (const color of this.availableColors) {
-      frequency.set(color, 0)
+      initialFrequency.set(color, 0)
     }
 
-    for (const color of colors) {
-      frequency.set(color, (frequency.get(color) || 0) + 1)
-    }
-
-    return frequency
+    return reduce(
+      (freq: Map<PuyoColor, number>, color: PuyoColor) => {
+        freq.set(color, (freq.get(color) || 0) + 1)
+        return freq
+      },
+      initialFrequency,
+      colors,
+    )
   }
 
   /**
@@ -169,10 +173,7 @@ export class PuyoSpawningService {
   private selectWeightedRandomColor(
     weightedColors: { color: PuyoColor; weight: number }[],
   ): PuyoColor {
-    const totalWeight = weightedColors.reduce(
-      (sum, item) => sum + item.weight,
-      0,
-    )
+    const totalWeight = sumBy((item) => item.weight, weightedColors)
     let randomValue = Math.random() * totalWeight
 
     for (const item of weightedColors) {
@@ -270,3 +271,80 @@ export const DEFAULT_SPAWNING_CONFIG: SpawningConfig = {
   balanceStrength: 0.3,
   sameColorPairProbability: 0.1,
 }
+
+/**
+ * 関数型アプローチによる色選択ユーティリティ
+ */
+export const createColorSelector = curry(
+  (availableColors: PuyoColor[], config: SpawningConfig) => ({
+    selectRandomColor: () => {
+      const randomIndex = Math.floor(Math.random() * availableColors.length)
+      return availableColors[randomIndex]
+    },
+
+    calculateFrequency: (colors: PuyoColor[]) => {
+      const initialFreq = new Map<PuyoColor, number>()
+      for (const color of availableColors) {
+        initialFreq.set(color, 0)
+      }
+      return reduce(
+        (freq: Map<PuyoColor, number>, color: PuyoColor) => {
+          freq.set(color, (freq.get(color) || 0) + 1)
+          return freq
+        },
+        initialFreq,
+        colors,
+      )
+    },
+
+    calculateWeights: (frequency: Map<PuyoColor, number>) => {
+      const maxFrequency = Math.max(...frequency.values())
+      return map((color: PuyoColor) => {
+        const currentFreq = frequency.get(color) || 0
+        const baseWeight = 1.0
+        const frequencyPenalty = currentFreq / Math.max(maxFrequency, 1)
+        return {
+          color,
+          weight: Math.max(
+            0.1,
+            baseWeight - frequencyPenalty * config.balanceStrength,
+          ),
+        }
+      }, availableColors)
+    },
+  }),
+)
+
+/**
+ * 色の統計計算の関数型実装
+ */
+export const calculateColorStatistics = curry(
+  (colors: PuyoColor[], availableColors: PuyoColor[]): ColorStatistics => {
+    const frequency = new Map<PuyoColor, number>()
+    for (const color of availableColors) {
+      frequency.set(color, 0)
+    }
+
+    const finalFreq = reduce(
+      (freq: Map<PuyoColor, number>, color: PuyoColor) => {
+        freq.set(color, (freq.get(color) || 0) + 1)
+        return freq
+      },
+      frequency,
+      colors,
+    )
+
+    const total = colors.length
+    const statistics: Record<string, number> = {}
+
+    for (const [color, count] of finalFreq) {
+      statistics[color as string] = total > 0 ? count / total : 0
+    }
+
+    return {
+      totalGenerated: total,
+      colorDistribution: statistics,
+      historyLength: colors.length,
+    }
+  },
+)

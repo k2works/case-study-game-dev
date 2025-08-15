@@ -64,7 +64,7 @@ describe('ImmutableField', () => {
       const validPosition = createPosition(2, 5)
 
       // Act
-      const result = isValidPosition(field, validPosition)
+      const result = isValidPosition(validPosition, field)
 
       // Assert
       expect(result).toBe(true)
@@ -76,7 +76,7 @@ describe('ImmutableField', () => {
       const invalidPosition = createPosition(-1, 5)
 
       // Act
-      const result = isValidPosition(field, invalidPosition)
+      const result = isValidPosition(invalidPosition, field)
 
       // Assert
       expect(result).toBe(false)
@@ -88,7 +88,7 @@ describe('ImmutableField', () => {
       const outOfBoundsPosition = createPosition(6, 12)
 
       // Act
-      const result = isValidPosition(field, outOfBoundsPosition)
+      const result = isValidPosition(outOfBoundsPosition, field)
 
       // Assert
       expect(result).toBe(false)
@@ -103,11 +103,11 @@ describe('ImmutableField', () => {
       const puyo = createPuyo('red', position)
 
       // Act
-      const newField = setPuyo(field, position, puyo)
+      const newField = setPuyo(position, puyo, field)
 
       // Assert
-      expect(getPuyo(newField, position)).toBe(puyo)
-      expect(getPuyo(field, position)).toBeNull() // 元のフィールドは変更されない
+      expect(getPuyo(position, newField)).toBe(puyo)
+      expect(getPuyo(position, field)).toBeNull() // 元のフィールドは変更されない
     })
 
     it('既に占有されている位置にぷよを配置しようとするとエラーが発生する', () => {
@@ -116,10 +116,10 @@ describe('ImmutableField', () => {
       const position = createPosition(2, 5)
       const puyo1 = createPuyo('red', position)
       const puyo2 = createPuyo('blue', position)
-      const fieldWithPuyo = setPuyo(field, position, puyo1)
+      const fieldWithPuyo = setPuyo(position, puyo1, field)
 
       // Act & Assert
-      expect(() => setPuyo(fieldWithPuyo, position, puyo2)).toThrow(
+      expect(() => setPuyo(position, puyo2, fieldWithPuyo)).toThrow(
         'Position already occupied',
       )
     })
@@ -131,7 +131,7 @@ describe('ImmutableField', () => {
       const puyo = createPuyo('red', invalidPosition)
 
       // Act & Assert
-      expect(() => setPuyo(field, invalidPosition, puyo)).toThrow(
+      expect(() => setPuyo(invalidPosition, puyo, field)).toThrow(
         'Invalid position',
       )
     })
@@ -142,7 +142,7 @@ describe('ImmutableField', () => {
       const invalidPosition = createPosition(-1, 5)
 
       // Act
-      const result = getPuyo(field, invalidPosition)
+      const result = getPuyo(invalidPosition, field)
 
       // Assert
       expect(result).toBeNull()
@@ -155,14 +155,14 @@ describe('ImmutableField', () => {
       const field = createField()
       const position = createPosition(2, 5)
       const puyo = createPuyo('red', position)
-      const fieldWithPuyo = setPuyo(field, position, puyo)
+      const fieldWithPuyo = setPuyo(position, puyo, field)
 
       // Act
-      const newField = removePuyo(fieldWithPuyo, position)
+      const newField = removePuyo(position, fieldWithPuyo)
 
       // Assert
-      expect(getPuyo(newField, position)).toBeNull()
-      expect(getPuyo(fieldWithPuyo, position)).toBe(puyo) // 元のフィールドは変更されない
+      expect(getPuyo(position, newField)).toBeNull()
+      expect(getPuyo(position, fieldWithPuyo)).toBe(puyo) // 元のフィールドは変更されない
     })
 
     it('無効な位置からぷよを削除しても元のフィールドが返される', () => {
@@ -171,7 +171,7 @@ describe('ImmutableField', () => {
       const invalidPosition = createPosition(-1, 5)
 
       // Act
-      const result = removePuyo(field, invalidPosition)
+      const result = removePuyo(invalidPosition, field)
 
       // Assert
       expect(result).toBe(field)
@@ -184,15 +184,15 @@ describe('ImmutableField', () => {
       const position2 = createPosition(2, 2)
       const puyo1 = createPuyo('red', position1)
       const puyo2 = createPuyo('blue', position2)
-      let fieldWithPuyos = setPuyo(field, position1, puyo1)
-      fieldWithPuyos = setPuyo(fieldWithPuyos, position2, puyo2)
+      let fieldWithPuyos = setPuyo(position1, puyo1, field)
+      fieldWithPuyos = setPuyo(position2, puyo2, fieldWithPuyos)
 
       // Act
-      const newField = removePuyos(fieldWithPuyos, [position1, position2])
+      const newField = removePuyos([position1, position2], fieldWithPuyos)
 
       // Assert
-      expect(getPuyo(newField, position1)).toBeNull()
-      expect(getPuyo(newField, position2)).toBeNull()
+      expect(getPuyo(position1, newField)).toBeNull()
+      expect(getPuyo(position2, newField)).toBeNull()
     })
   })
 
@@ -203,7 +203,7 @@ describe('ImmutableField', () => {
       const position = createPosition(2, 5)
 
       // Act
-      const result = isEmpty(field, position)
+      const result = isEmpty(position, field)
 
       // Assert
       expect(result).toBe(true)
@@ -214,10 +214,10 @@ describe('ImmutableField', () => {
       const field = createField()
       const position = createPosition(2, 5)
       const puyo = createPuyo('red', position)
-      const fieldWithPuyo = setPuyo(field, position, puyo)
+      const fieldWithPuyo = setPuyo(position, puyo, field)
 
       // Act
-      const result = isEmpty(fieldWithPuyo, position)
+      const result = isEmpty(position, fieldWithPuyo)
 
       // Assert
       expect(result).toBe(false)
@@ -229,7 +229,7 @@ describe('ImmutableField', () => {
       const invalidPosition = createPosition(-1, 5)
 
       // Act
-      const result = isEmpty(field, invalidPosition)
+      const result = isEmpty(invalidPosition, field)
 
       // Assert
       expect(result).toBe(false)
@@ -259,8 +259,8 @@ describe('ImmutableField', () => {
       const position2 = createPosition(1, 1)
       const puyo1 = createPuyo('red', position1)
       const puyo2 = createPuyo('blue', position2)
-      let fieldWithPuyos = setPuyo(field, position1, puyo1)
-      fieldWithPuyos = setPuyo(fieldWithPuyos, position2, puyo2)
+      let fieldWithPuyos = setPuyo(position1, puyo1, field)
+      fieldWithPuyos = setPuyo(position2, puyo2, fieldWithPuyos)
 
       // Act
       const puyos = getAllPuyos(fieldWithPuyos)
@@ -276,7 +276,7 @@ describe('ImmutableField', () => {
       const field = createField()
       const position = createPosition(2, 5)
       const puyo = createPuyo('red', position)
-      const fieldWithPuyo = setPuyo(field, position, puyo)
+      const fieldWithPuyo = setPuyo(position, puyo, field)
 
       // Act
       const clonedField = cloneField(fieldWithPuyo)
@@ -284,7 +284,7 @@ describe('ImmutableField', () => {
       // Assert
       expect(clonedField).not.toBe(fieldWithPuyo)
       expect(clonedField.grid).not.toBe(fieldWithPuyo.grid)
-      expect(getPuyo(clonedField, position)).toBe(puyo)
+      expect(getPuyo(position, clonedField)).toBe(puyo)
     })
   })
 })

@@ -1,3 +1,5 @@
+import { curry, flow, sum } from 'lodash/fp'
+
 import type { ImmutableField } from '../models/ImmutableField'
 import type { PuyoGroup } from '../models/PuyoGroup'
 import {
@@ -36,7 +38,7 @@ export const processChain = (field: ImmutableField): ImmutableChainResult => {
     }
 
     // グループを消去
-    const eliminationResult = eliminateGroups(currentField, eliminableGroups)
+    const eliminationResult = eliminateGroups(eliminableGroups, currentField)
     currentField = eliminationResult.field
 
     // 連鎖カウントと記録を更新
@@ -79,7 +81,7 @@ export const processSingleElimination = (
   }
 
   // グループを消去
-  const eliminationResult = eliminateGroups(fieldAfterGravity, eliminableGroups)
+  const eliminationResult = eliminateGroups(eliminableGroups, fieldAfterGravity)
 
   return {
     field: eliminationResult.field,
@@ -105,6 +107,37 @@ export const calculateChainBonus = (chainCount: number): number => {
 
   return bonusMap[chainCount as keyof typeof bonusMap] ?? 64
 }
+
+/**
+ * 連鎖スコアを計算する関数型アプローチ
+ */
+export const calculateChainScore = curry(
+  (chainCount: number, baseScore: number): number =>
+    flow(calculateChainBonus, (bonus: number) => baseScore * bonus)(chainCount),
+)
+
+/**
+ * 複数の連鎖スコアを合計する
+ */
+export const sumChainScores = (scores: number[]): number => sum(scores)
+
+/**
+ * 連鎖結果の変換関数
+ */
+export const mapChainResult = curry(
+  (
+    transform: (result: ImmutableChainResult) => ImmutableChainResult,
+    result: ImmutableChainResult,
+  ): ImmutableChainResult => transform(result),
+)
+
+/**
+ * 連鎖結果のバリデーション
+ */
+export const isValidChainResult = (result: ImmutableChainResult): boolean =>
+  result.chainCount >= 0 &&
+  result.totalScore >= 0 &&
+  result.eliminatedGroups.length >= 0
 
 /**
  * 連鎖可能性を判定する（純粋関数）
