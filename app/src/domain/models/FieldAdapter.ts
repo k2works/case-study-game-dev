@@ -49,9 +49,19 @@ export class FieldAdapter {
     return getPuyo(this.immutableField, position)
   }
 
-  setPuyo(x: number, y: number, puyo: Puyo): void {
+  setPuyo(x: number, y: number, puyo: Puyo): FieldAdapter {
     const position: Position = { x, y }
     this.immutableField = setPuyo(this.immutableField, position, puyo)
+    return this
+  }
+
+  /**
+   * 新しいインスタンスを返すsetPuyoメソッド（不変版）
+   */
+  withPuyo(x: number, y: number, puyo: Puyo): FieldAdapter {
+    const position: Position = { x, y }
+    const newField = setPuyo(this.immutableField, position, puyo)
+    return new FieldAdapter(newField)
   }
 
   removePuyo(x: number, y: number): void {
