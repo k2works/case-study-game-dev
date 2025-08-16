@@ -79,6 +79,8 @@ nav:
     - Phase 2レビュー: development/phase2-review.md
     - イテレーション1完了報告書: development/iteration1-completion-report.md
     - イテレーション1ふりかえり: development/iteration1-retrospective.md
+    - イテレーション2完了報告書: development/iteration-2-completion-report.md
+    - イテレーション2ふりかえり: development/iteration-2-retrospective.md
   - 運用:
     - 運用概要: operation/index.md
     - セットアップ: operation/セットアップ.md

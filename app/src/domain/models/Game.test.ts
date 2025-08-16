@@ -7,6 +7,7 @@ import {
   movePuyoLeft,
   movePuyoRight,
   pauseGame,
+  resetGame,
   resumeGame,
   rotatePuyo,
   startGame,
@@ -505,6 +506,48 @@ describe('Game', () => {
       // Assert
       expect(pausedGame.state).toBe(originalState)
       expect(resumedGame).not.toBe(pausedGame)
+    })
+  })
+
+  describe('resetGame', () => {
+    it('ゲームを初期状態にリセットできる', () => {
+      // Act
+      const resetedGame = resetGame()
+
+      // Assert
+      expect(resetedGame.state).toBe('ready')
+      expect(resetedGame.score.current).toBe(0)
+      expect(resetedGame.score.multiplier).toBe(1)
+      expect(resetedGame.level).toBe(1)
+      expect(resetedGame.currentPuyoPair).toBeNull()
+      expect(resetedGame.currentPuyo).toBeNull()
+    })
+
+    it('フィールドも初期状態にリセットされる', () => {
+      // Arrange
+      const game = createGame()
+      game.field.setPuyo(0, 0, createPuyo('red', { x: 0, y: 0 }))
+      game.field.setPuyo(1, 1, createPuyo('blue', { x: 1, y: 1 }))
+
+      // Act
+      const resetedGame = resetGame()
+
+      // Assert
+      expect(resetedGame.field.isEmpty(0, 0)).toBe(true)
+      expect(resetedGame.field.isEmpty(1, 1)).toBe(true)
+    })
+
+    it('元のゲームオブジェクトは変更されない（イミュータブル）', () => {
+      // Arrange
+      const originalGame = createGame()
+      const gameOverGame = updateGameState(originalGame, 'gameOver')
+
+      // Act
+      const resetedGame = resetGame()
+
+      // Assert
+      expect(gameOverGame.state).toBe('gameOver')
+      expect(resetedGame).not.toBe(gameOverGame)
     })
   })
 

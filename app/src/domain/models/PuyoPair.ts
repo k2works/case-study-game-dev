@@ -10,13 +10,13 @@ export interface PuyoPair {
 }
 
 export const createPuyoPair = (
-  mainColor: string,
-  subColor: string,
+  mainColor: PuyoColor,
+  subColor: PuyoColor,
   centerX: number,
   centerY: number,
 ): PuyoPair => ({
-  main: createPuyo(mainColor as PuyoColor, createPosition(centerX, centerY)),
-  sub: createPuyo(subColor as PuyoColor, createPosition(centerX, centerY - 1)),
+  main: createPuyo(mainColor, createPosition(centerX, centerY)),
+  sub: createPuyo(subColor, createPosition(centerX, centerY - 1)),
 })
 
 export const rotatePuyoPair = (
@@ -47,7 +47,7 @@ export const rotatePuyoPair = (
 
   return {
     main: pair.main,
-    sub: movePuyo(pair.sub, newSubPosition),
+    sub: movePuyo(newSubPosition, pair.sub),
   }
 }
 
@@ -66,8 +66,8 @@ export const movePuyoPair = (
   )
 
   return {
-    main: movePuyo(pair.main, newMainPosition),
-    sub: movePuyo(pair.sub, newSubPosition),
+    main: movePuyo(newMainPosition, pair.main),
+    sub: movePuyo(newSubPosition, pair.sub),
   }
 }
 
@@ -82,4 +82,45 @@ export const canPlaceOn = (pair: PuyoPair, field: FieldAdapter): boolean => {
   return positions.every(
     (pos) => field.isValidPosition(pos.x, pos.y) && field.isEmpty(pos.x, pos.y),
   )
+}
+
+// 壁蹴り（Wall Kick）機能付き回転
+export const rotatePuyoPairWithWallKick = (
+  pair: PuyoPair,
+  direction: 'clockwise' | 'counterclockwise',
+  field: FieldAdapter,
+): PuyoPair => {
+  // まず通常の回転を試みる
+  const rotatedPair = rotatePuyoPair(pair, direction)
+
+  if (canPlaceOn(rotatedPair, field)) {
+    return rotatedPair
+  }
+
+  // 壁蹴りパターンを定義（優先順位順）
+  // 1. 左右に1マスずらす
+  // 2. 上下に1マスずらす
+  // 3. 斜めにずらす（角の場合）
+  const wallKickOffsets = [
+    { x: -1, y: 0 }, // 左
+    { x: 1, y: 0 }, // 右
+    { x: 0, y: -1 }, // 上
+    { x: 0, y: 1 }, // 下
+    { x: -1, y: -1 }, // 左上
+    { x: 1, y: -1 }, // 右上
+    { x: -1, y: 1 }, // 左下
+    { x: 1, y: 1 }, // 右下
+  ]
+
+  // 各オフセットを試す
+  for (const offset of wallKickOffsets) {
+    const kickedPair = movePuyoPair(rotatedPair, offset.x, offset.y)
+
+    if (canPlaceOn(kickedPair, field)) {
+      return kickedPair
+    }
+  }
+
+  // 壁蹴りできない場合は元の位置を返す（回転しない）
+  return pair
 }

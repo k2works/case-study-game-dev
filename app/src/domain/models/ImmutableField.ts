@@ -1,3 +1,5 @@
+import { curry } from 'lodash/fp'
+
 import type { Position } from './Position'
 import type { Puyo } from './Puyo'
 
@@ -36,81 +38,84 @@ export const createFieldFromGrid = (
 /**
  * フィールドの指定位置のぷよを取得する
  */
-export const getPuyo = (
-  field: ImmutableField,
-  position: Position,
-): Puyo | null => {
-  if (!isValidPosition(field, position)) {
-    return null
-  }
-  return field.grid[position.y][position.x]
-}
+export const getPuyo = curry(
+  (position: Position, field: ImmutableField): Puyo | null => {
+    if (!isValidPosition(position, field)) {
+      return null
+    }
+    return field.grid[position.y][position.x]
+  },
+)
 
 /**
  * フィールドの指定位置にぷよを配置した新しいフィールドを返す
  */
-export const setPuyo = (
-  field: ImmutableField,
-  position: Position,
-  puyo: Puyo,
-): ImmutableField => {
-  if (!isValidPosition(field, position)) {
-    throw new Error(`Invalid position: (${position.x}, ${position.y})`)
-  }
+export const setPuyo = curry(
+  (position: Position, puyo: Puyo, field: ImmutableField): ImmutableField => {
+    if (!isValidPosition(position, field)) {
+      throw new Error(`Invalid position: (${position.x}, ${position.y})`)
+    }
 
-  if (!isEmpty(field, position)) {
-    throw new Error(`Position already occupied: (${position.x}, ${position.y})`)
-  }
+    if (!isEmpty(position, field)) {
+      throw new Error(
+        `Position already occupied: (${position.x}, ${position.y})`,
+      )
+    }
 
-  const newGrid = field.grid.map((row, y) =>
-    row.map((cell, x) => (x === position.x && y === position.y ? puyo : cell)),
-  )
+    const newGrid = field.grid.map((row, y) =>
+      row.map((cell, x) =>
+        x === position.x && y === position.y ? puyo : cell,
+      ),
+    )
 
-  return createFieldFromGrid(newGrid)
-}
+    return createFieldFromGrid(newGrid)
+  },
+)
 
 /**
  * フィールドの指定位置からぷよを削除した新しいフィールドを返す
  */
-export const removePuyo = (
-  field: ImmutableField,
-  position: Position,
-): ImmutableField => {
-  if (!isValidPosition(field, position)) {
-    return field
-  }
+export const removePuyo = curry(
+  (position: Position, field: ImmutableField): ImmutableField => {
+    if (!isValidPosition(position, field)) {
+      return field
+    }
 
-  const newGrid = field.grid.map((row, y) =>
-    row.map((cell, x) => (x === position.x && y === position.y ? null : cell)),
-  )
+    const newGrid = field.grid.map((row, y) =>
+      row.map((cell, x) =>
+        x === position.x && y === position.y ? null : cell,
+      ),
+    )
 
-  return createFieldFromGrid(newGrid)
-}
+    return createFieldFromGrid(newGrid)
+  },
+)
 
 /**
  * 指定位置が空かどうかを判定する
  */
-export const isEmpty = (field: ImmutableField, position: Position): boolean => {
-  if (!isValidPosition(field, position)) {
-    return false
-  }
-  return field.grid[position.y][position.x] === null
-}
+export const isEmpty = curry(
+  (position: Position, field: ImmutableField): boolean => {
+    if (!isValidPosition(position, field)) {
+      return false
+    }
+    return field.grid[position.y][position.x] === null
+  },
+)
 
 /**
  * 指定位置が有効かどうかを判定する
  */
-export const isValidPosition = (
-  field: ImmutableField,
-  position: Position,
-): boolean => {
-  return (
-    position.x >= 0 &&
-    position.x < field.width &&
-    position.y >= 0 &&
-    position.y < field.height
-  )
-}
+export const isValidPosition = curry(
+  (position: Position, field: ImmutableField): boolean => {
+    return (
+      position.x >= 0 &&
+      position.x < field.width &&
+      position.y >= 0 &&
+      position.y < field.height
+    )
+  },
+)
 
 /**
  * フィールドの全ての位置を取得する
@@ -146,18 +151,17 @@ export const getAllPuyos = (
 /**
  * 複数のぷよを一度に削除した新しいフィールドを返す
  */
-export const removePuyos = (
-  field: ImmutableField,
-  positions: Position[],
-): ImmutableField => {
-  const positionSet = new Set(positions.map((pos) => `${pos.x},${pos.y}`))
+export const removePuyos = curry(
+  (positions: Position[], field: ImmutableField): ImmutableField => {
+    const positionSet = new Set(positions.map((pos) => `${pos.x},${pos.y}`))
 
-  const newGrid = field.grid.map((row, y) =>
-    row.map((cell, x) => (positionSet.has(`${x},${y}`) ? null : cell)),
-  )
+    const newGrid = field.grid.map((row, y) =>
+      row.map((cell, x) => (positionSet.has(`${x},${y}`) ? null : cell)),
+    )
 
-  return createFieldFromGrid(newGrid)
-}
+    return createFieldFromGrid(newGrid)
+  },
+)
 
 /**
  * フィールドをクローンする

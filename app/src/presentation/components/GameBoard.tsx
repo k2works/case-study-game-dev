@@ -1,8 +1,10 @@
-import type { Game } from '../../domain/models/Game'
-import type { Puyo } from '../../domain/models/Puyo'
+import type {
+  GameViewModel,
+  PuyoViewModel,
+} from '../../application/viewmodels/GameViewModel'
 
 interface GameBoardProps {
-  game: Game
+  game: GameViewModel
 }
 
 export const GameBoard = ({ game }: GameBoardProps) => {
@@ -32,37 +34,31 @@ export const GameBoard = ({ game }: GameBoardProps) => {
 
     // メインぷよの位置チェック
     if (
-      game.currentPuyoPair.main.position.x === x &&
-      game.currentPuyoPair.main.position.y === y
+      game.currentPuyoPair.main.x === x &&
+      game.currentPuyoPair.main.y === y
     ) {
       return { puyo: game.currentPuyoPair.main, isCurrentPuyo: true }
     }
 
     // サブぷよの位置チェック
-    if (
-      game.currentPuyoPair.sub.position.x === x &&
-      game.currentPuyoPair.sub.position.y === y
-    ) {
+    if (game.currentPuyoPair.sub.x === x && game.currentPuyoPair.sub.y === y) {
       return { puyo: game.currentPuyoPair.sub, isCurrentPuyo: true }
     }
 
     return { puyo: null, isCurrentPuyo: false }
   }
 
-  // ヘルパー関数: 後方互換性のためのcurrentPuyoチェック
-  const getCurrentPuyoLegacy = (x: number, y: number) => {
-    if (
-      game.currentPuyo &&
-      game.currentPuyo.position.x === x &&
-      game.currentPuyo.position.y === y
-    ) {
-      return { puyo: game.currentPuyo, isCurrentPuyo: true }
-    }
+  // ヘルパー関数: 後方互換性のためのcurrentPuyoチェック（ViewModelには存在しない）
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getCurrentPuyoLegacy = (_x: number, _y: number) => {
+    // ViewModelではcurrentPuyoは存在しないので、常にnullを返す
     return { puyo: null, isCurrentPuyo: false }
   }
 
   const getCellPuyo = (x: number, y: number) => {
-    const fieldPuyo = field.getPuyo(x, y)
+    // ViewModelのfield.cellsから直接ぷよを取得
+    const fieldPuyo =
+      field.cells[x] && field.cells[x][y] ? field.cells[x][y] : null
 
     // PuyoPairからの表示チェック
     const pairResult = getCurrentPuyoFromPair(x, y)
@@ -82,7 +78,10 @@ export const GameBoard = ({ game }: GameBoardProps) => {
     }
   }
 
-  const buildCellClasses = (puyo: Puyo | null, isCurrentPuyo: boolean) => {
+  const buildCellClasses = (
+    puyo: PuyoViewModel | null,
+    isCurrentPuyo: boolean,
+  ) => {
     const cellClasses = [
       'cell',
       'w-8 h-8 border border-gray-300/30 flex items-center justify-center rounded-sm transition-all duration-200',
@@ -122,9 +121,9 @@ export const GameBoard = ({ game }: GameBoardProps) => {
   const renderField = () => {
     const rows = []
 
-    for (let y = 0; y < field.getHeight(); y++) {
+    for (let y = 0; y < field.height; y++) {
       const cells = []
-      for (let x = 0; x < field.getWidth(); x++) {
+      for (let x = 0; x < field.width; x++) {
         cells.push(renderCell(x, y))
       }
       rows.push(

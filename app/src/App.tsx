@@ -1,82 +1,176 @@
-import { useGameStore } from './application/stores/gameStore'
-import {
-  dropPuyoFast,
-  movePuyoLeft,
-  movePuyoRight,
-  rotatePuyo,
-} from './domain/models/Game'
+import { useState } from 'react'
+
+import type { GamePort } from './application/ports/GamePort'
+import type { InputPort } from './application/ports/InputPort'
+import type { GameViewModel } from './application/viewmodels/GameViewModel'
+import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
 
-function App() {
-  const { game, startGame, pauseGame, resumeGame, resetGame, updateGame } =
-    useGameStore()
+// キーボードハンドラーの型定義
+interface KeyboardHandlers {
+  handleLeft: () => void
+  handleRight: () => void
+  handleDown: () => void
+  handleRotate: () => void
+  handlePause: () => void
+  handleReset: () => void
+}
 
-  // キーボード入力ハンドラー
-  const handleLeft = () => {
-    console.log('Left key pressed')
-    if (game.state === 'playing') {
-      const updatedGame = movePuyoLeft(game)
-      updateGame(updatedGame)
-    }
+// キーボード操作ハンドラーを生成するフック
+const useKeyboardHandlers = (
+  game: GameViewModel,
+  gameService: GamePort,
+  inputService: InputPort,
+  updateGame: (newGame: GameViewModel) => void,
+): KeyboardHandlers => {
+  return {
+    handleLeft: () => {
+      console.log('Left key pressed')
+      if (game.state === 'playing') {
+        const action = inputService.processKeyboardInput({
+          code: 'ArrowLeft',
+          key: 'ArrowLeft',
+          ctrlKey: false,
+          altKey: false,
+          shiftKey: false,
+          metaKey: false,
+          repeat: false,
+          type: 'keydown',
+        })
+        if (action) {
+          const updatedGame = gameService.updateGameState(game, action)
+          updateGame(updatedGame)
+        }
+      }
+    },
+    handleRight: () => {
+      console.log('Right key pressed')
+      if (game.state === 'playing') {
+        const action = inputService.processKeyboardInput({
+          code: 'ArrowRight',
+          key: 'ArrowRight',
+          ctrlKey: false,
+          altKey: false,
+          shiftKey: false,
+          metaKey: false,
+          repeat: false,
+          type: 'keydown',
+        })
+        if (action) {
+          const updatedGame = gameService.updateGameState(game, action)
+          updateGame(updatedGame)
+        }
+      }
+    },
+    handleDown: () => {
+      console.log('Down key pressed')
+      if (game.state === 'playing') {
+        const action = inputService.processKeyboardInput({
+          code: 'ArrowDown',
+          key: 'ArrowDown',
+          ctrlKey: false,
+          altKey: false,
+          shiftKey: false,
+          metaKey: false,
+          repeat: false,
+          type: 'keydown',
+        })
+        if (action) {
+          const updatedGame = gameService.updateGameState(game, action)
+          updateGame(updatedGame)
+        }
+      }
+    },
+    handleRotate: () => {
+      console.log('Rotate key pressed')
+      if (game.state === 'playing') {
+        const action = inputService.processKeyboardInput({
+          code: 'ArrowUp',
+          key: 'ArrowUp',
+          ctrlKey: false,
+          altKey: false,
+          shiftKey: false,
+          metaKey: false,
+          repeat: false,
+          type: 'keydown',
+        })
+        if (action) {
+          const updatedGame = gameService.updateGameState(game, action)
+          updateGame(updatedGame)
+        }
+      }
+    },
+    handlePause: () => {
+      console.log('Pause key pressed')
+      const action = inputService.processKeyboardInput({
+        code: 'KeyP',
+        key: 'p',
+        ctrlKey: false,
+        altKey: false,
+        shiftKey: false,
+        metaKey: false,
+        repeat: false,
+        type: 'keydown',
+      })
+      if (action) {
+        const updatedGame = gameService.updateGameState(game, action)
+        updateGame(updatedGame)
+      }
+    },
+    handleReset: () => {
+      console.log('Reset key pressed')
+      const action = inputService.processKeyboardInput({
+        code: 'KeyR',
+        key: 'r',
+        ctrlKey: false,
+        altKey: false,
+        shiftKey: false,
+        metaKey: false,
+        repeat: false,
+        type: 'keydown',
+      })
+      if (action) {
+        const updatedGame = gameService.updateGameState(game, action)
+        updateGame(updatedGame)
+      }
+    },
+  }
+}
+
+// ゲームレイアウトコンポーネント
+const GameLayout = ({
+  game,
+  gameService,
+  updateGame,
+  handleReset,
+}: {
+  game: GameViewModel
+  gameService: GamePort
+  updateGame: (game: GameViewModel) => void
+  handleReset: () => void
+}) => {
+  const startGame = () => {
+    const newGame = gameService.startNewGame()
+    updateGame(newGame)
   }
 
-  const handleRight = () => {
-    console.log('Right key pressed')
-    if (game.state === 'playing') {
-      const updatedGame = movePuyoRight(game)
-      updateGame(updatedGame)
-    }
+  const pauseGame = () => {
+    const updatedGame = gameService.updateGameState(game, { type: 'PAUSE' })
+    updateGame(updatedGame)
   }
 
-  const handleDown = () => {
-    console.log('Down key pressed')
-    if (game.state === 'playing') {
-      const updatedGame = dropPuyoFast(game)
-      updateGame(updatedGame)
-    }
+  const resumeGame = () => {
+    const updatedGame = gameService.updateGameState(game, { type: 'RESUME' })
+    updateGame(updatedGame)
   }
 
-  const handleRotate = () => {
-    console.log('Rotate key pressed')
-    if (game.state === 'playing') {
-      const updatedGame = rotatePuyo(game)
-      updateGame(updatedGame)
-    }
+  const resetGame = () => {
+    const newGame = gameService.createReadyGame()
+    updateGame(newGame)
   }
-
-  const handlePause = () => {
-    console.log('Pause key pressed')
-    if (game.state === 'playing') {
-      pauseGame()
-    } else if (game.state === 'paused') {
-      resumeGame()
-    }
-  }
-
-  const handleReset = () => {
-    console.log('Reset key pressed')
-    resetGame()
-  }
-
-  // キーボード入力を監視
-  useKeyboard({
-    onLeft: handleLeft,
-    onRight: handleRight,
-    onDown: handleDown,
-    onRotate: handleRotate,
-    onPause: handlePause,
-    onReset: handleReset,
-  })
-
-  // 自動落下システム
-  useAutoFall({
-    game,
-    updateGame,
-    fallSpeed: 1000, // 1秒間隔で落下
-  })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4">
@@ -90,7 +184,7 @@ function App() {
           {/* ゲーム情報パネル */}
           <div className="lg:col-span-1">
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-              <GameInfo game={game} />
+              <GameInfo game={game} onRestart={handleReset} />
 
               {/* ゲーム制御ボタン */}
               <div className="mt-6 space-y-3">
@@ -162,6 +256,71 @@ function App() {
         </footer>
       </div>
     </div>
+  )
+}
+
+function App() {
+  // DIコンテナからサービスを取得
+  const gameService = defaultContainer.getGameService()
+  const inputService = defaultContainer.getInputService()
+
+  // ゲーム状態を管理（Reactの状態として）
+  const [game, setGame] = useState<GameViewModel>(() => {
+    // 初期状態では準備状態の新しいゲームを作成
+    return gameService.createReadyGame()
+  })
+
+  // デバッグ用にE2Eテストからアクセス可能にする
+  if (
+    typeof window !== 'undefined' &&
+    import.meta.env.NODE_ENV !== 'production'
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).gameService = gameService
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).game = game
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).setGame = setGame
+  }
+
+  const updateGame = (newGame: GameViewModel) => {
+    setGame(newGame)
+  }
+
+  // キーボードハンドラー
+  const {
+    handleLeft,
+    handleRight,
+    handleDown,
+    handleRotate,
+    handlePause,
+    handleReset,
+  } = useKeyboardHandlers(game, gameService, inputService, updateGame)
+
+  // キーボード入力を監視
+  useKeyboard({
+    onLeft: handleLeft,
+    onRight: handleRight,
+    onDown: handleDown,
+    onRotate: handleRotate,
+    onPause: handlePause,
+    onReset: handleReset,
+  })
+
+  // 自動落下システム
+  useAutoFall({
+    game,
+    updateGame,
+    fallSpeed: 1000, // 1秒間隔で落下
+  })
+
+  return (
+    <GameLayout
+      game={game}
+      gameService={gameService}
+      updateGame={updateGame}
+      handleReset={handleReset}
+    />
   )
 }
 

@@ -1,3 +1,5 @@
+import { curry } from 'lodash/fp'
+
 export type PuyoColor = 'red' | 'blue' | 'green' | 'yellow' | 'purple' | null
 
 export interface PuyoPosition {
@@ -15,7 +17,9 @@ export const createPuyo = (color: PuyoColor, position: PuyoPosition): Puyo => ({
   position,
 })
 
-export const movePuyo = (puyo: Puyo, newPosition: PuyoPosition): Puyo => ({
-  ...puyo,
-  position: newPosition,
-})
+export const movePuyo = curry(
+  (newPosition: PuyoPosition, puyo: Puyo): Puyo => ({
+    ...puyo,
+    position: newPosition,
+  }),
+)

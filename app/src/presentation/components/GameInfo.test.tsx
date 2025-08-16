@@ -1,20 +1,21 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
+import type { GameStateViewModel } from '../../application/viewmodels/GameViewModel'
 import {
-  createGame,
-  updateGameScore,
-  updateGameState,
-} from '../../domain/models/Game'
-import { createScore } from '../../domain/models/Score'
+  createTestGameViewModel,
+  createTestPuyoPairViewModel,
+  createTestScoreViewModel,
+} from '../../test/helpers/gameViewModelHelpers'
 import { GameInfo } from './GameInfo'
 
 describe('GameInfoコンポーネント', () => {
   describe('基本表示テスト', () => {
     it('ゲーム情報コンテナが表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -25,7 +26,7 @@ describe('GameInfoコンポーネント', () => {
 
     it('スコア表示エリアが表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -37,7 +38,7 @@ describe('GameInfoコンポーネント', () => {
 
     it('レベル表示エリアが表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -49,7 +50,7 @@ describe('GameInfoコンポーネント', () => {
 
     it('ゲーム状態表示エリアが表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -58,12 +59,24 @@ describe('GameInfoコンポーネント', () => {
       expect(screen.getByTestId('state-display')).toBeInTheDocument()
       expect(screen.getByText('状態')).toBeInTheDocument()
     })
+
+    it('次のぷよペア表示エリアが表示される', () => {
+      // Arrange
+      const game = createTestGameViewModel()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('next-puyo-display')).toBeInTheDocument()
+      expect(screen.getByText('次のぷよ')).toBeInTheDocument()
+    })
   })
 
   describe('スコア表示テスト', () => {
     it('初期スコア0が表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -74,8 +87,9 @@ describe('GameInfoコンポーネント', () => {
 
     it('更新されたスコアが表示される', () => {
       // Arrange
-      const game = createGame()
-      const updatedGame = updateGameScore(game, createScore(1500))
+      const updatedGame = createTestGameViewModel({
+        score: createTestScoreViewModel(1500),
+      })
 
       // Act
       render(<GameInfo game={updatedGame} />)
@@ -86,8 +100,9 @@ describe('GameInfoコンポーネント', () => {
 
     it('大きなスコアが正しく表示される', () => {
       // Arrange
-      const game = createGame()
-      const updatedGame = updateGameScore(game, createScore(999999))
+      const updatedGame = createTestGameViewModel({
+        score: createTestScoreViewModel(999999),
+      })
 
       // Act
       render(<GameInfo game={updatedGame} />)
@@ -100,7 +115,7 @@ describe('GameInfoコンポーネント', () => {
   describe('レベル表示テスト', () => {
     it('初期レベル1が表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -113,7 +128,7 @@ describe('GameInfoコンポーネント', () => {
   describe('ゲーム状態表示テスト', () => {
     it('ready状態が日本語で表示される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -124,8 +139,9 @@ describe('GameInfoコンポーネント', () => {
 
     it('playing状態が日本語で表示される', () => {
       // Arrange
-      const game = createGame()
-      const playingGame = updateGameState(game, 'playing')
+      const playingGame = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+      })
 
       // Act
       render(<GameInfo game={playingGame} />)
@@ -136,8 +152,9 @@ describe('GameInfoコンポーネント', () => {
 
     it('paused状態が日本語で表示される', () => {
       // Arrange
-      const game = createGame()
-      const pausedGame = updateGameState(game, 'paused')
+      const pausedGame = createTestGameViewModel({
+        state: 'paused' as GameStateViewModel,
+      })
 
       // Act
       render(<GameInfo game={pausedGame} />)
@@ -148,8 +165,9 @@ describe('GameInfoコンポーネント', () => {
 
     it('gameOver状態が日本語で表示される', () => {
       // Arrange
-      const game = createGame()
-      const gameOverGame = updateGameState(game, 'gameOver')
+      const gameOverGame = createTestGameViewModel({
+        state: 'gameOver' as GameStateViewModel,
+      })
 
       // Act
       render(<GameInfo game={gameOverGame} />)
@@ -164,7 +182,7 @@ describe('GameInfoコンポーネント', () => {
   describe('状態別スタイルテスト', () => {
     it('ready状態で適切なクラスが設定される', () => {
       // Arrange
-      const game = createGame()
+      const game = createTestGameViewModel()
 
       // Act
       render(<GameInfo game={game} />)
@@ -175,8 +193,9 @@ describe('GameInfoコンポーネント', () => {
 
     it('playing状態で適切なクラスが設定される', () => {
       // Arrange
-      const game = createGame()
-      const playingGame = updateGameState(game, 'playing')
+      const playingGame = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+      })
 
       // Act
       render(<GameInfo game={playingGame} />)
@@ -187,14 +206,97 @@ describe('GameInfoコンポーネント', () => {
 
     it('gameOver状態で適切なクラスが設定される', () => {
       // Arrange
-      const game = createGame()
-      const gameOverGame = updateGameState(game, 'gameOver')
+      const gameOverGame = createTestGameViewModel({
+        state: 'gameOver' as GameStateViewModel,
+      })
 
       // Act
       render(<GameInfo game={gameOverGame} />)
 
       // Assert
       expect(screen.getByTestId('state-value')).toHaveClass('state-gameOver')
+    })
+  })
+
+  describe('リスタートボタンテスト', () => {
+    it('ゲームオーバー時にリスタートボタンが表示される', () => {
+      // Arrange
+      const game = createTestGameViewModel({
+        state: 'gameOver' as GameStateViewModel,
+      })
+      const mockOnRestart = vi.fn()
+
+      // Act
+      render(<GameInfo game={game} onRestart={mockOnRestart} />)
+
+      // Assert
+      expect(screen.getByTestId('restart-button')).toBeInTheDocument()
+      expect(screen.getByText('リスタート')).toBeInTheDocument()
+    })
+
+    it('ゲームオーバー以外では リスタートボタンが表示されない', () => {
+      // Arrange
+      const readyGame = createTestGameViewModel()
+      const playingGame = createTestGameViewModel({
+        state: 'playing' as GameStateViewModel,
+      })
+      const pausedGame = createTestGameViewModel({
+        state: 'paused' as GameStateViewModel,
+      })
+      const mockOnRestart = vi.fn()
+
+      // Act & Assert
+      render(<GameInfo game={readyGame} onRestart={mockOnRestart} />)
+      expect(screen.queryByTestId('restart-button')).not.toBeInTheDocument()
+
+      render(<GameInfo game={playingGame} onRestart={mockOnRestart} />)
+      expect(screen.queryByTestId('restart-button')).not.toBeInTheDocument()
+
+      render(<GameInfo game={pausedGame} onRestart={mockOnRestart} />)
+      expect(screen.queryByTestId('restart-button')).not.toBeInTheDocument()
+    })
+
+    it('リスタートボタンクリック時にonRestartが呼ばれる', async () => {
+      // Arrange
+      const user = userEvent.setup()
+      const game = createTestGameViewModel({
+        state: 'gameOver' as GameStateViewModel,
+      })
+      const mockOnRestart = vi.fn()
+
+      // Act
+      render(<GameInfo game={game} onRestart={mockOnRestart} />)
+      const restartButton = screen.getByTestId('restart-button')
+      await user.click(restartButton)
+
+      // Assert
+      expect(mockOnRestart).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('次のぷよペア表示テスト', () => {
+    it('ゲーム未開始時は次のぷよペアが空表示される', () => {
+      // Arrange
+      const game = createTestGameViewModel()
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('next-puyo-pair-empty')).toBeInTheDocument()
+    })
+
+    it('ゲーム開始時は次のぷよペアが表示される', () => {
+      // Arrange
+      const game = createTestGameViewModel({
+        nextPuyoPair: createTestPuyoPairViewModel(),
+      })
+
+      // Act
+      render(<GameInfo game={game} />)
+
+      // Assert
+      expect(screen.getByTestId('next-puyo-pair')).toBeInTheDocument()
     })
   })
 })

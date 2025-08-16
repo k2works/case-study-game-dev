@@ -20,7 +20,7 @@ export const applyGravity = (field: ImmutableField): ImmutableField => {
     const columnPuyos: Array<{ puyo: Puyo; originalY: number }> = []
 
     for (let y = 0; y < field.height; y++) {
-      const puyo = getPuyo(field, createPosition(x, y))
+      const puyo = getPuyo(createPosition(x, y), field)
       if (puyo) {
         columnPuyos.push({ puyo, originalY: y })
       }
@@ -45,8 +45,8 @@ export const applyGravity = (field: ImmutableField): ImmutableField => {
       const newY = field.height - 1 - i
       const newPosition = createPosition(x, newY)
 
-      if (isEmpty(newField, newPosition)) {
-        newField = setPuyo(newField, newPosition, puyo)
+      if (isEmpty(newPosition, newField)) {
+        newField = setPuyo(newPosition, puyo, newField)
       }
     }
   }
@@ -63,7 +63,7 @@ export const needsGravity = (field: ImmutableField): boolean => {
 
     for (let y = field.height - 1; y >= 0; y--) {
       const position = createPosition(x, y)
-      const puyo = getPuyo(field, position)
+      const puyo = getPuyo(position, field)
 
       if (!puyo) {
         foundEmpty = true

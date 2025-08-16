@@ -11,7 +11,7 @@ vi.mock('./presentation/hooks/useKeyboard', () => ({
 }))
 
 // gameStoreをモック
-vi.mock('./application/stores/gameStore', () => ({
+vi.mock('./presentation/stores/gameStore', () => ({
   useGameStore: vi.fn(() => ({
     game: {
       field: {

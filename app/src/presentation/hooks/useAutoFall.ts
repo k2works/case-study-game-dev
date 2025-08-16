@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-import type { Game } from '../../domain/models/Game'
-import {
-  dropPuyoFast,
-  placePuyoPair,
-  spawnNextPuyoPair,
-} from '../../domain/models/Game'
+import type { GamePort } from '../../application/ports/GamePort'
+import type { GameViewModel } from '../../application/viewmodels/GameViewModel'
+import { defaultContainer } from '../../infrastructure/di/DefaultContainer'
 
 interface UseAutoFallProps {
-  game: Game
-  updateGame: (newGame: Game) => void
+  game: GameViewModel
+  updateGame: (newGame: GameViewModel) => void
   fallSpeed?: number // ミリ秒単位での落下間隔
 }
 
@@ -23,6 +20,7 @@ export const useAutoFall = ({
   fallSpeed = 1000,
 }: UseAutoFallProps) => {
   const intervalRef = useRef<number | null>(null)
+  const gameService: GamePort = defaultContainer.getGameService()
 
   // ぷよペアを1マス下に落下させる処理
   const handleAutoFall = useCallback(() => {
@@ -30,25 +28,10 @@ export const useAutoFall = ({
       return
     }
 
-    // 下に移動を試行
-    const fallenGame = dropPuyoFast(game)
-
-    // 移動できた場合（位置が変わった場合）
-    if (
-      fallenGame.currentPuyoPair &&
-      game.currentPuyoPair &&
-      fallenGame.currentPuyoPair.main.position.y >
-        game.currentPuyoPair.main.position.y
-    ) {
-      updateGame(fallenGame)
-      return
-    }
-
-    // 移動できなかった場合（着地した場合）
-    // 現在のぷよペアをフィールドに固定し、次のペアを生成
-    const placedGame = placePuyoPair(game)
-    updateGame(placedGame)
-  }, [game, updateGame])
+    // application層のサービス経由で落下処理を実行
+    const updatedGame = gameService.processAutoFall(game)
+    updateGame(updatedGame)
+  }, [game, gameService, updateGame])
 
   useEffect(() => {
     // ゲームが進行中でない場合はタイマーをクリア
@@ -62,7 +45,7 @@ export const useAutoFall = ({
 
     // currentPuyoPairが存在しない場合は新しいペアを生成
     if (!game.currentPuyoPair) {
-      const gameWithPair = spawnNextPuyoPair(game)
+      const gameWithPair = gameService.spawnNewPuyoPair(game)
       updateGame(gameWithPair)
       return
     }
@@ -80,7 +63,7 @@ export const useAutoFall = ({
         intervalRef.current = null
       }
     }
-  }, [game, fallSpeed, handleAutoFall, updateGame])
+  }, [game, fallSpeed, handleAutoFall, updateGame, gameService])
 
   // コンポーネントのアンマウント時にタイマーをクリア
   useEffect(() => {
