@@ -4,6 +4,8 @@ import type { PuyoColor } from '../models/Puyo'
 import {
   DEFAULT_SPAWNING_CONFIG,
   PuyoSpawningService,
+  calculateColorStatistics,
+  createColorSelector,
 } from './PuyoSpawningService'
 
 describe('PuyoSpawningService', () => {
@@ -237,5 +239,184 @@ describe('PuyoSpawningService', () => {
       )
       expect(customService).toBeDefined()
     })
+  })
+})
+
+describe('createColorSelector', () => {
+  const availableColors: PuyoColor[] = ['red', 'blue', 'green']
+  const config = DEFAULT_SPAWNING_CONFIG
+
+  it('色選択ユーティリティを作成できる', () => {
+    // Arrange & Act
+    const selector = createColorSelector(availableColors, config)
+
+    // Assert
+    expect(selector).toBeDefined()
+    expect(selector.selectRandomColor).toBeDefined()
+    expect(selector.calculateFrequency).toBeDefined()
+    expect(selector.calculateWeights).toBeDefined()
+  })
+
+  it('ランダムに色を選択できる', () => {
+    // Arrange
+    const selector = createColorSelector(availableColors, config)
+
+    // Act
+    const color = selector.selectRandomColor()
+
+    // Assert
+    expect(availableColors).toContain(color)
+  })
+
+  it('色の頻度を計算できる', () => {
+    // Arrange
+    const selector = createColorSelector(availableColors, config)
+    const colors: PuyoColor[] = ['red', 'red', 'blue', 'green', 'red']
+
+    // Act
+    const frequency = selector.calculateFrequency(colors)
+
+    // Assert
+    expect(frequency.get('red')).toBe(3)
+    expect(frequency.get('blue')).toBe(1)
+    expect(frequency.get('green')).toBe(1)
+  })
+
+  it('存在しない色も頻度0で初期化される', () => {
+    // Arrange
+    const selector = createColorSelector(
+      ['red', 'blue', 'green', 'yellow'],
+      config,
+    )
+    const colors: PuyoColor[] = ['red', 'red']
+
+    // Act
+    const frequency = selector.calculateFrequency(colors)
+
+    // Assert
+    expect(frequency.get('yellow')).toBe(0)
+    expect(frequency.get('blue')).toBe(0)
+    expect(frequency.get('green')).toBe(0)
+  })
+
+  it('頻度に基づいて重みを計算できる', () => {
+    // Arrange
+    const selector = createColorSelector(availableColors, config)
+    const frequency = new Map<PuyoColor, number>([
+      ['red', 3],
+      ['blue', 1],
+      ['green', 0],
+    ])
+
+    // Act
+    const weights = selector.calculateWeights(frequency)
+
+    // Assert
+    expect(weights).toHaveLength(3)
+    const redWeight = weights.find((w) => w.color === 'red')?.weight || 0
+    const blueWeight = weights.find((w) => w.color === 'blue')?.weight || 0
+    const greenWeight = weights.find((w) => w.color === 'green')?.weight || 0
+
+    // 頻度が高い色ほど重みが小さい
+    expect(redWeight).toBeLessThan(blueWeight)
+    expect(greenWeight).toBeGreaterThan(redWeight)
+  })
+
+  it('カリー化された関数として使用できる', () => {
+    // Arrange
+    const curriedSelector = createColorSelector(availableColors)
+
+    // Act
+    const selector = curriedSelector(config)
+
+    // Assert
+    expect(selector.selectRandomColor).toBeDefined()
+    const color = selector.selectRandomColor()
+    expect(availableColors).toContain(color)
+  })
+})
+
+describe('calculateColorStatistics', () => {
+  const availableColors: PuyoColor[] = ['red', 'blue', 'green']
+
+  it('色の統計を正しく計算する', () => {
+    // Arrange
+    const colors: PuyoColor[] = ['red', 'red', 'blue', 'green', 'red']
+
+    // Act
+    const stats = calculateColorStatistics(colors, availableColors)
+
+    // Assert
+    expect(stats.totalGenerated).toBe(5)
+    expect(stats.historyLength).toBe(5)
+    expect(stats.colorDistribution['red']).toBeCloseTo(3 / 5, 5)
+    expect(stats.colorDistribution['blue']).toBeCloseTo(1 / 5, 5)
+    expect(stats.colorDistribution['green']).toBeCloseTo(1 / 5, 5)
+  })
+
+  it('空の配列でも統計を計算できる', () => {
+    // Arrange
+    const colors: PuyoColor[] = []
+
+    // Act
+    const stats = calculateColorStatistics(colors, availableColors)
+
+    // Assert
+    expect(stats.totalGenerated).toBe(0)
+    expect(stats.historyLength).toBe(0)
+    expect(stats.colorDistribution['red']).toBe(0)
+    expect(stats.colorDistribution['blue']).toBe(0)
+    expect(stats.colorDistribution['green']).toBe(0)
+  })
+
+  it('一部の色のみが使用された場合の統計', () => {
+    // Arrange
+    const colors: PuyoColor[] = ['red', 'red', 'red']
+
+    // Act
+    const stats = calculateColorStatistics(colors, availableColors)
+
+    // Assert
+    expect(stats.totalGenerated).toBe(3)
+    expect(stats.colorDistribution['red']).toBe(1)
+    expect(stats.colorDistribution['blue']).toBe(0)
+    expect(stats.colorDistribution['green']).toBe(0)
+  })
+
+  it('カリー化された関数として使用できる', () => {
+    // Arrange
+    const colors: PuyoColor[] = ['red', 'blue', 'blue']
+    const curriedStats = calculateColorStatistics(colors)
+
+    // Act
+    const stats = curriedStats(availableColors)
+
+    // Assert
+    expect(stats.totalGenerated).toBe(3)
+    expect(stats.colorDistribution['red']).toBeCloseTo(1 / 3, 5)
+    expect(stats.colorDistribution['blue']).toBeCloseTo(2 / 3, 5)
+  })
+
+  it('利用可能な色が実際の色より多い場合', () => {
+    // Arrange
+    const colors: PuyoColor[] = ['red', 'blue']
+    const moreAvailableColors: PuyoColor[] = [
+      'red',
+      'blue',
+      'green',
+      'yellow',
+      'purple',
+    ]
+
+    // Act
+    const stats = calculateColorStatistics(colors, moreAvailableColors)
+
+    // Assert
+    expect(stats.totalGenerated).toBe(2)
+    expect(stats.colorDistribution['red']).toBe(0.5)
+    expect(stats.colorDistribution['blue']).toBe(0.5)
+    expect(stats.colorDistribution['green']).toBe(0)
+    expect(stats.colorDistribution['yellow']).toBe(0)
+    expect(stats.colorDistribution['purple']).toBe(0)
   })
 })
