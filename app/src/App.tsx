@@ -388,36 +388,75 @@ function App() {
     [],
   )
 
+  // AI手の実行ヘルパー関数
+  const executeAIMoveActions = useCallback(
+    (game: GameViewModel, aiMove: AIMove) => {
+      // 回転実行
+      const currentRotation = game.currentPuyoPair!.rotation
+      const targetRotation = aiMove.rotation
+      let updatedGame = game
+      
+      console.log(`Rotating from ${currentRotation} to ${targetRotation}`)
+      const rotationSteps = ((targetRotation - currentRotation + 360) % 360) / 90
+      for (let i = 0; i < rotationSteps; i++) {
+        const rotateInput = createKeyboardInput('ArrowUp', 'ArrowUp')
+        const rotateAction = inputService.processKeyboardInput(rotateInput)
+        if (rotateAction) {
+          updatedGame = gameService.updateGameState(updatedGame, rotateAction)
+        }
+      }
+
+      // 横移動実行
+      const currentX = updatedGame.currentPuyoPair?.x || 0
+      console.log(`Moving from x=${currentX} to x=${aiMove.x}`)
+      updatedGame = executeHorizontalMoves(updatedGame, currentX, aiMove.x)
+      console.log('After horizontal moves:', updatedGame.currentPuyoPair?.x)
+
+      // ドロップ実行
+      const dropInput = createKeyboardInput('ArrowDown', 'ArrowDown')
+      const dropAction = inputService.processKeyboardInput(dropInput)
+      if (dropAction) {
+        console.log('Executing drop action:', dropAction)
+        updatedGame = gameService.updateGameState(updatedGame, dropAction)
+      }
+
+      return updatedGame
+    },
+    [createKeyboardInput, inputService, gameService, executeHorizontalMoves],
+  )
+
   // AI自動プレイのロジック
   const executeAIMove = useCallback(async () => {
+    console.log('executeAIMove called', {
+      aiEnabled,
+      gameState: game.state,
+      hasCurrentPuyo: !!game.currentPuyoPair,
+      aiServiceEnabled: aiService.isEnabled(),
+    })
+
     if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
+      console.log('executeAIMove early return:', {
+        aiEnabled,
+        gameState: game.state,
+        hasCurrentPuyo: !!game.currentPuyoPair,
+      })
       return
     }
 
-    // AIServiceの状態も確認
     if (!aiService.isEnabled()) {
       console.warn('AI is not enabled in AIService')
       return
     }
 
     try {
-      // GameViewModelをAIGameStateに変換
       const aiGameState = convertToAIGameState(game)
+      console.log('AI Game State:', aiGameState)
 
-      // AIが最適な手を計算
       const aiMove = await aiService.decideMove(aiGameState)
+      console.log('AI Move decision:', aiMove)
 
-      // 横移動実行
-      const currentX = game.currentPuyoPair.x
-      let updatedGame = executeHorizontalMoves(game, currentX, aiMove.x)
-
-      // ドロップ実行
-      const dropInput = createKeyboardInput('ArrowDown', 'ArrowDown')
-      const dropAction = inputService.processKeyboardInput(dropInput)
-      if (dropAction) {
-        updatedGame = gameService.updateGameState(updatedGame, dropAction)
-      }
-
+      const updatedGame = executeAIMoveActions(game, aiMove)
+      console.log('Final game state after AI move:', updatedGame.currentPuyoPair)
       updateGame(updatedGame)
     } catch (error) {
       console.error('AI move execution failed:', error)
@@ -427,18 +466,23 @@ function App() {
     game,
     aiService,
     convertToAIGameState,
-    executeHorizontalMoves,
-    createKeyboardInput,
-    inputService,
-    gameService,
+    executeAIMoveActions,
     updateGame,
   ])
 
   // AI自動プレイのタイマー管理
   useEffect(() => {
+    console.log('AI Timer effect:', {
+      aiEnabled,
+      gameState: game.state,
+      thinkingSpeed: aiSettings.thinkingSpeed,
+    })
+
     if (aiEnabled && game.state === 'playing') {
+      console.log('Starting AI timer with interval:', aiSettings.thinkingSpeed)
       aiTimerRef.current = setInterval(executeAIMove, aiSettings.thinkingSpeed)
     } else {
+      console.log('Stopping AI timer')
       if (aiTimerRef.current) {
         clearInterval(aiTimerRef.current)
         aiTimerRef.current = null
