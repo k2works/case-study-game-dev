@@ -1,11 +1,15 @@
 /**
  * StrategyServiceのテスト
  */
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 
-import { DEFAULT_STRATEGIES, type StrategyConfig } from '../../domain/models/ai/StrategyConfig'
+import {
+  DEFAULT_STRATEGIES,
+  type StrategyConfig,
+} from '../../domain/models/ai/StrategyConfig'
 import type { StrategyPort } from '../ports/StrategyPort'
-import { StrategyService, type CreateStrategyRequest, type UpdateStrategyRequest } from './StrategyService'
+import { StrategyService } from './StrategyService'
+import type { CreateStrategyRequest, UpdateStrategyRequest } from './StrategyService'
 
 // モックアダプター
 class MockStrategyAdapter implements StrategyPort {
@@ -71,7 +75,7 @@ describe('StrategyService', () => {
 
       // Assert
       expect(result).toHaveLength(3) // 3つのデフォルト戦略
-      expect(result.every(s => s.isDefault)).toBe(true)
+      expect(result.every((s) => s.isDefault)).toBe(true)
     })
 
     test('既存の戦略がある場合はそれらを返す', async () => {
@@ -112,7 +116,7 @@ describe('StrategyService', () => {
     test('無効なIDの場合はnullを返す', async () => {
       // Act
       const result1 = await strategyService.getStrategyById('')
-      const result2 = await strategyService.getStrategyById(null as any)
+      const result2 = await strategyService.getStrategyById(null as unknown as string)
 
       // Assert
       expect(result1).toBeNull()
@@ -163,7 +167,9 @@ describe('StrategyService', () => {
       }
 
       // Act & Assert
-      await expect(strategyService.createCustomStrategy(request)).rejects.toThrow('Strategy name is required')
+      await expect(
+        strategyService.createCustomStrategy(request),
+      ).rejects.toThrow('Strategy name is required')
     })
 
     test('説明が空の場合はエラーを投げる', async () => {
@@ -182,7 +188,9 @@ describe('StrategyService', () => {
       }
 
       // Act & Assert
-      await expect(strategyService.createCustomStrategy(request)).rejects.toThrow('Strategy description is required')
+      await expect(
+        strategyService.createCustomStrategy(request),
+      ).rejects.toThrow('Strategy description is required')
     })
   })
 
@@ -221,7 +229,10 @@ describe('StrategyService', () => {
       }
 
       // Act
-      const result = await strategyService.updateStrategy(originalStrategy.id, updateRequest)
+      const result = await strategyService.updateStrategy(
+        originalStrategy.id,
+        updateRequest,
+      )
 
       // Assert
       expect(result.name).toBe(updateRequest.name)
@@ -236,7 +247,9 @@ describe('StrategyService', () => {
       }
 
       // Act & Assert
-      await expect(strategyService.updateStrategy('non-existent-id', updateRequest)).rejects.toThrow('not found')
+      await expect(
+        strategyService.updateStrategy('non-existent-id', updateRequest),
+      ).rejects.toThrow('not found')
     })
 
     test('デフォルト戦略の更新はエラーを投げる', async () => {
@@ -249,7 +262,9 @@ describe('StrategyService', () => {
       }
 
       // Act & Assert
-      await expect(strategyService.updateStrategy(defaultStrategy.id, updateRequest)).rejects.toThrow('Cannot update default strategy')
+      await expect(
+        strategyService.updateStrategy(defaultStrategy.id, updateRequest),
+      ).rejects.toThrow('Cannot update default strategy')
     })
   })
 
@@ -285,7 +300,9 @@ describe('StrategyService', () => {
 
     test('存在しない戦略の削除はエラーを投げる', async () => {
       // Act & Assert
-      await expect(strategyService.deleteStrategy('non-existent-id')).rejects.toThrow('not found')
+      await expect(
+        strategyService.deleteStrategy('non-existent-id'),
+      ).rejects.toThrow('not found')
     })
 
     test('デフォルト戦略の削除はエラーを投げる', async () => {
@@ -294,7 +311,9 @@ describe('StrategyService', () => {
       mockAdapter.addStrategy(defaultStrategy)
 
       // Act & Assert
-      await expect(strategyService.deleteStrategy(defaultStrategy.id)).rejects.toThrow('Cannot delete default strategy')
+      await expect(
+        strategyService.deleteStrategy(defaultStrategy.id),
+      ).rejects.toThrow('Cannot delete default strategy')
     })
 
     test('アクティブ戦略が削除される場合はバランス型に戻る', async () => {
@@ -368,7 +387,9 @@ describe('StrategyService', () => {
 
     test('存在しない戦略をアクティブに設定しようとするとエラーを投げる', async () => {
       // Act & Assert
-      await expect(strategyService.setActiveStrategy('non-existent-id')).rejects.toThrow('not found')
+      await expect(
+        strategyService.setActiveStrategy('non-existent-id'),
+      ).rejects.toThrow('not found')
     })
   })
 
@@ -392,7 +413,7 @@ describe('StrategyService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       }
-      
+
       mockAdapter.addStrategy(DEFAULT_STRATEGIES.balanced)
       mockAdapter.addStrategy(DEFAULT_STRATEGIES.aggressive)
       mockAdapter.addStrategy(customStrategy)
@@ -438,8 +459,8 @@ describe('StrategyService', () => {
       // Assert
       const allStrategies = await mockAdapter.getAllStrategies()
       expect(allStrategies).toHaveLength(3) // デフォルト戦略のみ
-      expect(allStrategies.every(s => s.isDefault)).toBe(true)
-      
+      expect(allStrategies.every((s) => s.isDefault)).toBe(true)
+
       const activeStrategy = await mockAdapter.getActiveStrategy()
       expect(activeStrategy?.id).toBe(DEFAULT_STRATEGIES.balanced.id)
     })

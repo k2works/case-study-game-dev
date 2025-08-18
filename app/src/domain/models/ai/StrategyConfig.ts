@@ -43,7 +43,10 @@ export interface StrategyParameters {
 /**
  * デフォルト戦略設定の定義
  */
-export const DEFAULT_STRATEGIES: Record<Exclude<StrategyType, 'custom'>, StrategyConfig> = {
+export const DEFAULT_STRATEGIES: Record<
+  Exclude<StrategyType, 'custom'>,
+  StrategyConfig
+> = {
   aggressive: {
     id: 'strategy-aggressive',
     name: '攻撃型',
@@ -104,7 +107,7 @@ export const createStrategyConfig = (
   name: string,
   type: StrategyType,
   description: string,
-  parameters: StrategyParameters
+  parameters: StrategyParameters,
 ): StrategyConfig => ({
   id: `strategy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
   name,
@@ -121,7 +124,7 @@ export const createStrategyConfig = (
  */
 export const updateStrategyConfig = (
   config: StrategyConfig,
-  updates: Partial<Pick<StrategyConfig, 'name' | 'description' | 'parameters'>>
+  updates: Partial<Pick<StrategyConfig, 'name' | 'description' | 'parameters'>>,
 ): StrategyConfig => ({
   ...config,
   ...updates,
@@ -131,18 +134,63 @@ export const updateStrategyConfig = (
 /**
  * パラメータの妥当性を検証する
  */
-export const validateStrategyParameters = (parameters: StrategyParameters): boolean => {
-  const { chainPriority, speedPriority, defensePriority, riskTolerance, heightControl, centerPriority } = parameters
+export const validateStrategyParameters = (
+  parameters: StrategyParameters,
+): boolean => {
+  const {
+    chainPriority,
+    speedPriority,
+    defensePriority,
+    riskTolerance,
+    heightControl,
+    centerPriority,
+  } = parameters
 
   // すべてのパラメータが0-100の範囲内であることを確認
-  const allParams = [chainPriority, speedPriority, defensePriority, riskTolerance, heightControl, centerPriority]
-  
-  return allParams.every(param => 
-    typeof param === 'number' && 
-    param >= 0 && 
-    param <= 100 && 
-    Number.isInteger(param)
+  const allParams = [
+    chainPriority,
+    speedPriority,
+    defensePriority,
+    riskTolerance,
+    heightControl,
+    centerPriority,
+  ]
+
+  return allParams.every(
+    (param) =>
+      typeof param === 'number' &&
+      param >= 0 &&
+      param <= 100 &&
+      Number.isInteger(param),
   )
+}
+
+/**
+ * 戦略設定の基本フィールドが有効かどうかを判定する
+ */
+const isValidBasicFields = (config: StrategyConfig): boolean => {
+  return (
+    typeof config.id === 'string' &&
+    config.id.length > 0 &&
+    typeof config.name === 'string' &&
+    config.name.length > 0 &&
+    typeof config.description === 'string' &&
+    config.description.length > 0
+  )
+}
+
+/**
+ * 戦略タイプが有効かどうかを判定する
+ */
+const isValidStrategyType = (config: StrategyConfig): boolean => {
+  return ['aggressive', 'defensive', 'balanced', 'custom'].includes(config.type)
+}
+
+/**
+ * 日付フィールドが有効かどうかを判定する
+ */
+const isValidDateFields = (config: StrategyConfig): boolean => {
+  return config.createdAt instanceof Date && config.updatedAt instanceof Date
 }
 
 /**
@@ -150,15 +198,9 @@ export const validateStrategyParameters = (parameters: StrategyParameters): bool
  */
 export const isValidStrategyConfig = (config: StrategyConfig): boolean => {
   return (
-    typeof config.id === 'string' &&
-    config.id.length > 0 &&
-    typeof config.name === 'string' &&
-    config.name.length > 0 &&
-    typeof config.description === 'string' &&
-    config.description.length > 0 &&
-    ['aggressive', 'defensive', 'balanced', 'custom'].includes(config.type) &&
+    isValidBasicFields(config) &&
+    isValidStrategyType(config) &&
     validateStrategyParameters(config.parameters) &&
-    config.createdAt instanceof Date &&
-    config.updatedAt instanceof Date
+    isValidDateFields(config)
   )
 }

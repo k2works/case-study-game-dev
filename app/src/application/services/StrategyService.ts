@@ -2,15 +2,8 @@
  * 戦略設定アプリケーションサービス
  * 戦略の管理、保存、読み込み機能を提供
  */
-import {
-  createStrategyConfig,
-  DEFAULT_STRATEGIES,
-  isValidStrategyConfig,
-  type StrategyConfig,
-  type StrategyParameters,
-  type StrategyType,
-  updateStrategyConfig,
-} from '../../domain/models/ai/StrategyConfig'
+import { DEFAULT_STRATEGIES, createStrategyConfig, isValidStrategyConfig, updateStrategyConfig } from '../../domain/models/ai/StrategyConfig'
+import type { StrategyConfig, StrategyParameters } from '../../domain/models/ai/StrategyConfig'
 import type { StrategyPort } from '../ports/StrategyPort'
 
 /**
@@ -42,8 +35,12 @@ export interface UpdateStrategyRequest {
   parameters?: StrategyParameters
 }
 
-export class StrategyService {
-  constructor(private readonly strategyAdapter: StrategyPort) {}
+class StrategyService {
+  private readonly strategyAdapter: StrategyPort
+  
+  constructor(strategyAdapter: StrategyPort) {
+    this.strategyAdapter = strategyAdapter
+  }
 
   /**
    * すべての戦略を取得する
@@ -51,13 +48,13 @@ export class StrategyService {
   async getAllStrategies(): Promise<StrategyConfig[]> {
     try {
       const strategies = await this.strategyAdapter.getAllStrategies()
-      
+
       // デフォルト戦略がない場合は追加
       if (strategies.length === 0) {
         await this.initializeDefaultStrategies()
         return await this.strategyAdapter.getAllStrategies()
       }
-      
+
       return strategies
     } catch (error) {
       console.error('Failed to get all strategies:', error)
@@ -74,7 +71,7 @@ export class StrategyService {
       if (!id || typeof id !== 'string') {
         throw new Error('Invalid strategy ID')
       }
-      
+
       return await this.strategyAdapter.getStrategyById(id)
     } catch (error) {
       console.error(`Failed to get strategy by ID ${id}:`, error)
@@ -85,12 +82,14 @@ export class StrategyService {
   /**
    * カスタム戦略を作成する
    */
-  async createCustomStrategy(request: CreateStrategyRequest): Promise<StrategyConfig> {
+  async createCustomStrategy(
+    request: CreateStrategyRequest,
+  ): Promise<StrategyConfig> {
     try {
       if (!request.name || request.name.trim().length === 0) {
         throw new Error('Strategy name is required')
       }
-      
+
       if (!request.description || request.description.trim().length === 0) {
         throw new Error('Strategy description is required')
       }
@@ -99,7 +98,7 @@ export class StrategyService {
         request.name.trim(),
         'custom',
         request.description.trim(),
-        request.parameters
+        request.parameters,
       )
 
       if (!isValidStrategyConfig(strategy)) {
@@ -117,7 +116,10 @@ export class StrategyService {
   /**
    * 戦略を更新する
    */
-  async updateStrategy(id: string, request: UpdateStrategyRequest): Promise<StrategyConfig> {
+  async updateStrategy(
+    id: string,
+    request: UpdateStrategyRequest,
+  ): Promise<StrategyConfig> {
     try {
       const existingStrategy = await this.strategyAdapter.getStrategyById(id)
       if (!existingStrategy) {
@@ -129,7 +131,7 @@ export class StrategyService {
       }
 
       const updatedStrategy = updateStrategyConfig(existingStrategy, request)
-      
+
       if (!isValidStrategyConfig(updatedStrategy)) {
         throw new Error('Invalid strategy configuration')
       }
@@ -159,7 +161,9 @@ export class StrategyService {
       // アクティブ戦略が削除される場合はデフォルトに戻す
       const activeStrategy = await this.strategyAdapter.getActiveStrategy()
       if (activeStrategy && activeStrategy.id === id) {
-        await this.strategyAdapter.setActiveStrategy(DEFAULT_STRATEGIES.balanced.id)
+        await this.strategyAdapter.setActiveStrategy(
+          DEFAULT_STRATEGIES.balanced.id,
+        )
       }
 
       await this.strategyAdapter.deleteStrategy(id)
@@ -178,9 +182,11 @@ export class StrategyService {
       if (activeStrategy && isValidStrategyConfig(activeStrategy)) {
         return activeStrategy
       }
-      
+
       // アクティブ戦略がない場合はバランス型をデフォルトとする
-      await this.strategyAdapter.setActiveStrategy(DEFAULT_STRATEGIES.balanced.id)
+      await this.strategyAdapter.setActiveStrategy(
+        DEFAULT_STRATEGIES.balanced.id,
+      )
       return DEFAULT_STRATEGIES.balanced
     } catch (error) {
       console.error('Failed to get active strategy:', error)
@@ -219,10 +225,10 @@ export class StrategyService {
     try {
       const allStrategies = await this.getAllStrategies()
       const activeStrategy = await this.getActiveStrategy()
-      
-      const customStrategies = allStrategies.filter(s => !s.isDefault)
-      const defaultStrategies = allStrategies.filter(s => s.isDefault)
-      
+
+      const customStrategies = allStrategies.filter((s) => !s.isDefault)
+      const defaultStrategies = allStrategies.filter((s) => s.isDefault)
+
       // 最近使用された戦略（上位5件）
       const lastUsedStrategies = allStrategies
         .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
@@ -266,16 +272,20 @@ export class StrategyService {
   private async initializeDefaultStrategies(): Promise<void> {
     try {
       const defaultStrategies = Object.values(DEFAULT_STRATEGIES)
-      
+
       for (const strategy of defaultStrategies) {
         await this.strategyAdapter.saveStrategy(strategy)
       }
-      
+
       // バランス型をデフォルトのアクティブ戦略として設定
-      await this.strategyAdapter.setActiveStrategy(DEFAULT_STRATEGIES.balanced.id)
+      await this.strategyAdapter.setActiveStrategy(
+        DEFAULT_STRATEGIES.balanced.id,
+      )
     } catch (error) {
       console.error('Failed to initialize default strategies:', error)
       throw error
     }
   }
 }
+
+export { StrategyService }

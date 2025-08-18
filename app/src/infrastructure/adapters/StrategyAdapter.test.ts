@@ -4,12 +4,15 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 
 import type { StoragePort } from '../../application/ports/StoragePort'
-import { DEFAULT_STRATEGIES, type StrategyConfig } from '../../domain/models/ai/StrategyConfig'
+import {
+  DEFAULT_STRATEGIES,
+  type StrategyConfig,
+} from '../../domain/models/ai/StrategyConfig'
 import { StrategyAdapter } from './StrategyAdapter'
 
 // モックストレージアダプター
 class MockStorageAdapter implements StoragePort {
-  private storage: Map<string, any> = new Map()
+  private storage: Map<string, unknown> = new Map()
 
   async save<T>(key: string, value: T): Promise<boolean> {
     this.storage.set(key, value)
@@ -17,11 +20,29 @@ class MockStorageAdapter implements StoragePort {
   }
 
   async load<T>(key: string): Promise<T | null> {
-    return this.storage.get(key) || null
+    const value = this.storage.get(key)
+    return value ? (value as T) : null
+  }
+
+  async remove(key: string): Promise<boolean> {
+    return this.storage.delete(key)
+  }
+
+  async exists(key: string): Promise<boolean> {
+    return this.storage.has(key)
+  }
+
+  async getUsage(): Promise<number | null> {
+    return 0
+  }
+
+  async clear(): Promise<boolean> {
+    this.storage.clear()
+    return true
   }
 
   // テスト用のヘルパーメソッド
-  clear(): void {
+  clearSync(): void {
     this.storage.clear()
   }
 
@@ -51,11 +72,13 @@ describe('StrategyAdapter', () => {
     test('保存された戦略を正しく読み込む', async () => {
       // Arrange
       const testStrategy = DEFAULT_STRATEGIES.balanced
-      const serialized = [{
-        ...testStrategy,
-        createdAt: testStrategy.createdAt.toISOString(),
-        updatedAt: testStrategy.updatedAt.toISOString(),
-      }]
+      const serialized = [
+        {
+          ...testStrategy,
+          createdAt: testStrategy.createdAt.toISOString(),
+          updatedAt: testStrategy.updatedAt.toISOString(),
+        },
+      ]
       mockStorage.save('ai-strategies', serialized)
 
       // Act
@@ -148,8 +171,8 @@ describe('StrategyAdapter', () => {
       // Assert
       const strategies = await strategyAdapter.getAllStrategies()
       expect(strategies).toHaveLength(2)
-      expect(strategies.map(s => s.id)).toContain(strategy1.id)
-      expect(strategies.map(s => s.id)).toContain(strategy2.id)
+      expect(strategies.map((s) => s.id)).toContain(strategy1.id)
+      expect(strategies.map((s) => s.id)).toContain(strategy2.id)
     })
   })
 
@@ -169,7 +192,9 @@ describe('StrategyAdapter', () => {
 
     test('存在しない戦略を削除しようとしてもエラーにならない', async () => {
       // Act & Assert
-      await expect(strategyAdapter.deleteStrategy('non-existent-id')).resolves.not.toThrow()
+      await expect(
+        strategyAdapter.deleteStrategy('non-existent-id'),
+      ).resolves.not.toThrow()
     })
 
     test('複数の戦略から特定の戦略のみを削除できる', async () => {
@@ -261,8 +286,12 @@ describe('StrategyAdapter', () => {
 
       // Assert
       expect(result).toHaveLength(3)
-      expect(result.map(s => s.type)).toEqual(['aggressive', 'defensive', 'balanced'])
-      expect(result.every(s => s.isDefault)).toBe(true)
+      expect(result.map((s) => s.type)).toEqual([
+        'aggressive',
+        'defensive',
+        'balanced',
+      ])
+      expect(result.every((s) => s.isDefault)).toBe(true)
     })
   })
 
@@ -303,8 +332,12 @@ describe('StrategyAdapter', () => {
       expect(retrieved).not.toBeNull()
       expect(retrieved!.createdAt).toBeInstanceOf(Date)
       expect(retrieved!.updatedAt).toBeInstanceOf(Date)
-      expect(retrieved!.createdAt.toISOString()).toBe(originalDate.toISOString())
-      expect(retrieved!.updatedAt.toISOString()).toBe(originalDate.toISOString())
+      expect(retrieved!.createdAt.toISOString()).toBe(
+        originalDate.toISOString(),
+      )
+      expect(retrieved!.updatedAt.toISOString()).toBe(
+        originalDate.toISOString(),
+      )
     })
   })
 })

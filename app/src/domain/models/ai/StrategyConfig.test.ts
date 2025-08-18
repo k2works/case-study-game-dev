@@ -4,11 +4,11 @@
 import { describe, expect, test } from 'vitest'
 
 import {
-  createStrategyConfig,
   DEFAULT_STRATEGIES,
-  isValidStrategyConfig,
   type StrategyConfig,
   type StrategyParameters,
+  createStrategyConfig,
+  isValidStrategyConfig,
   updateStrategyConfig,
   validateStrategyParameters,
 } from './StrategyConfig'
@@ -29,7 +29,12 @@ describe('StrategyConfig', () => {
       }
 
       // Act
-      const result = createStrategyConfig(name, 'custom', description, parameters)
+      const result = createStrategyConfig(
+        name,
+        'custom',
+        description,
+        parameters,
+      )
 
       // Assert
       expect(result.name).toBe(name)
@@ -57,7 +62,7 @@ describe('StrategyConfig', () => {
           riskTolerance: 50,
           heightControl: 50,
           centerPriority: 50,
-        }
+        },
       )
       const originalUpdatedAt = originalConfig.updatedAt
 
@@ -85,7 +90,9 @@ describe('StrategyConfig', () => {
       expect(result.type).toBe(originalConfig.type)
       expect(result.isDefault).toBe(originalConfig.isDefault)
       expect(result.createdAt).toBe(originalConfig.createdAt)
-      expect(result.updatedAt.getTime()).toBeGreaterThanOrEqual(originalUpdatedAt.getTime())
+      expect(result.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        originalUpdatedAt.getTime(),
+      )
     })
 
     test('部分的な更新ができる', () => {
@@ -101,7 +108,7 @@ describe('StrategyConfig', () => {
           riskTolerance: 50,
           heightControl: 50,
           centerPriority: 50,
-        }
+        },
       )
 
       const updates = {
@@ -214,7 +221,7 @@ describe('StrategyConfig', () => {
           riskTolerance: 40,
           heightControl: 60,
           centerPriority: 55,
-        }
+        },
       )
 
       // Act & Assert
@@ -262,7 +269,7 @@ describe('StrategyConfig', () => {
       ]
 
       // Act & Assert
-      invalidConfigs.forEach(config => {
+      invalidConfigs.forEach((config) => {
         expect(isValidStrategyConfig(config as StrategyConfig)).toBe(false)
       })
     })
@@ -271,7 +278,7 @@ describe('StrategyConfig', () => {
   describe('DEFAULT_STRATEGIES', () => {
     test('すべてのデフォルト戦略が有効である', () => {
       // Act & Assert
-      Object.values(DEFAULT_STRATEGIES).forEach(strategy => {
+      Object.values(DEFAULT_STRATEGIES).forEach((strategy) => {
         expect(isValidStrategyConfig(strategy)).toBe(true)
         expect(strategy.isDefault).toBe(true)
       })
@@ -283,7 +290,9 @@ describe('StrategyConfig', () => {
 
       // Act & Assert
       expect(aggressive.type).toBe('aggressive')
-      expect(aggressive.parameters.chainPriority).toBeGreaterThan(aggressive.parameters.speedPriority)
+      expect(aggressive.parameters.chainPriority).toBeGreaterThan(
+        aggressive.parameters.speedPriority,
+      )
       expect(aggressive.parameters.riskTolerance).toBeGreaterThan(50)
     })
 
@@ -305,7 +314,7 @@ describe('StrategyConfig', () => {
       // Act & Assert
       expect(balanced.type).toBe('balanced')
       // すべてのパラメータが中程度の値（40-80）であることを確認
-      Object.values(balanced.parameters).forEach(value => {
+      Object.values(balanced.parameters).forEach((value) => {
         expect(value).toBeGreaterThanOrEqual(40)
         expect(value).toBeLessThanOrEqual(80)
       })
