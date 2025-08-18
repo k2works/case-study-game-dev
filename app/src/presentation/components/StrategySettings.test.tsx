@@ -6,7 +6,10 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import type { StrategyService } from '../../application/services/StrategyService'
-import { DEFAULT_STRATEGIES, type StrategyParameters } from '../../domain/models/ai/StrategyConfig'
+import {
+  DEFAULT_STRATEGIES,
+  type StrategyParameters,
+} from '../../domain/models/ai/StrategyConfig'
 import { StrategySettings } from './StrategySettings'
 
 // モックStrategyService
@@ -29,7 +32,11 @@ class MockStrategyService {
     }
   }
 
-  async createCustomStrategy(request: {name: string; description: string; parameters: StrategyParameters}) {
+  async createCustomStrategy(request: {
+    name: string
+    description: string
+    parameters: StrategyParameters
+  }) {
     const newStrategy = {
       id: `custom-${Date.now()}`,
       name: request.name,
@@ -44,7 +51,14 @@ class MockStrategyService {
     return newStrategy
   }
 
-  async updateStrategy(id: string, request: {name?: string; description?: string; parameters?: StrategyParameters}) {
+  async updateStrategy(
+    id: string,
+    request: {
+      name?: string
+      description?: string
+      parameters?: StrategyParameters
+    },
+  ) {
     const index = this.strategies.findIndex((s) => s.id === id)
     if (index >= 0) {
       this.strategies[index] = {

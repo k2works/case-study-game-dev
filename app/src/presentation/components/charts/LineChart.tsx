@@ -40,7 +40,10 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
         <p className="font-semibold text-gray-800">{label}</p>
         {payload.map((entry, index: number) => (
           <p key={index} style={{ color: entry.color }} className="text-sm">
-            {entry.name}: {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
+            {entry.name}:{' '}
+            {typeof entry.value === 'number'
+              ? entry.value.toLocaleString()
+              : entry.value}
           </p>
         ))}
       </div>
@@ -60,7 +63,9 @@ export function LineChart({
 }: LineChartProps) {
   if (data.data.length === 0) {
     return (
-      <div className={`flex items-center justify-center h-64 bg-gray-50 rounded-lg ${className}`}>
+      <div
+        className={`flex items-center justify-center h-64 bg-gray-50 rounded-lg ${className}`}
+      >
         <div className="text-center text-gray-500">
           <p className="text-lg font-medium">{data.title}</p>
           <p className="text-sm mt-2">データがありません</p>
@@ -85,16 +90,28 @@ export function LineChart({
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="label" 
+          <XAxis
+            dataKey="label"
             axisLine={false}
             tickLine={false}
-            label={data.xAxisLabel ? { value: data.xAxisLabel, position: 'insideBottom', offset: -5 } : undefined}
+            label={
+              data.xAxisLabel
+                ? {
+                    value: data.xAxisLabel,
+                    position: 'insideBottom',
+                    offset: -5,
+                  }
+                : undefined
+            }
           />
-          <YAxis 
+          <YAxis
             axisLine={false}
             tickLine={false}
-            label={data.yAxisLabel ? { value: data.yAxisLabel, angle: -90, position: 'insideLeft' } : undefined}
+            label={
+              data.yAxisLabel
+                ? { value: data.yAxisLabel, angle: -90, position: 'insideLeft' }
+                : undefined
+            }
           />
           <Tooltip content={<CustomTooltip />} />
           {data.series.map((series) => (

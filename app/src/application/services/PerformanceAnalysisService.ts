@@ -89,14 +89,16 @@ export class PerformanceAnalysisService {
     const data = this.performancePort.getPerformanceData()
 
     // ゲーム結果データを生成
-    const gameResults: GameResultData[] = data.sessions.map((session, index) => ({
-      id: `game-${index + 1}`,
-      score: session.finalScore,
-      chain: session.maxChain,
-      playTime: session.endTime.getTime() - session.startTime.getTime(),
-      timestamp: session.endTime,
-      isAI: session.aiEnabled,
-    }))
+    const gameResults: GameResultData[] = data.sessions.map(
+      (session, index) => ({
+        id: `game-${index + 1}`,
+        score: session.finalScore,
+        chain: session.maxChain,
+        playTime: session.endTime.getTime() - session.startTime.getTime(),
+        timestamp: session.endTime,
+        isAI: session.aiEnabled,
+      }),
+    )
 
     try {
       return {

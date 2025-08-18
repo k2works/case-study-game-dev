@@ -1,11 +1,11 @@
 /**
  * LineChartコンポーネントのテスト
  */
-import { render } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 
-import type { LineChartData } from '../../../domain/models/visualization/ChartData'
+import { render } from '@testing-library/react'
 
+import type { LineChartData } from '../../../domain/models/visualization/ChartData'
 import { LineChart } from './LineChart'
 
 describe('LineChart', () => {
@@ -38,9 +38,7 @@ describe('LineChart', () => {
       // Arrange
       const chartData: LineChartData = {
         title: 'スコア推移',
-        data: [
-          { label: 'ゲーム1', value: 1000 },
-        ],
+        data: [{ label: 'ゲーム1', value: 1000 }],
         series: [
           {
             name: 'スコア',
@@ -57,7 +55,9 @@ describe('LineChart', () => {
 
       // Assert
       expect(getByText('スコア推移')).toBeInTheDocument()
-      expect(container.querySelector('.recharts-responsive-container')).toBeInTheDocument()
+      expect(
+        container.querySelector('.recharts-responsive-container'),
+      ).toBeInTheDocument()
     })
   })
 
@@ -97,7 +97,9 @@ describe('LineChart', () => {
       const { container } = render(<LineChart data={chartData} />)
 
       // Assert
-      const responsiveContainer = container.querySelector('.recharts-responsive-container')
+      const responsiveContainer = container.querySelector(
+        '.recharts-responsive-container',
+      )
       expect(responsiveContainer).toBeInTheDocument()
     })
   })

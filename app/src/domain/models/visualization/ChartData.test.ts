@@ -138,9 +138,7 @@ describe('ChartData', () => {
         color: '#8884d8',
       }
 
-      const dataPoints: ChartDataPoint[] = [
-        { label: 'ゲーム1', value: 1000 },
-      ]
+      const dataPoints: ChartDataPoint[] = [{ label: 'ゲーム1', value: 1000 }]
 
       // Act
       const chartData: LineChartData = createLineChartData({

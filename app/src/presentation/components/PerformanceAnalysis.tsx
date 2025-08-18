@@ -4,10 +4,9 @@
 import { useState } from 'react'
 
 import { ChartDataService } from '../../application/services/ChartDataService'
-import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
 import type { PerformanceMetricType } from '../../application/services/ChartDataService'
+import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
 import type { PerformanceReport } from '../../domain/models/ai/types'
-
 import { LineChart } from './charts/LineChart'
 
 interface PerformanceAnalysisProps {
@@ -49,7 +48,8 @@ export function PerformanceAnalysis({
   onResetData,
 }: PerformanceAnalysisProps) {
   // チャート表示設定
-  const [selectedMetric, setSelectedMetric] = useState<PerformanceMetricType>('score')
+  const [selectedMetric, setSelectedMetric] =
+    useState<PerformanceMetricType>('score')
   const [showCharts, setShowCharts] = useState(false)
 
   // データが空の場合
@@ -70,8 +70,12 @@ export function PerformanceAnalysis({
   }
 
   // チャートデータの生成
-  const performanceChartData = ChartDataService.createPerformanceLineChart(statistics, selectedMetric)
-  const comparisonChartData = ChartDataService.createComparisonChart(comparisonReport)
+  const performanceChartData = ChartDataService.createPerformanceLineChart(
+    statistics,
+    selectedMetric,
+  )
+  const comparisonChartData =
+    ChartDataService.createComparisonChart(comparisonReport)
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -138,7 +142,7 @@ export function PerformanceAnalysis({
           <h4 className="text-lg font-semibold text-gray-700 mb-4">
             データ可視化
           </h4>
-          
+
           {/* メトリック選択 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -146,7 +150,9 @@ export function PerformanceAnalysis({
             </label>
             <select
               value={selectedMetric}
-              onChange={(e) => setSelectedMetric(e.target.value as PerformanceMetricType)}
+              onChange={(e) =>
+                setSelectedMetric(e.target.value as PerformanceMetricType)
+              }
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="score">スコア推移</option>

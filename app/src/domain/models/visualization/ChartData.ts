@@ -52,7 +52,9 @@ export const createChartDataPoint = (params: {
   value: params.value,
   timestamp: params.timestamp,
   ...Object.fromEntries(
-    Object.entries(params).filter(([key]) => !['label', 'value', 'timestamp'].includes(key))
+    Object.entries(params).filter(
+      ([key]) => !['label', 'value', 'timestamp'].includes(key),
+    ),
   ),
 })
 
@@ -73,7 +75,7 @@ export const isValidChartDataPoint = (dataPoint: ChartDataPoint): boolean => {
  */
 export const formatChartValue = (
   value: number,
-  format: ValueFormatType = 'number'
+  format: ValueFormatType = 'number',
 ): string => {
   switch (format) {
     case 'percentage':

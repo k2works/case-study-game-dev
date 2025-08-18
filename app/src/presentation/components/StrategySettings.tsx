@@ -55,7 +55,6 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
     },
   })
 
-
   /**
    * 戦略をアクティブに設定
    */

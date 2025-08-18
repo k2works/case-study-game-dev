@@ -4,9 +4,8 @@
 import { describe, expect, test } from 'vitest'
 
 import type { PerformanceReport } from '../../domain/models/ai/types'
-
-import type { PerformanceStatistics } from './PerformanceAnalysisService'
 import { ChartDataService } from './ChartDataService'
+import type { PerformanceStatistics } from './PerformanceAnalysisService'
 
 describe('ChartDataService', () => {
   describe('createPerformanceLineChart', () => {
@@ -47,7 +46,10 @@ describe('ChartDataService', () => {
       }
 
       // Act
-      const chartData = ChartDataService.createPerformanceLineChart(statistics, 'score')
+      const chartData = ChartDataService.createPerformanceLineChart(
+        statistics,
+        'score',
+      )
 
       // Assert
       expect(chartData.title).toBe('スコア推移')
@@ -95,7 +97,10 @@ describe('ChartDataService', () => {
       }
 
       // Act
-      const chartData = ChartDataService.createPerformanceLineChart(statistics, 'chain')
+      const chartData = ChartDataService.createPerformanceLineChart(
+        statistics,
+        'chain',
+      )
 
       // Assert
       expect(chartData.title).toBe('連鎖数推移')
@@ -125,7 +130,10 @@ describe('ChartDataService', () => {
       }
 
       // Act
-      const chartData = ChartDataService.createPerformanceLineChart(statistics, 'playTime')
+      const chartData = ChartDataService.createPerformanceLineChart(
+        statistics,
+        'playTime',
+      )
 
       // Assert
       expect(chartData.title).toBe('プレイ時間推移')
@@ -166,14 +174,14 @@ describe('ChartDataService', () => {
       // Assert
       expect(chartData.title).toBe('AI vs 人間 パフォーマンス比較')
       expect(chartData.data).toHaveLength(4)
-      
+
       // スコア比較データ
-      const scoreData = chartData.data.find(d => d.label === 'スコア')
+      const scoreData = chartData.data.find((d) => d.label === 'スコア')
       expect(scoreData?.AI).toBe(1800)
       expect(scoreData?.Human).toBe(1200)
 
-      // 連鎖数比較データ  
-      const chainData = chartData.data.find(d => d.label === '連鎖数')
+      // 連鎖数比較データ
+      const chainData = chartData.data.find((d) => d.label === '連鎖数')
       expect(chainData?.AI).toBe(5.5)
       expect(chainData?.Human).toBe(3.5)
 

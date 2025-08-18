@@ -2,11 +2,19 @@
  * チャートデータサービス
  * パフォーマンス統計からチャートデータを生成する
  */
-import { createLineChartData, DEFAULT_CHART_COLORS } from '../../domain/models/visualization/ChartData'
-import type { ChartDataPoint, LineChartData } from '../../domain/models/visualization/ChartData'
 import type { PerformanceReport } from '../../domain/models/ai/types'
-
-import type { GameResultData, PerformanceStatistics } from './PerformanceAnalysisService'
+import {
+  DEFAULT_CHART_COLORS,
+  createLineChartData,
+} from '../../domain/models/visualization/ChartData'
+import type {
+  ChartDataPoint,
+  LineChartData,
+} from '../../domain/models/visualization/ChartData'
+import type {
+  GameResultData,
+  PerformanceStatistics,
+} from './PerformanceAnalysisService'
 
 export type PerformanceMetricType = 'score' | 'chain' | 'playTime'
 
@@ -19,17 +27,20 @@ export class ChartDataService {
    */
   static createPerformanceLineChart(
     statistics: PerformanceStatistics,
-    metricType: PerformanceMetricType
+    metricType: PerformanceMetricType,
   ): LineChartData {
-    const dataPoints: ChartDataPoint[] = statistics.gameResults.map((result, index) => ({
-      label: `ゲーム${index + 1}`,
-      value: this.getMetricValue(result, metricType),
-      score: result.score,
-      chain: result.chain,
-      playTime: result.playTime,
-    }))
+    const dataPoints: ChartDataPoint[] = statistics.gameResults.map(
+      (result, index) => ({
+        label: `ゲーム${index + 1}`,
+        value: this.getMetricValue(result, metricType),
+        score: result.score,
+        chain: result.chain,
+        playTime: result.playTime,
+      }),
+    )
 
-    const { title, yAxisLabel, seriesName, dataKey } = this.getChartConfig(metricType)
+    const { title, yAxisLabel, seriesName, dataKey } =
+      this.getChartConfig(metricType)
 
     return createLineChartData({
       title,
@@ -50,8 +61,13 @@ export class ChartDataService {
   /**
    * AI vs 人間比較チャートデータを作成
    */
-  static createComparisonChart(comparisonReport: PerformanceReport): LineChartData {
-    if (comparisonReport.ai.gamesPlayed === 0 && comparisonReport.human.gamesPlayed === 0) {
+  static createComparisonChart(
+    comparisonReport: PerformanceReport,
+  ): LineChartData {
+    if (
+      comparisonReport.ai.gamesPlayed === 0 &&
+      comparisonReport.human.gamesPlayed === 0
+    ) {
       return createLineChartData({
         title: 'AI vs 人間 パフォーマンス比較',
         data: [],
@@ -111,7 +127,7 @@ export class ChartDataService {
    */
   private static getMetricValue(
     result: GameResultData,
-    metricType: PerformanceMetricType
+    metricType: PerformanceMetricType,
   ): number {
     switch (metricType) {
       case 'score':
