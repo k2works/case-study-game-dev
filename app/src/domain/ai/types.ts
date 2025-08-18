@@ -1,8 +1,10 @@
 /**
  * AI関連の型定義
  */
-import type { FieldAdapter } from '../models/FieldAdapter'
-import type { PuyoPair } from '../models/PuyoPair'
+import type {
+  FieldViewModel,
+  PuyoPairViewModel,
+} from '../../application/viewmodels/GameViewModel'
 
 /**
  * AIの設定
@@ -21,11 +23,11 @@ export interface AISettings {
  */
 export interface AIGameState {
   /** 現在のフィールド */
-  field: FieldAdapter
+  field: FieldViewModel
   /** 現在のぷよペア */
-  currentPuyoPair: PuyoPair | null
+  currentPuyoPair: PuyoPairViewModel | null
   /** 次のぷよペア */
-  nextPuyoPair: PuyoPair | null
+  nextPuyoPair: PuyoPairViewModel | null
   /** 現在のスコア */
   score: number
 }

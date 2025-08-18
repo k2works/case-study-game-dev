@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
+import type { AISettings } from './domain/ai/types'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
+import { AIControlPanel } from './presentation/components/AIControlPanel'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
@@ -146,11 +148,19 @@ const GameLayout = ({
   gameService,
   updateGame,
   handleReset,
+  aiEnabled,
+  aiSettings,
+  onToggleAI,
+  onAISettingsChange,
 }: {
   game: GameViewModel
   gameService: GamePort
   updateGame: (game: GameViewModel) => void
   handleReset: () => void
+  aiEnabled: boolean
+  aiSettings: AISettings
+  onToggleAI: () => void
+  onAISettingsChange: (settings: AISettings) => void
 }) => {
   const startGame = () => {
     const newGame = gameService.startNewGame()
@@ -185,6 +195,14 @@ const GameLayout = ({
           <div className="lg:col-span-1">
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
               <GameInfo game={game} onRestart={handleReset} />
+
+              {/* AIコントロールパネル */}
+              <AIControlPanel
+                aiEnabled={aiEnabled}
+                aiSettings={aiSettings}
+                onToggleAI={onToggleAI}
+                onSettingsChange={onAISettingsChange}
+              />
 
               {/* ゲーム制御ボタン */}
               <div className="mt-6 space-y-3">
@@ -263,12 +281,22 @@ function App() {
   // DIコンテナからサービスを取得
   const gameService = defaultContainer.getGameService()
   const inputService = defaultContainer.getInputService()
+  const aiService = defaultContainer.getAIService()
 
   // ゲーム状態を管理（Reactの状態として）
   const [game, setGame] = useState<GameViewModel>(() => {
     // 初期状態では準備状態の新しいゲームを作成
     return gameService.createReadyGame()
   })
+
+  // AI状態管理
+  const [aiEnabled, setAiEnabled] = useState(false)
+  const [aiSettings, setAiSettings] = useState<AISettings>({
+    enabled: false,
+    thinkingSpeed: 1000,
+    mode: 'balanced',
+  })
+  const aiTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // デバッグ用にE2Eテストからアクセス可能にする
   if (
@@ -283,9 +311,106 @@ function App() {
     ;(window as any).setGame = setGame
   }
 
-  const updateGame = (newGame: GameViewModel) => {
+  const updateGame = useCallback((newGame: GameViewModel) => {
     setGame(newGame)
-  }
+  }, [])
+
+  // キーボード入力を作成するヘルパー関数
+  const createKeyboardInput = useCallback(
+    (code: string, key: string) => ({
+      code,
+      key,
+      ctrlKey: false,
+      altKey: false,
+      shiftKey: false,
+      metaKey: false,
+      repeat: false,
+      type: 'keydown' as const,
+    }),
+    [],
+  )
+
+  // AI移動操作を実行するヘルパー関数
+  const executeHorizontalMoves = useCallback(
+    (game: GameViewModel, currentX: number, targetX: number): GameViewModel => {
+      const moveCount = Math.abs(targetX - currentX)
+      const direction = targetX < currentX ? 'ArrowLeft' : 'ArrowRight'
+
+      let updatedGame = game
+      for (let i = 0; i < moveCount; i++) {
+        const input = createKeyboardInput(direction, direction)
+        const action = inputService.processKeyboardInput(input)
+        if (action) {
+          updatedGame = gameService.updateGameState(updatedGame, action)
+        }
+      }
+      return updatedGame
+    },
+    [createKeyboardInput, inputService, gameService],
+  )
+
+  // AI自動プレイのロジック
+  const executeAIMove = useCallback(async () => {
+    if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
+      return
+    }
+
+    try {
+      // GameViewModelをAIGameStateに変換
+      const aiGameState = {
+        field: game.field,
+        currentPuyoPair: game.currentPuyoPair,
+        nextPuyoPair: game.nextPuyoPair,
+        score: game.score.current,
+      }
+
+      // AIが最適な手を計算
+      const aiMove = await aiService.decideMove(aiGameState)
+
+      // 横移動実行
+      const currentX = game.currentPuyoPair.x
+      let updatedGame = executeHorizontalMoves(game, currentX, aiMove.x)
+
+      // ドロップ実行
+      const dropInput = createKeyboardInput('ArrowDown', 'ArrowDown')
+      const dropAction = inputService.processKeyboardInput(dropInput)
+      if (dropAction) {
+        updatedGame = gameService.updateGameState(updatedGame, dropAction)
+      }
+
+      updateGame(updatedGame)
+    } catch (error) {
+      console.error('AI move execution failed:', error)
+    }
+  }, [
+    aiEnabled,
+    game,
+    aiService,
+    executeHorizontalMoves,
+    createKeyboardInput,
+    inputService,
+    gameService,
+    updateGame,
+  ])
+
+  // AI自動プレイのタイマー管理
+  useEffect(() => {
+    if (aiEnabled && game.state === 'playing') {
+      aiTimerRef.current = setInterval(executeAIMove, aiSettings.thinkingSpeed)
+    } else {
+      if (aiTimerRef.current) {
+        clearInterval(aiTimerRef.current)
+        aiTimerRef.current = null
+      }
+    }
+
+    return () => {
+      if (aiTimerRef.current) {
+        clearInterval(aiTimerRef.current)
+        aiTimerRef.current = null
+      }
+    }
+  }, [aiEnabled, game.state, aiSettings.thinkingSpeed, executeAIMove])
 
   // キーボードハンドラー
   const {
@@ -297,12 +422,27 @@ function App() {
     handleReset,
   } = useKeyboardHandlers(game, gameService, inputService, updateGame)
 
-  // キーボード入力を監視
+  // AI設定ハンドラー
+  const handleToggleAI = useCallback(() => {
+    const newEnabled = !aiEnabled
+    setAiEnabled(newEnabled)
+    aiService.setEnabled(newEnabled)
+  }, [aiEnabled, aiService])
+
+  const handleAISettingsChange = useCallback(
+    (newSettings: AISettings) => {
+      setAiSettings(newSettings)
+      aiService.updateSettings(newSettings)
+    },
+    [aiService],
+  )
+
+  // キーボード入力を監視（AI有効時は無効化）
   useKeyboard({
-    onLeft: handleLeft,
-    onRight: handleRight,
-    onDown: handleDown,
-    onRotate: handleRotate,
+    onLeft: aiEnabled ? () => {} : handleLeft,
+    onRight: aiEnabled ? () => {} : handleRight,
+    onDown: aiEnabled ? () => {} : handleDown,
+    onRotate: aiEnabled ? () => {} : handleRotate,
     onPause: handlePause,
     onReset: handleReset,
   })
@@ -320,6 +460,10 @@ function App() {
       gameService={gameService}
       updateGame={updateGame}
       handleReset={handleReset}
+      aiEnabled={aiEnabled}
+      aiSettings={aiSettings}
+      onToggleAI={handleToggleAI}
+      onAISettingsChange={handleAISettingsChange}
     />
   )
 }

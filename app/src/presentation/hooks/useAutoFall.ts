@@ -19,7 +19,7 @@ export const useAutoFall = ({
   updateGame,
   fallSpeed = 1000,
 }: UseAutoFallProps) => {
-  const intervalRef = useRef<number | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const gameService: GamePort = defaultContainer.getGameService()
 
   // ぷよペアを1マス下に落下させる処理

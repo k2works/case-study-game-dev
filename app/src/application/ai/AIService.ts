@@ -64,15 +64,15 @@ export class AIService implements AIPort {
    */
   private findBestMove(gameState: AIGameState): AIMove {
     const field = gameState.field
-    const width = field.getWidth()
-    
+    const width = field.width
+
     // 各列の高さを計算
     const columnHeights: number[] = []
     for (let x = 0; x < width; x++) {
       let height = 0
-      for (let y = 0; y < field.getHeight(); y++) {
-        if (field.getPuyo(x, y) !== null) {
-          height = field.getHeight() - y
+      for (let y = 0; y < field.height; y++) {
+        if (field.cells[x] && field.cells[x][y] !== null) {
+          height = field.height - y
           break
         }
       }

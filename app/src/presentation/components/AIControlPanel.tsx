@@ -58,7 +58,9 @@ export const AIControlPanel = ({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-white/80 text-sm">思考速度</span>
-            <span className="text-white text-sm">{aiSettings.thinkingSpeed}ms</span>
+            <span className="text-white text-sm">
+              {aiSettings.thinkingSpeed}ms
+            </span>
           </div>
           <input
             type="range"
