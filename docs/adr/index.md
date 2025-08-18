@@ -20,7 +20,7 @@
 | [ADR-010](010-Codecov採用.md) | Codecov採用 | 採用 | 2025-08-13 | 2025-11-13 |
 | [ADR-011](011-ヘキサゴナルアーキテクチャリファクタリング.md) | ヘキサゴナルアーキテクチャリファクタリング | 採用 | 2025-08-13 | 2025-11-13 |
 | [ADR-012](012-TensorFlow.js統合.md) | TensorFlow.js統合 | 採用 | 2025-08-18 | 2025-11-18 |
-| [ADR-013](013-Web Workers AI処理.md) | Web Workers AI処理 | 採用 | 2025-08-18 | 2025-11-18 |
+| [ADR-013](013-Web Workers AI処理採用.md) | Web Workers AI処理採用 | 採用 | 2025-08-18 | 2025-11-18 |
 
 ## 実装状況
 
@@ -122,7 +122,7 @@
 ### 技術スタック
 - ADR-002: フロントエンド技術スタック（React + TypeScript）
 - ADR-012: TensorFlow.js統合
-- ADR-013: Web Workers AI処理
+- ADR-013: Web Workers AI処理採用
 
 ### 開発プロセス・手法
 - ADR-004: TDD開発手法採用

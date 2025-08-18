@@ -102,4 +102,4 @@ nav:
     - Codecov採用: adr/010-Codecov採用.md
     - ヘキサゴナルアーキテクチャリファクタリング: adr/011-ヘキサゴナルアーキテクチャリファクタリング.md
     - TensorFlow.js統合: adr/012-TensorFlow.js統合.md
-    - Web Workers AI処理: adr/013-Web Workers AI処理.md
+    - Web Workers AI処理採用: adr/013-Web Workers AI処理採用.md
