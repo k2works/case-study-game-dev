@@ -1,7 +1,7 @@
 /**
  * AI関連の型定義
  */
-import type { PuyoColor } from '../models/Puyo'
+import type { PuyoColor } from '../Puyo.ts'
 
 /**
  * AIの設定

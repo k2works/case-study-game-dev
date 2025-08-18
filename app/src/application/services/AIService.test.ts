@@ -3,8 +3,8 @@
  */
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import type { AIGameState, AISettings } from '../../domain/ai/types'
 import type { PuyoColor } from '../../domain/models/Puyo'
+import type { AIGameState, AISettings } from '../../domain/models/ai/types.ts'
 import { AIService } from './AIService'
 
 describe('AIService', () => {

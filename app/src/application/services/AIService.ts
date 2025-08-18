@@ -2,13 +2,14 @@
  * AIサービス
  * アプリケーション層のAI制御サービス
  */
-import type { AIPort, MoveGeneratorPort } from '../../domain/ai/ports'
 import type {
   AIGameState,
   AIMove,
   AISettings,
   PossibleMove,
-} from '../../domain/ai/types'
+} from '../../domain/models/ai/types'
+import type { AIPort } from '../ports/AIPort.ts'
+import type { MoveGeneratorPort } from '../ports/MoveGeneratorPort.ts'
 import { MoveGenerator } from './MoveGenerator'
 
 /**

@@ -2,8 +2,8 @@
  * 手生成サービス
  * AI用の可能な手を生成する
  */
-import type { MoveGeneratorPort } from '../../domain/ai/ports'
-import type { AIGameState, PossibleMove } from '../../domain/ai/types'
+import type { AIGameState, PossibleMove } from '../../domain/models/ai/types'
+import type { MoveGeneratorPort } from '../ports/MoveGeneratorPort.ts'
 
 /**
  * 基本的な手生成器

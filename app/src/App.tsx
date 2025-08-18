@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import type { AIPort } from './application/ports/AIPort.ts'
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
-import type { AIPort } from './domain/ai/ports'
-import type { AIMove, AISettings } from './domain/ai/types'
+import type { AIMove, AISettings } from './domain/models/ai/types.ts'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { AIControlPanel } from './presentation/components/AIControlPanel'
 import { GameBoard } from './presentation/components/GameBoard'
