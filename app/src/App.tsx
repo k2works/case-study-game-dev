@@ -7,6 +7,7 @@ import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AIMove, AISettings } from './domain/models/ai/types.ts'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { AIControlPanel } from './presentation/components/AIControlPanel'
+import { AIInsights } from './presentation/components/AIInsights'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
@@ -224,6 +225,8 @@ const GameLayout = ({
   aiSettings,
   onToggleAI,
   onAISettingsChange,
+  lastAIMove,
+  isAIThinking,
 }: {
   game: GameViewModel
   gameService: GamePort
@@ -234,6 +237,8 @@ const GameLayout = ({
   aiService: AIPort
   onToggleAI: () => void
   onAISettingsChange: (settings: AISettings) => void
+  lastAIMove: AIMove | null
+  isAIThinking: boolean
 }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4">
@@ -256,6 +261,9 @@ const GameLayout = ({
                 onToggleAI={onToggleAI}
                 onSettingsChange={onAISettingsChange}
               />
+
+              {/* AI判断詳細表示 */}
+              <AIInsights lastAIMove={lastAIMove} isThinking={isAIThinking} />
 
               {/* ゲーム制御ボタン */}
               <GameControlButtons
@@ -317,6 +325,8 @@ function App() {
     thinkingSpeed: 1000,
     mode: 'balanced',
   })
+  const [lastAIMove, setLastAIMove] = useState<AIMove | null>(null)
+  const [isAIThinking, setIsAIThinking] = useState(false)
   const aiTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // デバッグ用にE2Eテストからアクセス可能にする
@@ -455,15 +465,21 @@ function App() {
     }
 
     try {
+      setIsAIThinking(true)
       const aiGameState = convertToAIGameState(game)
 
       const aiMove = await aiService.decideMove(aiGameState)
+
+      // AI判断の詳細を記録
+      setLastAIMove(aiMove)
+      setIsAIThinking(false)
 
       const updatedGame = executeAIMoveActions(game, aiMove)
 
       updateGame(updatedGame)
     } catch (error) {
       console.error('AI move execution failed:', error)
+      setIsAIThinking(false)
     }
   }, [
     aiEnabled,
@@ -557,6 +573,8 @@ function App() {
       aiService={aiService}
       onToggleAI={handleToggleAI}
       onAISettingsChange={handleAISettingsChange}
+      lastAIMove={lastAIMove}
+      isAIThinking={isAIThinking}
     />
   )
 }

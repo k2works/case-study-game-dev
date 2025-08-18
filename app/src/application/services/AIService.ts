@@ -6,6 +6,7 @@ import type {
   AIGameState,
   AIMove,
   AISettings,
+  MoveEvaluation,
   PossibleMove,
 } from '../../domain/models/ai/types'
 import type { AIPort } from '../ports/AIPort.ts'
@@ -88,10 +89,14 @@ export class AIService implements AIPort {
     }
 
     // 各手を評価
-    const evaluatedMoves = possibleMoves.map((move) => ({
-      ...move,
-      evaluationScore: this.evaluateMove(move, gameState),
-    }))
+    const evaluatedMoves = possibleMoves.map((move) => {
+      const evaluation = this.evaluateMoveDetailed(move, gameState)
+      return {
+        ...move,
+        evaluationScore: evaluation.totalScore,
+        evaluation,
+      }
+    })
 
     // 最高スコアの手を選択
     const bestMove = evaluatedMoves.reduce((best, current) =>
@@ -102,47 +107,77 @@ export class AIService implements AIPort {
       x: bestMove.x,
       rotation: bestMove.rotation,
       score: bestMove.evaluationScore,
+      evaluation: bestMove.evaluation,
     }
   }
 
   /**
-   * 手を評価する
+   * 手を詳細評価する
    */
-  private evaluateMove(move: PossibleMove, gameState: AIGameState): number {
+  private evaluateMoveDetailed(
+    move: PossibleMove,
+    gameState: AIGameState,
+  ): MoveEvaluation {
     if (!move.isValid) {
-      return -1000
+      return {
+        heightScore: -1000,
+        centerScore: 0,
+        modeScore: 0,
+        totalScore: -1000,
+        averageY: -1,
+        averageX: -1,
+        distanceFromCenter: 0,
+        reason: '無効な手',
+      }
     }
 
     const field = gameState.field
-    let score = 0
 
     // 高さベースの評価（下の位置ほど高スコア - y値が大きいほど良い）
     const avgY = (move.primaryPosition.y + move.secondaryPosition.y) / 2
-    score += avgY * 10 // y値が大きい（下の方）ほど高スコア
+    const heightScore = avgY * 10 // y値が大きい（下の方）ほど高スコア
 
     // 中央付近を優遇
     const centerX = (field.width - 1) / 2 // 6列なら中央は2.5
     const avgX = (move.primaryPosition.x + move.secondaryPosition.x) / 2
     const distanceFromCenter = Math.abs(centerX - avgX)
-    score += (field.width - distanceFromCenter) * 5
+    const centerScore = (field.width - distanceFromCenter) * 5
 
     // モード別の評価調整
+    let modeScore = 0
+    let modeReason = ''
+
     switch (this.settings.mode) {
       case 'aggressive':
         // より中央寄りを優遇
-        score += (field.width - distanceFromCenter) * 10
+        modeScore = (field.width - distanceFromCenter) * 10
+        modeReason = '攻撃型: 中央重視'
         break
       case 'defensive':
         // より下の位置を優遇
-        score += avgY * 15
+        modeScore = avgY * 15
+        modeReason = '防御型: 安定性重視'
         break
       case 'balanced':
       default:
-        // バランス重視（デフォルト評価）
+        modeReason = 'バランス型: 標準評価'
         break
     }
 
-    return score
+    const totalScore = heightScore + centerScore + modeScore
+
+    const reason = `位置(${move.x}, ${Math.round(avgY)}), ${modeReason}, スコア: ${Math.round(totalScore)}`
+
+    return {
+      heightScore,
+      centerScore,
+      modeScore,
+      totalScore,
+      averageY: avgY,
+      averageX: avgX,
+      distanceFromCenter,
+      reason,
+    }
   }
 
   /**
