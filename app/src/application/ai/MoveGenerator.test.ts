@@ -3,8 +3,8 @@
  */
 import { describe, expect, it } from 'vitest'
 
-import type { PuyoColor } from '../../domain/models/Puyo'
 import type { AIGameState } from '../../domain/ai/types'
+import type { PuyoColor } from '../../domain/models/Puyo'
 import { MoveGenerator } from './MoveGenerator'
 
 describe('MoveGenerator', () => {

@@ -179,13 +179,21 @@ export class MoveGenerator implements MoveGeneratorPort {
       secondary: { x: number; y: number }
     },
     field: { width: number; height: number; cells: (string | null)[][] },
-  ): { primaryX: number; secondaryX: number; primaryY: number; secondaryY: number } | null {
+  ): {
+    primaryX: number
+    secondaryX: number
+    primaryY: number
+    secondaryY: number
+  } | null {
     const { primary, secondary } = positions
 
     const primaryFinalY = this.calculateDropPosition(primary.x, field)
     const secondaryFinalY = this.calculateDropPosition(secondary.x, field)
 
-    if (!this.isValidDropY(primaryFinalY, field) || !this.isValidDropY(secondaryFinalY, field)) {
+    if (
+      !this.isValidDropY(primaryFinalY, field) ||
+      !this.isValidDropY(secondaryFinalY, field)
+    ) {
       return null
     }
 
@@ -216,7 +224,12 @@ export class MoveGenerator implements MoveGeneratorPort {
     primaryX: number,
     secondaryX: number,
     primaryFinalY: number,
-  ): { primaryX: number; secondaryX: number; primaryY: number; secondaryY: number } | null {
+  ): {
+    primaryX: number
+    secondaryX: number
+    primaryY: number
+    secondaryY: number
+  } | null {
     const adjustedSecondaryY = primaryFinalY - 1
     if (adjustedSecondaryY < 0) {
       return null
