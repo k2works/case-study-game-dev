@@ -3,7 +3,12 @@
  * アプリケーション層のAI制御サービス
  */
 import type { AIPort, MoveGeneratorPort } from '../../domain/ai/ports'
-import type { AIGameState, AIMove, AISettings, PossibleMove } from '../../domain/ai/types'
+import type {
+  AIGameState,
+  AIMove,
+  AISettings,
+  PossibleMove,
+} from '../../domain/ai/types'
 import { MoveGenerator } from './MoveGenerator'
 
 /**
@@ -36,7 +41,7 @@ export class AIService implements AIPort {
 
     // 可能な手を生成
     const possibleMoves = this.moveGenerator.generateMoves(gameState)
-    
+
     // 最適な手を選択
     const bestMove = this.selectBestMove(possibleMoves, gameState)
     return bestMove
@@ -102,10 +107,7 @@ export class AIService implements AIPort {
   /**
    * 手を評価する
    */
-  private evaluateMove(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): number {
+  private evaluateMove(move: PossibleMove, gameState: AIGameState): number {
     if (!move.isValid) {
       return -1000
     }

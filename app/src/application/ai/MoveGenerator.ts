@@ -31,7 +31,7 @@ export class MoveGenerator implements MoveGeneratorPort {
       }
     }
 
-    return moves.filter((move) => move.isValid)
+    return moves
   }
 
   /**
@@ -95,7 +95,10 @@ export class MoveGenerator implements MoveGeneratorPort {
     x: number,
     rotation: number,
     field: { width: number; height: number },
-  ): { primary: { x: number; y: number }; secondary: { x: number; y: number } } | null {
+  ): {
+    primary: { x: number; y: number }
+    secondary: { x: number; y: number }
+  } | null {
     // フィールド境界チェック
     if (x < 0 || x >= field.width) {
       return null
@@ -124,7 +127,10 @@ export class MoveGenerator implements MoveGeneratorPort {
    * 境界チェック
    */
   private isWithinBounds(
-    positions: { primary: { x: number; y: number }; secondary: { x: number; y: number } },
+    positions: {
+      primary: { x: number; y: number }
+      secondary: { x: number; y: number }
+    },
     field: { width: number; height: number },
   ): boolean {
     const { primary, secondary } = positions
@@ -140,43 +146,98 @@ export class MoveGenerator implements MoveGeneratorPort {
    * 配置が有効かどうかをチェック
    */
   private isValidPlacement(
-    positions: { primary: { x: number; y: number }; secondary: { x: number; y: number } },
+    positions: {
+      primary: { x: number; y: number }
+      secondary: { x: number; y: number }
+    },
     field: { width: number; height: number; cells: (string | null)[][] },
   ): boolean {
     if (!this.isWithinBounds(positions, field)) {
       return false
     }
 
-    const { primary, secondary } = positions
-
-    // 各ぷよの落下先を計算
-    const primaryFinalY = this.calculateDropPosition(primary.x, field)
-    const secondaryFinalY = this.calculateDropPosition(secondary.x, field)
-
-    // 落下先が有効範囲内かチェック
-    if (
-      primaryFinalY < 0 ||
-      primaryFinalY >= field.height ||
-      secondaryFinalY < 0 ||
-      secondaryFinalY >= field.height
-    ) {
+    const finalPositions = this.calculateFinalDropPositions(positions, field)
+    if (!finalPositions) {
       return false
     }
 
-    // 配置可能性をチェック
     return this.canPlacePuyoPair(
-      primary.x,
-      secondary.x,
-      primaryFinalY,
-      secondaryFinalY,
+      finalPositions.primaryX,
+      finalPositions.secondaryX,
+      finalPositions.primaryY,
+      finalPositions.secondaryY,
       field,
     )
   }
 
   /**
+   * 最終的な落下位置を計算
+   */
+  private calculateFinalDropPositions(
+    positions: {
+      primary: { x: number; y: number }
+      secondary: { x: number; y: number }
+    },
+    field: { width: number; height: number; cells: (string | null)[][] },
+  ): { primaryX: number; secondaryX: number; primaryY: number; secondaryY: number } | null {
+    const { primary, secondary } = positions
+
+    const primaryFinalY = this.calculateDropPosition(primary.x, field)
+    const secondaryFinalY = this.calculateDropPosition(secondary.x, field)
+
+    if (!this.isValidDropY(primaryFinalY, field) || !this.isValidDropY(secondaryFinalY, field)) {
+      return null
+    }
+
+    // 上向き回転の特別処理
+    if (secondary.y < 0) {
+      return this.handleUpwardRotation(primary.x, secondary.x, primaryFinalY)
+    }
+
+    return {
+      primaryX: primary.x,
+      secondaryX: secondary.x,
+      primaryY: primaryFinalY,
+      secondaryY: secondaryFinalY,
+    }
+  }
+
+  /**
+   * Y座標が有効な落下位置かチェック
+   */
+  private isValidDropY(y: number, field: { height: number }): boolean {
+    return y >= 0 && y < field.height
+  }
+
+  /**
+   * 上向き回転（0度）の処理
+   */
+  private handleUpwardRotation(
+    primaryX: number,
+    secondaryX: number,
+    primaryFinalY: number,
+  ): { primaryX: number; secondaryX: number; primaryY: number; secondaryY: number } | null {
+    const adjustedSecondaryY = primaryFinalY - 1
+    if (adjustedSecondaryY < 0) {
+      return null
+    }
+
+    return {
+      primaryX,
+      secondaryX,
+      primaryY: primaryFinalY,
+      secondaryY: adjustedSecondaryY,
+    }
+  }
+
+  /**
    * 指定列での落下位置を計算
    */
-  private calculateDropPosition(x: number, field: { height: number; cells: (string | null)[][] }): number {
+  private calculateDropPosition(
+    x: number,
+    field: { height: number; cells: (string | null)[][] },
+  ): number {
+    // 下から上に向かって空いている最も下の位置を探す
     for (let y = field.height - 1; y >= 0; y--) {
       if (field.cells[x] && field.cells[x][y] === null) {
         return y
@@ -201,8 +262,10 @@ export class MoveGenerator implements MoveGeneratorPort {
     }
 
     // 各位置が空いているかチェック
-    const isPrimaryEmpty = field.cells[primaryX] && field.cells[primaryX][primaryY] === null
-    const isSecondaryEmpty = field.cells[secondaryX] && field.cells[secondaryX][secondaryY] === null
+    const isPrimaryEmpty =
+      field.cells[primaryX] && field.cells[primaryX][primaryY] === null
+    const isSecondaryEmpty =
+      field.cells[secondaryX] && field.cells[secondaryX][secondaryY] === null
 
     return isPrimaryEmpty && isSecondaryEmpty
   }
