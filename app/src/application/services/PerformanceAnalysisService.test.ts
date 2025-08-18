@@ -124,6 +124,7 @@ describe('PerformanceAnalysisService', () => {
         averageChain: 5.0,
         chainSuccessRate: 0.8,
         averagePlayTime: 300000,
+        gameResults: [],
       })
     })
 
@@ -291,6 +292,7 @@ describe('PerformanceAnalysisService', () => {
         averageChain: 0,
         chainSuccessRate: 0,
         averagePlayTime: 0,
+        gameResults: [],
       })
     })
   })

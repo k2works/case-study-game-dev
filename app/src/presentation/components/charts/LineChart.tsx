@@ -81,7 +81,7 @@ export function LineChart({
       </h3>
       <ResponsiveContainer width={width || '100%'} height={height}>
         <RechartsLineChart
-          data={data.data as Array<Record<string, string | number | Date>>}
+          data={[...data.data] as Array<Record<string, string | number | Date>>}
           margin={{
             top: 5,
             right: 30,
