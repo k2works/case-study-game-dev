@@ -1,7 +1,7 @@
 /**
  * AI関連のポート定義
  */
-import type { AIGameState, AIMove, AISettings } from './types'
+import type { AIGameState, AIMove, AISettings, PossibleMove } from './types'
 
 /**
  * AIポート
@@ -19,4 +19,13 @@ export interface AIPort {
 
   /** AIを有効化/無効化 */
   setEnabled(enabled: boolean): void
+}
+
+/**
+ * 手生成ポート
+ * 可能な手を生成するインターフェース
+ */
+export interface MoveGeneratorPort {
+  /** 可能な手を生成 */
+  generateMoves(gameState: AIGameState): PossibleMove[]
 }

@@ -2,8 +2,9 @@
  * AIサービス
  * アプリケーション層のAI制御サービス
  */
-import type { AIPort } from '../../domain/ai/ports'
-import type { AIGameState, AIMove, AISettings } from '../../domain/ai/types'
+import type { AIPort, MoveGeneratorPort } from '../../domain/ai/ports'
+import type { AIGameState, AIMove, AISettings, PossibleMove } from '../../domain/ai/types'
+import { MoveGenerator } from './MoveGenerator'
 
 /**
  * AIサービス実装
@@ -11,6 +12,7 @@ import type { AIGameState, AIMove, AISettings } from '../../domain/ai/types'
 export class AIService implements AIPort {
   private settings: AISettings
   private enabled = false
+  private moveGenerator: MoveGeneratorPort
 
   constructor() {
     this.settings = {
@@ -18,6 +20,7 @@ export class AIService implements AIPort {
       thinkingSpeed: 1000,
       mode: 'balanced',
     }
+    this.moveGenerator = new MoveGenerator()
   }
 
   /**
@@ -31,8 +34,11 @@ export class AIService implements AIPort {
     // 思考速度の遅延をシミュレート
     await this.delay(this.settings.thinkingSpeed)
 
-    // シンプルな戦略: 一番低い列に配置
-    const bestMove = this.findBestMove(gameState)
+    // 可能な手を生成
+    const possibleMoves = this.moveGenerator.generateMoves(gameState)
+    
+    // 最適な手を選択
+    const bestMove = this.selectBestMove(possibleMoves, gameState)
     return bestMove
   }
 
@@ -60,43 +66,80 @@ export class AIService implements AIPort {
   }
 
   /**
-   * 最適な手を見つける（シンプルな実装）
+   * 可能な手から最適な手を選択
    */
-  private findBestMove(gameState: AIGameState): AIMove {
-    const field = gameState.field
-    const width = field.width
-
-    // 各列の高さを計算
-    const columnHeights: number[] = []
-    for (let x = 0; x < width; x++) {
-      let height = 0
-      for (let y = 0; y < field.height; y++) {
-        if (field.cells[x] && field.cells[x][y] !== null) {
-          height = field.height - y
-          break
-        }
-      }
-      columnHeights[x] = height
-    }
-
-    // 最も低い列を見つける
-    let bestX = 0
-    let minHeight = columnHeights[0]
-    for (let x = 1; x < width; x++) {
-      if (columnHeights[x] < minHeight) {
-        minHeight = columnHeights[x]
-        bestX = x
+  private selectBestMove(
+    possibleMoves: PossibleMove[],
+    gameState: AIGameState,
+  ): AIMove {
+    if (possibleMoves.length === 0) {
+      // デフォルトの手を返す
+      return {
+        x: 0,
+        rotation: 0,
+        score: 0,
       }
     }
 
-    // 評価スコア（高さが低いほど高スコア）
-    const score = 100 - minHeight * 10
+    // 各手を評価
+    const evaluatedMoves = possibleMoves.map((move) => ({
+      ...move,
+      evaluationScore: this.evaluateMove(move, gameState),
+    }))
+
+    // 最高スコアの手を選択
+    const bestMove = evaluatedMoves.reduce((best, current) =>
+      current.evaluationScore > best.evaluationScore ? current : best,
+    )
 
     return {
-      x: bestX,
-      rotation: 0, // シンプルに回転なし
-      score,
+      x: bestMove.x,
+      rotation: bestMove.rotation,
+      score: bestMove.evaluationScore,
     }
+  }
+
+  /**
+   * 手を評価する
+   */
+  private evaluateMove(
+    move: PossibleMove,
+    gameState: AIGameState,
+  ): number {
+    if (!move.isValid) {
+      return -1000
+    }
+
+    const field = gameState.field
+    let score = 0
+
+    // 高さベースの評価（低い位置ほど高スコア）
+    const avgHeight = (move.primaryPosition.y + move.secondaryPosition.y) / 2
+    score += (field.height - avgHeight) * 10
+
+    // 中央付近を優遇
+    const centerX = field.width / 2
+    const avgX = (move.primaryPosition.x + move.secondaryPosition.x) / 2
+    const distanceFromCenter = Math.abs(centerX - avgX)
+    score += (field.width - distanceFromCenter) * 5
+
+    // モード別の評価調整
+    switch (this.settings.mode) {
+      case 'aggressive':
+        // より中央寄りを優遇
+        score += (field.width - distanceFromCenter) * 10
+        break
+      case 'defensive':
+        // より低い位置を優遇
+        score += (field.height - avgHeight) * 15
+        break
+      case 'balanced':
+      default:
+        // バランス重視（デフォルト評価）
+        break
+    }
+
+    return score
   }
 
   /**
