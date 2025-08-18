@@ -59,14 +59,28 @@ export class MoveGenerator implements MoveGeneratorPort {
       }
     }
 
-    const isValid = this.isValidPlacement(positions, field)
+    const finalPositions = this.calculateFinalDropPositions(positions, field)
+    const isValid = finalPositions !== null
+
+    // 実際の落下後の位置を返す
+    const finalPrimary = finalPositions
+      ? { x: finalPositions.primaryX, y: finalPositions.primaryY }
+      : { x: -1, y: -1 }
+    const finalSecondary = finalPositions
+      ? { x: finalPositions.secondaryX, y: finalPositions.secondaryY }
+      : { x: -1, y: -1 }
+
+    console.log(`Move generation: x=${x}, rotation=${rotation}, valid=${isValid}`, {
+      initialPositions: positions,
+      finalPositions: { finalPrimary, finalSecondary },
+    })
 
     return {
       x,
       rotation,
       isValid,
-      primaryPosition: positions.primary,
-      secondaryPosition: positions.secondary,
+      primaryPosition: finalPrimary,
+      secondaryPosition: finalSecondary,
     }
   }
 

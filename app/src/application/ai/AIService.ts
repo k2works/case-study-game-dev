@@ -78,7 +78,7 @@ export class AIService implements AIPort {
     gameState: AIGameState,
   ): AIMove {
     if (possibleMoves.length === 0) {
-      // デフォルトの手を返す
+      console.warn('No possible moves available')
       return {
         x: 0,
         rotation: 0,
@@ -92,10 +92,25 @@ export class AIService implements AIPort {
       evaluationScore: this.evaluateMove(move, gameState),
     }))
 
+    console.log('All evaluated moves:', evaluatedMoves.map(move => ({
+      x: move.x,
+      rotation: move.rotation,
+      isValid: move.isValid,
+      score: move.evaluationScore,
+      primaryPos: move.primaryPosition,
+      secondaryPos: move.secondaryPosition,
+    })))
+
     // 最高スコアの手を選択
     const bestMove = evaluatedMoves.reduce((best, current) =>
       current.evaluationScore > best.evaluationScore ? current : best,
     )
+
+    console.log('Best move selected:', {
+      x: bestMove.x,
+      rotation: bestMove.rotation,
+      score: bestMove.evaluationScore,
+    })
 
     return {
       x: bestMove.x,
@@ -109,18 +124,19 @@ export class AIService implements AIPort {
    */
   private evaluateMove(move: PossibleMove, gameState: AIGameState): number {
     if (!move.isValid) {
+      console.log(`Invalid move: x=${move.x}, rotation=${move.rotation}`)
       return -1000
     }
 
     const field = gameState.field
     let score = 0
 
-    // 高さベースの評価（低い位置ほど高スコア）
-    const avgHeight = (move.primaryPosition.y + move.secondaryPosition.y) / 2
-    score += (field.height - avgHeight) * 10
+    // 高さベースの評価（下の位置ほど高スコア - y値が大きいほど良い）
+    const avgY = (move.primaryPosition.y + move.secondaryPosition.y) / 2
+    score += avgY * 10 // y値が大きい（下の方）ほど高スコア
 
     // 中央付近を優遇
-    const centerX = field.width / 2
+    const centerX = (field.width - 1) / 2 // 6列なら中央は2.5
     const avgX = (move.primaryPosition.x + move.secondaryPosition.x) / 2
     const distanceFromCenter = Math.abs(centerX - avgX)
     score += (field.width - distanceFromCenter) * 5
@@ -132,14 +148,23 @@ export class AIService implements AIPort {
         score += (field.width - distanceFromCenter) * 10
         break
       case 'defensive':
-        // より低い位置を優遇
-        score += (field.height - avgHeight) * 15
+        // より下の位置を優遇
+        score += avgY * 15
         break
       case 'balanced':
       default:
         // バランス重視（デフォルト評価）
         break
     }
+
+    console.log(`Move evaluation: x=${move.x}, rotation=${move.rotation}`, {
+      avgY,
+      avgX,
+      distanceFromCenter,
+      score,
+      primaryPos: move.primaryPosition,
+      secondaryPos: move.secondaryPosition,
+    })
 
     return score
   }
