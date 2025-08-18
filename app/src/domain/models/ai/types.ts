@@ -118,3 +118,97 @@ export interface MoveEvaluation {
   /** 評価理由 */
   reason: string
 }
+
+/**
+ * ゲームセッション
+ */
+export interface GameSession {
+  /** セッションID */
+  id: string
+  /** 開始時刻 */
+  startTime: Date
+  /** 終了時刻 */
+  endTime: Date
+  /** 最終スコア */
+  finalScore: number
+  /** 最大連鎖数 */
+  maxChain: number
+  /** 総手数 */
+  totalMoves: number
+  /** AIが有効だったか */
+  aiEnabled: boolean
+  /** プレイヤータイプ */
+  playerType: 'ai' | 'human'
+}
+
+/**
+ * パフォーマンスデータ
+ */
+export interface PerformanceData {
+  /** 総ゲーム数 */
+  totalGames: number
+  /** 総スコア */
+  totalScore: number
+  /** 総連鎖数 */
+  totalChains: number
+  /** セッション履歴 */
+  sessions: GameSession[]
+}
+
+/**
+ * パフォーマンス比較レポート
+ */
+export interface PerformanceReport {
+  /** AI統計 */
+  ai: {
+    avgScore: number
+    avgChain: number
+    gamesPlayed: number
+    avgPlayTime: number
+    chainSuccessRate: number
+  }
+  /** 人間統計 */
+  human: {
+    avgScore: number
+    avgChain: number
+    gamesPlayed: number
+    avgPlayTime: number
+    chainSuccessRate: number
+  }
+  /** 比較データ */
+  comparison: {
+    scoreRatio: number
+    chainRatio: number
+    playTimeRatio: number
+  }
+}
+
+/**
+ * AI戦略
+ */
+export interface AIStrategy {
+  /** 戦略ID */
+  id: string
+  /** 戦略名 */
+  name: string
+  /** 戦略説明 */
+  description: string
+  /** パラメータ */
+  parameters: AIStrategyParameters
+}
+
+/**
+ * AI戦略パラメータ
+ */
+export interface AIStrategyParameters {
+  /** 攻撃性 (0-100) */
+  aggressiveness: number
+  /** 防御性 (0-100) */
+  defensiveness: number
+  /** 連鎖重視度 (0-100) */
+  chainFocus: number
+  /** 高さ制御重要度 (0-100) */
+  heightControl: number
+  /** 中央配置重要度 (0-100) */
+  centerPriority: number
+}
