@@ -92,28 +92,10 @@ export class AIService implements AIPort {
       evaluationScore: this.evaluateMove(move, gameState),
     }))
 
-    console.log(
-      'All evaluated moves:',
-      evaluatedMoves.map((move) => ({
-        x: move.x,
-        rotation: move.rotation,
-        isValid: move.isValid,
-        score: move.evaluationScore,
-        primaryPos: move.primaryPosition,
-        secondaryPos: move.secondaryPosition,
-      })),
-    )
-
     // 最高スコアの手を選択
     const bestMove = evaluatedMoves.reduce((best, current) =>
       current.evaluationScore > best.evaluationScore ? current : best,
     )
-
-    console.log('Best move selected:', {
-      x: bestMove.x,
-      rotation: bestMove.rotation,
-      score: bestMove.evaluationScore,
-    })
 
     return {
       x: bestMove.x,
@@ -127,7 +109,6 @@ export class AIService implements AIPort {
    */
   private evaluateMove(move: PossibleMove, gameState: AIGameState): number {
     if (!move.isValid) {
-      console.log(`Invalid move: x=${move.x}, rotation=${move.rotation}`)
       return -1000
     }
 
@@ -159,15 +140,6 @@ export class AIService implements AIPort {
         // バランス重視（デフォルト評価）
         break
     }
-
-    console.log(`Move evaluation: x=${move.x}, rotation=${move.rotation}`, {
-      avgY,
-      avgX,
-      distanceFromCenter,
-      score,
-      primaryPos: move.primaryPosition,
-      secondaryPos: move.secondaryPosition,
-    })
 
     return score
   }

@@ -222,7 +222,6 @@ const GameLayout = ({
   handleReset,
   aiEnabled,
   aiSettings,
-  aiService,
   onToggleAI,
   onAISettingsChange,
 }: {
@@ -257,27 +256,6 @@ const GameLayout = ({
                 onToggleAI={onToggleAI}
                 onSettingsChange={onAISettingsChange}
               />
-
-              {/* デバッグ情報（開発環境のみ） */}
-              {import.meta.env.DEV && (
-                <div className="mt-4 p-3 bg-black/20 rounded-lg text-xs text-white">
-                  <div className="font-bold mb-2">Debug Info</div>
-                  <div>Game State: {game.state}</div>
-                  <div>AI Enabled: {aiEnabled ? 'Yes' : 'No'}</div>
-                  <div>
-                    AI Service: {aiService.isEnabled() ? 'Enabled' : 'Disabled'}
-                  </div>
-                  <div>
-                    Has Current Puyo: {game.currentPuyoPair ? 'Yes' : 'No'}
-                  </div>
-                  {game.currentPuyoPair && (
-                    <div>
-                      Puyo Position: ({game.currentPuyoPair.x},{' '}
-                      {game.currentPuyoPair.y})
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* ゲーム制御ボタン */}
               <GameControlButtons
@@ -355,25 +333,13 @@ function App() {
   }
 
   const updateGame = useCallback((newGame: GameViewModel) => {
-    console.log('Game state updated:', {
-      state: newGame.state,
-      hasCurrentPuyo: !!newGame.currentPuyoPair,
-      currentPuyoPos: newGame.currentPuyoPair
-        ? { x: newGame.currentPuyoPair.x, y: newGame.currentPuyoPair.y }
-        : null,
-    })
     setGame(newGame)
   }, [])
 
   // AIService初期化
   useEffect(() => {
-    console.log('Initializing AI Service:', { aiSettings, aiEnabled })
     aiService.updateSettings(aiSettings)
     aiService.setEnabled(aiEnabled)
-    console.log('AI Service state after init:', {
-      isEnabled: aiService.isEnabled(),
-      settings: aiSettings,
-    })
   }, [aiService, aiSettings, aiEnabled])
 
   // キーボード入力を作成するヘルパー関数
@@ -451,7 +417,6 @@ function App() {
       const targetRotation = aiMove.rotation
       let updatedGame = game
 
-      console.log(`Rotating from ${currentRotation} to ${targetRotation}`)
       const rotationSteps =
         ((targetRotation - currentRotation + 360) % 360) / 90
       for (let i = 0; i < rotationSteps; i++) {
@@ -464,15 +429,12 @@ function App() {
 
       // 横移動実行
       const currentX = updatedGame.currentPuyoPair?.x || 0
-      console.log(`Moving from x=${currentX} to x=${aiMove.x}`)
       updatedGame = executeHorizontalMoves(updatedGame, currentX, aiMove.x)
-      console.log('After horizontal moves:', updatedGame.currentPuyoPair?.x)
 
       // ドロップ実行
       const dropInput = createKeyboardInput('ArrowDown', 'ArrowDown')
       const dropAction = inputService.processKeyboardInput(dropInput)
       if (dropAction) {
-        console.log('Executing drop action:', dropAction)
         updatedGame = gameService.updateGameState(updatedGame, dropAction)
       }
 
@@ -483,19 +445,7 @@ function App() {
 
   // AI自動プレイのロジック
   const executeAIMove = useCallback(async () => {
-    console.log('executeAIMove called', {
-      aiEnabled,
-      gameState: game.state,
-      hasCurrentPuyo: !!game.currentPuyoPair,
-      aiServiceEnabled: aiService.isEnabled(),
-    })
-
     if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
-      console.log('executeAIMove early return:', {
-        aiEnabled,
-        gameState: game.state,
-        hasCurrentPuyo: !!game.currentPuyoPair,
-      })
       return
     }
 
@@ -506,16 +456,11 @@ function App() {
 
     try {
       const aiGameState = convertToAIGameState(game)
-      console.log('AI Game State:', aiGameState)
 
       const aiMove = await aiService.decideMove(aiGameState)
-      console.log('AI Move decision:', aiMove)
 
       const updatedGame = executeAIMoveActions(game, aiMove)
-      console.log(
-        'Final game state after AI move:',
-        updatedGame.currentPuyoPair,
-      )
+
       updateGame(updatedGame)
     } catch (error) {
       console.error('AI move execution failed:', error)
@@ -531,17 +476,9 @@ function App() {
 
   // AI自動プレイのタイマー管理
   useEffect(() => {
-    console.log('AI Timer effect:', {
-      aiEnabled,
-      gameState: game.state,
-      thinkingSpeed: aiSettings.thinkingSpeed,
-    })
-
     if (aiEnabled && game.state === 'playing') {
-      console.log('Starting AI timer with interval:', aiSettings.thinkingSpeed)
       aiTimerRef.current = setInterval(executeAIMove, aiSettings.thinkingSpeed)
     } else {
-      console.log('Stopping AI timer')
       if (aiTimerRef.current) {
         clearInterval(aiTimerRef.current)
         aiTimerRef.current = null
@@ -570,7 +507,6 @@ function App() {
   const handleToggleAI = useCallback(() => {
     const newEnabled = !aiEnabled
     const newSettings = { ...aiSettings, enabled: newEnabled }
-    console.log('AI Toggle:', { from: aiEnabled, to: newEnabled, newSettings })
     setAiEnabled(newEnabled)
     setAiSettings(newSettings)
     aiService.updateSettings(newSettings)
@@ -578,15 +514,9 @@ function App() {
 
     // AIを有効にしたときにゲームが開始状態でなければ自動開始
     if (newEnabled && game.state !== 'playing') {
-      console.log('Auto-starting game for AI')
       const newGame = gameService.startNewGame()
       updateGame(newGame)
     }
-
-    console.log('AI Service after toggle:', {
-      isEnabled: aiService.isEnabled(),
-      gameState: game.state,
-    })
   }, [aiEnabled, aiSettings, aiService, game.state, gameService, updateGame])
 
   const handleAISettingsChange = useCallback(

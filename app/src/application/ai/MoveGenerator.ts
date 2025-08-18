@@ -70,14 +70,6 @@ export class MoveGenerator implements MoveGeneratorPort {
       ? { x: finalPositions.secondaryX, y: finalPositions.secondaryY }
       : { x: -1, y: -1 }
 
-    console.log(
-      `Move generation: x=${x}, rotation=${rotation}, valid=${isValid}`,
-      {
-        initialPositions: positions,
-        finalPositions: { finalPrimary, finalSecondary },
-      },
-    )
-
     return {
       x,
       rotation,
