@@ -21,6 +21,18 @@ export interface GameSessionData {
 }
 
 /**
+ * ゲーム結果データ
+ */
+export interface GameResultData {
+  id: string
+  score: number
+  chain: number
+  playTime: number
+  timestamp: Date
+  isAI: boolean
+}
+
+/**
  * パフォーマンス統計
  */
 export interface PerformanceStatistics {
@@ -29,6 +41,7 @@ export interface PerformanceStatistics {
   averageChain: number
   chainSuccessRate: number
   averagePlayTime: number
+  gameResults: GameResultData[]
 }
 
 /**
@@ -75,6 +88,16 @@ export class PerformanceAnalysisService {
   getPerformanceStatistics(): PerformanceStatistics {
     const data = this.performancePort.getPerformanceData()
 
+    // ゲーム結果データを生成
+    const gameResults: GameResultData[] = data.sessions.map((session, index) => ({
+      id: `game-${index + 1}`,
+      score: session.finalScore,
+      chain: session.maxChain,
+      playTime: session.endTime.getTime() - session.startTime.getTime(),
+      timestamp: session.endTime,
+      isAI: session.aiEnabled,
+    }))
+
     try {
       return {
         totalGames: data.totalGames,
@@ -82,6 +105,7 @@ export class PerformanceAnalysisService {
         averageChain: this.performancePort.getAverageChain(),
         chainSuccessRate: this.performancePort.getChainSuccessRate(),
         averagePlayTime: this.performancePort.getAveragePlayTime(),
+        gameResults,
       }
     } catch (error) {
       // データが不十分な場合はデフォルト値を返す
@@ -92,6 +116,7 @@ export class PerformanceAnalysisService {
         averageChain: 0,
         chainSuccessRate: 0,
         averagePlayTime: 0,
+        gameResults,
       }
     }
   }

@@ -1,8 +1,14 @@
 /**
  * パフォーマンス分析コンポーネント
  */
+import { useState } from 'react'
+
+import { ChartDataService } from '../../application/services/ChartDataService'
 import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
+import type { PerformanceMetricType } from '../../application/services/ChartDataService'
 import type { PerformanceReport } from '../../domain/models/ai/types'
+
+import { LineChart } from './charts/LineChart'
 
 interface PerformanceAnalysisProps {
   statistics: PerformanceStatistics
@@ -42,6 +48,10 @@ export function PerformanceAnalysis({
   comparisonReport,
   onResetData,
 }: PerformanceAnalysisProps) {
+  // チャート表示設定
+  const [selectedMetric, setSelectedMetric] = useState<PerformanceMetricType>('score')
+  const [showCharts, setShowCharts] = useState(false)
+
   // データが空の場合
   if (statistics.totalGames === 0) {
     return (
@@ -59,16 +69,28 @@ export function PerformanceAnalysis({
     )
   }
 
+  // チャートデータの生成
+  const performanceChartData = ChartDataService.createPerformanceLineChart(statistics, selectedMetric)
+  const comparisonChartData = ChartDataService.createComparisonChart(comparisonReport)
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-gray-800">パフォーマンス分析</h3>
-        <button
-          onClick={onResetData}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-        >
-          データをリセット
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowCharts(!showCharts)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            {showCharts ? 'チャートを非表示' : 'チャートを表示'}
+          </button>
+          <button
+            onClick={onResetData}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          >
+            データをリセット
+          </button>
+        </div>
       </div>
 
       {/* 全体統計 */}
@@ -109,6 +131,43 @@ export function PerformanceAnalysis({
           </div>
         </div>
       </div>
+
+      {/* チャートセクション */}
+      {showCharts && (
+        <div className="mb-8">
+          <h4 className="text-lg font-semibold text-gray-700 mb-4">
+            データ可視化
+          </h4>
+          
+          {/* メトリック選択 */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              表示メトリック
+            </label>
+            <select
+              value={selectedMetric}
+              onChange={(e) => setSelectedMetric(e.target.value as PerformanceMetricType)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="score">スコア推移</option>
+              <option value="chain">連鎖数推移</option>
+              <option value="playTime">プレイ時間推移</option>
+            </select>
+          </div>
+
+          {/* パフォーマンス推移チャート */}
+          <div className="mb-6">
+            <LineChart data={performanceChartData} height={300} />
+          </div>
+
+          {/* AI vs 人間比較チャート */}
+          {comparisonChartData.data.length > 0 && (
+            <div className="mb-6">
+              <LineChart data={comparisonChartData} height={300} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* AI vs 人間比較 */}
       <div>

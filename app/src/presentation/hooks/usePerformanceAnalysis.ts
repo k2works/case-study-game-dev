@@ -33,6 +33,7 @@ export function usePerformanceAnalysis({
     averageChain: 0,
     chainSuccessRate: 0,
     averagePlayTime: 0,
+    gameResults: [],
   })
 
   const [comparisonReport, setComparisonReport] = useState<PerformanceReport>({

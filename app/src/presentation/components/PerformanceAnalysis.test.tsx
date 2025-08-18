@@ -19,6 +19,7 @@ describe('PerformanceAnalysis', () => {
         averageChain: 5.2,
         chainSuccessRate: 0.7,
         averagePlayTime: 300000, // 5分
+        gameResults: [],
       }
 
       const mockReport: PerformanceReport = {
@@ -68,6 +69,7 @@ describe('PerformanceAnalysis', () => {
         averageChain: 5.2,
         chainSuccessRate: 0.7,
         averagePlayTime: 300000,
+        gameResults: [],
       }
 
       const mockReport: PerformanceReport = {
@@ -117,6 +119,7 @@ describe('PerformanceAnalysis', () => {
         averageChain: 0,
         chainSuccessRate: 0,
         averagePlayTime: 0,
+        gameResults: [],
       }
 
       const emptyReport: PerformanceReport = {
@@ -162,6 +165,7 @@ describe('PerformanceAnalysis', () => {
         averageChain: 4.5,
         chainSuccessRate: 0.6,
         averagePlayTime: 270000, // 4分30秒
+        gameResults: [],
       }
 
       const mockReport: PerformanceReport = {
@@ -209,6 +213,7 @@ describe('PerformanceAnalysis', () => {
         averageChain: 4.0,
         chainSuccessRate: 0.6,
         averagePlayTime: 240000,
+        gameResults: [],
       }
 
       const mockReport: PerformanceReport = {
@@ -259,6 +264,7 @@ describe('PerformanceAnalysis', () => {
         averageChain: 4.0,
         chainSuccessRate: 0.6,
         averagePlayTime: 240000,
+        gameResults: [],
       }
 
       const mockReport: PerformanceReport = {
