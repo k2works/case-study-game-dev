@@ -4,8 +4,14 @@
  */
 import { useState } from 'react'
 
-import type { StrategyConfig, StrategyParameters } from '../../domain/models/ai/StrategyConfig'
-import type { StrategyService, CreateStrategyRequest } from '../../application/services/StrategyService'
+import type {
+  CreateStrategyRequest,
+  StrategyService,
+} from '../../application/services/StrategyService'
+import type {
+  StrategyConfig,
+  StrategyParameters,
+} from '../../domain/models/ai/StrategyConfig'
 import { useStrategy } from '../hooks/useStrategy'
 
 interface StrategySettingsProps {
@@ -34,7 +40,8 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [strategyToDelete, setStrategyToDelete] = useState<StrategyConfig | null>(null)
+  const [strategyToDelete, setStrategyToDelete] =
+    useState<StrategyConfig | null>(null)
   const [createFormData, setCreateFormData] = useState<CreateStrategyFormData>({
     name: '',
     description: '',
@@ -113,8 +120,11 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
   /**
    * パラメータ値の変更
    */
-  const handleParameterChange = (key: keyof StrategyParameters, value: number) => {
-    setCreateFormData(prev => ({
+  const handleParameterChange = (
+    key: keyof StrategyParameters,
+    value: number,
+  ) => {
+    setCreateFormData((prev) => ({
       ...prev,
       parameters: {
         ...prev.parameters,
@@ -153,7 +163,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
       </div>
 
       <div className="space-y-2">
-        {strategies.map(strategy => (
+        {strategies.map((strategy) => (
           <div
             key={strategy.id}
             data-testid="strategy-item"
@@ -174,8 +184,10 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{strategy.description}</p>
-                
+                <p className="text-sm text-gray-600 mt-1">
+                  {strategy.description}
+                </p>
+
                 {/* パラメータ表示 */}
                 <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-500">
                   <div>連鎖優先度: {strategy.parameters.chainPriority}</div>
@@ -210,7 +222,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">新しいカスタム戦略</h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -220,7 +232,12 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                   type="text"
                   placeholder="戦略名を入力"
                   value={createFormData.name}
-                  onChange={(e) => setCreateFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setCreateFormData((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -232,7 +249,12 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                 <textarea
                   placeholder="戦略の説明を入力"
                   value={createFormData.description}
-                  onChange={(e) => setCreateFormData(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setCreateFormData((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
                 />
@@ -241,7 +263,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
               {/* パラメータ設定 */}
               <div className="space-y-3">
                 <h4 className="font-medium text-gray-800">パラメータ設定</h4>
-                
+
                 {Object.entries({
                   chainPriority: '連鎖優先度',
                   speedPriority: 'スピード優先度',
@@ -251,16 +273,33 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                   centerPriority: '中央重視',
                 }).map(([key, label]) => (
                   <div key={key}>
-                    <label className="block text-sm text-gray-600 mb-1" htmlFor={`param-${key}`}>
-                      {label}: {createFormData.parameters[key as keyof StrategyParameters]}
+                    <label
+                      className="block text-sm text-gray-600 mb-1"
+                      htmlFor={`param-${key}`}
+                    >
+                      {label}:{' '}
+                      {
+                        createFormData.parameters[
+                          key as keyof StrategyParameters
+                        ]
+                      }
                     </label>
                     <input
                       id={`param-${key}`}
                       type="range"
                       min="0"
                       max="100"
-                      value={createFormData.parameters[key as keyof StrategyParameters]}
-                      onChange={(e) => handleParameterChange(key as keyof StrategyParameters, parseInt(e.target.value))}
+                      value={
+                        createFormData.parameters[
+                          key as keyof StrategyParameters
+                        ]
+                      }
+                      onChange={(e) =>
+                        handleParameterChange(
+                          key as keyof StrategyParameters,
+                          parseInt(e.target.value),
+                        )
+                      }
                       className="w-full"
                       aria-label={label}
                     />
@@ -278,7 +317,10 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
               </button>
               <button
                 onClick={handleCreateStrategy}
-                disabled={!createFormData.name.trim() || !createFormData.description.trim()}
+                disabled={
+                  !createFormData.name.trim() ||
+                  !createFormData.description.trim()
+                }
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 作成
@@ -294,7 +336,8 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
             <h3 className="text-lg font-semibold mb-2">戦略を削除</h3>
             <p className="text-gray-600 mb-4">
-              「{strategyToDelete.name}」を削除しますか？この操作は取り消せません。
+              「{strategyToDelete.name}
+              」を削除しますか？この操作は取り消せません。
             </p>
             <div className="flex space-x-2">
               <button

@@ -5,7 +5,11 @@
 import type { StoragePort } from '../../application/ports/StoragePort'
 import type { StrategyPort } from '../../application/ports/StrategyPort'
 import { DEFAULT_STRATEGIES } from '../../domain/models/ai/StrategyConfig'
-import type { StrategyConfig, StrategyParameters, StrategyType } from '../../domain/models/ai/StrategyConfig'
+import type {
+  StrategyConfig,
+  StrategyParameters,
+  StrategyType,
+} from '../../domain/models/ai/StrategyConfig'
 
 /**
  * シリアライズされた戦略設定の型
@@ -47,7 +51,9 @@ class StrategyAdapter implements StrategyPort {
       }
 
       // 日付文字列をDateオブジェクトに変換
-      return stored.map((item) => this.deserializeStrategy(item as unknown as StrategyConfigSerialized))
+      return stored.map((item) =>
+        this.deserializeStrategy(item as unknown as StrategyConfigSerialized),
+      )
     } catch (error) {
       console.error('Failed to load strategies from storage:', error)
       return []
@@ -169,7 +175,9 @@ class StrategyAdapter implements StrategyPort {
   /**
    * 戦略をシリアライズする（日付をISO文字列に変換）
    */
-  private serializeStrategy(strategy: StrategyConfig): StrategyConfigSerialized {
+  private serializeStrategy(
+    strategy: StrategyConfig,
+  ): StrategyConfigSerialized {
     return {
       ...strategy,
       createdAt: strategy.createdAt.toISOString(),
@@ -180,7 +188,9 @@ class StrategyAdapter implements StrategyPort {
   /**
    * 戦略をデシリアライズする（ISO文字列を日付に変換）
    */
-  private deserializeStrategy(serialized: StrategyConfigSerialized): StrategyConfig {
+  private deserializeStrategy(
+    serialized: StrategyConfigSerialized,
+  ): StrategyConfig {
     return {
       ...serialized,
       createdAt: new Date(serialized.createdAt),

@@ -9,7 +9,10 @@ import {
 } from '../../domain/models/ai/StrategyConfig'
 import type { StrategyPort } from '../ports/StrategyPort'
 import { StrategyService } from './StrategyService'
-import type { CreateStrategyRequest, UpdateStrategyRequest } from './StrategyService'
+import type {
+  CreateStrategyRequest,
+  UpdateStrategyRequest,
+} from './StrategyService'
 
 // モックアダプター
 class MockStrategyAdapter implements StrategyPort {
@@ -116,7 +119,9 @@ describe('StrategyService', () => {
     test('無効なIDの場合はnullを返す', async () => {
       // Act
       const result1 = await strategyService.getStrategyById('')
-      const result2 = await strategyService.getStrategyById(null as unknown as string)
+      const result2 = await strategyService.getStrategyById(
+        null as unknown as string,
+      )
 
       // Assert
       expect(result1).toBeNull()

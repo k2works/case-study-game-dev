@@ -1,11 +1,12 @@
 /**
  * useStrategyフックのテスト
  */
-import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { DEFAULT_STRATEGIES } from '../../domain/models/ai/StrategyConfig'
+import { act, renderHook, waitFor } from '@testing-library/react'
+
 import type { StrategyService } from '../../application/services/StrategyService'
+import { DEFAULT_STRATEGIES, type StrategyParameters } from '../../domain/models/ai/StrategyConfig'
 import { useStrategy } from './useStrategy'
 
 // モックStrategyService
@@ -22,13 +23,13 @@ class MockStrategyService {
   }
 
   async setActiveStrategy(strategyId: string) {
-    const strategy = this.strategies.find(s => s.id === strategyId)
+    const strategy = this.strategies.find((s) => s.id === strategyId)
     if (strategy) {
       this.activeStrategy = strategy
     }
   }
 
-  async createCustomStrategy(request: any) {
+  async createCustomStrategy(request: {name: string; description: string; parameters: StrategyParameters}) {
     const newStrategy = {
       id: `custom-${Date.now()}`,
       name: request.name,
@@ -43,17 +44,21 @@ class MockStrategyService {
     return newStrategy
   }
 
-  async updateStrategy(id: string, request: any) {
-    const index = this.strategies.findIndex(s => s.id === id)
+  async updateStrategy(id: string, request: {name?: string; description?: string; parameters?: StrategyParameters}) {
+    const index = this.strategies.findIndex((s) => s.id === id)
     if (index >= 0) {
-      this.strategies[index] = { ...this.strategies[index], ...request, updatedAt: new Date() }
+      this.strategies[index] = {
+        ...this.strategies[index],
+        ...request,
+        updatedAt: new Date(),
+      }
       return this.strategies[index]
     }
     throw new Error('Strategy not found')
   }
 
   async deleteStrategy(id: string) {
-    const index = this.strategies.findIndex(s => s.id === id)
+    const index = this.strategies.findIndex((s) => s.id === id)
     if (index >= 0) {
       this.strategies.splice(index, 1)
     }
@@ -69,7 +74,9 @@ describe('useStrategy', () => {
 
   test('初期状態で戦略一覧とアクティブ戦略を取得する', async () => {
     // Arrange
-    const { result } = renderHook(() => useStrategy(mockStrategyService as unknown as StrategyService))
+    const { result } = renderHook(() =>
+      useStrategy(mockStrategyService as unknown as StrategyService),
+    )
 
     // Act
     await waitFor(() => {
@@ -78,13 +85,17 @@ describe('useStrategy', () => {
 
     // Assert
     expect(result.current.strategies).toHaveLength(3)
-    expect(result.current.activeStrategy?.id).toBe(DEFAULT_STRATEGIES.balanced.id)
+    expect(result.current.activeStrategy?.id).toBe(
+      DEFAULT_STRATEGIES.balanced.id,
+    )
     expect(result.current.error).toBeNull()
   })
 
   test('アクティブ戦略を変更できる', async () => {
     // Arrange
-    const { result } = renderHook(() => useStrategy(mockStrategyService as unknown as StrategyService))
+    const { result } = renderHook(() =>
+      useStrategy(mockStrategyService as unknown as StrategyService),
+    )
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false)
@@ -96,12 +107,16 @@ describe('useStrategy', () => {
     })
 
     // Assert
-    expect(result.current.activeStrategy?.id).toBe(DEFAULT_STRATEGIES.aggressive.id)
+    expect(result.current.activeStrategy?.id).toBe(
+      DEFAULT_STRATEGIES.aggressive.id,
+    )
   })
 
   test('カスタム戦略を作成できる', async () => {
     // Arrange
-    const { result } = renderHook(() => useStrategy(mockStrategyService as unknown as StrategyService))
+    const { result } = renderHook(() =>
+      useStrategy(mockStrategyService as unknown as StrategyService),
+    )
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false)
@@ -127,12 +142,16 @@ describe('useStrategy', () => {
 
     // Assert
     expect(result.current.strategies).toHaveLength(4)
-    expect(result.current.strategies.some(s => s.name === 'テスト戦略')).toBe(true)
+    expect(result.current.strategies.some((s) => s.name === 'テスト戦略')).toBe(
+      true,
+    )
   })
 
   test('戦略を更新できる', async () => {
     // Arrange
-    const { result } = renderHook(() => useStrategy(mockStrategyService as unknown as StrategyService))
+    const { result } = renderHook(() =>
+      useStrategy(mockStrategyService as unknown as StrategyService),
+    )
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false)
@@ -156,7 +175,9 @@ describe('useStrategy', () => {
       await result.current.createCustomStrategy(createRequest)
     })
 
-    const customStrategy = result.current.strategies.find(s => s.name === 'テスト戦略')!
+    const customStrategy = result.current.strategies.find(
+      (s) => s.name === 'テスト戦略',
+    )!
     const updateRequest = {
       name: '更新されたテスト戦略',
     }
@@ -167,13 +188,17 @@ describe('useStrategy', () => {
     })
 
     // Assert
-    const updatedStrategy = result.current.strategies.find(s => s.id === customStrategy.id)
+    const updatedStrategy = result.current.strategies.find(
+      (s) => s.id === customStrategy.id,
+    )
     expect(updatedStrategy?.name).toBe('更新されたテスト戦略')
   })
 
   test('戦略を削除できる', async () => {
     // Arrange
-    const { result } = renderHook(() => useStrategy(mockStrategyService as unknown as StrategyService))
+    const { result } = renderHook(() =>
+      useStrategy(mockStrategyService as unknown as StrategyService),
+    )
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false)
@@ -197,7 +222,9 @@ describe('useStrategy', () => {
       await result.current.createCustomStrategy(createRequest)
     })
 
-    const customStrategy = result.current.strategies.find(s => s.name === 'テスト戦略')!
+    const customStrategy = result.current.strategies.find(
+      (s) => s.name === 'テスト戦略',
+    )!
 
     // Act
     await act(async () => {
@@ -205,7 +232,9 @@ describe('useStrategy', () => {
     })
 
     // Assert
-    expect(result.current.strategies.find(s => s.id === customStrategy.id)).toBeUndefined()
+    expect(
+      result.current.strategies.find((s) => s.id === customStrategy.id),
+    ).toBeUndefined()
   })
 
   test('エラー処理が正しく動作する', async () => {
@@ -226,7 +255,9 @@ describe('useStrategy', () => {
 
   test('ローディング状態が正しく管理される', () => {
     // Arrange & Act
-    const { result } = renderHook(() => useStrategy(mockStrategyService as unknown as StrategyService))
+    const { result } = renderHook(() =>
+      useStrategy(mockStrategyService as unknown as StrategyService),
+    )
 
     // Assert
     expect(result.current.isLoading).toBe(true)

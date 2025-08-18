@@ -4,6 +4,7 @@ import type { AIPort } from './application/ports/AIPort.ts'
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
 import type { PerformanceAnalysisService } from './application/services/PerformanceAnalysisService'
+import type { StrategyService } from './application/services/StrategyService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AIMove, AISettings } from './domain/models/ai/types.ts'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
@@ -12,6 +13,7 @@ import { AIInsights } from './presentation/components/AIInsights'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { PerformanceAnalysis } from './presentation/components/PerformanceAnalysis'
+import { StrategySettings } from './presentation/components/StrategySettings'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
 import { usePerformanceAnalysis } from './presentation/hooks/usePerformanceAnalysis'
@@ -231,6 +233,7 @@ const GameLayout = ({
   lastAIMove,
   isAIThinking,
   performanceService,
+  strategyService,
 }: {
   game: GameViewModel
   gameService: GamePort
@@ -244,6 +247,7 @@ const GameLayout = ({
   lastAIMove: AIMove | null
   isAIThinking: boolean
   performanceService: PerformanceAnalysisService
+  strategyService: StrategyService
 }) => {
   const { statistics, comparisonReport, resetData } = usePerformanceAnalysis({
     performanceService,
@@ -301,6 +305,11 @@ const GameLayout = ({
           />
         </div>
 
+        {/* 戦略設定パネル */}
+        <div className="mt-8">
+          <StrategySettings strategyService={strategyService} />
+        </div>
+
         <footer className="text-center mt-8">
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 mb-4">
             <h3 className="text-white font-semibold mb-2">キーボード操作</h3>
@@ -331,6 +340,7 @@ function App() {
   const inputService = defaultContainer.getInputService()
   const aiService = defaultContainer.getAIService()
   const performanceService = defaultContainer.getPerformanceAnalysisService()
+  const strategyService = defaultContainer.getStrategyService()
 
   // ゲーム状態を管理（Reactの状態として）
   const [game, setGame] = useState<GameViewModel>(() => {
@@ -596,6 +606,7 @@ function App() {
       lastAIMove={lastAIMove}
       isAIThinking={isAIThinking}
       performanceService={performanceService}
+      strategyService={strategyService}
     />
   )
 }

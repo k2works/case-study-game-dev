@@ -2,8 +2,16 @@
  * 戦略設定アプリケーションサービス
  * 戦略の管理、保存、読み込み機能を提供
  */
-import { DEFAULT_STRATEGIES, createStrategyConfig, isValidStrategyConfig, updateStrategyConfig } from '../../domain/models/ai/StrategyConfig'
-import type { StrategyConfig, StrategyParameters } from '../../domain/models/ai/StrategyConfig'
+import {
+  DEFAULT_STRATEGIES,
+  createStrategyConfig,
+  isValidStrategyConfig,
+  updateStrategyConfig,
+} from '../../domain/models/ai/StrategyConfig'
+import type {
+  StrategyConfig,
+  StrategyParameters,
+} from '../../domain/models/ai/StrategyConfig'
 import type { StrategyPort } from '../ports/StrategyPort'
 
 /**
@@ -37,7 +45,7 @@ export interface UpdateStrategyRequest {
 
 class StrategyService {
   private readonly strategyAdapter: StrategyPort
-  
+
   constructor(strategyAdapter: StrategyPort) {
     this.strategyAdapter = strategyAdapter
   }
