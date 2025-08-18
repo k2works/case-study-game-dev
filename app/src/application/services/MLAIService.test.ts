@@ -1,10 +1,10 @@
 /**
  * MLAIServiceのテスト
  */
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { MLAIService } from '../../../src/application/services/MLAIService'
-import type { AIGameState } from '../../../src/domain/models/ai/types'
+import type { AIGameState } from '../../domain/models/ai/types'
+import { MLAIService } from './MLAIService'
 
 // TensorFlow.jsのモック
 vi.mock('@tensorflow/tfjs', () => ({
@@ -12,20 +12,20 @@ vi.mock('@tensorflow/tfjs', () => ({
     compile: vi.fn(),
     predict: vi.fn(() => ({
       data: vi.fn().mockResolvedValue([0.5]),
-      dispose: vi.fn()
+      dispose: vi.fn(),
     })),
-    dispose: vi.fn()
+    dispose: vi.fn(),
   })),
   layers: {
     dense: vi.fn(),
-    dropout: vi.fn()
+    dropout: vi.fn(),
   },
   train: {
-    adam: vi.fn()
+    adam: vi.fn(),
   },
   tensor2d: vi.fn(() => ({
-    dispose: vi.fn()
-  }))
+    dispose: vi.fn(),
+  })),
 }))
 
 describe('MLAIService', () => {
@@ -35,19 +35,20 @@ describe('MLAIService', () => {
     field: {
       width: 6,
       height: 12,
-      cells: Array(6).fill(null).map(() => Array(12).fill(null))
+      cells: Array(6)
+        .fill(null)
+        .map(() => Array(12).fill(null)),
     },
     currentPuyoPair: {
       primaryColor: 'red',
       secondaryColor: 'blue',
       x: 2,
       y: 0,
-      rotation: 0
+      rotation: 0,
     },
     nextPuyoPair: null,
-    score: 0
+    score: 0,
   }
-
 
   beforeEach(() => {
     service = new MLAIService()
@@ -66,7 +67,7 @@ describe('MLAIService', () => {
       const settings = {
         enabled: true,
         thinkingSpeed: 500,
-        mode: 'aggressive' as const
+        mode: 'aggressive' as const,
       }
 
       service.updateSettings(settings)
@@ -99,8 +100,8 @@ describe('MLAIService', () => {
           centerScore: expect.any(Number),
           modeScore: expect.any(Number),
           totalScore: expect.any(Number),
-          reason: expect.any(String)
-        })
+          reason: expect.any(String),
+        }),
       })
     })
 
@@ -108,18 +109,18 @@ describe('MLAIService', () => {
       service.setEnabled(false)
 
       await expect(service.decideMove(mockGameState)).rejects.toThrow(
-        'AI is not enabled or no current puyo pair'
+        'AI is not enabled or no current puyo pair',
       )
     })
 
     it('現在のぷよペアがない場合はエラーを投げる', async () => {
       const gameStateWithoutPuyo = {
         ...mockGameState,
-        currentPuyoPair: null
+        currentPuyoPair: null,
       }
 
       await expect(service.decideMove(gameStateWithoutPuyo)).rejects.toThrow(
-        'AI is not enabled or no current puyo pair'
+        'AI is not enabled or no current puyo pair',
       )
     })
   })
@@ -134,7 +135,7 @@ describe('MLAIService', () => {
       const mockMove = {
         x: 2,
         rotation: 0,
-        score: 85
+        score: 85,
       }
 
       // エラーが投げられないことを確認

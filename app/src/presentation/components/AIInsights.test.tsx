@@ -1,11 +1,12 @@
 /**
  * AIInsightsコンポーネントのテスト
  */
-import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { AIInsights } from '../../../src/presentation/components/AIInsights'
-import type { AIMove } from '../../../src/domain/models/ai/types'
+import { render, screen } from '@testing-library/react'
+
+import type { AIMove } from '../../domain/models/ai/types.ts'
+import { AIInsights } from './AIInsights.tsx'
 
 describe('AIInsightsコンポーネント', () => {
   describe('AI思考状況表示', () => {
@@ -24,7 +25,9 @@ describe('AIInsightsコンポーネント', () => {
 
       // Assert
       expect(screen.getByText('🧠 AI思考状況')).toBeInTheDocument()
-      expect(screen.queryByText('🤔 AIが次の手を考え中...')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('🤔 AIが次の手を考え中...'),
+      ).not.toBeInTheDocument()
     })
 
     it('AI履歴がない場合、適切なメッセージが表示される', () => {
@@ -32,7 +35,9 @@ describe('AIInsightsコンポーネント', () => {
       render(<AIInsights lastAIMove={null} isThinking={false} />)
 
       // Assert
-      expect(screen.getByText('まだAIの判断履歴がありません')).toBeInTheDocument()
+      expect(
+        screen.getByText('まだAIの判断履歴がありません'),
+      ).toBeInTheDocument()
     })
   })
 
@@ -49,8 +54,8 @@ describe('AIInsightsコンポーネント', () => {
         averageY: 8.5,
         averageX: 2.5,
         distanceFromCenter: 0.5,
-        reason: '位置(2, 9), バランス型: 標準評価, スコア: 85'
-      }
+        reason: '位置(2, 9), バランス型: 標準評価, スコア: 85',
+      },
     }
 
     it('AI判断詳細が正しく表示される', () => {
@@ -59,7 +64,9 @@ describe('AIInsightsコンポーネント', () => {
 
       // Assert
       expect(screen.getByText('最後の判断:')).toBeInTheDocument()
-      expect(screen.getByText('位置(2, 9), バランス型: 標準評価, スコア: 85')).toBeInTheDocument()
+      expect(
+        screen.getByText('位置(2, 9), バランス型: 標準評価, スコア: 85'),
+      ).toBeInTheDocument()
     })
 
     it('配置位置が正しく表示される', () => {
@@ -78,10 +85,10 @@ describe('AIInsightsコンポーネント', () => {
       // Assert
       expect(screen.getByText('総合スコア')).toBeInTheDocument()
       expect(screen.getByText('85')).toBeInTheDocument()
-      
+
       expect(screen.getByText('高さ評価')).toBeInTheDocument()
       expect(screen.getByText('50')).toBeInTheDocument()
-      
+
       expect(screen.getByText('中央度評価')).toBeInTheDocument()
       expect(screen.getByText('25')).toBeInTheDocument()
     })
@@ -100,8 +107,8 @@ describe('AIInsightsコンポーネント', () => {
         ...mockAIMove,
         evaluation: {
           ...mockAIMove.evaluation!,
-          modeScore: 0
-        }
+          modeScore: 0,
+        },
       }
 
       // Act
@@ -116,11 +123,16 @@ describe('AIInsightsコンポーネント', () => {
       const mockMoveWithoutEvaluation: AIMove = {
         x: 2,
         rotation: 90,
-        score: 85
+        score: 85,
       }
 
       // Act
-      render(<AIInsights lastAIMove={mockMoveWithoutEvaluation} isThinking={false} />)
+      render(
+        <AIInsights
+          lastAIMove={mockMoveWithoutEvaluation}
+          isThinking={false}
+        />,
+      )
 
       // Assert
       expect(screen.queryByText('最後の判断:')).not.toBeInTheDocument()
