@@ -11,8 +11,6 @@ export interface AISettings {
   enabled: boolean
   /** 思考速度（ミリ秒） */
   thinkingSpeed: number
-  /** 動作モード */
-  mode: 'balanced' | 'aggressive' | 'defensive'
 }
 
 /**

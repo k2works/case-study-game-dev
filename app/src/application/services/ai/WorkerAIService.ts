@@ -59,7 +59,6 @@ export class WorkerAIService implements AIPort {
     this.settings = {
       enabled: false,
       thinkingSpeed: 1000,
-      mode: 'balanced',
     }
     this.moveGenerator = new MoveGenerator()
     this.initializeWorker()

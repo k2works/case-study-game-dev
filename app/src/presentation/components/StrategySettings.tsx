@@ -16,6 +16,7 @@ import { useStrategy } from '../hooks/useStrategy'
 
 interface StrategySettingsProps {
   strategyService: StrategyService
+  onStrategyChange?: () => void
 }
 
 interface CreateStrategyFormData {
@@ -27,7 +28,10 @@ interface CreateStrategyFormData {
 /**
  * 戦略設定コンポーネント
  */
-export function StrategySettings({ strategyService }: StrategySettingsProps) {
+export function StrategySettings({
+  strategyService,
+  onStrategyChange,
+}: StrategySettingsProps) {
   const {
     strategies,
     activeStrategy,
@@ -60,6 +64,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
    */
   const handleSetActiveStrategy = async (strategyId: string) => {
     await setActiveStrategy(strategyId)
+    onStrategyChange?.()
   }
 
   /**
@@ -89,6 +94,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
         },
       })
       setIsCreateModalOpen(false)
+      onStrategyChange?.()
     } catch (error) {
       console.error('カスタム戦略の作成に失敗:', error)
     }

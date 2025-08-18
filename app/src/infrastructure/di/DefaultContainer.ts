@@ -9,8 +9,8 @@ import type { TimerPort } from '../../application/ports/TimerPort'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
-import { StrategyService } from '../../application/services/StrategyService'
-import { WorkerAIService } from '../../application/services/ai/WorkerAIService.ts'
+import StrategyService from '../../application/services/StrategyService'
+import { MLAIService } from '../../application/services/ai/MLAIService'
 import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
 import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
@@ -80,8 +80,12 @@ export class DefaultContainer {
       true,
     )
 
-    // AI Service: WorkerAIService（Web Worker + TensorFlow.js統合）を使用
-    container.register<AIPort>('AIPort', () => new WorkerAIService(), true)
+    // AI Service: MLAIService（戦略統合 + TensorFlow.js）を使用
+    container.register<AIPort>(
+      'AIPort',
+      () => new MLAIService(container.resolve<StrategyPort>('StrategyPort')),
+      true,
+    )
 
     // パフォーマンス分析
     container.register<PerformancePort>(

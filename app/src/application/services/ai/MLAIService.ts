@@ -4,6 +4,7 @@
  */
 import * as tf from '@tensorflow/tfjs'
 
+import type { StrategyConfig } from '../../../domain/models/ai/StrategyConfig'
 import type {
   AIGameState,
   AIMove,
@@ -13,6 +14,7 @@ import type {
 } from '../../../domain/models/ai/types'
 import type { AIPort } from '../../ports/AIPort'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort'
+import type { StrategyPort } from '../../ports/StrategyPort'
 import { MoveGenerator } from './MoveGenerator'
 
 /**
@@ -24,15 +26,30 @@ export class MLAIService implements AIPort {
   private moveGenerator: MoveGeneratorPort
   private model: tf.LayersModel | null = null
   private modelReady = false
+  private strategyPort: StrategyPort
+  private currentStrategy: StrategyConfig | null = null
 
-  constructor() {
+  constructor(strategyPort: StrategyPort) {
     this.settings = {
       enabled: false,
       thinkingSpeed: 1000,
-      mode: 'balanced',
     }
     this.moveGenerator = new MoveGenerator()
+    this.strategyPort = strategyPort
     this.initializeModel()
+    this.loadActiveStrategy()
+  }
+
+  /**
+   * アクティブ戦略の読み込み
+   */
+  private async loadActiveStrategy(): Promise<void> {
+    try {
+      this.currentStrategy = await this.strategyPort.getActiveStrategy()
+    } catch (error) {
+      console.warn('Failed to load active strategy, using default:', error)
+      this.currentStrategy = null
+    }
   }
 
   /**
@@ -153,7 +170,7 @@ export class MLAIService implements AIPort {
   }
 
   /**
-   * フォールバック評価（従来の手法）
+   * 戦略を考慮した評価（従来の手法 + 戦略パラメータ）
    */
   private fallbackEvaluation(
     move: PossibleMove,
@@ -163,19 +180,113 @@ export class MLAIService implements AIPort {
       return -1000
     }
 
-    const field = gameState.field
+    const strategy = this.currentStrategy
+    const positions = this.calculatePositions(move, gameState.field)
+    const params = this.getStrategyParameters(strategy)
 
-    // 高さベースの評価（下の位置ほど高スコア）
+    const heightScore = this.calculateHeightScore(positions, params)
+    const centerScore = this.calculateCenterScore(
+      positions,
+      gameState.field,
+      params,
+    )
+    const defenseScore = this.calculateDefenseScore(
+      positions,
+      gameState.field,
+      params,
+    )
+    const riskScore = this.calculateRiskScore(positions, params)
+
+    return heightScore + centerScore + defenseScore - riskScore
+  }
+
+  /**
+   * 位置情報を計算
+   */
+  private calculatePositions(
+    move: PossibleMove,
+    field: { width: number; height: number },
+  ) {
     const avgY = (move.primaryPosition.y + move.secondaryPosition.y) / 2
-    const heightScore = avgY * 10
-
-    // 中央付近を優遇
-    const centerX = (field.width - 1) / 2
     const avgX = (move.primaryPosition.x + move.secondaryPosition.x) / 2
+    const centerX = (field.width - 1) / 2
     const distanceFromCenter = Math.abs(centerX - avgX)
-    const centerScore = (field.width - distanceFromCenter) * 5
 
-    return heightScore + centerScore
+    return { avgY, avgX, centerX, distanceFromCenter }
+  }
+
+  /**
+   * 戦略パラメータを取得
+   */
+  private getStrategyParameters(strategy: StrategyConfig | null) {
+    const defaultParams = this.getDefaultStrategyParameters()
+    return strategy?.parameters ?? defaultParams
+  }
+
+  /**
+   * デフォルト戦略パラメータを取得
+   */
+  private getDefaultStrategyParameters() {
+    return {
+      heightControl: 50,
+      centerPriority: 50,
+      defensePriority: 50,
+      riskTolerance: 50,
+      chainPriority: 50,
+      speedPriority: 50,
+    }
+  }
+
+  /**
+   * 高さスコアを計算
+   */
+  private calculateHeightScore(
+    positions: { avgY: number },
+    params: { heightControl: number },
+  ): number {
+    return positions.avgY * (params.heightControl / 10)
+  }
+
+  /**
+   * 中央スコアを計算
+   */
+  private calculateCenterScore(
+    positions: { distanceFromCenter: number },
+    field: { width: number },
+    params: { centerPriority: number },
+  ): number {
+    return (
+      (field.width - positions.distanceFromCenter) *
+      (params.centerPriority / 10)
+    )
+  }
+
+  /**
+   * 防御スコアを計算
+   */
+  private calculateDefenseScore(
+    positions: { avgY: number },
+    field: { height: number },
+    params: { defensePriority: number },
+  ): number {
+    return params.defensePriority > 70
+      ? Math.max(0, field.height - positions.avgY - 3) *
+          (params.defensePriority / 20)
+      : 0
+  }
+
+  /**
+   * リスクスコアを計算
+   */
+  private calculateRiskScore(
+    positions: { distanceFromCenter: number },
+    params: { riskTolerance: number },
+  ): number {
+    return params.riskTolerance < 30
+      ? (Math.max(0, 3 - positions.distanceFromCenter) *
+          (100 - params.riskTolerance)) /
+          20
+      : 0
   }
 
   /**
@@ -291,6 +402,20 @@ export class MLAIService implements AIPort {
   updateSettings(settings: AISettings): void {
     this.settings = { ...settings }
     this.enabled = settings.enabled
+  }
+
+  /**
+   * 戦略設定を更新
+   */
+  async updateStrategy(): Promise<void> {
+    await this.loadActiveStrategy()
+  }
+
+  /**
+   * 現在の戦略を取得
+   */
+  getCurrentStrategy(): StrategyConfig | null {
+    return this.currentStrategy
   }
 
   /**

@@ -228,6 +228,7 @@ const GameLayout = ({
   handleReset,
   aiEnabled,
   aiSettings,
+  aiService,
   onToggleAI,
   onAISettingsChange,
   lastAIMove,
@@ -307,7 +308,22 @@ const GameLayout = ({
 
         {/* 戦略設定パネル */}
         <div className="mt-8">
-          <StrategySettings strategyService={strategyService} />
+          <StrategySettings
+            strategyService={strategyService}
+            onStrategyChange={async () => {
+              // AIサービスに戦略更新を通知
+              if (aiService && 'updateStrategy' in aiService) {
+                try {
+                  await (
+                    aiService as { updateStrategy: () => Promise<void> }
+                  ).updateStrategy()
+                  console.log('AI戦略を更新しました')
+                } catch (error) {
+                  console.warn('AI戦略更新に失敗:', error)
+                }
+              }
+            }}
+          />
         </div>
 
         <footer className="text-center mt-8">
@@ -353,7 +369,6 @@ function App() {
   const [aiSettings, setAiSettings] = useState<AISettings>({
     enabled: false,
     thinkingSpeed: 1000,
-    mode: 'balanced',
   })
   const [lastAIMove, setLastAIMove] = useState<AIMove | null>(null)
   const [isAIThinking, setIsAIThinking] = useState(false)

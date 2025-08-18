@@ -48,6 +48,36 @@ class StrategyService {
 
   constructor(strategyAdapter: StrategyPort) {
     this.strategyAdapter = strategyAdapter
+    // アプリケーション起動時にデフォルト戦略を初期化
+    this.initializeDefaultStrategies()
+  }
+
+  /**
+   * デフォルト戦略をストレージに初期化
+   */
+  private async initializeDefaultStrategies(): Promise<void> {
+    try {
+      const existingStrategies = await this.strategyAdapter.getAllStrategies()
+      const defaultStrategies = this.strategyAdapter.getDefaultStrategies()
+
+      // 既存のデフォルト戦略IDを取得
+      const existingDefaultIds = existingStrategies
+        .filter((strategy) => strategy.isDefault)
+        .map((strategy) => strategy.id)
+
+      // 不足しているデフォルト戦略を追加
+      for (const defaultStrategy of defaultStrategies) {
+        if (!existingDefaultIds.includes(defaultStrategy.id)) {
+          await this.strategyAdapter.saveStrategy(defaultStrategy)
+          // テスト環境ではログ出力を抑制
+          if (process.env.NODE_ENV !== 'test') {
+            console.log(`Initialized default strategy: ${defaultStrategy.name}`)
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to initialize default strategies:', error)
+    }
   }
 
   /**
@@ -82,7 +112,9 @@ class StrategyService {
 
       return await this.strategyAdapter.getStrategyById(id)
     } catch (error) {
-      console.error(`Failed to get strategy by ID ${id}:`, error)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(`Failed to get strategy by ID ${id}:`, error)
+      }
       return null
     }
   }
@@ -116,7 +148,9 @@ class StrategyService {
       await this.strategyAdapter.saveStrategy(strategy)
       return strategy
     } catch (error) {
-      console.error('Failed to create custom strategy:', error)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error('Failed to create custom strategy:', error)
+      }
       throw error
     }
   }
@@ -147,7 +181,9 @@ class StrategyService {
       await this.strategyAdapter.saveStrategy(updatedStrategy)
       return updatedStrategy
     } catch (error) {
-      console.error(`Failed to update strategy ${id}:`, error)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(`Failed to update strategy ${id}:`, error)
+      }
       throw error
     }
   }
@@ -176,7 +212,9 @@ class StrategyService {
 
       await this.strategyAdapter.deleteStrategy(id)
     } catch (error) {
-      console.error(`Failed to delete strategy ${id}:`, error)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(`Failed to delete strategy ${id}:`, error)
+      }
       throw error
     }
   }
@@ -214,7 +252,9 @@ class StrategyService {
 
       await this.strategyAdapter.setActiveStrategy(strategyId)
     } catch (error) {
-      console.error(`Failed to set active strategy ${strategyId}:`, error)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(`Failed to set active strategy ${strategyId}:`, error)
+      }
       throw error
     }
   }
@@ -269,31 +309,13 @@ class StrategyService {
       await this.strategyAdapter.clearAllStrategies()
       await this.initializeDefaultStrategies()
     } catch (error) {
-      console.error('Failed to clear all strategies:', error)
-      throw error
-    }
-  }
-
-  /**
-   * デフォルト戦略を初期化する
-   */
-  private async initializeDefaultStrategies(): Promise<void> {
-    try {
-      const defaultStrategies = Object.values(DEFAULT_STRATEGIES)
-
-      for (const strategy of defaultStrategies) {
-        await this.strategyAdapter.saveStrategy(strategy)
+      if (process.env.NODE_ENV !== 'test') {
+        console.error('Failed to clear all strategies:', error)
       }
-
-      // バランス型をデフォルトのアクティブ戦略として設定
-      await this.strategyAdapter.setActiveStrategy(
-        DEFAULT_STRATEGIES.balanced.id,
-      )
-    } catch (error) {
-      console.error('Failed to initialize default strategies:', error)
       throw error
     }
   }
 }
 
 export { StrategyService }
+export default StrategyService
