@@ -315,6 +315,12 @@ function App() {
     setGame(newGame)
   }, [])
 
+  // AIService初期化
+  useEffect(() => {
+    aiService.updateSettings(aiSettings)
+    aiService.setEnabled(aiEnabled)
+  }, [aiService, aiSettings, aiEnabled])
+
   // キーボード入力を作成するヘルパー関数
   const createKeyboardInput = useCallback(
     (code: string, key: string) => ({
@@ -388,6 +394,12 @@ function App() {
       return
     }
 
+    // AIServiceの状態も確認
+    if (!aiService.isEnabled()) {
+      console.warn('AI is not enabled in AIService')
+      return
+    }
+
     try {
       // GameViewModelをAIGameStateに変換
       const aiGameState = convertToAIGameState(game)
@@ -454,14 +466,19 @@ function App() {
   // AI設定ハンドラー
   const handleToggleAI = useCallback(() => {
     const newEnabled = !aiEnabled
+    const newSettings = { ...aiSettings, enabled: newEnabled }
     setAiEnabled(newEnabled)
+    setAiSettings(newSettings)
+    aiService.updateSettings(newSettings)
     aiService.setEnabled(newEnabled)
-  }, [aiEnabled, aiService])
+  }, [aiEnabled, aiSettings, aiService])
 
   const handleAISettingsChange = useCallback(
     (newSettings: AISettings) => {
       setAiSettings(newSettings)
+      setAiEnabled(newSettings.enabled)
       aiService.updateSettings(newSettings)
+      aiService.setEnabled(newSettings.enabled)
     },
     [aiService],
   )
