@@ -55,6 +55,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
     },
   })
 
+
   /**
    * 戦略をアクティブに設定
    */
@@ -219,7 +220,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
 
       {/* カスタム戦略作成モーダル */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">新しいカスタム戦略</h3>
 
@@ -229,6 +230,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                   戦略名
                 </label>
                 <input
+                  data-testid="strategy-name-input"
                   type="text"
                   placeholder="戦略名を入力"
                   value={createFormData.name}
@@ -238,7 +240,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                       name: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 />
               </div>
 
@@ -247,6 +249,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                   説明
                 </label>
                 <textarea
+                  data-testid="strategy-description-input"
                   placeholder="戦略の説明を入力"
                   value={createFormData.description}
                   onChange={(e) =>
@@ -255,7 +258,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
                       description: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   rows={3}
                 />
               </div>
@@ -332,7 +335,7 @@ export function StrategySettings({ strategyService }: StrategySettingsProps) {
 
       {/* 削除確認モーダル */}
       {isDeleteModalOpen && strategyToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
             <h3 className="text-lg font-semibold mb-2">戦略を削除</h3>
             <p className="text-gray-600 mb-4">
