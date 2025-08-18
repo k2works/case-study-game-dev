@@ -349,6 +349,39 @@ function App() {
     [createKeyboardInput, inputService, gameService],
   )
 
+  // GameViewModelをAIGameStateに変換するヘルパー関数
+  const convertToAIGameState = useCallback(
+    (game: GameViewModel) => ({
+      field: {
+        width: game.field.width,
+        height: game.field.height,
+        cells: game.field.cells.map((row) =>
+          row.map((cell) => (cell ? cell.color : null)),
+        ),
+      },
+      currentPuyoPair: game.currentPuyoPair
+        ? {
+            primaryColor: game.currentPuyoPair.main.color,
+            secondaryColor: game.currentPuyoPair.sub.color,
+            x: game.currentPuyoPair.x,
+            y: game.currentPuyoPair.y,
+            rotation: game.currentPuyoPair.rotation,
+          }
+        : null,
+      nextPuyoPair: game.nextPuyoPair
+        ? {
+            primaryColor: game.nextPuyoPair.main.color,
+            secondaryColor: game.nextPuyoPair.sub.color,
+            x: game.nextPuyoPair.x,
+            y: game.nextPuyoPair.y,
+            rotation: game.nextPuyoPair.rotation,
+          }
+        : null,
+      score: game.score.current,
+    }),
+    [],
+  )
+
   // AI自動プレイのロジック
   const executeAIMove = useCallback(async () => {
     if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
@@ -357,12 +390,7 @@ function App() {
 
     try {
       // GameViewModelをAIGameStateに変換
-      const aiGameState = {
-        field: game.field,
-        currentPuyoPair: game.currentPuyoPair,
-        nextPuyoPair: game.nextPuyoPair,
-        score: game.score.current,
-      }
+      const aiGameState = convertToAIGameState(game)
 
       // AIが最適な手を計算
       const aiMove = await aiService.decideMove(aiGameState)
@@ -386,6 +414,7 @@ function App() {
     aiEnabled,
     game,
     aiService,
+    convertToAIGameState,
     executeHorizontalMoves,
     createKeyboardInput,
     inputService,
