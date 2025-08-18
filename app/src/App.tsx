@@ -204,6 +204,22 @@ const GameLayout = ({
                 onSettingsChange={onAISettingsChange}
               />
 
+              {/* デバッグ情報（開発環境のみ） */}
+              {import.meta.env.DEV && (
+                <div className="mt-4 p-3 bg-black/20 rounded-lg text-xs text-white">
+                  <div className="font-bold mb-2">Debug Info</div>
+                  <div>Game State: {game.state}</div>
+                  <div>AI Enabled: {aiEnabled ? 'Yes' : 'No'}</div>
+                  <div>AI Service: {aiService.isEnabled() ? 'Enabled' : 'Disabled'}</div>
+                  <div>Has Current Puyo: {game.currentPuyoPair ? 'Yes' : 'No'}</div>
+                  {game.currentPuyoPair && (
+                    <div>
+                      Puyo Position: ({game.currentPuyoPair.x}, {game.currentPuyoPair.y})
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* ゲーム制御ボタン */}
               <div className="mt-6 space-y-3">
                 {game.state === 'ready' && (
@@ -312,13 +328,25 @@ function App() {
   }
 
   const updateGame = useCallback((newGame: GameViewModel) => {
+    console.log('Game state updated:', {
+      state: newGame.state,
+      hasCurrentPuyo: !!newGame.currentPuyoPair,
+      currentPuyoPos: newGame.currentPuyoPair
+        ? { x: newGame.currentPuyoPair.x, y: newGame.currentPuyoPair.y }
+        : null,
+    })
     setGame(newGame)
   }, [])
 
   // AIService初期化
   useEffect(() => {
+    console.log('Initializing AI Service:', { aiSettings, aiEnabled })
     aiService.updateSettings(aiSettings)
     aiService.setEnabled(aiEnabled)
+    console.log('AI Service state after init:', {
+      isEnabled: aiService.isEnabled(),
+      settings: aiSettings,
+    })
   }, [aiService, aiSettings, aiEnabled])
 
   // キーボード入力を作成するヘルパー関数
@@ -511,11 +539,24 @@ function App() {
   const handleToggleAI = useCallback(() => {
     const newEnabled = !aiEnabled
     const newSettings = { ...aiSettings, enabled: newEnabled }
+    console.log('AI Toggle:', { from: aiEnabled, to: newEnabled, newSettings })
     setAiEnabled(newEnabled)
     setAiSettings(newSettings)
     aiService.updateSettings(newSettings)
     aiService.setEnabled(newEnabled)
-  }, [aiEnabled, aiSettings, aiService])
+    
+    // AIを有効にしたときにゲームが開始状態でなければ自動開始
+    if (newEnabled && game.state !== 'playing') {
+      console.log('Auto-starting game for AI')
+      const newGame = gameService.startNewGame()
+      updateGame(newGame)
+    }
+    
+    console.log('AI Service after toggle:', {
+      isEnabled: aiService.isEnabled(),
+      gameState: game.state,
+    })
+  }, [aiEnabled, aiSettings, aiService, game.state, gameService, updateGame])
 
   const handleAISettingsChange = useCallback(
     (newSettings: AISettings) => {
