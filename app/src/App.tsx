@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
-import type { AISettings } from './domain/ai/types'
+import type { AIPort } from './domain/ai/ports'
+import type { AIMove, AISettings } from './domain/ai/types'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { AIControlPanel } from './presentation/components/AIControlPanel'
 import { GameBoard } from './presentation/components/GameBoard'
@@ -150,6 +151,7 @@ const GameLayout = ({
   handleReset,
   aiEnabled,
   aiSettings,
+  aiService,
   onToggleAI,
   onAISettingsChange,
 }: {
@@ -159,6 +161,7 @@ const GameLayout = ({
   handleReset: () => void
   aiEnabled: boolean
   aiSettings: AISettings
+  aiService: AIPort
   onToggleAI: () => void
   onAISettingsChange: (settings: AISettings) => void
 }) => {
@@ -593,6 +596,7 @@ function App() {
       handleReset={handleReset}
       aiEnabled={aiEnabled}
       aiSettings={aiSettings}
+      aiService={aiService}
       onToggleAI={handleToggleAI}
       onAISettingsChange={handleAISettingsChange}
     />
