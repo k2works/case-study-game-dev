@@ -33,7 +33,8 @@ export default defineConfig({
         'src/App.tsx',
         'src/App.css',
         'src/index.css',
-        '.dependency-cruiser.cjs'
+        '.dependency-cruiser.cjs',
+        'public/'
       ]
     }
   }
