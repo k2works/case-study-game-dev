@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { AIPort } from './application/ports/AIPort.ts'
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
+import type { PerformanceAnalysisService } from './application/services/PerformanceAnalysisService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AIMove, AISettings } from './domain/models/ai/types.ts'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
@@ -10,8 +11,10 @@ import { AIControlPanel } from './presentation/components/AIControlPanel'
 import { AIInsights } from './presentation/components/AIInsights'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
+import { PerformanceAnalysis } from './presentation/components/PerformanceAnalysis'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
+import { usePerformanceAnalysis } from './presentation/hooks/usePerformanceAnalysis'
 
 // キーボードハンドラーの型定義
 interface KeyboardHandlers {
@@ -227,6 +230,7 @@ const GameLayout = ({
   onAISettingsChange,
   lastAIMove,
   isAIThinking,
+  performanceService,
 }: {
   game: GameViewModel
   gameService: GamePort
@@ -239,7 +243,13 @@ const GameLayout = ({
   onAISettingsChange: (settings: AISettings) => void
   lastAIMove: AIMove | null
   isAIThinking: boolean
+  performanceService: PerformanceAnalysisService
 }) => {
+  const { statistics, comparisonReport, resetData } = usePerformanceAnalysis({
+    performanceService,
+    game,
+    aiEnabled,
+  })
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4">
       <div className="max-w-4xl mx-auto">
@@ -282,6 +292,15 @@ const GameLayout = ({
           </div>
         </div>
 
+        {/* パフォーマンス分析パネル */}
+        <div className="mt-8">
+          <PerformanceAnalysis
+            statistics={statistics}
+            comparisonReport={comparisonReport}
+            onResetData={resetData}
+          />
+        </div>
+
         <footer className="text-center mt-8">
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 mb-4">
             <h3 className="text-white font-semibold mb-2">キーボード操作</h3>
@@ -311,6 +330,7 @@ function App() {
   const gameService = defaultContainer.getGameService()
   const inputService = defaultContainer.getInputService()
   const aiService = defaultContainer.getAIService()
+  const performanceService = defaultContainer.getPerformanceAnalysisService()
 
   // ゲーム状態を管理（Reactの状態として）
   const [game, setGame] = useState<GameViewModel>(() => {
@@ -575,6 +595,7 @@ function App() {
       onAISettingsChange={handleAISettingsChange}
       lastAIMove={lastAIMove}
       isAIThinking={isAIThinking}
+      performanceService={performanceService}
     />
   )
 }

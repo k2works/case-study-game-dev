@@ -11,6 +11,7 @@ export interface GameViewModel {
   readonly level: number
   readonly currentPuyoPair: PuyoPairViewModel | null
   readonly nextPuyoPair: PuyoPairViewModel | null
+  readonly lastChain: number // 最後の連鎖数
   readonly createdAt: string // ISO string
   readonly updatedAt: string // ISO string
 }

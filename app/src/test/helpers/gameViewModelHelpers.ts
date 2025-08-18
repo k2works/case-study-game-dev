@@ -63,6 +63,7 @@ export const createTestGameViewModel = (
   level: 1,
   currentPuyoPair: null,
   nextPuyoPair: null,
+  lastChain: 0,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   ...overrides,
