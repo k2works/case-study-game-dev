@@ -35,6 +35,14 @@
   - **特徴:**
     モバイルファースト、アクセシビリティ対応、直感的操作
 
+### AI機能設計
+- [AI設計](AI設計.md) - 機械学習システムとAI思考エンジン設計
+  - **対象:**
+    TensorFlow.js統合、Web Workers、AI可視化、戦略システム
+  - **特徴:**
+    非同期処理、リアルタイム思考表示、学習機能
+  - **実装状況:** イテレーション3でAI基盤実装完了 ✅
+
 ### 実装戦略
 - [実装戦略](実装戦略.md) - 開発手法と技術的アプローチ
   - **対象:**
@@ -63,6 +71,12 @@ package "Application Layer" SERVICE_COLOR {
   [Game Store]
   [Use Cases]
   [Application Services]
+  [AI Services]
+  package "AI Module" {
+    [MLAIService]
+    [WorkerAIService]
+    [AI Worker]
+  }
 }
 
 package "Domain Layer" ENTITY_COLOR {
@@ -85,6 +99,10 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 [Use Cases] --> [Puyo Entity]
 [Use Cases] --> [Game Entity]
 [Domain Services] --> [Field Entity]
+[AI Services] --> [MLAIService]
+[AI Services] --> [WorkerAIService]
+[WorkerAIService] --> [AI Worker]
+[AI Services] --> [Domain Services]
 [Infrastructure Layer] --> [Application Layer]
 
 @enduml
@@ -96,9 +114,11 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 | :--- | :--- | :--- | :--- |
 | **コード品質** | ESLint + Prettier | ✅ 実装済み | TypeScript strict mode |
 | **複雑度制限** | ESLint complexity | ✅ 実装済み | 最大7 |
-| **テストカバレッジ** | Vitest + Codecov | ✅ 実装済み | 目標80% |
+| **テストカバレッジ** | Vitest + Codecov | ✅ 実装済み | 目標80%（80.57%達成） |
 | **アーキテクチャ検証** | dependency-cruiser | ✅ 実装済み | 層間依存制御 |
 | **型安全性** | TypeScript 5.8 | ✅ 実装済み | strict設定 |
+| **AI処理性能** | Web Workers | ✅ 実装済み | 非ブロッキング処理 |
+| **AI学習基盤** | TensorFlow.js | ✅ 実装済み | ニューラルネットワーク |
 
 ## 技術的特徴
 
@@ -126,11 +146,21 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 - **ドメインサービス:**
   複雑なビジネスルールの実装
 
+### AI機能アーキテクチャ
+- **機械学習統合:**
+  TensorFlow.jsによるブラウザ内ML処理
+- **非同期AI処理:**
+  Web Workersによるメインスレッド非ブロッキング
+- **AI可視化:**
+  リアルタイム思考過程の表示
+- **フォールバック機構:**
+  Worker未対応環境への対応
+
 ## Phase 3開発準備状況
 
 ### イテレーション別設計方針
 
-#### Iteration 1: ゲーム基盤（MVP）
+#### Iteration 1: ゲーム基盤（MVP）✅
 - **アーキテクチャ:**
   ✅ ヘキサゴナルアーキテクチャ基盤構築完了
 - **ドメインモデル:**
@@ -138,9 +168,25 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 - **テスト基盤:**
   ✅ TDD環境構築完了
 
-#### Iteration 2-4: 段階的機能実装
+#### Iteration 2: テストカバレッジ向上✅
+- **品質向上:**
+  ✅ テストカバレッジ91.18%達成
+- **関数型導入:**
+  ✅ lodash/fp、不変データ構造実装
+- **アーキテクチャ改善:**
+  ✅ stores配置最適化、未使用コード削除
+
+#### Iteration 3: AI機能基盤✅
+- **AI統合:**
+  ✅ TensorFlow.js、Web Workers実装完了
+- **AI可視化:**
+  ✅ AIControlPanel、AIInsights実装完了
+- **アーキテクチャ拡張:**
+  ✅ AI層追加、services/ai/ディレクトリ構造化
+
+#### Iteration 4-7: 段階的機能実装
 - **設計ガイドライン:**
-  関数型アプローチによる段階的実装
+  AI機能拡張、関数型アプローチ継続
 - **品質保証:**
   各イテレーションでの品質ゲート通過
 - **リファクタリング:**
@@ -155,5 +201,5 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 
 ---
 
-**最終更新:** Phase 2 完了時  
+**最終更新:** 2025-08-18（イテレーション3完了時）  
 **更新者:** Claude Code Assistant

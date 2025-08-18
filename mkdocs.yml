@@ -81,6 +81,8 @@ nav:
     - イテレーション1ふりかえり: development/iteration1-retrospective.md
     - イテレーション2完了報告書: development/iteration-2-completion-report.md
     - イテレーション2ふりかえり: development/iteration-2-retrospective.md
+    - イテレーション3完了報告書: development/iteration-3-completion-report.md
+    - イテレーション3ふりかえり: development/iteration-3-retrospective.md
   - 運用:
     - 運用概要: operation/index.md
     - セットアップ: operation/セットアップ.md
@@ -98,3 +100,6 @@ nav:
     - サイクロマティック複雑度制限: adr/008-サイクロマティック複雑度制限.md
     - dependency-cruiser採用: adr/009-dependency-cruiser採用.md
     - Codecov採用: adr/010-Codecov採用.md
+    - ヘキサゴナルアーキテクチャリファクタリング: adr/011-ヘキサゴナルアーキテクチャリファクタリング.md
+    - TensorFlow.js統合: adr/012-TensorFlow.js統合.md
+    - Web Workers AI処理: adr/013-Web Workers AI処理.md

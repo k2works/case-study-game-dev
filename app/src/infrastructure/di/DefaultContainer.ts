@@ -4,9 +4,9 @@ import type { GamePort } from '../../application/ports/GamePort'
 import type { InputPort } from '../../application/ports/InputPort'
 import type { StoragePort } from '../../application/ports/StoragePort'
 import type { TimerPort } from '../../application/ports/TimerPort'
-import { AIService } from '../../application/services/AIService.ts'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
+import { WorkerAIService } from '../../application/services/ai/WorkerAIService.ts'
 import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
 import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
@@ -74,7 +74,8 @@ export class DefaultContainer {
       true,
     )
 
-    container.register<AIPort>('AIPort', () => new AIService(), true)
+    // AI Service: WorkerAIService（Web Worker + TensorFlow.js統合）を使用
+    container.register<AIPort>('AIPort', () => new WorkerAIService(), true)
 
     return container
   }

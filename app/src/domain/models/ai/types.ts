@@ -67,6 +67,8 @@ export interface AIMove {
   rotation: number
   /** 評価スコア */
   score: number
+  /** 評価詳細 */
+  evaluation?: MoveEvaluation
 }
 
 /**
@@ -93,4 +95,26 @@ export interface EvaluationResult {
   heightBalance: number
   /** 総合スコア */
   totalScore: number
+}
+
+/**
+ * 手の評価詳細
+ */
+export interface MoveEvaluation {
+  /** 高さスコア */
+  heightScore: number
+  /** 中央位置スコア */
+  centerScore: number
+  /** モード別追加スコア */
+  modeScore: number
+  /** 総合スコア */
+  totalScore: number
+  /** 平均Y座標 */
+  averageY: number
+  /** 平均X座標 */
+  averageX: number
+  /** 中央からの距離 */
+  distanceFromCenter: number
+  /** 評価理由 */
+  reason: string
 }
