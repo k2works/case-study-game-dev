@@ -70,10 +70,13 @@ export class MoveGenerator implements MoveGeneratorPort {
       ? { x: finalPositions.secondaryX, y: finalPositions.secondaryY }
       : { x: -1, y: -1 }
 
-    console.log(`Move generation: x=${x}, rotation=${rotation}, valid=${isValid}`, {
-      initialPositions: positions,
-      finalPositions: { finalPrimary, finalSecondary },
-    })
+    console.log(
+      `Move generation: x=${x}, rotation=${rotation}, valid=${isValid}`,
+      {
+        initialPositions: positions,
+        finalPositions: { finalPrimary, finalSecondary },
+      },
+    )
 
     return {
       x,
@@ -135,53 +138,6 @@ export class MoveGenerator implements MoveGeneratorPort {
       primary: { x, y: 0 },
       secondary: { x: secondaryX, y: secondaryY },
     }
-  }
-
-  /**
-   * 境界チェック
-   */
-  private isWithinBounds(
-    positions: {
-      primary: { x: number; y: number }
-      secondary: { x: number; y: number }
-    },
-    field: { width: number; height: number },
-  ): boolean {
-    const { primary, secondary } = positions
-    return (
-      primary.x >= 0 &&
-      primary.x < field.width &&
-      secondary.x >= 0 &&
-      secondary.x < field.width
-    )
-  }
-
-  /**
-   * 配置が有効かどうかをチェック
-   */
-  private isValidPlacement(
-    positions: {
-      primary: { x: number; y: number }
-      secondary: { x: number; y: number }
-    },
-    field: { width: number; height: number; cells: (string | null)[][] },
-  ): boolean {
-    if (!this.isWithinBounds(positions, field)) {
-      return false
-    }
-
-    const finalPositions = this.calculateFinalDropPositions(positions, field)
-    if (!finalPositions) {
-      return false
-    }
-
-    return this.canPlacePuyoPair(
-      finalPositions.primaryX,
-      finalPositions.secondaryX,
-      finalPositions.primaryY,
-      finalPositions.secondaryY,
-      field,
-    )
   }
 
   /**
@@ -271,29 +227,5 @@ export class MoveGenerator implements MoveGeneratorPort {
       }
     }
     return -1 // 列が満杯
-  }
-
-  /**
-   * ぷよペアが配置可能かチェック
-   */
-  private canPlacePuyoPair(
-    primaryX: number,
-    secondaryX: number,
-    primaryY: number,
-    secondaryY: number,
-    field: { cells: (string | null)[][] },
-  ): boolean {
-    // 同じ位置に配置しようとしていないかチェック
-    if (primaryX === secondaryX && primaryY === secondaryY) {
-      return false
-    }
-
-    // 各位置が空いているかチェック
-    const isPrimaryEmpty =
-      field.cells[primaryX] && field.cells[primaryX][primaryY] === null
-    const isSecondaryEmpty =
-      field.cells[secondaryX] && field.cells[secondaryX][secondaryY] === null
-
-    return isPrimaryEmpty && isSecondaryEmpty
   }
 }

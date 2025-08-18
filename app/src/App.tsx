@@ -143,6 +143,77 @@ const useKeyboardHandlers = (
   }
 }
 
+// ゲーム制御ボタンコンポーネント
+const GameControlButtons = ({
+  game,
+  gameService,
+  updateGame,
+}: {
+  game: GameViewModel
+  gameService: GamePort
+  updateGame: (game: GameViewModel) => void
+}) => {
+  const startGame = () => {
+    const newGame = gameService.startNewGame()
+    updateGame(newGame)
+  }
+
+  const pauseGame = () => {
+    const updatedGame = gameService.updateGameState(game, { type: 'PAUSE' })
+    updateGame(updatedGame)
+  }
+
+  const resumeGame = () => {
+    const updatedGame = gameService.updateGameState(game, { type: 'RESUME' })
+    updateGame(updatedGame)
+  }
+
+  const resetGame = () => {
+    const newGame = gameService.createReadyGame()
+    updateGame(newGame)
+  }
+
+  return (
+    <div className="mt-6 space-y-3">
+      {game.state === 'ready' && (
+        <button
+          onClick={startGame}
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+        >
+          ゲーム開始
+        </button>
+      )}
+
+      {game.state === 'playing' && (
+        <button
+          onClick={pauseGame}
+          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+        >
+          一時停止
+        </button>
+      )}
+
+      {game.state === 'paused' && (
+        <button
+          onClick={resumeGame}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+        >
+          再開
+        </button>
+      )}
+
+      {(game.state === 'gameOver' || game.state === 'paused') && (
+        <button
+          onClick={resetGame}
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+        >
+          リセット
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ゲームレイアウトコンポーネント
 const GameLayout = ({
   game,
@@ -165,26 +236,6 @@ const GameLayout = ({
   onToggleAI: () => void
   onAISettingsChange: (settings: AISettings) => void
 }) => {
-  const startGame = () => {
-    const newGame = gameService.startNewGame()
-    updateGame(newGame)
-  }
-
-  const pauseGame = () => {
-    const updatedGame = gameService.updateGameState(game, { type: 'PAUSE' })
-    updateGame(updatedGame)
-  }
-
-  const resumeGame = () => {
-    const updatedGame = gameService.updateGameState(game, { type: 'RESUME' })
-    updateGame(updatedGame)
-  }
-
-  const resetGame = () => {
-    const newGame = gameService.createReadyGame()
-    updateGame(newGame)
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4">
       <div className="max-w-4xl mx-auto">
@@ -213,54 +264,27 @@ const GameLayout = ({
                   <div className="font-bold mb-2">Debug Info</div>
                   <div>Game State: {game.state}</div>
                   <div>AI Enabled: {aiEnabled ? 'Yes' : 'No'}</div>
-                  <div>AI Service: {aiService.isEnabled() ? 'Enabled' : 'Disabled'}</div>
-                  <div>Has Current Puyo: {game.currentPuyoPair ? 'Yes' : 'No'}</div>
+                  <div>
+                    AI Service: {aiService.isEnabled() ? 'Enabled' : 'Disabled'}
+                  </div>
+                  <div>
+                    Has Current Puyo: {game.currentPuyoPair ? 'Yes' : 'No'}
+                  </div>
                   {game.currentPuyoPair && (
                     <div>
-                      Puyo Position: ({game.currentPuyoPair.x}, {game.currentPuyoPair.y})
+                      Puyo Position: ({game.currentPuyoPair.x},{' '}
+                      {game.currentPuyoPair.y})
                     </div>
                   )}
                 </div>
               )}
 
               {/* ゲーム制御ボタン */}
-              <div className="mt-6 space-y-3">
-                {game.state === 'ready' && (
-                  <button
-                    onClick={startGame}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    ゲーム開始
-                  </button>
-                )}
-
-                {game.state === 'playing' && (
-                  <button
-                    onClick={pauseGame}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    一時停止
-                  </button>
-                )}
-
-                {game.state === 'paused' && (
-                  <button
-                    onClick={resumeGame}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    再開
-                  </button>
-                )}
-
-                {(game.state === 'gameOver' || game.state === 'paused') && (
-                  <button
-                    onClick={resetGame}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    リセット
-                  </button>
-                )}
-              </div>
+              <GameControlButtons
+                game={game}
+                gameService={gameService}
+                updateGame={updateGame}
+              />
             </div>
           </div>
 
@@ -426,9 +450,10 @@ function App() {
       const currentRotation = game.currentPuyoPair!.rotation
       const targetRotation = aiMove.rotation
       let updatedGame = game
-      
+
       console.log(`Rotating from ${currentRotation} to ${targetRotation}`)
-      const rotationSteps = ((targetRotation - currentRotation + 360) % 360) / 90
+      const rotationSteps =
+        ((targetRotation - currentRotation + 360) % 360) / 90
       for (let i = 0; i < rotationSteps; i++) {
         const rotateInput = createKeyboardInput('ArrowUp', 'ArrowUp')
         const rotateAction = inputService.processKeyboardInput(rotateInput)
@@ -487,7 +512,10 @@ function App() {
       console.log('AI Move decision:', aiMove)
 
       const updatedGame = executeAIMoveActions(game, aiMove)
-      console.log('Final game state after AI move:', updatedGame.currentPuyoPair)
+      console.log(
+        'Final game state after AI move:',
+        updatedGame.currentPuyoPair,
+      )
       updateGame(updatedGame)
     } catch (error) {
       console.error('AI move execution failed:', error)
@@ -547,14 +575,14 @@ function App() {
     setAiSettings(newSettings)
     aiService.updateSettings(newSettings)
     aiService.setEnabled(newEnabled)
-    
+
     // AIを有効にしたときにゲームが開始状態でなければ自動開始
     if (newEnabled && game.state !== 'playing') {
       console.log('Auto-starting game for AI')
       const newGame = gameService.startNewGame()
       updateGame(newGame)
     }
-    
+
     console.log('AI Service after toggle:', {
       isEnabled: aiService.isEnabled(),
       gameState: game.state,

@@ -92,14 +92,17 @@ export class AIService implements AIPort {
       evaluationScore: this.evaluateMove(move, gameState),
     }))
 
-    console.log('All evaluated moves:', evaluatedMoves.map(move => ({
-      x: move.x,
-      rotation: move.rotation,
-      isValid: move.isValid,
-      score: move.evaluationScore,
-      primaryPos: move.primaryPosition,
-      secondaryPos: move.secondaryPosition,
-    })))
+    console.log(
+      'All evaluated moves:',
+      evaluatedMoves.map((move) => ({
+        x: move.x,
+        rotation: move.rotation,
+        isValid: move.isValid,
+        score: move.evaluationScore,
+        primaryPos: move.primaryPosition,
+        secondaryPos: move.secondaryPosition,
+      })),
+    )
 
     // 最高スコアの手を選択
     const bestMove = evaluatedMoves.reduce((best, current) =>

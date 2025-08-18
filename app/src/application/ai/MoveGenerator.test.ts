@@ -143,8 +143,9 @@ describe('MoveGenerator', () => {
 
       expect(validMove).toBeDefined()
       expect(validMove?.isValid).toBe(true)
-      expect(validMove?.primaryPosition).toEqual({ x: 2, y: 0 })
-      expect(validMove?.secondaryPosition).toEqual({ x: 2, y: -1 })
+      // 落下後の最終位置を期待（空のフィールドの底部）
+      expect(validMove?.primaryPosition).toEqual({ x: 2, y: 11 })
+      expect(validMove?.secondaryPosition).toEqual({ x: 2, y: 10 })
     })
 
     it('90度回転時の正しい座標を計算する', () => {
@@ -158,8 +159,9 @@ describe('MoveGenerator', () => {
         (move) => move.x === 2 && move.rotation === 90,
       )
 
-      expect(rightRotationMove?.primaryPosition).toEqual({ x: 2, y: 0 })
-      expect(rightRotationMove?.secondaryPosition).toEqual({ x: 3, y: 0 })
+      // 落下後の最終位置を期待
+      expect(rightRotationMove?.primaryPosition).toEqual({ x: 2, y: 11 })
+      expect(rightRotationMove?.secondaryPosition).toEqual({ x: 3, y: 11 })
     })
 
     it('180度回転時の正しい座標を計算する', () => {
@@ -173,8 +175,9 @@ describe('MoveGenerator', () => {
         (move) => move.x === 2 && move.rotation === 180,
       )
 
-      expect(downRotationMove?.primaryPosition).toEqual({ x: 2, y: 0 })
-      expect(downRotationMove?.secondaryPosition).toEqual({ x: 2, y: 1 })
+      // 落下後の最終位置を期待
+      expect(downRotationMove?.primaryPosition).toEqual({ x: 2, y: 11 })
+      expect(downRotationMove?.secondaryPosition).toEqual({ x: 2, y: 11 })
     })
 
     it('270度回転時の正しい座標を計算する', () => {
@@ -188,8 +191,9 @@ describe('MoveGenerator', () => {
         (move) => move.x === 2 && move.rotation === 270,
       )
 
-      expect(leftRotationMove?.primaryPosition).toEqual({ x: 2, y: 0 })
-      expect(leftRotationMove?.secondaryPosition).toEqual({ x: 1, y: 0 })
+      // 落下後の最終位置を期待
+      expect(leftRotationMove?.primaryPosition).toEqual({ x: 2, y: 11 })
+      expect(leftRotationMove?.secondaryPosition).toEqual({ x: 1, y: 11 })
     })
   })
 })

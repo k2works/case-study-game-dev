@@ -35,8 +35,8 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
   })
 
   test('キーボード操作説明が表示される', async ({ page }) => {
-    // キーボード操作セクションの確認
-    await expect(page.locator('h3')).toHaveText('キーボード操作')
+    // キーボード操作セクションの確認（AI機能追加により複数のh3要素があるため、特定の文字列で指定）
+    await expect(page.getByRole('heading', { name: 'キーボード操作' })).toBeVisible()
     
     // 操作説明の確認
     await expect(page.locator('text=←→: 左右移動')).toBeVisible()
@@ -203,5 +203,22 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
     
     // ゲーム開始ボタンが再び表示されることを確認
     await expect(page.locator('button', { hasText: 'ゲーム開始' })).toBeVisible()
+  })
+
+  test('AI機能の基本動作確認', async ({ page }) => {
+    // AIコントロールパネルが存在することを確認
+    await expect(page.getByRole('heading', { name: '🤖 AI自動プレイ' })).toBeVisible()
+    
+    // AI切り替えトグルが存在することを確認（実装はbuttonで行われている）
+    const aiToggleSection = page.locator('text=AI自動プレイ').first()
+    await expect(aiToggleSection).toBeVisible()
+    
+    // AI設定セクションが存在することを確認
+    await expect(page.locator('text=思考速度')).toBeVisible()
+    await expect(page.locator('text=AIモード')).toBeVisible()
+    
+    // AI設定の詳細要素を確認
+    await expect(page.locator('input[type="range"]')).toBeVisible()
+    await expect(page.locator('select')).toBeVisible()
   })
 })
