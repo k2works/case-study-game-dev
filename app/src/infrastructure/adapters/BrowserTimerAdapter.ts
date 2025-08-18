@@ -66,9 +66,9 @@ export class BrowserTimerAdapter implements TimerPort {
     }
 
     if (timerInfo.type === 'interval') {
-      clearInterval(timerInfo.nativeId as number)
+      clearInterval(timerInfo.nativeId)
     } else {
-      clearTimeout(timerInfo.nativeId as number)
+      clearTimeout(timerInfo.nativeId)
     }
 
     this.activeTimers.delete(timerId)
@@ -169,7 +169,7 @@ export class BrowserTimerAdapter implements TimerPort {
  */
 interface TimerInfo {
   readonly type: 'interval' | 'timeout'
-  readonly nativeId: number
+  readonly nativeId: ReturnType<typeof setTimeout>
   readonly callback: () => void
   readonly intervalMs?: number
   readonly delayMs?: number

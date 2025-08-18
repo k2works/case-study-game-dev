@@ -1,8 +1,10 @@
 import { Container } from '../../application/di/Container'
+import type { AIPort } from '../../application/ports/AIPort.ts'
 import type { GamePort } from '../../application/ports/GamePort'
 import type { InputPort } from '../../application/ports/InputPort'
 import type { StoragePort } from '../../application/ports/StoragePort'
 import type { TimerPort } from '../../application/ports/TimerPort'
+import { AIService } from '../../application/services/AIService.ts'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
 import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
@@ -72,6 +74,8 @@ export class DefaultContainer {
       true,
     )
 
+    container.register<AIPort>('AIPort', () => new AIService(), true)
+
     return container
   }
 }
@@ -93,6 +97,10 @@ class DefaultContainerWrapper {
 
   getInputService(): InputPort {
     return this.container.resolve<InputPort>('InputPort')
+  }
+
+  getAIService(): AIPort {
+    return this.container.resolve<AIPort>('AIPort')
   }
 }
 
