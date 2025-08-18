@@ -8,9 +8,9 @@ import type {
   AISettings,
   MoveEvaluation,
   PossibleMove,
-} from '../../domain/models/ai/types'
-import type { AIPort } from '../ports/AIPort.ts'
-import type { MoveGeneratorPort } from '../ports/MoveGeneratorPort.ts'
+} from '../../../domain/models/ai/types'
+import type { AIPort } from '../../ports/AIPort.ts'
+import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort.ts'
 import { MoveGenerator } from './MoveGenerator'
 
 /**
