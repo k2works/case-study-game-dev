@@ -1,3 +1,4 @@
+import { AIService } from '../../application/ai/AIService'
 import { Container } from '../../application/di/Container'
 import type { GamePort } from '../../application/ports/GamePort'
 import type { InputPort } from '../../application/ports/InputPort'
@@ -5,6 +6,7 @@ import type { StoragePort } from '../../application/ports/StoragePort'
 import type { TimerPort } from '../../application/ports/TimerPort'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
+import type { AIPort } from '../../domain/ai/ports'
 import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
 import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
@@ -72,6 +74,8 @@ export class DefaultContainer {
       true,
     )
 
+    container.register<AIPort>('AIPort', () => new AIService(), true)
+
     return container
   }
 }
@@ -93,6 +97,10 @@ class DefaultContainerWrapper {
 
   getInputService(): InputPort {
     return this.container.resolve<InputPort>('InputPort')
+  }
+
+  getAIService(): AIPort {
+    return this.container.resolve<AIPort>('AIPort')
   }
 }
 
