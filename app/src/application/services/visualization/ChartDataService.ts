@@ -2,19 +2,19 @@
  * チャートデータサービス
  * パフォーマンス統計からチャートデータを生成する
  */
-import type { PerformanceReport } from '../../domain/models/ai/types'
+import type { PerformanceReport } from '../../../domain/models/ai/types'
 import {
   DEFAULT_CHART_COLORS,
   createLineChartData,
-} from '../../domain/models/visualization/ChartData'
+} from '../../../domain/models/visualization/ChartData'
 import type {
   ChartDataPoint,
   LineChartData,
-} from '../../domain/models/visualization/ChartData'
+} from '../../../domain/models/visualization/ChartData'
 import type {
   GameResultData,
   PerformanceStatistics,
-} from './PerformanceAnalysisService'
+} from '../PerformanceAnalysisService'
 
 export type PerformanceMetricType = 'score' | 'chain' | 'playTime'
 
