@@ -132,9 +132,11 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 - **イミュータブルデータ構造:**
   ゲーム状態の変更は新しいオブジェクト生成
 - **純粋関数:**
-  副作用のない予測可能な処理
+  副作用のない予測可能な処理（EvaluationService等で実装）
 - **合成可能性:**
   小さな関数の組み合わせによる複雑な処理
+- **ドメインサービス関数化:**
+  評価ロジックの純粋関数への移行完了
 
 ### ヘキサゴナルアーキテクチャ
 - **ポートとアダプター:**
@@ -189,6 +191,8 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
   ✅ AIControlPanel、AIInsights実装完了
 - **アーキテクチャ拡張:**
   ✅ AI層追加、services/ai/ディレクトリ構造化
+- **関数型リファクタリング:**
+  ✅ EvaluationService純粋関数化、domain/services/ai配置
 
 #### Iteration 4: AI分析・戦略機能✅
 - **パフォーマンス分析:**
@@ -217,5 +221,5 @@ package "Infrastructure Layer" REPOSITORY_COLOR {
 
 ---
 
-**最終更新:** 2025-08-19（イテレーション4完了時）  
+**最終更新:** 2025-08-19（EvaluationService関数型リファクタリング完了時）  
 **更新者:** Claude Code Assistant
