@@ -2,7 +2,7 @@
  * チャートデータサービス
  * パフォーマンス統計からチャートデータを生成する
  */
-import type { PerformanceReport } from '../../../domain/models/ai/types'
+import type { PerformanceReport } from '../../../domain/models/ai/index'
 import {
   DEFAULT_CHART_COLORS,
   createLineChartData,

@@ -1,7 +1,7 @@
 /**
  * AIコントロールパネルコンポーネント
  */
-import type { AISettings } from '../../domain/models/ai/types'
+import type { AISettings } from '../../domain/models/ai/index'
 
 interface AIControlPanelProps {
   aiEnabled: boolean

@@ -11,7 +11,7 @@ import type {
   AISettings,
   MoveEvaluation,
   PossibleMove,
-} from '../../../domain/models/ai/types'
+} from '../../../domain/models/ai/index'
 import type { AIPort } from '../../ports/AIPort'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort'
 import type { StrategyPort } from '../../ports/StrategyPort'

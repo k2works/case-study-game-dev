@@ -6,7 +6,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
 import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
-import type { PerformanceReport } from '../../domain/models/ai/types'
+import type { PerformanceReport } from '../../domain/models/ai/index'
 import { PerformanceAnalysis } from './PerformanceAnalysis'
 
 describe('PerformanceAnalysis', () => {

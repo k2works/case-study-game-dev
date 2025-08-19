@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
 import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
 import type { GameViewModel } from '../../application/viewmodels/GameViewModel'
-import type { PerformanceReport } from '../../domain/models/ai/types'
+import type { PerformanceReport } from '../../domain/models/ai/index'
 
 interface UsePerformanceAnalysisProps {
   performanceService: PerformanceAnalysisService

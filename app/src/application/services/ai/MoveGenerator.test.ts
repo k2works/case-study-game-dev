@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { PuyoColor } from '../../../domain/models/Puyo'
-import type { AIGameState } from '../../../domain/models/ai/types'
+import type { AIGameState } from '../../../domain/models/ai/index'
 import { MoveGenerator } from './MoveGenerator'
 
 describe('MoveGenerator', () => {

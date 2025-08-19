@@ -3,7 +3,7 @@
  */
 import { describe, expect, test, vi } from 'vitest'
 
-import type { GameSession } from '../../domain/models/ai/types'
+import type { GameSession } from '../../domain/models/ai/index'
 import type { PerformancePort } from '../ports/PerformancePort'
 import { PerformanceAnalysisService } from './PerformanceAnalysisService'
 

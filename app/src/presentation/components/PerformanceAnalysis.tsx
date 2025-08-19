@@ -6,7 +6,7 @@ import { useState } from 'react'
 import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
 import { ChartDataService } from '../../application/services/visualization/ChartDataService'
 import type { PerformanceMetricType } from '../../application/services/visualization/ChartDataService'
-import type { PerformanceReport } from '../../domain/models/ai/types'
+import type { PerformanceReport } from '../../domain/models/ai/index'
 import { LineChart } from './charts/LineChart'
 
 interface PerformanceAnalysisProps {

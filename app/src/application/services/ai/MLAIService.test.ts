@@ -3,7 +3,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { AIGameState } from '../../../domain/models/ai/types'
+import type { AIGameState } from '../../../domain/models/ai/index'
 import type { StrategyPort } from '../../ports/StrategyPort'
 import { MLAIService } from './MLAIService'
 

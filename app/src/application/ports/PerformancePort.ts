@@ -5,7 +5,7 @@ import type {
   GameSession,
   PerformanceData,
   PerformanceReport,
-} from '../../domain/models/ai/types'
+} from '../../domain/models/ai/index'
 
 /**
  * パフォーマンス分析の出力ポート

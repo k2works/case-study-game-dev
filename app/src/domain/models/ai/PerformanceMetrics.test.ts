@@ -4,7 +4,7 @@
 import { describe, expect, test } from 'vitest'
 
 import { PerformanceMetrics } from './PerformanceMetrics'
-import type { GameSession } from './types'
+import type { GameSession } from './index'
 
 describe('PerformanceMetrics', () => {
   describe('基本機能', () => {

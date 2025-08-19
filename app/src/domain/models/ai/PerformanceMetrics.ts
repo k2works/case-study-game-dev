@@ -1,7 +1,7 @@
 /**
  * パフォーマンスメトリクスドメインモデル
  */
-import type { GameSession, PerformanceData, PerformanceReport } from './types'
+import type { GameSession, PerformanceData, PerformanceReport } from './index'
 
 /**
  * パフォーマンス分析機能
