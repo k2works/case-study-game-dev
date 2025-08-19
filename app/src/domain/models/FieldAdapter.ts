@@ -9,7 +9,7 @@ import {
   setPuyo,
 } from './ImmutableField'
 import type { Position } from './Position'
-import type { Puyo } from './Puyo'
+import type { PuyoData } from './Puyo'
 
 /**
  * 既存のFieldクラスとImmutableFieldの間のアダプター
@@ -44,12 +44,12 @@ export class FieldAdapter {
     return this.immutableField.height
   }
 
-  getPuyo(x: number, y: number): Puyo | null {
+  getPuyo(x: number, y: number): PuyoData | null {
     const position: Position = { x, y }
     return getPuyo(position, this.immutableField)
   }
 
-  setPuyo(x: number, y: number, puyo: Puyo): FieldAdapter {
+  setPuyo(x: number, y: number, puyo: PuyoData): FieldAdapter {
     const position: Position = { x, y }
     this.immutableField = setPuyo(position, puyo, this.immutableField)
     return this
@@ -58,7 +58,7 @@ export class FieldAdapter {
   /**
    * 新しいインスタンスを返すsetPuyoメソッド（不変版）
    */
-  withPuyo(x: number, y: number, puyo: Puyo): FieldAdapter {
+  withPuyo(x: number, y: number, puyo: PuyoData): FieldAdapter {
     const position: Position = { x, y }
     const newField = setPuyo(position, puyo, this.immutableField)
     return new FieldAdapter(newField)
@@ -82,7 +82,7 @@ export class FieldAdapter {
   /**
    * 全てのぷよとその位置を取得する新しいメソッド
    */
-  getAllPuyos(): Array<{ puyo: Puyo; position: Position }> {
+  getAllPuyos(): Array<{ puyo: PuyoData; position: Position }> {
     return getAllPuyos(this.immutableField)
   }
 

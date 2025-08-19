@@ -1,7 +1,7 @@
 import type { FieldAdapter } from '../models/FieldAdapter'
 import { isEmptyAt } from '../models/ImmutableField'
 import type { Position } from '../models/Position'
-import type { Puyo } from '../models/Puyo'
+import type { PuyoData } from '../models/Puyo'
 import type { PuyoPair } from '../models/PuyoPair'
 
 /**
@@ -28,7 +28,7 @@ export class CollisionService {
    * @param field 対象フィールド
    * @returns 配置可能な場合true
    */
-  canPlacePuyo(puyo: Puyo, field: FieldAdapter): boolean {
+  canPlacePuyo(puyo: PuyoData, field: FieldAdapter): boolean {
     const { x, y } = puyo.position
 
     // 境界チェック

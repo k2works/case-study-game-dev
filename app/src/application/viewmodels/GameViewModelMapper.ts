@@ -1,7 +1,7 @@
 import type { FieldAdapter } from '../../domain/models/FieldAdapter'
 import type { Game } from '../../domain/models/Game'
 import { getPuyoAt } from '../../domain/models/ImmutableField'
-import type { Puyo, PuyoColor } from '../../domain/models/Puyo'
+import type { PuyoColor, PuyoData } from '../../domain/models/Puyo'
 import type { PuyoPair } from '../../domain/models/PuyoPair'
 import type { Score } from '../../domain/models/Score'
 import { getDisplayScore } from '../../domain/models/Score'
@@ -75,7 +75,7 @@ export class GameViewModelMapper {
   /**
    * PuyoドメインモデルをPuyoViewModelに変換
    */
-  private static toPuyoViewModel(puyo: Puyo): PuyoViewModel {
+  private static toPuyoViewModel(puyo: PuyoData): PuyoViewModel {
     return {
       id: `${puyo.position.x}-${puyo.position.y}`, // ドメインにはIDがないので位置から生成
       color: this.toPuyoColorViewModel(puyo.color),

@@ -1,7 +1,7 @@
 import { processChain } from '../services/ImmutableChainService'
 import { FieldAdapter } from './FieldAdapter'
 import { isEmptyAt } from './ImmutableField'
-import { type Puyo, type PuyoColor } from './Puyo'
+import { type PuyoColor, type PuyoData } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
 import {
   createPuyoPair,
@@ -21,7 +21,7 @@ export interface Game {
   readonly level: number
   readonly currentPuyoPair: PuyoPair | null
   readonly nextPuyoPair: PuyoPair | null
-  readonly currentPuyo: Puyo | null
+  readonly currentPuyo: PuyoData | null
   readonly createdAt: Date
   readonly updatedAt: Date
 }
@@ -78,7 +78,7 @@ export const updateCurrentPuyoPair = (
   updatedAt: new Date(),
 })
 
-export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
+export const dropPuyo = (game: Game, puyo: PuyoData, column: number): Game => {
   // 指定した列でぷよを落下させる
   let dropPosition = game.field.getHeight() - 1
 

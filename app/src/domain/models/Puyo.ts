@@ -223,17 +223,3 @@ export const puyoToChar = (puyo: PuyoData): string => {
   }
   return puyo.color ? colorMap[puyo.color] : '.'
 }
-
-// =============================================================================
-// 型エイリアス（下位互換性）
-// =============================================================================
-
-/**
- * @deprecated PuyoDataを使用してください
- */
-export type Puyo = PuyoData
-
-/**
- * @deprecated Positionを使用してください
- */
-export type PuyoPosition = Position

@@ -1,12 +1,12 @@
 import type { FieldAdapter } from './FieldAdapter'
 import type { Position } from './Position'
 import { createPosition } from './Position'
-import type { Puyo, PuyoColor } from './Puyo'
+import type { PuyoColor, PuyoData } from './Puyo'
 import { createPuyo, movePuyo } from './Puyo'
 
 export interface PuyoPair {
-  readonly main: Puyo
-  readonly sub: Puyo
+  readonly main: PuyoData
+  readonly sub: PuyoData
 }
 
 export const createPuyoPair = (

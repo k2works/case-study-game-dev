@@ -6,18 +6,18 @@ import {
   setPuyo,
 } from '../models/ImmutableField'
 import { createPosition } from '../models/Position'
-import type { Puyo } from '../models/Puyo'
+import type { PuyoData } from '../models/Puyo'
 
 /**
  * 重力を適用して、新しいフィールド状態を返す（純粋関数）
  */
 export const applyGravity = (field: ImmutableField): ImmutableField => {
   // 各列ごとに重力を適用
-  const columns: Array<Array<{ puyo: Puyo; originalY: number }>> = []
+  const columns: Array<Array<{ puyo: PuyoData; originalY: number }>> = []
 
   // 各列のぷよを収集
   for (let x = 0; x < field.width; x++) {
-    const columnPuyos: Array<{ puyo: Puyo; originalY: number }> = []
+    const columnPuyos: Array<{ puyo: PuyoData; originalY: number }> = []
 
     for (let y = 0; y < field.height; y++) {
       const puyo = getPuyo(createPosition(x, y), field)
