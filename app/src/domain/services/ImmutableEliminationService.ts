@@ -1,12 +1,12 @@
 import { curry, filter, flatMap, flow, map, sumBy } from 'lodash/fp'
 
-import type { FieldData } from '../models/ImmutableField'
+import type { FieldData } from '../models/Field.ts'
 import {
   getAllPositions,
   getPuyoAt,
   isValidPosition,
   removePuyosAt,
-} from '../models/ImmutableField'
+} from '../models/Field.ts'
 import { getAdjacentPositions, positionToString } from '../models/Position'
 import type { PuyoColor } from '../models/Puyo'
 import type { PuyoGroup } from '../models/PuyoGroup'

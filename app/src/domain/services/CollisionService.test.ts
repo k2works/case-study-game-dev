@@ -4,7 +4,7 @@ import {
   type FieldData,
   createEmptyField,
   placePuyoAt,
-} from '../models/ImmutableField'
+} from '../models/Field.ts'
 import { createPuyo } from '../models/Puyo'
 import { createPuyoPair } from '../models/PuyoPair'
 import { CollisionService } from './CollisionService'

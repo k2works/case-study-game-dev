@@ -19,7 +19,7 @@ import {
   placePuyoAt,
   removeAllPuyosOfColor,
   removePuyoAt,
-} from './ImmutableField'
+} from './Field.ts'
 import { createPosition } from './Position'
 import { createPuyo } from './Puyo'
 

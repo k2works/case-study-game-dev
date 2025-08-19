@@ -1,11 +1,11 @@
 import { curry, flow, map, sum } from 'lodash/fp'
 
-import type { FieldData, PuyoWithPosition } from '../models/ImmutableField'
+import type { FieldData, PuyoWithPosition } from '../models/Field.ts'
 import {
   findConnectedPuyos as fieldFindConnectedPuyos,
   findErasableGroups as fieldFindErasableGroups,
   getColoredPuyosWithPositions,
-} from '../models/ImmutableField'
+} from '../models/Field.ts'
 import type { PuyoColor } from '../models/Puyo'
 
 /**

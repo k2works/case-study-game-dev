@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { getPuyoAt, placePuyoAt } from './Field.ts'
 import { createGame, placePuyoPair, updateCurrentPuyoPair } from './Game'
-import { getPuyoAt, placePuyoAt } from './ImmutableField'
 import { createPuyo } from './Puyo'
 import { createPuyoPair } from './PuyoPair'
 

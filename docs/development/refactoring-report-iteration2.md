@@ -29,7 +29,7 @@
 ```
 src/domain/models/
 ├── Puyo.ts
-└── ImmutableField.ts
+└── Field.ts
 
 src/domain/services/
 ├── ImmutableChainService.ts
@@ -53,7 +53,7 @@ export const movePuyo = curry((newPosition: Position, puyo: Puyo): Puyo => {
 });
 ```
 
-**ImmutableField.ts**
+**Field.ts**
 ```typescript
 // Before: 通常の関数
 export const getPuyo = (field: Field, position: Position): Puyo | undefined => {
@@ -112,7 +112,7 @@ export const calculateChainScore = curry((multiplier: number, chainResults: Chai
 - getPuyoStats
 ```
 
-**ImmutableField.ts (4個の関数削除)**
+**Field.ts (4個の関数削除)**
 ```typescript
 // 削除された未使用関数
 - findPuyos
@@ -210,7 +210,7 @@ curry化により関数の引数順序が変更され、101個のテストが失
    ```
 
 3. **影響ファイル**
-   - `ImmutableField.test.ts`: 19箇所修正
+   - `Field.test.ts`: 19箇所修正
    - `ImmutableChainService.test.ts`: setPuyo呼び出し修正
    - `PuyoPair.ts`: movePuyo呼び出し修正
    - `ImmutableGravityService.ts`: 各種関数呼び出し修正

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { getPuyoAt, isEmptyAt, placePuyoAt } from './Field.ts'
 import {
   createGame,
   dropPuyo,
@@ -14,7 +15,6 @@ import {
   updateGameScore,
   updateGameState,
 } from './Game'
-import { getPuyoAt, isEmptyAt, placePuyoAt } from './ImmutableField'
 import { createPuyo } from './Puyo'
 
 describe('Game', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { createEmptyField, placePuyoAt } from './ImmutableField'
+import { createEmptyField, placePuyoAt } from './Field.ts'
 import { createPuyo } from './Puyo'
 import {
   canPlaceOn,

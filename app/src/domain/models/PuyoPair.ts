@@ -1,5 +1,5 @@
-import type { FieldData } from './ImmutableField'
-import { isEmptyAt, isValidPosition } from './ImmutableField'
+import type { FieldData } from './Field.ts'
+import { isEmptyAt, isValidPosition } from './Field.ts'
 import type { Position } from './Position'
 import { createPosition } from './Position'
 import type { PuyoColor, PuyoData } from './Puyo'

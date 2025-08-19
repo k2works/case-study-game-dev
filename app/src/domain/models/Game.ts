@@ -4,7 +4,7 @@ import {
   createEmptyField,
   isEmptyAt,
   placePuyoAt,
-} from './ImmutableField'
+} from './Field.ts'
 import { type PuyoColor, type PuyoData } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
 import {

@@ -1,6 +1,6 @@
+import type { FieldData } from '../../domain/models/Field.ts'
+import { getPuyoAt } from '../../domain/models/Field.ts'
 import type { Game } from '../../domain/models/Game'
-import type { FieldData } from '../../domain/models/ImmutableField'
-import { getPuyoAt } from '../../domain/models/ImmutableField'
 import type { PuyoColor, PuyoData } from '../../domain/models/Puyo'
 import type { PuyoPair } from '../../domain/models/PuyoPair'
 import type { Score } from '../../domain/models/Score'

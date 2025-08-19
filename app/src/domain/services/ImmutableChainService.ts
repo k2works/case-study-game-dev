@@ -1,6 +1,6 @@
 import { curry, flow } from 'lodash/fp'
 
-import type { FieldData } from '../models/ImmutableField'
+import type { FieldData } from '../models/Field.ts'
 import type { PuyoGroup } from '../models/PuyoGroup'
 import {
   eliminateGroups,

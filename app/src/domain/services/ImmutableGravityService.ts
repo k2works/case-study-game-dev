@@ -1,10 +1,10 @@
-import type { FieldData } from '../models/ImmutableField'
+import type { FieldData } from '../models/Field.ts'
 import {
   createEmptyField,
   getPuyoAt,
   isEmptyAt,
   placePuyoAt,
-} from '../models/ImmutableField'
+} from '../models/Field.ts'
 import { createPosition } from '../models/Position'
 import type { PuyoData } from '../models/Puyo'
 

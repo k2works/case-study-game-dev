@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { placePuyoAt } from './Field.ts'
 import {
   createGame,
   dropPuyoFast,
@@ -9,7 +10,6 @@ import {
   spawnNextPuyoPair,
   startGame,
 } from './Game'
-import { placePuyoAt } from './ImmutableField'
 
 describe('Game PuyoPair System', () => {
   describe('startGame', () => {

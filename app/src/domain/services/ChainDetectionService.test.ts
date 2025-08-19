@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  type FieldData,
-  createFieldFromPattern,
-} from '../models/ImmutableField'
+import { type FieldData, createFieldFromPattern } from '../models/Field.ts'
 import { createPosition } from '../models/Position'
 import {
   type ChainResult,
