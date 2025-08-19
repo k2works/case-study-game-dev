@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { createField, setPuyo } from '../models/ImmutableField'
+import { createEmptyField, placePuyoAt } from '../models/ImmutableField'
 import { createPosition } from '../models/Position'
 import { createPuyo } from '../models/Puyo'
 import {
@@ -49,25 +49,25 @@ describe('ImmutableChainService', () => {
   describe('連鎖可能性判定', () => {
     it('連鎖可能なフィールドを正しく判定する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
 
       // 4つの赤ぷよを縦に並べる（消去可能）
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
         field,
@@ -82,20 +82,20 @@ describe('ImmutableChainService', () => {
 
     it('連鎖不可能なフィールドを正しく判定する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
 
       // 3つの赤ぷよを縦に並べる（消去不可能）
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
         field,
@@ -112,25 +112,25 @@ describe('ImmutableChainService', () => {
   describe('単発消去処理', () => {
     it('消去可能なグループがある場合に正しく処理する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
 
       // 4つの赤ぷよを縦に並べる
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
         field,
@@ -147,7 +147,7 @@ describe('ImmutableChainService', () => {
 
     it('消去可能なグループがない場合に正しく処理する', () => {
       // Arrange
-      const field = createField()
+      const field = createEmptyField()
 
       // Act
       const result = processSingleElimination(field)
@@ -162,25 +162,25 @@ describe('ImmutableChainService', () => {
   describe('連鎖処理', () => {
     it('単発消去の場合に正しく処理する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
 
       // 4つの赤ぷよを縦に並べる
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
         field,
@@ -196,7 +196,7 @@ describe('ImmutableChainService', () => {
 
     it('連鎖がない場合は連鎖数0を返す', () => {
       // Arrange
-      const field = createField()
+      const field = createEmptyField()
 
       // Act
       const result = processChain(field)
@@ -210,7 +210,7 @@ describe('ImmutableChainService', () => {
   describe('最大連鎖予測', () => {
     it('連鎖がない場合は0を返す', () => {
       // Arrange
-      const field = createField()
+      const field = createEmptyField()
 
       // Act
       const result = predictMaxChain(field)
@@ -221,25 +221,25 @@ describe('ImmutableChainService', () => {
 
     it('単発消去の場合は1を返す', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
 
       // 4つの赤ぷよを縦に並べる
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 11),
         createPuyo('red', createPosition(0, 11)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 10),
         createPuyo('red', createPosition(0, 10)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 9),
         createPuyo('red', createPosition(0, 9)),
         field,
       )
-      field = setPuyo(
+      field = placePuyoAt(
         createPosition(0, 8),
         createPuyo('red', createPosition(0, 8)),
         field,

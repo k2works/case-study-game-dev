@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { FieldAdapter } from '../models/FieldAdapter'
-import { createField } from '../models/ImmutableField'
+import { createEmptyField } from '../models/ImmutableField'
 import { createPuyo } from '../models/Puyo'
 import { createPuyoPair } from '../models/PuyoPair'
 import { CollisionService } from './CollisionService'
@@ -13,7 +13,7 @@ describe('CollisionService', () => {
   beforeEach(() => {
     service = new CollisionService()
     // 6x13のフィールドを作成
-    field = new FieldAdapter(createField(6, 13))
+    field = new FieldAdapter(createEmptyField(6, 13))
   })
 
   describe('canPlacePuyo', () => {

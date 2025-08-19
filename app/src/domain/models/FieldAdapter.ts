@@ -1,12 +1,12 @@
-import type { ImmutableField } from './ImmutableField'
+import type { FieldData } from './ImmutableField'
 import {
-  createField,
-  getAllPuyos,
-  getPuyo,
-  isEmpty,
+  createEmptyField,
+  getAllPuyosWithPositions,
+  getPuyoAt,
+  isEmptyAt,
   isValidPosition,
-  removePuyo,
-  setPuyo,
+  placePuyoAt,
+  removePuyoAt,
 } from './ImmutableField'
 import type { Position } from './Position'
 import type { PuyoData } from './Puyo'
@@ -16,23 +16,23 @@ import type { PuyoData } from './Puyo'
  * 既存のコードとの互換性を保ちながらImmutableFieldの利点を活用
  */
 export class FieldAdapter {
-  private immutableField: ImmutableField
+  private immutableField: FieldData
 
-  constructor(field?: ImmutableField) {
-    this.immutableField = field ?? createField()
+  constructor(field?: FieldData) {
+    this.immutableField = field ?? createEmptyField()
   }
 
   /**
    * 内部の不変フィールドを取得
    */
-  getImmutableField(): ImmutableField {
+  getImmutableField(): FieldData {
     return this.immutableField
   }
 
   /**
    * 不変フィールドから新しいアダプターを作成
    */
-  static fromImmutableField(field: ImmutableField): FieldAdapter {
+  static fromImmutableField(field: FieldData): FieldAdapter {
     return new FieldAdapter(field)
   }
 
@@ -46,12 +46,12 @@ export class FieldAdapter {
 
   getPuyo(x: number, y: number): PuyoData | null {
     const position: Position = { x, y }
-    return getPuyo(position, this.immutableField)
+    return getPuyoAt(position, this.immutableField)
   }
 
   setPuyo(x: number, y: number, puyo: PuyoData): FieldAdapter {
     const position: Position = { x, y }
-    this.immutableField = setPuyo(position, puyo, this.immutableField)
+    this.immutableField = placePuyoAt(position, puyo, this.immutableField)
     return this
   }
 
@@ -60,18 +60,18 @@ export class FieldAdapter {
    */
   withPuyo(x: number, y: number, puyo: PuyoData): FieldAdapter {
     const position: Position = { x, y }
-    const newField = setPuyo(position, puyo, this.immutableField)
+    const newField = placePuyoAt(position, puyo, this.immutableField)
     return new FieldAdapter(newField)
   }
 
   removePuyo(x: number, y: number): void {
     const position: Position = { x, y }
-    this.immutableField = removePuyo(position, this.immutableField)
+    this.immutableField = removePuyoAt(position, this.immutableField)
   }
 
   isEmpty(x: number, y: number): boolean {
     const position: Position = { x, y }
-    return isEmpty(position, this.immutableField)
+    return isEmptyAt(position, this.immutableField)
   }
 
   isValidPosition(x: number, y: number): boolean {
@@ -83,7 +83,7 @@ export class FieldAdapter {
    * 全てのぷよとその位置を取得する新しいメソッド
    */
   getAllPuyos(): Array<{ puyo: PuyoData; position: Position }> {
-    return getAllPuyos(this.immutableField)
+    return getAllPuyosWithPositions(this.immutableField)
   }
 
   /**

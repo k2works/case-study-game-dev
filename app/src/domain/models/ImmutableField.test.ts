@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest'
 import {
   areFieldsEqual,
   createEmptyField,
-  // 下位互換のエイリアス
-  createField,
   createFieldFromGrid,
   createFieldFromPattern,
   fieldToPatternString,
@@ -12,10 +10,8 @@ import {
   findErasableGroups,
   getColoredPositions,
   getFieldStatistics,
-  getPuyo,
   getPuyoAt,
   getPuyosOfColor,
-  isEmpty,
   isFieldEmpty,
   isFieldFull,
   isRowFull,
@@ -23,7 +19,6 @@ import {
   placePuyoAt,
   removeAllPuyosOfColor,
   removePuyoAt,
-  setPuyo,
 } from './ImmutableField'
 import { createPosition } from './Position'
 import { createPuyo } from './Puyo'
@@ -363,21 +358,6 @@ describe('関数型ImmutableField', () => {
       // When & Then
       expect(areFieldsEqual(field1, field2)).toBe(true)
       expect(areFieldsEqual(field1, field3)).toBe(false)
-    })
-  })
-
-  // 下位互換性テスト
-  describe('下位互換性テスト', () => {
-    it('古いAPIも引き続き動作する', () => {
-      // When
-      const field = createField() // 古いAPI
-      const position = createPosition(1, 1)
-      const puyo = createPuyo('red', position)
-      const newField = setPuyo(position, puyo, field) // 古いAPI
-
-      // Then
-      expect(getPuyo(position, newField)).toBe(puyo) // 古いAPI
-      expect(isEmpty(position, field)).toBe(true) // 古いAPI
     })
   })
 })

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { FieldAdapter } from './FieldAdapter'
-import { createField } from './ImmutableField'
+import { createEmptyField } from './ImmutableField'
 import { createPosition } from './Position'
 import { createPuyo } from './Puyo'
 
@@ -18,7 +18,7 @@ describe('FieldAdapter', () => {
 
     it('ImmutableFieldから初期化できる', () => {
       // Arrange
-      const immutableField = createField(4, 8)
+      const immutableField = createEmptyField(4, 8)
 
       // Act
       const adapter = FieldAdapter.fromImmutableField(immutableField)
