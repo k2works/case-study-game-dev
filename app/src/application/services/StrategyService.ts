@@ -126,25 +126,8 @@ class StrategyService {
     request: CreateStrategyRequest,
   ): Promise<StrategyConfig> {
     try {
-      if (!request.name || request.name.trim().length === 0) {
-        throw new Error('Strategy name is required')
-      }
-
-      if (!request.description || request.description.trim().length === 0) {
-        throw new Error('Strategy description is required')
-      }
-
-      const strategy = createStrategyConfig(
-        request.name.trim(),
-        'custom',
-        request.description.trim(),
-        request.parameters,
-      )
-
-      if (!isValidStrategyConfig(strategy)) {
-        throw new Error('Invalid strategy configuration')
-      }
-
+      this.validateStrategyRequest(request)
+      const strategy = this.buildStrategy(request)
       await this.strategyAdapter.saveStrategy(strategy)
       return strategy
     } catch (error) {
@@ -153,6 +136,37 @@ class StrategyService {
       }
       throw error
     }
+  }
+
+  /**
+   * 戦略リクエストのバリデーション
+   */
+  private validateStrategyRequest(request: CreateStrategyRequest): void {
+    if (!request.name || request.name.trim().length === 0) {
+      throw new Error('Strategy name is required')
+    }
+
+    if (!request.description || request.description.trim().length === 0) {
+      throw new Error('Strategy description is required')
+    }
+  }
+
+  /**
+   * 戦略の構築とバリデーション
+   */
+  private buildStrategy(request: CreateStrategyRequest): StrategyConfig {
+    const strategy = createStrategyConfig(
+      request.name.trim(),
+      'custom',
+      request.description.trim(),
+      request.parameters,
+    )
+
+    if (!isValidStrategyConfig(strategy)) {
+      throw new Error('Invalid strategy configuration')
+    }
+
+    return strategy
   }
 
   /**
