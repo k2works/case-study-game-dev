@@ -7,7 +7,7 @@ import { useState } from 'react'
 import type {
   CreateStrategyRequest,
   StrategyService,
-} from '../../application/services/StrategyService'
+} from '../../application/services/ai/StrategyService'
 import type {
   StrategyConfig,
   StrategyParameters,

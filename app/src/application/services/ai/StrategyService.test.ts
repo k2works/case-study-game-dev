@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, test } from 'vitest'
 import {
   DEFAULT_STRATEGIES,
   type StrategyConfig,
-} from '../../domain/models/ai/StrategyConfig'
-import type { StrategyPort } from '../ports/StrategyPort'
+} from '../../../domain/models/ai/StrategyConfig'
+import type { StrategyPort } from '../../ports/StrategyPort'
 import { StrategyService } from './StrategyService'
 import type {
   CreateStrategyRequest,
