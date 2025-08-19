@@ -1,5 +1,6 @@
 import { processChain } from '../services/ImmutableChainService'
 import { FieldAdapter } from './FieldAdapter'
+import { isEmptyAt } from './ImmutableField'
 import { type Puyo, type PuyoColor } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
 import {
@@ -83,7 +84,7 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
 
   // 下から上に向かって空きセルを探す
   for (let y = game.field.getHeight() - 1; y >= 0; y--) {
-    if (!game.field.isEmpty(column, y)) {
+    if (!isEmptyAt({ x: column, y }, game.field.getImmutableField())) {
       dropPosition = y - 1
       break
     }
@@ -115,10 +116,10 @@ export const dropPuyo = (game: Game, puyo: Puyo, column: number): Game => {
 const checkPuyoPairCollision = (game: Game, puyoPair: PuyoPair): boolean => {
   const mainCollision =
     puyoPair.main.position.y >= 0 &&
-    !game.field.isEmpty(puyoPair.main.position.x, puyoPair.main.position.y)
+    !isEmptyAt(puyoPair.main.position, game.field.getImmutableField())
   const subCollision =
     puyoPair.sub.position.y >= 0 &&
-    !game.field.isEmpty(puyoPair.sub.position.x, puyoPair.sub.position.y)
+    !isEmptyAt(puyoPair.sub.position, game.field.getImmutableField())
 
   return mainCollision || subCollision
 }
@@ -289,7 +290,7 @@ export const spawnNextPuyoPair = (game: Game): Game => {
   const startY = 0
 
   // 生成位置が空いているかチェック（メインのみ、サブは画面外なのでチェック不要）
-  if (!game.field.isEmpty(startX, startY)) {
+  if (!isEmptyAt({ x: startX, y: startY }, game.field.getImmutableField())) {
     return {
       ...game,
       state: 'gameOver',

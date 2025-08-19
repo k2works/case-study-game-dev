@@ -1,4 +1,5 @@
 import type { FieldAdapter } from '../models/FieldAdapter'
+import { isEmptyAt } from '../models/ImmutableField'
 import type { Position } from '../models/Position'
 import type { Puyo } from '../models/Puyo'
 import type { PuyoPair } from '../models/PuyoPair'
@@ -36,7 +37,7 @@ export class CollisionService {
     }
 
     // 占有チェック
-    if (!field.isEmpty(x, y)) {
+    if (!isEmptyAt({ x, y }, field.getImmutableField())) {
       return false
     }
 
@@ -220,7 +221,7 @@ export class CollisionService {
    */
   isGameOver(field: FieldAdapter, spawnPosition: Position): boolean {
     // 生成位置が占有されている場合はゲームオーバー
-    return !field.isEmpty(spawnPosition.x, spawnPosition.y)
+    return !isEmptyAt(spawnPosition, field.getImmutableField())
   }
 
   /**
@@ -232,7 +233,7 @@ export class CollisionService {
   isDangerZone(field: FieldAdapter, dangerLine: number = 2): boolean {
     for (let x = 0; x < field.getWidth(); x++) {
       for (let y = 0; y < dangerLine; y++) {
-        if (!field.isEmpty(x, y)) {
+        if (!isEmptyAt({ x, y }, field.getImmutableField())) {
           return true
         }
       }
@@ -251,7 +252,7 @@ export class CollisionService {
 
     // 指定位置から上方向をチェック
     for (let y = checkPosition.y - 1; y >= 0; y--) {
-      if (!field.isEmpty(checkPosition.x, y)) {
+      if (!isEmptyAt({ x: checkPosition.x, y }, field.getImmutableField())) {
         floatingPuyos.push({ x: checkPosition.x, y })
       }
     }

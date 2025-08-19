@@ -11,7 +11,7 @@ import { InputApplicationService } from '../../application/services/InputApplica
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
 import StrategyService from '../../application/services/StrategyService'
 import { MLAIService } from '../../application/services/ai/MLAIService'
-import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
+import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import { BrowserTimerAdapter } from '../adapters/BrowserTimerAdapter'
@@ -44,10 +44,10 @@ export class DefaultContainer {
       true, // シングルトン
     )
 
-    // ドメインサービス
-    container.register<ChainDetectionService>(
+    // ドメインサービス（関数型API）
+    container.register<typeof ChainDetectionService>(
       'ChainDetectionService',
-      () => new ChainDetectionService(),
+      () => ChainDetectionService,
       true,
     )
 

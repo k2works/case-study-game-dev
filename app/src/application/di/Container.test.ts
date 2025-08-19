@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
+import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import { Container } from './Container'
@@ -161,10 +161,7 @@ describe('Container', () => {
       // 必要なサービスを登録
       container.register('StoragePort', () => new MockStorageService())
       container.register('TimerPort', () => new MockTimerService())
-      container.register(
-        'ChainDetectionService',
-        () => new ChainDetectionService(),
-      )
+      container.register('ChainDetectionService', () => ChainDetectionService)
       container.register('CollisionService', () => new CollisionService())
       container.register('PuyoSpawningService', () => new PuyoSpawningService())
     })
@@ -179,9 +176,11 @@ describe('Container', () => {
       expect(adapter).toBeInstanceOf(MockTimerService)
     })
 
-    it('getChainDetectionService はChainDetectionServiceを返す', () => {
+    it('getChainDetectionService は関数型ChainDetectionServiceを返す', () => {
       const service = container.getChainDetectionService()
-      expect(service).toBeInstanceOf(ChainDetectionService)
+      expect(typeof service).toBe('object')
+      expect(typeof service.findErasableGroups).toBe('function')
+      expect(typeof service.calculateChainScore).toBe('function')
     })
 
     it('getCollisionService はCollisionServiceを返す', () => {

@@ -1,4 +1,4 @@
-import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
+import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import type { GamePort } from '../ports/GamePort'
@@ -117,8 +117,8 @@ export class Container {
     return this.resolve<InputPort>('InputPort')
   }
 
-  getChainDetectionService(): ChainDetectionService {
-    return this.resolve<ChainDetectionService>('ChainDetectionService')
+  getChainDetectionService(): typeof ChainDetectionService {
+    return this.resolve<typeof ChainDetectionService>('ChainDetectionService')
   }
 
   getCollisionService(): CollisionService {

@@ -1,5 +1,6 @@
 import type { FieldAdapter } from '../../domain/models/FieldAdapter'
 import type { Game } from '../../domain/models/Game'
+import { getPuyoAt } from '../../domain/models/ImmutableField'
 import type { Puyo, PuyoColor } from '../../domain/models/Puyo'
 import type { PuyoPair } from '../../domain/models/PuyoPair'
 import type { Score } from '../../domain/models/Score'
@@ -59,7 +60,7 @@ export class GameViewModelMapper {
     for (let x = 0; x < field.getWidth(); x++) {
       cells[x] = []
       for (let y = 0; y < field.getHeight(); y++) {
-        const puyo = field.getPuyo(x, y)
+        const puyo = getPuyoAt({ x, y }, field.getImmutableField())
         cells[x][y] = puyo ? this.toPuyoViewModel(puyo) : null
       }
     }
