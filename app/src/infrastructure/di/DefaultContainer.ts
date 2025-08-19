@@ -9,10 +9,9 @@ import type { TimerPort } from '../../application/ports/TimerPort'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
-import StrategyService from '../../application/services/StrategyService'
 import { MLAIService } from '../../application/services/ai/MLAIService'
-import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
-import { CollisionService } from '../../domain/services/CollisionService'
+import StrategyService from '../../application/services/ai/StrategyService'
+import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import { BrowserTimerAdapter } from '../adapters/BrowserTimerAdapter'
 import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter'
@@ -44,16 +43,10 @@ export class DefaultContainer {
       true, // シングルトン
     )
 
-    // ドメインサービス
-    container.register<ChainDetectionService>(
+    // ドメインサービス（関数型API）
+    container.register<typeof ChainDetectionService>(
       'ChainDetectionService',
-      () => new ChainDetectionService(),
-      true,
-    )
-
-    container.register<CollisionService>(
-      'CollisionService',
-      () => new CollisionService(),
+      () => ChainDetectionService,
       true,
     )
 

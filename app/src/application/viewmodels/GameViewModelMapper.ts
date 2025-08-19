@@ -1,6 +1,7 @@
-import type { FieldAdapter } from '../../domain/models/FieldAdapter'
+import type { FieldData } from '../../domain/models/Field.ts'
+import { getPuyoAt } from '../../domain/models/Field.ts'
 import type { Game } from '../../domain/models/Game'
-import type { Puyo, PuyoColor } from '../../domain/models/Puyo'
+import type { PuyoColor, PuyoData } from '../../domain/models/Puyo'
 import type { PuyoPair } from '../../domain/models/PuyoPair'
 import type { Score } from '../../domain/models/Score'
 import { getDisplayScore } from '../../domain/models/Score'
@@ -53,20 +54,20 @@ export class GameViewModelMapper {
   /**
    * FieldドメインモデルをFieldViewModelに変換
    */
-  private static toFieldViewModel(field: FieldAdapter): FieldViewModel {
+  private static toFieldViewModel(field: FieldData): FieldViewModel {
     const cells: (PuyoViewModel | null)[][] = []
 
-    for (let x = 0; x < field.getWidth(); x++) {
+    for (let x = 0; x < field.width; x++) {
       cells[x] = []
-      for (let y = 0; y < field.getHeight(); y++) {
-        const puyo = field.getPuyo(x, y)
+      for (let y = 0; y < field.height; y++) {
+        const puyo = getPuyoAt({ x, y }, field)
         cells[x][y] = puyo ? this.toPuyoViewModel(puyo) : null
       }
     }
 
     return {
-      width: field.getWidth(),
-      height: field.getHeight(),
+      width: field.width,
+      height: field.height,
       cells,
     }
   }
@@ -74,7 +75,7 @@ export class GameViewModelMapper {
   /**
    * PuyoドメインモデルをPuyoViewModelに変換
    */
-  private static toPuyoViewModel(puyo: Puyo): PuyoViewModel {
+  private static toPuyoViewModel(puyo: PuyoData): PuyoViewModel {
     return {
       id: `${puyo.position.x}-${puyo.position.y}`, // ドメインにはIDがないので位置から生成
       color: this.toPuyoColorViewModel(puyo.color),

@@ -3,7 +3,7 @@
  */
 import { describe, expect, test } from 'vitest'
 
-import type { GameSession } from '../../domain/models/ai/types'
+import type { GameSession } from '../../domain/models/ai/index'
 import { PerformanceAdapter } from './PerformanceAdapter'
 
 describe('PerformanceAdapter', () => {

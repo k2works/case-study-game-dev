@@ -2,7 +2,7 @@ import type {
   AIGameState,
   AIMove,
   AISettings,
-} from '../../domain/models/ai/types.ts'
+} from '../../domain/models/ai/index'
 
 export interface AIPort {
   /** 次の手を決定 */

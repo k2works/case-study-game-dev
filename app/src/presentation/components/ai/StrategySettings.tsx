@@ -7,12 +7,12 @@ import { useState } from 'react'
 import type {
   CreateStrategyRequest,
   StrategyService,
-} from '../../application/services/StrategyService'
+} from '../../../application/services/ai/StrategyService'
 import type {
   StrategyConfig,
   StrategyParameters,
-} from '../../domain/models/ai/StrategyConfig'
-import { useStrategy } from '../hooks/useStrategy'
+} from '../../../domain/models/ai'
+import { useStrategy } from '../../hooks/useStrategy'
 
 interface StrategySettingsProps {
   strategyService: StrategyService

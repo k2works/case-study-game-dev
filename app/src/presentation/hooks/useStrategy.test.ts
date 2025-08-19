@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { act, renderHook, waitFor } from '@testing-library/react'
 
-import type { StrategyService } from '../../application/services/StrategyService'
+import type { StrategyService } from '../../application/services/ai/StrategyService'
 import {
   DEFAULT_STRATEGIES,
   type StrategyParameters,

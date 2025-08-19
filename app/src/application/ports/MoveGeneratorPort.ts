@@ -1,4 +1,4 @@
-import type { AIGameState, PossibleMove } from '../../domain/models/ai/types.ts'
+import type { AIGameState, PossibleMove } from '../../domain/models/ai/index'
 
 /**
  * 手生成ポート

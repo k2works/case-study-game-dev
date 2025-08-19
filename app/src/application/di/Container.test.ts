@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ChainDetectionService } from '../../domain/services/ChainDetectionService'
-import { CollisionService } from '../../domain/services/CollisionService'
+import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import { Container } from './Container'
 
@@ -161,11 +160,7 @@ describe('Container', () => {
       // 必要なサービスを登録
       container.register('StoragePort', () => new MockStorageService())
       container.register('TimerPort', () => new MockTimerService())
-      container.register(
-        'ChainDetectionService',
-        () => new ChainDetectionService(),
-      )
-      container.register('CollisionService', () => new CollisionService())
+      container.register('ChainDetectionService', () => ChainDetectionService)
       container.register('PuyoSpawningService', () => new PuyoSpawningService())
     })
 
@@ -179,14 +174,11 @@ describe('Container', () => {
       expect(adapter).toBeInstanceOf(MockTimerService)
     })
 
-    it('getChainDetectionService はChainDetectionServiceを返す', () => {
+    it('getChainDetectionService は関数型ChainDetectionServiceを返す', () => {
       const service = container.getChainDetectionService()
-      expect(service).toBeInstanceOf(ChainDetectionService)
-    })
-
-    it('getCollisionService はCollisionServiceを返す', () => {
-      const service = container.getCollisionService()
-      expect(service).toBeInstanceOf(CollisionService)
+      expect(typeof service).toBe('object')
+      expect(typeof service.findErasableGroups).toBe('function')
+      expect(typeof service.calculateChainScore).toBe('function')
     })
 
     it('getPuyoSpawningService はPuyoSpawningServiceを返す', () => {

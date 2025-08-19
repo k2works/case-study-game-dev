@@ -1,26 +1,26 @@
-import type { ImmutableField } from '../models/ImmutableField'
+import type { FieldData } from '../models/Field.ts'
 import {
-  createField,
-  getPuyo,
-  isEmpty,
-  setPuyo,
-} from '../models/ImmutableField'
+  createEmptyField,
+  getPuyoAt,
+  isEmptyAt,
+  placePuyoAt,
+} from '../models/Field.ts'
 import { createPosition } from '../models/Position'
-import type { Puyo } from '../models/Puyo'
+import type { PuyoData } from '../models/Puyo'
 
 /**
  * 重力を適用して、新しいフィールド状態を返す（純粋関数）
  */
-export const applyGravity = (field: ImmutableField): ImmutableField => {
+export const applyGravity = (field: FieldData): FieldData => {
   // 各列ごとに重力を適用
-  const columns: Array<Array<{ puyo: Puyo; originalY: number }>> = []
+  const columns: Array<Array<{ puyo: PuyoData; originalY: number }>> = []
 
   // 各列のぷよを収集
   for (let x = 0; x < field.width; x++) {
-    const columnPuyos: Array<{ puyo: Puyo; originalY: number }> = []
+    const columnPuyos: Array<{ puyo: PuyoData; originalY: number }> = []
 
     for (let y = 0; y < field.height; y++) {
-      const puyo = getPuyo(createPosition(x, y), field)
+      const puyo = getPuyoAt(createPosition(x, y), field)
       if (puyo) {
         columnPuyos.push({ puyo, originalY: y })
       }
@@ -30,7 +30,7 @@ export const applyGravity = (field: ImmutableField): ImmutableField => {
   }
 
   // 新しい空のフィールドを作成
-  let newField = createField(field.width, field.height)
+  let newField = createEmptyField(field.width, field.height)
 
   // 各列に重力を適用してぷよを再配置
   for (let x = 0; x < field.width; x++) {
@@ -45,8 +45,8 @@ export const applyGravity = (field: ImmutableField): ImmutableField => {
       const newY = field.height - 1 - i
       const newPosition = createPosition(x, newY)
 
-      if (isEmpty(newPosition, newField)) {
-        newField = setPuyo(newPosition, puyo, newField)
+      if (isEmptyAt(newPosition, newField)) {
+        newField = placePuyoAt(newPosition, puyo, newField)
       }
     }
   }
@@ -57,13 +57,13 @@ export const applyGravity = (field: ImmutableField): ImmutableField => {
 /**
  * 重力が必要かどうかを判定する（純粋関数）
  */
-export const needsGravity = (field: ImmutableField): boolean => {
+export const needsGravity = (field: FieldData): boolean => {
   for (let x = 0; x < field.width; x++) {
     let foundEmpty = false
 
     for (let y = field.height - 1; y >= 0; y--) {
       const position = createPosition(x, y)
-      const puyo = getPuyo(position, field)
+      const puyo = getPuyoAt(position, field)
 
       if (!puyo) {
         foundEmpty = true
@@ -80,9 +80,7 @@ export const needsGravity = (field: ImmutableField): boolean => {
 /**
  * 重力適用の完了を待つ（必要に応じて複数回適用）
  */
-export const applyGravityUntilStable = (
-  field: ImmutableField,
-): ImmutableField => {
+export const applyGravityUntilStable = (field: FieldData): FieldData => {
   let currentField = field
   let iterations = 0
   const maxIterations = 20 // 無限ループ防止

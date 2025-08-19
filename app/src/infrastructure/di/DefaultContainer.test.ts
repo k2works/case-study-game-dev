@@ -20,7 +20,6 @@ describe('DefaultContainer', () => {
       expect(container.has('StoragePort')).toBe(true)
       expect(container.has('TimerPort')).toBe(true)
       expect(container.has('ChainDetectionService')).toBe(true)
-      expect(container.has('CollisionService')).toBe(true)
       expect(container.has('PuyoSpawningService')).toBe(true)
       expect(container.has('GamePort')).toBe(true)
       expect(container.has('InputPort')).toBe(true)

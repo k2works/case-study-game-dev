@@ -8,12 +8,12 @@ import {
   startGame,
 } from '../../domain/models/Game'
 import type { Game } from '../../domain/models/Game'
-import type { Puyo } from '../../domain/models/Puyo'
+import type { PuyoData } from '../../domain/models/Puyo'
 
 interface GameStore {
   // State
   game: Game
-  currentPuyo: Puyo | null
+  currentPuyo: PuyoData | null
   score: number
   isGameOver: boolean
   isPaused: boolean
@@ -26,7 +26,7 @@ interface GameStore {
   resetGame: () => void
   updateGame: (newGame: Game) => void
   updateScore: (newScore: number) => void
-  setCurrentPuyo: (puyo: Puyo | null) => void
+  setCurrentPuyo: (puyo: PuyoData | null) => void
   setGameOver: (isOver: boolean) => void
 }
 
@@ -102,7 +102,7 @@ export const useGameStore = create<GameStore>()(
         set((state) => ({ ...state, score: newScore }), false, 'updateScore')
       },
 
-      setCurrentPuyo: (puyo: Puyo | null) => {
+      setCurrentPuyo: (puyo: PuyoData | null) => {
         set(
           (state) => ({ ...state, currentPuyo: puyo }),
           false,

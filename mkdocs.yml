@@ -74,6 +74,7 @@ nav:
     - ドメインモデル設計: design/ドメインモデル設計.md
     - ユーザーインターフェース設計: design/ユーザーインターフェース設計.md
     - 実装戦略: design/実装戦略.md
+    - AI設計: design/AI設計.md
   - 開発:
     - 開発概要: development/index.md
     - Phase 2レビュー: development/phase2-review.md
@@ -83,6 +84,8 @@ nav:
     - イテレーション2ふりかえり: development/iteration-2-retrospective.md
     - イテレーション3完了報告書: development/iteration-3-completion-report.md
     - イテレーション3ふりかえり: development/iteration-3-retrospective.md
+    - イテレーション4完了報告書: development/iteration-4-completion-report.md
+    - イテレーション4ふりかえり: development/iteration-4-retrospective.md
   - 運用:
     - 運用概要: operation/index.md
     - セットアップ: operation/セットアップ.md

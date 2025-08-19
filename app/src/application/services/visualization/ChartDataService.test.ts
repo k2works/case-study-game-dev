@@ -3,9 +3,9 @@
  */
 import { describe, expect, test } from 'vitest'
 
-import type { PerformanceReport } from '../../domain/models/ai/types'
+import type { PerformanceReport } from '../../../domain/models/ai/index'
+import type { PerformanceStatistics } from '../PerformanceAnalysisService'
 import { ChartDataService } from './ChartDataService'
-import type { PerformanceStatistics } from './PerformanceAnalysisService'
 
 describe('ChartDataService', () => {
   describe('createPerformanceLineChart', () => {

@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest'
 
-import { createField, setPuyo } from '../models/ImmutableField'
+import { createEmptyField, placePuyoAt } from '../models/Field.ts'
 import { createPuyo } from '../models/Puyo'
 import {
   eliminateGroups,
   findEliminableGroups,
   processElimination,
-} from './ImmutableEliminationService'
+} from './EliminationService.ts'
 
 describe('ImmutableEliminationService', () => {
   describe('findEliminableGroups', () => {
     it('空のフィールドでは消去可能なグループを見つけない', () => {
       // Arrange
-      const field = createField()
+      const field = createEmptyField()
 
       // Act
       const groups = findEliminableGroups(field)
@@ -23,14 +23,14 @@ describe('ImmutableEliminationService', () => {
 
     it('4つ連結した同色ぷよを消去可能なグループとして見つける', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
 
       // 垂直に4つ配置
-      field = setPuyo({ x: 0, y: 0 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 3 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 3 }, redPuyo, field)
 
       // Act
       const groups = findEliminableGroups(field)
@@ -43,13 +43,13 @@ describe('ImmutableEliminationService', () => {
 
     it('3つ以下の連結では消去可能なグループとして見つけない', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const bluePuyo = createPuyo('blue', { x: 0, y: 0 })
 
       // 3つだけ配置
-      field = setPuyo({ x: 0, y: 0 }, bluePuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, bluePuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, bluePuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, bluePuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, bluePuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, bluePuyo, field)
 
       // Act
       const groups = findEliminableGroups(field)
@@ -60,14 +60,14 @@ describe('ImmutableEliminationService', () => {
 
     it('L字型の連結を正しく検出する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const greenPuyo = createPuyo('green', { x: 0, y: 0 })
 
       // L字型に配置
-      field = setPuyo({ x: 0, y: 0 }, greenPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, greenPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, greenPuyo, field)
-      field = setPuyo({ x: 1, y: 0 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, greenPuyo, field)
+      field = placePuyoAt({ x: 1, y: 0 }, greenPuyo, field)
 
       // Act
       const groups = findEliminableGroups(field)
@@ -80,21 +80,21 @@ describe('ImmutableEliminationService', () => {
 
     it('複数の消去可能なグループを同時に見つける', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
       const bluePuyo = createPuyo('blue', { x: 0, y: 0 })
 
       // 赤を4つ配置
-      field = setPuyo({ x: 0, y: 0 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 3 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 3 }, redPuyo, field)
 
       // 青を4つ配置（別の列）
-      field = setPuyo({ x: 2, y: 0 }, bluePuyo, field)
-      field = setPuyo({ x: 2, y: 1 }, bluePuyo, field)
-      field = setPuyo({ x: 2, y: 2 }, bluePuyo, field)
-      field = setPuyo({ x: 2, y: 3 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 0 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 1 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 2 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 3 }, bluePuyo, field)
 
       // Act
       const groups = findEliminableGroups(field)
@@ -107,16 +107,16 @@ describe('ImmutableEliminationService', () => {
 
     it('大きな連結グループを正しく検出する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const yellowPuyo = createPuyo('yellow', { x: 0, y: 0 })
 
       // 十字型に6つ配置
-      field = setPuyo({ x: 1, y: 0 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 1 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 2 }, yellowPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, yellowPuyo, field)
-      field = setPuyo({ x: 2, y: 1 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 3 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 0 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 1 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 2 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 2, y: 1 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 3 }, yellowPuyo, field)
 
       // Act
       const groups = findEliminableGroups(field)
@@ -131,19 +131,19 @@ describe('ImmutableEliminationService', () => {
   describe('eliminateGroups', () => {
     it('グループを消去して新しいフィールドを返す', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
       const bluePuyo = createPuyo('blue', { x: 0, y: 0 })
 
       // 赤を4つ配置（消去対象）
-      field = setPuyo({ x: 0, y: 0 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 3 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 3 }, redPuyo, field)
 
       // 青を2つ配置（残る）
-      field = setPuyo({ x: 1, y: 0 }, bluePuyo, field)
-      field = setPuyo({ x: 1, y: 1 }, bluePuyo, field)
+      field = placePuyoAt({ x: 1, y: 0 }, bluePuyo, field)
+      field = placePuyoAt({ x: 1, y: 1 }, bluePuyo, field)
 
       const groups = findEliminableGroups(field)
 
@@ -167,9 +167,9 @@ describe('ImmutableEliminationService', () => {
 
     it('空のグループリストで元のフィールドを返す', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
-      field = setPuyo({ x: 0, y: 0 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, redPuyo, field)
 
       // Act
       const result = eliminateGroups([], field)
@@ -183,21 +183,21 @@ describe('ImmutableEliminationService', () => {
 
     it('複数のグループを同時に消去する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
       const bluePuyo = createPuyo('blue', { x: 0, y: 0 })
 
       // 赤を4つ配置
-      field = setPuyo({ x: 0, y: 0 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 3 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 3 }, redPuyo, field)
 
       // 青を4つ配置
-      field = setPuyo({ x: 2, y: 0 }, bluePuyo, field)
-      field = setPuyo({ x: 2, y: 1 }, bluePuyo, field)
-      field = setPuyo({ x: 2, y: 2 }, bluePuyo, field)
-      field = setPuyo({ x: 2, y: 3 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 0 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 1 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 2 }, bluePuyo, field)
+      field = placePuyoAt({ x: 2, y: 3 }, bluePuyo, field)
 
       const groups = findEliminableGroups(field)
 
@@ -219,15 +219,15 @@ describe('ImmutableEliminationService', () => {
   describe('processElimination', () => {
     it('消去処理を一括で実行する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const greenPuyo = createPuyo('green', { x: 0, y: 0 })
 
       // 緑を5つ配置
-      field = setPuyo({ x: 0, y: 0 }, greenPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, greenPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, greenPuyo, field)
-      field = setPuyo({ x: 0, y: 3 }, greenPuyo, field)
-      field = setPuyo({ x: 0, y: 4 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 3 }, greenPuyo, field)
+      field = placePuyoAt({ x: 0, y: 4 }, greenPuyo, field)
 
       // Act
       const result = processElimination(field)
@@ -247,17 +247,17 @@ describe('ImmutableEliminationService', () => {
 
     it('消去可能なグループがない場合は元のフィールドを返す', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const redPuyo = createPuyo('red', { x: 0, y: 0 })
       const bluePuyo = createPuyo('blue', { x: 0, y: 0 })
 
       // 消去できない配置（3つずつ）
-      field = setPuyo({ x: 0, y: 0 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 1 }, redPuyo, field)
-      field = setPuyo({ x: 0, y: 2 }, redPuyo, field)
-      field = setPuyo({ x: 1, y: 0 }, bluePuyo, field)
-      field = setPuyo({ x: 1, y: 1 }, bluePuyo, field)
-      field = setPuyo({ x: 1, y: 2 }, bluePuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 1 }, redPuyo, field)
+      field = placePuyoAt({ x: 0, y: 2 }, redPuyo, field)
+      field = placePuyoAt({ x: 1, y: 0 }, bluePuyo, field)
+      field = placePuyoAt({ x: 1, y: 1 }, bluePuyo, field)
+      field = placePuyoAt({ x: 1, y: 2 }, bluePuyo, field)
 
       // Act
       const result = processElimination(field)
@@ -271,17 +271,17 @@ describe('ImmutableEliminationService', () => {
 
     it('複雑な形状のグループを処理する', () => {
       // Arrange
-      let field = createField()
+      let field = createEmptyField()
       const yellowPuyo = createPuyo('yellow', { x: 0, y: 0 })
 
       // T字型に7つ配置
-      field = setPuyo({ x: 0, y: 0 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 0 }, yellowPuyo, field)
-      field = setPuyo({ x: 2, y: 0 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 1 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 2 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 3 }, yellowPuyo, field)
-      field = setPuyo({ x: 1, y: 4 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 0, y: 0 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 0 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 2, y: 0 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 1 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 2 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 3 }, yellowPuyo, field)
+      field = placePuyoAt({ x: 1, y: 4 }, yellowPuyo, field)
 
       // Act
       const result = processElimination(field)

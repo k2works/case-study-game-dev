@@ -8,7 +8,7 @@ import type {
   CreateStrategyRequest,
   StrategyService,
   UpdateStrategyRequest,
-} from '../../application/services/StrategyService'
+} from '../../application/services/ai/StrategyService'
 import type { StrategyConfig } from '../../domain/models/ai/StrategyConfig'
 
 interface UseStrategyState {

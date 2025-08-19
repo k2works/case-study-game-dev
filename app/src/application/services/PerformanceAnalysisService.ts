@@ -4,7 +4,7 @@
 import type {
   GameSession,
   PerformanceReport,
-} from '../../domain/models/ai/types'
+} from '../../domain/models/ai/index'
 import type { PerformancePort } from '../ports/PerformancePort'
 
 /**

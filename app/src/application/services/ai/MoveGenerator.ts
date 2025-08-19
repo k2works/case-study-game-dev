@@ -2,7 +2,7 @@
  * 手生成サービス
  * AI用の可能な手を生成する
  */
-import type { AIGameState, PossibleMove } from '../../../domain/models/ai/types'
+import type { AIGameState, PossibleMove } from '../../../domain/models/ai/index'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort.ts'
 
 /**

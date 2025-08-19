@@ -1,12 +1,12 @@
 import { curry, filter, flatMap, flow, map, sumBy } from 'lodash/fp'
 
-import type { ImmutableField } from '../models/ImmutableField'
+import type { FieldData } from '../models/Field.ts'
 import {
   getAllPositions,
-  getPuyo,
+  getPuyoAt,
   isValidPosition,
-  removePuyos,
-} from '../models/ImmutableField'
+  removePuyosAt,
+} from '../models/Field.ts'
 import { getAdjacentPositions, positionToString } from '../models/Position'
 import type { PuyoColor } from '../models/Puyo'
 import type { PuyoGroup } from '../models/PuyoGroup'
@@ -16,14 +16,14 @@ export interface ImmutableEliminationResult {
   readonly eliminatedCount: number
   readonly groups: readonly PuyoGroup[]
   readonly totalScore: number
-  readonly field: ImmutableField
+  readonly field: FieldData
 }
 
 /**
  * 消去可能なグループを見つける（純粋関数）
  */
 export const findEliminableGroups = (
-  field: ImmutableField,
+  field: FieldData,
 ): readonly PuyoGroup[] => {
   const visited = new Set<string>()
   const groups: PuyoGroup[] = []
@@ -32,7 +32,7 @@ export const findEliminableGroups = (
     const positionKey = positionToString(position)
 
     if (!visited.has(positionKey)) {
-      const puyo = getPuyo(position, field)
+      const puyo = getPuyoAt(position, field)
       if (puyo) {
         const group = exploreConnectedGroup(
           field,
@@ -56,10 +56,10 @@ export const findEliminableGroups = (
 export const eliminateGroups = curry(
   (
     groups: readonly PuyoGroup[],
-    field: ImmutableField,
+    field: FieldData,
   ): ImmutableEliminationResult => {
     const allPositions = flatMap((group) => group.positions, groups)
-    const newField = removePuyos(allPositions, field)
+    const newField = removePuyosAt(allPositions, field)
 
     const eliminatedCount = allPositions.length
     const totalScore = flow(
@@ -80,7 +80,7 @@ export const eliminateGroups = curry(
  * 完全な消去処理を実行する（純粋関数）
  */
 export const processElimination = (
-  field: ImmutableField,
+  field: FieldData,
 ): ImmutableEliminationResult => {
   const eliminableGroups = findEliminableGroups(field)
   return eliminateGroups(eliminableGroups, field)
@@ -124,7 +124,7 @@ export const calculateTotalScore = (groups: readonly PuyoGroup[]): number =>
  * 連結グループを探索する（内部関数）
  */
 const exploreConnectedGroup = (
-  field: ImmutableField,
+  field: FieldData,
   startPosition: { x: number; y: number },
   color: string,
   visited: Set<string>,
@@ -153,14 +153,14 @@ const exploreConnectedGroup = (
 const shouldSkipPosition = (
   position: { x: number; y: number },
   color: string,
-  field: ImmutableField,
+  field: FieldData,
   visited: Set<string>,
 ): boolean => {
   const positionKey = positionToString(position)
   if (visited.has(positionKey)) return true
   if (!isValidPosition(position, field)) return true
 
-  const puyo = getPuyo(position, field)
+  const puyo = getPuyoAt(position, field)
   return !puyo || puyo.color !== color
 }
 

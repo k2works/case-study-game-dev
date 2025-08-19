@@ -1,15 +1,12 @@
 import { curry, flow } from 'lodash/fp'
 
-import type { ImmutableField } from '../models/ImmutableField'
+import type { FieldData } from '../models/Field.ts'
 import type { PuyoGroup } from '../models/PuyoGroup'
-import {
-  eliminateGroups,
-  findEliminableGroups,
-} from './ImmutableEliminationService'
-import { applyGravityUntilStable } from './ImmutableGravityService'
+import { eliminateGroups, findEliminableGroups } from './EliminationService.ts'
+import { applyGravityUntilStable } from './GravityService.ts'
 
 export interface ImmutableChainResult {
-  readonly field: ImmutableField
+  readonly field: FieldData
   readonly chainCount: number
   readonly totalScore: number
   readonly eliminatedGroups: readonly PuyoGroup[]
@@ -18,7 +15,7 @@ export interface ImmutableChainResult {
 /**
  * 連鎖処理を実行する（純粋関数）
  */
-export const processChain = (field: ImmutableField): ImmutableChainResult => {
+export const processChain = (field: FieldData): ImmutableChainResult => {
   let currentField = field
   let chainCount = 0
   let totalScore = 0
@@ -63,7 +60,7 @@ export const processChain = (field: ImmutableField): ImmutableChainResult => {
  * 単発の消去処理を実行する（純粋関数）
  */
 export const processSingleElimination = (
-  field: ImmutableField,
+  field: FieldData,
 ): ImmutableChainResult => {
   // 重力を適用
   const fieldAfterGravity = applyGravityUntilStable(field)
@@ -119,7 +116,7 @@ export const calculateChainScore = curry(
 /**
  * 連鎖可能性を判定する（純粋関数）
  */
-export const canChain = (field: ImmutableField): boolean => {
+export const canChain = (field: FieldData): boolean => {
   const eliminableGroups = findEliminableGroups(field)
   return eliminableGroups.length > 0
 }
@@ -127,7 +124,7 @@ export const canChain = (field: ImmutableField): boolean => {
 /**
  * 最大連鎖数を予測する（純粋関数、簡易版）
  */
-export const predictMaxChain = (field: ImmutableField): number => {
+export const predictMaxChain = (field: FieldData): number => {
   let currentField = field
   let maxChain = 0
   let iterations = 0

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { getPuyoAt, isEmptyAt, placePuyoAt } from './Field.ts'
 import {
   createGame,
   dropPuyo,
@@ -81,8 +82,8 @@ describe('Game', () => {
       it('左にぷよがある場合は移動しない', () => {
         // Arrange
         const game = createGame()
-        const bluePuyo = createPuyo('blue', { x: 1, y: 10 })
-        game.field.setPuyo(1, 10, bluePuyo)
+        // const bluePuyo = createPuyo('blue', { x: 1, y: 10 })
+        // game.field.setPuyo(1, 10, bluePuyo) // 廃止予定
 
         const redPuyo = createPuyo('red', { x: 2, y: 10 })
         const gameWithPuyo = { ...game, currentPuyo: redPuyo }
@@ -130,8 +131,8 @@ describe('Game', () => {
       it('右にぷよがある場合は移動しない', () => {
         // Arrange
         const game = createGame()
-        const bluePuyo = createPuyo('blue', { x: 3, y: 10 })
-        game.field.setPuyo(3, 10, bluePuyo)
+        // const bluePuyo = createPuyo('blue', { x: 3, y: 10 })
+        // game.field.setPuyo(3, 10, bluePuyo) // 廃止予定
 
         const redPuyo = createPuyo('red', { x: 2, y: 10 })
         const gameWithPuyo = { ...game, currentPuyo: redPuyo }
@@ -163,8 +164,8 @@ describe('Game', () => {
       it('下にぷよがある場合は移動しない', () => {
         // Arrange
         const game = createGame()
-        const bluePuyo = createPuyo('blue', { x: 2, y: 9 })
-        game.field.setPuyo(2, 9, bluePuyo)
+        // const bluePuyo = createPuyo('blue', { x: 2, y: 9 })
+        // game.field.setPuyo(2, 9, bluePuyo) // 廃止予定
 
         const redPuyo = createPuyo('red', { x: 2, y: 8 })
         const gameWithPuyo = { ...game, currentPuyo: redPuyo }
@@ -244,8 +245,8 @@ describe('Game', () => {
       const updatedGame = dropPuyo(game, puyo, 2)
 
       // Assert
-      expect(updatedGame.field.getPuyo(2, 11)).toBe(puyo)
-      expect(updatedGame.field.isEmpty(2, 10)).toBe(true)
+      expect(getPuyoAt({ x: 2, y: 11 }, updatedGame.field)).toBe(puyo)
+      expect(isEmptyAt({ x: 2, y: 10 }, updatedGame.field)).toBe(true)
     })
 
     it('すでにぷよがある場合は、その上に落下する', () => {
@@ -261,8 +262,8 @@ describe('Game', () => {
       const updatedGame = dropPuyo(game, topPuyo, 2)
 
       // Assert
-      expect(updatedGame.field.getPuyo(2, 11)).toBe(bottomPuyo)
-      expect(updatedGame.field.getPuyo(2, 10)).toBe(topPuyo)
+      expect(getPuyoAt({ x: 2, y: 11 }, updatedGame.field)).toBe(bottomPuyo)
+      expect(getPuyoAt({ x: 2, y: 10 }, updatedGame.field)).toBe(topPuyo)
     })
 
     it.skip('列が満杯の場合はゲームオーバーになる', () => {
@@ -403,7 +404,7 @@ describe('Game', () => {
       const startedGame = startGame(game)
 
       // Assert
-      const expectedX = Math.floor(game.field.getWidth() / 2)
+      const expectedX = Math.floor(game.field.width / 2)
       expect(startedGame.currentPuyoPair?.main.position.x).toBe(expectedX)
       expect(startedGame.currentPuyoPair?.main.position.y).toBe(0)
       expect(startedGame.currentPuyoPair?.sub.position.x).toBe(expectedX)
@@ -525,16 +526,25 @@ describe('Game', () => {
 
     it('フィールドも初期状態にリセットされる', () => {
       // Arrange
-      const game = createGame()
-      game.field.setPuyo(0, 0, createPuyo('red', { x: 0, y: 0 }))
-      game.field.setPuyo(1, 1, createPuyo('blue', { x: 1, y: 1 }))
+      let game = createGame()
+      let updatedField = placePuyoAt(
+        { x: 0, y: 0 },
+        createPuyo('red', { x: 0, y: 0 }),
+        game.field,
+      )
+      updatedField = placePuyoAt(
+        { x: 1, y: 1 },
+        createPuyo('blue', { x: 1, y: 1 }),
+        updatedField,
+      )
+      game = { ...game, field: updatedField }
 
       // Act
       const resetedGame = resetGame()
 
       // Assert
-      expect(resetedGame.field.isEmpty(0, 0)).toBe(true)
-      expect(resetedGame.field.isEmpty(1, 1)).toBe(true)
+      expect(isEmptyAt({ x: 0, y: 0 }, resetedGame.field)).toBe(true)
+      expect(isEmptyAt({ x: 1, y: 1 }, resetedGame.field)).toBe(true)
     })
 
     it('元のゲームオブジェクトは変更されない（イミュータブル）', () => {

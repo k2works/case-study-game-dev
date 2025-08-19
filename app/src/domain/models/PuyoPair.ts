@@ -1,12 +1,13 @@
-import type { FieldAdapter } from './FieldAdapter'
+import type { FieldData } from './Field.ts'
+import { isEmptyAt, isValidPosition } from './Field.ts'
 import type { Position } from './Position'
 import { createPosition } from './Position'
-import type { Puyo, PuyoColor } from './Puyo'
+import type { PuyoColor, PuyoData } from './Puyo'
 import { createPuyo, movePuyo } from './Puyo'
 
 export interface PuyoPair {
-  readonly main: Puyo
-  readonly sub: Puyo
+  readonly main: PuyoData
+  readonly sub: PuyoData
 }
 
 export const createPuyoPair = (
@@ -76,11 +77,11 @@ export const getOccupiedPositions = (pair: PuyoPair): Position[] => [
   pair.sub.position,
 ]
 
-export const canPlaceOn = (pair: PuyoPair, field: FieldAdapter): boolean => {
+export const canPlaceOn = (pair: PuyoPair, field: FieldData): boolean => {
   const positions = getOccupiedPositions(pair)
 
   return positions.every(
-    (pos) => field.isValidPosition(pos.x, pos.y) && field.isEmpty(pos.x, pos.y),
+    (pos) => isValidPosition(pos, field) && isEmptyAt(pos, field),
   )
 }
 
@@ -88,7 +89,7 @@ export const canPlaceOn = (pair: PuyoPair, field: FieldAdapter): boolean => {
 export const rotatePuyoPairWithWallKick = (
   pair: PuyoPair,
   direction: 'clockwise' | 'counterclockwise',
-  field: FieldAdapter,
+  field: FieldData,
 ): PuyoPair => {
   // まず通常の回転を試みる
   const rotatedPair = rotatePuyoPair(pair, direction)
