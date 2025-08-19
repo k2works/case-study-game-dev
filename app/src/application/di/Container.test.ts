@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
-import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import { Container } from './Container'
 
@@ -162,7 +161,6 @@ describe('Container', () => {
       container.register('StoragePort', () => new MockStorageService())
       container.register('TimerPort', () => new MockTimerService())
       container.register('ChainDetectionService', () => ChainDetectionService)
-      container.register('CollisionService', () => new CollisionService())
       container.register('PuyoSpawningService', () => new PuyoSpawningService())
     })
 
@@ -181,11 +179,6 @@ describe('Container', () => {
       expect(typeof service).toBe('object')
       expect(typeof service.findErasableGroups).toBe('function')
       expect(typeof service.calculateChainScore).toBe('function')
-    })
-
-    it('getCollisionService はCollisionServiceを返す', () => {
-      const service = container.getCollisionService()
-      expect(service).toBeInstanceOf(CollisionService)
     })
 
     it('getPuyoSpawningService はPuyoSpawningServiceを返す', () => {

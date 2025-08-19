@@ -12,7 +12,6 @@ import { PerformanceAnalysisService } from '../../application/services/Performan
 import StrategyService from '../../application/services/StrategyService'
 import { MLAIService } from '../../application/services/ai/MLAIService'
 import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
-import { CollisionService } from '../../domain/services/CollisionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
 import { BrowserTimerAdapter } from '../adapters/BrowserTimerAdapter'
 import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter'
@@ -48,12 +47,6 @@ export class DefaultContainer {
     container.register<typeof ChainDetectionService>(
       'ChainDetectionService',
       () => ChainDetectionService,
-      true,
-    )
-
-    container.register<CollisionService>(
-      'CollisionService',
-      () => new CollisionService(),
       true,
     )
 
