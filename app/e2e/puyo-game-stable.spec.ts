@@ -215,10 +215,11 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
     
     // AI設定セクションが存在することを確認
     await expect(page.locator('text=思考速度')).toBeVisible()
-    await expect(page.locator('text=AIモード')).toBeVisible()
     
-    // AI設定の詳細要素を確認
+    // AI設定の詳細要素を確認（思考速度スライダー）
     await expect(page.locator('input[type="range"]')).toBeVisible()
-    await expect(page.locator('select')).toBeVisible()
+    
+    // 戦略設定セクションが存在することを確認
+    await expect(page.locator('text=戦略設定')).toBeVisible()
   })
 })

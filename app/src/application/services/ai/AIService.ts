@@ -25,7 +25,6 @@ export class AIService implements AIPort {
     this.settings = {
       enabled: false,
       thinkingSpeed: 1000,
-      mode: 'balanced',
     }
     this.moveGenerator = new MoveGenerator()
   }
@@ -143,35 +142,14 @@ export class AIService implements AIPort {
     const distanceFromCenter = Math.abs(centerX - avgX)
     const centerScore = (field.width - distanceFromCenter) * 5
 
-    // モード別の評価調整
-    let modeScore = 0
-    let modeReason = ''
+    const totalScore = heightScore + centerScore
 
-    switch (this.settings.mode) {
-      case 'aggressive':
-        // より中央寄りを優遇
-        modeScore = (field.width - distanceFromCenter) * 10
-        modeReason = '攻撃型: 中央重視'
-        break
-      case 'defensive':
-        // より下の位置を優遇
-        modeScore = avgY * 15
-        modeReason = '防御型: 安定性重視'
-        break
-      case 'balanced':
-      default:
-        modeReason = 'バランス型: 標準評価'
-        break
-    }
-
-    const totalScore = heightScore + centerScore + modeScore
-
-    const reason = `位置(${move.x}, ${Math.round(avgY)}), ${modeReason}, スコア: ${Math.round(totalScore)}`
+    const reason = `位置(${move.x}, ${Math.round(avgY)}), 標準評価, スコア: ${Math.round(totalScore)}`
 
     return {
       heightScore,
       centerScore,
-      modeScore,
+      modeScore: 0,
       totalScore,
       averageY: avgY,
       averageX: avgX,

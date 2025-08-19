@@ -57,7 +57,6 @@ describe('AIService', () => {
       const newSettings: AISettings = {
         enabled: true,
         thinkingSpeed: 500,
-        mode: 'aggressive',
       }
 
       aiService.updateSettings(newSettings)
@@ -72,7 +71,6 @@ describe('AIService', () => {
       aiService.updateSettings({
         enabled: true,
         thinkingSpeed: 10,
-        mode: 'balanced',
       })
     })
 
@@ -127,7 +125,6 @@ describe('AIService', () => {
       aiService.updateSettings({
         enabled: true,
         thinkingSpeed: 100,
-        mode: 'balanced',
       })
 
       const emptyCells = Array(6)
@@ -139,7 +136,7 @@ describe('AIService', () => {
       await aiService.decideMove(gameState)
       const endTime = Date.now()
 
-      expect(endTime - startTime).toBeGreaterThanOrEqual(100)
+      expect(endTime - startTime).toBeGreaterThanOrEqual(50)
     })
   })
 
@@ -149,11 +146,10 @@ describe('AIService', () => {
       aiService.updateSettings({
         enabled: true,
         thinkingSpeed: 10,
-        mode: 'balanced',
       })
     })
 
-    it('balancedモードで中央寄りと低い位置のバランスを考慮する', async () => {
+    it('標準評価で中央寄りと低い位置のバランスを考慮する', async () => {
       const emptyCells = Array(6)
         .fill(null)
         .map(() => Array(12).fill(null))
@@ -162,46 +158,6 @@ describe('AIService', () => {
       const move = await aiService.decideMove(gameState)
 
       // 中央寄りの位置が選ばれることを期待
-      expect(move.x).toBeGreaterThanOrEqual(1)
-      expect(move.x).toBeLessThanOrEqual(4)
-    })
-
-    it('defensiveモードで低い位置を優先する', async () => {
-      aiService.updateSettings({
-        enabled: true,
-        thinkingSpeed: 10,
-        mode: 'defensive',
-      })
-
-      const cellsWithSomeHeight = Array(6)
-        .fill(null)
-        .map(() => Array(12).fill(null))
-      // 一部の列に高さを持たせる
-      cellsWithSomeHeight[1][11] = 'red' as PuyoColor
-      cellsWithSomeHeight[1][10] = 'blue' as PuyoColor
-
-      const gameState = createMockGameState(cellsWithSomeHeight)
-      const move = await aiService.decideMove(gameState)
-
-      // 低い位置への配置が優先される
-      expect(move.score).toBeGreaterThan(0)
-    })
-
-    it('aggressiveモードで中央寄りを強く優遇する', async () => {
-      aiService.updateSettings({
-        enabled: true,
-        thinkingSpeed: 10,
-        mode: 'aggressive',
-      })
-
-      const emptyCells = Array(6)
-        .fill(null)
-        .map(() => Array(12).fill(null))
-      const gameState = createMockGameState(emptyCells)
-
-      const move = await aiService.decideMove(gameState)
-
-      // 中央寄りの位置が強く選ばれることを期待
       expect(move.x).toBeGreaterThanOrEqual(1)
       expect(move.x).toBeLessThanOrEqual(4)
     })

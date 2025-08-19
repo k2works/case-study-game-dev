@@ -4,6 +4,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { AIGameState } from '../../../domain/models/ai/types'
+import type { StrategyPort } from '../../ports/StrategyPort'
 import { MLAIService } from './MLAIService'
 
 // TensorFlow.jsのモック
@@ -30,6 +31,7 @@ vi.mock('@tensorflow/tfjs', () => ({
 
 describe('MLAIService', () => {
   let service: MLAIService
+  let mockStrategyPort: StrategyPort
 
   const mockGameState: AIGameState = {
     field: {
@@ -51,7 +53,17 @@ describe('MLAIService', () => {
   }
 
   beforeEach(() => {
-    service = new MLAIService()
+    mockStrategyPort = {
+      getActiveStrategy: vi.fn().mockResolvedValue(null),
+      setActiveStrategy: vi.fn(),
+      getStrategyById: vi.fn(),
+      getAllStrategies: vi.fn(),
+      saveStrategy: vi.fn(),
+      deleteStrategy: vi.fn(),
+      getDefaultStrategies: vi.fn().mockReturnValue([]),
+      clearAllStrategies: vi.fn(),
+    }
+    service = new MLAIService(mockStrategyPort)
   })
 
   afterEach(() => {
@@ -67,7 +79,6 @@ describe('MLAIService', () => {
       const settings = {
         enabled: true,
         thinkingSpeed: 500,
-        mode: 'aggressive' as const,
       }
 
       service.updateSettings(settings)
@@ -155,6 +166,18 @@ describe('MLAIService', () => {
     it('dispose後にモデルが無効になる', () => {
       service.dispose()
       expect(service.isModelReady()).toBe(false)
+    })
+  })
+
+  describe('戦略統合', () => {
+    it('戦略設定を更新できる', async () => {
+      await expect(service.updateStrategy()).resolves.not.toThrow()
+      expect(mockStrategyPort.getActiveStrategy).toHaveBeenCalled()
+    })
+
+    it('現在の戦略を取得できる', () => {
+      const strategy = service.getCurrentStrategy()
+      expect(strategy).toBe(null) // モックでnullを返すため
     })
   })
 })

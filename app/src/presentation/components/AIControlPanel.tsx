@@ -23,13 +23,6 @@ export const AIControlPanel = ({
     })
   }
 
-  const handleModeChange = (mode: 'balanced' | 'aggressive' | 'defensive') => {
-    onSettingsChange({
-      ...aiSettings,
-      mode,
-    })
-  }
-
   return (
     <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
       <h3 className="text-white font-semibold mb-3 flex items-center">
@@ -71,24 +64,6 @@ export const AIControlPanel = ({
             onChange={(e) => handleSpeedChange(parseInt(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
           />
-        </div>
-
-        {/* AIモード選択 */}
-        <div className="space-y-2">
-          <span className="text-white/80 text-sm">AIモード</span>
-          <select
-            value={aiSettings.mode}
-            onChange={(e) =>
-              handleModeChange(
-                e.target.value as 'balanced' | 'aggressive' | 'defensive',
-              )
-            }
-            className="w-full bg-gray-700 text-white rounded-lg px-3 py-1 text-sm border border-gray-600"
-          >
-            <option value="balanced">バランス型</option>
-            <option value="aggressive">攻撃型</option>
-            <option value="defensive">守備型</option>
-          </select>
         </div>
 
         {aiEnabled && (
