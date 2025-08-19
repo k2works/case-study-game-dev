@@ -603,6 +603,351 @@ stop
 @enduml
 ```
 
+## フェーズ4: 高度な評価関数システム（次期実装予定）
+
+### mayah AI実装を参考にした評価関数再設計
+
+mayah AI（@mayah_puyo）の実装から得られた知見を基に、より高度で人間らしい評価関数システムを設計します。
+
+#### 新評価システムの構成
+
+mayah AIの4要素評価を参考に、以下の評価カテゴリを導入：
+
+```plantuml
+@startuml "mayah型評価システム"
+!define OPERATION_COLOR #FFE6CC
+!define SHAPE_COLOR #E6F3FF
+!define CHAIN_COLOR #F0FFF0
+!define STRATEGY_COLOR #FFF0F5
+
+package "評価システム" {
+  package "操作評価" OPERATION_COLOR {
+    rectangle "フレーム数評価"
+    rectangle "ちぎり評価"
+    rectangle "配置効率性"
+  }
+  
+  package "形評価" SHAPE_COLOR {
+    rectangle "U字型評価"
+    rectangle "連結数評価" 
+    rectangle "山谷評価"
+    rectangle "高さバランス"
+  }
+  
+  package "連鎖評価" CHAIN_COLOR {
+    rectangle "本線連鎖"
+    rectangle "副砲連鎖"
+    rectangle "パターンマッチ"
+    rectangle "連鎖予測"
+  }
+  
+  package "戦略評価" STRATEGY_COLOR {
+    rectangle "発火判断"
+    rectangle "凝視機能"
+    rectangle "状況判断"
+    rectangle "リスク管理"
+  }
+}
+
+package "統合評価" {
+  rectangle "重み付け統合" as Integration
+  rectangle "状況別調整" as ContextAdjust
+}
+
+"操作評価" --> Integration
+"形評価" --> Integration  
+"連鎖評価" --> Integration
+"戦略評価" --> Integration
+Integration --> ContextAdjust
+@enduml
+```
+
+#### 詳細設計仕様
+
+##### 1. 操作評価（OperationEvaluation）
+
+```typescript
+export interface OperationEvaluation {
+  frameCount: number      // 操作フレーム数（1フレーム = 0.1点減点）
+  tearCount: number       // ちぎり回数（1回 = 100点減点）
+  efficiency: number      // 配置効率性
+}
+
+export const evaluateOperation = (
+  move: PossibleMove,
+  gameState: AIGameState
+): OperationEvaluation => {
+  // フレーム数計算（6列目は若干遅い）
+  const frameCount = calculateFrameCount(move.position, move.rotation)
+  
+  // ちぎり判定
+  const tearCount = calculateTearCount(move, gameState.currentPuyoPair)
+  
+  // 効率性評価
+  const efficiency = calculatePlacementEfficiency(move, gameState)
+  
+  return { frameCount, tearCount, efficiency }
+}
+```
+
+##### 2. 形評価（ShapeEvaluation）
+
+```typescript
+export interface ShapeEvaluation {
+  uShapeScore: number     // U字型スコア
+  connectionScore: number // 連結スコア（2連結=10点、3連結=30点）
+  valleyPenalty: number   // 谷ペナルティ（深さ4以上で2000点減点）
+  mountainPenalty: number // 山ペナルティ（高さ4以上で2000点減点）
+  heightBalance: number   // 高さバランス（二乗誤差）
+}
+
+export const evaluateShape = (
+  field: AIFieldState,
+  gamePhase: GamePhase
+): ShapeEvaluation => {
+  // U字型評価（理想高さからの二乗誤差）
+  const idealHeights = calculateIdealUShape(field)
+  const uShapeScore = calculateUShapeScore(field.heights, idealHeights, gamePhase)
+  
+  // 連結数評価
+  const connectionScore = evaluateConnections(field)
+  
+  // 山谷評価
+  const { valleyPenalty, mountainPenalty } = evaluateMountainsAndValleys(field)
+  
+  // 高さバランス
+  const heightBalance = calculateHeightBalance(field.heights)
+  
+  return { 
+    uShapeScore, 
+    connectionScore, 
+    valleyPenalty, 
+    mountainPenalty, 
+    heightBalance 
+  }
+}
+```
+
+##### 3. 連鎖評価（ChainEvaluation）
+
+```typescript
+export interface ChainEvaluation {
+  mainChain: ChainInfo     // 本線連鎖（連鎖数 * 1000点）
+  subChain: ChainInfo      // 副砲連鎖（2連鎖=1000点、3連鎖=500点）
+  patternMatch: number     // パターンマッチスコア
+  requiredPuyos: number    // 必要ぷよ数（二次関数的減点）
+}
+
+export interface ChainInfo {
+  chainCount: number       // 連鎖数
+  score: number           // 評価スコア
+  shapeQuality: number    // 連鎖形状品質
+  frameToFire: number     // 発火までのフレーム数
+}
+
+export const evaluateChain = (
+  field: AIFieldState,
+  patterns: ChainPattern[]
+): ChainEvaluation => {
+  // 連鎖パターンマッチング
+  const possibleChains = enumerateChains(field, patterns)
+  
+  // 本線・副砲選択
+  const mainChain = selectBestMainChain(possibleChains)
+  const subChain = selectBestSubChain(possibleChains)
+  
+  // パターンマッチ評価
+  const patternMatch = evaluatePatternMatching(field, patterns)
+  
+  // 必要ぷよ数計算（50%確率ベース）
+  const requiredPuyos = calculateRequiredPuyos(mainChain, 0.5)
+  
+  return { mainChain, subChain, patternMatch, requiredPuyos }
+}
+```
+
+##### 4. 戦略評価（StrategyEvaluation）
+
+```typescript
+export interface StrategyEvaluation {
+  firingDecision: number   // 発火判断スコア
+  riskAssessment: number   // リスク評価
+  stareFunction: number    // 凝視機能
+  defensiveNeed: number    // 防御必要性
+}
+
+export const evaluateStrategy = (
+  gameState: AIGameState,
+  rensaHandTree: RensaHandTree
+): StrategyEvaluation => {
+  // 発火判断（RensaHandTree使用）
+  const firingDecision = evaluateFiringDecision(rensaHandTree)
+  
+  // リスク評価
+  const riskAssessment = assessRisk(gameState)
+  
+  // 凝視機能（相手の攻撃への対応）
+  const stareFunction = evaluateOpponentThreats(gameState)
+  
+  // 防御必要性
+  const defensiveNeed = evaluateDefensiveNeed(gameState)
+  
+  return { firingDecision, riskAssessment, stareFunction, defensiveNeed }
+}
+```
+
+#### RensaHandTree実装設計
+
+```typescript
+export interface RensaHandNode {
+  chainCount: number       // 連鎖数
+  startFrame: number       // 開始フレーム
+  endFrame: number         // 終了フレーム
+  score: number           // 連鎖スコア
+  children: RensaHandNode[] // 後続連鎖
+}
+
+export class RensaHandTree {
+  private myTree: RensaHandNode[]
+  private opponentTree: RensaHandNode[]
+  
+  // 連鎖木構築
+  buildTree(field: AIFieldState, depth: number = 3): RensaHandNode[] {
+    const chains = enumerateAllChains(field)
+    const sortedChains = chains.sort((a, b) => a.endFrame - b.endFrame)
+    
+    const tree: RensaHandNode[] = []
+    let maxScore = 0
+    
+    for (const chain of sortedChains) {
+      if (chain.score > maxScore) {
+        tree.push(chain)
+        maxScore = chain.score
+        
+        // 再帰的に次段構築
+        if (depth > 0) {
+          const afterField = simulateChain(field, chain)
+          chain.children = this.buildTree(afterField, depth - 1)
+        }
+      }
+    }
+    
+    return tree
+  }
+  
+  // 打ち合い評価
+  evaluateBattle(): BattleResult {
+    return evaluateChainBattle(this.myTree, this.opponentTree)
+  }
+}
+```
+
+#### ゲームフェーズ別調整
+
+```typescript
+export enum GamePhase {
+  EARLY = 'early',     // 序盤（ぷよ数 < 30）
+  MIDDLE = 'middle',   // 中盤（30 <= ぷよ数 < 60）  
+  LATE = 'late'        // 終盤（ぷよ数 >= 60）
+}
+
+export const getPhaseAdjustments = (phase: GamePhase): PhaseAdjustments => {
+  switch (phase) {
+    case GamePhase.EARLY:
+      return {
+        gapTolerance: 0.5,      // スキ許容度高
+        chainPriority: 0.7,     // 連鎖優先度中
+        shapePriority: 1.0      // 形重視
+      }
+    case GamePhase.MIDDLE:
+      return {
+        gapTolerance: 0.3,      // スキ許容度中
+        chainPriority: 1.0,     // 連鎖優先度高
+        shapePriority: 0.8      // 形重視維持
+      }
+    case GamePhase.LATE:
+      return {
+        gapTolerance: 0.1,      // スキ許容度低
+        chainPriority: 1.2,     // 連鎖最優先
+        shapePriority: 0.5      // 形より実用性
+      }
+  }
+}
+```
+
+#### 統合評価関数
+
+```typescript
+export interface MayahStyleEvaluation extends MoveEvaluation {
+  operationScore: number
+  shapeScore: number  
+  chainScore: number
+  strategyScore: number
+  phaseAdjustment: number
+}
+
+export const evaluateMoveWithMayahStyle = (
+  move: PossibleMove,
+  gameState: AIGameState,
+  settings: MayahEvaluationSettings
+): MayahStyleEvaluation => {
+  // 各カテゴリ評価
+  const operation = evaluateOperation(move, gameState)
+  const shape = evaluateShape(gameState.field, getGamePhase(gameState))
+  const chain = evaluateChain(gameState.field, settings.patterns)
+  const strategy = evaluateStrategy(gameState, settings.rensaHandTree)
+  
+  // フェーズ別調整
+  const phase = getGamePhase(gameState)
+  const adjustments = getPhaseAdjustments(phase)
+  
+  // 重み付け統合
+  const operationScore = calculateOperationScore(operation) * adjustments.operationWeight
+  const shapeScore = calculateShapeScore(shape) * adjustments.shapeWeight  
+  const chainScore = calculateChainScore(chain) * adjustments.chainWeight
+  const strategyScore = calculateStrategyScore(strategy) * adjustments.strategyWeight
+  
+  const totalScore = operationScore + shapeScore + chainScore + strategyScore
+  
+  return {
+    ...move,
+    operationScore,
+    shapeScore,
+    chainScore, 
+    strategyScore,
+    phaseAdjustment: adjustments.phaseAdjustment,
+    totalScore,
+    reason: generateEvaluationReason({
+      operation, shape, chain, strategy, phase
+    })
+  }
+}
+```
+
+### 実装計画
+
+#### Phase 4a: 基盤実装（イテレーション4前半）
+- [ ] mayah型評価システムの型定義
+- [ ] 操作評価・形評価の基本実装
+- [ ] 既存評価関数との統合テスト
+
+#### Phase 4b: 高度機能実装（イテレーション4後半）
+- [ ] 連鎖パターンマッチング実装
+- [ ] RensaHandTree実装
+- [ ] 戦略評価システム統合
+
+#### Phase 4c: 最適化・調整（イテレーション5）
+- [ ] パフォーマンス最適化
+- [ ] パラメータチューニング  
+- [ ] 人間らしさの検証・調整
+
+### 期待される効果
+
+1. **人間らしい思考:** GTRなど定跡パターンの認識・活用
+2. **戦略的判断:** 状況に応じた攻守のバランス調整
+3. **高い競技性:** mayah AIレベルの強さを目指す
+4. **学習基盤:** パターン学習・強化学習への発展
+
 ## まとめ
 
 このAI設計により、以下を実現しました：
@@ -614,15 +959,23 @@ stop
 4. **AI可視化:** 思考プロセスのリアルタイム表示 ✅
 5. **テスタビリティ:** 17テストケースで包括的なカバレッジ ✅
 
+### 次期実装予定
+6. **mayah型評価システム:** 4要素評価による人間らしい思考 🔄
+7. **パターンマッチング:** 定跡認識による戦略的配置 🔄
+8. **RensaHandTree:** 高度な打ち合い評価システム 🔄
+
 ### 技術的特徴
 - **並行処理安全:** 状態なしの純粋関数による安全な並行実行
 - **拡張性:** 新しい評価関数の追加が容易
 - **保守性:** 関数型パラダイムによる理解しやすいコード
 - **パフォーマンス:** GPU加速対応、最適化された推論処理
 - **フォールバック:** Worker未対応環境への対応
+- **競技レベル:** mayah AI参考による高度な戦略思考
 
-### 評価関数の特徴
-- **高さ評価:** 下の位置ほど高評価（安定配置優先）
-- **中央評価:** 中央に近いほど高評価（柔軟性維持）
-- **ML強化:** ニューラルネットワークによる追加評価
-- **カスタマイズ可能:** 重み設定による戦略調整
+### 評価関数の進化
+- **現行版:** 高さ・中央・ML評価による基本AI ✅
+- **次期版:** mayah型4要素評価による人間らしいAI 🔄
+  - 操作評価（フレーム・ちぎり・効率性）
+  - 形評価（U字型・連結・山谷・バランス）
+  - 連鎖評価（本線・副砲・パターン・必要数）
+  - 戦略評価（発火・凝視・リスク・防御）
