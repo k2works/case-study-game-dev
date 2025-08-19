@@ -9,9 +9,12 @@ import type {
   AIGameState,
   AIMove,
   AISettings,
-  MoveEvaluation,
   PossibleMove,
 } from '../../../domain/models/ai/index'
+import {
+  evaluateMove,
+  evaluateMoveWithML,
+} from '../../../domain/services/ai/EvaluationService'
 import type { AIPort } from '../../ports/AIPort'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort'
 import type { StrategyPort } from '../../ports/StrategyPort'
@@ -307,7 +310,9 @@ export class MLAIService implements AIPort {
     const evaluatedMoves = await Promise.all(
       possibleMoves.map(async (move) => {
         const mlScore = await this.evaluateWithML(move, gameState)
-        const evaluation = this.createEvaluation(move, gameState, mlScore)
+        const evaluation = this.modelReady
+          ? evaluateMoveWithML(move, gameState, mlScore)
+          : evaluateMove(move, gameState)
 
         return {
           ...move,
@@ -327,72 +332,6 @@ export class MLAIService implements AIPort {
       rotation: bestMove.rotation,
       score: bestMove.evaluationScore,
       evaluation: bestMove.evaluation,
-    }
-  }
-
-  /**
-   * 評価詳細の作成
-   */
-  private createEvaluation(
-    move: PossibleMove,
-    gameState: AIGameState,
-    mlScore: number,
-  ): MoveEvaluation {
-    if (!move.isValid) {
-      return this.createInvalidMoveEvaluation()
-    }
-
-    return this.createValidMoveEvaluation(move, gameState, mlScore)
-  }
-
-  /**
-   * 無効な手の評価を作成
-   */
-  private createInvalidMoveEvaluation(): MoveEvaluation {
-    return {
-      heightScore: -1000,
-      centerScore: 0,
-      modeScore: 0,
-      totalScore: -1000,
-      averageY: -1,
-      averageX: -1,
-      distanceFromCenter: 0,
-      reason: '無効な手',
-    }
-  }
-
-  /**
-   * 有効な手の評価を作成
-   */
-  private createValidMoveEvaluation(
-    move: PossibleMove,
-    gameState: AIGameState,
-    mlScore: number,
-  ): MoveEvaluation {
-    const field = gameState.field
-    const avgY = (move.primaryPosition.y + move.secondaryPosition.y) / 2
-    const avgX = (move.primaryPosition.x + move.secondaryPosition.x) / 2
-    const centerX = (field.width - 1) / 2
-    const distanceFromCenter = Math.abs(centerX - avgX)
-
-    const heightScore = avgY * 10
-    const centerScore = (field.width - distanceFromCenter) * 5
-    const modeScore = this.modelReady ? mlScore * 20 : 0
-    const totalScore = heightScore + centerScore + modeScore
-
-    const reason = this.modelReady
-      ? `位置(${move.x}, ${Math.round(avgY)}), ML強化判定, スコア: ${Math.round(totalScore)}`
-      : `位置(${move.x}, ${Math.round(avgY)}), 従来型判定, スコア: ${Math.round(totalScore)}`
-
-    return {
-      heightScore,
-      centerScore,
-      modeScore,
-      totalScore,
-      averageY: avgY,
-      averageX: avgX,
-      distanceFromCenter,
-      reason,
     }
   }
 

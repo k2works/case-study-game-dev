@@ -6,9 +6,9 @@ import type {
   AIGameState,
   AIMove,
   AISettings,
-  MoveEvaluation,
   PossibleMove,
 } from '../../../domain/models/ai/index'
+import { evaluateMove } from '../../../domain/services/ai/EvaluationService'
 import type { AIPort } from '../../ports/AIPort.ts'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort.ts'
 import { MoveGenerator } from './MoveGenerator'
@@ -89,7 +89,7 @@ export class AIService implements AIPort {
 
     // 各手を評価
     const evaluatedMoves = possibleMoves.map((move) => {
-      const evaluation = this.evaluateMoveDetailed(move, gameState)
+      const evaluation = evaluateMove(move, gameState)
       return {
         ...move,
         evaluationScore: evaluation.totalScore,
@@ -107,54 +107,6 @@ export class AIService implements AIPort {
       rotation: bestMove.rotation,
       score: bestMove.evaluationScore,
       evaluation: bestMove.evaluation,
-    }
-  }
-
-  /**
-   * 手を詳細評価する
-   */
-  private evaluateMoveDetailed(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): MoveEvaluation {
-    if (!move.isValid) {
-      return {
-        heightScore: -1000,
-        centerScore: 0,
-        modeScore: 0,
-        totalScore: -1000,
-        averageY: -1,
-        averageX: -1,
-        distanceFromCenter: 0,
-        reason: '無効な手',
-      }
-    }
-
-    const field = gameState.field
-
-    // 高さベースの評価（下の位置ほど高スコア - y値が大きいほど良い）
-    const avgY = (move.primaryPosition.y + move.secondaryPosition.y) / 2
-    const heightScore = avgY * 10 // y値が大きい（下の方）ほど高スコア
-
-    // 中央付近を優遇
-    const centerX = (field.width - 1) / 2 // 6列なら中央は2.5
-    const avgX = (move.primaryPosition.x + move.secondaryPosition.x) / 2
-    const distanceFromCenter = Math.abs(centerX - avgX)
-    const centerScore = (field.width - distanceFromCenter) * 5
-
-    const totalScore = heightScore + centerScore
-
-    const reason = `位置(${move.x}, ${Math.round(avgY)}), 標準評価, スコア: ${Math.round(totalScore)}`
-
-    return {
-      heightScore,
-      centerScore,
-      modeScore: 0,
-      totalScore,
-      averageY: avgY,
-      averageX: avgX,
-      distanceFromCenter,
-      reason,
     }
   }
 

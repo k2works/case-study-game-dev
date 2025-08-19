@@ -33,6 +33,14 @@ export type {
   StrategyType,
 } from './StrategyConfig'
 
+// 評価サービス関連（domain/services/aiに移動）
+export type { EvaluationSettings } from '../../services/ai/EvaluationService'
+export {
+  DEFAULT_EVALUATION_SETTINGS,
+  evaluateMove,
+  evaluateMoveWithML,
+} from '../../services/ai/EvaluationService'
+
 // AI戦略パラメータ（元のtypes.tsにあったもの）
 export interface AIStrategy {
   /** 戦略ID */
