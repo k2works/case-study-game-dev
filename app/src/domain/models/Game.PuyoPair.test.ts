@@ -9,6 +9,7 @@ import {
   spawnNextPuyoPair,
   startGame,
 } from './Game'
+import { placePuyoAt } from './ImmutableField'
 
 describe('Game PuyoPair System', () => {
   describe('startGame', () => {
@@ -37,7 +38,7 @@ describe('Game PuyoPair System', () => {
       const startedGame = startGame(game)
 
       // Assert
-      const expectedX = Math.floor(game.field.getWidth() / 2)
+      const expectedX = Math.floor(game.field.width / 2)
       expect(startedGame.currentPuyoPair?.main.position.x).toBe(expectedX)
       expect(startedGame.currentPuyoPair?.main.position.y).toBe(0)
       expect(startedGame.currentPuyoPair?.sub.position.x).toBe(expectedX)
@@ -127,7 +128,7 @@ describe('Game PuyoPair System', () => {
       // 右端まで移動
       while (
         startedGame.currentPuyoPair!.main.position.x <
-        game.field.getWidth() - 1
+        game.field.width - 1
       ) {
         startedGame = movePuyoRight(startedGame)
       }
@@ -166,7 +167,7 @@ describe('Game PuyoPair System', () => {
       // 最下段まで移動
       while (
         startedGame.currentPuyoPair!.main.position.y <
-        game.field.getHeight() - 1
+        game.field.height - 1
       ) {
         startedGame = dropPuyoFast(startedGame)
       }
@@ -221,16 +222,21 @@ describe('Game PuyoPair System', () => {
     it('生成位置が占有されている場合はゲームオーバーになる', () => {
       // Arrange
       const game = createGame()
-      const centerX = Math.floor(game.field.getWidth() / 2)
+      const centerX = Math.floor(game.field.width / 2)
       const blockingPuyo = {
         color: 'red' as const,
         position: { x: centerX, y: 0 },
         id: 'test-puyo',
       }
-      game.field.setPuyo(centerX, 0, blockingPuyo)
+      const updatedField = placePuyoAt(
+        { x: centerX, y: 0 },
+        blockingPuyo,
+        game.field,
+      )
+      const gameWithBlockedField = { ...game, field: updatedField }
 
       // Act
-      const result = spawnNextPuyoPair(game)
+      const result = spawnNextPuyoPair(gameWithBlockedField)
 
       // Assert
       expect(result.state).toBe('gameOver')

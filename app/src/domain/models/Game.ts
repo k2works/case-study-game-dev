@@ -1,6 +1,10 @@
 import { processChain } from '../services/ImmutableChainService'
-import { FieldAdapter } from './FieldAdapter'
-import { isEmptyAt } from './ImmutableField'
+import {
+  type FieldData,
+  createEmptyField,
+  isEmptyAt,
+  placePuyoAt,
+} from './ImmutableField'
 import { type PuyoColor, type PuyoData } from './Puyo'
 import type { PuyoPair } from './PuyoPair'
 import {
@@ -16,7 +20,7 @@ export type GameState = 'ready' | 'playing' | 'paused' | 'gameOver'
 export interface Game {
   readonly id: string
   readonly state: GameState
-  readonly field: FieldAdapter
+  readonly field: FieldData
   readonly score: Score
   readonly level: number
   readonly currentPuyoPair: PuyoPair | null
@@ -29,7 +33,7 @@ export interface Game {
 export const createGame = (): Game => ({
   id: crypto.randomUUID(),
   state: 'ready',
-  field: new FieldAdapter(),
+  field: createEmptyField(),
   score: createScore(),
   level: 1,
   currentPuyoPair: null,
@@ -80,11 +84,11 @@ export const updateCurrentPuyoPair = (
 
 export const dropPuyo = (game: Game, puyo: PuyoData, column: number): Game => {
   // 指定した列でぷよを落下させる
-  let dropPosition = game.field.getHeight() - 1
+  let dropPosition = game.field.height - 1
 
   // 下から上に向かって空きセルを探す
-  for (let y = game.field.getHeight() - 1; y >= 0; y--) {
-    if (!isEmptyAt({ x: column, y }, game.field.getImmutableField())) {
+  for (let y = game.field.height - 1; y >= 0; y--) {
+    if (!isEmptyAt({ x: column, y }, game.field)) {
       dropPosition = y - 1
       break
     }
@@ -99,11 +103,8 @@ export const dropPuyo = (game: Game, puyo: PuyoData, column: number): Game => {
     }
   }
 
-  // 新しいFieldAdapterを作成（イミュータブル）
-  const newField = game.field.clone()
-
-  // ぷよを配置
-  newField.setPuyo(column, dropPosition, puyo)
+  // ぷよを配置した新しいフィールドを作成
+  const newField = placePuyoAt({ x: column, y: dropPosition }, puyo, game.field)
 
   return {
     ...game,
@@ -116,10 +117,10 @@ export const dropPuyo = (game: Game, puyo: PuyoData, column: number): Game => {
 const checkPuyoPairCollision = (game: Game, puyoPair: PuyoPair): boolean => {
   const mainCollision =
     puyoPair.main.position.y >= 0 &&
-    !isEmptyAt(puyoPair.main.position, game.field.getImmutableField())
+    !isEmptyAt(puyoPair.main.position, game.field)
   const subCollision =
     puyoPair.sub.position.y >= 0 &&
-    !isEmptyAt(puyoPair.sub.position, game.field.getImmutableField())
+    !isEmptyAt(puyoPair.sub.position, game.field)
 
   return mainCollision || subCollision
 }
@@ -169,8 +170,8 @@ export const movePuyoRight = (game: Game): Game => {
 
   // 右端チェック
   if (
-    movedPair.main.position.x >= game.field.getWidth() ||
-    movedPair.sub.position.x >= game.field.getWidth()
+    movedPair.main.position.x >= game.field.width ||
+    movedPair.sub.position.x >= game.field.width
   ) {
     return game
   }
@@ -194,8 +195,8 @@ export const dropPuyoFast = (game: Game): Game => {
 
   const movedPair = movePuyoPair(game.currentPuyoPair, 0, 1)
 
-  // 垃直境界チェック
-  if (checkVerticalBounds(movedPair, game.field.getHeight())) {
+  // 垂直境界チェック
+  if (checkVerticalBounds(movedPair, game.field.height)) {
     return game
   }
 
@@ -258,7 +259,7 @@ export const startGame = (game: Game): Game => {
   }
 
   // 初期ぷよペアを生成（フィールド上部中央に配置）
-  const startX = Math.floor(game.field.getWidth() / 2)
+  const startX = Math.floor(game.field.width / 2)
   const startY = 0
   const mainColor = getRandomColor()
   const subColor = getRandomColor()
@@ -286,11 +287,11 @@ export const startGame = (game: Game): Game => {
 
 // 次のぷよペアを生成
 export const spawnNextPuyoPair = (game: Game): Game => {
-  const startX = Math.floor(game.field.getWidth() / 2)
+  const startX = Math.floor(game.field.width / 2)
   const startY = 0
 
   // 生成位置が空いているかチェック（メインのみ、サブは画面外なのでチェック不要）
-  if (!isEmptyAt({ x: startX, y: startY }, game.field.getImmutableField())) {
+  if (!isEmptyAt({ x: startX, y: startY }, game.field)) {
     return {
       ...game,
       state: 'gameOver',
@@ -333,20 +334,33 @@ export const placePuyoPair = (game: Game): Game => {
 
   const puyoPair = game.currentPuyoPair
 
-  // 新しいフィールドを作成してぷよペアを配置
-  const newField = game.field.clone()
-
   try {
-    newField.setPuyo(
-      puyoPair.main.position.x,
-      puyoPair.main.position.y,
+    // ぷよペアを段階的に配置
+    let newField = placePuyoAt(
+      puyoPair.main.position,
       puyoPair.main,
+      game.field,
     )
-    newField.setPuyo(
-      puyoPair.sub.position.x,
-      puyoPair.sub.position.y,
-      puyoPair.sub,
-    )
+    newField = placePuyoAt(puyoPair.sub.position, puyoPair.sub, newField)
+
+    // 連鎖処理を実行
+    const chainResult = processChain(newField)
+
+    // スコア更新
+    const newScore = {
+      current: game.score.current + chainResult.totalScore,
+      multiplier: game.score.multiplier,
+    }
+
+    // 次のぷよペアを生成
+    return spawnNextPuyoPair({
+      ...game,
+      field: chainResult.field,
+      score: newScore,
+      currentPuyoPair: null,
+      currentPuyo: null,
+      updatedAt: new Date(),
+    })
   } catch {
     // 配置できない場合はゲームオーバー
     return {
@@ -357,24 +371,4 @@ export const placePuyoPair = (game: Game): Game => {
       updatedAt: new Date(),
     }
   }
-
-  // 連鎖処理を実行
-  const chainResult = processChain(newField.getImmutableField())
-  const fieldAfterChain = FieldAdapter.fromImmutableField(chainResult.field)
-
-  // スコア更新
-  const newScore = {
-    current: game.score.current + chainResult.totalScore,
-    multiplier: game.score.multiplier,
-  }
-
-  // 次のぷよペアを生成
-  return spawnNextPuyoPair({
-    ...game,
-    field: fieldAfterChain,
-    score: newScore,
-    currentPuyoPair: null,
-    currentPuyo: null,
-    updatedAt: new Date(),
-  })
 }

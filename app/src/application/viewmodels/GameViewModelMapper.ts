@@ -1,5 +1,5 @@
-import type { FieldAdapter } from '../../domain/models/FieldAdapter'
 import type { Game } from '../../domain/models/Game'
+import type { FieldData } from '../../domain/models/ImmutableField'
 import { getPuyoAt } from '../../domain/models/ImmutableField'
 import type { PuyoColor, PuyoData } from '../../domain/models/Puyo'
 import type { PuyoPair } from '../../domain/models/PuyoPair'
@@ -54,20 +54,20 @@ export class GameViewModelMapper {
   /**
    * FieldドメインモデルをFieldViewModelに変換
    */
-  private static toFieldViewModel(field: FieldAdapter): FieldViewModel {
+  private static toFieldViewModel(field: FieldData): FieldViewModel {
     const cells: (PuyoViewModel | null)[][] = []
 
-    for (let x = 0; x < field.getWidth(); x++) {
+    for (let x = 0; x < field.width; x++) {
       cells[x] = []
-      for (let y = 0; y < field.getHeight(); y++) {
-        const puyo = getPuyoAt({ x, y }, field.getImmutableField())
+      for (let y = 0; y < field.height; y++) {
+        const puyo = getPuyoAt({ x, y }, field)
         cells[x][y] = puyo ? this.toPuyoViewModel(puyo) : null
       }
     }
 
     return {
-      width: field.getWidth(),
-      height: field.getHeight(),
+      width: field.width,
+      height: field.height,
       cells,
     }
   }

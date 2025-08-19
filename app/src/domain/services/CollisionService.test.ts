@@ -1,19 +1,22 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { FieldAdapter } from '../models/FieldAdapter'
-import { createEmptyField } from '../models/ImmutableField'
+import {
+  type FieldData,
+  createEmptyField,
+  placePuyoAt,
+} from '../models/ImmutableField'
 import { createPuyo } from '../models/Puyo'
 import { createPuyoPair } from '../models/PuyoPair'
 import { CollisionService } from './CollisionService'
 
 describe('CollisionService', () => {
   let service: CollisionService
-  let field: FieldAdapter
+  let field: FieldData
 
   beforeEach(() => {
     service = new CollisionService()
     // 6x13のフィールドを作成
-    field = new FieldAdapter(createEmptyField(6, 13))
+    field = createEmptyField(6, 13)
   })
 
   describe('canPlacePuyo', () => {
@@ -38,7 +41,11 @@ describe('CollisionService', () => {
     })
 
     it('既にぷよがある位置には配置できない', () => {
-      field = field.withPuyo(0, 12, createPuyo('blue', { x: 0, y: 12 }))
+      field = placePuyoAt(
+        { x: 0, y: 12 },
+        createPuyo('blue', { x: 0, y: 12 }),
+        field,
+      )
       const puyo = createPuyo('red', { x: 0, y: 12 })
       expect(service.canPlacePuyo(puyo, field)).toBe(false)
     })
@@ -51,7 +58,11 @@ describe('CollisionService', () => {
     })
 
     it('どちらか一方でも配置できない場合はぷよペア全体が配置できない', () => {
-      field = field.withPuyo(2, 1, createPuyo('green', { x: 2, y: 1 }))
+      field = placePuyoAt(
+        { x: 2, y: 1 },
+        createPuyo('green', { x: 2, y: 1 }),
+        field,
+      )
       const pair = createPuyoPair('red', 'blue', 2, 1)
       expect(service.canPlacePuyoPair(pair, field)).toBe(false)
     })
@@ -73,8 +84,16 @@ describe('CollisionService', () => {
     })
 
     it('ぷよがある場合はその上に着地する', () => {
-      field = field.withPuyo(2, 12, createPuyo('green', { x: 2, y: 12 }))
-      field = field.withPuyo(2, 11, createPuyo('yellow', { x: 2, y: 11 }))
+      field = placePuyoAt(
+        { x: 2, y: 12 },
+        createPuyo('green', { x: 2, y: 12 }),
+        field,
+      )
+      field = placePuyoAt(
+        { x: 2, y: 11 },
+        createPuyo('yellow', { x: 2, y: 11 }),
+        field,
+      )
 
       const pair = createPuyoPair('red', 'blue', 2, 1)
 
@@ -87,7 +106,11 @@ describe('CollisionService', () => {
     it('配置できない場合はnullを返す', () => {
       // フィールドを上まで埋める
       for (let y = 0; y < 13; y++) {
-        field = field.withPuyo(2, y, createPuyo('green', { x: 2, y }))
+        field = placePuyoAt(
+          { x: 2, y },
+          createPuyo('green', { x: 2, y }),
+          field,
+        )
       }
 
       const pair = createPuyoPair('red', 'blue', 2, 1)
@@ -127,7 +150,11 @@ describe('CollisionService', () => {
     })
 
     it('ぷよがある場所への移動は不可能', () => {
-      field = field.withPuyo(3, 10, createPuyo('green', { x: 3, y: 10 }))
+      field = placePuyoAt(
+        { x: 3, y: 10 },
+        createPuyo('green', { x: 3, y: 10 }),
+        field,
+      )
 
       const pair = createPuyoPair('red', 'blue', 2, 10)
 
@@ -156,7 +183,11 @@ describe('CollisionService', () => {
     })
 
     it('ぷよがある場所への回転は不可能', () => {
-      field = field.withPuyo(3, 10, createPuyo('green', { x: 3, y: 10 }))
+      field = placePuyoAt(
+        { x: 3, y: 10 },
+        createPuyo('green', { x: 3, y: 10 }),
+        field,
+      )
 
       const originalPair = createPuyoPair('red', 'blue', 2, 10)
 
@@ -205,8 +236,16 @@ describe('CollisionService', () => {
 
     it('壁蹴り不可能な場合はnullを返す', () => {
       // 左側をぷよで埋める
-      field = field.withPuyo(3, 10, createPuyo('green', { x: 3, y: 10 }))
-      field = field.withPuyo(4, 10, createPuyo('green', { x: 4, y: 10 }))
+      field = placePuyoAt(
+        { x: 3, y: 10 },
+        createPuyo('green', { x: 3, y: 10 }),
+        field,
+      )
+      field = placePuyoAt(
+        { x: 4, y: 10 },
+        createPuyo('green', { x: 4, y: 10 }),
+        field,
+      )
 
       const rotatedPair = createPuyoPair('red', 'blue', 5, 10)
       const rotatedPairWithBoundaryIssue = {
@@ -237,24 +276,40 @@ describe('CollisionService', () => {
     })
 
     it('生成位置にぷよがある場合はゲームオーバー', () => {
-      field = field.withPuyo(2, 0, createPuyo('red', { x: 2, y: 0 }))
+      field = placePuyoAt(
+        { x: 2, y: 0 },
+        createPuyo('red', { x: 2, y: 0 }),
+        field,
+      )
       expect(service.isGameOver(field, { x: 2, y: 0 })).toBe(true)
     })
   })
 
   describe('isDangerZone', () => {
     it('危険ライン以下にぷよがない場合は安全', () => {
-      field = field.withPuyo(0, 5, createPuyo('red', { x: 0, y: 5 }))
+      field = placePuyoAt(
+        { x: 0, y: 5 },
+        createPuyo('red', { x: 0, y: 5 }),
+        field,
+      )
       expect(service.isDangerZone(field, 2)).toBe(false)
     })
 
     it('危険ライン以上にぷよがある場合は危険', () => {
-      field = field.withPuyo(0, 1, createPuyo('red', { x: 0, y: 1 }))
+      field = placePuyoAt(
+        { x: 0, y: 1 },
+        createPuyo('red', { x: 0, y: 1 }),
+        field,
+      )
       expect(service.isDangerZone(field, 2)).toBe(true)
     })
 
     it('カスタム危険ラインで正しく判定する', () => {
-      field = field.withPuyo(0, 3, createPuyo('red', { x: 0, y: 3 }))
+      field = placePuyoAt(
+        { x: 0, y: 3 },
+        createPuyo('red', { x: 0, y: 3 }),
+        field,
+      )
       expect(service.isDangerZone(field, 4)).toBe(true)
       expect(service.isDangerZone(field, 3)).toBe(false)
     })
@@ -262,9 +317,21 @@ describe('CollisionService', () => {
 
   describe('findFloatingPuyos', () => {
     it('浮いているぷよを正しく検出する', () => {
-      field = field.withPuyo(2, 8, createPuyo('red', { x: 2, y: 8 }))
-      field = field.withPuyo(2, 6, createPuyo('blue', { x: 2, y: 6 }))
-      field = field.withPuyo(2, 5, createPuyo('green', { x: 2, y: 5 }))
+      field = placePuyoAt(
+        { x: 2, y: 8 },
+        createPuyo('red', { x: 2, y: 8 }),
+        field,
+      )
+      field = placePuyoAt(
+        { x: 2, y: 6 },
+        createPuyo('blue', { x: 2, y: 6 }),
+        field,
+      )
+      field = placePuyoAt(
+        { x: 2, y: 5 },
+        createPuyo('green', { x: 2, y: 5 }),
+        field,
+      )
 
       const floatingPuyos = service.findFloatingPuyos(field, { x: 2, y: 10 })
       expect(floatingPuyos).toHaveLength(3)
@@ -277,8 +344,16 @@ describe('CollisionService', () => {
     })
 
     it('指定位置より下のぷよは検出しない', () => {
-      field = field.withPuyo(2, 11, createPuyo('red', { x: 2, y: 11 }))
-      field = field.withPuyo(2, 8, createPuyo('blue', { x: 2, y: 8 }))
+      field = placePuyoAt(
+        { x: 2, y: 11 },
+        createPuyo('red', { x: 2, y: 11 }),
+        field,
+      )
+      field = placePuyoAt(
+        { x: 2, y: 8 },
+        createPuyo('blue', { x: 2, y: 8 }),
+        field,
+      )
 
       const floatingPuyos = service.findFloatingPuyos(field, { x: 2, y: 10 })
       expect(floatingPuyos).toHaveLength(1)

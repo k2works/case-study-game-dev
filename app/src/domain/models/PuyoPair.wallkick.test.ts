@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { FieldAdapter } from './FieldAdapter'
+import { createEmptyField, placePuyoAt } from './ImmutableField'
 import { createPosition } from './Position'
 import { createPuyo } from './Puyo'
 import {
@@ -13,7 +13,7 @@ describe('PuyoPair 壁蹴り機能', () => {
   describe('rotatePuyoPairWithWallKick', () => {
     it('通常の回転が可能な場合はそのまま回転する', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = createPuyoPair('red', 'blue', 3, 5)
 
       // Act
@@ -28,7 +28,7 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('右壁にぶつかる場合は左に1マスずらして回転する', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = {
         main: createPuyo('red', createPosition(5, 5)), // 右端
         sub: createPuyo('blue', createPosition(5, 4)), // 上
@@ -46,7 +46,7 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('左壁にぶつかる場合は右に1マスずらして回転する', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = {
         main: createPuyo('red', createPosition(0, 5)), // 左端
         sub: createPuyo('blue', createPosition(0, 4)), // 上
@@ -68,7 +68,7 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('下壁にぶつかる場合は上に1マスずらして回転する', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = {
         main: createPuyo('red', createPosition(3, 11)), // 最下段
         sub: createPuyo('blue', createPosition(4, 11)), // 右
@@ -86,7 +86,7 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('フィールド上部でも壁蹴りが機能する', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = {
         main: createPuyo('red', createPosition(3, 0)), // 最上段
         sub: createPuyo('blue', createPosition(2, 0)), // 左
@@ -104,9 +104,13 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it.skip('壁蹴り後の位置にぷよがある場合は上下にずらして回転', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       // 左に既存のぷよを配置して、左への壁蹴りを阻害
-      field.setPuyo(4, 5, createPuyo('green', createPosition(4, 5)))
+      const updatedField = placePuyoAt(
+        { x: 4, y: 5 },
+        createPuyo('green', createPosition(4, 5)),
+        field,
+      )
 
       const pair = {
         main: createPuyo('red', createPosition(5, 5)), // 右端
@@ -114,7 +118,11 @@ describe('PuyoPair 壁蹴り機能', () => {
       }
 
       // Act - 壁蹴りで左にずらそうとするが、障害物があるので上にずらす
-      const rotatedPair = rotatePuyoPairWithWallKick(pair, 'clockwise', field)
+      const rotatedPair = rotatePuyoPairWithWallKick(
+        pair,
+        'clockwise',
+        updatedField,
+      )
 
       // Assert - 上にずらして回転
       // Note: 現在の実装では左にずらして回転するため、このテストはスキップ
@@ -126,9 +134,13 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('複数の壁蹴りパターンを試す（優先順位のテスト）', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       // 左に障害物を配置（まだ壁蹴り可能）
-      field.setPuyo(3, 5, createPuyo('green', createPosition(3, 5)))
+      const updatedField = placePuyoAt(
+        { x: 3, y: 5 },
+        createPuyo('green', createPosition(3, 5)),
+        field,
+      )
 
       const pair = {
         main: createPuyo('red', createPosition(5, 5)), // 右端
@@ -136,7 +148,11 @@ describe('PuyoPair 壁蹴り機能', () => {
       }
 
       // Act - 壁蹴りで左にずらす
-      const rotatedPair = rotatePuyoPairWithWallKick(pair, 'clockwise', field)
+      const rotatedPair = rotatePuyoPairWithWallKick(
+        pair,
+        'clockwise',
+        updatedField,
+      )
 
       // Assert - 左にずらして回転成功
       expect(rotatedPair.main.position.x).toBe(4) // 左にずれる
@@ -147,7 +163,7 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it.skip('角での壁蹴り（右上角）', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = {
         main: createPuyo('red', createPosition(5, 0)), // 右上角
         sub: createPuyo('blue', createPosition(4, 0)), // 左
@@ -170,7 +186,7 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('角での壁蹴り（左下角）', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       const pair = {
         main: createPuyo('red', createPosition(0, 11)), // 左下角
         sub: createPuyo('blue', createPosition(1, 11)), // 右
@@ -188,11 +204,23 @@ describe('PuyoPair 壁蹴り機能', () => {
 
     it('Tスピンのような複雑な壁蹴り', () => {
       // Arrange
-      const field = new FieldAdapter()
+      const field = createEmptyField(6, 12)
       // 障害物を配置してT字型の隙間を作る
-      field.setPuyo(1, 10, createPuyo('green', createPosition(1, 10)))
-      field.setPuyo(3, 10, createPuyo('green', createPosition(3, 10)))
-      field.setPuyo(2, 11, createPuyo('green', createPosition(2, 11)))
+      let updatedField = placePuyoAt(
+        { x: 1, y: 10 },
+        createPuyo('green', createPosition(1, 10)),
+        field,
+      )
+      updatedField = placePuyoAt(
+        { x: 3, y: 10 },
+        createPuyo('green', createPosition(3, 10)),
+        updatedField,
+      )
+      updatedField = placePuyoAt(
+        { x: 2, y: 11 },
+        createPuyo('green', createPosition(2, 11)),
+        updatedField,
+      )
 
       const pair = {
         main: createPuyo('red', createPosition(2, 9)),
@@ -200,10 +228,14 @@ describe('PuyoPair 壁蹴り機能', () => {
       }
 
       // Act - 回転して隙間に入れる
-      const rotatedPair = rotatePuyoPairWithWallKick(pair, 'clockwise', field)
+      const rotatedPair = rotatePuyoPairWithWallKick(
+        pair,
+        'clockwise',
+        updatedField,
+      )
 
       // Assert - 回転が成功
-      expect(canPlaceOn(rotatedPair, field)).toBe(true)
+      expect(canPlaceOn(rotatedPair, updatedField)).toBe(true)
     })
   })
 })

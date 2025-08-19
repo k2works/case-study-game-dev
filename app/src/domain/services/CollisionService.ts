@@ -1,5 +1,5 @@
-import type { FieldAdapter } from '../models/FieldAdapter'
-import { isEmptyAt } from '../models/ImmutableField'
+import type { FieldData } from '../models/ImmutableField'
+import { isEmptyAt, isValidPosition } from '../models/ImmutableField'
 import type { Position } from '../models/Position'
 import type { PuyoData } from '../models/Puyo'
 import type { PuyoPair } from '../models/PuyoPair'
@@ -15,7 +15,7 @@ export class CollisionService {
    * @param field 対象フィールド
    * @returns 配置可能な場合true
    */
-  canPlacePuyoPair(puyoPair: PuyoPair, field: FieldAdapter): boolean {
+  canPlacePuyoPair(puyoPair: PuyoPair, field: FieldData): boolean {
     const mainCanPlace = this.canPlacePuyo(puyoPair.main, field)
     const subCanPlace = this.canPlacePuyo(puyoPair.sub, field)
 
@@ -28,7 +28,7 @@ export class CollisionService {
    * @param field 対象フィールド
    * @returns 配置可能な場合true
    */
-  canPlacePuyo(puyo: PuyoData, field: FieldAdapter): boolean {
+  canPlacePuyo(puyo: PuyoData, field: FieldData): boolean {
     const { x, y } = puyo.position
 
     // 境界チェック
@@ -37,7 +37,7 @@ export class CollisionService {
     }
 
     // 占有チェック
-    if (!isEmptyAt({ x, y }, field.getImmutableField())) {
+    if (!isEmptyAt({ x, y }, field)) {
       return false
     }
 
@@ -50,10 +50,7 @@ export class CollisionService {
    * @param field 対象フィールド
    * @returns 着地位置のぷよペア、着地できない場合null
    */
-  findLandingPosition(
-    puyoPair: PuyoPair,
-    field: FieldAdapter,
-  ): PuyoPair | null {
+  findLandingPosition(puyoPair: PuyoPair, field: FieldData): PuyoPair | null {
     let currentPair = puyoPair
     let nextPair = this.movePuyoPairDown(currentPair)
 
@@ -97,13 +94,8 @@ export class CollisionService {
    * @param field 対象フィールド
    * @returns 境界内の場合true
    */
-  isWithinBounds(position: Position, field: FieldAdapter): boolean {
-    return (
-      position.x >= 0 &&
-      position.x < field.getWidth() &&
-      position.y >= 0 &&
-      position.y < field.getHeight()
-    )
+  isWithinBounds(position: Position, field: FieldData): boolean {
+    return isValidPosition(position, field)
   }
 
   /**
@@ -116,7 +108,7 @@ export class CollisionService {
   canMoveHorizontally(
     puyoPair: PuyoPair,
     direction: -1 | 1,
-    field: FieldAdapter,
+    field: FieldData,
   ): boolean {
     const movedPair = this.movePuyoPairHorizontally(puyoPair, direction)
     return this.canPlacePuyoPair(movedPair, field)
@@ -160,7 +152,7 @@ export class CollisionService {
   canRotate(
     _originalPair: PuyoPair,
     rotatedPair: PuyoPair,
-    field: FieldAdapter,
+    field: FieldData,
   ): boolean {
     return this.canPlacePuyoPair(rotatedPair, field)
   }
@@ -174,7 +166,7 @@ export class CollisionService {
    */
   findWallKickPosition(
     rotatedPair: PuyoPair,
-    field: FieldAdapter,
+    field: FieldData,
     kickOffsets: Position[],
   ): PuyoPair | null {
     for (const offset of kickOffsets) {
@@ -219,9 +211,9 @@ export class CollisionService {
    * @param spawnPosition 新しいぷよの生成位置
    * @returns ゲームオーバーの場合true
    */
-  isGameOver(field: FieldAdapter, spawnPosition: Position): boolean {
+  isGameOver(field: FieldData, spawnPosition: Position): boolean {
     // 生成位置が占有されている場合はゲームオーバー
-    return !isEmptyAt(spawnPosition, field.getImmutableField())
+    return !isEmptyAt(spawnPosition, field)
   }
 
   /**
@@ -230,10 +222,10 @@ export class CollisionService {
    * @param dangerLine 危険ライン（この高さ以上にぷよがあると危険）
    * @returns 危険な場合true
    */
-  isDangerZone(field: FieldAdapter, dangerLine: number = 2): boolean {
-    for (let x = 0; x < field.getWidth(); x++) {
+  isDangerZone(field: FieldData, dangerLine: number = 2): boolean {
+    for (let x = 0; x < field.width; x++) {
       for (let y = 0; y < dangerLine; y++) {
-        if (!isEmptyAt({ x, y }, field.getImmutableField())) {
+        if (!isEmptyAt({ x, y }, field)) {
           return true
         }
       }
@@ -247,12 +239,12 @@ export class CollisionService {
    * @param checkPosition チェック開始位置
    * @returns 落下するぷよの位置配列
    */
-  findFloatingPuyos(field: FieldAdapter, checkPosition: Position): Position[] {
+  findFloatingPuyos(field: FieldData, checkPosition: Position): Position[] {
     const floatingPuyos: Position[] = []
 
     // 指定位置から上方向をチェック
     for (let y = checkPosition.y - 1; y >= 0; y--) {
-      if (!isEmptyAt({ x: checkPosition.x, y }, field.getImmutableField())) {
+      if (!isEmptyAt({ x: checkPosition.x, y }, field)) {
         floatingPuyos.push({ x: checkPosition.x, y })
       }
     }
