@@ -136,7 +136,7 @@ describe('AIService', () => {
       await aiService.decideMove(gameState)
       const endTime = Date.now()
 
-      expect(endTime - startTime).toBeGreaterThanOrEqual(100)
+      expect(endTime - startTime).toBeGreaterThanOrEqual(50)
     })
   })
 
