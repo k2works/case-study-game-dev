@@ -1,7 +1,7 @@
 /**
  * AI判断詳細表示コンポーネント
  */
-import type { AIMove, MoveEvaluation } from '../../domain/models/ai/index'
+import type { AIMove, MoveEvaluation } from '../../../domain/models/ai'
 
 interface AIInsightsProps {
   /** 最後のAI判断 */

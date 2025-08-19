@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import { render, screen } from '@testing-library/react'
 
-import type { AIMove } from '../../domain/models/ai/index'
+import type { AIMove } from '../../../domain/models/ai'
 import { AIInsights } from './AIInsights.tsx'
 
 describe('AIInsightsコンポーネント', () => {

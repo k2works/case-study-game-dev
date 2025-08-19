@@ -5,11 +5,11 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
-import type { StrategyService } from '../../application/services/ai/StrategyService'
+import type { StrategyService } from '../../../application/services/ai/StrategyService'
 import {
   DEFAULT_STRATEGIES,
   type StrategyParameters,
-} from '../../domain/models/ai/StrategyConfig'
+} from '../../../domain/models/ai/StrategyConfig'
 import { StrategySettings } from './StrategySettings'
 
 // モックStrategyService
