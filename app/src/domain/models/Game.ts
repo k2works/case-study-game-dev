@@ -1,4 +1,4 @@
-import { processChain } from '../services/ImmutableChainService'
+import { processChain } from '../services/ChainService.ts'
 import {
   type FieldData,
   createEmptyField,

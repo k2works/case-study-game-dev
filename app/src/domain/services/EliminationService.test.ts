@@ -6,7 +6,7 @@ import {
   eliminateGroups,
   findEliminableGroups,
   processElimination,
-} from './ImmutableEliminationService'
+} from './EliminationService.ts'
 
 describe('ImmutableEliminationService', () => {
   describe('findEliminableGroups', () => {

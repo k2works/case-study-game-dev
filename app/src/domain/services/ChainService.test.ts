@@ -9,7 +9,7 @@ import {
   predictMaxChain,
   processChain,
   processSingleElimination,
-} from './ImmutableChainService'
+} from './ChainService.ts'
 
 describe('ImmutableChainService', () => {
   describe('連鎖ボーナス計算', () => {

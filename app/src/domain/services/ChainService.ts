@@ -2,11 +2,8 @@ import { curry, flow } from 'lodash/fp'
 
 import type { FieldData } from '../models/Field.ts'
 import type { PuyoGroup } from '../models/PuyoGroup'
-import {
-  eliminateGroups,
-  findEliminableGroups,
-} from './ImmutableEliminationService'
-import { applyGravityUntilStable } from './ImmutableGravityService'
+import { eliminateGroups, findEliminableGroups } from './EliminationService.ts'
+import { applyGravityUntilStable } from './GravityService.ts'
 
 export interface ImmutableChainResult {
   readonly field: FieldData
