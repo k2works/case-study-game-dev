@@ -56,20 +56,22 @@ describe('MayahEvaluation', () => {
     it('連鎖評価の型が正しく定義されている', () => {
       // Arrange
       const chainEval: ChainEvaluation = {
-        mainChainScore: 500,
-        subChainScore: 200,
-        patternScore: 100,
-        requiredPuyoCount: 8,
-        chainProbability: 0.65,
+        patterns: [],
+        bestPattern: undefined,
+        chainPotential: 80,
+        diversityScore: 60,
+        stabilityScore: 75,
+        feasibilityScore: 70,
         totalScore: 800,
       }
 
       // Assert
-      expect(chainEval.mainChainScore).toBe(500)
-      expect(chainEval.subChainScore).toBe(200)
-      expect(chainEval.patternScore).toBe(100)
-      expect(chainEval.requiredPuyoCount).toBe(8)
-      expect(chainEval.chainProbability).toBe(0.65)
+      expect(chainEval.patterns).toEqual([])
+      expect(chainEval.bestPattern).toBeUndefined()
+      expect(chainEval.chainPotential).toBe(80)
+      expect(chainEval.diversityScore).toBe(60)
+      expect(chainEval.stabilityScore).toBe(75)
+      expect(chainEval.feasibilityScore).toBe(70)
       expect(chainEval.totalScore).toBe(800)
     })
 
@@ -108,11 +110,12 @@ describe('MayahEvaluation', () => {
           totalScore: 310,
         },
         chain: {
-          mainChainScore: 500,
-          subChainScore: 200,
-          patternScore: 100,
-          requiredPuyoCount: 8,
-          chainProbability: 0.65,
+          patterns: [],
+          bestPattern: undefined,
+          chainPotential: 80,
+          diversityScore: 60,
+          stabilityScore: 75,
+          feasibilityScore: 70,
           totalScore: 800,
         },
         strategy: {

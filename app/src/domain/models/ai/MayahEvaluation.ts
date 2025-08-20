@@ -34,19 +34,55 @@ export interface ShapeEvaluation {
 }
 
 /**
+ * 連鎖パターン
+ */
+export interface ChainPattern {
+  /** パターンタイプ */
+  type: string
+  /** パターン名 */
+  name: string
+  /** パターン説明 */
+  description: string
+  /** パターンの位置情報 */
+  position: {
+    startX: number
+    endX: number
+    columns: number
+  }
+  /** 完成度（0-1） */
+  completeness: number
+  /** 発火可能性（0-1） */
+  triggerability: number
+  /** 拡張性（0-1） */
+  extensibility: number
+  /** ポテンシャルスコア（0-100） */
+  potential: number
+  /** 効率性（0-1） */
+  efficiency: number
+  /** 難易度（0-1） */
+  difficulty: number
+  /** 安定性（0-1） */
+  stability: number
+  /** 必要な色 */
+  requiredColors: string[]
+}
+
+/**
  * 連鎖評価 - 連鎖構築の評価
  */
 export interface ChainEvaluation {
-  /** 本線連鎖スコア（メインの連鎖） */
-  mainChainScore: number
-  /** 副砲連鎖スコア（サブの連鎖） */
-  subChainScore: number
-  /** パターンマッチングスコア（GTRなど定跡パターン） */
-  patternScore: number
-  /** 必要ぷよ数（連鎖発火に必要な数） */
-  requiredPuyoCount: number
-  /** 連鎖発火確率（50%基準） */
-  chainProbability: number
+  /** 検出されたパターン一覧 */
+  patterns: ChainPattern[]
+  /** 最良のパターン */
+  bestPattern?: ChainPattern
+  /** 連鎖ポテンシャル */
+  chainPotential: number
+  /** パターンの多様性スコア */
+  diversityScore: number
+  /** 連鎖の安定性スコア */
+  stabilityScore: number
+  /** 実現可能性スコア */
+  feasibilityScore: number
   /** 総合連鎖スコア */
   totalScore: number
 }
@@ -227,6 +263,8 @@ export interface MayahEvaluationSettings {
   chainProbabilityThreshold: number
   /** 緊急モード判定の高さ */
   emergencyHeight: number
+  /** 連鎖パターンの最小完成度閾値 */
+  minChainCompleteness: number
 }
 
 /**
@@ -240,4 +278,5 @@ export const DEFAULT_MAYAH_SETTINGS: MayahEvaluationSettings = {
   maxChigiri: 2,
   chainProbabilityThreshold: 0.5,
   emergencyHeight: 10,
+  minChainCompleteness: 0.3,
 }

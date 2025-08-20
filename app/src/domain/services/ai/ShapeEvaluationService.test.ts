@@ -32,7 +32,7 @@ describe('ShapeEvaluationService', () => {
     y: number,
     color: string,
   ) => {
-    field.cells[y][x] = color as any
+    field.cells[y][x] = color as never
   }
 
   describe('calculateColumnHeights', () => {

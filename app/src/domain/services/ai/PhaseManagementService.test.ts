@@ -52,7 +52,7 @@ describe('PhaseManagementService', () => {
     y: number,
     color: string,
   ) => {
-    gameState.currentField!.cells[y][x] = color as any
+    gameState.currentField!.cells[y][x] = color as never
   }
 
   describe('determineGamePhase', () => {
@@ -228,7 +228,7 @@ describe('PhaseManagementService', () => {
 
       // 相手のフィールドは高く
       for (let y = 6; y < 12; y++) {
-        gameState.opponentField.cells[y][2] = 'blue' as any
+        gameState.opponentField.cells[y][2] = 'blue' as never
       }
 
       // Act
@@ -303,7 +303,7 @@ describe('PhaseManagementService', () => {
 
       // 相手を脅威的にする
       for (let y = 4; y < 12; y++) {
-        gameState.opponentField.cells[y][2] = 'blue' as any
+        gameState.opponentField.cells[y][2] = 'blue' as never
       }
 
       const baseWeights = getPhaseWeights(GamePhase.MIDDLE)
