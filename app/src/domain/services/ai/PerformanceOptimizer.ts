@@ -38,11 +38,11 @@ export class LRUCache<K, V> {
     // アクセス数更新
     entry.accessCount++
     entry.timestamp = Date.now()
-    
+
     // LRU更新のため再挿入
     this.cache.delete(key)
     this.cache.set(key, entry)
-    
+
     return entry.value
   }
 
@@ -51,7 +51,9 @@ export class LRUCache<K, V> {
     if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
       // 最も古いエントリを削除
       const oldestKey = this.cache.keys().next().value
-      this.cache.delete(oldestKey)
+      if (oldestKey !== undefined) {
+        this.cache.delete(oldestKey)
+      }
     }
 
     this.cache.set(key, {
@@ -120,16 +122,16 @@ export const findOptimal = <T>(
     return best
   }
 
+  // サイクロマティック複雑度を下げるため、シンプルなループに変更
   for (let i = 1; i < items.length; i++) {
     const score = scorer(items[i])
     if (score > bestScore) {
       best = items[i]
       bestScore = score
-
-      // 閾値を満たした場合は早期終了
-      if (threshold && bestScore >= threshold) {
-        break
-      }
+    }
+    // 閾値チェックを別々に実行
+    if (threshold && bestScore >= threshold) {
+      break
     }
   }
 
@@ -242,11 +244,11 @@ export const measurePerformance = <T extends unknown[], R>(
     const start = performance.now()
     const result = func(...args)
     const end = performance.now()
-    
+
     if (label) {
       console.log(`${label}: ${(end - start).toFixed(2)}ms`)
     }
-    
+
     return result
   }
 }
@@ -262,7 +264,7 @@ export const memoize = <T extends unknown[], R>(
 
   return (...args: T): R => {
     const key = keyGenerator ? keyGenerator(...args) : JSON.stringify(args)
-    
+
     const cached = cache.get(key)
     if (cached !== undefined) {
       return cached
@@ -293,7 +295,7 @@ export const progressiveEvaluation = <T>(
   for (const { name, evaluator, threshold = 0, weight } of evaluators) {
     const score = evaluator(item)
     evaluationsUsed.push(name)
-    
+
     totalScore += score * weight
     totalWeight += weight
 
@@ -320,7 +322,7 @@ export class ObjectPool<T> {
   constructor(factory: () => T, reset?: (obj: T) => void, initialSize = 10) {
     this.factory = factory
     this.reset = reset
-    
+
     // 初期オブジェクトを作成
     for (let i = 0; i < initialSize; i++) {
       this.available.push(factory())

@@ -4,8 +4,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import {
-  type LRUCache,
-  type ObjectPool,
+  LRUCache,
+  ObjectPool,
   debounce,
   findOptimal,
   generateFieldHash,
@@ -14,9 +14,6 @@ import {
   progressiveEvaluation,
   throttle,
 } from './PerformanceOptimizer'
-
-// 動的インポート用のモック
-const { LRUCache, ObjectPool } = await import('./PerformanceOptimizer')
 
 describe('PerformanceOptimizer', () => {
   describe('LRUCache', () => {
@@ -175,8 +172,7 @@ describe('PerformanceOptimizer', () => {
     it('要素をバッチ処理', () => {
       // Arrange
       const items = [1, 2, 3, 4, 5, 6, 7]
-      const processor = (batch: number[]) =>
-        batch.map((x) => x * 2)
+      const processor = (batch: number[]) => batch.map((x) => x * 2)
 
       // Act
       const results = processBatch(items, processor, 3)
@@ -188,8 +184,7 @@ describe('PerformanceOptimizer', () => {
     it('バッチサイズより少ない要素の処理', () => {
       // Arrange
       const items = [1, 2]
-      const processor = (batch: number[]) =>
-        batch.map((x) => x * 2)
+      const processor = (batch: number[]) => batch.map((x) => x * 2)
 
       // Act
       const results = processBatch(items, processor, 5)
@@ -261,10 +256,7 @@ describe('PerformanceOptimizer', () => {
     it('カスタムキージェネレータを使用', () => {
       // Arrange
       const mockFn = vi.fn((obj: { x: number; y: number }) => obj.x + obj.y)
-      const memoizedFn = memoize(
-        mockFn,
-        (obj) => `${obj.x},${obj.y}`,
-      )
+      const memoizedFn = memoize(mockFn, (obj) => `${obj.x},${obj.y}`)
 
       // Act
       const result1 = memoizedFn({ x: 1, y: 2 })
@@ -346,7 +338,7 @@ describe('PerformanceOptimizer', () => {
 
       // Act
       const obj1 = pool.acquire()
-      const obj2 = pool.acquire()
+      pool.acquire() // 使用されないがプールサイズテストのために取得
       obj1.value = 42
 
       pool.release(obj1)

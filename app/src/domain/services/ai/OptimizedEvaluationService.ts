@@ -7,28 +7,26 @@ import type {
   ChainEvaluation,
   GamePhase,
   MayahEvaluationSettings,
-  Move,
   RensaHandTree,
   StrategyEvaluation,
 } from '../../models/ai/MayahEvaluation'
+import type { AIMove as Move } from '../../models/ai/MoveTypes'
 import { DEFAULT_MAYAH_SETTINGS } from '../../models/ai/MayahEvaluation'
 import { evaluateChain } from './ChainEvaluationService'
+import {
+  type LRUCache,
+  LRUCache as LRUCacheClass,
+  findOptimal,
+  generateFieldHash,
+  memoize,
+  progressiveEvaluation,
+} from './PerformanceOptimizer'
 import {
   type ChainSearchSettings,
   DEFAULT_CHAIN_SEARCH_SETTINGS,
   buildRensaHandTree,
 } from './RensaHandTreeService'
 import { evaluateStrategy } from './StrategyEvaluationService'
-import {
-  type LRUCache,
-  LRUCache as LRUCacheClass,
-  debounce,
-  findOptimal,
-  generateFieldHash,
-  memoize,
-  progressiveEvaluation,
-  throttle,
-} from './PerformanceOptimizer'
 
 /**
  * 最適化された評価結果
@@ -99,12 +97,20 @@ export class OptimizedEvaluationService {
   private settings: OptimizedEvaluationSettings
   private cacheStats = { hits: 0, misses: 0 }
 
-  constructor(settings: OptimizedEvaluationSettings = DEFAULT_OPTIMIZATION_SETTINGS) {
+  constructor(
+    settings: OptimizedEvaluationSettings = DEFAULT_OPTIMIZATION_SETTINGS,
+  ) {
     this.settings = settings
-    
+
     this.fieldCache = new LRUCacheClass(settings.cacheSize, settings.cacheTTL)
-    this.strategyCache = new LRUCacheClass(settings.cacheSize, settings.cacheTTL)
-    this.treeCache = new LRUCacheClass(Math.floor(settings.cacheSize / 2), settings.cacheTTL)
+    this.strategyCache = new LRUCacheClass(
+      settings.cacheSize,
+      settings.cacheTTL,
+    )
+    this.treeCache = new LRUCacheClass(
+      Math.floor(settings.cacheSize / 2),
+      settings.cacheTTL,
+    )
   }
 
   /**
@@ -118,8 +124,7 @@ export class OptimizedEvaluationService {
       mayahSettings: MayahEvaluationSettings = DEFAULT_MAYAH_SETTINGS,
     ): OptimizedEvaluationResult => {
       const startTime = performance.now()
-      const myFieldHash = generateFieldHash(myGameState.field)
-      const opponentFieldHash = generateFieldHash(opponentGameState.field)
+      // フィールドハッシュはキー生成で使用される
 
       // 段階的評価定義
       const evaluators = [
@@ -163,7 +168,7 @@ export class OptimizedEvaluationService {
         const detailedStart = performance.now()
 
         const myChainEval = this.chainEvaluation(myGameState.field)
-        const opponentChainEval = this.chainEvaluation(opponentGameState.field)
+        // 対戦相手の連鎖評価は戦略評価内で使用される
 
         const strategyEval = this.strategyEvaluation(
           myGameState,
@@ -201,7 +206,8 @@ export class OptimizedEvaluationService {
           misses: this.cacheStats.misses,
           hitRate:
             this.cacheStats.hits + this.cacheStats.misses > 0
-              ? this.cacheStats.hits / (this.cacheStats.hits + this.cacheStats.misses)
+              ? this.cacheStats.hits /
+                (this.cacheStats.hits + this.cacheStats.misses)
               : 0,
         },
       }
@@ -235,7 +241,8 @@ export class OptimizedEvaluationService {
     // 高さの標準偏差（簡易版）
     const avgHeight = heights.reduce((sum, h) => sum + h, 0) / heights.length
     const variance =
-      heights.reduce((sum, h) => sum + Math.pow(h - avgHeight, 2), 0) / heights.length
+      heights.reduce((sum, h) => sum + Math.pow(h - avgHeight, 2), 0) /
+      heights.length
     score += Math.max(0, 50 - Math.sqrt(variance) * 10)
 
     // 空きスペース
@@ -331,7 +338,12 @@ export class OptimizedEvaluationService {
       timeLimit: 2000, // 通常の5000から2000に削減
     }
 
-    const result = buildRensaHandTree(myField, opponentField, settings, lightSettings)
+    const result = buildRensaHandTree(
+      myField,
+      opponentField,
+      settings,
+      lightSettings,
+    )
     this.treeCache.set(key, result.tree)
     return result.tree
   }
@@ -363,8 +375,12 @@ export class OptimizedEvaluationService {
 
     return detailedScored
       .sort((a, b) => {
-        const aScore = a.evaluation.detailed?.strategyEvaluation.totalScore ?? a.evaluation.basic.score
-        const bScore = b.evaluation.detailed?.strategyEvaluation.totalScore ?? b.evaluation.basic.score
+        const aScore =
+          a.evaluation.detailed?.strategyEvaluation.totalScore ??
+          a.evaluation.basic.score
+        const bScore =
+          b.evaluation.detailed?.strategyEvaluation.totalScore ??
+          b.evaluation.basic.score
         return bScore - aScore
       })
       .slice(0, maxMoves)
@@ -389,7 +405,8 @@ export class OptimizedEvaluationService {
         misses: this.cacheStats.misses,
         hitRate:
           this.cacheStats.hits + this.cacheStats.misses > 0
-            ? this.cacheStats.hits / (this.cacheStats.hits + this.cacheStats.misses)
+            ? this.cacheStats.hits /
+              (this.cacheStats.hits + this.cacheStats.misses)
             : 0,
       },
     }
@@ -457,8 +474,12 @@ export const findTopMovesOptimized = (
   // 4. 最終ソート
   return detailedResults
     .sort((a, b) => {
-      const aScore = a.evaluation.detailed?.strategyEvaluation.totalScore ?? a.evaluation.basic.score
-      const bScore = b.evaluation.detailed?.strategyEvaluation.totalScore ?? b.evaluation.basic.score
+      const aScore =
+        a.evaluation.detailed?.strategyEvaluation.totalScore ??
+        a.evaluation.basic.score
+      const bScore =
+        b.evaluation.detailed?.strategyEvaluation.totalScore ??
+        b.evaluation.basic.score
       return bScore - aScore
     })
     .slice(0, topN)

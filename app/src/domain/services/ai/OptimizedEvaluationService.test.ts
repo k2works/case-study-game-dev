@@ -6,9 +6,9 @@ import { describe, expect, it, vi } from 'vitest'
 import type { AIFieldState, AIGameState } from '../../models/ai/GameState'
 import { GamePhase } from '../../models/ai/MayahEvaluation'
 import {
-  type OptimizedEvaluationSettings,
   DEFAULT_OPTIMIZATION_SETTINGS,
   OptimizedEvaluationService,
+  type OptimizedEvaluationSettings,
   evaluateMovesThrottled,
   findTopMovesOptimized,
 } from './OptimizedEvaluationService'
@@ -22,7 +22,12 @@ describe('OptimizedEvaluationService', () => {
       .map(() => Array(width).fill(null)),
   })
 
-  const setCell = (field: AIFieldState, x: number, y: number, color: string) => {
+  const setCell = (
+    field: AIFieldState,
+    x: number,
+    y: number,
+    color: string,
+  ) => {
     field.cells[y][x] = color as never
   }
 
@@ -155,7 +160,11 @@ describe('OptimizedEvaluationService', () => {
       const opponentGameState = createTestGameState(opponentField)
 
       // Act
-      service.evaluateProgressive(myGameState, opponentGameState, GamePhase.EARLY)
+      service.evaluateProgressive(
+        myGameState,
+        opponentGameState,
+        GamePhase.EARLY,
+      )
       const stats = service.getCacheStats()
 
       // Assert
@@ -176,13 +185,19 @@ describe('OptimizedEvaluationService', () => {
       const opponentGameState = createTestGameState(opponentField)
 
       // Act
-      service.evaluateProgressive(myGameState, opponentGameState, GamePhase.EARLY)
+      service.evaluateProgressive(
+        myGameState,
+        opponentGameState,
+        GamePhase.EARLY,
+      )
       const statsBefore = service.getCacheStats()
       service.clearCache()
       const statsAfter = service.getCacheStats()
 
       // Assert
-      expect(statsBefore.overall.hits + statsBefore.overall.misses).toBeGreaterThan(0)
+      expect(
+        statsBefore.overall.hits + statsBefore.overall.misses,
+      ).toBeGreaterThan(0)
       expect(statsAfter.overall.hits).toBe(0)
       expect(statsAfter.overall.misses).toBe(0)
     })
@@ -221,8 +236,8 @@ describe('OptimizedEvaluationService', () => {
       }))
 
       const moves = [
-        { x: 2, y: 0, rotation: 0 },
-        { x: 3, y: 0, rotation: 1 },
+        { x: 2, rotation: 0, score: 0 },
+        { x: 3, rotation: 1, score: 0 },
       ]
 
       // Act
@@ -240,11 +255,11 @@ describe('OptimizedEvaluationService', () => {
     it('最適化された手候補探索', () => {
       // Arrange
       const moves = [
-        { x: 0, y: 0, rotation: 0 },
-        { x: 1, y: 0, rotation: 0 },
-        { x: 2, y: 0, rotation: 0 },
-        { x: 3, y: 0, rotation: 0 },
-        { x: 4, y: 0, rotation: 0 },
+        { x: 0, rotation: 0, score: 0 },
+        { x: 1, rotation: 0, score: 0 },
+        { x: 2, rotation: 0, score: 0 },
+        { x: 3, rotation: 0, score: 0 },
+        { x: 4, rotation: 0, score: 0 },
       ]
 
       const quickEvaluator = vi.fn((move) => move.x * 10) // xが大きいほど高スコア
@@ -260,7 +275,12 @@ describe('OptimizedEvaluationService', () => {
       }))
 
       // Act
-      const topMoves = findTopMovesOptimized(moves, quickEvaluator, detailedEvaluator, 3)
+      const topMoves = findTopMovesOptimized(
+        moves,
+        quickEvaluator,
+        detailedEvaluator,
+        3,
+      )
 
       // Assert
       expect(topMoves.length).toBeGreaterThan(0) // 結果が返される
@@ -270,7 +290,7 @@ describe('OptimizedEvaluationService', () => {
 
     it('手候補が少ない場合の処理', () => {
       // Arrange
-      const moves = [{ x: 2, y: 0, rotation: 0 }]
+      const moves = [{ x: 2, rotation: 0, score: 0 }]
       const quickEvaluator = () => 50
       const detailedEvaluator = () => ({
         basic: { score: 50, computeTime: 5 },
@@ -279,7 +299,12 @@ describe('OptimizedEvaluationService', () => {
       })
 
       // Act
-      const topMoves = findTopMovesOptimized(moves, quickEvaluator, detailedEvaluator, 3)
+      const topMoves = findTopMovesOptimized(
+        moves,
+        quickEvaluator,
+        detailedEvaluator,
+        3,
+      )
 
       // Assert
       expect(topMoves).toHaveLength(1)
@@ -289,8 +314,8 @@ describe('OptimizedEvaluationService', () => {
     it('全ての手が低スコアの場合', () => {
       // Arrange
       const moves = [
-        { x: 0, y: 0, rotation: 0 },
-        { x: 1, y: 0, rotation: 0 },
+        { x: 0, rotation: 0, score: 0 },
+        { x: 1, rotation: 0, score: 0 },
       ]
       const quickEvaluator = () => 0 // 全て0点
       const detailedEvaluator = () => ({
@@ -300,7 +325,12 @@ describe('OptimizedEvaluationService', () => {
       })
 
       // Act
-      const topMoves = findTopMovesOptimized(moves, quickEvaluator, detailedEvaluator, 2)
+      const topMoves = findTopMovesOptimized(
+        moves,
+        quickEvaluator,
+        detailedEvaluator,
+        2,
+      )
 
       // Assert
       expect(topMoves).toHaveLength(2) // 低スコアでも返される
