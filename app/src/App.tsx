@@ -377,9 +377,9 @@ function App() {
       rank: number
     }>
   >([])
-  const [currentPhase] = useState<'Phase 4a' | 'Phase 4b' | 'Phase 4c'>(
-    'Phase 4a',
-  )
+  const [currentPhase, setCurrentPhase] = useState<
+    'Phase 4a' | 'Phase 4b' | 'Phase 4c'
+  >('Phase 4b')
 
   // デバッグ用にE2Eテストからアクセス可能にする
   if (
@@ -507,26 +507,64 @@ function App() {
 
   // MayahAI評価結果をUIに更新するヘルパー関数
   const updateMayahAIEvaluationResults = useCallback((service: AIPort) => {
-    if (!service || !('getLastEvaluation' in service) || !('getLastCandidateMoves' in service)) {
-      return
+    const mayahService = validateMayahService(service)
+    if (!mayahService) return
+
+    updatePhaseState(mayahService)
+    updateEvaluationResults(mayahService)
+    updateCandidateResults(mayahService)
+  }, [])
+
+  // MayahAIサービス検証ヘルパー
+  const validateMayahService = (service: AIPort) => {
+    if (
+      !service ||
+      !('getLastEvaluation' in service) ||
+      !('getLastCandidateMoves' in service)
+    ) {
+      return null
     }
 
-    const mayahService = service as unknown as {
+    return service as unknown as {
       getLastEvaluation: () => MayahEvaluationResult | null
       getLastCandidateMoves: () => Array<{
         move: { x: number; rotation: number; score: number }
         evaluation: MayahEvaluationResult
         rank: number
       }>
+      getCurrentPhase?: () => 'Phase 4a' | 'Phase 4b' | 'Phase 4c'
     }
+  }
 
+  // Phase状態更新ヘルパー
+  const updatePhaseState = (mayahService: {
+    getCurrentPhase?: () => 'Phase 4a' | 'Phase 4b' | 'Phase 4c'
+  }) => {
+    if (mayahService.getCurrentPhase) {
+      const phase = mayahService.getCurrentPhase()
+      setCurrentPhase(phase)
+    }
+  }
+
+  // 評価結果更新ヘルパー
+  const updateEvaluationResults = (mayahService: {
+    getLastEvaluation: () => MayahEvaluationResult | null
+  }) => {
     const evaluationResult = mayahService.getLastEvaluation()
-    const candidates = mayahService.getLastCandidateMoves()
-
     if (evaluationResult) {
       setMayahEvaluationResult(evaluationResult)
     }
+  }
 
+  // 候補手結果更新ヘルパー
+  const updateCandidateResults = (mayahService: {
+    getLastCandidateMoves: () => Array<{
+      move: { x: number; rotation: number; score: number }
+      evaluation: MayahEvaluationResult
+      rank: number
+    }>
+  }) => {
+    const candidates = mayahService.getLastCandidateMoves()
     if (candidates && candidates.length > 0) {
       setCandidateMoves(
         candidates.map((candidate, index) => ({
@@ -540,7 +578,7 @@ function App() {
         })),
       )
     }
-  }, [])
+  }
 
   // AI自動プレイのロジック
   const executeAIMove = useCallback(async () => {

@@ -8,6 +8,7 @@ import type {
   AISettings,
   PossibleMove,
 } from '../../../domain/models/ai/index'
+import { OperationEvaluationService } from '../../../domain/services/ai'
 import type { AIPort } from '../../ports/AIPort'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort'
 import { MoveGenerator } from './MoveGenerator'
@@ -30,6 +31,8 @@ export class MayahAIService implements AIPort {
   private settings: AISettings
   private enabled = false
   private moveGenerator: MoveGeneratorPort
+  private operationEvaluationService: OperationEvaluationService
+  private currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c' = 'Phase 4b'
   private lastEvaluationResult: MayahEvaluationResult | null = null
   private candidateMovesWithEvaluation: Array<{
     move: AIMove
@@ -43,6 +46,7 @@ export class MayahAIService implements AIPort {
       thinkingSpeed: 1000,
     }
     this.moveGenerator = new MoveGenerator()
+    this.operationEvaluationService = new OperationEvaluationService()
   }
 
   /**
@@ -128,8 +132,23 @@ export class MayahAIService implements AIPort {
   }
 
   /**
-   * Phase 4a: 基本的な手選択実装
-   * 後のフェーズで段階的に高度化予定
+   * 現在の実装フェーズを取得
+   * UI用
+   */
+  getCurrentPhase(): 'Phase 4a' | 'Phase 4b' | 'Phase 4c' {
+    return this.currentPhase
+  }
+
+  /**
+   * 実装フェーズを設定
+   */
+  setCurrentPhase(phase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c'): void {
+    this.currentPhase = phase
+  }
+
+  /**
+   * Phase 4a-4b: 段階的実装による手選択
+   * 現在Phase 4b: 高度な評価ロジック
    */
   private async selectBestMove(
     possibleMoves: PossibleMove[],
@@ -144,10 +163,12 @@ export class MayahAIService implements AIPort {
       }
     }
 
-    // Phase 4a: 基本評価（後で段階的に拡張）
+    // Phase 4b: 高度な評価システムを使用
     const evaluatedMoves = possibleMoves.map((move, index) => {
-      // 基本評価実装（シンプルな重心ベース）
-      const evaluation = this.evaluateBasicMove(move, gameState)
+      const evaluation =
+        this.currentPhase === 'Phase 4b' || this.currentPhase === 'Phase 4c'
+          ? this.evaluateAdvancedMove(move, gameState)
+          : this.evaluateBasicMove(move, gameState)
 
       return {
         move: {
@@ -201,6 +222,71 @@ export class MayahAIService implements AIPort {
       phase: 'Phase 4a - 基本実装',
       confidence: 0.6, // 基本評価なので低め
     }
+  }
+
+  /**
+   * Phase 4b: 高度な手評価
+   * OperationEvaluationServiceを使用した詳細評価
+   */
+  private evaluateAdvancedMove(
+    move: PossibleMove,
+    gameState: AIGameState,
+  ): MayahEvaluationResult {
+    // OperationEvaluationServiceで詳細評価
+    const operationEvaluation = this.operationEvaluationService.evaluateMove(
+      move,
+      gameState,
+    )
+
+    // Phase 4bの信頼度計算（より高度）
+    const confidence = this.calculateAdvancedConfidence(operationEvaluation)
+
+    return {
+      score: operationEvaluation.totalScore,
+      reason: operationEvaluation.reason,
+      phase: 'Phase 4b - 高度評価',
+      confidence,
+    }
+  }
+
+  /**
+   * Phase 4b: 高度な信頼度計算
+   */
+  private calculateAdvancedConfidence(operationEvaluation: {
+    baseScore: number
+    positionScore: number
+    colorScore: number
+    chainPotentialScore: number
+    totalScore: number
+  }): number {
+    // スコア要素の分散を基に信頼度を計算
+    const scores = [
+      operationEvaluation.baseScore,
+      operationEvaluation.positionScore,
+      operationEvaluation.colorScore,
+      operationEvaluation.chainPotentialScore,
+    ]
+
+    const nonZeroScores = scores.filter((score) => score > 0)
+
+    // 複数の評価要素が高い場合、信頼度が高い
+    const factorCount = nonZeroScores.length
+    const averageScore =
+      nonZeroScores.length > 0
+        ? nonZeroScores.reduce((sum, score) => sum + score, 0) /
+          nonZeroScores.length
+        : 0
+
+    // 基本信頼度: 評価要素の多様性と平均スコアに基づく
+    let confidence = 0.5 + factorCount * 0.1 + averageScore / 200
+
+    // 連鎖可能性がある場合は追加ボーナス
+    if (operationEvaluation.chainPotentialScore > 30) {
+      confidence += 0.15
+    }
+
+    // 0.0-1.0の範囲に制限
+    return Math.max(0.0, Math.min(1.0, confidence))
   }
 
   /**

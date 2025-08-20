@@ -84,9 +84,9 @@ describe('MayahAIService', () => {
       const evaluation = await service.getLastEvaluationResult()
       expect(evaluation).not.toBeNull()
       expect(evaluation?.score).toBeGreaterThan(0)
-      expect(evaluation?.reason).toContain('Phase 4a基本評価')
-      expect(evaluation?.phase).toBe('Phase 4a - 基本実装')
-      expect(evaluation?.confidence).toBe(0.6)
+      expect(evaluation?.reason).toContain('Phase 4b高度評価')
+      expect(evaluation?.phase).toBe('Phase 4b - 高度評価')
+      expect(evaluation?.confidence).toBeGreaterThan(0.5)
     })
 
     it('候補手ランキングを生成する', async () => {
