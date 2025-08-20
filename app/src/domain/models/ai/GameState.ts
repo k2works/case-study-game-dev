@@ -37,10 +37,23 @@ export interface AIPuyoPairState {
 export interface AIGameState {
   /** 現在のフィールド */
   field: AIFieldState
+  /** 現在のフィールド（旧名での互換性） */
+  currentField?: AIFieldState
+  /** 相手のフィールド（対戦時） */
+  opponentField?: AIFieldState
   /** 現在のぷよペア */
   currentPuyoPair: AIPuyoPairState | null
+  /** 現在のぷよ（旧名での互換性） */
+  currentPuyo?: {
+    primary: { color: PuyoColor; position: { x: number; y: number } }
+    secondary: { color: PuyoColor; position: { x: number; y: number } }
+  }
   /** 次のぷよペア */
   nextPuyoPair: AIPuyoPairState | null
+  /** 次のぷよリスト（旧名での互換性） */
+  nextPuyos?: AIPuyoPairState[]
   /** 現在のスコア */
   score: number
+  /** 連鎖数 */
+  chainCount?: number
 }
