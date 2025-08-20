@@ -75,7 +75,15 @@ const calculateColumnHeight = (
   field: { cells: (string | null)[][]; height: number },
   x: number,
 ): number => {
+  // フィールド構造の安全性チェック
+  if (!field.cells || !Array.isArray(field.cells)) {
+    return 0
+  }
+
   for (let y = 0; y < field.height; y++) {
+    if (!field.cells[y]) {
+      return 0
+    }
     if (field.cells[y][x] !== null) {
       return field.height - y
     }

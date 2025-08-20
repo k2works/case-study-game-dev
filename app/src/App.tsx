@@ -7,12 +7,16 @@ import type { PerformanceAnalysisService } from './application/services/Performa
 import type { StrategyService } from './application/services/ai/StrategyService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AIMove, AISettings } from './domain/models/ai'
+import type { OptimizedEvaluationResult } from './domain/services/ai/OptimizedEvaluationService'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { AIControlPanel } from './presentation/components/ai/AIControlPanel'
 import { AIInsights } from './presentation/components/ai/AIInsights'
+import { MayahEvaluationDisplay } from './presentation/components/ai/MayahEvaluationDisplay'
+import { MoveEvaluationRanking } from './presentation/components/ai/MoveEvaluationRanking'
 import { PerformanceAnalysis } from './presentation/components/ai/PerformanceAnalysis'
+import { PerformanceMonitor } from './presentation/components/ai/PerformanceMonitor'
 import { StrategySettings } from './presentation/components/ai/StrategySettings'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
@@ -235,6 +239,12 @@ const GameLayout = ({
   isAIThinking,
   performanceService,
   strategyService,
+  evaluationResult,
+  candidateMoves,
+  performanceMetrics,
+  isMonitoring,
+  handleToggleMonitoring,
+  handleResetMetrics,
 }: {
   game: GameViewModel
   gameService: GamePort
@@ -249,6 +259,24 @@ const GameLayout = ({
   isAIThinking: boolean
   performanceService: PerformanceAnalysisService
   strategyService: StrategyService
+  evaluationResult: OptimizedEvaluationResult | null
+  candidateMoves: Array<{
+    move: AIMove
+    evaluation: OptimizedEvaluationResult
+    rank: number
+  }>
+  performanceMetrics: {
+    avgEvaluationTime: number
+    maxEvaluationTime: number
+    minEvaluationTime: number
+    totalEvaluations: number
+    cacheHitRate: number
+    estimatedMemoryUsage: number
+    evaluationsPerSecond: number
+  } | null
+  isMonitoring: boolean
+  handleToggleMonitoring: () => void
+  handleResetMetrics: () => void
 }) => {
   const { statistics, comparisonReport, resetData } = usePerformanceAnalysis({
     performanceService,
@@ -277,9 +305,6 @@ const GameLayout = ({
                 onSettingsChange={onAISettingsChange}
               />
 
-              {/* AI判断詳細表示 */}
-              <AIInsights lastAIMove={lastAIMove} isThinking={isAIThinking} />
-
               {/* ゲーム制御ボタン */}
               <GameControlButtons
                 game={game}
@@ -297,32 +322,52 @@ const GameLayout = ({
           </div>
         </div>
 
+        {/* mayah AI評価可視化パネル */}
+        {aiEnabled && (
+          <div className="mt-8 grid grid-cols-1 xl:grid-cols-2 gap-8">
+            {/* mayah評価結果表示 */}
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+              <MayahEvaluationDisplay
+                evaluationResult={evaluationResult}
+                isEvaluating={isAIThinking}
+              />
+            </div>
+
+            {/* パフォーマンス監視 */}
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+              <PerformanceMonitor
+                metrics={performanceMetrics}
+                isMonitoring={isMonitoring}
+                realTimeUpdates={aiEnabled && isMonitoring}
+                onToggleMonitoring={handleToggleMonitoring}
+                onResetMetrics={handleResetMetrics}
+              />
+            </div>
+
+            {/* 候補手ランキング */}
+            {candidateMoves.length > 0 && (
+              <div className="xl:col-span-2 bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                <MoveEvaluationRanking
+                  evaluatedMoves={candidateMoves}
+                  selectedMove={lastAIMove}
+                  isEvaluating={isAIThinking}
+                  onMoveSelect={(move) => {
+                    console.log('手動で選択された手:', move)
+                    // 必要に応じて手動実行機能を実装
+                  }}
+                  maxDisplay={8}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* パフォーマンス分析パネル */}
         <div className="mt-8">
           <PerformanceAnalysis
             statistics={statistics}
             comparisonReport={comparisonReport}
             onResetData={resetData}
-          />
-        </div>
-
-        {/* 戦略設定パネル */}
-        <div className="mt-8">
-          <StrategySettings
-            strategyService={strategyService}
-            onStrategyChange={async () => {
-              // AIサービスに戦略更新を通知
-              if (aiService && 'updateStrategy' in aiService) {
-                try {
-                  await (
-                    aiService as { updateStrategy: () => Promise<void> }
-                  ).updateStrategy()
-                  console.log('AI戦略を更新しました')
-                } catch (error) {
-                  console.warn('AI戦略更新に失敗:', error)
-                }
-              }
-            }}
           />
         </div>
 
@@ -372,6 +417,21 @@ function App() {
   })
   const [lastAIMove, setLastAIMove] = useState<AIMove | null>(null)
   const [isAIThinking, setIsAIThinking] = useState(false)
+  const [evaluationResult, setEvaluationResult] =
+    useState<OptimizedEvaluationResult | null>(null)
+  const [candidateMoves, setCandidateMoves] = useState<
+    Array<{ move: AIMove; evaluation: OptimizedEvaluationResult; rank: number }>
+  >([])
+  const [performanceMetrics, setPerformanceMetrics] = useState<{
+    avgEvaluationTime: number
+    maxEvaluationTime: number
+    minEvaluationTime: number
+    totalEvaluations: number
+    cacheHitRate: number
+    estimatedMemoryUsage: number
+    evaluationsPerSecond: number
+  } | null>(null)
+  const [isMonitoring, setIsMonitoring] = useState(false)
   const aiTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // デバッグ用にE2Eテストからアクセス可能にする
@@ -433,34 +493,44 @@ function App() {
 
   // GameViewModelをAIGameStateに変換するヘルパー関数
   const convertToAIGameState = useCallback(
-    (game: GameViewModel) => ({
-      field: {
-        width: game.field.width,
-        height: game.field.height,
-        cells: game.field.cells.map((row) =>
-          row.map((cell) => (cell ? cell.color : null)),
-        ),
-      },
-      currentPuyoPair: game.currentPuyoPair
-        ? {
-            primaryColor: game.currentPuyoPair.main.color,
-            secondaryColor: game.currentPuyoPair.sub.color,
-            x: game.currentPuyoPair.x,
-            y: game.currentPuyoPair.y,
-            rotation: game.currentPuyoPair.rotation,
-          }
-        : null,
-      nextPuyoPair: game.nextPuyoPair
-        ? {
-            primaryColor: game.nextPuyoPair.main.color,
-            secondaryColor: game.nextPuyoPair.sub.color,
-            x: game.nextPuyoPair.x,
-            y: game.nextPuyoPair.y,
-            rotation: game.nextPuyoPair.rotation,
-          }
-        : null,
-      score: game.score.current,
-    }),
+    (game: GameViewModel) => {
+      // GameViewModelのcellsは[x][y]形式なので、[y][x]形式に変換する
+      const cells: (string | null)[][] = []
+      for (let y = 0; y < game.field.height; y++) {
+        cells[y] = []
+        for (let x = 0; x < game.field.width; x++) {
+          const cell = game.field.cells[x] ? game.field.cells[x][y] : null
+          cells[y][x] = cell ? cell.color : null
+        }
+      }
+
+      return {
+        field: {
+          width: game.field.width,
+          height: game.field.height,
+          cells,
+        },
+        currentPuyoPair: game.currentPuyoPair
+          ? {
+              primaryColor: game.currentPuyoPair.main.color,
+              secondaryColor: game.currentPuyoPair.sub.color,
+              x: game.currentPuyoPair.x,
+              y: game.currentPuyoPair.y,
+              rotation: game.currentPuyoPair.rotation,
+            }
+          : null,
+        nextPuyoPair: game.nextPuyoPair
+          ? {
+              primaryColor: game.nextPuyoPair.main.color,
+              secondaryColor: game.nextPuyoPair.sub.color,
+              x: game.nextPuyoPair.x,
+              y: game.nextPuyoPair.y,
+              rotation: game.nextPuyoPair.rotation,
+            }
+          : null,
+        score: game.score.current,
+      }
+    },
     [],
   )
 
@@ -498,6 +568,43 @@ function App() {
     [createKeyboardInput, inputService, gameService, executeHorizontalMoves],
   )
 
+  // mayah AI評価データ取得ヘルパー
+  const fetchEvaluationData = useCallback(async () => {
+    // mayah AI評価結果を取得（AIServiceが対応している場合）
+    if ('getLastEvaluationResult' in aiService) {
+      try {
+        const result = await (
+          aiService as {
+            getLastEvaluationResult: () => Promise<OptimizedEvaluationResult>
+          }
+        ).getLastEvaluationResult()
+        setEvaluationResult(result)
+      } catch (error) {
+        console.warn('評価結果の取得に失敗:', error)
+      }
+    }
+
+    // 候補手ランキングを取得（AIServiceが対応している場合）
+    if ('getCandidateMovesWithEvaluation' in aiService) {
+      try {
+        const candidates = await (
+          aiService as {
+            getCandidateMovesWithEvaluation: () => Promise<
+              Array<{
+                move: AIMove
+                evaluation: OptimizedEvaluationResult
+                rank: number
+              }>
+            >
+          }
+        ).getCandidateMovesWithEvaluation()
+        setCandidateMoves(candidates)
+      } catch (error) {
+        console.warn('候補手の取得に失敗:', error)
+      }
+    }
+  }, [aiService])
+
   // AI自動プレイのロジック
   const executeAIMove = useCallback(async () => {
     if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
@@ -512,15 +619,31 @@ function App() {
     try {
       setIsAIThinking(true)
       const aiGameState = convertToAIGameState(game)
-
       const aiMove = await aiService.decideMove(aiGameState)
+
+      // mayah AI評価データ取得
+      await fetchEvaluationData()
+
+      // パフォーマンスメトリクスを更新
+      if (isMonitoring) {
+        // ダミーデータ生成（実際の実装では AIService から取得）
+        const avgTime = Math.random() * 50 + 10
+        setPerformanceMetrics({
+          avgEvaluationTime: avgTime,
+          maxEvaluationTime: avgTime * 2,
+          minEvaluationTime: avgTime * 0.5,
+          totalEvaluations: Math.floor(Math.random() * 1000) + 100,
+          cacheHitRate: Math.random() * 0.8 + 0.2,
+          estimatedMemoryUsage: Math.random() * 20 + 5,
+          evaluationsPerSecond: 1000 / avgTime,
+        })
+      }
 
       // AI判断の詳細を記録
       setLastAIMove(aiMove)
       setIsAIThinking(false)
 
       const updatedGame = executeAIMoveActions(game, aiMove)
-
       updateGame(updatedGame)
     } catch (error) {
       console.error('AI move execution failed:', error)
@@ -533,6 +656,8 @@ function App() {
     convertToAIGameState,
     executeAIMoveActions,
     updateGame,
+    fetchEvaluationData,
+    isMonitoring,
   ])
 
   // AI自動プレイのタイマー管理
@@ -590,6 +715,37 @@ function App() {
     [aiService],
   )
 
+  // パフォーマンスメトリクス更新関数
+  const updatePerformanceMetrics = useCallback(() => {
+    // ダミーデータ生成（実際の実装では AIService から取得）
+    const avgTime = Math.random() * 50 + 10
+    setPerformanceMetrics({
+      avgEvaluationTime: avgTime,
+      maxEvaluationTime: avgTime * 2,
+      minEvaluationTime: avgTime * 0.5,
+      totalEvaluations: Math.floor(Math.random() * 1000) + 100,
+      cacheHitRate: Math.random() * 0.8 + 0.2,
+      estimatedMemoryUsage: Math.random() * 20 + 5,
+      evaluationsPerSecond: 1000 / avgTime,
+    })
+  }, [])
+
+  // 監視開始・停止ハンドラー
+  const handleToggleMonitoring = useCallback(() => {
+    const newMonitoring = !isMonitoring
+    setIsMonitoring(newMonitoring)
+    if (newMonitoring) {
+      updatePerformanceMetrics()
+    }
+  }, [isMonitoring, updatePerformanceMetrics])
+
+  // メトリクスリセットハンドラー
+  const handleResetMetrics = useCallback(() => {
+    setPerformanceMetrics(null)
+    setEvaluationResult(null)
+    setCandidateMoves([])
+  }, [])
+
   // キーボード入力を監視（AI有効時は無効化）
   useKeyboard({
     onLeft: aiEnabled ? () => {} : handleLeft,
@@ -622,6 +778,12 @@ function App() {
       isAIThinking={isAIThinking}
       performanceService={performanceService}
       strategyService={strategyService}
+      evaluationResult={evaluationResult}
+      candidateMoves={candidateMoves}
+      performanceMetrics={performanceMetrics}
+      isMonitoring={isMonitoring}
+      handleToggleMonitoring={handleToggleMonitoring}
+      handleResetMetrics={handleResetMetrics}
     />
   )
 }

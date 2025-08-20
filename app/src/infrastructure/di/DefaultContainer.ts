@@ -9,7 +9,7 @@ import type { TimerPort } from '../../application/ports/TimerPort'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
-import { MLAIService } from '../../application/services/ai/MLAIService'
+import { MayahAIService } from '../../application/services/ai/MayahAIService'
 import StrategyService from '../../application/services/ai/StrategyService'
 import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
@@ -73,12 +73,8 @@ export class DefaultContainer {
       true,
     )
 
-    // AI Service: MLAIService（戦略統合 + TensorFlow.js）を使用
-    container.register<AIPort>(
-      'AIPort',
-      () => new MLAIService(container.resolve<StrategyPort>('StrategyPort')),
-      true,
-    )
+    // AI Service: MayahAIService（mayah評価システム + 最適化）を使用
+    container.register<AIPort>('AIPort', () => new MayahAIService(), true)
 
     // パフォーマンス分析
     container.register<PerformancePort>(
