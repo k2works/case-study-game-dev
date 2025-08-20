@@ -8,7 +8,7 @@ import type {
   AISettings,
   PossibleMove,
 } from '../../../domain/models/ai/index'
-import { OperationEvaluationService } from '../../../domain/services/ai'
+import { evaluateMove as evaluateOperation } from '../../../domain/services/ai'
 import type { AIPort } from '../../ports/AIPort'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort'
 import { MoveGenerator } from './MoveGenerator'
@@ -31,7 +31,6 @@ export class MayahAIService implements AIPort {
   private settings: AISettings
   private enabled = false
   private moveGenerator: MoveGeneratorPort
-  private operationEvaluationService: OperationEvaluationService
   private currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c' = 'Phase 4c'
   private lastEvaluationResult: MayahEvaluationResult | null = null
   private candidateMovesWithEvaluation: Array<{
@@ -46,7 +45,6 @@ export class MayahAIService implements AIPort {
       thinkingSpeed: 1000,
     }
     this.moveGenerator = new MoveGenerator()
-    this.operationEvaluationService = new OperationEvaluationService()
   }
 
   /**
@@ -232,11 +230,8 @@ export class MayahAIService implements AIPort {
     move: PossibleMove,
     gameState: AIGameState,
   ): MayahEvaluationResult {
-    // OperationEvaluationServiceで詳細評価
-    const operationEvaluation = this.operationEvaluationService.evaluateMove(
-      move,
-      gameState,
-    )
+    // 関数型評価で詳細評価
+    const operationEvaluation = evaluateOperation(move, gameState)
 
     // Phase 4bの信頼度計算（より高度）
     const confidence = this.calculateAdvancedConfidence(operationEvaluation)

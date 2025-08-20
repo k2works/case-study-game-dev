@@ -5,11 +5,9 @@ import { describe, expect, test } from 'vitest'
 
 import type { PuyoColor } from '../../models/Puyo'
 import type { AIGameState, PossibleMove } from '../../models/ai'
-import { OperationEvaluationService } from './OperationEvaluationService'
+import { evaluateMove } from './OperationEvaluationService'
 
-describe('OperationEvaluationService', () => {
-  const service = new OperationEvaluationService()
-
+describe('OperationEvaluationService (関数型)', () => {
   // テスト用のゲーム状態を作成
   const createTestGameState = (
     customField?: (PuyoColor | null)[][],
@@ -57,12 +55,12 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result).toBeDefined()
       expect(result.totalScore).toBeGreaterThan(0)
-      expect(result.reason).toContain('Phase 4c最適化評価')
+      expect(result.reason).toContain('Phase 4c関数型評価')
       expect(typeof result.baseScore).toBe('number')
       expect(typeof result.positionScore).toBe('number')
       expect(typeof result.colorScore).toBe('number')
@@ -75,7 +73,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove()
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result).toMatchObject({
@@ -94,7 +92,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove()
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       const expectedTotal =
@@ -114,8 +112,8 @@ describe('OperationEvaluationService', () => {
       const edgeMove = createTestMove(0, 0) // 端
 
       // Act
-      const centerResult = service.evaluateMove(centerMove, gameState)
-      const edgeResult = service.evaluateMove(edgeMove, gameState)
+      const centerResult = evaluateMove(centerMove, gameState)
+      const edgeResult = evaluateMove(edgeMove, gameState)
 
       // Assert
       expect(centerResult.baseScore).toBeGreaterThan(edgeResult.baseScore)
@@ -129,9 +127,9 @@ describe('OperationEvaluationService', () => {
       const move3 = createTestMove(0, 0) // 左端
 
       // Act
-      const result1 = service.evaluateMove(move1, gameState)
-      const result2 = service.evaluateMove(move2, gameState)
-      const result3 = service.evaluateMove(move3, gameState)
+      const result1 = evaluateMove(move1, gameState)
+      const result2 = evaluateMove(move2, gameState)
+      const result3 = evaluateMove(move3, gameState)
 
       // Assert
       expect(result1.baseScore).toBeGreaterThan(result2.baseScore)
@@ -154,8 +152,8 @@ describe('OperationEvaluationService', () => {
       const highMove = createTestMove(0, 0) // ぷよがある列
 
       // Act
-      const lowResult = service.evaluateMove(lowMove, gameState)
-      const highResult = service.evaluateMove(highMove, gameState)
+      const lowResult = evaluateMove(lowMove, gameState)
+      const highResult = evaluateMove(highMove, gameState)
 
       // Assert
       expect(lowResult.positionScore).toBeGreaterThan(highResult.positionScore)
@@ -174,7 +172,7 @@ describe('OperationEvaluationService', () => {
       const balancedMove = createTestMove(2, 0) // 中央（両隣が同じ高さ）
 
       // Act
-      const result = service.evaluateMove(balancedMove, gameState)
+      const result = evaluateMove(balancedMove, gameState)
 
       // Assert
       expect(result.positionScore).toBeGreaterThan(0)
@@ -193,7 +191,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result.colorScore).toBeGreaterThan(0)
@@ -217,8 +215,8 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0)
 
       // Act
-      const result1 = service.evaluateMove(move, gameState1)
-      const result2 = service.evaluateMove(move, gameState2)
+      const result1 = evaluateMove(move, gameState1)
+      const result2 = evaluateMove(move, gameState2)
 
       // Assert
       expect(result2.colorScore).toBeGreaterThan(result1.colorScore)
@@ -239,7 +237,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result.chainPotentialScore).toBeGreaterThan(0)
@@ -251,7 +249,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result.chainPotentialScore).toBeLessThanOrEqual(0)
@@ -265,7 +263,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result).toBeDefined()
@@ -278,7 +276,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 90)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result).toBeDefined()
@@ -291,7 +289,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 180)
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result).toBeDefined()
@@ -304,7 +302,7 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(1, 270) // 左回転なので左にスペースが必要
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
       expect(result).toBeDefined()
@@ -319,10 +317,10 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0) // 中央配置
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
-      expect(result.reason).toContain('Phase 4c最適化評価')
+      expect(result.reason).toContain('Phase 4c関数型評価')
       if (result.baseScore > 30) {
         expect(result.reason).toContain('中央配置')
       }
@@ -339,10 +337,10 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove(2, 0) // 中央配置
 
       // Act
-      const result = service.evaluateMove(move, gameState)
+      const result = evaluateMove(move, gameState)
 
       // Assert
-      expect(result.reason).toContain('Phase 4c最適化評価')
+      expect(result.reason).toContain('Phase 4c関数型評価')
       // 複数の要素が含まれる可能性
       const possibleReasons = ['中央配置', '安定位置', '色隣接', '連鎖可能']
       const reasonIncludesMultiple =
@@ -360,8 +358,8 @@ describe('OperationEvaluationService', () => {
       const move = createTestMove()
 
       // Act & Assert
-      expect(() => service.evaluateMove(move, gameState)).not.toThrow()
-      const result = service.evaluateMove(move, gameState)
+      expect(() => evaluateMove(move, gameState)).not.toThrow()
+      const result = evaluateMove(move, gameState)
       expect(result.colorScore).toBe(0)
       expect(result.chainPotentialScore).toBe(0)
     })
@@ -373,8 +371,8 @@ describe('OperationEvaluationService', () => {
       const rightEdgeMove = createTestMove(5, 0)
 
       // Act
-      const leftResult = service.evaluateMove(leftEdgeMove, gameState)
-      const rightResult = service.evaluateMove(rightEdgeMove, gameState)
+      const leftResult = evaluateMove(leftEdgeMove, gameState)
+      const rightResult = evaluateMove(rightEdgeMove, gameState)
 
       // Assert
       expect(leftResult).toBeDefined()
@@ -389,10 +387,8 @@ describe('OperationEvaluationService', () => {
       const invalidRotationMove = createTestMove(2, 45) // 無効な角度
 
       // Act & Assert
-      expect(() =>
-        service.evaluateMove(invalidRotationMove, gameState),
-      ).not.toThrow()
-      const result = service.evaluateMove(invalidRotationMove, gameState)
+      expect(() => evaluateMove(invalidRotationMove, gameState)).not.toThrow()
+      const result = evaluateMove(invalidRotationMove, gameState)
       expect(result).toBeDefined()
     })
   })

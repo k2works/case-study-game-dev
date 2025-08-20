@@ -84,7 +84,7 @@ describe('MayahAIService', () => {
       const evaluation = await service.getLastEvaluationResult()
       expect(evaluation).not.toBeNull()
       expect(evaluation?.score).toBeGreaterThan(0)
-      expect(evaluation?.reason).toContain('Phase 4c最適化評価')
+      expect(evaluation?.reason).toContain('Phase 4c関数型評価')
       expect(evaluation?.phase).toBe('Phase 4c - 最適化評価')
       expect(evaluation?.confidence).toBeGreaterThan(0.5)
     })

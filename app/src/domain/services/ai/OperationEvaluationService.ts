@@ -1,6 +1,6 @@
 /**
- * mayah AI操作評価ドメインサービス
- * Phase 4b: 高度な操作評価ロジック
+ * mayah AI操作評価ドメインサービス（関数型リファクタリング版）
+ * Phase 4c: 関数型プログラミング手法による実装
  */
 import type { PuyoColor } from '../../models/Puyo'
 import type { AIGameState, PossibleMove } from '../../models/ai'
@@ -24,388 +24,393 @@ export interface OperationEvaluation {
 }
 
 /**
- * Phase 4c最適化済み操作評価サービス
- * mayah AIの高度な操作評価ロジック（パフォーマンス最適化版）
+ * 評価コンテキスト（関数間で共有される文脈情報）
  */
-export class OperationEvaluationService {
-  // Phase 4c: キャッシュ機能追加
-  private fieldCache: Map<string, number[]> = new Map()
-  private centerX: number = 0
+interface EvaluationContext {
+  readonly gameState: AIGameState
+  readonly centerX: number
+  readonly fieldKey: string
+  readonly heightInfo: readonly number[]
+}
 
-  /**
-   * 指定された手を評価（Phase 4c最適化版）
-   */
-  evaluateMove(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): OperationEvaluation {
-    // Phase 4c: フィールド状態のキャッシュキー生成
-    const fieldKey = this.generateFieldCacheKey(gameState)
+/**
+ * スコア構成要素
+ */
+interface ScoreComponents {
+  readonly baseScore: number
+  readonly positionScore: number
+  readonly colorScore: number
+  readonly chainPotentialScore: number
+}
 
-    // Phase 4c: 中央位置計算をキャッシュ
-    this.centerX = Math.floor(gameState.field.width / 2)
+// Phase 4c: 関数型キャッシュストレージ（モジュールレベル）
+const fieldCache = new Map<string, number[]>()
+/**
+ * 関数型操作評価サービス（メイン関数）
+ * 関数の合成により評価を実行
+ */
+export const evaluateMove = (
+  move: PossibleMove,
+  gameState: AIGameState,
+): OperationEvaluation => {
+  // 評価コンテキストを生成
+  const context = createEvaluationContext(gameState)
 
-    const baseScore = this.calculateBaseScore(move)
-    const positionScore = this.calculatePositionScore(move, gameState, fieldKey)
-    const colorScore = this.calculateColorScore(move, gameState)
-    const chainPotentialScore = this.calculateChainPotential(move, gameState)
+  // 各スコア要素を関数合成で計算
+  const scoreComponents = calculateScoreComponents(move, context)
 
-    const totalScore =
-      baseScore + positionScore + colorScore + chainPotentialScore
+  // 結果を合成して返す
+  return composeEvaluationResult(scoreComponents)
+}
 
-    const reason = this.generateReason({
-      baseScore,
-      positionScore,
-      colorScore,
-      chainPotentialScore,
-      totalScore,
-    })
+/**
+ * 評価コンテキスト生成（純粋関数）
+ */
+const createEvaluationContext = (gameState: AIGameState): EvaluationContext => {
+  const fieldKey = generateFieldCacheKey(gameState)
+  const centerX = Math.floor(gameState.field.width / 2)
+  const heightInfo = getColumnHeightInfo(gameState, fieldKey)
 
-    return {
-      baseScore,
-      positionScore,
-      colorScore,
-      chainPotentialScore,
-      totalScore,
-      reason,
+  return {
+    gameState,
+    centerX,
+    fieldKey,
+    heightInfo,
+  }
+}
+
+/**
+ * スコア要素計算（関数合成）
+ */
+const calculateScoreComponents = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): ScoreComponents => ({
+  baseScore: calculateBaseScore(move, context),
+  positionScore: calculatePositionScore(move, context),
+  colorScore: calculateColorScore(move, context),
+  chainPotentialScore: calculateChainPotential(move, context),
+})
+
+/**
+ * 評価結果合成（純粋関数）
+ */
+const composeEvaluationResult = (
+  components: ScoreComponents,
+): OperationEvaluation => {
+  const { baseScore, positionScore, colorScore, chainPotentialScore } =
+    components
+  const totalScore =
+    baseScore + positionScore + colorScore + chainPotentialScore
+  const reason = generateReason({ ...components, totalScore })
+
+  return {
+    baseScore,
+    positionScore,
+    colorScore,
+    chainPotentialScore,
+    totalScore,
+    reason,
+  }
+}
+
+/**
+ * フィールドキャッシュキー生成（純粋関数）
+ */
+const generateFieldCacheKey = (gameState: AIGameState): string =>
+  gameState.field.cells
+    .map((row) => row.map((cell) => (cell ? cell[0] : 'n')).join(''))
+    .join('|')
+
+/**
+ * 基本スコア計算（純粋関数）
+ * フィールド中央への配置を重視
+ */
+const calculateBaseScore = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): number => {
+  const distanceFromCenter = Math.abs(move.x - context.centerX)
+  // 中央に近いほど高スコア（最大50点）
+  return Math.max(0, 50 - distanceFromCenter * 8)
+}
+
+/**
+ * 位置評価スコア計算（純粋関数）
+ * 高さと安定性を評価
+ */
+const calculatePositionScore = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): number => {
+  const height = context.heightInfo[move.x]
+
+  // 低い位置ほど高スコア（最大30点）
+  const heightScore = Math.max(0, 30 - height * 3)
+
+  // 隣接列との高さバランス評価（最大20点）
+  const balanceScore = calculateBalanceScore(move.x, context.heightInfo)
+
+  return heightScore + balanceScore
+}
+
+/**
+ * 色配置評価スコア計算（純粋関数）
+ * 同色の隣接配置を評価
+ */
+const calculateColorScore = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): number => {
+  if (!context.gameState.currentPuyoPair) return 0
+
+  const { primaryColor, secondaryColor } = context.gameState.currentPuyoPair
+
+  // 主ぷよの評価
+  const primaryY = calculateDropPosition(move.x, context.gameState)
+  const primaryAdjacent = countAdjacentSameColor(
+    move.x,
+    primaryY,
+    primaryColor,
+    context.gameState,
+  )
+
+  // 副ぷよの評価
+  const { subX, subY } = calculateSubPuyoPosition(move, context.gameState)
+  const secondaryAdjacent = isValidPosition(subX, subY, context.gameState)
+    ? countAdjacentSameColor(subX, subY, secondaryColor, context.gameState)
+    : 0
+
+  // 隣接同色1つにつき15点
+  return (primaryAdjacent + secondaryAdjacent) * 15
+}
+
+/**
+ * 連鎖可能性スコア計算（純粋関数）
+ * 将来の連鎖につながる配置を評価
+ */
+const calculateChainPotential = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): number => {
+  if (!context.gameState.currentPuyoPair) return 0
+
+  const { primaryColor, secondaryColor } = context.gameState.currentPuyoPair
+
+  // 主ぷよと副ぷよの連鎖可能性を計算
+  const primaryChainScore = canForm4Group(
+    move.x,
+    primaryColor,
+    context.gameState,
+  )
+    ? 40
+    : 0
+
+  const { subX } = calculateSubPuyoPosition(move, context.gameState)
+  const secondaryChainScore = canForm4Group(
+    subX,
+    secondaryColor,
+    context.gameState,
+  )
+    ? 40
+    : 0
+
+  return primaryChainScore + secondaryChainScore
+}
+
+/**
+ * 列高さ情報をキャッシュ付きで取得（純粋関数＋副作用）
+ */
+const getColumnHeightInfo = (
+  gameState: AIGameState,
+  fieldKey: string,
+): readonly number[] => {
+  const cacheKey = `heights_${fieldKey}`
+
+  // キャッシュから取得を試行
+  const cached = fieldCache.get(cacheKey)
+  if (cached) return cached
+
+  // キャッシュにない場合は計算してキャッシュに保存
+  const heights = Array.from({ length: gameState.field.width }, (_, x) =>
+    calculateColumnHeight(gameState.field.cells, x),
+  )
+
+  fieldCache.set(cacheKey, heights)
+  return heights
+}
+
+/**
+ * 列の高さを計算（純粋関数）
+ */
+const calculateColumnHeight = (
+  cells: readonly (readonly (PuyoColor | null)[])[],
+  x: number,
+): number => {
+  const firstNonEmptyIndex = cells.findIndex((row) => row[x] !== null)
+  return firstNonEmptyIndex === -1 ? cells.length : firstNonEmptyIndex
+}
+
+/**
+ * ぷよが落ちる位置を計算（純粋関数）
+ */
+const calculateDropPosition = (x: number, gameState: AIGameState): number => {
+  const cells = gameState.field.cells
+  for (let y = cells.length - 1; y >= 0; y--) {
+    if (cells[y][x] === null) {
+      return y
     }
   }
+  return 0 // フィールドが満杯の場合
+}
 
-  /**
-   * Phase 4c: フィールドキャッシュキー生成
-   */
-  private generateFieldCacheKey(gameState: AIGameState): string {
-    // 簡単なフィールド状態ハッシュ
-    return gameState.field.cells
-      .map((row) => row.map((cell) => (cell ? cell[0] : 'n')).join(''))
-      .join('|')
-  }
+/**
+ * バランススコア計算（純粋関数）
+ */
+const calculateBalanceScore = (
+  x: number,
+  heightInfo: readonly number[],
+): number => {
+  const currentHeight = heightInfo[x]
 
-  /**
-   * 基本スコア計算（Phase 4c最適化版）
-   * フィールド中央への配置を重視
-   */
-  private calculateBaseScore(move: PossibleMove): number {
-    // Phase 4c: キャッシュ済みの中央位置を使用
-    const distanceFromCenter = Math.abs(move.x - this.centerX)
+  // 隣接列との高さ差評価を関数合成で計算
+  const leftScore =
+    x > 0
+      ? Math.max(0, 10 - Math.abs(currentHeight - heightInfo[x - 1]) * 2)
+      : 0
 
-    // 中央に近いほど高スコア（最大50点）
-    return Math.max(0, 50 - distanceFromCenter * 8)
-  }
+  const rightScore =
+    x < heightInfo.length - 1
+      ? Math.max(0, 10 - Math.abs(currentHeight - heightInfo[x + 1]) * 2)
+      : 0
 
-  /**
-   * 位置評価スコア計算（Phase 4c最適化版）
-   * 高さと安定性を評価
-   */
-  private calculatePositionScore(
-    move: PossibleMove,
-    gameState: AIGameState,
-    fieldKey: string,
-  ): number {
-    // Phase 4c: 列高さ情報をキャッシュから取得
-    const heightInfo = this.getColumnHeightInfo(gameState, fieldKey)
-    const height = heightInfo[move.x]
+  return leftScore + rightScore
+}
 
-    // 低い位置ほど高スコア（最大30点）
-    const heightScore = Math.max(0, 30 - height * 3)
+/**
+ * 隣接同色ぷよをカウント（純粋関数）
+ */
+const countAdjacentSameColor = (
+  x: number,
+  y: number,
+  color: PuyoColor,
+  gameState: AIGameState,
+): number => {
+  const directions = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ] as const
 
-    // 隣接列との高さバランス評価（最大20点）
-    const balanceScore = this.calculateBalanceScore(move.x, heightInfo)
+  return directions.filter(([dx, dy]) =>
+    isSameColorAt(x + dx, y + dy, color, gameState),
+  ).length
+}
 
-    return heightScore + balanceScore
-  }
+/**
+ * 指定位置が同色かチェック（純粋関数）
+ */
+const isSameColorAt = (
+  x: number,
+  y: number,
+  color: PuyoColor,
+  gameState: AIGameState,
+): boolean =>
+  isValidPosition(x, y, gameState) && gameState.field.cells[y][x] === color
 
-  /**
-   * 色配置評価スコア計算（Phase 4c最適化版）
-   * 同色の隣接配置を評価
-   */
-  private calculateColorScore(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): number {
-    if (!gameState.currentPuyoPair) return 0
+/**
+ * 副ぷよの配置位置を計算（純粋関数）
+ */
+const calculateSubPuyoPosition = (
+  move: PossibleMove,
+  gameState: AIGameState,
+): { subX: number; subY: number } => {
+  const primaryY = calculateDropPosition(move.x, gameState)
 
-    const primaryColor = gameState.currentPuyoPair.primaryColor
-    const secondaryColor = gameState.currentPuyoPair.secondaryColor
+  const rotationMap = {
+    0: { subX: move.x, subY: primaryY - 1 }, // 上
+    90: {
+      subX: move.x + 1,
+      subY: calculateDropPosition(move.x + 1, gameState),
+    }, // 右
+    180: { subX: move.x, subY: primaryY + 1 }, // 下
+    270: {
+      subX: move.x - 1,
+      subY: calculateDropPosition(move.x - 1, gameState),
+    }, // 左
+  } as const
 
-    // 主ぷよの配置位置（フィールドの底から配置）
-    const primaryY = this.calculateDropPosition(move.x, gameState)
-    const primaryAdjacent = this.countAdjacentSameColor(
-      move.x,
-      primaryY,
-      primaryColor,
-      gameState,
-    )
+  return (
+    rotationMap[move.rotation as keyof typeof rotationMap] ?? rotationMap[0]
+  ) // デフォルトは上向き
+}
 
-    // 副ぷよの配置位置を計算して評価
-    const { subX, subY } = this.calculateSubPuyoPosition(move, gameState)
-    let secondaryAdjacent = 0
+/**
+ * 4個グループ形成可能性判定（純粋関数）
+ */
+const canForm4Group = (
+  x: number,
+  color: PuyoColor,
+  gameState: AIGameState,
+): boolean => {
+  const baseHeight = calculateColumnHeight(gameState.field.cells, x)
 
-    // 副ぷよが有効な位置にある場合のみカウント
-    if (
-      subX >= 0 &&
-      subX < gameState.field.width &&
-      subY >= 0 &&
-      subY < gameState.field.height
-    ) {
-      secondaryAdjacent = this.countAdjacentSameColor(
-        subX,
-        subY,
-        secondaryColor,
-        gameState,
-      )
-    }
+  const adjacentPositions = [
+    { x: x - 1, y: baseHeight }, // 左
+    { x: x + 1, y: baseHeight }, // 右
+    { x: x, y: baseHeight - 1 }, // 上
+    { x: x, y: baseHeight + 1 }, // 下
+  ] as const
 
-    // 隣接同色1つにつき15点
-    return (primaryAdjacent + secondaryAdjacent) * 15
-  }
+  return adjacentPositions.some(
+    (pos) =>
+      isValidPosition(pos.x, pos.y, gameState) &&
+      gameState.field.cells[pos.y][pos.x] === color,
+  )
+}
 
-  /**
-   * 連鎖可能性スコア計算（Phase 4c最適化版）
-   * 将来の連鎖につながる配置を評価
-   */
-  private calculateChainPotential(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): number {
-    // Phase 4b基本実装: 簡単な連鎖判定
-    // 4個以上の同色グループが作れそうな場合にボーナス
+/**
+ * 位置が有効かどうかチェック（純粋関数）
+ */
+const isValidPosition = (
+  x: number,
+  y: number,
+  gameState: AIGameState,
+): boolean => {
+  const { width, height, cells } = gameState.field
+  return (
+    x >= 0 &&
+    x < width &&
+    y >= 0 &&
+    y < height &&
+    cells[y] &&
+    cells[y][x] !== undefined
+  )
+}
 
-    if (!gameState.currentPuyoPair) return 0
+/**
+ * 評価理由を生成（純粋関数）
+ */
+const generateReason = (scores: {
+  baseScore: number
+  positionScore: number
+  colorScore: number
+  chainPotentialScore: number
+  totalScore: number
+}): string => {
+  const reasonMap = [
+    { threshold: 30, key: 'baseScore', label: '中央配置' },
+    { threshold: 25, key: 'positionScore', label: '安定位置' },
+    { threshold: 20, key: 'colorScore', label: '色隣接' },
+    { threshold: 30, key: 'chainPotentialScore', label: '連鎖可能' },
+  ] as const
 
-    const primaryColor = gameState.currentPuyoPair.primaryColor
-    const secondaryColor = gameState.currentPuyoPair.secondaryColor
+  const reasons = reasonMap
+    .filter(({ threshold, key }) => scores[key] > threshold)
+    .map(({ label }) => label)
 
-    let chainScore = 0
+  const finalReasons = reasons.length > 0 ? reasons : ['基本配置']
 
-    // 主ぷよが4個グループを作る可能性
-    if (this.canForm4Group(move.x, primaryColor, gameState)) {
-      chainScore += 40
-    }
-
-    // 副ぷよが4個グループを作る可能性
-    const { subX } = this.calculateSubPuyoPosition(move, gameState)
-    if (this.canForm4Group(subX, secondaryColor, gameState)) {
-      chainScore += 40
-    }
-
-    return chainScore
-  }
-
-  /**
-   * Phase 4c: 列高さ情報をキャッシュ付きで取得
-   */
-  private getColumnHeightInfo(
-    gameState: AIGameState,
-    fieldKey: string,
-  ): number[] {
-    const cacheKey = `heights_${fieldKey}`
-
-    if (this.fieldCache.has(cacheKey)) {
-      return this.fieldCache.get(cacheKey)!
-    }
-
-    const heights = new Array(gameState.field.width)
-    for (let x = 0; x < gameState.field.width; x++) {
-      heights[x] = this.calculateColumnHeight(gameState.field.cells, x)
-    }
-
-    this.fieldCache.set(cacheKey, heights)
-    return heights
-  }
-
-  /**
-   * 列の高さを計算（Phase 4c最適化版）
-   */
-  private calculateColumnHeight(
-    cells: (PuyoColor | null)[][],
-    x: number,
-  ): number {
-    for (let y = 0; y < cells.length; y++) {
-      if (cells[y][x] !== null) {
-        return y
-      }
-    }
-    return cells.length
-  }
-
-  /**
-   * ぷよが落ちる位置を計算
-   */
-  private calculateDropPosition(x: number, gameState: AIGameState): number {
-    const column = gameState.field.cells.map((row) => row[x])
-    for (let y = column.length - 1; y >= 0; y--) {
-      if (column[y] === null) {
-        return y
-      }
-    }
-    return 0 // フィールドが満杯の場合
-  }
-
-  /**
-   * バランススコア計算（Phase 4c最適化版）
-   */
-  private calculateBalanceScore(x: number, heightInfo: number[]): number {
-    const currentHeight = heightInfo[x]
-    let balanceScore = 0
-
-    // 左隣との比較
-    if (x > 0) {
-      const leftHeight = heightInfo[x - 1]
-      const heightDiff = Math.abs(currentHeight - leftHeight)
-      balanceScore += Math.max(0, 10 - heightDiff * 2)
-    }
-
-    // 右隣との比較
-    if (x < heightInfo.length - 1) {
-      const rightHeight = heightInfo[x + 1]
-      const heightDiff = Math.abs(currentHeight - rightHeight)
-      balanceScore += Math.max(0, 10 - heightDiff * 2)
-    }
-
-    return balanceScore
-  }
-
-  /**
-   * 隣接同色ぷよをカウント
-   */
-  private countAdjacentSameColor(
-    x: number,
-    y: number,
-    color: PuyoColor,
-    gameState: AIGameState,
-  ): number {
-    const directions = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1], // 上下左右
-    ]
-
-    return directions.filter(([dx, dy]) => {
-      const newX = x + dx
-      const newY = y + dy
-      return this.isSameColorAt(newX, newY, color, gameState)
-    }).length
-  }
-
-  /**
-   * 指定位置が同色かチェック
-   */
-  private isSameColorAt(
-    x: number,
-    y: number,
-    color: PuyoColor,
-    gameState: AIGameState,
-  ): boolean {
-    return (
-      this.isValidPosition(x, y, gameState) &&
-      gameState.field.cells[y][x] === color
-    )
-  }
-
-  /**
-   * 副ぷよの配置位置を計算
-   */
-  private calculateSubPuyoPosition(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): { subX: number; subY: number } {
-    const primaryY = this.calculateDropPosition(move.x, gameState)
-
-    // 回転角度に応じて副ぷよの位置を計算
-    switch (move.rotation) {
-      case 0: // 上
-        return { subX: move.x, subY: primaryY - 1 }
-      case 90: // 右
-        return {
-          subX: move.x + 1,
-          subY: this.calculateDropPosition(move.x + 1, gameState),
-        }
-      case 180: // 下
-        return { subX: move.x, subY: primaryY + 1 }
-      case 270: // 左
-        return {
-          subX: move.x - 1,
-          subY: this.calculateDropPosition(move.x - 1, gameState),
-        }
-      default:
-        return { subX: move.x, subY: primaryY - 1 }
-    }
-  }
-
-  /**
-   * 4個グループ形成可能性判定（Phase 4c最適化版）
-   */
-  private canForm4Group(
-    x: number,
-    color: PuyoColor,
-    gameState: AIGameState,
-  ): boolean {
-    // Phase 4c: 最適化版の列高さ計算を使用
-    const baseHeight = this.calculateColumnHeight(gameState.field.cells, x)
-
-    const adjacentPositions = [
-      { x: x - 1, y: baseHeight }, // 左
-      { x: x + 1, y: baseHeight }, // 右
-      { x: x, y: baseHeight - 1 }, // 上
-      { x: x, y: baseHeight + 1 }, // 下
-    ]
-
-    return adjacentPositions.some(
-      (pos) =>
-        this.isValidPosition(pos.x, pos.y, gameState) &&
-        gameState.field.cells[pos.y][pos.x] === color,
-    )
-  }
-
-  /**
-   * 位置が有効かどうかチェック
-   */
-  private isValidPosition(
-    x: number,
-    y: number,
-    gameState: AIGameState,
-  ): boolean {
-    return (
-      x >= 0 &&
-      x < gameState.field.width &&
-      y >= 0 &&
-      y < gameState.field.height &&
-      gameState.field.cells[y] &&
-      gameState.field.cells[y][x] !== undefined
-    )
-  }
-
-  /**
-   * 評価理由を生成
-   */
-  private generateReason(scores: {
-    baseScore: number
-    positionScore: number
-    colorScore: number
-    chainPotentialScore: number
-    totalScore: number
-  }): string {
-    const parts: string[] = []
-
-    if (scores.baseScore > 30) {
-      parts.push('中央配置')
-    }
-    if (scores.positionScore > 25) {
-      parts.push('安定位置')
-    }
-    if (scores.colorScore > 20) {
-      parts.push('色隣接')
-    }
-    if (scores.chainPotentialScore > 30) {
-      parts.push('連鎖可能')
-    }
-
-    if (parts.length === 0) {
-      parts.push('基本配置')
-    }
-
-    return `Phase 4c最適化評価: ${parts.join('・')}`
-  }
+  return `Phase 4c関数型評価: ${finalReasons.join('・')}`
 }
