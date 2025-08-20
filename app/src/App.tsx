@@ -379,7 +379,7 @@ function App() {
   >([])
   const [currentPhase, setCurrentPhase] = useState<
     'Phase 4a' | 'Phase 4b' | 'Phase 4c'
-  >('Phase 4b')
+  >('Phase 4c')
 
   // デバッグ用にE2Eテストからアクセス可能にする
   if (

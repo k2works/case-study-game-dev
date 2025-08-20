@@ -32,7 +32,7 @@ export class MayahAIService implements AIPort {
   private enabled = false
   private moveGenerator: MoveGeneratorPort
   private operationEvaluationService: OperationEvaluationService
-  private currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c' = 'Phase 4b'
+  private currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c' = 'Phase 4c'
   private lastEvaluationResult: MayahEvaluationResult | null = null
   private candidateMovesWithEvaluation: Array<{
     move: AIMove
@@ -244,7 +244,7 @@ export class MayahAIService implements AIPort {
     return {
       score: operationEvaluation.totalScore,
       reason: operationEvaluation.reason,
-      phase: 'Phase 4b - 高度評価',
+      phase: 'Phase 4c - 最適化評価',
       confidence,
     }
   }

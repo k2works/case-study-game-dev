@@ -62,7 +62,7 @@ describe('OperationEvaluationService', () => {
       // Assert
       expect(result).toBeDefined()
       expect(result.totalScore).toBeGreaterThan(0)
-      expect(result.reason).toContain('Phase 4b高度評価')
+      expect(result.reason).toContain('Phase 4c最適化評価')
       expect(typeof result.baseScore).toBe('number')
       expect(typeof result.positionScore).toBe('number')
       expect(typeof result.colorScore).toBe('number')
@@ -322,7 +322,7 @@ describe('OperationEvaluationService', () => {
       const result = service.evaluateMove(move, gameState)
 
       // Assert
-      expect(result.reason).toContain('Phase 4b高度評価')
+      expect(result.reason).toContain('Phase 4c最適化評価')
       if (result.baseScore > 30) {
         expect(result.reason).toContain('中央配置')
       }
@@ -342,7 +342,7 @@ describe('OperationEvaluationService', () => {
       const result = service.evaluateMove(move, gameState)
 
       // Assert
-      expect(result.reason).toContain('Phase 4b高度評価')
+      expect(result.reason).toContain('Phase 4c最適化評価')
       // 複数の要素が含まれる可能性
       const possibleReasons = ['中央配置', '安定位置', '色隣接', '連鎖可能']
       const reasonIncludesMultiple =

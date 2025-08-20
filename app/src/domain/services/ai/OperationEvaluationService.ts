@@ -24,19 +24,29 @@ export interface OperationEvaluation {
 }
 
 /**
- * 操作評価サービス
- * mayah AIの高度な操作評価ロジックを提供
+ * Phase 4c最適化済み操作評価サービス
+ * mayah AIの高度な操作評価ロジック（パフォーマンス最適化版）
  */
 export class OperationEvaluationService {
+  // Phase 4c: キャッシュ機能追加
+  private fieldCache: Map<string, number[]> = new Map()
+  private centerX: number = 0
+
   /**
-   * 指定された手を評価
+   * 指定された手を評価（Phase 4c最適化版）
    */
   evaluateMove(
     move: PossibleMove,
     gameState: AIGameState,
   ): OperationEvaluation {
-    const baseScore = this.calculateBaseScore(move, gameState)
-    const positionScore = this.calculatePositionScore(move, gameState)
+    // Phase 4c: フィールド状態のキャッシュキー生成
+    const fieldKey = this.generateFieldCacheKey(gameState)
+
+    // Phase 4c: 中央位置計算をキャッシュ
+    this.centerX = Math.floor(gameState.field.width / 2)
+
+    const baseScore = this.calculateBaseScore(move)
+    const positionScore = this.calculatePositionScore(move, gameState, fieldKey)
     const colorScore = this.calculateColorScore(move, gameState)
     const chainPotentialScore = this.calculateChainPotential(move, gameState)
 
@@ -62,42 +72,51 @@ export class OperationEvaluationService {
   }
 
   /**
-   * 基本スコア計算
+   * Phase 4c: フィールドキャッシュキー生成
+   */
+  private generateFieldCacheKey(gameState: AIGameState): string {
+    // 簡単なフィールド状態ハッシュ
+    return gameState.field.cells
+      .map((row) => row.map((cell) => (cell ? cell[0] : 'n')).join(''))
+      .join('|')
+  }
+
+  /**
+   * 基本スコア計算（Phase 4c最適化版）
    * フィールド中央への配置を重視
    */
-  private calculateBaseScore(
-    move: PossibleMove,
-    gameState: AIGameState,
-  ): number {
-    const centerX = Math.floor(gameState.field.width / 2)
-    const distanceFromCenter = Math.abs(move.x - centerX)
+  private calculateBaseScore(move: PossibleMove): number {
+    // Phase 4c: キャッシュ済みの中央位置を使用
+    const distanceFromCenter = Math.abs(move.x - this.centerX)
 
     // 中央に近いほど高スコア（最大50点）
     return Math.max(0, 50 - distanceFromCenter * 8)
   }
 
   /**
-   * 位置評価スコア計算
+   * 位置評価スコア計算（Phase 4c最適化版）
    * 高さと安定性を評価
    */
   private calculatePositionScore(
     move: PossibleMove,
     gameState: AIGameState,
+    fieldKey: string,
   ): number {
-    const column = gameState.field.cells.map((row) => row[move.x])
-    const height = this.calculateColumnHeight(column)
+    // Phase 4c: 列高さ情報をキャッシュから取得
+    const heightInfo = this.getColumnHeightInfo(gameState, fieldKey)
+    const height = heightInfo[move.x]
 
     // 低い位置ほど高スコア（最大30点）
     const heightScore = Math.max(0, 30 - height * 3)
 
     // 隣接列との高さバランス評価（最大20点）
-    const balanceScore = this.calculateBalanceScore(move.x, gameState)
+    const balanceScore = this.calculateBalanceScore(move.x, heightInfo)
 
     return heightScore + balanceScore
   }
 
   /**
-   * 色配置評価スコア計算
+   * 色配置評価スコア計算（Phase 4c最適化版）
    * 同色の隣接配置を評価
    */
   private calculateColorScore(
@@ -142,7 +161,7 @@ export class OperationEvaluationService {
   }
 
   /**
-   * 連鎖可能性スコア計算
+   * 連鎖可能性スコア計算（Phase 4c最適化版）
    * 将来の連鎖につながる配置を評価
    */
   private calculateChainPotential(
@@ -174,15 +193,40 @@ export class OperationEvaluationService {
   }
 
   /**
-   * 列の高さを計算
+   * Phase 4c: 列高さ情報をキャッシュ付きで取得
    */
-  private calculateColumnHeight(column: (PuyoColor | null)[]): number {
-    for (let i = 0; i < column.length; i++) {
-      if (column[i] !== null) {
-        return i
+  private getColumnHeightInfo(
+    gameState: AIGameState,
+    fieldKey: string,
+  ): number[] {
+    const cacheKey = `heights_${fieldKey}`
+
+    if (this.fieldCache.has(cacheKey)) {
+      return this.fieldCache.get(cacheKey)!
+    }
+
+    const heights = new Array(gameState.field.width)
+    for (let x = 0; x < gameState.field.width; x++) {
+      heights[x] = this.calculateColumnHeight(gameState.field.cells, x)
+    }
+
+    this.fieldCache.set(cacheKey, heights)
+    return heights
+  }
+
+  /**
+   * 列の高さを計算（Phase 4c最適化版）
+   */
+  private calculateColumnHeight(
+    cells: (PuyoColor | null)[][],
+    x: number,
+  ): number {
+    for (let y = 0; y < cells.length; y++) {
+      if (cells[y][x] !== null) {
+        return y
       }
     }
-    return column.length
+    return cells.length
   }
 
   /**
@@ -199,29 +243,22 @@ export class OperationEvaluationService {
   }
 
   /**
-   * バランススコア計算
+   * バランススコア計算（Phase 4c最適化版）
    */
-  private calculateBalanceScore(x: number, gameState: AIGameState): number {
-    const currentHeight = this.calculateColumnHeight(
-      gameState.field.cells.map((row) => row[x]),
-    )
-
+  private calculateBalanceScore(x: number, heightInfo: number[]): number {
+    const currentHeight = heightInfo[x]
     let balanceScore = 0
 
     // 左隣との比較
     if (x > 0) {
-      const leftHeight = this.calculateColumnHeight(
-        gameState.field.cells.map((row) => row[x - 1]),
-      )
+      const leftHeight = heightInfo[x - 1]
       const heightDiff = Math.abs(currentHeight - leftHeight)
       balanceScore += Math.max(0, 10 - heightDiff * 2)
     }
 
     // 右隣との比較
-    if (x < gameState.field.width - 1) {
-      const rightHeight = this.calculateColumnHeight(
-        gameState.field.cells.map((row) => row[x + 1]),
-      )
+    if (x < heightInfo.length - 1) {
+      const rightHeight = heightInfo[x + 1]
       const heightDiff = Math.abs(currentHeight - rightHeight)
       balanceScore += Math.max(0, 10 - heightDiff * 2)
     }
@@ -298,35 +335,38 @@ export class OperationEvaluationService {
   }
 
   /**
-   * 4個グループ形成可能性判定
+   * 4個グループ形成可能性判定（Phase 4c最適化版）
    */
   private canForm4Group(
     x: number,
     color: PuyoColor,
     gameState: AIGameState,
   ): boolean {
-    // 簡易実装: 直接隣接（上下左右）に同色が1個以上あるかチェック
-    const baseHeight = this.calculateColumnHeight(
-      gameState.field.cells.map((row) => row[x]),
-    )
-    
+    // Phase 4c: 最適化版の列高さ計算を使用
+    const baseHeight = this.calculateColumnHeight(gameState.field.cells, x)
+
     const adjacentPositions = [
-      { x: x - 1, y: baseHeight },     // 左
-      { x: x + 1, y: baseHeight },     // 右
-      { x: x, y: baseHeight - 1 },     // 上
-      { x: x, y: baseHeight + 1 },     // 下
+      { x: x - 1, y: baseHeight }, // 左
+      { x: x + 1, y: baseHeight }, // 右
+      { x: x, y: baseHeight - 1 }, // 上
+      { x: x, y: baseHeight + 1 }, // 下
     ]
 
-    return adjacentPositions.some(pos => 
-      this.isValidPosition(pos.x, pos.y, gameState) &&
-      gameState.field.cells[pos.y][pos.x] === color
+    return adjacentPositions.some(
+      (pos) =>
+        this.isValidPosition(pos.x, pos.y, gameState) &&
+        gameState.field.cells[pos.y][pos.x] === color,
     )
   }
 
   /**
    * 位置が有効かどうかチェック
    */
-  private isValidPosition(x: number, y: number, gameState: AIGameState): boolean {
+  private isValidPosition(
+    x: number,
+    y: number,
+    gameState: AIGameState,
+  ): boolean {
     return (
       x >= 0 &&
       x < gameState.field.width &&
@@ -366,6 +406,6 @@ export class OperationEvaluationService {
       parts.push('基本配置')
     }
 
-    return `Phase 4b高度評価: ${parts.join('・')}`
+    return `Phase 4c最適化評価: ${parts.join('・')}`
   }
 }
