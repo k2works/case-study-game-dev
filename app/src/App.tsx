@@ -1,23 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { AIPort } from './application/ports/AIPort.ts'
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
 import type { PerformanceAnalysisService } from './application/services/PerformanceAnalysisService'
-import type { StrategyService } from './application/services/ai/StrategyService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
+import type { PuyoColor } from './domain/models/Puyo'
 import type { AIMove, AISettings } from './domain/models/ai'
 import type { OptimizedEvaluationResult } from './domain/services/ai/OptimizedEvaluationService'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { AIControlPanel } from './presentation/components/ai/AIControlPanel'
-import { AIInsights } from './presentation/components/ai/AIInsights'
 import { MayahEvaluationDisplay } from './presentation/components/ai/MayahEvaluationDisplay'
 import { MoveEvaluationRanking } from './presentation/components/ai/MoveEvaluationRanking'
 import { PerformanceAnalysis } from './presentation/components/ai/PerformanceAnalysis'
 import { PerformanceMonitor } from './presentation/components/ai/PerformanceMonitor'
-import { StrategySettings } from './presentation/components/ai/StrategySettings'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
 import { usePerformanceAnalysis } from './presentation/hooks/usePerformanceAnalysis'
@@ -232,13 +229,11 @@ const GameLayout = ({
   handleReset,
   aiEnabled,
   aiSettings,
-  aiService,
   onToggleAI,
   onAISettingsChange,
   lastAIMove,
   isAIThinking,
   performanceService,
-  strategyService,
   evaluationResult,
   candidateMoves,
   performanceMetrics,
@@ -252,13 +247,11 @@ const GameLayout = ({
   handleReset: () => void
   aiEnabled: boolean
   aiSettings: AISettings
-  aiService: AIPort
   onToggleAI: () => void
   onAISettingsChange: (settings: AISettings) => void
   lastAIMove: AIMove | null
   isAIThinking: boolean
   performanceService: PerformanceAnalysisService
-  strategyService: StrategyService
   evaluationResult: OptimizedEvaluationResult | null
   candidateMoves: Array<{
     move: AIMove
@@ -401,7 +394,6 @@ function App() {
   const inputService = defaultContainer.getInputService()
   const aiService = defaultContainer.getAIService()
   const performanceService = defaultContainer.getPerformanceAnalysisService()
-  const strategyService = defaultContainer.getStrategyService()
 
   // ゲーム状態を管理（Reactの状態として）
   const [game, setGame] = useState<GameViewModel>(() => {
@@ -492,47 +484,44 @@ function App() {
   )
 
   // GameViewModelをAIGameStateに変換するヘルパー関数
-  const convertToAIGameState = useCallback(
-    (game: GameViewModel) => {
-      // GameViewModelのcellsは[x][y]形式なので、[y][x]形式に変換する
-      const cells: (string | null)[][] = []
-      for (let y = 0; y < game.field.height; y++) {
-        cells[y] = []
-        for (let x = 0; x < game.field.width; x++) {
-          const cell = game.field.cells[x] ? game.field.cells[x][y] : null
-          cells[y][x] = cell ? cell.color : null
-        }
+  const convertToAIGameState = useCallback((game: GameViewModel) => {
+    // GameViewModelのcellsは[x][y]形式なので、[y][x]形式に変換する
+    const cells: (PuyoColor | null)[][] = []
+    for (let y = 0; y < game.field.height; y++) {
+      cells[y] = []
+      for (let x = 0; x < game.field.width; x++) {
+        const cell = game.field.cells[x] ? game.field.cells[x][y] : null
+        cells[y][x] = cell ? (cell.color as PuyoColor) : null
       }
+    }
 
-      return {
-        field: {
-          width: game.field.width,
-          height: game.field.height,
-          cells,
-        },
-        currentPuyoPair: game.currentPuyoPair
-          ? {
-              primaryColor: game.currentPuyoPair.main.color,
-              secondaryColor: game.currentPuyoPair.sub.color,
-              x: game.currentPuyoPair.x,
-              y: game.currentPuyoPair.y,
-              rotation: game.currentPuyoPair.rotation,
-            }
-          : null,
-        nextPuyoPair: game.nextPuyoPair
-          ? {
-              primaryColor: game.nextPuyoPair.main.color,
-              secondaryColor: game.nextPuyoPair.sub.color,
-              x: game.nextPuyoPair.x,
-              y: game.nextPuyoPair.y,
-              rotation: game.nextPuyoPair.rotation,
-            }
-          : null,
-        score: game.score.current,
-      }
-    },
-    [],
-  )
+    return {
+      field: {
+        width: game.field.width,
+        height: game.field.height,
+        cells,
+      },
+      currentPuyoPair: game.currentPuyoPair
+        ? {
+            primaryColor: game.currentPuyoPair.main.color,
+            secondaryColor: game.currentPuyoPair.sub.color,
+            x: game.currentPuyoPair.x,
+            y: game.currentPuyoPair.y,
+            rotation: game.currentPuyoPair.rotation,
+          }
+        : null,
+      nextPuyoPair: game.nextPuyoPair
+        ? {
+            primaryColor: game.nextPuyoPair.main.color,
+            secondaryColor: game.nextPuyoPair.sub.color,
+            x: game.nextPuyoPair.x,
+            y: game.nextPuyoPair.y,
+            rotation: game.nextPuyoPair.rotation,
+          }
+        : null,
+      score: game.score.current,
+    }
+  }, [])
 
   // AI手の実行ヘルパー関数
   const executeAIMoveActions = useCallback(
@@ -771,13 +760,11 @@ function App() {
       handleReset={handleReset}
       aiEnabled={aiEnabled}
       aiSettings={aiSettings}
-      aiService={aiService}
       onToggleAI={handleToggleAI}
       onAISettingsChange={handleAISettingsChange}
       lastAIMove={lastAIMove}
       isAIThinking={isAIThinking}
       performanceService={performanceService}
-      strategyService={strategyService}
       evaluationResult={evaluationResult}
       candidateMoves={candidateMoves}
       performanceMetrics={performanceMetrics}

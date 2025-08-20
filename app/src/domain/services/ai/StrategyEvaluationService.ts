@@ -369,7 +369,7 @@ const getMaxFieldHeight = (field: AIFieldState): number => {
 const calculateBaseTimingScore = (
   myChainEvaluation: ChainEvaluation,
   opponentChainEvaluation: ChainEvaluation,
-  _gamePhase: GamePhase,
+  gamePhase: GamePhase,
 ): number => {
   const myScore = myChainEvaluation.totalScore
   const opponentScore = opponentChainEvaluation.totalScore
@@ -380,7 +380,30 @@ const calculateBaseTimingScore = (
   // 自分の連鎖品質による補正
   baseScore += getQualityBonus(myChainEvaluation)
 
+  // ゲームフェーズによる補正
+  baseScore += getPhaseBonus(gamePhase, scoreDiff)
+
   return baseScore
+}
+
+/**
+ * フェーズ別ボーナス係数マップ
+ */
+const PHASE_BONUS_MAP = {
+  early: { positive: 10, negative: -5 },
+  middle: { positive: 15, negative: -10 },
+  late: { positive: 25, negative: -20 },
+  emergency: { positive: 50, negative: -30 },
+} as const
+
+/**
+ * ゲームフェーズによるボーナス
+ */
+const getPhaseBonus = (gamePhase: GamePhase, scoreDiff: number): number => {
+  const bonusConfig = PHASE_BONUS_MAP[gamePhase as keyof typeof PHASE_BONUS_MAP]
+  if (!bonusConfig) return 0
+
+  return scoreDiff > 0 ? bonusConfig.positive : bonusConfig.negative
 }
 
 /**
@@ -498,11 +521,23 @@ const calculateColumnThreat = (
 }
 
 /**
+ * 指定列の高さを取得
+ */
+const getColumnHeight = (field: AIFieldState, x: number): number => {
+  for (let y = 0; y < field.height; y++) {
+    if (field.cells[y] && field.cells[y][x] !== null) {
+      return field.height - y
+    }
+  }
+  return 0
+}
+
+/**
  * 凝視ターゲットを選定
  */
 const selectGazeTargets = (
   dangerousColumns: Array<{ column: number; threat: number }>,
-  _opponentField: AIFieldState,
+  opponentField: AIFieldState,
 ): number[] => {
   const targets: number[] = []
 
@@ -512,7 +547,12 @@ const selectGazeTargets = (
 
     // 隣接列の影響を考慮して選定
     const isAdjacent = targets.some((target) => Math.abs(target - column) === 1)
-    if (!isAdjacent || dangerousColumns[i].threat > 70) {
+
+    // フィールドの実際の高さを確認
+    const columnHeight = getColumnHeight(opponentField, column)
+    const isReallyDangerous = columnHeight >= opponentField.height - 3
+
+    if (!isAdjacent || dangerousColumns[i].threat > 70 || isReallyDangerous) {
       targets.push(column)
     }
   }
@@ -527,7 +567,7 @@ const calculateGazeScore = (
   targetColumns: number[],
   opponentField: AIFieldState,
   opponentChainEvaluation: ChainEvaluation,
-  _settings: MayahEvaluationSettings,
+  settings: MayahEvaluationSettings,
 ): number => {
   if (targetColumns.length === 0) return 0
 
@@ -540,9 +580,18 @@ const calculateGazeScore = (
     opponentChainEvaluation,
   )
 
-  // ターゲット数によるボーナス
+  // ターゲット数によるボーナス（設定値を考慮）
   const targetBonus = Math.min(targetColumns.length * 5, 15)
+
+  // 設定に基づいた緊急度調整
+  const emergencyMultiplier = targetColumns.some((col) => {
+    const height = getColumnHeight(opponentField, col)
+    return height >= settings.emergencyHeight
+  })
+    ? 1.5
+    : 1.0
   gazeScore += targetBonus
+  gazeScore *= emergencyMultiplier
 
   return Math.min(gazeScore, 100)
 }
@@ -651,18 +700,6 @@ const calculateOpponentConstraint = (
 }
 
 /**
- * 列の高さを取得
- */
-const getColumnHeight = (field: AIFieldState, x: number): number => {
-  for (let y = 0; y < field.height; y++) {
-    if (field.cells[y][x] !== null) {
-      return field.height - y
-    }
-  }
-  return 0
-}
-
-/**
  * 相手の攻撃リスクを計算
  */
 const calculateOpponentAttackRisk = (
@@ -722,6 +759,25 @@ const applyPhaseRiskModifier = (
 }
 
 /**
+ * 連鎖スコアから防御力を計算
+ */
+const getChainDefenseScore = (chainScore: number): number => {
+  if (chainScore > 600) return 50
+  if (chainScore > 300) return 30
+  return 10
+}
+
+/**
+ * フィールド余裕度から防御力を計算
+ */
+const getSpaceDefenseScore = (spaceRemaining: number): number => {
+  if (spaceRemaining >= 6) return 30
+  if (spaceRemaining >= 4) return 20
+  if (spaceRemaining >= 2) return 10
+  return 0
+}
+
+/**
  * 防御力を計算
  */
 const calculateDefenseCapability = (
@@ -732,25 +788,12 @@ const calculateDefenseCapability = (
   let defenseCapability = 0
 
   // 自分の連鎖による防御力
-  const myScore = myChainEvaluation.totalScore
-  if (myScore > 600) {
-    defenseCapability += 50 // 反撃能力高
-  } else if (myScore > 300) {
-    defenseCapability += 30
-  } else {
-    defenseCapability += 10
-  }
+  defenseCapability += getChainDefenseScore(myChainEvaluation.totalScore)
 
   // フィールドの余裕度
   const myMaxHeight = getMaxFieldHeight(myGameState.field)
   const spaceRemaining = myGameState.field.height - myMaxHeight
-  if (spaceRemaining >= 6) {
-    defenseCapability += 30 // 十分な余裕
-  } else if (spaceRemaining >= 4) {
-    defenseCapability += 20
-  } else if (spaceRemaining >= 2) {
-    defenseCapability += 10
-  } // spaceRemaining < 2の場合は0
+  defenseCapability += getSpaceDefenseScore(spaceRemaining)
 
   // 連鎖の安定性
   if (myChainEvaluation.stabilityScore > 70) {
@@ -758,7 +801,7 @@ const calculateDefenseCapability = (
   }
 
   // フェーズによる調整
-  if (gamePhase === PHASE.EARLY) {
+  if (gamePhase === 'early') {
     defenseCapability *= 1.2 // 序盤は防御しやすい
   }
 
@@ -860,6 +903,32 @@ const calculateCellComplexity = (
 }
 
 /**
+ * 座標が有効範囲内かチェック
+ */
+const isValidPosition = (
+  field: AIFieldState,
+  x: number,
+  y: number,
+): boolean => {
+  return x >= 0 && x < field.width && y >= 0 && y < field.height
+}
+
+/**
+ * 隣接セルが異色かチェック
+ */
+const isDifferentColor = (
+  field: AIFieldState,
+  x: number,
+  y: number,
+  currentColor: string,
+): boolean => {
+  if (!isValidPosition(field, x, y)) return false
+
+  const neighborCell = field.cells[y][x]
+  return neighborCell !== null && neighborCell !== currentColor
+}
+
+/**
  * 隣接する異色の数を数える
  */
 const countAdjacentDifferentColors = (
@@ -868,7 +937,6 @@ const countAdjacentDifferentColors = (
   y: number,
   currentColor: string,
 ): number => {
-  let count = 0
   const directions = [
     [0, 1],
     [0, -1],
@@ -876,18 +944,11 @@ const countAdjacentDifferentColors = (
     [-1, 0],
   ]
 
-  for (const [dx, dy] of directions) {
-    const nx = x + dx
-    const ny = y + dy
-    if (nx >= 0 && nx < field.width && ny >= 0 && ny < field.height) {
-      const neighborCell = field.cells[ny][nx]
-      if (neighborCell && neighborCell !== currentColor) {
-        count++
-      }
-    }
-  }
-
-  return count
+  return directions.reduce((count, [dx, dy]) => {
+    return (
+      count + (isDifferentColor(field, x + dx, y + dy, currentColor) ? 1 : 0)
+    )
+  }, 0)
 }
 
 /**

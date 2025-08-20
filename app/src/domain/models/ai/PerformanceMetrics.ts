@@ -39,7 +39,7 @@ export class PerformanceMetrics {
    */
   getAverageScore(): number {
     if (this.sessions.length === 0) {
-      throw new Error('データが不十分です')
+      return 0
     }
     return (
       this.sessions.reduce((sum, session) => sum + session.finalScore, 0) /
@@ -52,7 +52,7 @@ export class PerformanceMetrics {
    */
   getAverageChain(): number {
     if (this.sessions.length === 0) {
-      throw new Error('データが不十分です')
+      return 0
     }
     return (
       this.sessions.reduce((sum, session) => sum + session.maxChain, 0) /
@@ -66,7 +66,7 @@ export class PerformanceMetrics {
    */
   getChainSuccessRate(): number {
     if (this.sessions.length === 0) {
-      throw new Error('データが不十分です')
+      return 0
     }
     const successfulChains = this.sessions.filter(
       (session) => session.maxChain >= 4,
@@ -79,7 +79,7 @@ export class PerformanceMetrics {
    */
   getAveragePlayTime(): number {
     if (this.sessions.length === 0) {
-      throw new Error('データが不十分です')
+      return 0
     }
     const totalTime = this.sessions.reduce((sum, session) => {
       return sum + (session.endTime.getTime() - session.startTime.getTime())

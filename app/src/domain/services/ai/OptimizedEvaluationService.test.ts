@@ -69,19 +69,37 @@ describe('OptimizedEvaluationService', () => {
 
     it('高スコア時に詳細評価を実行', () => {
       // Arrange
-      const service = new OptimizedEvaluationService()
+      // 低い閾値設定でテスト
+      const testSettings: OptimizedEvaluationSettings = {
+        basicThreshold: 50,
+        detailedThreshold: 100,
+        treeThreshold: 150,
+        cacheSize: 100,
+        cacheTTL: 5000,
+        concurrency: 2,
+        debounceTime: 10,
+      }
+      const service = new OptimizedEvaluationService(testSettings)
       const myField = createTestField(6, 12)
       const opponentField = createTestField(6, 12)
 
-      // 高スコアになるようなフィールドを作成
-      setCell(myField, 2, 8, 'red')
-      setCell(myField, 2, 9, 'red')
-      setCell(myField, 2, 10, 'red')
+      // 高スコアになるようなフィールドを作成（より多くのぷよを配置）
+      // 連鎖の土台を作成
+      setCell(myField, 0, 11, 'red')
+      setCell(myField, 0, 10, 'red')
+      setCell(myField, 0, 9, 'red')
+      setCell(myField, 1, 11, 'blue')
+      setCell(myField, 1, 10, 'blue')
+      setCell(myField, 1, 9, 'blue')
       setCell(myField, 2, 11, 'red')
-      setCell(myField, 3, 9, 'blue')
-      setCell(myField, 3, 10, 'blue')
+      setCell(myField, 2, 10, 'red')
+      setCell(myField, 2, 9, 'red')
       setCell(myField, 3, 11, 'blue')
-      setCell(myField, 4, 11, 'blue')
+      setCell(myField, 3, 10, 'blue')
+      setCell(myField, 3, 9, 'yellow')
+      setCell(myField, 4, 11, 'yellow')
+      setCell(myField, 4, 10, 'yellow')
+      setCell(myField, 5, 11, 'green')
 
       const myGameState = createTestGameState(myField)
       const opponentGameState = createTestGameState(opponentField)
@@ -266,8 +284,21 @@ describe('OptimizedEvaluationService', () => {
       const detailedEvaluator = vi.fn(() => ({
         basic: { score: 100, computeTime: 10 },
         detailed: {
-          chainEvaluation: {} as any,
-          strategyEvaluation: { totalScore: 150 } as any,
+          chainEvaluation: {
+            patterns: [],
+            chainPotential: 80,
+            diversityScore: 70,
+            stabilityScore: 75,
+            feasibilityScore: 85,
+            totalScore: 77,
+          },
+          strategyEvaluation: {
+            timingScore: 90,
+            gazeScore: 80,
+            riskScore: 70,
+            defenseScore: 85,
+            totalScore: 150,
+          },
           computeTime: 20,
         },
         evaluationLevels: ['basic', 'detailed'],

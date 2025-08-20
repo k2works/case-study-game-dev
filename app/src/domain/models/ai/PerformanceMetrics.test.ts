@@ -272,14 +272,15 @@ describe('PerformanceMetrics', () => {
       })
     })
 
-    test('データが不十分な場合のエラーハンドリング', () => {
+    test('データが不十分な場合はデフォルト値を返す', () => {
       // Arrange
       const metrics = new PerformanceMetrics()
 
       // Act & Assert
-      expect(() => metrics.getAverageScore()).toThrow('データが不十分です')
-      expect(() => metrics.getAverageChain()).toThrow('データが不十分です')
-      expect(() => metrics.getChainSuccessRate()).toThrow('データが不十分です')
+      expect(metrics.getAverageScore()).toBe(0)
+      expect(metrics.getAverageChain()).toBe(0)
+      expect(metrics.getChainSuccessRate()).toBe(0)
+      expect(metrics.getAveragePlayTime()).toBe(0)
     })
   })
 

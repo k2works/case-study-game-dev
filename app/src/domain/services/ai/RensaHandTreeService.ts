@@ -2,6 +2,7 @@
  * RensaHandTree実装サービス
  * mayah AIの連鎖木構築システム - 連鎖の分岐構造を木で表現し最適パスを探索
  */
+import type { PuyoColor } from '../../models/Puyo'
 import type { AIFieldState } from '../../models/ai/GameState'
 import type {
   MayahEvaluationSettings,
@@ -591,10 +592,11 @@ const clearColumn = (field: AIFieldState, x: number): void => {
 const placeColumnFromBottom = (
   field: AIFieldState,
   x: number,
-  column: unknown[],
+  column: (string | null)[],
 ): void => {
   for (let i = 0; i < column.length; i++) {
-    field.cells[field.height - 1 - i][x] = column[i] as any
+    const cellValue = column[i]
+    field.cells[field.height - 1 - i][x] = cellValue as PuyoColor
   }
 }
 

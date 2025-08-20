@@ -18,7 +18,6 @@ import {
   LRUCache as LRUCacheClass,
   findOptimal,
   generateFieldHash,
-  memoize,
   progressiveEvaluation,
 } from './PerformanceOptimizer'
 import {
@@ -94,6 +93,7 @@ export class OptimizedEvaluationService {
   private fieldCache: LRUCache<string, ChainEvaluation>
   private strategyCache: LRUCache<string, StrategyEvaluation>
   private treeCache: LRUCache<string, RensaHandTree>
+  private progressiveCache: LRUCache<string, OptimizedEvaluationResult>
   private settings: OptimizedEvaluationSettings
   private cacheStats = { hits: 0, misses: 0 }
 
@@ -111,96 +111,32 @@ export class OptimizedEvaluationService {
       Math.floor(settings.cacheSize / 2),
       settings.cacheTTL,
     )
+    this.progressiveCache = new LRUCacheClass(
+      settings.cacheSize,
+      settings.cacheTTL,
+    )
   }
 
   /**
    * 段階的評価実行
    */
-  evaluateProgressive = memoize(
-    (
-      myGameState: AIGameState,
-      opponentGameState: AIGameState,
-      gamePhase: GamePhase,
-      mayahSettings: MayahEvaluationSettings = DEFAULT_MAYAH_SETTINGS,
-    ): OptimizedEvaluationResult => {
-      const startTime = performance.now()
-      // フィールドハッシュはキー生成で使用される
+  evaluateProgressive = (
+    myGameState: AIGameState,
+    opponentGameState: AIGameState,
+    gamePhase: GamePhase,
+    mayahSettings: MayahEvaluationSettings = DEFAULT_MAYAH_SETTINGS,
+  ): OptimizedEvaluationResult => {
+    // キャッシュキーの生成
+    const cacheKey = `${generateFieldHash(myGameState.field)}-${generateFieldHash(
+      opponentGameState.field,
+    )}-${gamePhase}`
 
-      // 段階的評価定義
-      const evaluators = [
-        {
-          name: 'basic',
-          evaluator: () => this.basicEvaluation(myGameState.field),
-          threshold: this.settings.basicThreshold,
-          weight: 1.0,
-        },
-        {
-          name: 'chain_analysis',
-          evaluator: () => this.chainEvaluation(myGameState.field).totalScore,
-          threshold: this.settings.detailedThreshold,
-          weight: 1.5,
-        },
-        {
-          name: 'strategy_analysis',
-          evaluator: () =>
-            this.strategyEvaluation(
-              myGameState,
-              opponentGameState,
-              gamePhase,
-              mayahSettings,
-            ).totalScore,
-          threshold: this.settings.treeThreshold,
-          weight: 2.0,
-        },
-      ]
-
-      const progressiveResult = progressiveEvaluation(
-        { myGameState, opponentGameState, gamePhase },
-        evaluators,
-      )
-
-      const basicComputeTime = performance.now() - startTime
-
-      let detailed: OptimizedEvaluationResult['detailed']
-
-      // 詳細評価が必要な場合
-      if (progressiveResult.evaluationsUsed.includes('strategy_analysis')) {
-        const detailedStart = performance.now()
-
-        const myChainEval = this.chainEvaluation(myGameState.field)
-        // 対戦相手の連鎖評価は戦略評価内で使用される
-
-        const strategyEval = this.strategyEvaluation(
-          myGameState,
-          opponentGameState,
-          gamePhase,
-          mayahSettings,
-        )
-
-        let rensaHandTree: RensaHandTree | undefined
-        if (progressiveResult.score >= this.settings.treeThreshold) {
-          rensaHandTree = this.treeEvaluation(
-            myGameState.field,
-            opponentGameState.field,
-            mayahSettings,
-          )
-        }
-
-        detailed = {
-          chainEvaluation: myChainEval,
-          strategyEvaluation: strategyEval,
-          rensaHandTree,
-          computeTime: performance.now() - detailedStart,
-        }
-      }
-
+    // キャッシュ確認
+    const cached = this.progressiveCache.get(cacheKey)
+    if (cached) {
+      this.cacheStats.hits++
       return {
-        basic: {
-          score: progressiveResult.score,
-          computeTime: basicComputeTime,
-        },
-        detailed,
-        evaluationLevels: progressiveResult.evaluationsUsed,
+        ...cached,
         cacheInfo: {
           hits: this.cacheStats.hits,
           misses: this.cacheStats.misses,
@@ -211,13 +147,101 @@ export class OptimizedEvaluationService {
               : 0,
         },
       }
-    },
-    (myGameState, opponentGameState, gamePhase) => {
-      return `${generateFieldHash(myGameState.field)}-${generateFieldHash(
-        opponentGameState.field,
-      )}-${gamePhase}`
-    },
-  )
+    }
+    this.cacheStats.misses++
+    const startTime = performance.now()
+    // フィールドハッシュはキー生成で使用される
+
+    // 段階的評価定義
+    const evaluators = [
+      {
+        name: 'basic',
+        evaluator: () => this.basicEvaluation(myGameState.field),
+        threshold: this.settings.basicThreshold,
+        weight: 1.0,
+      },
+      {
+        name: 'chain_analysis',
+        evaluator: () => this.chainEvaluation(myGameState.field).totalScore,
+        threshold: this.settings.detailedThreshold,
+        weight: 1.5,
+      },
+      {
+        name: 'strategy_analysis',
+        evaluator: () =>
+          this.strategyEvaluation(
+            myGameState,
+            opponentGameState,
+            gamePhase,
+            mayahSettings,
+          ).totalScore,
+        threshold: this.settings.treeThreshold,
+        weight: 2.0,
+      },
+    ]
+
+    const progressiveResult = progressiveEvaluation(
+      { myGameState, opponentGameState, gamePhase },
+      evaluators,
+    )
+
+    const basicComputeTime = performance.now() - startTime
+
+    let detailed: OptimizedEvaluationResult['detailed']
+
+    // 詳細評価が必要な場合
+    if (progressiveResult.evaluationsUsed.includes('strategy_analysis')) {
+      const detailedStart = performance.now()
+
+      const myChainEval = this.chainEvaluation(myGameState.field)
+      // 対戦相手の連鎖評価は戦略評価内で使用される
+
+      const strategyEval = this.strategyEvaluation(
+        myGameState,
+        opponentGameState,
+        gamePhase,
+        mayahSettings,
+      )
+
+      let rensaHandTree: RensaHandTree | undefined
+      if (progressiveResult.score >= this.settings.treeThreshold) {
+        rensaHandTree = this.treeEvaluation(
+          myGameState.field,
+          opponentGameState.field,
+          mayahSettings,
+        )
+      }
+
+      detailed = {
+        chainEvaluation: myChainEval,
+        strategyEvaluation: strategyEval,
+        rensaHandTree,
+        computeTime: performance.now() - detailedStart,
+      }
+    }
+
+    const result: OptimizedEvaluationResult = {
+      basic: {
+        score: progressiveResult.score,
+        computeTime: basicComputeTime,
+      },
+      detailed,
+      evaluationLevels: progressiveResult.evaluationsUsed,
+      cacheInfo: {
+        hits: this.cacheStats.hits,
+        misses: this.cacheStats.misses,
+        hitRate:
+          this.cacheStats.hits + this.cacheStats.misses > 0
+            ? this.cacheStats.hits /
+              (this.cacheStats.hits + this.cacheStats.misses)
+            : 0,
+      },
+    }
+
+    // キャッシュに保存
+    this.progressiveCache.set(cacheKey, result)
+    return result
+  }
 
   /**
    * 基本評価（最軽量）
@@ -394,12 +418,14 @@ export class OptimizedEvaluationService {
     fieldCache: { size: number; hitRate: number }
     strategyCache: { size: number; hitRate: number }
     treeCache: { size: number; hitRate: number }
+    progressiveCache: { size: number; hitRate: number }
     overall: { hits: number; misses: number; hitRate: number }
   } {
     return {
       fieldCache: this.fieldCache.getStats(),
       strategyCache: this.strategyCache.getStats(),
       treeCache: this.treeCache.getStats(),
+      progressiveCache: this.progressiveCache.getStats(),
       overall: {
         hits: this.cacheStats.hits,
         misses: this.cacheStats.misses,
@@ -419,6 +445,7 @@ export class OptimizedEvaluationService {
     this.fieldCache.clear()
     this.strategyCache.clear()
     this.treeCache.clear()
+    this.progressiveCache.clear()
     this.cacheStats = { hits: 0, misses: 0 }
   }
 }

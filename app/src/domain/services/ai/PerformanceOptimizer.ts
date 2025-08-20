@@ -105,6 +105,55 @@ export const generateFieldHash = (field: {
 }
 
 /**
+ * 初期最適解を検索
+ */
+const findInitialBest = <T>(
+  items: T[],
+  scorer: (item: T) => number,
+  threshold?: number,
+): { best: T; bestScore: number } | null => {
+  if (items.length === 0) return null
+
+  const best = items[0]
+  const bestScore = scorer(best)
+
+  // 閾値が設定されていて、最初の要素が既に満たしている場合は早期リターン
+  if (threshold && bestScore >= threshold) {
+    return { best, bestScore }
+  }
+
+  return { best, bestScore }
+}
+
+/**
+ * 残りの要素から最適解を検索
+ */
+const searchRemaining = <T>(
+  items: T[],
+  scorer: (item: T) => number,
+  initialBest: T,
+  initialScore: number,
+  threshold?: number,
+): { best: T; bestScore: number } => {
+  let best = initialBest
+  let bestScore = initialScore
+
+  for (let i = 1; i < items.length; i++) {
+    const score = scorer(items[i])
+    if (score > bestScore) {
+      best = items[i]
+      bestScore = score
+    }
+
+    if (threshold && bestScore >= threshold) {
+      break
+    }
+  }
+
+  return { best, bestScore }
+}
+
+/**
  * 配列の早期終了検索
  */
 export const findOptimal = <T>(
@@ -112,30 +161,22 @@ export const findOptimal = <T>(
   scorer: (item: T) => number,
   threshold?: number,
 ): T | null => {
-  if (items.length === 0) return null
+  const initial = findInitialBest(items, scorer, threshold)
+  if (!initial) return null
 
-  let best = items[0]
-  let bestScore = scorer(best)
-
-  // 閾値が設定されていて、最初の要素が既に満たしている場合は早期リターン
-  if (threshold && bestScore >= threshold) {
-    return best
+  // 既に閾値を満たしている場合は初期値を返す
+  if (threshold && initial.bestScore >= threshold) {
+    return initial.best
   }
 
-  // サイクロマティック複雑度を下げるため、シンプルなループに変更
-  for (let i = 1; i < items.length; i++) {
-    const score = scorer(items[i])
-    if (score > bestScore) {
-      best = items[i]
-      bestScore = score
-    }
-    // 閾値チェックを別々に実行
-    if (threshold && bestScore >= threshold) {
-      break
-    }
-  }
-
-  return best
+  const result = searchRemaining(
+    items,
+    scorer,
+    initial.best,
+    initial.bestScore,
+    threshold,
+  )
+  return result.best
 }
 
 /**

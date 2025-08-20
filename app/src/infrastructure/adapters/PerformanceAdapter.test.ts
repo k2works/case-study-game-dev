@@ -169,15 +169,15 @@ describe('PerformanceAdapter', () => {
   })
 
   describe('エラーハンドリング', () => {
-    test('データが不十分な場合はエラーが発生する', () => {
+    test('データが不十分な場合はデフォルト値を返す', () => {
       // Arrange
       const adapter = new PerformanceAdapter()
 
       // Act & Assert
-      expect(() => adapter.getAverageScore()).toThrow('データが不十分です')
-      expect(() => adapter.getAverageChain()).toThrow('データが不十分です')
-      expect(() => adapter.getChainSuccessRate()).toThrow('データが不十分です')
-      expect(() => adapter.getAveragePlayTime()).toThrow('データが不十分です')
+      expect(adapter.getAverageScore()).toBe(0)
+      expect(adapter.getAverageChain()).toBe(0)
+      expect(adapter.getChainSuccessRate()).toBe(0)
+      expect(adapter.getAveragePlayTime()).toBe(0)
     })
   })
 })

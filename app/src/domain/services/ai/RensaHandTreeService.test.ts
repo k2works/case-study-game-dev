@@ -8,6 +8,7 @@ import { DEFAULT_MAYAH_SETTINGS } from '../../models/ai/MayahEvaluation'
 import {
   type ChainSearchSettings,
   DEFAULT_CHAIN_SEARCH_SETTINGS,
+  type RensaNodeDetail,
   buildRensaHandTree,
   generateTreeVisualization,
 } from './RensaHandTreeService'
@@ -148,10 +149,10 @@ describe('RensaHandTreeService', () => {
       expect(result.tree.optimalTiming).toBeGreaterThan(0)
       // 両方とも連鎖がある場合はスコアが算出される
       expect(
-        (result.tree.myTree as any).accumulatedScore,
+        (result.tree.myTree as RensaNodeDetail).accumulatedScore,
       ).toBeGreaterThanOrEqual(0)
       expect(
-        (result.tree.opponentTree as any).accumulatedScore,
+        (result.tree.opponentTree as RensaNodeDetail).accumulatedScore,
       ).toBeGreaterThanOrEqual(0)
     })
 
@@ -198,7 +199,7 @@ describe('RensaHandTreeService', () => {
       const result = buildRensaHandTree(myField, opponentField)
 
       // Assert
-      const root = result.tree.myTree as any
+      const root = result.tree.myTree as RensaNodeDetail
       expect(root.chainLength).toBe(0)
       expect(root.accumulatedScore).toBe(0)
       expect(root.feasibility).toBe(1.0)
@@ -225,9 +226,9 @@ describe('RensaHandTreeService', () => {
       const result = buildRensaHandTree(myField, opponentField)
 
       // Assert
-      const root = result.tree.myTree as any
+      const root = result.tree.myTree as RensaNodeDetail
       if (root.children.length > 0) {
-        const child = root.children[0] as any
+        const child = root.children[0]
         expect(child.chainLength).toBeGreaterThan(root.chainLength)
         expect(child.accumulatedScore).toBeGreaterThanOrEqual(
           root.accumulatedScore,
@@ -253,11 +254,11 @@ describe('RensaHandTreeService', () => {
       const result = buildRensaHandTree(myField, opponentField)
 
       // Assert
-      const root = result.tree.myTree as any
+      const root = result.tree.myTree as RensaNodeDetail
       if (root.children.length > 1) {
         for (let i = 0; i < root.children.length - 1; i++) {
-          expect((root.children[i] as any).efficiency).toBeGreaterThanOrEqual(
-            (root.children[i + 1] as any).efficiency,
+          expect(root.children[i].efficiency).toBeGreaterThanOrEqual(
+            root.children[i + 1].efficiency,
           )
         }
       }

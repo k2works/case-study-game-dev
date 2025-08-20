@@ -263,18 +263,10 @@ describe('PerformanceAnalysisService', () => {
           totalChains: 0,
           sessions: [],
         }),
-        getAverageScore: vi.fn().mockImplementation(() => {
-          throw new Error('データが不十分です')
-        }),
-        getAverageChain: vi.fn().mockImplementation(() => {
-          throw new Error('データが不十分です')
-        }),
-        getChainSuccessRate: vi.fn().mockImplementation(() => {
-          throw new Error('データが不十分です')
-        }),
-        getAveragePlayTime: vi.fn().mockImplementation(() => {
-          throw new Error('データが不十分です')
-        }),
+        getAverageScore: vi.fn().mockReturnValue(0),
+        getAverageChain: vi.fn().mockReturnValue(0),
+        getChainSuccessRate: vi.fn().mockReturnValue(0),
+        getAveragePlayTime: vi.fn().mockReturnValue(0),
         generateComparisonReport: vi.fn(),
         clearData: vi.fn(),
         getSessionsInPeriod: vi.fn(),
