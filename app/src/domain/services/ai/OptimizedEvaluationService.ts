@@ -10,8 +10,8 @@ import type {
   RensaHandTree,
   StrategyEvaluation,
 } from '../../models/ai/MayahEvaluation'
-import type { AIMove as Move } from '../../models/ai/MoveTypes'
 import { DEFAULT_MAYAH_SETTINGS } from '../../models/ai/MayahEvaluation'
+import type { AIMove as Move } from '../../models/ai/MoveTypes'
 import { evaluateChain } from './ChainEvaluationService'
 import {
   type LRUCache,
