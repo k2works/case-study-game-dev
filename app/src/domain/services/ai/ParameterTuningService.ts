@@ -4,7 +4,14 @@
  */
 import type { AIFieldState, AIGameState } from '../../models/ai/GameState'
 import type { GamePhase } from '../../models/ai/MayahEvaluation'
-import { OptimizedEvaluationService } from './OptimizedEvaluationService'
+import { DEFAULT_MAYAH_SETTINGS } from '../../models/ai/MayahEvaluation'
+import {
+  type CacheState,
+  DEFAULT_OPTIMIZATION_SETTINGS,
+  type EvaluationContext,
+  createCacheState,
+  evaluateProgressive,
+} from './OptimizedEvaluationService'
 
 /**
  * チューニング対象パラメータ定義
@@ -115,11 +122,11 @@ export const DEFAULT_GA_SETTINGS: GeneticAlgorithmSettings = {
  * パラメータチューニングサービス
  */
 export class ParameterTuningService {
-  private evaluationService: OptimizedEvaluationService
+  private cacheState: CacheState
   private testCases: TestCase[]
 
   constructor() {
-    this.evaluationService = new OptimizedEvaluationService()
+    this.cacheState = createCacheState(DEFAULT_OPTIMIZATION_SETTINGS)
     this.testCases = this.createTestCases()
   }
 
@@ -570,12 +577,22 @@ export class ParameterTuningService {
     const myGameState = this.createGameState(testCase.myField)
     const opponentGameState = this.createGameState(testCase.opponentField)
 
-    // 評価実行（簡易版）
-    const result = this.evaluationService.evaluateProgressive(
+    // 評価実行（関数型）
+    const context: EvaluationContext = {
       myGameState,
       opponentGameState,
-      testCase.gamePhase,
+      gamePhase: testCase.gamePhase,
+      settings: DEFAULT_MAYAH_SETTINGS,
+      optimizationSettings: DEFAULT_OPTIMIZATION_SETTINGS,
+    }
+
+    const { result, newCacheState } = evaluateProgressive(
+      context,
+      this.cacheState,
     )
+
+    // キャッシュ状態を更新
+    this.cacheState = newCacheState
 
     // パラメータを使用した補正スコア計算
     const adjustedScore = this.applyParameterAdjustments(

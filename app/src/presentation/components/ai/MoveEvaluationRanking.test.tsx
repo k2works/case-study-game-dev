@@ -45,7 +45,7 @@ describe('MoveEvaluationRanking', () => {
     }
 
     if (detailed) {
-      result.detailed = {
+      ;(result as { detailed?: unknown }).detailed = {
         chainEvaluation: {
           patterns: [],
           chainPotential: 80.0,
@@ -83,7 +83,11 @@ describe('MoveEvaluationRanking', () => {
           battleEvaluation: 0,
         }, // 連鎖木あり
       }
-      result.evaluationLevels = ['basic', 'chain_analysis', 'strategy_analysis']
+      ;(result as { evaluationLevels?: unknown }).evaluationLevels = [
+        'basic',
+        'chain_analysis',
+        'strategy_analysis',
+      ]
     }
 
     return result

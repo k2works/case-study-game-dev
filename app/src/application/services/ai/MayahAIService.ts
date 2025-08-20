@@ -1,29 +1,36 @@
 /**
  * mayah AI評価システムを使用するAIサービス
- * OptimizedEvaluationServiceベースの高度な評価を提供
+ * FunctionalOptimizedEvaluationServiceベースの高度な評価を提供（関数型）
  */
 import type { GamePhase } from '../../../domain/models/ai/MayahEvaluation'
+import { DEFAULT_MAYAH_SETTINGS } from '../../../domain/models/ai/MayahEvaluation'
 import type {
   AIGameState,
   AIMove,
   AISettings,
   PossibleMove,
 } from '../../../domain/models/ai/index'
-import { OptimizedEvaluationService } from '../../../domain/services/ai/OptimizedEvaluationService'
-import type { OptimizedEvaluationResult } from '../../../domain/services/ai/OptimizedEvaluationService'
+import {
+  type CacheState,
+  DEFAULT_OPTIMIZATION_SETTINGS,
+  type EvaluationContext,
+  type OptimizedEvaluationResult,
+  createCacheState,
+  evaluateProgressive,
+} from '../../../domain/services/ai/OptimizedEvaluationService'
 import { determineGamePhase } from '../../../domain/services/ai/PhaseManagementService'
 import type { AIPort } from '../../ports/AIPort.ts'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort.ts'
 import { MoveGenerator } from './MoveGenerator'
 
 /**
- * mayah AI評価システムサービス実装
+ * mayah AI評価システムサービス実装（関数型）
  */
 export class MayahAIService implements AIPort {
   private settings: AISettings
   private enabled = false
   private moveGenerator: MoveGeneratorPort
-  private evaluationService: OptimizedEvaluationService
+  private cacheState: CacheState
   private lastEvaluationResult: OptimizedEvaluationResult | null = null
   private candidateMovesWithEvaluation: Array<{
     move: AIMove
@@ -37,7 +44,7 @@ export class MayahAIService implements AIPort {
       thinkingSpeed: 1000,
     }
     this.moveGenerator = new MoveGenerator()
-    this.evaluationService = new OptimizedEvaluationService()
+    this.cacheState = createCacheState(DEFAULT_OPTIMIZATION_SETTINGS)
   }
 
   /**
@@ -121,7 +128,7 @@ export class MayahAIService implements AIPort {
     // ゲームフェーズを判定
     const gamePhase = this.determineGamePhase(gameState)
 
-    // 各手をmayah AI評価システムで評価
+    // 各手をmayah AI評価システムで評価（関数型）
     const evaluatedMoves = possibleMoves.map((move, index) => {
       // ゲーム状態を作成（手を適用後の状態をシミュレーション）
       const myGameState = this.createValidGameState(gameState)
@@ -129,11 +136,23 @@ export class MayahAIService implements AIPort {
       // 相手は空の状態として仮定
       const opponentGameState = this.createEmptyOpponentState(gameState)
 
-      const evaluation = this.evaluationService.evaluateProgressive(
+      // 評価コンテキストを作成
+      const context: EvaluationContext = {
         myGameState,
         opponentGameState,
         gamePhase,
+        settings: DEFAULT_MAYAH_SETTINGS,
+        optimizationSettings: DEFAULT_OPTIMIZATION_SETTINGS,
+      }
+
+      // 関数型評価を実行
+      const { result: evaluation, newCacheState } = evaluateProgressive(
+        context,
+        this.cacheState,
       )
+
+      // キャッシュ状態を更新
+      this.cacheState = newCacheState
 
       return {
         move: {

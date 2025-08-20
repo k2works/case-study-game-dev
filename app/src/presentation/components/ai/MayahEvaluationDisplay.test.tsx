@@ -277,26 +277,27 @@ describe('MayahEvaluationDisplay', () => {
   it('連鎖木の有無が正しく表示される', () => {
     // Arrange
     const evaluationResult = createMockDetailedResult()
-    evaluationResult.detailed!.rensaHandTree = {
-      myTree: {
-        chainCount: 0,
-        score: 0,
-        frameCount: 0,
-        requiredPuyos: 0,
-        probability: 0,
-        children: [],
-      },
-      opponentTree: {
-        chainCount: 0,
-        score: 0,
-        frameCount: 0,
-        requiredPuyos: 0,
-        probability: 0,
-        children: [],
-      },
-      optimalTiming: 0,
-      battleEvaluation: 0,
-    } // 連鎖木あり
+    ;(evaluationResult.detailed! as { rensaHandTree?: unknown }).rensaHandTree =
+      {
+        myTree: {
+          chainCount: 0,
+          score: 0,
+          frameCount: 0,
+          requiredPuyos: 0,
+          probability: 0,
+          children: [],
+        },
+        opponentTree: {
+          chainCount: 0,
+          score: 0,
+          frameCount: 0,
+          requiredPuyos: 0,
+          probability: 0,
+          children: [],
+        },
+        optimalTiming: 0,
+        battleEvaluation: 0,
+      } // 連鎖木あり
 
     // Act
     render(

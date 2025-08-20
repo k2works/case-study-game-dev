@@ -41,7 +41,7 @@ export const MayahEvaluationDisplay = ({
         <>
           <BasicEvaluationCard evaluation={evaluationResult.basic} />
           <EvaluationLevelsCard
-            levels={evaluationResult.evaluationLevels}
+            levels={[...evaluationResult.evaluationLevels]}
             cacheInfo={evaluationResult.cacheInfo}
           />
 
