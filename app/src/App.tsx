@@ -4,6 +4,7 @@ import type { AIPort } from './application/ports/AIPort.ts'
 import type { GamePort } from './application/ports/GamePort'
 import type { InputPort } from './application/ports/InputPort'
 import type { PerformanceAnalysisService } from './application/services/PerformanceAnalysisService'
+import type { MayahEvaluationResult } from './application/services/ai/MayahAIService'
 import type { StrategyService } from './application/services/ai/StrategyService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AIMove, AISettings } from './domain/models/ai'
@@ -11,9 +12,9 @@ import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { AIControlPanel } from './presentation/components/ai/AIControlPanel'
-import { AIInsights } from './presentation/components/ai/AIInsights'
+import { MayahAIEvaluationDisplay } from './presentation/components/ai/MayahAIEvaluationDisplay'
+import './presentation/components/ai/MayahAIEvaluationDisplay.css'
 import { PerformanceAnalysis } from './presentation/components/ai/PerformanceAnalysis'
-import { StrategySettings } from './presentation/components/ai/StrategySettings'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useKeyboard } from './presentation/hooks/useKeyboard'
 import { usePerformanceAnalysis } from './presentation/hooks/usePerformanceAnalysis'
@@ -228,13 +229,12 @@ const GameLayout = ({
   handleReset,
   aiEnabled,
   aiSettings,
-  aiService,
   onToggleAI,
   onAISettingsChange,
-  lastAIMove,
-  isAIThinking,
   performanceService,
-  strategyService,
+  mayahEvaluationResult,
+  candidateMoves,
+  currentPhase,
 }: {
   game: GameViewModel
   gameService: GamePort
@@ -249,6 +249,13 @@ const GameLayout = ({
   isAIThinking: boolean
   performanceService: PerformanceAnalysisService
   strategyService: StrategyService
+  mayahEvaluationResult: MayahEvaluationResult | null
+  candidateMoves: Array<{
+    move: { x: number; rotation: number; score: number }
+    evaluation: MayahEvaluationResult
+    rank: number
+  }>
+  currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c'
 }) => {
   const { statistics, comparisonReport, resetData } = usePerformanceAnalysis({
     performanceService,
@@ -277,9 +284,6 @@ const GameLayout = ({
                 onSettingsChange={onAISettingsChange}
               />
 
-              {/* AI判断詳細表示 */}
-              <AIInsights lastAIMove={lastAIMove} isThinking={isAIThinking} />
-
               {/* ゲーム制御ボタン */}
               <GameControlButtons
                 game={game}
@@ -297,32 +301,21 @@ const GameLayout = ({
           </div>
         </div>
 
+        {/* Mayah AI評価表示パネル */}
+        <div className="mt-8">
+          <MayahAIEvaluationDisplay
+            evaluationResult={mayahEvaluationResult}
+            candidateMoves={candidateMoves}
+            currentPhase={currentPhase}
+          />
+        </div>
+
         {/* パフォーマンス分析パネル */}
         <div className="mt-8">
           <PerformanceAnalysis
             statistics={statistics}
             comparisonReport={comparisonReport}
             onResetData={resetData}
-          />
-        </div>
-
-        {/* 戦略設定パネル */}
-        <div className="mt-8">
-          <StrategySettings
-            strategyService={strategyService}
-            onStrategyChange={async () => {
-              // AIサービスに戦略更新を通知
-              if (aiService && 'updateStrategy' in aiService) {
-                try {
-                  await (
-                    aiService as { updateStrategy: () => Promise<void> }
-                  ).updateStrategy()
-                  console.log('AI戦略を更新しました')
-                } catch (error) {
-                  console.warn('AI戦略更新に失敗:', error)
-                }
-              }
-            }}
           />
         </div>
 
@@ -373,6 +366,20 @@ function App() {
   const [lastAIMove, setLastAIMove] = useState<AIMove | null>(null)
   const [isAIThinking, setIsAIThinking] = useState(false)
   const aiTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Mayah AI評価状態管理
+  const [mayahEvaluationResult, setMayahEvaluationResult] =
+    useState<MayahEvaluationResult | null>(null)
+  const [candidateMoves, setCandidateMoves] = useState<
+    Array<{
+      move: { x: number; rotation: number; score: number }
+      evaluation: MayahEvaluationResult
+      rank: number
+    }>
+  >([])
+  const [currentPhase] = useState<'Phase 4a' | 'Phase 4b' | 'Phase 4c'>(
+    'Phase 4a',
+  )
 
   // デバッグ用にE2Eテストからアクセス可能にする
   if (
@@ -498,6 +505,43 @@ function App() {
     [createKeyboardInput, inputService, gameService, executeHorizontalMoves],
   )
 
+  // MayahAI評価結果をUIに更新するヘルパー関数
+  const updateMayahAIEvaluationResults = useCallback((service: AIPort) => {
+    if (!service || !('getLastEvaluation' in service) || !('getLastCandidateMoves' in service)) {
+      return
+    }
+
+    const mayahService = service as unknown as {
+      getLastEvaluation: () => MayahEvaluationResult | null
+      getLastCandidateMoves: () => Array<{
+        move: { x: number; rotation: number; score: number }
+        evaluation: MayahEvaluationResult
+        rank: number
+      }>
+    }
+
+    const evaluationResult = mayahService.getLastEvaluation()
+    const candidates = mayahService.getLastCandidateMoves()
+
+    if (evaluationResult) {
+      setMayahEvaluationResult(evaluationResult)
+    }
+
+    if (candidates && candidates.length > 0) {
+      setCandidateMoves(
+        candidates.map((candidate, index) => ({
+          move: {
+            x: candidate.move.x,
+            rotation: candidate.move.rotation,
+            score: candidate.evaluation.score,
+          },
+          evaluation: candidate.evaluation,
+          rank: index + 1,
+        })),
+      )
+    }
+  }, [])
+
   // AI自動プレイのロジック
   const executeAIMove = useCallback(async () => {
     if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
@@ -517,6 +561,10 @@ function App() {
 
       // AI判断の詳細を記録
       setLastAIMove(aiMove)
+
+      // MayahAIServiceの場合、評価結果を取得してUIに表示
+      updateMayahAIEvaluationResults(aiService)
+
       setIsAIThinking(false)
 
       const updatedGame = executeAIMoveActions(game, aiMove)
@@ -533,6 +581,7 @@ function App() {
     convertToAIGameState,
     executeAIMoveActions,
     updateGame,
+    updateMayahAIEvaluationResults,
   ])
 
   // AI自動プレイのタイマー管理
@@ -622,6 +671,9 @@ function App() {
       isAIThinking={isAIThinking}
       performanceService={performanceService}
       strategyService={strategyService}
+      mayahEvaluationResult={mayahEvaluationResult}
+      candidateMoves={candidateMoves}
+      currentPhase={currentPhase}
     />
   )
 }
