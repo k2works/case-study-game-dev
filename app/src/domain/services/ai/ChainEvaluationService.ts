@@ -26,7 +26,8 @@ export const ChainPatternType = {
   SAKURA: 'sakura', // さくら積み
 } as const
 
-export type ChainPatternType = (typeof ChainPatternType)[keyof typeof ChainPatternType]
+export type ChainPatternType =
+  (typeof ChainPatternType)[keyof typeof ChainPatternType]
 
 /**
  * 色の組み合わせ
@@ -158,54 +159,75 @@ const CHAIN_PATTERNS: ChainPatternDefinition[] = [
  */
 export const detectChainPatterns = (
   field: AIFieldState,
-  _settings: MayahEvaluationSettings = DEFAULT_MAYAH_SETTINGS,
+  settings: MayahEvaluationSettings = DEFAULT_MAYAH_SETTINGS,
 ): ChainPattern[] => {
   const detectedPatterns: ChainPattern[] = []
   const columnHeights = calculateColumnHeights(field)
+  const range = findPuyoRange(columnHeights, field.width)
 
-  // 単純化：ぷよが配置されている範囲でパターンを生成
-  let startX = -1
-  let endX = -1
-  
-  // ぷよがある範囲を探す
-  for (let x = 0; x < field.width; x++) {
-    if (columnHeights[x] > 0) {
-      if (startX === -1) startX = x
-      endX = x
-    }
-  }
-  
   // ぷよがない場合は空の配列を返す
-  if (startX === -1) {
+  if (range.startX === -1) {
     return detectedPatterns
   }
-  
+
   // 各パターンタイプについて基本的なパターンを生成
   for (const pattern of CHAIN_PATTERNS) {
-    const columns = endX - startX + 1
-    
+    const columns = range.endX - range.startX + 1
     if (columns >= pattern.minColumns) {
-      // 基本的なパターンを生成
-      const basicPattern: ChainPattern = {
-        type: pattern.type,
-        name: pattern.name,
-        description: pattern.description,
-        position: { startX, endX, columns },
-        completeness: Math.min(columns / pattern.maxColumns, 1.0),
-        triggerability: 0.5, // デフォルト値
-        extensibility: 0.3, // デフォルト値
-        potential: Math.round((0.5 * 40 + 0.5 * 35 + 0.3 * 25) * 100),
-        efficiency: pattern.efficiency,
-        difficulty: pattern.difficulty,
-        stability: pattern.stability,
-        requiredColors: pattern.colorCombinations[0]?.primary || ['red', 'blue'],
-      }
-      
+      const basicPattern = createBasicPattern(pattern, range, settings)
       detectedPatterns.push(basicPattern)
     }
   }
 
   return detectedPatterns.sort((a, b) => b.potential - a.potential)
+}
+
+/**
+ * ぷよの配置範囲を見つける
+ */
+const findPuyoRange = (columnHeights: number[], width: number) => {
+  let startX = -1
+  let endX = -1
+
+  for (let x = 0; x < width; x++) {
+    if (columnHeights[x] > 0) {
+      if (startX === -1) startX = x
+      endX = x
+    }
+  }
+
+  return { startX, endX }
+}
+
+/**
+ * 基本パターンを作成
+ */
+const createBasicPattern = (
+  pattern: ChainPatternDefinition,
+  range: { startX: number; endX: number },
+  settings: MayahEvaluationSettings,
+): ChainPattern => {
+  const columns = range.endX - range.startX + 1
+  const completeness = Math.min(columns / pattern.maxColumns, 1.0)
+  const triggerability = settings.minChainCompleteness || 0.5
+  const extensibility = 0.3
+
+  return {
+    type: pattern.type,
+    name: pattern.name,
+    description: pattern.description,
+    position: { startX: range.startX, endX: range.endX, columns },
+    completeness,
+    triggerability,
+    extensibility,
+    potential: Math.round(
+      (completeness * 40 + triggerability * 35 + extensibility * 25) * 100,
+    ),
+    efficiency: pattern.efficiency,
+    difficulty: pattern.difficulty,
+    stability: pattern.stability,
+    requiredColors: pattern.colorCombinations[0]?.primary || ['red', 'blue'],
+  }
 }
 
 /**
@@ -228,7 +250,7 @@ export const detectChainPatterns = (
 //         startX,
 //         settings,
 //       )
-      
+
 //       if (match && match.completeness > settings.minChainCompleteness) {
 //         matches.push(match)
 //       }
@@ -259,14 +281,14 @@ export const detectChainPatterns = (
 //   const columnHeights = calculateColumnHeights(field)
 //   let occupiedColumns = 0
 //   let totalPuyos = 0
-  
+
 //   for (let x = startX; x <= endX; x++) {
 //     if (columnHeights[x] > 0) {
 //       occupiedColumns++
 //       totalPuyos += columnHeights[x]
 //     }
 //   }
-  
+
 //   // 基本的な存在チェック：最低1つのぷよがあれば検出
 //   if (totalPuyos === 0) {
 //     return null
@@ -274,7 +296,7 @@ export const detectChainPatterns = (
 
 //   // 簡素化された完成度計算
 //   const completeness = Math.min(occupiedColumns / columnCount, 1.0)
-  
+
 //   // 非常に寛容な閾値
 //   if (completeness < 0.1) {
 //     return null
@@ -330,17 +352,17 @@ export const detectChainPatterns = (
 //   // より寛容なパターンマッチング：同色のぷよがあるかどうかをチェック
 //   const allExpectedColors = [...colorCombo.primary, ...colorCombo.secondary, ...colorCombo.trigger]
 //   const uniqueColors = [...new Set(allExpectedColors)]
-  
+
 //   for (let x = startX; x <= endX; x++) {
 //     const height = columnHeights[x]
-    
+
 //     if (height === 0) {
 //       // 空の列でも基本スコアを与える（将来のポテンシャル）
 //       totalColorChecks += 1
 //       totalColorMatches += 0.1
 //       continue
 //     }
-    
+
 //     // この列に配置されたぷよの色をチェック
 //     const columnColors = new Set<string>()
 //     for (let y = field.height - height; y < field.height; y++) {
@@ -349,7 +371,7 @@ export const detectChainPatterns = (
 //         columnColors.add(cellColor)
 //       }
 //     }
-    
+
 //     // 期待される色との照合
 //     for (const expectedColor of uniqueColors) {
 //       totalColorChecks++
@@ -394,7 +416,7 @@ export const detectChainPatterns = (
 //         }
 //       }
 //     }
-    
+
 //     if (triggerPresent) {
 //       triggerScore += 0.9 // 既にトリガー配置済み
 //     } else if (spaceRemaining >= 3) {
@@ -460,7 +482,7 @@ export const detectChainPatterns = (
 //   columnIndex: number,
 // ): string[] => {
 //   const allColors = [...colorCombo.primary, ...colorCombo.secondary, ...colorCombo.trigger]
-  
+
 //   // 簡易実装: 列インデックスに基づいて色を分散
 //   switch (columnIndex) {
 //     case 0:
@@ -479,7 +501,7 @@ export const detectChainPatterns = (
  */
 const calculateColumnHeights = (field: AIFieldState): number[] => {
   const heights: number[] = []
-  
+
   for (let x = 0; x < field.width; x++) {
     let height = 0
     for (let y = field.height - 1; y >= 0; y--) {
@@ -490,7 +512,7 @@ const calculateColumnHeights = (field: AIFieldState): number[] => {
     }
     heights.push(height)
   }
-  
+
   return heights
 }
 
@@ -502,28 +524,28 @@ export const evaluateChain = (
   settings: MayahEvaluationSettings = DEFAULT_MAYAH_SETTINGS,
 ): ChainEvaluation => {
   const patterns = detectChainPatterns(field, settings)
-  
+
   // 最高ポテンシャルのパターンを基準とする
   const bestPattern = patterns[0]
   const chainPotential = bestPattern ? bestPattern.potential : 0
-  
+
   // パターンの多様性スコア
   const diversityScore = calculateDiversityScore(patterns)
-  
+
   // 連鎖の安定性スコア
   const stabilityScore = calculateStabilityScore(patterns)
-  
+
   // 実現可能性スコア
   const feasibilityScore = calculateFeasibilityScore(patterns, field)
-  
+
   // 総合スコア計算
   const totalScore = Math.round(
     chainPotential * 0.4 +
-    diversityScore * 0.2 +
-    stabilityScore * 0.2 +
-    feasibilityScore * 0.2,
+      diversityScore * 0.2 +
+      stabilityScore * 0.2 +
+      feasibilityScore * 0.2,
   )
-  
+
   return {
     patterns,
     bestPattern,
@@ -540,10 +562,10 @@ export const evaluateChain = (
  */
 const calculateDiversityScore = (patterns: ChainPattern[]): number => {
   if (patterns.length === 0) return 0
-  
-  const uniqueTypes = new Set(patterns.map(p => p.type))
+
+  const uniqueTypes = new Set(patterns.map((p) => p.type))
   const diversityRatio = uniqueTypes.size / CHAIN_PATTERNS.length
-  
+
   return Math.min(diversityRatio * 100, 100)
 }
 
@@ -552,62 +574,70 @@ const calculateDiversityScore = (patterns: ChainPattern[]): number => {
  */
 const calculateStabilityScore = (patterns: ChainPattern[]): number => {
   if (patterns.length === 0) return 0
-  
-  const avgStability = patterns.reduce((sum, p) => sum + p.stability, 0) / patterns.length
+
+  const avgStability =
+    patterns.reduce((sum, p) => sum + p.stability, 0) / patterns.length
   return Math.round(avgStability * 100)
 }
 
 /**
  * 実現可能性スコアを計算
  */
-const calculateFeasibilityScore = (patterns: ChainPattern[], field: AIFieldState): number => {
+const calculateFeasibilityScore = (
+  patterns: ChainPattern[],
+  field: AIFieldState,
+): number => {
   if (patterns.length === 0) return 0
-  
+
   const columnHeights = calculateColumnHeights(field)
   const maxHeight = Math.max(...columnHeights)
   const remainingSpace = field.height - maxHeight
-  
+
   // 残りスペースに基づく実現可能性
   let feasibilitySum = 0
   for (const pattern of patterns) {
-    const requiredSpace = pattern.requiredColors.length / pattern.position.columns
-    const spaceFeasibility = remainingSpace >= requiredSpace ? 1 : remainingSpace / requiredSpace
+    const requiredSpace =
+      pattern.requiredColors.length / pattern.position.columns
+    const spaceFeasibility =
+      remainingSpace >= requiredSpace ? 1 : remainingSpace / requiredSpace
     const completenessBonus = pattern.completeness * 0.5
     feasibilitySum += (spaceFeasibility * 0.7 + completenessBonus * 0.3) * 100
   }
-  
+
   return patterns.length > 0 ? Math.round(feasibilitySum / patterns.length) : 0
 }
 
 /**
  * 連鎖パターンの説明を生成
  */
-export const generateChainDescription = (evaluation: ChainEvaluation): string => {
+export const generateChainDescription = (
+  evaluation: ChainEvaluation,
+): string => {
   if (evaluation.patterns.length === 0) {
     return '連鎖パターン未検出'
   }
-  
+
   const best = evaluation.bestPattern!
   const patternCount = evaluation.patterns.length
-  
+
   let description = `${best.name}(${best.potential}pt)`
-  
+
   if (patternCount > 1) {
     description += ` +${patternCount - 1}パターン`
   }
-  
+
   if (evaluation.diversityScore >= 60) {
     description += ', 多様性良好'
   }
-  
+
   if (evaluation.stabilityScore >= 70) {
     description += ', 安定性良好'
   }
-  
+
   if (evaluation.feasibilityScore >= 70) {
     description += ', 実現性高'
   }
-  
+
   return description
 }
 
@@ -620,12 +650,15 @@ export const selectBestChainPattern = (
   if (patterns.length === 0) {
     return null
   }
-  
+
   // ポテンシャル・完成度・実現可能性の複合評価でソート
-  const scoredPatterns = patterns.map(pattern => ({
+  const scoredPatterns = patterns.map((pattern) => ({
     ...pattern,
-    compositeScore: pattern.potential * 0.5 + pattern.completeness * 30 + pattern.triggerability * 20,
+    compositeScore:
+      pattern.potential * 0.5 +
+      pattern.completeness * 30 +
+      pattern.triggerability * 20,
   }))
-  
+
   return scoredPatterns.sort((a, b) => b.compositeScore - a.compositeScore)[0]
 }

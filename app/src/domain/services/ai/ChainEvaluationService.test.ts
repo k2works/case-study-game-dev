@@ -46,18 +46,18 @@ describe('ChainEvaluationService', () => {
     it('GTRパターンの基本形を検出', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // GTRパターンを構築（3列）
-      setCell(field, 0, 8, 'green')  // 緑縦
+      setCell(field, 0, 8, 'green') // 緑縦
       setCell(field, 0, 9, 'green')
       setCell(field, 0, 10, 'green')
       setCell(field, 0, 11, 'green')
-      
-      setCell(field, 1, 9, 'red')    // 赤横
+
+      setCell(field, 1, 9, 'red') // 赤横
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
-      
-      setCell(field, 2, 10, 'blue')  // トリガー
+
+      setCell(field, 2, 10, 'blue') // トリガー
       setCell(field, 2, 11, 'red')
 
       // Act
@@ -66,20 +66,20 @@ describe('ChainEvaluationService', () => {
       // Assert
       expect(patterns.length).toBeGreaterThan(0)
       // GTRパターンが含まれることを期待
-      const gtrPattern = patterns.find(p => p.type === ChainPatternType.GTR)
+      const gtrPattern = patterns.find((p) => p.type === ChainPatternType.GTR)
       expect(gtrPattern).toBeDefined()
     })
 
     it('L字積みパターンを検出', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // L字積みパターンを構築（2列）
-      setCell(field, 1, 9, 'red')    // L字の縦部分
+      setCell(field, 1, 9, 'red') // L字の縦部分
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
-      
-      setCell(field, 2, 10, 'blue')  // L字の横部分
+
+      setCell(field, 2, 10, 'blue') // L字の横部分
       setCell(field, 2, 11, 'blue')
 
       // Act
@@ -87,14 +87,16 @@ describe('ChainEvaluationService', () => {
 
       // Assert
       expect(patterns.length).toBeGreaterThan(0)
-      const lstPattern = patterns.find(p => p.type === ChainPatternType.LST_STACKING)
+      const lstPattern = patterns.find(
+        (p) => p.type === ChainPatternType.LST_STACKING,
+      )
       expect(lstPattern).toBeDefined()
     })
 
     it('階段積みパターンを検出', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 階段状の配置（4列以上）
       setCell(field, 0, 11, 'red')
       setCell(field, 1, 10, 'red')
@@ -109,20 +111,22 @@ describe('ChainEvaluationService', () => {
 
       // Assert
       expect(patterns.length).toBeGreaterThan(0)
-      const stairsPattern = patterns.find(p => p.type === ChainPatternType.STAIRS)
+      const stairsPattern = patterns.find(
+        (p) => p.type === ChainPatternType.STAIRS,
+      )
       expect(stairsPattern).toBeDefined()
     })
 
     it('複数パターンが同時に検出される', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 複数のパターンを同じフィールドに配置
       // 左側にL字積み
       setCell(field, 0, 10, 'red')
       setCell(field, 0, 11, 'red')
       setCell(field, 1, 11, 'blue')
-      
+
       // 右側に階段積み
       setCell(field, 3, 11, 'green')
       setCell(field, 4, 10, 'yellow')
@@ -141,7 +145,7 @@ describe('ChainEvaluationService', () => {
     it('パターンがポテンシャル順にソートされる', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 異なる完成度のパターンを配置
       // 完成度の高いGTRパターン
       setCell(field, 0, 8, 'green')
@@ -152,7 +156,7 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 10, 'blue')
-      
+
       // 完成度の低いL字積み
       setCell(field, 4, 11, 'red')
 
@@ -162,7 +166,9 @@ describe('ChainEvaluationService', () => {
       // Assert
       expect(patterns.length).toBeGreaterThanOrEqual(2)
       // 1番目のパターンが2番目より高いポテンシャルを持つ
-      expect(patterns[0].potential).toBeGreaterThanOrEqual(patterns[1].potential)
+      expect(patterns[0].potential).toBeGreaterThanOrEqual(
+        patterns[1].potential,
+      )
     })
   })
 
@@ -187,7 +193,7 @@ describe('ChainEvaluationService', () => {
     it('GTRパターンのある場合の評価', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 完全なGTRパターンを構築
       setCell(field, 0, 8, 'green')
       setCell(field, 0, 9, 'green')
@@ -213,7 +219,7 @@ describe('ChainEvaluationService', () => {
     it('複数パターンでの多様性評価', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 異なる種類のパターンを配置
       // GTRパターン
       setCell(field, 0, 10, 'green')
@@ -221,7 +227,7 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 11, 'blue')
-      
+
       // 階段積み
       setCell(field, 3, 11, 'yellow')
       setCell(field, 4, 10, 'purple')
@@ -240,7 +246,7 @@ describe('ChainEvaluationService', () => {
     it('安定性の高いパターンでの評価', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // L字積み（安定性が高い）
       setCell(field, 1, 9, 'red')
       setCell(field, 1, 10, 'red')
@@ -259,14 +265,14 @@ describe('ChainEvaluationService', () => {
     it('実現可能性の評価', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 残りスペースが少ない状況でのパターン
       for (let x = 0; x < 6; x++) {
         for (let y = 6; y < 11; y++) {
           setCell(field, x, y, 'red')
         }
       }
-      
+
       // 上部に少しパターンを作る
       setCell(field, 2, 5, 'blue')
       setCell(field, 3, 5, 'blue')
@@ -285,7 +291,7 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 11, 'blue')
-      
+
       const customSettings = {
         ...DEFAULT_MAYAH_SETTINGS,
         minChainCompleteness: 0.8, // 完成度閾値を高く設定
@@ -297,7 +303,7 @@ describe('ChainEvaluationService', () => {
       // Assert
       // 高い閾値により検出されるパターンが減る
       expect(evaluation.patterns.length).toBeLessThanOrEqual(
-        detectChainPatterns(field).length
+        detectChainPatterns(field).length,
       )
     })
   })
@@ -330,7 +336,7 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 11, 'blue')
-      
+
       const evaluation = evaluateChain(field)
 
       // Act
@@ -344,7 +350,7 @@ describe('ChainEvaluationService', () => {
     it('高品質パターンの説明に修飾語が付く', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 複数の高品質パターンを配置
       setCell(field, 0, 9, 'green')
       setCell(field, 0, 10, 'green')
@@ -352,7 +358,7 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 11, 'blue')
-      
+
       setCell(field, 3, 10, 'yellow')
       setCell(field, 3, 11, 'yellow')
       setCell(field, 4, 11, 'purple')
@@ -364,7 +370,7 @@ describe('ChainEvaluationService', () => {
 
       // Assert
       // 多様性、安定性、実現性のいずれかの修飾語が含まれることを期待
-      const hasQualityModifier = 
+      const hasQualityModifier =
         description.includes('多様性') ||
         description.includes('安定性') ||
         description.includes('実現性')
@@ -374,12 +380,12 @@ describe('ChainEvaluationService', () => {
     it('複数パターン検出時の説明', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 異なるパターンを配置
       setCell(field, 0, 10, 'red')
       setCell(field, 0, 11, 'red')
       setCell(field, 1, 11, 'blue')
-      
+
       setCell(field, 3, 11, 'green')
       setCell(field, 4, 10, 'yellow')
       setCell(field, 4, 11, 'green')
@@ -411,7 +417,7 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 11, 'blue')
-      
+
       const patterns = detectChainPatterns(field)
 
       // Act
@@ -425,7 +431,7 @@ describe('ChainEvaluationService', () => {
     it('複数パターンから最適なものを選択', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 高品質なGTRパターン
       setCell(field, 0, 8, 'green')
       setCell(field, 0, 9, 'green')
@@ -435,11 +441,11 @@ describe('ChainEvaluationService', () => {
       setCell(field, 1, 10, 'red')
       setCell(field, 1, 11, 'red')
       setCell(field, 2, 10, 'blue')
-      
+
       // 低品質な階段積み
       setCell(field, 4, 11, 'yellow')
       setCell(field, 5, 11, 'purple')
-      
+
       const patterns = detectChainPatterns(field)
 
       // Act
@@ -454,18 +460,18 @@ describe('ChainEvaluationService', () => {
     it('複合スコアによる選択', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 複数パターンを配置
       setCell(field, 0, 10, 'red')
       setCell(field, 0, 11, 'red')
       setCell(field, 1, 11, 'blue')
-      
+
       setCell(field, 3, 9, 'green')
       setCell(field, 3, 10, 'green')
       setCell(field, 3, 11, 'green')
       setCell(field, 4, 10, 'yellow')
       setCell(field, 4, 11, 'yellow')
-      
+
       const patterns = detectChainPatterns(field)
 
       // Act
@@ -476,10 +482,11 @@ describe('ChainEvaluationService', () => {
       // 複合スコアが最も高いパターンが選択される
       if (patterns.length > 1) {
         // bestがpatternsに含まれていることを確認
-        const bestExists = patterns.some(p => 
-          p.type === best?.type && 
-          p.position.startX === best?.position.startX &&
-          p.position.endX === best?.position.endX
+        const bestExists = patterns.some(
+          (p) =>
+            p.type === best?.type &&
+            p.position.startX === best?.position.startX &&
+            p.position.endX === best?.position.endX,
         )
         expect(bestExists).toBe(true)
       }
@@ -490,7 +497,7 @@ describe('ChainEvaluationService', () => {
     it('GTRパターンは高効率', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 完全なGTRパターン
       setCell(field, 0, 8, 'green')
       setCell(field, 0, 9, 'green')
@@ -504,7 +511,7 @@ describe('ChainEvaluationService', () => {
 
       // Act
       const patterns = detectChainPatterns(field)
-      const gtrPattern = patterns.find(p => p.type === ChainPatternType.GTR)
+      const gtrPattern = patterns.find((p) => p.type === ChainPatternType.GTR)
 
       // Assert
       expect(gtrPattern).toBeDefined()
@@ -514,7 +521,7 @@ describe('ChainEvaluationService', () => {
     it('L字積みは高安定性', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // L字積みパターン
       setCell(field, 1, 9, 'red')
       setCell(field, 1, 10, 'red')
@@ -524,7 +531,9 @@ describe('ChainEvaluationService', () => {
 
       // Act
       const patterns = detectChainPatterns(field)
-      const lstPattern = patterns.find(p => p.type === ChainPatternType.LST_STACKING)
+      const lstPattern = patterns.find(
+        (p) => p.type === ChainPatternType.LST_STACKING,
+      )
 
       // Assert
       expect(lstPattern).toBeDefined()
@@ -534,7 +543,7 @@ describe('ChainEvaluationService', () => {
     it('フラクタルは高難易度', () => {
       // Arrange
       const field = createTestField(6, 12)
-      
+
       // 複雑なフラクタルパターン
       setCell(field, 0, 7, 'red')
       setCell(field, 0, 8, 'red')
@@ -548,7 +557,9 @@ describe('ChainEvaluationService', () => {
 
       // Act
       const patterns = detectChainPatterns(field)
-      const fractalPattern = patterns.find(p => p.type === ChainPatternType.FRACTAL)
+      const fractalPattern = patterns.find(
+        (p) => p.type === ChainPatternType.FRACTAL,
+      )
 
       // Assert
       if (fractalPattern) {
