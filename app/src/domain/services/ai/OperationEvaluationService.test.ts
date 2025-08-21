@@ -1,5 +1,5 @@
 /**
- * OperationEvaluationService のテスト
+ * OperationEvaluationService のテスト (mayah型操作評価)
  */
 import { describe, expect, test } from 'vitest'
 
@@ -7,32 +7,35 @@ import type { PuyoColor } from '../../models/Puyo'
 import type { AIGameState, PossibleMove } from '../../models/ai'
 import { evaluateMove } from './OperationEvaluationService'
 
-describe('OperationEvaluationService (関数型)', () => {
+describe('OperationEvaluationService (mayah型)', () => {
   // テスト用のゲーム状態を作成
   const createTestGameState = (
     customField?: (PuyoColor | null)[][],
     primaryColor: PuyoColor = 'red',
     secondaryColor: PuyoColor = 'blue',
   ): AIGameState => {
-    const defaultField = Array(12)
+    const defaultField = Array(13)
       .fill(null)
       .map(() => Array(6).fill(null))
 
     return {
       field: {
         width: 6,
-        height: 12,
+        height: 13,
         cells: customField || defaultField,
       },
       currentPuyoPair: {
-        primaryColor,
-        secondaryColor,
+        primaryColor: primaryColor,
+        secondaryColor: secondaryColor,
         x: 2,
         y: 0,
         rotation: 0,
       },
       nextPuyoPair: null,
       score: 0,
+      chainCount: 0,
+      turn: 1,
+      isGameOver: false,
     }
   }
 
@@ -44,8 +47,8 @@ describe('OperationEvaluationService (関数型)', () => {
     x,
     rotation,
     isValid: true,
-    primaryPosition: { x, y: 0 },
-    secondaryPosition: { x, y: 0 },
+    primaryPosition: { x, y: 11 },
+    secondaryPosition: { x, y: 12 },
   })
 
   describe('基本評価機能', () => {
@@ -60,11 +63,12 @@ describe('OperationEvaluationService (関数型)', () => {
       // Assert
       expect(result).toBeDefined()
       expect(result.totalScore).toBeGreaterThan(0)
-      expect(result.reason).toContain('Phase 4c関数型評価')
-      expect(typeof result.baseScore).toBe('number')
-      expect(typeof result.positionScore).toBe('number')
-      expect(typeof result.colorScore).toBe('number')
-      expect(typeof result.chainPotentialScore).toBe('number')
+      expect(result.reason).toContain('操作評価')
+      expect(typeof result.frameCount).toBe('number')
+      expect(typeof result.frameScore).toBe('number')
+      expect(typeof result.tearCount).toBe('number')
+      expect(typeof result.tearScore).toBe('number')
+      expect(typeof result.efficiencyScore).toBe('number')
     })
 
     test('評価結果の構造が正しい', () => {
@@ -77,10 +81,11 @@ describe('OperationEvaluationService (関数型)', () => {
 
       // Assert
       expect(result).toMatchObject({
-        baseScore: expect.any(Number),
-        positionScore: expect.any(Number),
-        colorScore: expect.any(Number),
-        chainPotentialScore: expect.any(Number),
+        frameCount: expect.any(Number),
+        frameScore: expect.any(Number),
+        tearCount: expect.any(Number),
+        tearScore: expect.any(Number),
+        efficiencyScore: expect.any(Number),
         totalScore: expect.any(Number),
         reason: expect.any(String),
       })
@@ -96,16 +101,13 @@ describe('OperationEvaluationService (関数型)', () => {
 
       // Assert
       const expectedTotal =
-        result.baseScore +
-        result.positionScore +
-        result.colorScore +
-        result.chainPotentialScore
+        result.frameScore + result.tearScore + result.efficiencyScore
       expect(result.totalScore).toBe(expectedTotal)
     })
   })
 
-  describe('基本スコア計算', () => {
-    test('中央配置が高スコアになる', () => {
+  describe('フレーム数評価', () => {
+    test('中央配置が高速になる', () => {
       // Arrange
       const gameState = createTestGameState()
       const centerMove = createTestMove(2, 0) // 中央
@@ -116,280 +118,210 @@ describe('OperationEvaluationService (関数型)', () => {
       const edgeResult = evaluateMove(edgeMove, gameState)
 
       // Assert
-      expect(centerResult.baseScore).toBeGreaterThan(edgeResult.baseScore)
+      expect(centerResult.frameCount).toBeLessThan(edgeResult.frameCount)
+      expect(centerResult.frameScore).toBeGreaterThan(edgeResult.frameScore)
     })
 
-    test('中央から遠いほど低スコア', () => {
+    test('回転するほどフレーム数が増える', () => {
       // Arrange
       const gameState = createTestGameState()
-      const move1 = createTestMove(2, 0) // 中央
-      const move2 = createTestMove(1, 0) // 中央から1つ左
-      const move3 = createTestMove(0, 0) // 左端
+      const move0 = createTestMove(2, 0) // 回転なし
+      const move90 = createTestMove(2, 90) // 90度回転
+      const move180 = createTestMove(2, 180) // 180度回転
 
       // Act
-      const result1 = evaluateMove(move1, gameState)
-      const result2 = evaluateMove(move2, gameState)
-      const result3 = evaluateMove(move3, gameState)
+      const result0 = evaluateMove(move0, gameState)
+      const result90 = evaluateMove(move90, gameState)
+      const result180 = evaluateMove(move180, gameState)
 
       // Assert
-      expect(result1.baseScore).toBeGreaterThan(result2.baseScore)
-      expect(result2.baseScore).toBeGreaterThan(result3.baseScore)
+      expect(result0.frameCount).toBeLessThan(result90.frameCount)
+      expect(result90.frameCount).toBeLessThan(result180.frameCount)
+    })
+
+    test('6列目（右端）は追加フレームがかかる', () => {
+      // Arrange
+      const gameState = createTestGameState()
+      const normalMove = createTestMove(4, 0) // 5列目
+      const edgeMove = createTestMove(5, 0) // 6列目（右端）
+
+      // Act
+      const normalResult = evaluateMove(normalMove, gameState)
+      const edgeResult = evaluateMove(edgeMove, gameState)
+
+      // Assert
+      expect(edgeResult.frameCount).toBeGreaterThan(normalResult.frameCount)
     })
   })
 
-  describe('位置評価スコア', () => {
-    test('低い位置ほど高スコア', () => {
+  describe('ちぎり評価', () => {
+    test('縦配置（回転0, 180度）はちぎりなし', () => {
+      // Arrange
+      const gameState = createTestGameState()
+      const verticalMove0 = createTestMove(2, 0) // 上向き
+      const verticalMove180 = createTestMove(2, 180) // 下向き
+
+      // Act
+      const result0 = evaluateMove(verticalMove0, gameState)
+      const result180 = evaluateMove(verticalMove180, gameState)
+
+      // Assert
+      expect(result0.tearCount).toBe(0)
+      expect(result180.tearCount).toBe(0)
+      expect(result0.tearScore).toBe(0)
+      expect(result180.tearScore).toBe(0)
+    })
+
+    test('横配置で高さ差があるとちぎり判定', () => {
+      // Arrange - 高さ差のあるフィールド
+      const fieldWithHeightDiff = Array(13)
+        .fill(null)
+        .map(() => Array(6).fill(null))
+      // 列0に高く積む
+      for (let y = 8; y < 13; y++) {
+        fieldWithHeightDiff[y][0] = 'red'
+      }
+      // 列1は空（低い）
+
+      const gameState = createTestGameState(fieldWithHeightDiff)
+      const horizontalMove = createTestMove(0, 90) // 横配置（高さ差あり）
+      const verticalMove = createTestMove(0, 0) // 縦配置
+
+      // Act
+      const horizontalResult = evaluateMove(horizontalMove, gameState)
+      const verticalResult = evaluateMove(verticalMove, gameState)
+
+      // Assert
+      expect(horizontalResult.tearCount).toBeGreaterThan(
+        verticalResult.tearCount,
+      )
+      expect(horizontalResult.tearScore).toBeLessThan(verticalResult.tearScore)
+    })
+
+    test('フィールド外への横配置はちぎり扱い', () => {
+      // Arrange
+      const gameState = createTestGameState()
+      const edgeMove270 = createTestMove(0, 270) // 左端から左へ（範囲外）
+      const normalMove = createTestMove(2, 0) // 通常配置
+
+      // Act
+      const edgeResult = evaluateMove(edgeMove270, gameState)
+      const normalResult = evaluateMove(normalMove, gameState)
+
+      // Assert
+      expect(edgeResult.tearCount).toBeGreaterThan(normalResult.tearCount)
+    })
+  })
+
+  describe('効率性評価', () => {
+    test('中央配置が効率的', () => {
+      // Arrange
+      const gameState = createTestGameState()
+      const centerMove = createTestMove(2, 0) // 中央
+      const edgeMove = createTestMove(0, 0) // 端
+
+      // Act
+      const centerResult = evaluateMove(centerMove, gameState)
+      const edgeResult = evaluateMove(edgeMove, gameState)
+
+      // Assert
+      expect(centerResult.efficiencyScore).toBeGreaterThan(
+        edgeResult.efficiencyScore,
+      )
+    })
+
+    test('低い位置への配置が効率的', () => {
       // Arrange - 一部に既存ぷよがある状態
-      const fieldWithPuyos = Array(12)
+      const fieldWithPuyos = Array(13)
         .fill(null)
         .map(() => Array(6).fill(null))
       // 列0に既存ぷよ
-      fieldWithPuyos[10][0] = 'red'
-      fieldWithPuyos[11][0] = 'blue'
+      for (let y = 8; y < 13; y++) {
+        fieldWithPuyos[y][0] = 'red'
+      }
 
       const gameState = createTestGameState(fieldWithPuyos)
-      const lowMove = createTestMove(2, 0) // 空の列
-      const highMove = createTestMove(0, 0) // ぷよがある列
+      const lowMove = createTestMove(2, 0) // 空の列（低い）
+      const highMove = createTestMove(0, 0) // ぷよがある列（高い）
 
       // Act
       const lowResult = evaluateMove(lowMove, gameState)
       const highResult = evaluateMove(highMove, gameState)
 
       // Assert
-      expect(lowResult.positionScore).toBeGreaterThan(highResult.positionScore)
+      expect(lowResult.efficiencyScore).toBeGreaterThan(
+        highResult.efficiencyScore,
+      )
     })
 
-    test('バランスの良い配置が高スコア', () => {
-      // Arrange - 隣接列に同じ高さのぷよ
-      const fieldWithBalance = Array(12)
-        .fill(null)
-        .map(() => Array(6).fill(null))
-      // 列1と列3に同じ高さでぷよ配置
-      fieldWithBalance[11][1] = 'red'
-      fieldWithBalance[11][3] = 'blue'
-
-      const gameState = createTestGameState(fieldWithBalance)
-      const balancedMove = createTestMove(2, 0) // 中央（両隣が同じ高さ）
-
-      // Act
-      const result = evaluateMove(balancedMove, gameState)
-
-      // Assert
-      expect(result.positionScore).toBeGreaterThan(0)
-    })
-  })
-
-  describe('色配置評価スコア', () => {
-    test('隣接同色がある場合高スコア', () => {
+    test('同色隣接配置にボーナス', () => {
       // Arrange - 隣接位置に同色ぷよ
-      const fieldWithSameColor = Array(12)
+      const fieldWithSameColor = Array(13)
         .fill(null)
         .map(() => Array(6).fill(null))
-      fieldWithSameColor[11][2] = 'red' // 配置予定位置の下に同色
+      // 列2の隣に赤ぷよ
+      fieldWithSameColor[12][1] = 'red'
+      fieldWithSameColor[12][3] = 'red'
 
       const gameState = createTestGameState(fieldWithSameColor, 'red', 'blue')
-      const move = createTestMove(2, 0)
+      const adjacentMove = createTestMove(2, 0) // 同色隣接あり
+      const isolatedMove = createTestMove(5, 0) // 同色隣接なし
 
       // Act
-      const result = evaluateMove(move, gameState)
+      const adjacentResult = evaluateMove(adjacentMove, gameState)
+      const isolatedResult = evaluateMove(isolatedMove, gameState)
 
       // Assert
-      expect(result.colorScore).toBeGreaterThan(0)
-    })
-
-    test('隣接同色が多いほど高スコア', () => {
-      // Arrange - より明確な差を作るテスト
-      const field1 = Array(12)
-        .fill(null)
-        .map(() => Array(6).fill(null))
-      // field1は隣接なし
-
-      const field2 = Array(12)
-        .fill(null)
-        .map(() => Array(6).fill(null))
-      field2[11][2] = 'red' // 配置予定位置(2,10)の下に隣接
-      field2[10][1] = 'red' // 配置予定位置の左に隣接
-
-      const gameState1 = createTestGameState(field1, 'red', 'blue')
-      const gameState2 = createTestGameState(field2, 'red', 'blue')
-      const move = createTestMove(2, 0)
-
-      // Act
-      const result1 = evaluateMove(move, gameState1)
-      const result2 = evaluateMove(move, gameState2)
-
-      // Assert
-      expect(result2.colorScore).toBeGreaterThan(result1.colorScore)
-    })
-  })
-
-  describe('連鎖可能性スコア', () => {
-    test('4個グループを作れる場合高スコア', () => {
-      // Arrange - 4個グループが作れる状況
-      const fieldForChain = Array(12)
-        .fill(null)
-        .map(() => Array(6).fill(null))
-      fieldForChain[11][2] = 'red'
-      fieldForChain[11][1] = 'red'
-      fieldForChain[10][2] = 'red'
-
-      const gameState = createTestGameState(fieldForChain, 'red', 'blue')
-      const move = createTestMove(2, 0)
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result.chainPotentialScore).toBeGreaterThan(0)
-    })
-
-    test('連鎖可能性がない場合は低スコア', () => {
-      // Arrange - 連鎖可能性がない状況
-      const gameState = createTestGameState()
-      const move = createTestMove(2, 0)
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result.chainPotentialScore).toBeLessThanOrEqual(0)
-    })
-  })
-
-  describe('回転による副ぷよ配置', () => {
-    test('回転角度0度（上）で正しく評価', () => {
-      // Arrange
-      const gameState = createTestGameState()
-      const move = createTestMove(2, 0)
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result).toBeDefined()
-      expect(result.totalScore).toBeGreaterThan(0)
-    })
-
-    test('回転角度90度（右）で正しく評価', () => {
-      // Arrange
-      const gameState = createTestGameState()
-      const move = createTestMove(2, 90)
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result).toBeDefined()
-      expect(result.totalScore).toBeGreaterThan(0)
-    })
-
-    test('回転角度180度（下）で正しく評価', () => {
-      // Arrange
-      const gameState = createTestGameState()
-      const move = createTestMove(2, 180)
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result).toBeDefined()
-      expect(result.totalScore).toBeGreaterThan(0)
-    })
-
-    test('回転角度270度（左）で正しく評価', () => {
-      // Arrange
-      const gameState = createTestGameState()
-      const move = createTestMove(1, 270) // 左回転なので左にスペースが必要
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result).toBeDefined()
-      expect(result.totalScore).toBeGreaterThan(0)
+      expect(adjacentResult.efficiencyScore).toBeGreaterThan(
+        isolatedResult.efficiencyScore,
+      )
     })
   })
 
   describe('評価理由生成', () => {
-    test('高スコア要素が理由に反映される', () => {
-      // Arrange - 中央配置で高スコアになる状況
-      const gameState = createTestGameState()
-      const move = createTestMove(2, 0) // 中央配置
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result.reason).toContain('Phase 4c関数型評価')
-      if (result.baseScore > 30) {
-        expect(result.reason).toContain('中央配置')
-      }
-    })
-
-    test('複数の高スコア要素が理由に含まれる', () => {
-      // Arrange - 複数の高スコア要素を持つ状況
-      const fieldForHighScore = Array(12)
-        .fill(null)
-        .map(() => Array(6).fill(null))
-      fieldForHighScore[11][2] = 'red' // 色隣接のため
-
-      const gameState = createTestGameState(fieldForHighScore, 'red', 'blue')
-      const move = createTestMove(2, 0) // 中央配置
-
-      // Act
-      const result = evaluateMove(move, gameState)
-
-      // Assert
-      expect(result.reason).toContain('Phase 4c関数型評価')
-      // 複数の要素が含まれる可能性
-      const possibleReasons = ['中央配置', '安定位置', '色隣接', '連鎖可能']
-      const reasonIncludesMultiple =
-        possibleReasons.filter((reason) => result.reason.includes(reason))
-          .length >= 1
-      expect(reasonIncludesMultiple).toBe(true)
-    })
-  })
-
-  describe('エッジケース', () => {
-    test('currentPuyoPairがnullの場合でもエラーにならない', () => {
+    test('フレーム数に応じた理由が生成される', () => {
       // Arrange
       const gameState = createTestGameState()
-      gameState.currentPuyoPair = null
-      const move = createTestMove()
-
-      // Act & Assert
-      expect(() => evaluateMove(move, gameState)).not.toThrow()
-      const result = evaluateMove(move, gameState)
-      expect(result.colorScore).toBe(0)
-      expect(result.chainPotentialScore).toBe(0)
-    })
-
-    test('フィールド境界での評価が正しい', () => {
-      // Arrange
-      const gameState = createTestGameState()
-      const leftEdgeMove = createTestMove(0, 0)
-      const rightEdgeMove = createTestMove(5, 0)
+      const fastMove = createTestMove(2, 0) // 高速
+      const slowMove = createTestMove(5, 180) // 低速
 
       // Act
-      const leftResult = evaluateMove(leftEdgeMove, gameState)
-      const rightResult = evaluateMove(rightEdgeMove, gameState)
+      const fastResult = evaluateMove(fastMove, gameState)
+      const slowResult = evaluateMove(slowMove, gameState)
 
       // Assert
-      expect(leftResult).toBeDefined()
-      expect(rightResult).toBeDefined()
-      expect(leftResult.totalScore).toBeGreaterThan(0)
-      expect(rightResult.totalScore).toBeGreaterThan(0)
+      expect(fastResult.reason).toContain('高速配置')
+      expect(slowResult.reason).toContain('低速配置')
     })
 
-    test('無効な回転角度でもデフォルト処理される', () => {
+    test('ちぎりの有無が理由に反映される', () => {
       // Arrange
       const gameState = createTestGameState()
-      const invalidRotationMove = createTestMove(2, 45) // 無効な角度
+      const noTearMove = createTestMove(2, 0) // ちぎりなし
+      const tearMove = createTestMove(0, 270) // ちぎりあり
 
-      // Act & Assert
-      expect(() => evaluateMove(invalidRotationMove, gameState)).not.toThrow()
-      const result = evaluateMove(invalidRotationMove, gameState)
-      expect(result).toBeDefined()
+      // Act
+      const noTearResult = evaluateMove(noTearMove, gameState)
+      const tearResult = evaluateMove(tearMove, gameState)
+
+      // Assert
+      expect(noTearResult.reason).toContain('ちぎりなし')
+      expect(tearResult.reason).toContain('ちぎり')
+    })
+
+    test('効率性が理由に反映される', () => {
+      // Arrange
+      const gameState = createTestGameState()
+      const efficientMove = createTestMove(2, 0) // 効率的
+      const inefficientMove = createTestMove(0, 180) // 非効率
+
+      // Act
+      const efficientResult = evaluateMove(efficientMove, gameState)
+      const inefficientResult = evaluateMove(inefficientMove, gameState)
+
+      // Assert
+      expect(efficientResult.reason).toContain('高効率')
+      expect(inefficientResult.reason).toContain('低効率')
     })
   })
 })

@@ -39,6 +39,9 @@ describe('MayahAIService', () => {
         rotation: 0,
       },
       score: 0,
+      chainCount: 0,
+      turn: 1,
+      isGameOver: false,
     }
   })
 
@@ -84,8 +87,10 @@ describe('MayahAIService', () => {
       const evaluation = await service.getLastEvaluationResult()
       expect(evaluation).not.toBeNull()
       expect(evaluation?.score).toBeGreaterThan(0)
-      expect(evaluation?.reason).toContain('Phase 4c関数型評価')
-      expect(evaluation?.phase).toBe('Phase 4c - 最適化評価')
+      expect(evaluation?.reason).toMatch(
+        /効率的な操作|良好な形状|連鎖構築優位|戦略的配置/,
+      )
+      expect(evaluation?.gamePhase).toBeDefined()
       expect(evaluation?.confidence).toBeGreaterThan(0.5)
     })
 

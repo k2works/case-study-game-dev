@@ -8,7 +8,13 @@ import type {
   AISettings,
   PossibleMove,
 } from '../../../domain/models/ai/index'
-import { evaluateMove as evaluateOperation } from '../../../domain/services/ai'
+import {
+  type MayahStyleEvaluation,
+  evaluateWithIntegratedSystem,
+  getGamePhase,
+} from '../../../domain/services/ai/IntegratedEvaluationService'
+import { evaluateMove as evaluateOperation } from '../../../domain/services/ai/OperationEvaluationService'
+import { evaluateShape } from '../../../domain/services/ai/ShapeEvaluationService'
 import type { AIPort } from '../../ports/AIPort'
 import type { MoveGeneratorPort } from '../../ports/MoveGeneratorPort'
 import { MoveGenerator } from './MoveGenerator'
@@ -16,11 +22,9 @@ import { MoveGenerator } from './MoveGenerator'
 /**
  * mayah AI評価結果の基本構造
  */
-export interface MayahEvaluationResult {
-  score: number
-  reason: string
-  phase: string
+export interface MayahEvaluationResult extends MayahStyleEvaluation {
   confidence: number
+  score: number
 }
 
 /**
@@ -199,7 +203,7 @@ export class MayahAIService implements AIPort {
 
   /**
    * Phase 4a: 基本的な手評価
-   * 後のフェーズでmayah型評価システムに拡張予定
+   * 簡略化された評価システム
    */
   private evaluateBasicMove(
     move: PossibleMove,
@@ -215,51 +219,61 @@ export class MayahAIService implements AIPort {
     const totalScore = centerScore + baseScore
 
     return {
-      score: totalScore,
+      operationScore: totalScore * 0.5,
+      shapeScore: totalScore * 0.3,
+      chainScore: totalScore * 0.15,
+      strategyScore: totalScore * 0.05,
+      totalScore,
+      phaseAdjustment: 1.0,
       reason: `Phase 4a基本評価: 中央距離${distanceFromCenter}`,
-      phase: 'Phase 4a - 基本実装',
+      gamePhase: getGamePhase(gameState),
       confidence: 0.6, // 基本評価なので低め
+      score: totalScore,
     }
   }
 
   /**
    * Phase 4b: 高度な手評価
-   * OperationEvaluationServiceを使用した詳細評価
+   * 統合評価サービスを使用した4要素評価
    */
   private evaluateAdvancedMove(
     move: PossibleMove,
     gameState: AIGameState,
   ): MayahEvaluationResult {
-    // 関数型評価で詳細評価
+    // 各評価サービスを実行
     const operationEvaluation = evaluateOperation(move, gameState)
+    const gamePhase = getGamePhase(gameState)
+    const shapeEvaluation = evaluateShape(gameState, gamePhase)
 
-    // Phase 4bの信頼度計算（より高度）
-    const confidence = this.calculateAdvancedConfidence(operationEvaluation)
+    // 統合評価を実行
+    const integratedEvaluation = evaluateWithIntegratedSystem(move, gameState, {
+      operation: operationEvaluation,
+      shape: shapeEvaluation,
+      // chainとstrategyは今後実装
+    })
+
+    // 信頼度計算
+    const confidence = this.calculateIntegratedConfidence(integratedEvaluation)
 
     return {
-      score: operationEvaluation.totalScore,
-      reason: operationEvaluation.reason,
-      phase: 'Phase 4c - 最適化評価',
+      ...integratedEvaluation,
+      score: integratedEvaluation.totalScore,
       confidence,
     }
   }
 
   /**
-   * Phase 4b: 高度な信頼度計算
+   * 統合評価に基づく信頼度計算
    */
-  private calculateAdvancedConfidence(operationEvaluation: {
-    baseScore: number
-    positionScore: number
-    colorScore: number
-    chainPotentialScore: number
-    totalScore: number
-  }): number {
+  private calculateIntegratedConfidence(
+    evaluation: MayahStyleEvaluation,
+  ): number {
     // スコア要素の分散を基に信頼度を計算
     const scores = [
-      operationEvaluation.baseScore,
-      operationEvaluation.positionScore,
-      operationEvaluation.colorScore,
-      operationEvaluation.chainPotentialScore,
+      evaluation.operationScore,
+      evaluation.shapeScore,
+      evaluation.chainScore,
+      evaluation.strategyScore,
     ]
 
     const nonZeroScores = scores.filter((score) => score > 0)
@@ -275,8 +289,8 @@ export class MayahAIService implements AIPort {
     // 基本信頼度: 評価要素の多様性と平均スコアに基づく
     let confidence = 0.5 + factorCount * 0.1 + averageScore / 200
 
-    // 連鎖可能性がある場合は追加ボーナス
-    if (operationEvaluation.chainPotentialScore > 30) {
+    // 連鎖評価が高い場合は追加ボーナス
+    if (evaluation.chainScore > 50) {
       confidence += 0.15
     }
 

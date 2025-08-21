@@ -316,6 +316,7 @@ describe('StrategySettings', () => {
 
   test('エラー状態が表示される', async () => {
     // Arrange
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const errorService = {
       getAllStrategies: vi.fn().mockRejectedValue(new Error('Network error')),
       getActiveStrategy: vi.fn().mockRejectedValue(new Error('Network error')),
@@ -330,5 +331,8 @@ describe('StrategySettings', () => {
         screen.getByText('戦略の読み込みに失敗しました'),
       ).toBeInTheDocument()
     })
+
+    // Cleanup
+    consoleSpy.mockRestore()
   })
 })

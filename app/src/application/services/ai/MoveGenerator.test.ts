@@ -34,6 +34,9 @@ describe('MoveGenerator', () => {
     },
     nextPuyoPair: null,
     score: 0,
+    chainCount: 0,
+    turn: 1,
+    isGameOver: false,
   })
 
   describe('generateMoves', () => {
@@ -68,6 +71,9 @@ describe('MoveGenerator', () => {
         currentPuyoPair: null,
         nextPuyoPair: null,
         score: 0,
+        chainCount: 0,
+        turn: 1,
+        isGameOver: false,
       }
 
       const moves = moveGenerator.generateMoves(gameState)

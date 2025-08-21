@@ -1,22 +1,24 @@
 /**
- * mayah AI操作評価ドメインサービス（関数型リファクタリング版）
- * Phase 4c: 関数型プログラミング手法による実装
+ * mayah AI操作評価ドメインサービス
+ * mayah型評価：フレーム数・ちぎり・効率性を評価
  */
 import type { PuyoColor } from '../../models/Puyo'
 import type { AIGameState, PossibleMove } from '../../models/ai'
 
 /**
- * 操作評価結果
+ * mayah型操作評価結果
  */
 export interface OperationEvaluation {
-  /** 基本スコア */
-  baseScore: number
-  /** 位置評価スコア */
-  positionScore: number
-  /** 色配置評価スコア */
-  colorScore: number
-  /** 連鎖可能性スコア */
-  chainPotentialScore: number
+  /** フレーム数（操作に要する時間） */
+  frameCount: number
+  /** フレーム数スコア（少ないほど高評価） */
+  frameScore: number
+  /** ちぎり回数 */
+  tearCount: number
+  /** ちぎりスコア（ちぎりは大幅減点） */
+  tearScore: number
+  /** 配置効率性スコア */
+  efficiencyScore: number
   /** 総合スコア */
   totalScore: number
   /** 評価理由 */
@@ -37,17 +39,18 @@ interface EvaluationContext {
  * スコア構成要素
  */
 interface ScoreComponents {
-  readonly baseScore: number
-  readonly positionScore: number
-  readonly colorScore: number
-  readonly chainPotentialScore: number
+  readonly frameCount: number
+  readonly frameScore: number
+  readonly tearCount: number
+  readonly tearScore: number
+  readonly efficiencyScore: number
 }
 
 // Phase 4c: 関数型キャッシュストレージ（モジュールレベル）
 const fieldCache = new Map<string, number[]>()
 /**
- * 関数型操作評価サービス（メイン関数）
- * 関数の合成により評価を実行
+ * mayah型操作評価サービス（メイン関数）
+ * フレーム数・ちぎり・効率性を評価
  */
 export const evaluateMove = (
   move: PossibleMove,
@@ -85,12 +88,26 @@ const createEvaluationContext = (gameState: AIGameState): EvaluationContext => {
 const calculateScoreComponents = (
   move: PossibleMove,
   context: EvaluationContext,
-): ScoreComponents => ({
-  baseScore: calculateBaseScore(move, context),
-  positionScore: calculatePositionScore(move, context),
-  colorScore: calculateColorScore(move, context),
-  chainPotentialScore: calculateChainPotential(move, context),
-})
+): ScoreComponents => {
+  // フレーム数計算
+  const frameCount = calculateFrameCount(move, context)
+  const frameScore = calculateFrameScore(frameCount)
+
+  // ちぎり判定
+  const tearCount = calculateTearCount(move, context)
+  const tearScore = calculateTearScore(tearCount)
+
+  // 効率性評価
+  const efficiencyScore = calculatePlacementEfficiency(move, context)
+
+  return {
+    frameCount,
+    frameScore,
+    tearCount,
+    tearScore,
+    efficiencyScore,
+  }
+}
 
 /**
  * 評価結果合成（純粋関数）
@@ -98,17 +115,17 @@ const calculateScoreComponents = (
 const composeEvaluationResult = (
   components: ScoreComponents,
 ): OperationEvaluation => {
-  const { baseScore, positionScore, colorScore, chainPotentialScore } =
+  const { frameCount, frameScore, tearCount, tearScore, efficiencyScore } =
     components
-  const totalScore =
-    baseScore + positionScore + colorScore + chainPotentialScore
+  const totalScore = frameScore + tearScore + efficiencyScore
   const reason = generateReason({ ...components, totalScore })
 
   return {
-    baseScore,
-    positionScore,
-    colorScore,
-    chainPotentialScore,
+    frameCount,
+    frameScore,
+    tearCount,
+    tearScore,
+    efficiencyScore,
     totalScore,
     reason,
   }
@@ -123,50 +140,141 @@ const generateFieldCacheKey = (gameState: AIGameState): string =>
     .join('|')
 
 /**
- * 基本スコア計算（純粋関数）
- * フィールド中央への配置を重視
+ * フレーム数計算（純粋関数）
+ * 操作に必要なフレーム数を計算
  */
-const calculateBaseScore = (
+const calculateFrameCount = (
   move: PossibleMove,
   context: EvaluationContext,
 ): number => {
+  // 基本フレーム数（横移動）
+  const horizontalFrames = Math.abs(move.x - context.centerX) * 2
+
+  // 回転フレーム数（1回転につき2フレーム）
+  const rotationFrames = (move.rotation / 90) * 2
+
+  // 6列目は若干遅い（追加2フレーム）
+  const edgeColumnPenalty = move.x === context.gameState.field.width - 1 ? 2 : 0
+
+  // 落下フレーム数（高さに依存）
+  const dropFrames = Math.max(0, 12 - context.heightInfo[move.x])
+
+  return horizontalFrames + rotationFrames + edgeColumnPenalty + dropFrames
+}
+
+/**
+ * フレーム数スコア計算（純粋関数）
+ * フレーム数が少ないほど高評価
+ */
+const calculateFrameScore = (frameCount: number): number => {
+  // 1フレームあたり0.1点減点
+  const baseScore = 100 - frameCount * 0.1
+  return Math.max(0, baseScore)
+}
+
+/**
+ * 縦配置かどうか判定（純粋関数）
+ */
+const isVerticalPlacement = (rotation: number): boolean => {
+  return rotation === 0 || rotation === 180
+}
+
+/**
+ * 横配置の右側X座標を計算（純粋関数）
+ */
+const calculateRightX = (x: number, rotation: number): number => {
+  return rotation === 90 ? x + 1 : x - 1
+}
+
+/**
+ * 位置が範囲外かどうか判定（純粋関数）
+ */
+const isOutOfBounds = (x: number, width: number): boolean => {
+  return x < 0 || x >= width
+}
+
+/**
+ * ちぎり回数計算（純粋関数）
+ * ぷよが分離して落ちる場合を検出
+ */
+const calculateTearCount = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): number => {
+  if (!context.gameState.currentPuyoPair) return 0
+
+  // 縦配置の場合、ちぎりなし
+  if (isVerticalPlacement(move.rotation)) {
+    return 0
+  }
+
+  // 横配置の場合、高さ差を確認
+  const leftHeight = context.heightInfo[move.x]
+  const rightX = calculateRightX(move.x, move.rotation)
+
+  // 横配置先が範囲外の場合はちぎり扱い
+  if (isOutOfBounds(rightX, context.gameState.field.width)) {
+    return 1
+  }
+
+  const rightHeight = context.heightInfo[rightX]
+  const heightDiff = Math.abs(leftHeight - rightHeight)
+
+  // 高さの差が2以上の場合はちぎり
+  return heightDiff >= 2 ? 1 : 0
+}
+
+/**
+ * ちぎりスコア計算（純粋関数）
+ * ちぎりは大幅に減点
+ */
+const calculateTearScore = (tearCount: number): number => {
+  // 1回のちぎりにつき100点減点
+  const score = -tearCount * 100
+  return score === 0 ? 0 : score // -0を0に変換
+}
+
+/**
+ * 配置効率性評価（純粋関数）
+ * 配置の効率性を総合的に評価
+ */
+const calculatePlacementEfficiency = (
+  move: PossibleMove,
+  context: EvaluationContext,
+): number => {
+  let efficiencyScore = 0
+
+  // 中央への配置は効率的（最大30点）
   const distanceFromCenter = Math.abs(move.x - context.centerX)
-  // 中央に近いほど高スコア（最大50点）
-  return Math.max(0, 50 - distanceFromCenter * 8)
-}
+  efficiencyScore += Math.max(0, 30 - distanceFromCenter * 10)
 
-/**
- * 位置評価スコア計算（純粋関数）
- * 高さと安定性を評価
- */
-const calculatePositionScore = (
-  move: PossibleMove,
-  context: EvaluationContext,
-): number => {
+  // 低い位置への配置は効率的（最大20点）
   const height = context.heightInfo[move.x]
+  efficiencyScore += Math.max(0, 20 - height * 2)
 
-  // 低い位置ほど高スコア（最大30点）
-  const heightScore = Math.max(0, 30 - height * 3)
+  // 同色隣接配置は効率的
+  if (context.gameState.currentPuyoPair) {
+    const adjacentScore = calculateAdjacentColorBonus(move, context)
+    efficiencyScore += adjacentScore
+  }
 
-  // 隣接列との高さバランス評価（最大20点）
+  // バランスの良い配置は効率的（最大20点）
   const balanceScore = calculateBalanceScore(move.x, context.heightInfo)
+  efficiencyScore += balanceScore
 
-  return heightScore + balanceScore
+  return efficiencyScore
 }
 
 /**
- * 色配置評価スコア計算（純粋関数）
- * 同色の隣接配置を評価
+ * 同色隣接ボーナス計算（純粋関数）
  */
-const calculateColorScore = (
+const calculateAdjacentColorBonus = (
   move: PossibleMove,
   context: EvaluationContext,
 ): number => {
   if (!context.gameState.currentPuyoPair) return 0
 
   const { primaryColor, secondaryColor } = context.gameState.currentPuyoPair
-
-  // 主ぷよの評価
   const primaryY = calculateDropPosition(move.x, context.gameState)
   const primaryAdjacent = countAdjacentSameColor(
     move.x,
@@ -175,47 +283,13 @@ const calculateColorScore = (
     context.gameState,
   )
 
-  // 副ぷよの評価
   const { subX, subY } = calculateSubPuyoPosition(move, context.gameState)
   const secondaryAdjacent = isValidPosition(subX, subY, context.gameState)
     ? countAdjacentSameColor(subX, subY, secondaryColor, context.gameState)
     : 0
 
-  // 隣接同色1つにつき15点
-  return (primaryAdjacent + secondaryAdjacent) * 15
-}
-
-/**
- * 連鎖可能性スコア計算（純粋関数）
- * 将来の連鎖につながる配置を評価
- */
-const calculateChainPotential = (
-  move: PossibleMove,
-  context: EvaluationContext,
-): number => {
-  if (!context.gameState.currentPuyoPair) return 0
-
-  const { primaryColor, secondaryColor } = context.gameState.currentPuyoPair
-
-  // 主ぷよと副ぷよの連鎖可能性を計算
-  const primaryChainScore = canForm4Group(
-    move.x,
-    primaryColor,
-    context.gameState,
-  )
-    ? 40
-    : 0
-
-  const { subX } = calculateSubPuyoPosition(move, context.gameState)
-  const secondaryChainScore = canForm4Group(
-    subX,
-    secondaryColor,
-    context.gameState,
-  )
-    ? 40
-    : 0
-
-  return primaryChainScore + secondaryChainScore
+  // 隣接同色1つにつき10点
+  return (primaryAdjacent + secondaryAdjacent) * 10
 }
 
 /**
@@ -232,8 +306,9 @@ const getColumnHeightInfo = (
   if (cached) return cached
 
   // キャッシュにない場合は計算してキャッシュに保存
-  const heights = Array.from({ length: gameState.field.width }, (_, x) =>
-    calculateColumnHeight(gameState.field.cells, x),
+  const fieldWidth = gameState.field?.width || 6
+  const heights = Array.from({ length: fieldWidth }, (_, x) =>
+    calculateColumnHeight(gameState.field?.cells, x),
   )
 
   fieldCache.set(cacheKey, heights)
@@ -247,8 +322,15 @@ const calculateColumnHeight = (
   cells: readonly (readonly (PuyoColor | null)[])[],
   x: number,
 ): number => {
-  const firstNonEmptyIndex = cells.findIndex((row) => row[x] !== null)
-  return firstNonEmptyIndex === -1 ? cells.length : firstNonEmptyIndex
+  if (!cells || !Array.isArray(cells)) {
+    return 0
+  }
+
+  const firstNonEmptyIndex = cells.findIndex((row) => {
+    if (!row || !Array.isArray(row)) return false
+    return row[x] !== null
+  })
+  return firstNonEmptyIndex === -1 ? 0 : cells.length - firstNonEmptyIndex
 }
 
 /**
@@ -256,8 +338,16 @@ const calculateColumnHeight = (
  */
 const calculateDropPosition = (x: number, gameState: AIGameState): number => {
   const cells = gameState.field.cells
+  if (!cells || !Array.isArray(cells)) {
+    return 0
+  }
+
   for (let y = cells.length - 1; y >= 0; y--) {
-    if (cells[y][x] === null) {
+    const row = cells[y]
+    if (!row || !Array.isArray(row)) {
+      continue
+    }
+    if (row[x] === null) {
       return y
     }
   }
@@ -316,8 +406,23 @@ const isSameColorAt = (
   y: number,
   color: PuyoColor,
   gameState: AIGameState,
-): boolean =>
-  isValidPosition(x, y, gameState) && gameState.field.cells[y][x] === color
+): boolean => {
+  if (!isValidPosition(x, y, gameState)) {
+    return false
+  }
+
+  const cells = gameState.field.cells
+  if (!cells || !Array.isArray(cells)) {
+    return false
+  }
+
+  const row = cells[y]
+  if (!row || !Array.isArray(row)) {
+    return false
+  }
+
+  return row[x] === color
+}
 
 /**
  * 副ぷよの配置位置を計算（純粋関数）
@@ -347,30 +452,6 @@ const calculateSubPuyoPosition = (
 }
 
 /**
- * 4個グループ形成可能性判定（純粋関数）
- */
-const canForm4Group = (
-  x: number,
-  color: PuyoColor,
-  gameState: AIGameState,
-): boolean => {
-  const baseHeight = calculateColumnHeight(gameState.field.cells, x)
-
-  const adjacentPositions = [
-    { x: x - 1, y: baseHeight }, // 左
-    { x: x + 1, y: baseHeight }, // 右
-    { x: x, y: baseHeight - 1 }, // 上
-    { x: x, y: baseHeight + 1 }, // 下
-  ] as const
-
-  return adjacentPositions.some(
-    (pos) =>
-      isValidPosition(pos.x, pos.y, gameState) &&
-      gameState.field.cells[pos.y][pos.x] === color,
-  )
-}
-
-/**
  * 位置が有効かどうかチェック（純粋関数）
  */
 const isValidPosition = (
@@ -393,24 +474,37 @@ const isValidPosition = (
  * 評価理由を生成（純粋関数）
  */
 const generateReason = (scores: {
-  baseScore: number
-  positionScore: number
-  colorScore: number
-  chainPotentialScore: number
+  frameCount: number
+  frameScore: number
+  tearCount: number
+  tearScore: number
+  efficiencyScore: number
   totalScore: number
 }): string => {
-  const reasonMap = [
-    { threshold: 30, key: 'baseScore', label: '中央配置' },
-    { threshold: 25, key: 'positionScore', label: '安定位置' },
-    { threshold: 20, key: 'colorScore', label: '色隣接' },
-    { threshold: 30, key: 'chainPotentialScore', label: '連鎖可能' },
-  ] as const
+  const reasons: string[] = []
 
-  const reasons = reasonMap
-    .filter(({ threshold, key }) => scores[key] > threshold)
-    .map(({ label }) => label)
+  // フレーム数評価
+  if (scores.frameCount <= 15) {
+    reasons.push('高速配置')
+  } else if (scores.frameCount >= 20) {
+    reasons.push('低速配置')
+  }
 
-  const finalReasons = reasons.length > 0 ? reasons : ['基本配置']
+  // ちぎり評価
+  if (scores.tearCount > 0) {
+    reasons.push(`ちぎり${scores.tearCount}回`)
+  } else {
+    reasons.push('ちぎりなし')
+  }
 
-  return `Phase 4c関数型評価: ${finalReasons.join('・')}`
+  // 効率性評価
+  if (scores.efficiencyScore >= 60) {
+    reasons.push('高効率')
+  } else if (scores.efficiencyScore >= 40) {
+    reasons.push('中効率')
+  } else {
+    reasons.push('低効率')
+  }
+
+  return `操作評価: ${reasons.join('・')}`
 }

@@ -34,6 +34,9 @@ describe('AIService', () => {
     },
     nextPuyoPair: null,
     score: 0,
+    chainCount: 0,
+    turn: 1,
+    isGameOver: false,
   })
 
   beforeEach(() => {
@@ -97,6 +100,9 @@ describe('AIService', () => {
         currentPuyoPair: null,
         nextPuyoPair: null,
         score: 0,
+        chainCount: 0,
+        turn: 1,
+        isGameOver: false,
       }
 
       await expect(aiService.decideMove(gameState)).rejects.toThrow(

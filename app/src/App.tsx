@@ -467,6 +467,9 @@ function App() {
           }
         : null,
       score: game.score.current,
+      chainCount: 0, // GameViewModelには存在しないためデフォルト値
+      turn: 1, // GameViewModelには存在しないためデフォルト値
+      isGameOver: false, // GameViewModelには存在しないためデフォルト値
     }),
     [],
   )
