@@ -142,20 +142,12 @@ export const getPhaseAdjustments = (phase: GamePhase): PhaseAdjustments => {
 }
 
 /**
- * 評価理由を生成
+ * 最高スコア要素の理由を追加
  */
-const generateEvaluationReason = (
-  scores: {
-    operation: number
-    shape: number
-    chain: number
-    strategy: number
-  },
-  phase: GamePhase,
-): string => {
-  const reasons: string[] = []
-
-  // 最も高いスコアの要素を特定
+const addHighScoreReasons = (
+  reasons: string[],
+  scores: { operation: number; shape: number; chain: number; strategy: number },
+): void => {
   const maxScore = Math.max(
     scores.operation,
     scores.shape,
@@ -175,6 +167,35 @@ const generateEvaluationReason = (
   if (scores.strategy === maxScore) {
     reasons.push('戦略的配置')
   }
+}
+
+/**
+ * 連鎖情報の理由を追加
+ */
+const addChainInfoReasons = (
+  reasons: string[],
+  chainInfo?: { chainLength?: number; triggerProbability?: number },
+): void => {
+  if (chainInfo?.chainLength && chainInfo.chainLength > 0) {
+    reasons.push(`${chainInfo.chainLength}連鎖可能`)
+  }
+  if (chainInfo?.triggerProbability && chainInfo.triggerProbability > 0.7) {
+    reasons.push('発火確率高')
+  }
+}
+
+/**
+ * 評価理由を生成
+ */
+const generateEvaluationReason = (
+  scores: { operation: number; shape: number; chain: number; strategy: number },
+  phase: GamePhase,
+  chainInfo?: { chainLength?: number; triggerProbability?: number },
+): string => {
+  const reasons: string[] = []
+
+  addHighScoreReasons(reasons, scores)
+  addChainInfoReasons(reasons, chainInfo)
 
   // フェーズ情報を追加
   const phaseInfo = {
@@ -197,7 +218,11 @@ export const evaluateWithIntegratedSystem = (
   evaluationResults: {
     operation: { totalScore: number }
     shape: { totalScore: number }
-    chain?: { totalScore: number }
+    chain?: {
+      totalScore: number
+      chainLength?: number
+      triggerProbability?: number
+    }
     strategy?: { totalScore: number }
   },
   settings?: IntegratedEvaluationSettings,
@@ -226,7 +251,7 @@ export const evaluateWithIntegratedSystem = (
     finalSettings.baseShapeWeight *
     phaseAdjustments.shapeWeight
 
-  // 連鎖評価と戦略評価は現時点では仮実装
+  // 連鎖評価：実際の連鎖評価結果を使用、なければデフォルト値
   const chainScore =
     (evaluationResults.chain?.totalScore ?? 50) *
     finalSettings.baseChainWeight *
@@ -240,7 +265,7 @@ export const evaluateWithIntegratedSystem = (
   // 総合スコアを計算
   const totalScore = operationScore + shapeScore + chainScore + strategyScore
 
-  // 評価理由を生成
+  // 評価理由を生成（連鎖情報を含む）
   const reason = generateEvaluationReason(
     {
       operation: operationScore,
@@ -249,6 +274,7 @@ export const evaluateWithIntegratedSystem = (
       strategy: strategyScore,
     },
     gamePhase,
+    evaluationResults.chain,
   )
 
   return {

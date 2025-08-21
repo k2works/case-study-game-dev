@@ -8,6 +8,7 @@ import type {
   AISettings,
   PossibleMove,
 } from '../../../domain/models/ai/index'
+import { evaluateChain } from '../../../domain/services/ai/ChainEvaluationService'
 import {
   type MayahStyleEvaluation,
   evaluateWithIntegratedSystem,
@@ -240,16 +241,24 @@ export class MayahAIService implements AIPort {
     move: PossibleMove,
     gameState: AIGameState,
   ): MayahEvaluationResult {
+    // ゲームフェーズを判定
+    const gamePhase = getGamePhase(gameState)
+
     // 各評価サービスを実行
     const operationEvaluation = evaluateOperation(move, gameState)
-    const gamePhase = getGamePhase(gameState)
     const shapeEvaluation = evaluateShape(gameState, gamePhase)
+    const chainEvaluation = evaluateChain(gameState, move, gamePhase)
 
     // 統合評価を実行
     const integratedEvaluation = evaluateWithIntegratedSystem(move, gameState, {
       operation: operationEvaluation,
       shape: shapeEvaluation,
-      // chainとstrategyは今後実装
+      chain: {
+        totalScore: chainEvaluation.totalScore,
+        chainLength: chainEvaluation.chainLength,
+        triggerProbability: chainEvaluation.triggerProbability,
+      },
+      // strategyは今後実装
     })
 
     // 信頼度計算
