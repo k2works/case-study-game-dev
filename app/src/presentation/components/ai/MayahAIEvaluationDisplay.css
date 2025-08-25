@@ -1,0 +1,621 @@
+/**
+ * mayah AI評価表示コンポーネントのスタイル
+ * Phase 4a-4c段階的検証用UI
+ */
+.mayah-ai-evaluation-display {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border: 2px solid #6366f1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.evaluation-header {
+  border-bottom: 2px solid #6366f1;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.evaluation-header h3 {
+  color: #6366f1;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.phase-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.phase-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.phase-badge.phase-phase4a {
+  background: linear-gradient(45deg, #10b981, #34d399);
+  color: white;
+}
+
+.phase-badge.phase-phase4b {
+  background: linear-gradient(45deg, #f59e0b, #fbbf24);
+  color: white;
+}
+
+.phase-badge.phase-phase4c {
+  background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+  color: white;
+}
+
+.phase-description {
+  color: #4b5563;
+  font-size: 0.875rem;
+  margin: 0;
+  font-style: italic;
+}
+
+.evaluation-content {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.current-evaluation {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.current-evaluation h4 {
+  color: #374151;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.evaluation-summary {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.score-display,
+.confidence-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  min-width: 100px;
+}
+
+.score-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #059669;
+}
+
+.confidence-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #7c3aed;
+}
+
+.score-label,
+.confidence-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+.evaluation-reason {
+  background: #f3f4f6;
+  border-left: 4px solid #6366f1;
+  padding: 0.75rem;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.candidate-moves {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.candidates-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.candidates-header h4 {
+  color: #374151;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.toggle-details {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-details:hover {
+  background: #4f46e5;
+}
+
+.candidates-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.candidate-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.candidate-item:hover {
+  border-color: #6366f1;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
+}
+
+.candidate-item.selected {
+  border-color: #6366f1;
+  background: #f0f9ff;
+}
+
+.candidate-item.best-move {
+  border-color: #059669;
+  background: #f0fdf4;
+}
+
+.candidate-rank {
+  font-weight: bold;
+  color: #6366f1;
+  font-size: 0.875rem;
+  min-width: 2rem;
+}
+
+.candidate-item.best-move .candidate-rank {
+  color: #059669;
+}
+
+.candidate-move {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.candidate-score {
+  font-weight: bold;
+  color: #059669;
+  font-size: 1rem;
+  text-align: right;
+  min-width: 4rem;
+}
+
+.candidate-details {
+  grid-column: 1 / -1;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.detail-item span:first-child {
+  font-weight: 500;
+}
+
+.phase-progress {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.phase-progress h4 {
+  color: #374151;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.progress-indicators {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.progress-item.completed {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+}
+
+.progress-item.pending {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 2px dashed #d1d5db;
+}
+
+.progress-label {
+  font-weight: bold;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.progress-status {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.no-evaluation {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.no-evaluation p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.phase-info {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.875rem;
+  text-align: left;
+  display: inline-block;
+}
+
+/* 4要素評価システム用スタイル */
+.four-element-evaluation {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.four-element-evaluation h4 {
+  color: #374151;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.element-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.element-card {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.element-card:hover {
+  border-color: #6366f1;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+.element-card.highlight {
+  border-color: #059669;
+  background: #f0fdf4;
+}
+
+.element-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.element-name {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.element-score {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #059669;
+}
+
+.element-description {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.game-phase-info {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.game-phase-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.game-phase-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.game-phase-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.game-phase-badge.early {
+  background: linear-gradient(45deg, #10b981, #34d399);
+  color: white;
+}
+
+.game-phase-badge.middle {
+  background: linear-gradient(45deg, #f59e0b, #fbbf24);
+  color: white;
+}
+
+.game-phase-badge.late {
+  background: linear-gradient(45deg, #dc2626, #ef4444);
+  color: white;
+}
+
+.game-phase-description {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.total-score-display {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.total-score-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
+}
+
+.total-score-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.total-score-confidence {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.evaluation-breakdown {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.breakdown-title {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.breakdown-item:last-child {
+  border-bottom: none;
+}
+
+.breakdown-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.breakdown-score {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.candidate-evaluation-details {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.candidate-elements {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.candidate-element {
+  text-align: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.candidate-element-name {
+  font-size: 0.625rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.candidate-element-score {
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: #059669;
+}
+
+.evaluation-capabilities {
+  background: #f0f9ff;
+  border: 1px solid #0ea5e9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.capabilities-title {
+  color: #0369a1;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.capabilities-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.capabilities-list li {
+  color: #0c4a6e;
+  font-size: 0.875rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.capabilities-list li:before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #059669;
+  font-weight: bold;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .evaluation-summary {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .phase-indicator {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .candidates-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .progress-indicators {
+    flex-direction: column;
+  }
+
+  .candidate-item {
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+  }
+
+  .candidate-score {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .element-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .candidate-elements {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.25rem;
+  }
+
+  .total-score-value {
+    font-size: 1.5rem;
+  }
+}

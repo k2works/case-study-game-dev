@@ -253,9 +253,11 @@ describe('useStrategy', () => {
 
   test('エラー処理が正しく動作する', async () => {
     // Arrange
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const errorService = {
       ...mockStrategyService,
       getAllStrategies: vi.fn().mockRejectedValue(new Error('Network error')),
+      getActiveStrategy: vi.fn().mockRejectedValue(new Error('Network error')),
     } as unknown as StrategyService
 
     const { result } = renderHook(() => useStrategy(errorService))
@@ -265,15 +267,23 @@ describe('useStrategy', () => {
       expect(result.current.error).toBeTruthy()
       expect(result.current.isLoading).toBe(false)
     })
+
+    // Cleanup
+    consoleSpy.mockRestore()
   })
 
-  test('ローディング状態が正しく管理される', () => {
+  test('ローディング状態が正しく管理される', async () => {
     // Arrange & Act
     const { result } = renderHook(() =>
       useStrategy(mockStrategyService as unknown as StrategyService),
     )
 
-    // Assert
+    // Assert - 初期状態でローディング中
     expect(result.current.isLoading).toBe(true)
+
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
   })
 })

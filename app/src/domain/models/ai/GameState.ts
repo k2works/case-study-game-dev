@@ -43,4 +43,10 @@ export interface AIGameState {
   nextPuyoPair: AIPuyoPairState | null
   /** 現在のスコア */
   score: number
+  /** 連鎖回数 */
+  chainCount: number
+  /** ターン数 */
+  turn: number
+  /** ゲーム終了フラグ */
+  isGameOver: boolean
 }

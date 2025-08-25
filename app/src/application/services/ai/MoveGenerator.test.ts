@@ -21,8 +21,8 @@ describe('MoveGenerator', () => {
     },
   ): AIGameState => ({
     field: {
-      width: fieldCells.length,
-      height: fieldCells[0]?.length || 12,
+      width: 6, // 固定の幅
+      height: fieldCells.length,
       cells: fieldCells,
     },
     currentPuyoPair: currentPuyoPair || {
@@ -34,13 +34,16 @@ describe('MoveGenerator', () => {
     },
     nextPuyoPair: null,
     score: 0,
+    chainCount: 0,
+    turn: 1,
+    isGameOver: false,
   })
 
   describe('generateMoves', () => {
     it('空のフィールドで全ての可能な手を生成する', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -55,9 +58,9 @@ describe('MoveGenerator', () => {
     })
 
     it('currentPuyoPairがnullの場合は空の配列を返す', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
 
       const gameState: AIGameState = {
         field: {
@@ -68,6 +71,9 @@ describe('MoveGenerator', () => {
         currentPuyoPair: null,
         nextPuyoPair: null,
         score: 0,
+        chainCount: 0,
+        turn: 1,
+        isGameOver: false,
       }
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -76,11 +82,13 @@ describe('MoveGenerator', () => {
     })
 
     it('フィールドに障害物がある場合は有効な手のみを返す', () => {
-      const cellsWithObstacles = Array(6)
+      const cellsWithObstacles = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       // 列0を満杯にする
-      cellsWithObstacles[0] = Array(12).fill('red' as PuyoColor)
+      for (let y = 0; y < 12; y++) {
+        cellsWithObstacles[y][0] = 'red' as PuyoColor
+      }
 
       const gameState = createMockGameState(cellsWithObstacles)
       const moves = moveGenerator.generateMoves(gameState)
@@ -97,9 +105,9 @@ describe('MoveGenerator', () => {
     })
 
     it('右端の列での90度回転は境界外になり無効', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -113,9 +121,9 @@ describe('MoveGenerator', () => {
     })
 
     it('左端の列での270度回転は境界外になり無効', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -131,9 +139,9 @@ describe('MoveGenerator', () => {
 
   describe('有効性チェック', () => {
     it('有効な配置位置では正しいぷよの最終座標を返す', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -149,9 +157,9 @@ describe('MoveGenerator', () => {
     })
 
     it('90度回転時の正しい座標を計算する', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -165,9 +173,9 @@ describe('MoveGenerator', () => {
     })
 
     it('180度回転時の正しい座標を計算する', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)
@@ -181,9 +189,9 @@ describe('MoveGenerator', () => {
     })
 
     it('270度回転時の正しい座標を計算する', () => {
-      const emptyCells = Array(6)
+      const emptyCells = Array(12)
         .fill(null)
-        .map(() => Array(12).fill(null))
+        .map(() => Array(6).fill(null))
       const gameState = createMockGameState(emptyCells)
 
       const moves = moveGenerator.generateMoves(gameState)

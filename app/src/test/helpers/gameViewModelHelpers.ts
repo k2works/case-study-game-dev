@@ -19,17 +19,17 @@ export const createTestFieldViewModel = (
 ): FieldViewModel => {
   const cells: (PuyoViewModel | null)[][] = []
 
-  for (let x = 0; x < width; x++) {
-    cells[x] = []
-    for (let y = 0; y < height; y++) {
-      cells[x][y] = null
+  for (let y = 0; y < height; y++) {
+    cells[y] = []
+    for (let x = 0; x < width; x++) {
+      cells[y][x] = null
     }
   }
 
   // 指定されたぷよを配置
   puyos.forEach((puyo) => {
     if (puyo.x < width && puyo.y < height) {
-      cells[puyo.x][puyo.y] = {
+      cells[puyo.y][puyo.x] = {
         id: `test-puyo-${puyo.x}-${puyo.y}`,
         color: puyo.color,
         x: puyo.x,
