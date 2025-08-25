@@ -214,7 +214,7 @@ export class MoveGenerator implements MoveGeneratorPort {
   ): number {
     // 下から上に向かって空いている最も下の位置を探す
     for (let y = field.height - 1; y >= 0; y--) {
-      if (field.cells[x] && field.cells[x][y] === null) {
+      if (field.cells[y] && field.cells[y][x] === null) {
         return y
       }
     }

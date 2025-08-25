@@ -58,7 +58,7 @@ export const GameBoard = ({ game }: GameBoardProps) => {
   const getCellPuyo = (x: number, y: number) => {
     // ViewModelのfield.cellsから直接ぷよを取得
     const fieldPuyo =
-      field.cells[x] && field.cells[x][y] ? field.cells[x][y] : null
+      field.cells[y] && field.cells[y][x] ? field.cells[y][x] : null
 
     // PuyoPairからの表示チェック
     const pairResult = getCurrentPuyoFromPair(x, y)

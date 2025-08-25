@@ -57,11 +57,11 @@ export class GameViewModelMapper {
   private static toFieldViewModel(field: FieldData): FieldViewModel {
     const cells: (PuyoViewModel | null)[][] = []
 
-    for (let x = 0; x < field.width; x++) {
-      cells[x] = []
-      for (let y = 0; y < field.height; y++) {
+    for (let y = 0; y < field.height; y++) {
+      cells[y] = []
+      for (let x = 0; x < field.width; x++) {
         const puyo = getPuyoAt({ x, y }, field)
-        cells[x][y] = puyo ? this.toPuyoViewModel(puyo) : null
+        cells[y][x] = puyo ? this.toPuyoViewModel(puyo) : null
       }
     }
 
