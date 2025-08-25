@@ -19,8 +19,9 @@ import { evaluateMove as evaluateOperation } from '../../../domain/services/ai/O
 import { evaluateShape } from '../../../domain/services/ai/ShapeEvaluationService'
 import {
   type StrategyEvaluationResult,
-  StrategyEvaluationService,
+  type StrategyEvaluationSettings,
   createDefaultStrategySettings,
+  evaluateStrategy,
 } from '../../../domain/services/ai/StrategyEvaluationService'
 import type { StrategyPriority } from '../../../domain/services/ai/StrategyTypes'
 import type { AIPort } from '../../ports/AIPort'
@@ -45,7 +46,7 @@ export class MayahAIService implements AIPort {
   private settings: AISettings
   private enabled = false
   private moveGenerator: MoveGeneratorPort
-  private strategyEvaluationService: StrategyEvaluationService
+  private strategyEvaluationSettings: StrategyEvaluationSettings
   private currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c' = 'Phase 4c'
   private lastEvaluationResult: MayahEvaluationResult | null = null
   private candidateMovesWithEvaluation: Array<{
@@ -60,9 +61,7 @@ export class MayahAIService implements AIPort {
       thinkingSpeed: 1000,
     }
     this.moveGenerator = new MoveGenerator()
-    this.strategyEvaluationService = new StrategyEvaluationService(
-      createDefaultStrategySettings(),
-    )
+    this.strategyEvaluationSettings = createDefaultStrategySettings()
   }
 
   /**
@@ -268,10 +267,11 @@ export class MayahAIService implements AIPort {
     // 戦略評価を実行
     const possibleMoves = this.moveGenerator.generateMoves(gameState)
     const chainPatterns: ChainPattern[] = [] // 今回は基本実装のため空配列
-    const strategyEvaluation = this.strategyEvaluationService.evaluateStrategy(
+    const strategyEvaluation = evaluateStrategy(
       gameState,
       possibleMoves,
       chainPatterns,
+      this.strategyEvaluationSettings,
     )
 
     // 統合評価を実行（戦略評価を含む）
