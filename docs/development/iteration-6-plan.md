@@ -208,15 +208,15 @@ AI -> Game: 改善されたAIで判断
 
 #### Day 1-2: データ収集システム
 - [x] TrainingDataモデル設計（完了）
-- [ ] DataCollectionService実装
-- [ ] IndexedDBRepository実装
-- [ ] 単体テスト作成
+- [x] DataCollectionService実装（完了）
+- [x] IndexedDBRepository実装（完了）
+- [x] 単体テスト作成（完了）
 
 #### Day 3-4: データ前処理
-- [ ] 特徴量エンジニアリング
-- [ ] データ正規化処理
-- [ ] バッチ処理システム
-- [ ] 統合テスト作成
+- [x] 特徴量エンジニアリング（完了）
+- [x] データ正規化処理（完了）
+- [x] バッチ処理システム（完了）
+- [x] 統合テスト作成（完了）
 
 #### Day 5: データ管理UI
 - [ ] データ収集設定画面
@@ -227,16 +227,16 @@ AI -> Game: 改善されたAIで判断
 ### Week 2: 学習システムと可視化
 
 #### Day 6-7: 学習パイプライン
-- [ ] LearningService実装
-- [ ] TensorFlowTrainer実装
-- [ ] モデル保存・読み込み
-- [ ] 学習テスト作成
+- [x] LearningService実装（完了）
+- [x] TensorFlowTrainer実装（完了）
+- [x] モデル保存・読み込み（完了）
+- [x] 学習テスト作成（完了）
 
 #### Day 8-9: 性能評価システム
-- [ ] PerformanceMetrics実装
-- [ ] A/Bテスト機能
-- [ ] 比較分析ツール
-- [ ] 評価テスト作成
+- [x] PerformanceMetrics実装（完了）
+- [x] A/Bテスト機能（完了）
+- [x] 比較分析ツール（完了）
+- [x] 評価テスト作成（完了）
 
 #### Day 10: 可視化ダッシュボード
 - [ ] LearningDashboard実装
