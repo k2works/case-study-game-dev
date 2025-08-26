@@ -265,7 +265,7 @@ export class LearningService {
    */
   private async trainModel(
     config: LearningConfig,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     processedResult: any,
   ): Promise<{
     trainingAccuracy: number
@@ -295,9 +295,8 @@ export class LearningService {
    * 基本評価実行（スタブ実装）
    */
   private async performBasicEvaluation(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     config: LearningConfig,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     processedResult: any,
   ): Promise<LearningEvaluation> {
     // 実際の評価処理はTODO-6で実装
@@ -325,7 +324,7 @@ export class LearningService {
    */
   private async performCrossValidation(
     config: LearningConfig,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     processedResult: any,
   ): Promise<CrossValidationResult[]> {
     // 実際のクロスバリデーション処理はTODO-6で実装
