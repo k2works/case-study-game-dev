@@ -18,16 +18,16 @@ import {
 
 import { useState } from 'react'
 
-import type { PerformanceReport } from '../../../domain/models/ai/index'
-import type {
-  LearningCurve,
-  PerformanceTrend,
-} from '../../../domain/models/learning/ModelPerformanceMetrics'
 import type { PerformanceStatistics } from '../../../application/services/PerformanceAnalysisService'
 import {
   ChartDataService,
   type PerformanceMetricType,
 } from '../../../application/services/visualization/ChartDataService'
+import type { PerformanceReport } from '../../../domain/models/ai/index'
+import type {
+  LearningCurve,
+  PerformanceTrend,
+} from '../../../domain/models/learning/ModelPerformanceMetrics'
 
 type ChartType = 'line' | 'bar' | 'area'
 type DataType =
@@ -77,10 +77,15 @@ function createChartData(
   const dataCreators = {
     gamePerformance: () =>
       statistics && selectedMetric
-        ? ChartDataService.createPerformanceLineChart(statistics, selectedMetric)
+        ? ChartDataService.createPerformanceLineChart(
+            statistics,
+            selectedMetric,
+          )
         : null,
     aiComparison: () =>
-      comparisonReport ? ChartDataService.createComparisonChart(comparisonReport) : null,
+      comparisonReport
+        ? ChartDataService.createComparisonChart(comparisonReport)
+        : null,
     learningCurve: () =>
       learningCurve ? createLearningCurveData(learningCurve) : null,
     performanceTrend: () =>
@@ -147,12 +152,14 @@ function createPerformanceTrendData(performanceTrend: PerformanceTrend) {
 /**
  * チャートコンポーネント作成
  */
-function createChartComponent(
-  chartType: ChartType,
-  chartData: any,
-) {
+type ChartDataStructure = {
+  data: unknown[]
+  series: Array<{ name: string; dataKey: string; color: string }>
+}
+
+function createChartComponent(chartType: ChartType, chartData: ChartDataStructure) {
   const commonProps = {
-    data: chartData.data,
+    data: chartData.data as unknown[],
     margin: { top: 5, right: 30, left: 20, bottom: 50 },
   }
 
@@ -164,7 +171,7 @@ function createChartComponent(
           <XAxis dataKey="label" axisLine={false} tickLine={false} />
           <YAxis axisLine={false} tickLine={false} />
           <Tooltip content={<CustomTooltip />} />
-          {chartData.series.map((series: any) => (
+          {chartData.series.map((series) => (
             <Bar
               key={series.dataKey}
               dataKey={series.dataKey}
@@ -181,7 +188,7 @@ function createChartComponent(
           <XAxis dataKey="label" axisLine={false} tickLine={false} />
           <YAxis axisLine={false} tickLine={false} />
           <Tooltip content={<CustomTooltip />} />
-          {chartData.series.map((series: any) => (
+          {chartData.series.map((series) => (
             <Area
               key={series.dataKey}
               type="monotone"
@@ -201,7 +208,7 @@ function createChartComponent(
           <XAxis dataKey="label" axisLine={false} tickLine={false} />
           <YAxis axisLine={false} tickLine={false} />
           <Tooltip content={<CustomTooltip />} />
-          {chartData.series.map((series: any) => (
+          {chartData.series.map((series) => (
             <Line
               key={series.dataKey}
               type="monotone"
@@ -258,12 +265,16 @@ function ChartHeader({
   return (
     <div className="p-4 border-b">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">{chartData.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {chartData.title}
+        </h3>
         <div className="flex items-center space-x-4">
           {dataType === 'gamePerformance' && (
             <select
               value={selectedMetric}
-              onChange={(e) => onMetricChange(e.target.value as PerformanceMetricType)}
+              onChange={(e) =>
+                onMetricChange(e.target.value as PerformanceMetricType)
+              }
               className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="score">スコア</option>
@@ -271,7 +282,9 @@ function ChartHeader({
               <option value="playTime">プレイ時間</option>
             </select>
           )}
-          <span className="text-xs text-gray-500 capitalize">{chartType} chart</span>
+          <span className="text-xs text-gray-500 capitalize">
+            {chartType} chart
+          </span>
         </div>
       </div>
     </div>
@@ -294,7 +307,8 @@ export function PerformanceChart(props: PerformanceChartProps) {
     height = 400,
   } = props
 
-  const [selectedMetric, setSelectedMetric] = useState<PerformanceMetricType>(metricType)
+  const [selectedMetric, setSelectedMetric] =
+    useState<PerformanceMetricType>(metricType)
 
   const chartData = createChartData(
     dataType,
@@ -307,7 +321,9 @@ export function PerformanceChart(props: PerformanceChartProps) {
 
   if (!chartData || chartData.data.length === 0) {
     return (
-      <div className={`flex items-center justify-center h-64 bg-gray-50 rounded-lg ${className}`}>
+      <div
+        className={`flex items-center justify-center h-64 bg-gray-50 rounded-lg ${className}`}
+      >
         <div className="text-center text-gray-500">
           <p className="text-lg font-medium">パフォーマンスチャート</p>
           <p className="text-sm mt-2">データがありません</p>
@@ -327,7 +343,7 @@ export function PerformanceChart(props: PerformanceChartProps) {
       />
       <div className="p-4">
         <ResponsiveContainer width="100%" height={height}>
-          {createChartComponent(chartType, chartData)}
+          {createChartComponent(chartType, chartData as ChartDataStructure)}
         </ResponsiveContainer>
       </div>
     </div>

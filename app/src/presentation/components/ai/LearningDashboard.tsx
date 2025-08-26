@@ -3,6 +3,7 @@
  */
 import { useState } from 'react'
 
+import type { PerformanceStatistics } from '../../../application/services/PerformanceAnalysisService'
 import type {
   LearningConfig,
   LearningResult,
@@ -14,7 +15,6 @@ import type {
   ModelPerformance,
 } from '../../../domain/models/learning/ModelPerformanceMetrics'
 import type { LineChartData } from '../../../domain/models/visualization/ChartData'
-import type { PerformanceStatistics } from '../../../application/services/PerformanceAnalysisService'
 import { LineChart } from '../charts/LineChart'
 import { PerformanceChart } from '../charts/PerformanceChart'
 import { ModelVersionManager } from './ModelVersionManager'

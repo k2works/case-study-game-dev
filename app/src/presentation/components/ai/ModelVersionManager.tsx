@@ -216,10 +216,14 @@ function ABTestSection({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label 
+                  htmlFor="model-a-select"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Model A
                 </label>
                 <select
+                  id="model-a-select"
                   value={modelA}
                   onChange={(e) => setModelA(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -234,10 +238,14 @@ function ABTestSection({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label 
+                  htmlFor="model-b-select"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Model B
                 </label>
                 <select
+                  id="model-b-select"
                   value={modelB}
                   onChange={(e) => setModelB(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -506,7 +514,7 @@ export function ModelVersionManager(props: ModelVersionManagerProps) {
     setSelectedForComparison,
   } = useModelComparison(onCompareModels)
 
-  const activeTests = abTests.filter((test) => {
+  const activeTests = (abTests || []).filter((test) => {
     const now = new Date()
     return test.startDate <= now && test.endDate >= now
   })
@@ -523,7 +531,7 @@ export function ModelVersionManager(props: ModelVersionManagerProps) {
       </div>
 
       <div className="p-6">
-        {models.length > 0 ? (
+        {models && models.length > 0 ? (
           <>
             <ModelsSection
               models={models}

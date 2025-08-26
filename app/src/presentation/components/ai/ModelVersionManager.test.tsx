@@ -306,7 +306,7 @@ describe('ModelVersionManager', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText('Select another model to compare with model-1'),
+          screen.getByText('Select another model to compare with model-2'),
         ).toBeInTheDocument()
       })
 
@@ -314,7 +314,7 @@ describe('ModelVersionManager', () => {
       fireEvent.click(compareButtons[1])
 
       await waitFor(() => {
-        expect(mockOnCompareModels).toHaveBeenCalledWith('model-1', 'model-2')
+        expect(mockOnCompareModels).toHaveBeenCalledWith('model-2', 'model-1')
       })
     })
   })

@@ -15,6 +15,50 @@ import type { AIMove, AISettings } from '../../domain/models/ai'
 import { usePerformanceAnalysis } from './usePerformanceAnalysis'
 
 /**
+ * AIの手をゲームに適用するヘルパー関数
+ */
+function applyAIMoveToGame(
+  game: GameViewModel,
+  move: AIMove,
+  gameService: GamePort,
+): GameViewModel {
+  if (!game.currentPuyoPair) return game
+
+  let updatedGame = game
+
+  // 現在の位置から目標位置への移動を計算
+  const currentX = game.currentPuyoPair.x
+  const targetX = move.x
+  const horizontalMoves = targetX - currentX
+
+  // 横移動を実行
+  for (let i = 0; i < Math.abs(horizontalMoves); i++) {
+    const action =
+      horizontalMoves > 0
+        ? { type: 'MOVE_RIGHT' as const }
+        : { type: 'MOVE_LEFT' as const }
+    updatedGame = gameService.updateGameState(updatedGame, action)
+  }
+
+  // 回転を実行（現在の回転から目標回転へ）
+  const currentRotation = game.currentPuyoPair.rotation
+  const targetRotation = move.rotation
+  const rotationSteps = (targetRotation - currentRotation + 4) % 4
+
+  for (let i = 0; i < rotationSteps; i++) {
+    const action = { type: 'ROTATE_CLOCKWISE' as const }
+    updatedGame = gameService.updateGameState(updatedGame, action)
+  }
+
+  // ハードドロップを実行
+  updatedGame = gameService.updateGameState(updatedGame, {
+    type: 'HARD_DROP',
+  })
+
+  return updatedGame
+}
+
+/**
  * ゲームシステムの状態と操作を管理するカスタムフック
  */
 export const useGameSystem = (
@@ -66,6 +110,83 @@ export const useGameSystem = (
     aiService.setEnabled(aiEnabled)
   }, [aiService, aiSettings, aiEnabled])
 
+  // GameViewModelをAIGameState形式に変換
+  const convertToAIGameState = useCallback((game: GameViewModel) => {
+    const convertFieldToAIFormat = (fieldViewModel: FieldViewModel) => {
+      return {
+        width: fieldViewModel.width,
+        height: fieldViewModel.height,
+        cells: fieldViewModel.cells.map((row: (PuyoViewModel | null)[]) =>
+          row.map((cell: PuyoViewModel | null) => cell ? cell.color : null),
+        ),
+        isEmpty: (x: number, y: number) => {
+          if (x < 0 || x >= fieldViewModel.width || y < 0 || y >= fieldViewModel.height) {
+            return false
+          }
+          return fieldViewModel.cells[y][x] === null
+        },
+        isValidPosition: (x: number, y: number) => {
+          return x >= 0 && x < fieldViewModel.width && y >= 0 && y < fieldViewModel.height
+        },
+        getPuyo: (x: number, y: number) => {
+          if (x < 0 || x >= fieldViewModel.width || y < 0 || y >= fieldViewModel.height) {
+            return null
+          }
+          return fieldViewModel.cells[y][x]
+        },
+      }
+    }
+
+    const convertPuyoPairToAIFormat = (puyoPairVM: PuyoPairViewModel | null) => {
+      if (!puyoPairVM) return null
+      return {
+        primaryColor: puyoPairVM.main.color,
+        secondaryColor: puyoPairVM.sub.color,
+        x: puyoPairVM.x,
+        y: puyoPairVM.y,
+        rotation: puyoPairVM.rotation,
+      }
+    }
+
+    return {
+      field: convertFieldToAIFormat(game.field),
+      currentPuyoPair: convertPuyoPairToAIFormat(game.currentPuyoPair),
+      nextPuyoPair: convertPuyoPairToAIFormat(game.nextPuyoPair),
+      score: game.score.current,
+      chainCount: 0,
+      turn: 1,
+      isGameOver: game.state === 'gameOver',
+    }
+  }, [])
+
+  // Mayah AI評価結果を処理
+  const processMayahEvaluation = useCallback((aiService: AIPort) => {
+    if ('getLastEvaluationResult' in aiService && 'getCandidateMovesWithEvaluation' in aiService) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mayahService = aiService as any
+      const evaluationResult = mayahService.getLastEvaluationResult()
+      if (evaluationResult) {
+        setMayahEvaluationResult(evaluationResult)
+      }
+
+      const candidates = mayahService.getCandidateMovesWithEvaluation()
+      if (candidates && candidates.length > 0) {
+        const displayCandidates = candidates.map(
+          (candidate: { move: AIMove; evaluation: MayahEvaluationResult; rank: number }) => ({
+            move: {
+              x: candidate.move.x,
+              rotation: candidate.move.rotation,
+              score: candidate.evaluation.score,
+            },
+            evaluation: candidate.evaluation,
+            rank: candidate.rank,
+          }),
+        )
+        setCandidateMoves(displayCandidates)
+      }
+    }
+  }, [])
+
   // AI自動プレイの実行
   useEffect(() => {
     if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
@@ -76,112 +197,17 @@ export const useGameSystem = (
       try {
         setIsAIThinking(true)
 
-        // GameViewModelをAIGameStateに変換
-        const convertFieldToAIFormat = (fieldViewModel: FieldViewModel) => {
-          return {
-            width: fieldViewModel.width,
-            height: fieldViewModel.height,
-            cells: fieldViewModel.cells.map((row: (PuyoViewModel | null)[]) =>
-              row.map((cell: PuyoViewModel | null) =>
-                cell ? cell.color : null,
-              ),
-            ),
-            isEmpty: (x: number, y: number) => {
-              if (
-                x < 0 ||
-                x >= fieldViewModel.width ||
-                y < 0 ||
-                y >= fieldViewModel.height
-              ) {
-                return false
-              }
-              return fieldViewModel.cells[y][x] === null
-            },
-            isValidPosition: (x: number, y: number) => {
-              return (
-                x >= 0 &&
-                x < fieldViewModel.width &&
-                y >= 0 &&
-                y < fieldViewModel.height
-              )
-            },
-            getPuyo: (x: number, y: number) => {
-              if (
-                x < 0 ||
-                x >= fieldViewModel.width ||
-                y < 0 ||
-                y >= fieldViewModel.height
-              ) {
-                return null
-              }
-              return fieldViewModel.cells[y][x]
-            },
-          }
-        }
-
-        const convertPuyoPairToAIFormat = (
-          puyoPairVM: PuyoPairViewModel | null,
-        ) => {
-          if (!puyoPairVM) return null
-          return {
-            primaryColor: puyoPairVM.main.color,
-            secondaryColor: puyoPairVM.sub.color,
-            x: puyoPairVM.x,
-            y: puyoPairVM.y,
-            rotation: puyoPairVM.rotation,
-          }
-        }
-
-        const aiGameState = {
-          field: convertFieldToAIFormat(game.field),
-          currentPuyoPair: convertPuyoPairToAIFormat(game.currentPuyoPair),
-          nextPuyoPair: convertPuyoPairToAIFormat(game.nextPuyoPair),
-          score: game.score.current,
-          chainCount: 0, // ゲーム状態から取得する場合は適切に設定
-          turn: 1, // ゲーム状態から取得する場合は適切に設定
-          isGameOver: game.state === 'gameOver',
-        }
-
+        const aiGameState = convertToAIGameState(game)
         const move = await aiService.decideMove(aiGameState)
         setLastAIMove(move)
 
-        // Mayah AI評価結果を取得（MayahAIServiceから）
-        if (
-          'getLastEvaluationResult' in aiService &&
-          'getCandidateMovesWithEvaluation' in aiService
-        ) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const mayahService = aiService as any
-          const evaluationResult = mayahService.getLastEvaluationResult()
-          if (evaluationResult) {
-            setMayahEvaluationResult(evaluationResult)
-          }
+        processMayahEvaluation(aiService)
 
-          // 候補手を取得
-          const candidates = mayahService.getCandidateMovesWithEvaluation()
-          if (candidates && candidates.length > 0) {
-            // AIMove形式から表示用形式に変換
-            const displayCandidates = candidates.map(
-              (candidate: {
-                move: AIMove
-                evaluation: MayahEvaluationResult
-                rank: number
-              }) => ({
-                move: {
-                  x: candidate.move.x,
-                  rotation: candidate.move.rotation,
-                  score: candidate.evaluation.score,
-                },
-                evaluation: candidate.evaluation,
-                rank: candidate.rank,
-              }),
-            )
-            setCandidateMoves(displayCandidates)
-          }
+        // AIの手をゲームアクションに変換して適用
+        if (move && game.currentPuyoPair) {
+          const updatedGame = applyAIMoveToGame(game, move, gameService)
+          updateGame(updatedGame)
         }
-
-        // 実際にゲーム状態を更新
-        // TODO: ゲームサービスにAIの手を適用する処理を実装
       } catch (error) {
         console.error('AI move execution failed:', error)
       } finally {
@@ -197,7 +223,16 @@ export const useGameSystem = (
         clearTimeout(timer)
       }
     }
-  }, [aiEnabled, game, aiService, aiSettings.thinkingSpeed])
+  }, [
+    aiEnabled,
+    game,
+    aiService,
+    aiSettings.thinkingSpeed,
+    gameService,
+    updateGame,
+    convertToAIGameState,
+    processMayahEvaluation,
+  ])
 
   // リセット処理
   const handleReset = useCallback(() => {

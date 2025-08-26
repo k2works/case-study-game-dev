@@ -1,5 +1,16 @@
 import React, { useCallback, useState } from 'react'
 
+import type {
+  LearningConfig,
+  LearningResult,
+  LearningService,
+} from '../../application/services/learning/LearningService'
+import type {
+  ABTestResult,
+  ModelComparison,
+  ModelPerformance,
+} from '../../domain/models/learning/ModelPerformanceMetrics'
+
 /**
  * A/Bテスト結果を作成するヘルパー関数
  */
@@ -41,7 +52,10 @@ function createABTestResult(
 /**
  * モデル比較結果を作成するヘルパー関数
  */
-function createModelComparison(modelA: ModelPerformance, modelB: ModelPerformance) {
+function createModelComparison(
+  modelA: ModelPerformance,
+  modelB: ModelPerformance,
+) {
   return {
     improvementMetrics: {
       accuracyImprovement:
@@ -54,7 +68,8 @@ function createModelComparison(modelA: ModelPerformance, modelB: ModelPerformanc
         (modelB.testMetrics?.gamePerformanceScore || 0) -
         (modelA.testMetrics?.gamePerformanceScore || 0),
       trainingSpeedImprovement:
-        (modelA.trainingMetrics.trainingTime - modelB.trainingMetrics.trainingTime) /
+        (modelA.trainingMetrics.trainingTime -
+          modelB.trainingMetrics.trainingTime) /
         modelA.trainingMetrics.trainingTime,
       modelSizeChange:
         modelB.resourceMetrics.modelSize - modelA.resourceMetrics.modelSize,
@@ -67,17 +82,6 @@ function createModelComparison(modelA: ModelPerformance, modelB: ModelPerformanc
     },
   }
 }
-
-import type {
-  LearningConfig,
-  LearningResult,
-  LearningService,
-} from '../../application/services/learning/LearningService'
-import type {
-  ABTestResult,
-  ModelComparison,
-  ModelPerformance,
-} from '../../domain/models/learning/ModelPerformanceMetrics'
 
 /**
  * 学習システムの状態と操作を管理するカスタムフック
