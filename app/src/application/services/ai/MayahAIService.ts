@@ -107,54 +107,6 @@ export class MayahAIService implements AIPort {
   }
 
   /**
-   * 最後の評価結果を取得（非同期）
-   */
-  async getLastEvaluationResult(): Promise<MayahEvaluationResult | null> {
-    return this.lastEvaluationResult
-  }
-
-  /**
-   * 候補手とその評価を取得（非同期）
-   */
-  async getCandidateMovesWithEvaluation(): Promise<
-    Array<{
-      move: AIMove
-      evaluation: MayahEvaluationResult
-      rank: number
-    }>
-  > {
-    return this.candidateMovesWithEvaluation
-  }
-
-  /**
-   * 最後の評価結果を取得（同期）
-   * UI用
-   */
-  getLastEvaluation(): MayahEvaluationResult | null {
-    return this.lastEvaluationResult
-  }
-
-  /**
-   * 候補手とその評価を取得（同期）
-   * UI用
-   */
-  getLastCandidateMoves(): Array<{
-    move: AIMove
-    evaluation: MayahEvaluationResult
-    rank: number
-  }> {
-    return this.candidateMovesWithEvaluation
-  }
-
-  /**
-   * 現在の実装フェーズを取得
-   * UI用
-   */
-  getCurrentPhase(): 'Phase 4a' | 'Phase 4b' | 'Phase 4c' {
-    return this.currentPhase
-  }
-
-  /**
    * 実装フェーズを設定
    */
   setCurrentPhase(phase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c'): void {
@@ -467,5 +419,30 @@ export class MayahAIService implements AIPort {
    */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  /**
+   * 最後の評価結果を取得
+   */
+  getLastEvaluationResult(): MayahEvaluationResult | null {
+    return this.lastEvaluationResult
+  }
+
+  /**
+   * 候補手と評価結果のランキングを取得
+   */
+  getCandidateMovesWithEvaluation(): Array<{
+    move: AIMove
+    evaluation: MayahEvaluationResult
+    rank: number
+  }> {
+    return [...this.candidateMovesWithEvaluation]
+  }
+
+  /**
+   * 現在のフェーズを取得
+   */
+  getCurrentPhase(): 'Phase 4a' | 'Phase 4b' | 'Phase 4c' {
+    return this.currentPhase
   }
 }

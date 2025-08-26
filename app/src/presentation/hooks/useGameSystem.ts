@@ -5,7 +5,12 @@ import type { GamePort } from '../../application/ports/GamePort'
 import type { InputPort } from '../../application/ports/InputPort'
 import type { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
 import type { MayahEvaluationResult } from '../../application/services/ai/MayahAIService'
-import type { GameViewModel } from '../../application/viewmodels/GameViewModel'
+import type { 
+  GameViewModel,
+  FieldViewModel,
+  PuyoPairViewModel,
+  PuyoViewModel,
+} from '../../application/viewmodels/GameViewModel'
 import type { AIMove, AISettings } from '../../domain/models/ai'
 import { usePerformanceAnalysis } from './usePerformanceAnalysis'
 
@@ -60,6 +65,130 @@ export const useGameSystem = (
     aiService.updateSettings(aiSettings)
     aiService.setEnabled(aiEnabled)
   }, [aiService, aiSettings, aiEnabled])
+
+  // AI自動プレイの実行
+  useEffect(() => {
+    if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
+      return
+    }
+
+    const executeAIMove = async () => {
+      try {
+        setIsAIThinking(true)
+
+        // GameViewModelをAIGameStateに変換
+        const convertFieldToAIFormat = (fieldViewModel: FieldViewModel) => {
+          return {
+            width: fieldViewModel.width,
+            height: fieldViewModel.height,
+            cells: fieldViewModel.cells.map((row: (PuyoViewModel | null)[]) =>
+              row.map((cell: PuyoViewModel | null) => (cell ? cell.color : null)),
+            ),
+            isEmpty: (x: number, y: number) => {
+              if (
+                x < 0 ||
+                x >= fieldViewModel.width ||
+                y < 0 ||
+                y >= fieldViewModel.height
+              ) {
+                return false
+              }
+              return fieldViewModel.cells[y][x] === null
+            },
+            isValidPosition: (x: number, y: number) => {
+              return (
+                x >= 0 &&
+                x < fieldViewModel.width &&
+                y >= 0 &&
+                y < fieldViewModel.height
+              )
+            },
+            getPuyo: (x: number, y: number) => {
+              if (
+                x < 0 ||
+                x >= fieldViewModel.width ||
+                y < 0 ||
+                y >= fieldViewModel.height
+              ) {
+                return null
+              }
+              return fieldViewModel.cells[y][x]
+            },
+          }
+        }
+
+        const convertPuyoPairToAIFormat = (puyoPairVM: PuyoPairViewModel | null) => {
+          if (!puyoPairVM) return null
+          return {
+            primaryColor: puyoPairVM.main.color,
+            secondaryColor: puyoPairVM.sub.color,
+            x: puyoPairVM.x,
+            y: puyoPairVM.y,
+            rotation: puyoPairVM.rotation,
+          }
+        }
+
+        const aiGameState = {
+          field: convertFieldToAIFormat(game.field),
+          currentPuyoPair: convertPuyoPairToAIFormat(game.currentPuyoPair),
+          nextPuyoPair: convertPuyoPairToAIFormat(game.nextPuyoPair),
+          score: game.score.current,
+          chainCount: 0, // ゲーム状態から取得する場合は適切に設定
+          turn: 1, // ゲーム状態から取得する場合は適切に設定
+          isGameOver: game.state === 'gameOver',
+        }
+
+        const move = await aiService.decideMove(aiGameState)
+        setLastAIMove(move)
+
+        // Mayah AI評価結果を取得（MayahAIServiceから）
+        if ('getLastEvaluationResult' in aiService && 'getCandidateMovesWithEvaluation' in aiService) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const mayahService = aiService as any
+          const evaluationResult = mayahService.getLastEvaluationResult()
+          if (evaluationResult) {
+            setMayahEvaluationResult(evaluationResult)
+          }
+
+          // 候補手を取得
+          const candidates = mayahService.getCandidateMovesWithEvaluation()
+          if (candidates && candidates.length > 0) {
+            // AIMove形式から表示用形式に変換
+            const displayCandidates = candidates.map((candidate: {
+              move: AIMove
+              evaluation: MayahEvaluationResult
+              rank: number
+            }) => ({
+              move: {
+                x: candidate.move.x,
+                rotation: candidate.move.rotation,
+                score: candidate.evaluation.score,
+              },
+              evaluation: candidate.evaluation,
+              rank: candidate.rank,
+            }))
+            setCandidateMoves(displayCandidates)
+          }
+        }
+
+        // 実際にゲーム状態を更新
+        // TODO: ゲームサービスにAIの手を適用する処理を実装
+      } catch (error) {
+        console.error('AI move execution failed:', error)
+      } finally {
+        setIsAIThinking(false)
+      }
+    }
+
+    const timer = setTimeout(executeAIMove, aiSettings.thinkingSpeed)
+    aiTimerRef.current = timer
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+    }
+  }, [aiEnabled, game, aiService, aiSettings.thinkingSpeed])
 
   // リセット処理
   const handleReset = useCallback(() => {
