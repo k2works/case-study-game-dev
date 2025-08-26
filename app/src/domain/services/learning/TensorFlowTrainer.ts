@@ -116,9 +116,15 @@ export class TensorFlowTrainer {
       })
 
       const trainLoss = this.getLastValue(history.history.loss as number[])
-      const trainAccuracy = this.getLastValue(history.history.accuracy as number[])
-      const validationLoss = this.getLastValue(history.history.val_loss as number[])
-      const validationAccuracy = this.getLastValue(history.history.val_accuracy as number[])
+      const trainAccuracy = this.getLastValue(
+        history.history.accuracy as number[],
+      )
+      const validationLoss = this.getLastValue(
+        history.history.val_loss as number[],
+      )
+      const validationAccuracy = this.getLastValue(
+        history.history.val_accuracy as number[],
+      )
 
       return {
         history: {
@@ -262,7 +268,11 @@ export class TensorFlowTrainer {
       if (layerConfig.type === 'dense') {
         const layer = tf.layers.dense({
           units: layerConfig.units!,
-          activation: layerConfig.activation as any,
+          activation: layerConfig.activation as
+            | 'relu'
+            | 'sigmoid'
+            | 'softmax'
+            | undefined,
           inputShape: index === 0 ? architecture.inputShape : undefined,
         })
         model.add(layer)
@@ -278,30 +288,71 @@ export class TensorFlowTrainer {
     architecture: ModelArchitecture,
   ): void {
     architecture.layers.forEach((layerConfig, index) => {
-      if (layerConfig.type === 'conv2d') {
-        const layer = tf.layers.conv2d({
-          filters: layerConfig.filters!,
-          kernelSize: layerConfig.kernelSize!,
-          activation: layerConfig.activation as any,
-          inputShape: index === 0 ? architecture.inputShape : undefined,
-        })
-        model.add(layer)
-      } else if (layerConfig.type === 'maxPooling2d') {
-        const layer = tf.layers.maxPooling2d({
-          poolSize: layerConfig.poolSize!,
-        })
-        model.add(layer)
-      } else if (layerConfig.type === 'flatten') {
-        const layer = tf.layers.flatten()
-        model.add(layer)
-      } else if (layerConfig.type === 'dense') {
-        const layer = tf.layers.dense({
-          units: layerConfig.units!,
-          activation: layerConfig.activation as any,
-        })
-        model.add(layer)
-      }
+      this.addCNNLayer(
+        model,
+        layerConfig,
+        index === 0 ? architecture.inputShape : undefined,
+      )
     })
+  }
+
+  private addCNNLayer(
+    model: tf.Sequential,
+    layerConfig: ModelLayerConfig,
+    inputShape?: number[],
+  ): void {
+    if (layerConfig.type === 'conv2d') {
+      this.addConv2dLayer(model, layerConfig, inputShape)
+    } else if (layerConfig.type === 'maxPooling2d') {
+      this.addMaxPooling2dLayer(model, layerConfig)
+    } else if (layerConfig.type === 'flatten') {
+      model.add(tf.layers.flatten())
+    } else if (layerConfig.type === 'dense') {
+      this.addDenseLayerToCNN(model, layerConfig)
+    }
+  }
+
+  private addConv2dLayer(
+    model: tf.Sequential,
+    layerConfig: ModelLayerConfig,
+    inputShape?: number[],
+  ): void {
+    const layer = tf.layers.conv2d({
+      filters: layerConfig.filters!,
+      kernelSize: layerConfig.kernelSize!,
+      activation: layerConfig.activation as
+        | 'relu'
+        | 'sigmoid'
+        | 'softmax'
+        | undefined,
+      inputShape,
+    })
+    model.add(layer)
+  }
+
+  private addMaxPooling2dLayer(
+    model: tf.Sequential,
+    layerConfig: ModelLayerConfig,
+  ): void {
+    const layer = tf.layers.maxPooling2d({
+      poolSize: layerConfig.poolSize!,
+    })
+    model.add(layer)
+  }
+
+  private addDenseLayerToCNN(
+    model: tf.Sequential,
+    layerConfig: ModelLayerConfig,
+  ): void {
+    const layer = tf.layers.dense({
+      units: layerConfig.units!,
+      activation: layerConfig.activation as
+        | 'relu'
+        | 'sigmoid'
+        | 'softmax'
+        | undefined,
+    })
+    model.add(layer)
   }
 
   private validateTrainingData(data: TrainingData): void {

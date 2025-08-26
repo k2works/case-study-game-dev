@@ -21,10 +21,12 @@ vi.mock('@tensorflow/tfjs', () => ({
         },
       }),
     ),
-    evaluate: vi.fn(() => Promise.resolve([
-      { data: vi.fn(() => Promise.resolve([0.2])) },
-      { data: vi.fn(() => Promise.resolve([0.9])) }
-    ])),
+    evaluate: vi.fn(() =>
+      Promise.resolve([
+        { data: vi.fn(() => Promise.resolve([0.2])) },
+        { data: vi.fn(() => Promise.resolve([0.9])) },
+      ]),
+    ),
     predict: vi.fn(() => ({
       dataSync: () => [0.1, 0.9],
     })),
@@ -345,7 +347,7 @@ describe('TensorFlowTrainer', () => {
       const invalidArchitecture = {
         type: 'invalid' as ModelArchitecture['type'],
         inputShape: [8],
-        layers: [{ type: 'dense', units: 10, activation: 'relu' }],
+        layers: [{ type: 'dense' as const, units: 10, activation: 'relu' }],
       }
 
       // Act & Assert
