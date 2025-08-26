@@ -11,12 +11,18 @@ import { InputApplicationService } from '../../application/services/InputApplica
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
 import { MayahAIService } from '../../application/services/ai/MayahAIService'
 import StrategyService from '../../application/services/ai/StrategyService'
+import { BatchProcessingService } from '../../application/services/learning/BatchProcessingService'
+import { DataCollectionServiceImpl } from '../../application/services/learning/DataCollectionService'
+import { DataPreprocessingService } from '../../application/services/learning/DataPreprocessingService'
+import { LearningService } from '../../application/services/learning/LearningService'
 import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
+import { FeatureEngineeringService } from '../../domain/services/learning/FeatureEngineeringService'
 import { BrowserTimerAdapter } from '../adapters/BrowserTimerAdapter'
 import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter'
 import { PerformanceAdapter } from '../adapters/PerformanceAdapter'
 import { StrategyAdapter } from '../adapters/StrategyAdapter'
+import { IndexedDBTrainingDataRepository } from '../adapters/learning/IndexedDBRepository'
 
 /**
  * デフォルトの依存性注入コンテナ設定
@@ -106,6 +112,63 @@ export class DefaultContainer {
       true,
     )
 
+    // 学習システム
+    container.register<IndexedDBTrainingDataRepository>(
+      'IndexedDBRepository',
+      () => new IndexedDBTrainingDataRepository(),
+      true,
+    )
+
+    container.register<DataCollectionServiceImpl>(
+      'DataCollectionService',
+      () =>
+        new DataCollectionServiceImpl(
+          container.resolve<IndexedDBTrainingDataRepository>(
+            'IndexedDBRepository',
+          ),
+        ),
+      true,
+    )
+
+    container.register<FeatureEngineeringService>(
+      'FeatureEngineeringService',
+      () => new FeatureEngineeringService(),
+      true,
+    )
+
+    container.register<DataPreprocessingService>(
+      'DataPreprocessingService',
+      () =>
+        new DataPreprocessingService(
+          container.resolve<FeatureEngineeringService>(
+            'FeatureEngineeringService',
+          ),
+        ),
+      true,
+    )
+
+    container.register<BatchProcessingService>(
+      'BatchProcessingService',
+      () =>
+        new BatchProcessingService(
+          container.resolve<DataCollectionServiceImpl>('DataCollectionService'),
+          container.resolve<DataPreprocessingService>(
+            'DataPreprocessingService',
+          ),
+        ),
+      true,
+    )
+
+    container.register<LearningService>(
+      'LearningService',
+      () =>
+        new LearningService(
+          container.resolve<DataCollectionServiceImpl>('DataCollectionService'),
+          container.resolve<BatchProcessingService>('BatchProcessingService'),
+        ),
+      true,
+    )
+
     return container
   }
 }
@@ -141,6 +204,16 @@ class DefaultContainerWrapper {
 
   getStrategyService(): StrategyService {
     return this.container.resolve<StrategyService>('StrategyService')
+  }
+
+  getLearningService(): LearningService {
+    return this.container.resolve<LearningService>('LearningService')
+  }
+
+  getDataCollectionService(): DataCollectionServiceImpl {
+    return this.container.resolve<DataCollectionServiceImpl>(
+      'DataCollectionService',
+    )
   }
 }
 
