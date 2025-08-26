@@ -269,7 +269,7 @@ export class DataCollectionServiceImpl implements DataCollectionService {
    */
   private validateActionBounds(action: AIAction, gameState: GameState): void {
     const fieldWidth = gameState.field[0]?.length || 0
-    
+
     if (action.x < 0 || action.x >= fieldWidth) {
       throw new Error('Invalid action: x is out of bounds')
     }

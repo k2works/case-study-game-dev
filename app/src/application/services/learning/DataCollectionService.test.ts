@@ -6,12 +6,8 @@ import type {
   TrainingData,
   TrainingMetadata,
 } from '../../../domain/models/training/TrainingData'
-import type {
-  DataCollectionService,
-} from './DataCollectionService'
-import {
-  createDataCollectionService,
-} from './DataCollectionService'
+import type { DataCollectionService } from './DataCollectionService'
+import { createDataCollectionService } from './DataCollectionService'
 
 // モックリポジトリ
 interface MockTrainingDataRepository {
