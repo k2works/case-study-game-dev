@@ -203,7 +203,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -241,7 +243,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -249,7 +253,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       const savePromise = repository.save(sampleTrainingData)
 
       // 保存エラーをシミュレート
-      const saveErrorEvent = { target: saveRequest } as Event & { target: IDBRequest }
+      const saveErrorEvent = { target: saveRequest } as Event & {
+        target: IDBRequest
+      }
       saveRequest.onerror?.(saveErrorEvent)
 
       // Assert
@@ -270,7 +276,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -308,7 +316,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -346,7 +356,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -383,7 +395,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -416,7 +430,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 
@@ -471,7 +487,9 @@ describe('IndexedDBTrainingDataRepository', () => {
       // データベース初期化
       const initPromise = repository.initialize()
       openRequest.result = mockDatabase
-      const initEvent = { target: openRequest } as Event & { target: IDBRequest }
+      const initEvent = { target: openRequest } as Event & {
+        target: IDBRequest
+      }
       openRequest.onsuccess?.(initEvent)
       await initPromise
 

@@ -1,5 +1,5 @@
-import type { TrainingData } from '../../../domain/models/training/TrainingData'
 import type { TrainingDataRepositoryPort } from '../../../application/services/learning/DataCollectionService'
+import type { TrainingData } from '../../../domain/models/training/TrainingData'
 
 /**
  * IndexedDBを使用したTrainingDataリポジトリの実装
