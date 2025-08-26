@@ -7,9 +7,17 @@ import type {
   LearningConfig,
   LearningResult,
 } from '../../../application/services/learning/LearningService'
-import type { ModelPerformance } from '../../../domain/models/learning/ModelPerformanceMetrics'
+import type { PerformanceReport } from '../../../domain/models/ai/index'
+import type {
+  ABTestResult,
+  ModelComparison,
+  ModelPerformance,
+} from '../../../domain/models/learning/ModelPerformanceMetrics'
 import type { LineChartData } from '../../../domain/models/visualization/ChartData'
+import type { PerformanceStatistics } from '../../../application/services/PerformanceAnalysisService'
 import { LineChart } from '../charts/LineChart'
+import { PerformanceChart } from '../charts/PerformanceChart'
+import { ModelVersionManager } from './ModelVersionManager'
 
 export interface LearningDashboardProps {
   isLearning: boolean
@@ -20,6 +28,18 @@ export interface LearningDashboardProps {
   onStartLearning: (config: LearningConfig) => void
   onStopLearning: () => void
   onModelSelect: (modelId: string) => void
+
+  // 新機能のプロップス
+  models: ModelPerformance[]
+  abTests: ABTestResult[]
+  performanceStatistics?: PerformanceStatistics
+  comparisonReport?: PerformanceReport
+  onStartABTest: (modelAId: string, modelBId: string, testName: string) => void
+  onStopABTest: (testId: string) => void
+  onCompareModels: (
+    modelAId: string,
+    modelBId: string,
+  ) => Promise<ModelComparison | null>
 }
 
 interface LearningConfigFormData {
@@ -48,6 +68,14 @@ export function LearningDashboard({
   learningHistory,
   onStartLearning,
   onStopLearning,
+  onModelSelect,
+  models,
+  abTests,
+  performanceStatistics,
+  comparisonReport,
+  onStartABTest,
+  onStopABTest,
+  onCompareModels,
 }: LearningDashboardProps) {
   const [config, setConfig] = useState<LearningConfigFormData>(defaultConfig)
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -124,6 +152,19 @@ export function LearningDashboard({
   const learningCurveData = generateLearningCurveData()
   const lossCurveData = generateLossCurveData()
 
+  // 学習曲線データをPerformanceChart用に変換
+  const learningCurve = latestPerformance
+    ? {
+        epochs: latestPerformance.trainingMetrics.accuracyHistory.map(
+          (_, i) => i + 1,
+        ),
+        trainLoss: latestPerformance.trainingMetrics.lossHistory,
+        validationLoss: latestPerformance.trainingMetrics.lossHistory, // TODO: 実際のvalidation履歴が必要
+        trainAccuracy: latestPerformance.trainingMetrics.accuracyHistory,
+        validationAccuracy: latestPerformance.trainingMetrics.accuracyHistory, // TODO: 実際のvalidation履歴が必要
+      }
+    : undefined
+
   return (
     <DashboardLayout currentModel={currentModel}>
       <LearningControlPanel
@@ -141,6 +182,60 @@ export function LearningDashboard({
         learningCurveData={learningCurveData}
         lossCurveData={lossCurveData}
       />
+
+      {/* 新しいパフォーマンスチャート */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Advanced Performance Analytics
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* ゲームパフォーマンスチャート */}
+          {performanceStatistics && (
+            <PerformanceChart
+              dataType="gamePerformance"
+              statistics={performanceStatistics}
+              chartType="line"
+              className="w-full"
+            />
+          )}
+
+          {/* AI vs Human比較チャート */}
+          {comparisonReport && (
+            <PerformanceChart
+              dataType="aiComparison"
+              comparisonReport={comparisonReport}
+              chartType="bar"
+              className="w-full"
+            />
+          )}
+
+          {/* 学習曲線チャート */}
+          {learningCurve && (
+            <PerformanceChart
+              dataType="learningCurve"
+              learningCurve={learningCurve}
+              chartType="area"
+              className="w-full lg:col-span-2"
+              height={350}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* モデルバージョン管理 */}
+      <div className="mb-8">
+        <ModelVersionManager
+          models={models}
+          activeModelId={currentModel}
+          abTests={abTests}
+          onModelSelect={onModelSelect}
+          onStartABTest={onStartABTest}
+          onStopABTest={onStopABTest}
+          onCompareModels={onCompareModels}
+          className="w-full"
+        />
+      </div>
+
       <LearningHistoryTable learningHistory={learningHistory} />
     </DashboardLayout>
   )

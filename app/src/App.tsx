@@ -279,6 +279,13 @@ function App() {
             onStartLearning={learningSystem.handleStartLearning}
             onStopLearning={learningSystem.handleStopLearning}
             onModelSelect={learningSystem.handleModelSelect}
+            models={learningSystem.models}
+            abTests={learningSystem.abTests}
+            performanceStatistics={gameSystem.statistics}
+            comparisonReport={gameSystem.comparisonReport}
+            onStartABTest={learningSystem.handleStartABTest}
+            onStopABTest={learningSystem.handleStopABTest}
+            onCompareModels={learningSystem.handleCompareModels}
           />
         )}
       </div>
