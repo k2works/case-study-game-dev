@@ -36,6 +36,7 @@ AIプレイヤーとして、
 ```
 
 **受け入れ基準**:
+
 - [ ] プレイデータ（盤面状態、行動、結果）が自動収集される
 - [ ] 収集データからモデルが学習できる
 - [ ] 学習前後の性能を比較できる
@@ -45,34 +46,118 @@ AIプレイヤーとして、
 ## 技術的アプローチ
 
 ### アーキテクチャ
+
+ヘキサゴナルアーキテクチャ（ポートとアダプター）パターンに基づいた学習システムの設計：
+
+```plantuml
+@startuml "AI学習システムアーキテクチャ"
+!define DOMAIN_COLOR #FFE6E6
+!define APP_COLOR #E6F3FF  
+!define INFRA_COLOR #F0FFF0
+!define UI_COLOR #FFF0F5
+
+skinparam roundcorner 10
+skinparam shadowing false
+
+' ドメイン層（中心）
+hexagon "ドメイン層" DOMAIN_COLOR {
+  rectangle "TrainingData" as TrainingData
+  rectangle "LearningModel" as LearningModel  
+  rectangle "TrainingStatistics" as TrainingStatistics
+  rectangle "PerformanceMetrics" as PerformanceMetrics
+}
+
+' アプリケーション層
+rectangle "アプリケーション層" APP_COLOR {
+  rectangle "LearningService" as LearningService
+  rectangle "DataCollectionService" as DataCollectionService
+  rectangle "ModelManagementService" as ModelManagementService
+}
+
+' プレゼンテーション層（左側アダプター）
+rectangle "プレゼンテーション層\n(左側アダプター)" UI_COLOR {
+  rectangle "LearningDashboard" as LearningDashboard
+  rectangle "PerformanceChart" as PerformanceChart
+  rectangle "ModelVersionManager" as ModelVersionManager
+}
+
+' インフラストラクチャ層（右側アダプター）
+rectangle "インフラストラクチャ層\n(右側アダプター)" INFRA_COLOR {
+  rectangle "IndexedDBRepository" as IndexedDBRepo
+  rectangle "TensorFlowTrainer" as TFTrainer
+  rectangle "WebWorkerProcessor" as WorkerProcessor
+}
+
+' ポートの定義
+interface "LearningPort" as LearningPort
+interface "DataStoragePort" as DataStoragePort
+interface "ModelTrainingPort" as ModelTrainingPort
+interface "ProcessingPort" as ProcessingPort
+
+' 接続関係 - プレゼンテーション層からアプリケーション層
+LearningDashboard --> LearningService
+PerformanceChart --> DataCollectionService
+ModelVersionManager --> ModelManagementService
+
+' アプリケーション層からポート
+LearningService --> LearningPort
+DataCollectionService --> DataStoragePort
+ModelManagementService --> ModelTrainingPort
+LearningService --> ProcessingPort
+
+' ポートからドメイン層
+LearningPort <-- LearningModel
+DataStoragePort <-- TrainingData
+ModelTrainingPort <-- PerformanceMetrics
+
+' ポートから右側アダプター（インフラ層）
+DataStoragePort <|-- IndexedDBRepo
+ModelTrainingPort <|-- TFTrainer
+ProcessingPort <|-- WorkerProcessor
+
+' ドメイン層内の関連
+LearningModel --> TrainingData
+LearningModel --> TrainingStatistics
+TrainingStatistics --> PerformanceMetrics
+
+@enduml
 ```
-┌─────────────────────────────────────┐
-│     Presentation Layer              │
-│  ├─ LearningDashboard              │
-│  ├─ PerformanceChart               │
-│  └─ ModelVersionManager            │
-└─────────────────────────────────────┘
-                ↓
-┌─────────────────────────────────────┐
-│     Application Layer               │
-│  ├─ LearningService                │
-│  ├─ DataCollectionService          │
-│  └─ ModelManagementService         │
-└─────────────────────────────────────┘
-                ↓
-┌─────────────────────────────────────┐
-│     Domain Layer                    │
-│  ├─ TrainingData                   │
-│  ├─ LearningModel                  │
-│  └─ PerformanceMetrics             │
-└─────────────────────────────────────┘
-                ↓
-┌─────────────────────────────────────┐
-│     Infrastructure Layer            │
-│  ├─ IndexedDBRepository            │
-│  ├─ TensorFlowTrainer              │
-│  └─ WebWorkerProcessor             │
-└─────────────────────────────────────┘
+
+### 依存性の流れ
+
+```plantuml
+@startuml "依存性フロー"
+left to right direction
+
+package "プレゼンテーション層" {
+  [UI Components]
+}
+
+package "アプリケーション層" {
+  [Application Services]
+  [Ports (Interfaces)]
+}
+
+package "ドメイン層" {
+  [Domain Models]
+  [Domain Services]
+}
+
+package "インフラストラクチャ層" {
+  [Adapters]
+  [External Libraries]
+}
+
+[UI Components] --> [Application Services]
+[Application Services] --> [Ports (Interfaces)]
+[Application Services] --> [Domain Models]
+[Ports (Interfaces)] <|-- [Adapters]
+[Domain Models] --> [Domain Services]
+[Adapters] --> [External Libraries]
+
+note right of [Domain Models] : 他の層に依存しない\n純粋なビジネスロジック
+note right of [Ports (Interfaces)] : 依存性逆転の原則\nアダプターの抽象化
+@enduml
 ```
 
 ### 技術スタック
@@ -83,10 +168,46 @@ AIプレイヤーとして、
 
 ## 実装計画
 
+### データ収集・学習プロセスフロー
+
+```plantuml
+@startuml "学習プロセスフロー"
+participant "Game" as Game
+participant "DataCollectionService" as Collector
+participant "IndexedDBRepository" as DB
+participant "LearningService" as Learning
+participant "TensorFlowTrainer" as Trainer
+participant "MLAIService" as AI
+
+Game -> Collector: ゲームイベント発生
+activate Collector
+Collector -> Collector: TrainingData生成
+Collector -> DB: データ保存
+deactivate Collector
+
+... 一定量のデータが蓄積 ...
+
+Learning -> DB: バッチデータ取得
+activate Learning
+Learning -> Trainer: 学習開始（Web Worker）
+activate Trainer
+
+Trainer -> Trainer: モデル訓練
+Trainer -> Trainer: 性能評価
+Trainer --> Learning: 学習完了
+
+Learning -> AI: モデル更新
+deactivate Trainer
+deactivate Learning
+
+AI -> Game: 改善されたAIで判断
+@enduml
+```
+
 ### Week 1: データ収集基盤
 
 #### Day 1-2: データ収集システム
-- [ ] TrainingDataモデル設計
+- [x] TrainingDataモデル設計（完了）
 - [ ] DataCollectionService実装
 - [ ] IndexedDBRepository実装
 - [ ] 単体テスト作成
@@ -232,12 +353,53 @@ const ModelVersionManager = () => {
 | 学習の収束しない | 中 | 早期停止、学習率の自動調整 |
 | UIの複雑化 | 低 | プログレッシブ開示、デフォルト設定 |
 
+## 既存アーキテクチャとの統合
+
+```plantuml
+@startuml "既存システムとの統合"
+!define EXISTING_COLOR #E0E0E0
+!define NEW_COLOR #FFE6CC
+
+package "既存システム" EXISTING_COLOR {
+  [GameApplicationService]
+  [MLAIService]
+  [MayahAIService]
+  [AIPort]
+  [StoragePort]
+  [LocalStorageAdapter]
+}
+
+package "学習システム（新規）" NEW_COLOR {
+  [LearningService]
+  [DataCollectionService]
+  [TensorFlowTrainer]
+  [IndexedDBRepository]
+}
+
+[GameApplicationService] --> [DataCollectionService] : プレイデータ送信
+[MLAIService] <--> [LearningService] : モデル更新
+[MayahAIService] --> [DataCollectionService] : 評価データ収集
+[StoragePort] <|-- [IndexedDBRepository] : ポート実装
+[LearningService] --> [TensorFlowTrainer] : 学習実行
+
+note bottom of [DataCollectionService] : ゲームプレイ中に\n自動的にデータ収集
+note bottom of [LearningService] : バックグラウンドで\n学習を実行
+@enduml
+```
+
+### 統合ポイント
+1. **GameApplicationService**: ゲームイベントから学習データを収集
+2. **MLAIService**: 学習済みモデルの適用と更新
+3. **MayahAIService**: 高度な評価データの収集
+4. **StoragePort**: 既存の永続化インターフェースを拡張
+
 ## 依存関係
 
 ### 前提条件
 - イテレーション5（mayah AI評価システム）完了
 - TensorFlow.js v4.22.0統合済み
 - Web Workers実装済み
+- ヘキサゴナルアーキテクチャ実装済み
 
 ### 必要なリソース
 - IndexedDBストレージ（最小100MB）
