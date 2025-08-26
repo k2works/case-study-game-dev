@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+
 import type { AIPort } from '../../application/ports/AIPort'
 import type { GamePort } from '../../application/ports/GamePort'
 import type { InputPort } from '../../application/ports/InputPort'
@@ -46,9 +47,9 @@ export const useGameSystem = (
       rank: number
     }>
   >([])
-  const [currentPhase] = useState<
-    'Phase 4a' | 'Phase 4b' | 'Phase 4c'
-  >('Phase 4c')
+  const [currentPhase] = useState<'Phase 4a' | 'Phase 4b' | 'Phase 4c'>(
+    'Phase 4c',
+  )
 
   const updateGame = useCallback((newGame: GameViewModel) => {
     setGame(newGame)

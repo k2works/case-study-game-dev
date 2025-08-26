@@ -1,3 +1,10 @@
+import type { GamePort } from './application/ports/GamePort'
+import type { PerformanceStatistics } from './application/services/PerformanceAnalysisService'
+import type { MayahEvaluationResult } from './application/services/ai/MayahAIService'
+import type { GameViewModel } from './application/viewmodels/GameViewModel'
+import type { AISettings } from './domain/models/ai'
+import type { PerformanceReport } from './domain/models/ai/index'
+import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { AIControlPanel } from './presentation/components/ai/AIControlPanel'
@@ -5,16 +12,9 @@ import { LearningDashboard } from './presentation/components/ai/LearningDashboar
 import { MayahAIEvaluationDisplay } from './presentation/components/ai/MayahAIEvaluationDisplay'
 import './presentation/components/ai/MayahAIEvaluationDisplay.css'
 import { PerformanceAnalysis } from './presentation/components/ai/PerformanceAnalysis'
-import { useLearningSystem } from './presentation/hooks/useLearningSystem'
-import { useGameSystem } from './presentation/hooks/useGameSystem'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
-import { defaultContainer } from './infrastructure/di/DefaultContainer'
-import type { GamePort } from './application/ports/GamePort'
-import type { MayahEvaluationResult } from './application/services/ai/MayahAIService'
-import type { PerformanceStatistics } from './application/services/PerformanceAnalysisService'
-import type { PerformanceReport } from './domain/models/ai/index'
-import type { GameViewModel } from './application/viewmodels/GameViewModel'
-import type { AISettings } from './domain/models/ai'
+import { useGameSystem } from './presentation/hooks/useGameSystem'
+import { useLearningSystem } from './presentation/hooks/useLearningSystem'
 
 // ゲーム制御ボタンコンポーネント
 const GameControlButtons = ({
@@ -209,8 +209,13 @@ function App() {
   const learningService = defaultContainer.getLearningService()
 
   // ゲームシステム
-  const gameSystem = useGameSystem(gameService, inputService, aiService, performanceService)
-  
+  const gameSystem = useGameSystem(
+    gameService,
+    inputService,
+    aiService,
+    performanceService,
+  )
+
   // 学習システム
   const learningSystem = useLearningSystem(learningService)
 
@@ -242,7 +247,10 @@ function App() {
           <p className="text-blue-200">AI対戦ぷよぷよゲーム & 学習システム</p>
         </header>
 
-        <TabNavigation currentTab={learningSystem.currentTab} onTabChange={learningSystem.setCurrentTab} />
+        <TabNavigation
+          currentTab={learningSystem.currentTab}
+          onTabChange={learningSystem.setCurrentTab}
+        />
 
         {learningSystem.currentTab === 'game' ? (
           <GameLayout

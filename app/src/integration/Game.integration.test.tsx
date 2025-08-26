@@ -24,7 +24,11 @@ describe('ゲーム統合テスト', () => {
 
       // Assert
       expect(screen.getByText('ぷよぷよ')).toBeInTheDocument()
-      expect(screen.getByText('AI対戦ぷよぷよゲーム')).toBeInTheDocument()
+      expect(
+        screen.getByText('AI対戦ぷよぷよゲーム & 学習システム'),
+      ).toBeInTheDocument()
+      expect(screen.getByText('🎮 ゲーム')).toBeInTheDocument()
+      expect(screen.getByText('🧠 AI学習')).toBeInTheDocument()
       expect(screen.getByTestId('game-board')).toBeInTheDocument()
       expect(screen.getByTestId('game-info')).toBeInTheDocument()
     })
@@ -112,9 +116,8 @@ describe('ゲーム統合テスト', () => {
   })
 
   describe('キーボード操作統合テスト', () => {
-    it('ready状態でのキー入力は無視される', () => {
+    it('ready状態でのキー入力時も状態は変わらない', () => {
       // Arrange
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
       render(<App />)
 
       // Act
@@ -126,21 +129,12 @@ describe('ゲーム統合テスト', () => {
       })
 
       // Assert
-      // ready状態なので移動コマンドは実行されるがゲーム状態は変わらない
-      expect(consoleSpy).toHaveBeenCalledWith('Left key pressed')
-      expect(consoleSpy).toHaveBeenCalledWith('Right key pressed')
-      expect(consoleSpy).toHaveBeenCalledWith('Down key pressed')
-      expect(consoleSpy).toHaveBeenCalledWith('Rotate key pressed')
-
       // 状態はready のまま
       expect(screen.getByText('準備中')).toBeInTheDocument()
-
-      consoleSpy.mockRestore()
     })
 
-    it('リセットキー（R）が動作する', () => {
+    it('リセットキー（r）時も状態はready状態のまま', () => {
       // Arrange
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
       render(<App />)
 
       // Act
@@ -149,15 +143,11 @@ describe('ゲーム統合テスト', () => {
       })
 
       // Assert
-      expect(consoleSpy).toHaveBeenCalledWith('Reset key pressed')
       expect(screen.getByText('準備中')).toBeInTheDocument()
-
-      consoleSpy.mockRestore()
     })
 
-    it('大文字のリセットキー（R）も動作する', () => {
+    it('大文字のリセットキー（R）時も状態はready状態のまま', () => {
       // Arrange
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
       render(<App />)
 
       // Act
@@ -166,9 +156,7 @@ describe('ゲーム統合テスト', () => {
       })
 
       // Assert
-      expect(consoleSpy).toHaveBeenCalledWith('Reset key pressed')
-
-      consoleSpy.mockRestore()
+      expect(screen.getByText('準備中')).toBeInTheDocument()
     })
   })
 

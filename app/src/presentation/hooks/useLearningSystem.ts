@@ -1,5 +1,10 @@
 import { useCallback, useState } from 'react'
-import type { LearningService, LearningConfig, LearningResult } from '../../application/services/learning/LearningService'
+
+import type {
+  LearningConfig,
+  LearningResult,
+  LearningService,
+} from '../../application/services/learning/LearningService'
 import type { ModelPerformance } from '../../domain/models/learning/ModelPerformanceMetrics'
 
 /**
@@ -11,8 +16,11 @@ export const useLearningSystem = (learningService: LearningService) => {
   const [isLearning, setIsLearning] = useState(false)
   const [learningProgress, setLearningProgress] = useState(0)
   const [currentModel, setCurrentModel] = useState('mayah-ai-v1')
-  const [latestPerformance, setLatestPerformance] = useState<ModelPerformance | null>(null)
-  const [learningHistory, setLearningHistory] = useState<readonly LearningResult[]>([])
+  const [latestPerformance, setLatestPerformance] =
+    useState<ModelPerformance | null>(null)
+  const [learningHistory, setLearningHistory] = useState<
+    readonly LearningResult[]
+  >([])
 
   // 学習システムハンドラー
   const handleStartLearning = useCallback(
