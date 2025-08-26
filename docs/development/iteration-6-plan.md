@@ -362,8 +362,10 @@ const ModelVersionManager = () => {
 
 package "既存システム" EXISTING_COLOR {
   [GameApplicationService]
-  [MLAIService]
   [MayahAIService]
+  [StrategyEvaluationService]
+  [ChainEvaluationService]
+  [OperationEvaluationService]
   [AIPort]
   [StoragePort]
   [LocalStorageAdapter]
@@ -374,23 +376,28 @@ package "学習システム（新規）" NEW_COLOR {
   [DataCollectionService]
   [TensorFlowTrainer]
   [IndexedDBRepository]
+  [ModelVersionManager]
 }
 
 [GameApplicationService] --> [DataCollectionService] : プレイデータ送信
-[MLAIService] <--> [LearningService] : モデル更新
+[MayahAIService] <--> [LearningService] : モデル更新・改善
 [MayahAIService] --> [DataCollectionService] : 評価データ収集
+[StrategyEvaluationService] --> [DataCollectionService] : 戦略評価データ
+[ChainEvaluationService] --> [DataCollectionService] : 連鎖評価データ
+[OperationEvaluationService] --> [DataCollectionService] : 操作評価データ
 [StoragePort] <|-- [IndexedDBRepository] : ポート実装
 [LearningService] --> [TensorFlowTrainer] : 学習実行
+[LearningService] --> [ModelVersionManager] : バージョン管理
 
-note bottom of [DataCollectionService] : ゲームプレイ中に\n自動的にデータ収集
-note bottom of [LearningService] : バックグラウンドで\n学習を実行
+note bottom of [DataCollectionService] : mayah AI評価データを\n学習用に収集
+note bottom of [LearningService] : mayah AIの\n継続的改善
 @enduml
 ```
 
 ### 統合ポイント
 1. **GameApplicationService**: ゲームイベントから学習データを収集
-2. **MLAIService**: 学習済みモデルの適用と更新
-3. **MayahAIService**: 高度な評価データの収集
+2. **MayahAIService**: mayah AI評価システムの学習と改善
+3. **評価サービス群**: 戦略・連鎖・操作の詳細評価データ収集
 4. **StoragePort**: 既存の永続化インターフェースを拡張
 
 ## 依存関係
