@@ -256,34 +256,52 @@ function App() {
   useKeyboard({
     onLeft: () => {
       if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
-        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'MOVE_LEFT' })
+        const newGame = gameSystem.gameService.updateGameState(
+          gameSystem.game,
+          { type: 'MOVE_LEFT' },
+        )
         gameSystem.updateGame(newGame)
       }
     },
     onRight: () => {
       if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
-        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'MOVE_RIGHT' })
+        const newGame = gameSystem.gameService.updateGameState(
+          gameSystem.game,
+          { type: 'MOVE_RIGHT' },
+        )
         gameSystem.updateGame(newGame)
       }
     },
     onDown: () => {
       if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
-        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'SOFT_DROP' })
+        const newGame = gameSystem.gameService.updateGameState(
+          gameSystem.game,
+          { type: 'SOFT_DROP' },
+        )
         gameSystem.updateGame(newGame)
       }
     },
     onRotate: () => {
       if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
-        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'ROTATE_CLOCKWISE' })
+        const newGame = gameSystem.gameService.updateGameState(
+          gameSystem.game,
+          { type: 'ROTATE_CLOCKWISE' },
+        )
         gameSystem.updateGame(newGame)
       }
     },
     onPause: () => {
       if (gameSystem.game.state === 'playing') {
-        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'PAUSE' })
+        const newGame = gameSystem.gameService.updateGameState(
+          gameSystem.game,
+          { type: 'PAUSE' },
+        )
         gameSystem.updateGame(newGame)
       } else if (gameSystem.game.state === 'paused') {
-        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'RESUME' })
+        const newGame = gameSystem.gameService.updateGameState(
+          gameSystem.game,
+          { type: 'RESUME' },
+        )
         gameSystem.updateGame(newGame)
       }
     },
