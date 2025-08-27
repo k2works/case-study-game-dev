@@ -56,59 +56,59 @@ function ModelCard({ model, isActive, onSelect, onCompare }: ModelCardProps) {
       p-4 border rounded-lg transition-all cursor-pointer
       ${
         isActive
-          ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-          : 'border-gray-200 bg-white hover:border-gray-300'
+          ? 'border-blue-400 bg-blue-500/20 ring-2 ring-blue-400/50'
+          : 'border-white/20 bg-white/10 hover:border-white/30'
       }
     `}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
-            <h4 className="font-semibold text-gray-900">{model.modelId}</h4>
-            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
+            <h4 className="font-semibold text-white">{model.modelId}</h4>
+            <span className="text-xs px-2 py-1 bg-white/20 text-white/80 rounded">
               v{model.modelVersion}
             </span>
             {isActive && (
-              <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded">
+              <span className="text-xs px-2 py-1 bg-green-500/20 text-green-300 rounded">
                 Active
               </span>
             )}
           </div>
 
-          <div className="text-xs text-gray-500 mb-3">
+          <div className="text-xs text-white/60 mb-3">
             {model.timestamp.toLocaleDateString('ja-JP')}{' '}
             {model.timestamp.toLocaleTimeString('ja-JP')}
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-600">Training</p>
-              <p className="font-medium">
+              <p className="text-white/70">Training</p>
+              <p className="font-medium text-white">
                 Acc:{' '}
                 {formatMetric(model.trainingMetrics.finalAccuracy * 100, '%')}
               </p>
-              <p className="font-medium">
+              <p className="font-medium text-white">
                 Loss: {formatMetric(model.trainingMetrics.finalLoss)}
               </p>
             </div>
 
             <div>
-              <p className="text-gray-600">Validation</p>
-              <p className="font-medium">
+              <p className="text-white/70">Validation</p>
+              <p className="font-medium text-white">
                 Acc:{' '}
                 {formatMetric(
                   model.validationMetrics.validationAccuracy * 100,
                   '%',
                 )}
               </p>
-              <p className="font-medium">
+              <p className="font-medium text-white">
                 Loss: {formatMetric(model.validationMetrics.validationLoss)}
               </p>
             </div>
           </div>
 
           <div className="mt-3 text-sm">
-            <div className="flex items-center justify-between text-gray-600">
+            <div className="flex items-center justify-between text-white/70">
               <span>Size: {formatSize(model.resourceMetrics.modelSize)}</span>
               <span>
                 Inference: {formatTime(model.resourceMetrics.inferenceTime)}
@@ -117,9 +117,9 @@ function ModelCard({ model, isActive, onSelect, onCompare }: ModelCardProps) {
           </div>
 
           {model.testMetrics && (
-            <div className="mt-3 p-2 bg-gray-50 rounded text-sm">
-              <p className="text-gray-600 mb-1">Game Performance</p>
-              <p className="font-medium">
+            <div className="mt-3 p-2 bg-white/10 rounded text-sm">
+              <p className="text-white/70 mb-1">Game Performance</p>
+              <p className="font-medium text-white">
                 Score: {formatMetric(model.testMetrics.gamePerformanceScore)}
               </p>
             </div>
@@ -135,7 +135,7 @@ function ModelCard({ model, isActive, onSelect, onCompare }: ModelCardProps) {
             px-3 py-1 text-sm rounded transition-colors
             ${
               isActive
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                ? 'bg-white/10 text-white/50 cursor-not-allowed'
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }
           `}
@@ -144,7 +144,7 @@ function ModelCard({ model, isActive, onSelect, onCompare }: ModelCardProps) {
         </button>
         <button
           onClick={onCompare}
-          className="px-3 py-1 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+          className="px-3 py-1 text-sm border border-white/30 text-white rounded hover:bg-white/10 transition-colors"
         >
           Compare
         </button>
@@ -185,7 +185,7 @@ function ABTestSection({
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">A/B Tests</h3>
+        <h3 className="text-lg font-semibold text-white">A/B Tests</h3>
         <button
           onClick={() => setShowCreateTest(!showCreateTest)}
           className="px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
@@ -195,14 +195,14 @@ function ABTestSection({
       </div>
 
       {showCreateTest && (
-        <div className="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-          <h4 className="font-medium text-gray-900 mb-3">
+        <div className="mb-4 p-4 border border-white/20 rounded-lg bg-white/10">
+          <h4 className="font-medium text-white mb-3">
             Create New A/B Test
           </h4>
 
           <div className="grid grid-cols-1 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Test Name
               </label>
               <input
@@ -210,7 +210,7 @@ function ABTestSection({
                 value={testName}
                 onChange={(e) => setTestName(e.target.value)}
                 placeholder="Enter test name..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-white/50"
               />
             </div>
 
@@ -218,7 +218,7 @@ function ABTestSection({
               <div>
                 <label
                   htmlFor="model-a-select"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-white mb-1"
                 >
                   Model A
                 </label>
@@ -226,7 +226,7 @@ function ABTestSection({
                   id="model-a-select"
                   value={modelA}
                   onChange={(e) => setModelA(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:ring-2 focus:ring-green-500 focus:border-transparent [&>option]:bg-gray-800 [&>option]:text-white"
                 >
                   <option value="">Select model...</option>
                   {models.map((model) => (
@@ -240,7 +240,7 @@ function ABTestSection({
               <div>
                 <label
                   htmlFor="model-b-select"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-white mb-1"
                 >
                   Model B
                 </label>
@@ -248,7 +248,7 @@ function ABTestSection({
                   id="model-b-select"
                   value={modelB}
                   onChange={(e) => setModelB(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:ring-2 focus:ring-green-500 focus:border-transparent [&>option]:bg-gray-800 [&>option]:text-white"
                 >
                   <option value="">Select model...</option>
                   {models.map((model) => (
@@ -271,7 +271,7 @@ function ABTestSection({
             </button>
             <button
               onClick={() => setShowCreateTest(false)}
-              className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-white/30 text-white text-sm rounded hover:bg-white/10 transition-colors"
             >
               Cancel
             </button>
@@ -284,15 +284,15 @@ function ABTestSection({
           {activeTests.map((test) => (
             <div
               key={test.testId}
-              className="p-4 border border-orange-200 bg-orange-50 rounded-lg"
+              className="p-4 border border-orange-300/30 bg-orange-500/20 rounded-lg"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="font-medium text-gray-900">{test.testName}</h4>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <h4 className="font-medium text-white">{test.testName}</h4>
+                  <p className="text-sm text-white/80 mt-1">
                     {test.modelA.modelId} vs {test.modelB.modelId}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-white/60 mt-1">
                     Started: {test.startDate.toLocaleDateString('ja-JP')}
                   </p>
                   {test.comparison.significance.isSignificant && (
@@ -300,13 +300,13 @@ function ABTestSection({
                       <span
                         className={`px-2 py-1 rounded ${
                           test.winnerModel === test.modelA.modelId
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-blue-100 text-blue-800'
+                            ? 'bg-green-500/20 text-green-300'
+                            : 'bg-blue-500/20 text-blue-300'
                         }`}
                       >
                         Winner: {test.winnerModel}
                       </span>
-                      <span className="ml-2 text-gray-600">
+                      <span className="ml-2 text-white/70">
                         (p-value:{' '}
                         {test.comparison.significance.pValue.toFixed(3)})
                       </span>
@@ -316,7 +316,7 @@ function ABTestSection({
 
                 <button
                   onClick={() => onStopTest(test.testId)}
-                  className="px-3 py-1 text-sm border border-red-300 text-red-700 rounded hover:bg-red-50 transition-colors"
+                  className="px-3 py-1 text-sm border border-red-400/30 text-red-300 rounded hover:bg-red-500/20 transition-colors"
                 >
                   Stop Test
                 </button>
@@ -325,7 +325,7 @@ function ABTestSection({
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-white/60">
           <p>No active A/B tests</p>
         </div>
       )}
@@ -373,8 +373,8 @@ function ComparisonResults({
   comparisonResult: ModelComparison
 }) {
   return (
-    <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-      <h4 className="font-medium text-gray-900 mb-3">
+    <div className="mb-6 p-4 border border-white/20 rounded-lg bg-white/10">
+      <h4 className="font-medium text-white mb-3">
         Model Comparison Results
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -391,18 +391,18 @@ function ComparisonResults({
           }
         />
         <div>
-          <p className="text-gray-600">Statistical Significance</p>
+          <p className="text-white/70">Statistical Significance</p>
           <p
             className={`font-medium ${
               comparisonResult.significance.isSignificant
-                ? 'text-green-600'
-                : 'text-red-600'
+                ? 'text-green-300'
+                : 'text-red-300'
             }`}
           >
             {comparisonResult.significance.isSignificant
               ? 'Significant'
               : 'Not Significant'}
-            <span className="text-xs text-gray-500 ml-1">
+            <span className="text-xs text-white/60 ml-1">
               (p={comparisonResult.significance.pValue.toFixed(3)})
             </span>
           </p>
@@ -426,9 +426,9 @@ function ComparisonMetric({
 }) {
   return (
     <div>
-      <p className="text-gray-600">{label}</p>
+      <p className="text-white/70">{label}</p>
       <p
-        className={`font-medium ${value > 0 ? 'text-green-600' : 'text-red-600'}`}
+        className={`font-medium ${value > 0 ? 'text-green-300' : 'text-red-300'}`}
       >
         {formatter(value)}
       </p>
@@ -460,17 +460,17 @@ function ModelsSection({
 
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <h3 className="text-lg font-semibold text-white mb-4">
         Available Models
       </h3>
       {selectedForComparison && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="mb-4 p-3 bg-blue-500/20 border border-blue-300/30 rounded-lg">
+          <p className="text-sm text-blue-200">
             Select another model to compare with {selectedForComparison}
           </p>
           <button
             onClick={onCancelComparison}
-            className="text-xs text-blue-600 hover:text-blue-800 underline mt-1"
+            className="text-xs text-blue-300 hover:text-blue-200 underline mt-1"
           >
             Cancel comparison
           </button>
@@ -520,12 +520,12 @@ export function ModelVersionManager(props: ModelVersionManagerProps) {
   })
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm ${className}`}>
-      <div className="p-6 border-b">
-        <h2 className="text-xl font-semibold text-gray-900">
+    <div className={`bg-white/10 backdrop-blur-md rounded-lg border border-white/20 ${className}`}>
+      <div className="p-6 border-b border-white/20">
+        <h2 className="text-xl font-semibold text-white">
           Model Version Manager
         </h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-white/70 mt-1">
           Manage AI models, compare performance, and run A/B tests
         </p>
       </div>
@@ -554,7 +554,7 @@ export function ModelVersionManager(props: ModelVersionManagerProps) {
             />
           </>
         ) : (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-white/60">
             <p className="text-lg font-medium">No Models Available</p>
             <p className="text-sm mt-2">
               Train your first model to get started

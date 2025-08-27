@@ -185,7 +185,7 @@ export function LearningDashboard({
 
       {/* 新しいパフォーマンスチャート */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-white mb-4">
           Advanced Performance Analytics
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -249,15 +249,15 @@ interface DashboardLayoutProps {
 
 function DashboardLayout({ currentModel, children }: DashboardLayoutProps) {
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
+          <h1 className="text-2xl font-bold text-white mb-2">
             🧠 AI学習ダッシュボード
           </h1>
-          <p className="text-gray-600">
+          <p className="text-white/80">
             現在のモデル:{' '}
-            <span className="font-semibold text-blue-600">{currentModel}</span>
+            <span className="font-semibold text-blue-300">{currentModel}</span>
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">{children}</div>
@@ -288,8 +288,8 @@ function LearningControlPanel({
   onStopLearning,
 }: LearningControlPanelProps) {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+    <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
+      <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
         ⚙️ 学習設定
       </h2>
       <LearningStatusDisplay
@@ -320,14 +320,14 @@ function LearningStatusDisplay({
   learningProgress: number
 }) {
   return (
-    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+    <div className="mb-4 p-3 bg-white/10 rounded-lg border border-white/20">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700">学習状態</span>
+        <span className="text-sm font-medium text-white">学習状態</span>
         <span
           className={`px-2 py-1 rounded text-xs font-medium ${
             isLearning
-              ? 'bg-blue-100 text-blue-700'
-              : 'bg-gray-100 text-gray-700'
+              ? 'bg-blue-500/20 text-blue-200'
+              : 'bg-white/20 text-white/80'
           }`}
         >
           {isLearning ? '学習中' : '待機中'}
@@ -335,13 +335,13 @@ function LearningStatusDisplay({
       </div>
       {isLearning && (
         <div className="space-y-2">
-          <div className="flex justify-between text-xs text-gray-600">
+          <div className="flex justify-between text-xs text-white/70">
             <span>進捗</span>
             <span>{Math.round(learningProgress)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-white/20 rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${learningProgress}%` }}
             />
           </div>
@@ -371,7 +371,7 @@ function LearningConfigForm({
       <div>
         <label
           htmlFor="epochs"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-white mb-2"
         >
           エポック数
         </label>
@@ -385,13 +385,13 @@ function LearningConfigForm({
             onConfigChange({ ...config, epochs: parseInt(e.target.value) })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-white/5 disabled:text-white/50"
         />
       </div>
       <div>
         <label
           htmlFor="learningRate"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-white mb-2"
         >
           学習率
         </label>
@@ -409,13 +409,13 @@ function LearningConfigForm({
             })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-white/5 disabled:text-white/50"
         />
       </div>
       <div>
         <label
           htmlFor="batchSize"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-white mb-2"
         >
           バッチサイズ
         </label>
@@ -426,7 +426,7 @@ function LearningConfigForm({
             onConfigChange({ ...config, batchSize: parseInt(e.target.value) })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-white/5 disabled:text-white/50"
         >
           <option value={16}>16</option>
           <option value={32}>32</option>
@@ -436,7 +436,7 @@ function LearningConfigForm({
       </div>
       <button
         onClick={onShowAdvancedToggle}
-        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+        className="text-sm text-blue-300 hover:text-blue-200 font-medium"
       >
         {showAdvanced ? '詳細設定を隠す' : '詳細設定を表示'}
       </button>
@@ -461,9 +461,9 @@ function AdvancedConfigForm({
   onConfigChange: (config: LearningConfigFormData) => void
 }) {
   return (
-    <div className="space-y-4 pt-4 border-t border-gray-200">
+    <div className="space-y-4 pt-4 border-t border-white/20">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           検証用データ分割比率
         </label>
         <input
@@ -479,11 +479,11 @@ function AdvancedConfigForm({
             })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-white/5 disabled:text-white/50"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           モデルアーキテクチャ
         </label>
         <select
@@ -495,14 +495,14 @@ function AdvancedConfigForm({
             })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-white/5 disabled:text-white/50"
         >
           <option value="dense">Dense (全結合)</option>
           <option value="cnn">CNN (畳み込み)</option>
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           最大サンプル数
         </label>
         <input
@@ -515,7 +515,7 @@ function AdvancedConfigForm({
             onConfigChange({ ...config, maxSamples: parseInt(e.target.value) })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 border border-white/30 rounded-md text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-white/5 disabled:text-white/50"
         />
       </div>
     </div>
@@ -558,17 +558,14 @@ function PerformanceMetricsPanel({
   latestPerformance: ModelPerformance | null
 }) {
   return (
-    <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+    <div className="lg:col-span-2 bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
+      <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
         📊 現在のモデル性能
       </h2>
       {latestPerformance ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <MetricCard
             title="学習メトリクス"
-            bgColor="bg-blue-50"
-            textColor="text-blue-800"
-            accentColor="text-blue-600"
             metrics={[
               {
                 label: '最終精度',
@@ -590,9 +587,6 @@ function PerformanceMetricsPanel({
           />
           <MetricCard
             title="検証メトリクス"
-            bgColor="bg-green-50"
-            textColor="text-green-800"
-            accentColor="text-green-600"
             metrics={[
               {
                 label: '検証精度',
@@ -619,9 +613,6 @@ function PerformanceMetricsPanel({
           />
           <MetricCard
             title="リソースメトリクス"
-            bgColor="bg-purple-50"
-            textColor="text-purple-800"
-            accentColor="text-purple-600"
             metrics={[
               {
                 label: 'モデルサイズ',
@@ -647,7 +638,7 @@ function PerformanceMetricsPanel({
           />
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-white/60">
           <p className="text-lg font-medium">モデル性能データがありません</p>
           <p className="text-sm mt-2">
             学習を実行してモデル性能を確認してください
@@ -658,29 +649,22 @@ function PerformanceMetricsPanel({
   )
 }
 
-interface MetricCardProps {
-  title: string
-  bgColor: string
-  textColor: string
-  accentColor: string
-  metrics: Array<{ label: string; value: string }>
-}
 
 function MetricCard({
   title,
-  bgColor,
-  textColor,
-  accentColor,
   metrics,
-}: MetricCardProps) {
+}: {
+  title: string
+  metrics: Array<{ label: string; value: string }>
+}) {
   return (
-    <div className={`${bgColor} rounded-lg p-4`}>
-      <h3 className={`text-sm font-semibold ${textColor} mb-3`}>{title}</h3>
+    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+      <h3 className="text-sm font-semibold text-white mb-3">{title}</h3>
       <div className="space-y-2">
         {metrics.map((metric, index) => (
           <div key={index} className="flex justify-between">
-            <span className={`text-sm ${accentColor}`}>{metric.label}:</span>
-            <span className={`text-sm font-medium ${textColor}`}>
+            <span className="text-sm text-white/70">{metric.label}:</span>
+            <span className="text-sm font-medium text-white">
               {metric.value}
             </span>
           </div>
@@ -702,12 +686,12 @@ function LearningChartsSection({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {learningCurveData && (
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20">
           <LineChart data={learningCurveData} height={300} />
         </div>
       )}
       {lossCurveData && (
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20">
           <LineChart data={lossCurveData} height={300} />
         </div>
       )}
@@ -721,62 +705,62 @@ function LearningHistoryTable({
   learningHistory: readonly LearningResult[]
 }) {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+    <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
+      <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
         📋 学習履歴
       </h2>
       {learningHistory.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-white/20">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   日時
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   モデル
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   精度
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   サンプル数
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   学習時間
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   状態
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white/5 divide-y divide-white/10">
               {learningHistory
                 .slice(-10)
                 .reverse()
                 .map((result, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tr key={index} className="hover:bg-white/10">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {new Date().toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                       {result.modelPath.split('/').pop() || 'Unknown'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {(result.statistics.validationAccuracy * 100).toFixed(1)}%
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {result.statistics.totalSamples.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {Math.round(result.statistics.trainingTime / 1000)}秒
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           result.success
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-green-500/20 text-green-300'
+                            : 'bg-red-500/20 text-red-300'
                         }`}
                       >
                         {result.success ? '成功' : '失敗'}
@@ -788,7 +772,7 @@ function LearningHistoryTable({
           </table>
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-white/60">
           <p className="text-lg font-medium">学習履歴がありません</p>
           <p className="text-sm mt-2">学習を実行すると履歴が表示されます</p>
         </div>
