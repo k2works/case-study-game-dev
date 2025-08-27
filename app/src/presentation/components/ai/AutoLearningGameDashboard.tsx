@@ -135,22 +135,34 @@ export function AutoLearningGameDashboard({
     if (!gameState) return null
 
     return (
-      <div className="bg-gray-50 p-3 rounded-lg">
-        <h4 className="font-medium text-sm mb-2">🎮 現在のゲーム状態</h4>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div>スコア: {gameState.score}</div>
+      <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg border border-white/30">
+        <h4 className="font-medium text-sm mb-2 text-white">
+          🎮 現在のゲーム状態
+        </h4>
+        <div className="grid grid-cols-2 gap-2 text-xs text-white/90">
+          <div>
+            スコア:{' '}
+            {typeof gameState.score === 'object' &&
+            gameState.score !== null &&
+            'current' in gameState.score
+              ? (gameState.score as { current: number }).current
+              : typeof gameState.score === 'number'
+                ? gameState.score
+                : 0}
+          </div>
           <div>チェイン: {gameState.chainCount || 0}</div>
           <div>
             現在のぷよ: {gameState.currentPuyoPair?.primaryColor || 'なし'}-
             {gameState.currentPuyoPair?.secondaryColor || 'なし'}
           </div>
           <div>
-            次のぷよ: {gameState.nextPuyoPair?.primaryColor || 'なし'}-{gameState.nextPuyoPair?.secondaryColor || 'なし'}
+            次のぷよ: {gameState.nextPuyoPair?.primaryColor || 'なし'}-
+            {gameState.nextPuyoPair?.secondaryColor || 'なし'}
           </div>
         </div>
         {lastMove && (
-          <div className="mt-2 pt-2 border-t">
-            <div className="text-xs">
+          <div className="mt-2 pt-2 border-t border-white/30">
+            <div className="text-xs text-white/80">
               最後の手: X={lastMove.x}, 回転={lastMove.rotation}
             </div>
           </div>
@@ -184,7 +196,9 @@ export function AutoLearningGameDashboard({
 
       {/* コントロールパネル */}
       <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
-        <h2 className="text-xl font-semibold text-white mb-4">🎛️ システム制御</h2>
+        <h2 className="text-xl font-semibold text-white mb-4">
+          🎛️ システム制御
+        </h2>
 
         <div className="flex gap-3 mb-4">
           <button
@@ -219,7 +233,9 @@ export function AutoLearningGameDashboard({
       {/* 現在のプロセス */}
       {autoLearningGame.currentProcess && (
         <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
-          <h2 className="text-xl font-semibold text-white mb-4">⚡ 現在のプロセス</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">
+            ⚡ 現在のプロセス
+          </h2>
 
           <ProgressBar process={autoLearningGame.currentProcess} />
 
@@ -313,7 +329,9 @@ export function AutoLearningGameDashboard({
 
       {/* 統計サマリー */}
       <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
-        <h2 className="text-xl font-semibold text-white mb-4">📈 統計サマリー</h2>
+        <h2 className="text-xl font-semibold text-white mb-4">
+          📈 統計サマリー
+        </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatsCard
@@ -519,7 +537,9 @@ export function AutoLearningGameDashboard({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-1">学習率</label>
+                <label className="block text-sm font-medium text-white mb-1">
+                  学習率
+                </label>
                 <input
                   type="number"
                   min="0.0001"
@@ -600,7 +620,10 @@ export function AutoLearningGameDashboard({
                   : 0
 
                 return (
-                  <div key={process.id} className="border border-white/20 bg-white/5 rounded-lg p-4">
+                  <div
+                    key={process.id}
+                    className="border border-white/20 bg-white/5 rounded-lg p-4"
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span>{statusInfo.emoji}</span>
