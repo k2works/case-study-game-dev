@@ -649,7 +649,6 @@ function PerformanceMetricsPanel({
   )
 }
 
-
 function MetricCard({
   title,
   metrics,

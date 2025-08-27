@@ -196,9 +196,7 @@ function ABTestSection({
 
       {showCreateTest && (
         <div className="mb-4 p-4 border border-white/20 rounded-lg bg-white/10">
-          <h4 className="font-medium text-white mb-3">
-            Create New A/B Test
-          </h4>
+          <h4 className="font-medium text-white mb-3">Create New A/B Test</h4>
 
           <div className="grid grid-cols-1 gap-3">
             <div>
@@ -374,9 +372,7 @@ function ComparisonResults({
 }) {
   return (
     <div className="mb-6 p-4 border border-white/20 rounded-lg bg-white/10">
-      <h4 className="font-medium text-white mb-3">
-        Model Comparison Results
-      </h4>
+      <h4 className="font-medium text-white mb-3">Model Comparison Results</h4>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
         <ComparisonMetric
           label="Accuracy Improvement"
@@ -520,7 +516,9 @@ export function ModelVersionManager(props: ModelVersionManagerProps) {
   })
 
   return (
-    <div className={`bg-white/10 backdrop-blur-md rounded-lg border border-white/20 ${className}`}>
+    <div
+      className={`bg-white/10 backdrop-blur-md rounded-lg border border-white/20 ${className}`}
+    >
       <div className="p-6 border-b border-white/20">
         <h2 className="text-xl font-semibold text-white">
           Model Version Manager
