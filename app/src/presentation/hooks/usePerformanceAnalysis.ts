@@ -1,7 +1,7 @@
 /**
  * パフォーマンス分析フック
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
 import type { PerformanceStatistics } from '../../application/services/PerformanceAnalysisService'
@@ -58,8 +58,7 @@ export function usePerformanceAnalysis({
     },
   })
 
-  const [currentSession, setCurrentSession] =
-    useState<GameSessionTracker | null>(null)
+  const currentSessionRef = useRef<GameSessionTracker | null>(null)
 
   // 統計データを更新
   const updateStatistics = useCallback(() => {
@@ -106,7 +105,7 @@ export function usePerformanceAnalysis({
 
   // ゲーム開始時の処理
   useEffect(() => {
-    if (game.state === 'playing' && !currentSession) {
+    if (game.state === 'playing' && !currentSessionRef.current) {
       const sessionId = `game-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       const newSession: GameSessionTracker = {
         gameId: sessionId,
@@ -115,47 +114,42 @@ export function usePerformanceAnalysis({
         maxChain: 0,
         moveCount: 0,
       }
-      setCurrentSession(newSession)
+      currentSessionRef.current = newSession
     }
-  }, [game.state, game.score, currentSession])
+  }, [game.state, game.score])
 
   // 連鎖数の追跡
   useEffect(() => {
-    if (currentSession && game.lastChain > 0) {
-      setCurrentSession((prev) =>
-        prev
-          ? {
-              ...prev,
-              maxChain: Math.max(prev.maxChain, game.lastChain),
-            }
-          : null,
-      )
+    if (currentSessionRef.current && game.lastChain > 0) {
+      currentSessionRef.current = {
+        ...currentSessionRef.current,
+        maxChain: Math.max(currentSessionRef.current.maxChain, game.lastChain),
+      }
     }
-  }, [currentSession, game.lastChain])
+  }, [game.lastChain])
 
   // ゲーム終了時の処理
   useEffect(() => {
-    if (game.state === 'gameOver' && currentSession) {
+    if (game.state === 'gameOver' && currentSessionRef.current) {
       const endTime = new Date()
       const sessionData = {
-        gameId: currentSession.gameId,
-        startTime: currentSession.startTime,
+        gameId: currentSessionRef.current.gameId,
+        startTime: currentSessionRef.current.startTime,
         endTime,
         finalScore: game.score.current,
-        maxChain: Math.max(currentSession.maxChain, game.lastChain),
-        totalMoves: currentSession.moveCount + 1, // 概算
+        maxChain: Math.max(currentSessionRef.current.maxChain, game.lastChain),
+        totalMoves: currentSessionRef.current.moveCount + 1, // 概算
         aiEnabled,
       }
 
       performanceService.recordGameSession(sessionData)
-      setCurrentSession(null)
+      currentSessionRef.current = null
       updateStatistics()
     }
   }, [
     game.state,
     game.score,
     game.lastChain,
-    currentSession,
     aiEnabled,
     performanceService,
     updateStatistics,
@@ -165,7 +159,7 @@ export function usePerformanceAnalysis({
   const resetData = useCallback(() => {
     performanceService.resetPerformanceData()
     updateStatistics()
-    setCurrentSession(null)
+    currentSessionRef.current = null
   }, [performanceService, updateStatistics])
 
   // 初回統計読み込み
@@ -177,6 +171,6 @@ export function usePerformanceAnalysis({
     statistics,
     comparisonReport,
     resetData,
-    isRecording: currentSession !== null,
+    isRecording: currentSessionRef.current !== null,
   }
 }

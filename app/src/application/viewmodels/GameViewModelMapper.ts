@@ -36,7 +36,7 @@ export class GameViewModelMapper {
       nextPuyoPair: game.nextPuyoPair
         ? this.toPuyoPairViewModel(game.nextPuyoPair)
         : null,
-      lastChain: 0, // 現在のドメインモデルには連鎖数がないのでデフォルト値
+      lastChain: game.lastChainCount,
       createdAt: game.createdAt.toISOString(),
       updatedAt: game.updatedAt.toISOString(),
     }
