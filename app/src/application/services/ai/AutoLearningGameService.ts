@@ -481,7 +481,7 @@ export class AutoLearningGameService {
       // スコア差分を計算
       const updatedVm = updatedState as {
         score?: { current: number }
-        chainCount?: number
+        lastChain?: number
       }
       const currentScore = updatedVm.score?.current || 0
       const scoreDelta = currentScore - previousScore
@@ -492,8 +492,8 @@ export class AutoLearningGameService {
       )
 
       // チェーン数を記録
-      if ((updatedVm.chainCount || 0) > moveChainLength) {
-        moveChainLength = updatedVm.chainCount || 0
+      if ((updatedVm.lastChain || 0) > moveChainLength) {
+        moveChainLength = updatedVm.lastChain || 0
       }
 
       // 自動落下処理
