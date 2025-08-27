@@ -5,6 +5,37 @@ import userEvent from '@testing-library/user-event'
 
 import App from '../App'
 
+// useLearningSystemフックをモック
+vi.mock('../presentation/hooks/useLearningSystem', () => ({
+  useLearningSystem: vi.fn(() => ({
+    isLearning: false,
+    learningProgress: 0,
+    currentModel: 'test-model-v1.0',
+    latestPerformance: null,
+    learningHistory: [],
+    models: [],
+    abTests: [],
+    startLearning: vi.fn(),
+    stopLearning: vi.fn(),
+    selectModel: vi.fn(),
+    startABTest: vi.fn(),
+    stopABTest: vi.fn(),
+    compareModels: vi.fn(),
+  })),
+}))
+
+// usePerformanceAnalysisフックをモック
+vi.mock('../presentation/hooks/usePerformanceAnalysis', () => ({
+  usePerformanceAnalysis: vi.fn(() => ({
+    statistics: null,
+    comparisonReport: null,
+    recordMove: vi.fn(),
+    recordChain: vi.fn(),
+    startGameSession: vi.fn(),
+    endGameSession: vi.fn(),
+  })),
+}))
+
 /**
  * AI学習システムの統合テスト
  *

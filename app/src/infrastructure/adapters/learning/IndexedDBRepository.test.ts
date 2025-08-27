@@ -9,6 +9,10 @@ import type {
 import { createTrainingData } from '../../../domain/models/training/TrainingData'
 import { IndexedDBTrainingDataRepository } from './IndexedDBRepository'
 
+// テスト環境でIndexedDBが利用できない場合はスキップ
+const hasIndexedDB = typeof indexedDB !== 'undefined'
+const describeWithIndexedDB = hasIndexedDB ? describe : describe.skip
+
 // IndexedDBのモック
 const mockIndexedDB = {
   open: vi.fn(),
@@ -92,7 +96,7 @@ Object.defineProperty(globalThis, 'IDBKeyRange', {
   writable: true,
 })
 
-describe('IndexedDBTrainingDataRepository', () => {
+describeWithIndexedDB('IndexedDBTrainingDataRepository', () => {
   let repository: IndexedDBTrainingDataRepository
 
   const sampleGameState: GameState = {

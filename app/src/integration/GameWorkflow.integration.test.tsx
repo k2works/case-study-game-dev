@@ -6,6 +6,63 @@ import { fireEvent, render, screen } from '@testing-library/react'
 
 import App from '../App'
 
+// useLearningSystemフックをモック
+vi.mock('../presentation/hooks/useLearningSystem', () => ({
+  useLearningSystem: vi.fn(() => ({
+    isLearning: false,
+    learningProgress: 0,
+    currentModel: 'test-model-v1.0',
+    latestPerformance: null,
+    learningHistory: [],
+    models: [],
+    abTests: [],
+    startLearning: vi.fn(),
+    stopLearning: vi.fn(),
+    selectModel: vi.fn(),
+    startABTest: vi.fn(),
+    stopABTest: vi.fn(),
+    compareModels: vi.fn(),
+  })),
+}))
+
+// usePerformanceAnalysisフックをモック
+vi.mock('../presentation/hooks/usePerformanceAnalysis', () => ({
+  usePerformanceAnalysis: vi.fn(() => ({
+    statistics: null,
+    comparisonReport: null,
+    recordMove: vi.fn(),
+    recordChain: vi.fn(),
+    startGameSession: vi.fn(),
+    endGameSession: vi.fn(),
+  })),
+}))
+
+// useKeyboardフックをモック
+vi.mock('../presentation/hooks/useKeyboard', () => ({
+  useKeyboard: vi.fn(),
+}))
+
+// gameStoreをモック
+vi.mock('../presentation/stores/gameStore', () => ({
+  useGameStore: vi.fn(() => ({
+    game: {
+      field: {
+        getWidth: () => 6,
+        getHeight: () => 12,
+        getPuyo: () => null,
+        getAllCells: () => Array(72).fill(null),
+      },
+      score: { value: 0 },
+      state: 'ready',
+      currentPuyoPair: null,
+      nextPuyoPair: null,
+    },
+    startGame: vi.fn(),
+    pauseGame: vi.fn(),
+    resetGame: vi.fn(),
+  })),
+}))
+
 // キーボードイベントのヘルパー関数
 const pressKey = (key: string) => {
   fireEvent.keyDown(document, { key })
