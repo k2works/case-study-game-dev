@@ -111,7 +111,7 @@ export class PerformanceAnalysisService {
       }
     } catch (error) {
       // データが不十分な場合はデフォルト値を返す
-      console.debug('Performance data insufficient:', error)
+      console.warn('Performance data insufficient:', error)
       return {
         totalGames: data.totalGames,
         averageScore: 0,

@@ -71,6 +71,9 @@ export function usePerformanceAnalysis({
       setComparisonReport(report)
     } catch (error) {
       console.debug('Statistics update failed:', error)
+      // エラー時は統計データをnullに設定
+      setStatistics(null)
+      setComparisonReport(null)
     }
   }, [performanceService])
 

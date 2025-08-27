@@ -350,15 +350,19 @@ export const useLearningSystem = (learningService: LearningService) => {
 
         console.log('Database initialized successfully')
 
-        // データベースをクリアして新しいモックデータを生成（デバッグ用）
-        await repository.clear()
-        console.log('Database cleared for fresh start')
+        // 本番環境のみデータベースをクリアして新しいモックデータを生成
+        if (typeof window !== 'undefined' && window.indexedDB) {
+          await repository.clear()
+          console.log('Database cleared for fresh start')
 
-        // 学習用モックデータを生成して保存
-        await generateAndSaveTrainingData(repository)
+          // 学習用モックデータを生成して保存
+          await generateAndSaveTrainingData(repository)
 
-        const finalCount = await repository.count()
-        console.log('Final data count in database:', finalCount)
+          const finalCount = await repository.count()
+          console.log('Final data count in database:', finalCount)
+        } else {
+          console.log('IndexedDB not available - skipping data generation')
+        }
       } catch (error) {
         console.warn('Failed to initialize database:', error)
         // データベース初期化失敗は警告として扱い、モックデータで継続
