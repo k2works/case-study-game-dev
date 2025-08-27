@@ -8,6 +8,7 @@ import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
 import { AIControlPanel } from './presentation/components/ai/AIControlPanel'
+import { AutoLearningGameDashboard } from './presentation/components/ai/AutoLearningGameDashboard'
 import { LearningDashboard } from './presentation/components/ai/LearningDashboard'
 import { MayahAIEvaluationDisplay } from './presentation/components/ai/MayahAIEvaluationDisplay'
 import './presentation/components/ai/MayahAIEvaluationDisplay.css'
@@ -59,8 +60,8 @@ const TabNavigation = ({
   currentTab,
   onTabChange,
 }: {
-  currentTab: 'game' | 'learning'
-  onTabChange: (tab: 'game' | 'learning') => void
+  currentTab: 'game' | 'learning' | 'autoLearning'
+  onTabChange: (tab: 'game' | 'learning' | 'autoLearning') => void
 }) => {
   return (
     <div className="mb-8">
@@ -84,6 +85,16 @@ const TabNavigation = ({
           }`}
         >
           🧠 AI学習
+        </button>
+        <button
+          onClick={() => onTabChange('autoLearning')}
+          className={`py-4 px-6 text-lg font-semibold rounded-t-lg transition-colors ${
+            currentTab === 'autoLearning'
+              ? 'bg-white/20 text-white border-b-2 border-green-400'
+              : 'text-white/60 hover:text-white/80 hover:bg-white/10'
+          }`}
+        >
+          🚀 自動学習
         </button>
       </nav>
     </div>
@@ -207,6 +218,7 @@ function App() {
   const aiService = defaultContainer.getAIService()
   const performanceService = defaultContainer.getPerformanceAnalysisService()
   const learningService = defaultContainer.getLearningService()
+  const autoLearningGameService = defaultContainer.getAutoLearningGameService()
 
   // ゲームシステム
   const gameSystem = useGameSystem(
@@ -269,7 +281,7 @@ function App() {
             comparisonReport={gameSystem.comparisonReport}
             resetData={gameSystem.resetData}
           />
-        ) : (
+        ) : learningSystem.currentTab === 'learning' ? (
           <LearningDashboard
             isLearning={learningSystem.isLearning}
             learningProgress={learningSystem.learningProgress}
@@ -286,6 +298,11 @@ function App() {
             onStartABTest={learningSystem.handleStartABTest}
             onStopABTest={learningSystem.handleStopABTest}
             onCompareModels={learningSystem.handleCompareModels}
+          />
+        ) : (
+          <AutoLearningGameDashboard
+            autoLearningGameService={autoLearningGameService}
+            className="max-w-7xl mx-auto"
           />
         )}
       </div>

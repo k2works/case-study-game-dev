@@ -89,7 +89,9 @@ function createModelComparison(
  */
 export const useLearningSystem = (learningService: LearningService) => {
   // 学習システム状態管理
-  const [currentTab, setCurrentTab] = useState<'game' | 'learning'>('game')
+  const [currentTab, setCurrentTab] = useState<
+    'game' | 'learning' | 'autoLearning'
+  >('game')
   const [isLearning, setIsLearning] = useState(false)
   const [learningProgress, setLearningProgress] = useState(0)
   const [currentModel, setCurrentModel] = useState('mayah-ai-v1')

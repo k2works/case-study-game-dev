@@ -9,6 +9,10 @@ import type { TimerPort } from '../../application/ports/TimerPort'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
+import {
+  AutoLearningGameService,
+  DEFAULT_AUTO_LEARNING_GAME_CONFIG,
+} from '../../application/services/ai/AutoLearningGameService'
 import { MayahAIService } from '../../application/services/ai/MayahAIService'
 import StrategyService from '../../application/services/ai/StrategyService'
 import { BatchProcessingService } from '../../application/services/learning/BatchProcessingService'
@@ -192,6 +196,20 @@ export class DefaultContainer {
       true,
     )
 
+    // 完全な自動学習ゲームシステム
+    container.register<AutoLearningGameService>(
+      'AutoLearningGameService',
+      () =>
+        new AutoLearningGameService(
+          container.resolve<GamePort>('GamePort'),
+          container.resolve<AIPort>('AIPort'),
+          container.resolve<DataCollectionServiceImpl>('DataCollectionService'),
+          container.resolve<BatchProcessingService>('BatchProcessingService'),
+          DEFAULT_AUTO_LEARNING_GAME_CONFIG,
+        ),
+      true,
+    )
+
     return container
   }
 }
@@ -236,6 +254,12 @@ class DefaultContainerWrapper {
   getDataCollectionService(): DataCollectionServiceImpl {
     return this.container.resolve<DataCollectionServiceImpl>(
       'DataCollectionService',
+    )
+  }
+
+  getAutoLearningGameService(): AutoLearningGameService {
+    return this.container.resolve<AutoLearningGameService>(
+      'AutoLearningGameService',
     )
   }
 }
