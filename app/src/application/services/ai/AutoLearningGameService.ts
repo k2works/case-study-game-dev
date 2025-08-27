@@ -786,10 +786,40 @@ export class AutoLearningGameService {
         rewards: number[]
       }
 
+      // データの検証
+      if (
+        !processedDataset.features ||
+        !processedDataset.rewards ||
+        processedDataset.features.length === 0 ||
+        processedDataset.rewards.length === 0
+      ) {
+        console.warn('⚠️ No training data available for model training')
+        return {
+          accuracy: 0,
+          loss: 0,
+          trainingDataSize: 0,
+        }
+      }
+
+      // データ整合性の確認
+      if (processedDataset.features.length !== processedDataset.rewards.length) {
+        console.warn(
+          '⚠️ Features and rewards data length mismatch:',
+          processedDataset.features.length,
+          'vs',
+          processedDataset.rewards.length,
+        )
+        return {
+          accuracy: 0,
+          loss: 0,
+          trainingDataSize: 0,
+        }
+      }
+
       // TensorFlow.jsモデルを作成
       const model = this.tensorFlowTrainer.createModel({
         type: this.config.modelArchitecture,
-        inputShape: [processedDataset.features[0]?.length || 10],
+        inputShape: [processedDataset.features[0].length],
         layers: [
           { type: 'dense', units: 128, activation: 'relu' },
           { type: 'dropout', rate: 0.3 },
