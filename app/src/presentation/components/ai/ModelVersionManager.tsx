@@ -210,7 +210,7 @@ function ABTestSection({
                 value={testName}
                 onChange={(e) => setTestName(e.target.value)}
                 placeholder="Enter test name..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
 
@@ -226,7 +226,7 @@ function ABTestSection({
                   id="model-a-select"
                   value={modelA}
                   onChange={(e) => setModelA(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="">Select model...</option>
                   {models.map((model) => (
@@ -248,7 +248,7 @@ function ABTestSection({
                   id="model-b-select"
                   value={modelB}
                   onChange={(e) => setModelB(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="">Select model...</option>
                   {models.map((model) => (
