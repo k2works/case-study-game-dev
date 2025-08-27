@@ -348,8 +348,8 @@ export class AutoLearningGameService {
       )
 
       // ゲーム終了後、最終スコアでコンテキストを更新
-      const finalVm = finalGameState as { score?: number }
-      gameContext.totalScore = finalVm.score || 0
+      const finalVm = finalGameState as { score?: { current: number } }
+      gameContext.totalScore = finalVm.score?.current || 0
 
       const gameDuration = Date.now() - startTime
       console.log(
@@ -467,17 +467,29 @@ export class AutoLearningGameService {
 
     // 一連のアクションを実行
     for (const action of gameActions) {
-      const vm = updatedState as { score?: number }
-      const previousScore = vm.score || 0
+      const vm = updatedState as { score?: { current: number } }
+      const previousScore = vm.score?.current || 0
+      console.log(
+        `🕹️ Applying action ${action} - Previous score: ${previousScore}`,
+      )
+
       updatedState = this.gameService.updateGameState(
         updatedState as never,
         action,
       )
 
       // スコア差分を計算
-      const updatedVm = updatedState as { score?: number; chainCount?: number }
-      const scoreDelta = (updatedVm.score || 0) - previousScore
+      const updatedVm = updatedState as {
+        score?: { current: number }
+        chainCount?: number
+      }
+      const currentScore = updatedVm.score?.current || 0
+      const scoreDelta = currentScore - previousScore
       moveScore += scoreDelta
+
+      console.log(
+        `🕹️ Action result - Current score: ${currentScore}, Score delta: ${scoreDelta}`,
+      )
 
       // チェーン数を記録
       if ((updatedVm.chainCount || 0) > moveChainLength) {
@@ -486,6 +498,12 @@ export class AutoLearningGameService {
 
       // 自動落下処理
       updatedState = this.gameService.processAutoFall(updatedState as never)
+
+      // 自動落下後のスコア確認
+      const afterAutoFall = updatedState as { score?: { current: number } }
+      console.log(
+        `🕹️ After auto-fall - Score: ${afterAutoFall.score?.current || 0}`,
+      )
 
       // 短時間待機（アニメーション的な効果）
       await this.sleep(10)

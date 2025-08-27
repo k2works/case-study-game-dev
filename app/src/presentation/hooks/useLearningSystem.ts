@@ -10,7 +10,6 @@ import type {
   ModelComparison,
   ModelPerformance,
 } from '../../domain/models/learning/ModelPerformanceMetrics'
-import type { TrainingData } from '../../domain/models/training/TrainingData'
 
 /**
  * A/Bテスト結果を作成するヘルパー関数
@@ -358,7 +357,7 @@ export const useLearningSystem = (learningService: LearningService) => {
           console.log('Database cleared for fresh start')
 
           // 学習用モックデータを生成して保存
-          await generateAndSaveTrainingData(repository)
+          // await generateAndSaveTrainingData(repository)
 
           const finalCount = await repository.count()
           console.log('Final data count in database:', finalCount)
@@ -380,6 +379,7 @@ export const useLearningSystem = (learningService: LearningService) => {
   /**
    * 学習用のモックデータを生成してIndexedDBに保存
    */
+  /*
   const generateAndSaveTrainingData = async (repository: {
     count: () => Promise<number>
     save: (data: TrainingData) => Promise<void>
@@ -438,6 +438,7 @@ export const useLearningSystem = (learningService: LearningService) => {
       console.error('Failed to generate training data:', error)
     }
   }
+  */
 
   return {
     // 状態
