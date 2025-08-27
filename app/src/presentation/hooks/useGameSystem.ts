@@ -117,19 +117,34 @@ export const useGameSystem = (
         width: fieldViewModel.width,
         height: fieldViewModel.height,
         cells: fieldViewModel.cells.map((row: (PuyoViewModel | null)[]) =>
-          row.map((cell: PuyoViewModel | null) => cell ? cell.color : null),
+          row.map((cell: PuyoViewModel | null) => (cell ? cell.color : null)),
         ),
         isEmpty: (x: number, y: number) => {
-          if (x < 0 || x >= fieldViewModel.width || y < 0 || y >= fieldViewModel.height) {
+          if (
+            x < 0 ||
+            x >= fieldViewModel.width ||
+            y < 0 ||
+            y >= fieldViewModel.height
+          ) {
             return false
           }
           return fieldViewModel.cells[y][x] === null
         },
         isValidPosition: (x: number, y: number) => {
-          return x >= 0 && x < fieldViewModel.width && y >= 0 && y < fieldViewModel.height
+          return (
+            x >= 0 &&
+            x < fieldViewModel.width &&
+            y >= 0 &&
+            y < fieldViewModel.height
+          )
         },
         getPuyo: (x: number, y: number) => {
-          if (x < 0 || x >= fieldViewModel.width || y < 0 || y >= fieldViewModel.height) {
+          if (
+            x < 0 ||
+            x >= fieldViewModel.width ||
+            y < 0 ||
+            y >= fieldViewModel.height
+          ) {
             return null
           }
           return fieldViewModel.cells[y][x]
@@ -137,7 +152,9 @@ export const useGameSystem = (
       }
     }
 
-    const convertPuyoPairToAIFormat = (puyoPairVM: PuyoPairViewModel | null) => {
+    const convertPuyoPairToAIFormat = (
+      puyoPairVM: PuyoPairViewModel | null,
+    ) => {
       if (!puyoPairVM) return null
       return {
         primaryColor: puyoPairVM.main.color,
@@ -161,7 +178,10 @@ export const useGameSystem = (
 
   // Mayah AI評価結果を処理
   const processMayahEvaluation = useCallback((aiService: AIPort) => {
-    if ('getLastEvaluationResult' in aiService && 'getCandidateMovesWithEvaluation' in aiService) {
+    if (
+      'getLastEvaluationResult' in aiService &&
+      'getCandidateMovesWithEvaluation' in aiService
+    ) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mayahService = aiService as any
       const evaluationResult = mayahService.getLastEvaluationResult()
@@ -172,7 +192,11 @@ export const useGameSystem = (
       const candidates = mayahService.getCandidateMovesWithEvaluation()
       if (candidates && candidates.length > 0) {
         const displayCandidates = candidates.map(
-          (candidate: { move: AIMove; evaluation: MayahEvaluationResult; rank: number }) => ({
+          (candidate: {
+            move: AIMove
+            evaluation: MayahEvaluationResult
+            rank: number
+          }) => ({
             move: {
               x: candidate.move.x,
               rotation: candidate.move.rotation,

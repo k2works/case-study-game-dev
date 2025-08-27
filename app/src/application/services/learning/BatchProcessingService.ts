@@ -103,15 +103,36 @@ export class BatchProcessingService {
     this.validateDateRange(startDate, endDate)
 
     try {
+      console.log('BatchProcessingService: Fetching data from date range', {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      })
+
       // データ取得
       const rawData = await this.collectionService.getDataByDateRange(
         startDate,
         endDate,
       )
 
+      console.log('BatchProcessingService: Retrieved raw data', {
+        count: rawData.length,
+        sampleData: rawData.length > 0 ? rawData[0] : null,
+      })
+
+      if (rawData.length === 0) {
+        console.warn(
+          'BatchProcessingService: No data found in the specified date range',
+          { startDate, endDate },
+        )
+      }
+
       // バッチ処理実行
       return await this.processBatch(rawData, config)
     } catch (error) {
+      console.error(
+        'BatchProcessingService: Error in processDataFromDateRange',
+        error,
+      )
       throw new Error(
         `Failed to process data from date range: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

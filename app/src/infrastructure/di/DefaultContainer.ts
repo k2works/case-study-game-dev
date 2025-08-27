@@ -115,7 +115,14 @@ export class DefaultContainer {
     // 学習システム
     container.register<IndexedDBTrainingDataRepository>(
       'IndexedDBRepository',
-      () => new IndexedDBTrainingDataRepository(),
+      () => {
+        const repository = new IndexedDBTrainingDataRepository()
+        // 非同期初期化を自動実行 (エラーは警告として処理)
+        repository.initialize().catch((error) => {
+          console.warn('Failed to initialize IndexedDB repository:', error)
+        })
+        return repository
+      },
       true,
     )
 

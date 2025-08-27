@@ -92,6 +92,11 @@ export class LearningService {
       this.validateLearningConfig(config)
 
       // データ処理
+      console.log('Starting data processing for learning...', {
+        startDate: config.dataRange.startDate,
+        endDate: config.dataRange.endDate,
+      })
+
       const processedResult =
         await this.batchProcessingService.processDataFromDateRange(
           config.dataRange.startDate,
@@ -104,6 +109,8 @@ export class LearningService {
             maxSamples: config.maxSamples,
           },
         )
+
+      console.log('Data processing completed successfully')
 
       // データ不足チェック
       if (processedResult.processedDataset.training.totalSamples === 0) {

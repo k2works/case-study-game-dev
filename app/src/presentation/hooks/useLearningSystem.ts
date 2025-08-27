@@ -10,6 +10,7 @@ import type {
   ModelComparison,
   ModelPerformance,
 } from '../../domain/models/learning/ModelPerformanceMetrics'
+import type { TrainingData } from '../../domain/models/training/TrainingData'
 
 /**
  * A/Bテスト結果を作成するヘルパー関数
@@ -188,6 +189,19 @@ export const useLearningSystem = (learningService: LearningService) => {
         setIsLearning(true)
         setLearningProgress(0)
 
+        // 学習設定の詳細ログ出力
+        console.log('useLearningSystem: Learning configuration', {
+          config,
+          dateRange: {
+            start: config.dataRange.startDate.toISOString(),
+            end: config.dataRange.endDate.toISOString(),
+            daysDiff:
+              (config.dataRange.endDate.getTime() -
+                config.dataRange.startDate.getTime()) /
+              (1000 * 60 * 60 * 24),
+          },
+        })
+
         // 学習開始
         const result = await learningService.startLearning(config)
 
@@ -325,8 +339,99 @@ export const useLearningSystem = (learningService: LearningService) => {
 
   // 初期化
   React.useEffect(() => {
-    generateMockModels()
+    const initializeServices = async () => {
+      try {
+        // データベース初期化 - IndexedDBリポジトリを直接初期化
+        const { IndexedDBTrainingDataRepository } = await import(
+          '../../infrastructure/adapters/learning/IndexedDBRepository'
+        )
+        const repository = new IndexedDBTrainingDataRepository()
+        await repository.initialize()
+
+        console.log('Database initialized successfully')
+
+        // データベースをクリアして新しいモックデータを生成（デバッグ用）
+        await repository.clear()
+        console.log('Database cleared for fresh start')
+
+        // 学習用モックデータを生成して保存
+        await generateAndSaveTrainingData(repository)
+
+        const finalCount = await repository.count()
+        console.log('Final data count in database:', finalCount)
+      } catch (error) {
+        console.warn('Failed to initialize database:', error)
+        // データベース初期化失敗は警告として扱い、モックデータで継続
+      }
+
+      // モックデータの初期化
+      generateMockModels()
+    }
+
+    initializeServices()
   }, [generateMockModels])
+
+  /**
+   * 学習用のモックデータを生成してIndexedDBに保存
+   */
+  const generateAndSaveTrainingData = async (repository: {
+    count: () => Promise<number>
+    save: (data: TrainingData) => Promise<void>
+    clear: () => Promise<void>
+  }) => {
+    try {
+      // 既存データの確認
+      const existingCount = await repository.count()
+      console.log('Existing training data count:', existingCount)
+
+      // データベーススキーマが更新されたため、データを再生成
+      if (existingCount > 0) {
+        console.log('Clearing existing data to regenerate with new schema...')
+        await repository.clear()
+      }
+
+      // モックデータ生成
+      const { MockTrainingDataGenerator } = await import(
+        '../../test/helpers/mockTrainingDataGenerator'
+      )
+
+      // 過去30日間のデータを生成（学習で使用するのは過去7日間だが、より多くのデータを用意）
+      const endDate = new Date()
+      const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+      console.log('Generating training data for date range:', {
+        startDate,
+        endDate,
+      })
+
+      const mockData = MockTrainingDataGenerator.generateDataForDateRange(
+        startDate,
+        endDate,
+        20, // 1日あたり20サンプル = 合計600サンプル
+      )
+
+      console.log(`Generated ${mockData.length} training data samples`)
+
+      // バッチで保存
+      const batchSize = 50
+      for (let i = 0; i < mockData.length; i += batchSize) {
+        const batch = mockData.slice(i, i + batchSize)
+        const savePromises = batch.map((data) => repository.save(data))
+        await Promise.all(savePromises)
+        console.log(
+          `Saved batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(mockData.length / batchSize)}`,
+        )
+      }
+
+      console.log('Training data generation and saving completed')
+
+      // 保存後の確認
+      const finalCount = await repository.count()
+      console.log('Final training data count:', finalCount)
+    } catch (error) {
+      console.error('Failed to generate training data:', error)
+    }
+  }
 
   return {
     // 状態

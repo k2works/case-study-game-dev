@@ -84,12 +84,46 @@ export class DataCollectionServiceImpl implements DataCollectionService {
     this.repository = repository
   }
 
+  /**
+   * リポジトリの初期化を確認し、必要に応じて初期化を実行
+   */
+  private async ensureRepositoryInitialized(): Promise<void> {
+    // IndexedDBRepositoryの場合、初期化状態を確認
+    if ('isInitialized' in this.repository) {
+      const repo = this.repository as unknown as {
+        isInitialized?: () => boolean
+        initialize?: () => Promise<void>
+      }
+      if (typeof repo.isInitialized === 'function') {
+        const isInitialized = repo.isInitialized()
+        console.log('Repository initialization status:', isInitialized)
+
+        if (!isInitialized) {
+          if (typeof repo.initialize === 'function') {
+            console.log('Initializing repository...')
+            await repo.initialize()
+            console.log('Repository initialization completed')
+          } else {
+            console.warn('Repository has no initialize method')
+          }
+        }
+      } else {
+        console.warn('Repository has no isInitialized method')
+      }
+    } else {
+      console.log('Repository is not IndexedDB repository')
+    }
+  }
+
   async collectTrainingData(
     gameState: GameState,
     action: AIAction,
     reward: number,
     metadata: TrainingMetadata,
   ): Promise<void> {
+    // リポジトリの初期化確認
+    await this.ensureRepositoryInitialized()
+
     // バリデーション
     this.validateInputs(gameState, action, reward, metadata)
 
@@ -115,6 +149,9 @@ export class DataCollectionServiceImpl implements DataCollectionService {
     if (data.length === 0) {
       return
     }
+
+    // リポジトリの初期化確認
+    await this.ensureRepositoryInitialized()
 
     try {
       const promises = data.map(async (item) => {
@@ -146,6 +183,9 @@ export class DataCollectionServiceImpl implements DataCollectionService {
   }
 
   async getCollectionStats(): Promise<CollectionStatistics> {
+    // リポジトリの初期化確認
+    await this.ensureRepositoryInitialized()
+
     try {
       const allData = await this.repository.findAll()
       const count = await this.repository.count()
@@ -170,6 +210,9 @@ export class DataCollectionServiceImpl implements DataCollectionService {
   }
 
   async clearCollectedData(): Promise<void> {
+    // リポジトリの初期化確認
+    await this.ensureRepositoryInitialized()
+
     try {
       await this.repository.clear()
       this.resetStats()
@@ -185,9 +228,44 @@ export class DataCollectionServiceImpl implements DataCollectionService {
       throw new Error('Start date must be before end date')
     }
 
+    console.log('DataCollectionService: Getting data by date range', {
+      start: start.toISOString(),
+      end: end.toISOString(),
+    })
+
+    // リポジトリの初期化確認
+    await this.ensureRepositoryInitialized()
+
     try {
-      return await this.repository.findByDateRange(start, end)
+      // まず総データ数を確認
+      const totalCount = await this.repository.count()
+      console.log(
+        'DataCollectionService: Total data count in repository:',
+        totalCount,
+      )
+
+      // 全データのサンプルを確認
+      if (totalCount > 0) {
+        const allData = await this.repository.findAll()
+        console.log('DataCollectionService: Sample of all data', {
+          firstItem: allData[0],
+          lastItem: allData[allData.length - 1],
+          timestampRange: {
+            earliest: Math.min(...allData.map((d) => d.timestamp.getTime())),
+            latest: Math.max(...allData.map((d) => d.timestamp.getTime())),
+          },
+        })
+      }
+
+      const result = await this.repository.findByDateRange(start, end)
+      console.log('DataCollectionService: Found data by date range', {
+        count: result.length,
+        sampleItem: result.length > 0 ? result[0] : null,
+      })
+
+      return result
     } catch (error) {
+      console.error('DataCollectionService: Error in getDataByDateRange', error)
       throw new Error(
         `Failed to get data by date range: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

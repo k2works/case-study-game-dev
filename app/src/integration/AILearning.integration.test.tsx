@@ -7,7 +7,7 @@ import App from '../App'
 
 /**
  * AI学習システムの統合テスト
- * 
+ *
  * 目的:
  * - AI学習ダッシュボードの表示と動作を確認
  * - 学習設定の変更機能を検証
@@ -25,13 +25,15 @@ describe('AI学習システム統合テスト', () => {
     it('AI学習ダッシュボードが正しく表示される', async () => {
       // Arrange
       render(<App />)
-      
+
       // Act: AI学習タブをクリック
       const learningTab = await screen.findByText('🧠 AI学習')
       await user.click(learningTab)
 
       // Assert: 主要な要素が表示される
-      expect(await screen.findByText('🧠 AI学習ダッシュボード')).toBeInTheDocument()
+      expect(
+        await screen.findByText('🧠 AI学習ダッシュボード'),
+      ).toBeInTheDocument()
       expect(await screen.findByText('⚙️ 学習設定')).toBeInTheDocument()
       expect(screen.getByText('待機中')).toBeInTheDocument()
     })
@@ -67,7 +69,9 @@ describe('AI学習システム統合テスト', () => {
       await user.click(learningTab)
 
       // Act: エポック数を変更
-      const epochsInput = screen.getByLabelText('エポック数') as HTMLInputElement
+      const epochsInput = screen.getByLabelText(
+        'エポック数',
+      ) as HTMLInputElement
       await user.clear(epochsInput)
       await user.type(epochsInput, '100')
 
@@ -82,7 +86,9 @@ describe('AI学習システム統合テスト', () => {
       await user.click(learningTab)
 
       // Act: 学習率を変更
-      const learningRateInput = screen.getByLabelText('学習率') as HTMLInputElement
+      const learningRateInput = screen.getByLabelText(
+        '学習率',
+      ) as HTMLInputElement
       await user.clear(learningRateInput)
       await user.type(learningRateInput, '0.01')
 
@@ -97,7 +103,9 @@ describe('AI学習システム統合テスト', () => {
       await user.click(learningTab)
 
       // Act: バッチサイズを変更
-      const batchSizeSelect = screen.getByLabelText('バッチサイズ') as HTMLSelectElement
+      const batchSizeSelect = screen.getByLabelText(
+        'バッチサイズ',
+      ) as HTMLSelectElement
       await user.selectOptions(batchSizeSelect, '64')
 
       // Assert: 値が変更される
@@ -118,7 +126,9 @@ describe('AI学習システム統合テスト', () => {
       await user.click(learningTab)
 
       // Assert: 学習ダッシュボードが表示される
-      expect(await screen.findByText('🧠 AI学習ダッシュボード')).toBeInTheDocument()
+      expect(
+        await screen.findByText('🧠 AI学習ダッシュボード'),
+      ).toBeInTheDocument()
     })
 
     it('学習タブからゲームタブへ戻れる', async () => {
@@ -145,7 +155,7 @@ describe('AI学習システム統合テスト', () => {
       for (let i = 0; i < 10; i++) {
         const learningTab = await screen.findByText('🧠 AI学習')
         await user.click(learningTab)
-        
+
         const gameTab = await screen.findByText('🎮 ゲーム')
         await user.click(gameTab)
       }
@@ -165,7 +175,9 @@ describe('AI学習システム統合テスト', () => {
       await user.click(learningTab)
 
       // Assert: 学習ダッシュボードが表示される
-      expect(await screen.findByText('🧠 AI学習ダッシュボード')).toBeInTheDocument()
+      expect(
+        await screen.findByText('🧠 AI学習ダッシュボード'),
+      ).toBeInTheDocument()
 
       const endTime = performance.now()
       const renderTime = endTime - startTime
@@ -204,7 +216,7 @@ describe('AI学習システム統合テスト', () => {
       })
 
       render(<App />)
-      
+
       // Act: 基本操作を実行
       const learningTab = await screen.findByText('🧠 AI学習')
       await user.click(learningTab)
@@ -214,10 +226,11 @@ describe('AI学習システム統合テスト', () => {
       })
 
       // Assert: 重大なエラーが発生していない
-      const criticalErrors = consoleErrors.filter(error => 
-        typeof error === 'string' && 
-        !error.includes('404') && 
-        !error.includes('favicon')
+      const criticalErrors = consoleErrors.filter(
+        (error) =>
+          typeof error === 'string' &&
+          !error.includes('404') &&
+          !error.includes('favicon'),
       )
       expect(criticalErrors.length).toBe(0)
     })

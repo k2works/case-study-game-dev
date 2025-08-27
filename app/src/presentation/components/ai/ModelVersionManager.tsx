@@ -216,7 +216,7 @@ function ABTestSection({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label 
+                <label
                   htmlFor="model-a-select"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
@@ -238,7 +238,7 @@ function ABTestSection({
               </div>
 
               <div>
-                <label 
+                <label
                   htmlFor="model-b-select"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >

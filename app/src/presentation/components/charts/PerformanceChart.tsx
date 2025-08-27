@@ -157,7 +157,10 @@ type ChartDataStructure = {
   series: Array<{ name: string; dataKey: string; color: string }>
 }
 
-function createChartComponent(chartType: ChartType, chartData: ChartDataStructure) {
+function createChartComponent(
+  chartType: ChartType,
+  chartData: ChartDataStructure,
+) {
   const commonProps = {
     data: chartData.data as unknown[],
     margin: { top: 5, right: 30, left: 20, bottom: 50 },

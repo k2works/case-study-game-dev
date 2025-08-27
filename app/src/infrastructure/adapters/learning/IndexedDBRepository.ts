@@ -9,7 +9,7 @@ export class IndexedDBTrainingDataRepository
 {
   private db: IDBDatabase | null = null
   private readonly dbName = 'PuyoTrainingData'
-  private readonly dbVersion = 1
+  private readonly dbVersion = 2
   private readonly storeName = 'training_data'
 
   /**
@@ -44,7 +44,7 @@ export class IndexedDBTrainingDataRepository
           })
 
           // タイムスタンプでのインデックスを作成（日付範囲検索用）
-          store.createIndex('timestamp', 'timestamp', { unique: false })
+          store.createIndex('timestamp', 'timestampNumber', { unique: false })
 
           // ゲームIDでのインデックスを作成（ゲーム別検索用）
           store.createIndex('gameId', 'metadata.gameId', { unique: false })
@@ -70,8 +70,15 @@ export class IndexedDBTrainingDataRepository
         // タイムスタンプを数値として保存（検索効率向上のため）
         const dataToStore = {
           ...data,
+          timestamp: data.timestamp.toISOString(), // ISO文字列として保存
           timestampNumber: data.timestamp.getTime(),
         }
+
+        console.log('IndexedDBRepository: Saving data', {
+          id: data.id,
+          timestamp: data.timestamp.toISOString(),
+          timestampNumber: data.timestamp.getTime(),
+        })
 
         const request = store.add(dataToStore)
 
@@ -83,6 +90,7 @@ export class IndexedDBTrainingDataRepository
           reject(new Error('Failed to save training data'))
         }
       } catch (error) {
+        console.error('IndexedDBRepository: Error saving data', error)
         reject(
           new Error(
             `Failed to save training data: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -128,26 +136,39 @@ export class IndexedDBTrainingDataRepository
       try {
         const transaction = this.db!.transaction([this.storeName], 'readonly')
         const store = transaction.objectStore(this.storeName)
-        const index = store.index('timestamp')
 
-        const range = IDBKeyRange.bound(
-          start.getTime(),
-          end.getTime(),
-          false,
-          false,
-        )
-
-        const request = index.getAll(range)
+        // 全データを取得してフィルタリング（インデックスの問題を回避）
+        const request = store.getAll()
 
         request.onsuccess = () => {
-          const results = request.result.map(this.convertFromStorage)
-          resolve(results)
+          const startTime = start.getTime()
+          const endTime = end.getTime()
+
+          const allData = request.result.map(this.convertFromStorage)
+          const filteredData = allData.filter((item) => {
+            const itemTime = item.timestamp.getTime()
+            return itemTime >= startTime && itemTime <= endTime
+          })
+
+          console.log('IndexedDBRepository: Date range filtering', {
+            startDate: start.toISOString(),
+            endDate: end.toISOString(),
+            totalRecords: allData.length,
+            filteredRecords: filteredData.length,
+            sampleTimestamps: allData.slice(0, 3).map((d) => ({
+              timestamp: d.timestamp.toISOString(),
+              timestampNumber: d.timestamp.getTime(),
+            })),
+          })
+
+          resolve(filteredData)
         }
 
         request.onerror = () => {
           reject(new Error('Failed to retrieve training data by date range'))
         }
-      } catch {
+      } catch (error) {
+        console.error('IndexedDBRepository: Error in findByDateRange', error)
         reject(new Error('Failed to retrieve training data by date range'))
       }
     })
@@ -305,6 +326,13 @@ export class IndexedDBTrainingDataRepository
     if (!this.db) {
       throw new Error('Database not initialized. Call initialize() first.')
     }
+  }
+
+  /**
+   * 初期化状態を確認
+   */
+  isInitialized(): boolean {
+    return this.db !== null
   }
 
   /**
