@@ -340,16 +340,20 @@ export class AutoLearningGameService {
 
       console.log('🕹️ Starting game execution...')
 
-      await this.executeGameLoop(
+      const finalGameState = await this.executeGameLoop(
         currentGameState,
         gameContext,
         startTime,
         maxGameTime,
       )
 
+      // ゲーム終了後、最終スコアでコンテキストを更新
+      const finalVm = finalGameState as { score?: number }
+      gameContext.totalScore = finalVm.score || 0
+
       const gameDuration = Date.now() - startTime
       console.log(
-        `✅ Game completed in ${gameDuration}ms with ${gameContext.totalMoves} moves`,
+        `✅ Game completed in ${gameDuration}ms with ${gameContext.totalMoves} moves, final score: ${gameContext.totalScore}`,
       )
 
       // 学習データを保存
@@ -357,9 +361,13 @@ export class AutoLearningGameService {
         await this.saveTrainingData(gameContext.gameData, gameId)
       }
 
+      console.log(
+        `🎮 Game completed with final score: ${gameContext.totalScore}, moves: ${gameContext.totalMoves}`,
+      )
+
       return {
         gameId,
-        score: gameContext.totalScore,
+        score: gameContext.totalScore, // ゲーム全体の最終スコアを返す
         moves: gameContext.totalMoves,
         maxChainLength: gameContext.maxChainLength,
         duration: gameDuration,
