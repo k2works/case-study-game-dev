@@ -385,7 +385,7 @@ function LearningConfigForm({
             onConfigChange({ ...config, epochs: parseInt(e.target.value) })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
         />
       </div>
       <div>
@@ -409,7 +409,7 @@ function LearningConfigForm({
             })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
         />
       </div>
       <div>
@@ -426,7 +426,7 @@ function LearningConfigForm({
             onConfigChange({ ...config, batchSize: parseInt(e.target.value) })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
         >
           <option value={16}>16</option>
           <option value={32}>32</option>
@@ -479,7 +479,7 @@ function AdvancedConfigForm({
             })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
         />
       </div>
       <div>
@@ -495,7 +495,7 @@ function AdvancedConfigForm({
             })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
         >
           <option value="dense">Dense (全結合)</option>
           <option value="cnn">CNN (畳み込み)</option>
@@ -515,7 +515,7 @@ function AdvancedConfigForm({
             onConfigChange({ ...config, maxSamples: parseInt(e.target.value) })
           }
           disabled={isLearning}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
         />
       </div>
     </div>
