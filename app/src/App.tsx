@@ -15,6 +15,7 @@ import './presentation/components/ai/MayahAIEvaluationDisplay.css'
 import { PerformanceAnalysis } from './presentation/components/ai/PerformanceAnalysis'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useGameSystem } from './presentation/hooks/useGameSystem'
+import { useKeyboard } from './presentation/hooks/useKeyboard'
 import { useLearningSystem } from './presentation/hooks/useLearningSystem'
 
 // ゲーム制御ボタンコンポーネント
@@ -249,6 +250,46 @@ function App() {
     game: gameSystem.game,
     updateGame: gameSystem.updateGame,
     fallSpeed: 1000, // 1秒間隔で落下
+  })
+
+  // キーボード入力処理（AI無効時のみ）
+  useKeyboard({
+    onLeft: () => {
+      if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
+        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'MOVE_LEFT' })
+        gameSystem.updateGame(newGame)
+      }
+    },
+    onRight: () => {
+      if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
+        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'MOVE_RIGHT' })
+        gameSystem.updateGame(newGame)
+      }
+    },
+    onDown: () => {
+      if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
+        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'SOFT_DROP' })
+        gameSystem.updateGame(newGame)
+      }
+    },
+    onRotate: () => {
+      if (!gameSystem.aiEnabled && gameSystem.game.state === 'playing') {
+        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'ROTATE_CLOCKWISE' })
+        gameSystem.updateGame(newGame)
+      }
+    },
+    onPause: () => {
+      if (gameSystem.game.state === 'playing') {
+        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'PAUSE' })
+        gameSystem.updateGame(newGame)
+      } else if (gameSystem.game.state === 'paused') {
+        const newGame = gameSystem.gameService.updateGameState(gameSystem.game, { type: 'RESUME' })
+        gameSystem.updateGame(newGame)
+      }
+    },
+    onReset: () => {
+      gameSystem.handleReset()
+    },
   })
 
   return (
