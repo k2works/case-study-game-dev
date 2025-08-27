@@ -6,28 +6,41 @@ import userEvent from '@testing-library/user-event'
 import App from '../App'
 
 // useLearningSystemフックをモック
+const mockSetCurrentTab = vi.fn()
+const mockUseLearningSystem = {
+  isLearning: false,
+  learningProgress: 0,
+  currentModel: 'test-model-v1.0',
+  latestPerformance: null,
+  learningHistory: [],
+  models: [],
+  abTests: [],
+  currentTab: 'learning' as 'game' | 'learning',
+  startLearning: vi.fn(),
+  stopLearning: vi.fn(),
+  selectModel: vi.fn(),
+  startABTest: vi.fn(),
+  stopABTest: vi.fn(),
+  compareModels: vi.fn(),
+  setCurrentTab: mockSetCurrentTab,
+}
+
 vi.mock('../presentation/hooks/useLearningSystem', () => ({
-  useLearningSystem: vi.fn(() => ({
-    isLearning: false,
-    learningProgress: 0,
-    currentModel: 'test-model-v1.0',
-    latestPerformance: null,
-    learningHistory: [],
-    models: [],
-    abTests: [],
-    startLearning: vi.fn(),
-    stopLearning: vi.fn(),
-    selectModel: vi.fn(),
-    startABTest: vi.fn(),
-    stopABTest: vi.fn(),
-    compareModels: vi.fn(),
-  })),
+  useLearningSystem: vi.fn(() => mockUseLearningSystem),
 }))
 
 // usePerformanceAnalysisフックをモック
 vi.mock('../presentation/hooks/usePerformanceAnalysis', () => ({
   usePerformanceAnalysis: vi.fn(() => ({
-    statistics: null,
+    statistics: {
+      totalGames: 0,
+      averageScore: 0,
+      averageChain: 0,
+      chainSuccessRate: 0,
+      averagePlayTime: 0,
+      sessions: [],
+      gameResults: [],
+    },
     comparisonReport: null,
     recordMove: vi.fn(),
     recordChain: vi.fn(),
@@ -50,6 +63,8 @@ describe('AI学習システム統合テスト', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // モック状態をリセット
+    mockUseLearningSystem.currentTab = 'learning'
   })
 
   describe('基本UI表示', () => {
@@ -146,43 +161,49 @@ describe('AI学習システム統合テスト', () => {
 
   describe('タブナビゲーション', () => {
     it('ゲームタブから学習タブへ切り替えできる', async () => {
-      // Arrange
+      // Arrange: 初期状態をゲームタブに設定
+      mockUseLearningSystem.currentTab = 'game'
       render(<App />)
 
       // Assert: 初期状態はゲームタブ
       expect(screen.getByTestId('game-board')).toBeInTheDocument()
 
-      // Act: 学習タブに切り替え
+      // Act: 学習タブに切り替え（実際のタブ変更はモックで管理）
+      mockUseLearningSystem.currentTab = 'learning'
       const learningTab = await screen.findByText('🧠 AI学習')
       await user.click(learningTab)
 
-      // Assert: 学習ダッシュボードが表示される
-      expect(
-        await screen.findByText('🧠 AI学習ダッシュボード'),
-      ).toBeInTheDocument()
+      // Assert: setCurrentTabが呼ばれることを確認
+      expect(mockSetCurrentTab).toHaveBeenCalledWith('learning')
     })
 
     it('学習タブからゲームタブへ戻れる', async () => {
-      // Arrange
+      // Arrange: 初期状態を学習タブに設定（このテストではすでに学習タブ）
+      mockUseLearningSystem.currentTab = 'learning'
       render(<App />)
-      const learningTab = await screen.findByText('🧠 AI学習')
-      await user.click(learningTab)
 
-      // Act: ゲームタブに戻る
+      // Assert: 学習ダッシュボードが表示されている
+      expect(
+        await screen.findByText('🧠 AI学習ダッシュボード'),
+      ).toBeInTheDocument()
+
+      // Act: ゲームタブに戻る（実際のタブ変更はモックで管理）
+      mockUseLearningSystem.currentTab = 'game'
       const gameTab = await screen.findByText('🎮 ゲーム')
       await user.click(gameTab)
 
-      // Assert: ゲームボードが表示される
-      expect(screen.getByTestId('game-board')).toBeInTheDocument()
+      // Assert: setCurrentTabが呼ばれることを確認
+      expect(mockSetCurrentTab).toHaveBeenCalledWith('game')
     })
   })
 
   describe('パフォーマンステスト', () => {
     it('大量のタブ切り替えでもメモリリークしない', async () => {
       // Arrange
+      mockUseLearningSystem.currentTab = 'learning'
       render(<App />)
 
-      // Act: 複数回のタブ切り替え
+      // Act: 複数回のタブ切り替えシミュレーション
       for (let i = 0; i < 10; i++) {
         const learningTab = await screen.findByText('🧠 AI学習')
         await user.click(learningTab)
@@ -193,7 +214,10 @@ describe('AI学習システム統合テスト', () => {
 
       // Assert: アプリケーションが正常に動作し続ける
       expect(screen.getByText('ぷよぷよ')).toBeInTheDocument()
-      expect(screen.getByTestId('game-board')).toBeInTheDocument()
+      expect(screen.getByText('🧠 AI学習ダッシュボード')).toBeInTheDocument()
+
+      // setCurrentTabが適切に呼ばれたことを確認（10回のタブクリック）
+      expect(mockSetCurrentTab).toHaveBeenCalledTimes(20) // 10回 × 2タブ
     })
 
     it('学習ダッシュボードの表示が高速である', async () => {

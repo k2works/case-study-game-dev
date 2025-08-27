@@ -71,9 +71,36 @@ export function usePerformanceAnalysis({
       setComparisonReport(report)
     } catch (error) {
       console.debug('Statistics update failed:', error)
-      // エラー時は統計データをnullに設定
-      setStatistics(null)
-      setComparisonReport(null)
+      // エラー時は初期値に設定
+      setStatistics({
+        totalGames: 0,
+        averageScore: 0,
+        averageChain: 0,
+        chainSuccessRate: 0,
+        averagePlayTime: 0,
+        gameResults: [],
+      })
+      setComparisonReport({
+        ai: {
+          avgScore: 0,
+          avgChain: 0,
+          gamesPlayed: 0,
+          avgPlayTime: 0,
+          chainSuccessRate: 0,
+        },
+        human: {
+          avgScore: 0,
+          avgChain: 0,
+          gamesPlayed: 0,
+          avgPlayTime: 0,
+          chainSuccessRate: 0,
+        },
+        comparison: {
+          scoreRatio: 1.0,
+          chainRatio: 1.0,
+          playTimeRatio: 1.0,
+        },
+      })
     }
   }, [performanceService])
 

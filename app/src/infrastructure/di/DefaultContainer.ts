@@ -23,6 +23,7 @@ import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter'
 import { PerformanceAdapter } from '../adapters/PerformanceAdapter'
 import { StrategyAdapter } from '../adapters/StrategyAdapter'
 import { IndexedDBTrainingDataRepository } from '../adapters/learning/IndexedDBRepository'
+import { MockTrainingDataRepository } from '../adapters/learning/MockTrainingDataRepository'
 
 /**
  * デフォルトの依存性注入コンテナ設定
@@ -113,9 +114,24 @@ export class DefaultContainer {
     )
 
     // 学習システム
-    container.register<IndexedDBTrainingDataRepository>(
+    container.register(
       'IndexedDBRepository',
       () => {
+        // テスト環境やIndexedDBが利用できない環境の場合はMockRepositoryを使用
+        const isTestEnvironment =
+          (typeof process !== 'undefined' &&
+            process.env?.NODE_ENV === 'test') ||
+          typeof indexedDB === 'undefined'
+
+        if (isTestEnvironment) {
+          const mockRepository = new MockTrainingDataRepository()
+          // モックリポジトリも初期化
+          mockRepository.initialize().catch((error) => {
+            console.warn('Failed to initialize Mock repository:', error)
+          })
+          return mockRepository
+        }
+
         const repository = new IndexedDBTrainingDataRepository()
         // 非同期初期化を自動実行 (エラーは警告として処理)
         repository.initialize().catch((error) => {

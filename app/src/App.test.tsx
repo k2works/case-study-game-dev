@@ -20,19 +20,29 @@ vi.mock('./presentation/hooks/useLearningSystem', () => ({
     learningHistory: [],
     models: [],
     abTests: [],
+    currentTab: 'game' as const,
     startLearning: vi.fn(),
     stopLearning: vi.fn(),
     selectModel: vi.fn(),
     startABTest: vi.fn(),
     stopABTest: vi.fn(),
     compareModels: vi.fn(),
+    setCurrentTab: vi.fn(),
   })),
 }))
 
 // usePerformanceAnalysisフックをモック
 vi.mock('./presentation/hooks/usePerformanceAnalysis', () => ({
   usePerformanceAnalysis: vi.fn(() => ({
-    statistics: null,
+    statistics: {
+      totalGames: 0,
+      averageScore: 0,
+      averageChain: 0,
+      chainSuccessRate: 0,
+      averagePlayTime: 0,
+      sessions: [],
+      gameResults: [],
+    },
     comparisonReport: null,
     recordMove: vi.fn(),
     recordChain: vi.fn(),
