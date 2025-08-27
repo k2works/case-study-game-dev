@@ -127,6 +127,7 @@ export function AutoLearningGameDashboard({
   /**
    * ゲーム状態表示
    */
+  // eslint-disable-next-line complexity
   const GameStateView = ({ process }: { process: LearningGameProcess }) => {
     const gameState = process.currentGameState
     const lastMove = process.lastMove

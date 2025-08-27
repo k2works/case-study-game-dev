@@ -3,9 +3,10 @@
  * ゲーム実行とTensorFlow.js学習を統合した自動学習サービス
  */
 import type { AIGameState, AIMove } from '../../../domain/models/ai/index'
+import type { PuyoColor } from '../../../domain/models/Puyo'
 import { TensorFlowTrainer } from '../../../domain/services/learning/TensorFlowTrainer'
 import type { AIPort } from '../../ports/AIPort'
-import type { GamePort } from '../../ports/GamePort'
+import type { GamePort, GameAction } from '../../ports/GamePort'
 import type { BatchProcessingService } from '../learning/BatchProcessingService'
 import type { DataCollectionService } from '../learning/DataCollectionService'
 
@@ -79,6 +80,39 @@ export interface LearningGameProcess {
   error?: string
 }
 
+/**
+ * ゲーム実行結果
+ */
+export interface GameResult {
+  gameId: string
+  score: number
+  moves: number
+  maxChainLength: number
+  duration: number
+  completed: boolean
+  dataPoints: number
+}
+
+/**
+ * ゲーム移動結果
+ */
+export interface MoveResult {
+  score: number
+  chainLength: number
+  gameOver: boolean
+  fieldFull: boolean
+}
+
+/**
+ * ゲームコンテキスト
+ */
+interface GameContext {
+  totalMoves: number
+  totalScore: number
+  maxChainLength: number
+  gameCompleted: boolean
+  gameData: Array<{state: AIGameState, move: AIMove, result: MoveResult}>
+}
 
 /**
  * 完全なAI自動学習システム
@@ -144,8 +178,8 @@ export class AutoLearningGameService {
     }
 
     try {
-      // 学習サイクル実行
-      await this.runMockLearningCycle()
+      // 実際の学習サイクル実行
+      await this.runRealLearningCycle()
     } catch (error) {
       console.error('❌ Auto learning game session failed:', error)
       if (this.currentProcess) {
@@ -181,12 +215,12 @@ export class AutoLearningGameService {
   }
 
   /**
-   * モック学習サイクル（デモ用）
+   * 実際の学習サイクル
    */
-  private async runMockLearningCycle(): Promise<void> {
+  private async runRealLearningCycle(): Promise<void> {
     if (!this.currentProcess) return
     
-    // 将来の実装で使用予定のサービスを記録
+    console.log('🎮 Starting real game learning cycle...')
     console.debug('Services initialized:', {
       gameService: !!this.gameService,
       aiService: !!this.aiService,
@@ -195,62 +229,624 @@ export class AutoLearningGameService {
       tensorFlowTrainer: !!this.tensorFlowTrainer,
     })
 
-    // モックゲーム実行
-    this.currentProcess.status = 'playing'
-    for (let i = 0; i < this.config.gamesPerSession; i++) {
-      if (!this.isRunning) break
+    try {
+      // AIサービスを有効化
+      console.log('🤖 Enabling AI service...')
+      this.aiService.setEnabled(true)
+      // 実際のゲーム実行
+      this.currentProcess.status = 'playing'
+      console.log(`🎯 Playing ${this.config.gamesPerSession} games...`)
+      
+      for (let i = 0; i < this.config.gamesPerSession; i++) {
+        if (!this.isRunning) break
 
-      this.currentProcess.currentGame = i + 1
-      this.currentProcess.progress = ((i + 1) / this.config.gamesPerSession) * 50
+        this.currentProcess.currentGame = i + 1
+        this.currentProcess.progress = ((i + 1) / this.config.gamesPerSession) * 60
 
-      // モックゲーム結果
-      const mockScore = Math.floor(Math.random() * 10000)
-      this.updateMockGameStats(mockScore, i + 1)
+        console.log(`🎮 Playing game ${i + 1}/${this.config.gamesPerSession}`)
+        
+        // 実際のゲームを実行
+        const gameResult = await this.runSingleGame()
+        
+        // ゲーム統計を更新
+        this.updateGameStats(gameResult, i + 1)
 
-      await this.sleep(1000) // 1秒間隔でシミュレーション
+        // ゲーム間の休憩
+        await this.sleep(this.config.pauseBetweenGames * 1000)
+      }
+
+      // データ収集フェーズ
+      this.currentProcess.status = 'collecting'
+      this.currentProcess.progress = 70
+      console.log('📊 Collecting training data...')
+      
+      // 収集されたデータ量を確認
+      const collectedDataSize = this.currentProcess.gameStats.collectedDataPoints
+      console.log(`📈 Collected ${collectedDataSize} data points`)
+
+      // 十分なデータがある場合のみ学習実行
+      if (collectedDataSize >= this.config.minTrainingDataSize) {
+        this.currentProcess.status = 'training'
+        this.currentProcess.progress = 80
+        console.log('🧠 Training neural network...')
+        
+        const learningResult = await this.trainWithCollectedData(collectedDataSize)
+        
+        this.currentProcess.learningStats = learningResult
+        this.currentProcess.modelId = `mayah-ai-${Date.now()}`
+      } else {
+        console.log(`⚠️ Not enough data for training (${collectedDataSize}/${this.config.minTrainingDataSize})`)
+        this.currentProcess.learningStats = {
+          accuracy: 0,
+          loss: 0,
+          trainingDataSize: collectedDataSize,
+        }
+      }
+
+      // モデル評価
+      this.currentProcess.status = 'evaluating'
+      this.currentProcess.progress = 90
+      console.log('🔍 Evaluating model performance...')
+      await this.sleep(1000) // 評価時間をシミュレート
+
+      this.currentProcess.status = 'completed'
+      this.currentProcess.progress = 100
+      this.currentProcess.endTime = new Date()
+
+      this.processHistory.push({ ...this.currentProcess })
+      console.log('✅ Real auto learning cycle completed!')
+      
+    } catch (error) {
+      console.error('❌ Learning cycle failed:', error)
+      if (this.currentProcess) {
+        this.currentProcess.status = 'error'
+        this.currentProcess.error = (error as Error).message
+        this.currentProcess.endTime = new Date()
+        this.processHistory.push({ ...this.currentProcess })
+      }
+      throw error
     }
-
-    // モック学習実行
-    this.currentProcess.status = 'training'
-    this.currentProcess.progress = 75
-
-    await this.sleep(2000) // 学習シミュレーション
-
-    this.currentProcess.learningStats = {
-      accuracy: 0.75 + Math.random() * 0.2,
-      loss: Math.random() * 0.5,
-      trainingDataSize: 1000,
-    }
-
-    this.currentProcess.status = 'completed'
-    this.currentProcess.progress = 100
-    this.currentProcess.endTime = new Date()
-
-    this.processHistory.push({ ...this.currentProcess })
-    console.log('✅ Mock auto learning completed!')
   }
 
   /**
-   * モックゲーム統計更新
+   * 単一ゲーム実行
    */
-  private updateMockGameStats(score: number, gameNumber: number): void {
+  private async runSingleGame(): Promise<GameResult> {
+    try {
+      console.log('🎮 Initializing new game...')
+      const gameId = `game-${Date.now()}`
+      
+      // ゲーム状態の初期化
+      const currentGameState = this.gameService.startNewGame()
+      
+      const gameContext = {
+        totalMoves: 0,
+        totalScore: 0,
+        maxChainLength: 0,
+        gameCompleted: false,
+        gameData: [] as Array<{state: AIGameState, move: AIMove, result: MoveResult}>
+      }
+      
+      const startTime = Date.now()
+      const maxGameTime = this.config.maxGameDuration * 1000
+      
+      console.log('🕹️ Starting game execution...')
+      
+      await this.executeGameLoop(currentGameState, gameContext, startTime, maxGameTime)
+      
+      const gameDuration = Date.now() - startTime
+      console.log(`✅ Game completed in ${gameDuration}ms with ${gameContext.totalMoves} moves`)
+      
+      // 学習データを保存
+      if (this.config.collectTrainingData && gameContext.gameData.length > 0) {
+        await this.saveTrainingData(gameContext.gameData, gameId)
+      }
+      
+      return {
+        gameId,
+        score: gameContext.totalScore,
+        moves: gameContext.totalMoves,
+        maxChainLength: gameContext.maxChainLength,
+        duration: gameDuration,
+        completed: gameContext.gameCompleted,
+        dataPoints: gameContext.gameData.length,
+      }
+      
+    } catch (error) {
+      console.error('❌ Failed to run single game:', error)
+      throw error
+    }
+  }
+
+  /**
+   * ゲームループの実行
+   */
+  private async executeGameLoop(
+    currentGameState: unknown, 
+    gameContext: GameContext, 
+    startTime: number, 
+    maxGameTime: number
+  ): Promise<unknown> {
+    while (!gameContext.gameCompleted && (Date.now() - startTime) < maxGameTime) {
+      if (!this.isRunning) break
+      
+      currentGameState = await this.executeAIMove(currentGameState, gameContext)
+      
+      // AI思考速度に合わせて待機
+      await this.sleep(this.config.thinkingSpeed)
+    }
+    
+    return currentGameState
+  }
+
+  /**
+   * AI手の実行
+   */
+  private async executeAIMove(currentGameState: unknown, gameContext: GameContext): Promise<unknown> {
+    // 現在のゲーム状態をAIGameState形式に変換
+    const aiGameState = this.convertToAIGameState(currentGameState)
+    
+    // プロセス状態更新
+    this.updateCurrentProcessState(aiGameState)
+    
+    // AIが次の手を決定
+    const aiMove = await this.aiService.decideMove(aiGameState)
+    console.log(`🤖 AI decided move:`, aiMove)
+    
+    // 手を実行
+    const {updatedGameState, moveResult} = await this.applyAIMove(currentGameState, aiMove)
+    
+    // データ記録
+    gameContext.gameData.push({
+      state: aiGameState,
+      move: aiMove,
+      result: moveResult
+    })
+    
+    // 統計更新
+    this.updateGameContext(gameContext, moveResult)
+    
+    return updatedGameState
+  }
+
+  /**
+   * プロセス状態更新
+   */
+  private updateCurrentProcessState(aiGameState: AIGameState): void {
+    if (this.currentProcess) {
+      this.currentProcess.currentGameState = aiGameState
+    }
+  }
+
+  /**
+   * AI手を適用
+   */
+  // eslint-disable-next-line complexity
+  private async applyAIMove(
+    currentGameState: unknown, 
+    aiMove: AIMove
+  ): Promise<{updatedGameState: unknown, moveResult: MoveResult}> {
+    // 現在のプロセスの最後の手を更新
+    if (this.currentProcess) {
+      this.currentProcess.lastMove = aiMove
+    }
+    
+    // AIの手をGameActionに変換して適用
+    const gameActions = this.convertAIMoveToGameActions(aiMove)
+    let moveScore = 0
+    let moveChainLength = 0
+    let updatedState = currentGameState
+    
+    // 一連のアクションを実行
+    for (const action of gameActions) {
+      const vm = updatedState as { score?: number }
+      const previousScore = vm.score || 0
+      updatedState = this.gameService.updateGameState(updatedState as never, action)
+      
+      // スコア差分を計算
+      const updatedVm = updatedState as { score?: number, chainCount?: number }
+      const scoreDelta = (updatedVm.score || 0) - previousScore
+      moveScore += scoreDelta
+      
+      // チェーン数を記録
+      if ((updatedVm.chainCount || 0) > moveChainLength) {
+        moveChainLength = updatedVm.chainCount || 0
+      }
+      
+      // 自動落下処理
+      updatedState = this.gameService.processAutoFall(updatedState as never)
+      
+      // 短時間待機（アニメーション的な効果）
+      await this.sleep(10)
+    }
+    
+    // 新しいぷよペアを生成（ゲームが継続可能な場合）
+    const finalVm = updatedState as { gameOver?: boolean }
+    if (!finalVm.gameOver) {
+      updatedState = this.gameService.spawnNewPuyoPair(updatedState as never)
+    }
+    
+    const moveResult: MoveResult = {
+      score: moveScore,
+      chainLength: moveChainLength,
+      gameOver: (updatedState as { gameOver?: boolean }).gameOver || false,
+      fieldFull: this.isFieldFull(updatedState),
+    }
+    
+    return { updatedGameState: updatedState, moveResult }
+  }
+
+  /**
+   * ゲームコンテキスト更新
+   */
+  private updateGameContext(gameContext: GameContext, moveResult: MoveResult): void {
+    gameContext.totalMoves++
+    gameContext.totalScore += moveResult.score || 0
+    gameContext.maxChainLength = Math.max(gameContext.maxChainLength, moveResult.chainLength || 0)
+    
+    // ゲーム終了判定
+    if (moveResult.gameOver || moveResult.fieldFull) {
+      gameContext.gameCompleted = true
+      console.log('🏁 Game completed:', moveResult.gameOver ? 'Game Over' : 'Field Full')
+    }
+  }
+
+  /**
+   * ゲーム状態をAIGameState形式に変換
+   */
+  // eslint-disable-next-line complexity
+  private convertToAIGameState(gameViewModel: unknown): AIGameState {
+    // GameViewModelをAIGameState形式に変換
+    const vm = gameViewModel as {
+      fieldViewModel?: { cells?: unknown[][] }
+      currentPuyoPair?: { main: { color: number }, sub: { color: number } }
+      nextPuyoPair?: { main: { color: number }, sub: { color: number } }
+      score?: number
+      chainCount?: number
+      gameOver?: boolean
+    }
+    
+    // currentPuyoPairが存在しない場合はデフォルト値を設定
+    const currentPuyoPair = vm.currentPuyoPair || {
+      main: { color: 1 }, // デフォルト: 赤
+      sub: { color: 2 }   // デフォルト: 青
+    }
+    
+    const nextPuyoPair = vm.nextPuyoPair || {
+      main: { color: 3 }, // デフォルト: 緑
+      sub: { color: 4 }   // デフォルト: 黄
+    }
+    
+    return {
+      field: {
+        width: 6,
+        height: 13,
+        cells: vm.fieldViewModel?.cells || Array(13).fill(null).map(() => Array(6).fill(null))
+      },
+      currentPuyoPair: {
+        primaryColor: this.convertNumberToPuyoColor(currentPuyoPair.main.color),
+        secondaryColor: this.convertNumberToPuyoColor(currentPuyoPair.sub.color),
+        x: 2,
+        y: 0,
+        rotation: 0
+      },
+      nextPuyoPair: {
+        primaryColor: this.convertNumberToPuyoColor(nextPuyoPair.main.color),
+        secondaryColor: this.convertNumberToPuyoColor(nextPuyoPair.sub.color),
+        x: 2,
+        y: 0,
+        rotation: 0
+      },
+      score: vm.score || 0,
+      chainCount: vm.chainCount || 0,
+      turn: 0,
+      isGameOver: vm.gameOver || false,
+    }
+  }
+
+  /**
+   * AIMoveをGameActionの配列に変換
+   */
+  private convertAIMoveToGameActions(aiMove: AIMove): GameAction[] {
+    const actions: GameAction[] = []
+    
+    // 位置への移動（x座標）
+    const currentX = 2 // 通常は中央からスタート
+    const targetX = aiMove.x
+    
+    if (targetX < currentX) {
+      // 左に移動
+      for (let i = 0; i < currentX - targetX; i++) {
+        actions.push({ type: 'MOVE_LEFT' })
+      }
+    } else if (targetX > currentX) {
+      // 右に移動
+      for (let i = 0; i < targetX - currentX; i++) {
+        actions.push({ type: 'MOVE_RIGHT' })
+      }
+    }
+    
+    // 回転
+    for (let i = 0; i < aiMove.rotation; i++) {
+      actions.push({ type: 'ROTATE_CLOCKWISE' })
+    }
+    
+    // ハードドロップ
+    actions.push({ type: 'HARD_DROP' })
+    
+    return actions
+  }
+
+  /**
+   * フィールドが満杯かどうかを判定
+   */
+  private isFieldFull(gameViewModel: unknown): boolean {
+    const vm = gameViewModel as { fieldViewModel?: { cells?: unknown[][] } }
+    const field = vm.fieldViewModel?.cells
+    if (!field || !Array.isArray(field)) return false
+    
+    // 上端行（y=0）にぷよがあるかチェック
+    return field.some((row: unknown[], y: number) => 
+      y === 0 && Array.isArray(row) && row.some(cell => {
+        const cellObj = cell as { color?: number }
+        return cellObj && cellObj.color !== 0
+      })
+    )
+  }
+
+  /**
+   * 学習データを保存
+   */
+  private async saveTrainingData(
+    gameData: Array<{state: AIGameState, move: AIMove, result: MoveResult}>, 
+    gameId: string
+  ): Promise<void> {
+    try {
+      console.log(`💾 Saving ${gameData.length} training data points for game ${gameId}`)
+      
+      for (const data of gameData) {
+        // AIGameStateをGameStateに変換
+        const gameState = this.convertAIGameStateToGameState(data.state)
+        
+        await this.dataCollectionService.collectTrainingData(
+          gameState,
+          {
+            x: data.move.x,
+            rotation: data.move.rotation,
+            evaluationScore: data.move.score,
+            features: {
+              'field_height': this.calculateFieldHeight(data.state.field),
+              'chain_potential': this.calculateChainPotential(data.state.field),
+              'position_x': data.move.x,
+              'rotation': data.move.rotation,
+            }
+          },
+          this.calculateReward(data.result),
+          {
+            gameId,
+            playerId: 'auto-ai',
+            difficulty: 'normal',
+            version: 'mayah-ai-v1',
+          },
+        )
+      }
+      
+      console.log('✅ Training data saved successfully')
+    } catch (error) {
+      console.error('❌ Failed to save training data:', error)
+      // データ保存失敗はゲーム実行を止めないように警告のみ
+    }
+  }
+
+  /**
+   * 報酬計算
+   */
+  private calculateReward(result: MoveResult): number {
+    let reward = 0
+    
+    // スコアによる報酬
+    reward += (result.score || 0) / 1000
+    
+    // チェーンによる報酬
+    reward += Math.pow(result.chainLength || 0, 2) * 10
+    
+    // ゲームオーバーペナルティ
+    if (result.gameOver) {
+      reward -= 100
+    }
+    
+    return reward
+  }
+
+  /**
+   * ゲーム結果の統計更新
+   */
+  private updateGameStats(gameResult: GameResult, gameNumber: number): void {
     if (!this.currentProcess) return
 
     const stats = this.currentProcess.gameStats
     stats.completedGames = gameNumber
 
     // 平均スコア更新
-    stats.averageScore = (stats.averageScore * (gameNumber - 1) + score) / gameNumber
+    stats.averageScore = (stats.averageScore * (gameNumber - 1) + gameResult.score) / gameNumber
 
     // 最高スコア更新
-    if (score > stats.bestScore) {
-      stats.bestScore = score
+    if (gameResult.score > stats.bestScore) {
+      stats.bestScore = gameResult.score
     }
 
-    // その他の統計をモック値で更新
-    stats.averageChainLength = 2 + Math.random() * 3
-    stats.collectedDataPoints = gameNumber * 50
-    stats.successRate = Math.min(1.0, gameNumber * 0.1)
+    // 平均チェーン長更新
+    stats.averageChainLength = (stats.averageChainLength * (gameNumber - 1) + gameResult.maxChainLength) / gameNumber
+
+    // 収集データポイント累計
+    stats.collectedDataPoints += gameResult.dataPoints
+
+    // 成功率計算（完了したゲームの割合）
+    stats.successRate = gameResult.completed ? (stats.successRate * (gameNumber - 1) + 1) / gameNumber : stats.successRate * (gameNumber - 1) / gameNumber
+
+    console.log(`📊 Game ${gameNumber} stats updated:`, {
+      score: gameResult.score,
+      avgScore: stats.averageScore.toFixed(0),
+      bestScore: stats.bestScore,
+      dataPoints: gameResult.dataPoints,
+      totalDataPoints: stats.collectedDataPoints,
+    })
+  }
+
+  /**
+   * 収集されたデータで学習実行
+   */
+  private async trainWithCollectedData(dataSize: number): Promise<{accuracy: number, loss: number, trainingDataSize: number}> {
+    try {
+      console.log(`🧠 Starting training with ${dataSize} data points`)
+      
+      // バッチ処理サービスを使って学習データを準備
+      const batchResult = await this.batchProcessingService.processDataFromDateRange(
+        new Date(Date.now() - 24 * 60 * 60 * 1000), // 過去24時間
+        new Date(),
+        {
+          batchSize: this.config.batchSize,
+          validationSplit: this.config.validationSplit,
+          shuffle: true,
+          normalizeRewards: true,
+          maxSamples: Math.min(dataSize, this.config.batchSize),
+        }
+      )
+      
+      // プロセス済みデータセットから特徴量と報酬を抽出
+      const processedDataset = batchResult.processedDataset as unknown as {
+        features: number[][]
+        rewards: number[]
+      }
+      
+      // TensorFlow.jsモデルを作成
+      const model = this.tensorFlowTrainer.createModel({
+        type: this.config.modelArchitecture,
+        inputShape: [processedDataset.features[0]?.length || 10],
+        layers: [
+          { type: 'dense', units: 128, activation: 'relu' },
+          { type: 'dropout', rate: 0.3 },
+          { type: 'dense', units: 64, activation: 'relu' },
+          { type: 'dense', units: 1, activation: 'linear' }
+        ]
+      })
+      
+      // 学習データを分割
+      const trainSize = Math.floor(processedDataset.features.length * (1 - this.config.validationSplit))
+      const trainData = {
+        features: processedDataset.features.slice(0, trainSize),
+        rewards: processedDataset.rewards.slice(0, trainSize)
+      }
+      const validationData = {
+        features: processedDataset.features.slice(trainSize),
+        rewards: processedDataset.rewards.slice(trainSize)
+      }
+      
+      // TensorFlow.jsモデルの学習実行
+      const trainingResult = await this.tensorFlowTrainer.trainModel(
+        model,
+        trainData,
+        validationData,
+        {
+          epochs: this.config.epochs,
+          batchSize: this.config.batchSize,
+          validationSplit: this.config.validationSplit,
+          learningRate: this.config.learningRate,
+          verbose: 0
+        }
+      )
+      
+      console.log('✅ Training completed:', trainingResult)
+      
+      return {
+        accuracy: trainingResult.validationAccuracy,
+        loss: trainingResult.validationLoss,
+        trainingDataSize: dataSize,
+      }
+      
+    } catch (error) {
+      console.error('❌ Training failed:', error)
+      throw error
+    }
+  }
+
+
+  /**
+   * 数値をPuyoColor文字列に変換
+   */
+  private convertNumberToPuyoColor(colorNum: number): PuyoColor {
+    const colorMap: { [key: number]: PuyoColor } = {
+      0: null,
+      1: 'red',
+      2: 'blue', 
+      3: 'green',
+      4: 'yellow',
+      5: 'purple'
+    }
+    return colorMap[colorNum] || 'red'
+  }
+
+  /**
+   * AIGameStateをGameStateに変換
+   */
+  private convertAIGameStateToGameState(aiState: AIGameState): any {
+    return {
+      field: aiState.field.cells,
+      currentPuyo: aiState.currentPuyoPair ? {
+        puyo1: { color: aiState.currentPuyoPair.primaryColor, x: aiState.currentPuyoPair.x, y: aiState.currentPuyoPair.y },
+        puyo2: { color: aiState.currentPuyoPair.secondaryColor, x: aiState.currentPuyoPair.x, y: aiState.currentPuyoPair.y + 1 }
+      } : { puyo1: { color: 'red', x: 0, y: 0 }, puyo2: { color: 'red', x: 0, y: 1 } },
+      nextPuyo: aiState.nextPuyoPair ? {
+        puyo1: { color: aiState.nextPuyoPair.primaryColor, x: aiState.nextPuyoPair.x, y: aiState.nextPuyoPair.y },
+        puyo2: { color: aiState.nextPuyoPair.secondaryColor, x: aiState.nextPuyoPair.x, y: aiState.nextPuyoPair.y + 1 }
+      } : { puyo1: { color: 'red', x: 0, y: 0 }, puyo2: { color: 'red', x: 0, y: 1 } },
+      score: aiState.score,
+      chainCount: aiState.chainCount,
+      turn: aiState.turn,
+    }
+  }
+
+  /**
+   * フィールドの高さを計算
+   */
+  private calculateFieldHeight(field: any): number {
+    if (!field.cells || !Array.isArray(field.cells)) return 0
+    
+    let maxHeight = 0
+    for (let x = 0; x < field.width; x++) {
+      let height = 0
+      for (let y = 0; y < field.height; y++) {
+        if (field.cells[y] && field.cells[y][x] && field.cells[y][x] !== null) {
+          height = field.height - y
+          break
+        }
+      }
+      maxHeight = Math.max(maxHeight, height)
+    }
+    return maxHeight
+  }
+
+  /**
+   * 連鎖可能性を計算
+   */
+  private calculateChainPotential(field: any): number {
+    // 簡単な連鎖可能性の計算（隣接する同色ぷよの数）
+    if (!field.cells || !Array.isArray(field.cells)) return 0
+    
+    let potential = 0
+    for (let y = 0; y < field.height - 1; y++) {
+      for (let x = 0; x < field.width - 1; x++) {
+        const current = field.cells[y]?.[x]
+        if (current && current !== null) {
+          const right = field.cells[y]?.[x + 1]
+          const down = field.cells[y + 1]?.[x]
+          
+          if (right === current) potential++
+          if (down === current) potential++
+        }
+      }
+    }
+    return potential
   }
 
   /**
