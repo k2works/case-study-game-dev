@@ -484,15 +484,15 @@ export class AutoLearningGameService {
     }
 
     // 新しいぷよペアを生成（ゲームが継続可能な場合）
-    const finalVm = updatedState as { gameOver?: boolean }
-    if (!finalVm.gameOver) {
+    const finalVm = updatedState as { state?: string }
+    if (finalVm.state !== 'gameOver') {
       updatedState = this.gameService.spawnNewPuyoPair(updatedState as never)
     }
 
     const moveResult: MoveResult = {
       score: moveScore,
       chainLength: moveChainLength,
-      gameOver: (updatedState as { gameOver?: boolean }).gameOver || false,
+      gameOver: (updatedState as { state?: string }).state === 'gameOver',
       fieldFull: this.isFieldFull(updatedState),
     }
 
