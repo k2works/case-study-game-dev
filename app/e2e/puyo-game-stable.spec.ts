@@ -9,7 +9,7 @@ test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
   test('アプリケーションが正常に起動する', async ({ page }) => {
     // ページタイトルが表示される
     await expect(page.locator('h1')).toHaveText('ぷよぷよ')
-    await expect(page.locator('p.text-blue-200')).toHaveText('AI対戦ぷよぷよゲーム')
+    await expect(page.locator('p.text-blue-200')).toHaveText('AI対戦ぷよぷよゲーム & 学習システム')
   })
 
   test('ゲーム情報パネルが正しく表示される', async ({ page }) => {
