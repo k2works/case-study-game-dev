@@ -766,105 +766,153 @@ export class AutoLearningGameService {
     try {
       console.log(`🧠 Starting training with ${dataSize} data points`)
 
-      // バッチ処理サービスを使って学習データを準備
-      const batchResult =
-        await this.batchProcessingService.processDataFromDateRange(
-          new Date(Date.now() - 24 * 60 * 60 * 1000), // 過去24時間
-          new Date(),
-          {
-            batchSize: this.config.batchSize,
-            validationSplit: this.config.validationSplit,
-            shuffle: true,
-            normalizeRewards: true,
-            maxSamples: Math.min(dataSize, this.config.batchSize),
-          },
-        )
+      // データサイズの事前チェック
+      const dataSizeResult = this.validateDataSize(dataSize)
+      if (dataSizeResult) return dataSizeResult
 
-      // プロセス済みデータセットから特徴量と報酬を抽出
-      const processedDataset = batchResult.processedDataset as unknown as {
-        features: number[][]
-        rewards: number[]
+      // データの準備と検証
+      const processedDataset = await this.prepareTrainingDataset(dataSize)
+      if (!processedDataset) {
+        return { accuracy: 0, loss: 0, trainingDataSize: 0 }
       }
 
-      // データの検証
-      if (
-        !processedDataset.features ||
-        !processedDataset.rewards ||
-        processedDataset.features.length === 0 ||
-        processedDataset.rewards.length === 0
-      ) {
-        console.warn('⚠️ No training data available for model training')
-        return {
-          accuracy: 0,
-          loss: 0,
-          trainingDataSize: 0,
-        }
+      // 実際の学習実行
+      return await this.executeTensorFlowTraining(processedDataset, dataSize)
+    } catch (error) {
+      console.error('❌ Training failed:', error)
+      return {
+        accuracy: 0,
+        loss: Number.MAX_SAFE_INTEGER,
+        trainingDataSize: dataSize,
       }
+    }
+  }
 
-      // データ整合性の確認
-      if (processedDataset.features.length !== processedDataset.rewards.length) {
-        console.warn(
-          '⚠️ Features and rewards data length mismatch:',
-          processedDataset.features.length,
-          'vs',
-          processedDataset.rewards.length,
-        )
-        return {
-          accuracy: 0,
-          loss: 0,
-          trainingDataSize: 0,
-        }
-      }
-
-      // TensorFlow.jsモデルを作成
-      const model = this.tensorFlowTrainer.createModel({
-        type: this.config.modelArchitecture,
-        inputShape: [processedDataset.features[0].length],
-        layers: [
-          { type: 'dense', units: 128, activation: 'relu' },
-          { type: 'dropout', rate: 0.3 },
-          { type: 'dense', units: 64, activation: 'relu' },
-          { type: 'dense', units: 1, activation: 'linear' },
-        ],
-      })
-
-      // 学習データを分割
-      const trainSize = Math.floor(
-        processedDataset.features.length * (1 - this.config.validationSplit),
+  /**
+   * データサイズの妥当性をチェック
+   */
+  private validateDataSize(
+    dataSize: number,
+  ): { accuracy: number; loss: number; trainingDataSize: number } | null {
+    if (dataSize < this.config.minTrainingDataSize) {
+      console.log(
+        `📊 Insufficient data for training: ${dataSize} < ${this.config.minTrainingDataSize} (minimum required)`,
       )
-      const trainData = {
-        features: processedDataset.features.slice(0, trainSize),
-        rewards: processedDataset.rewards.slice(0, trainSize),
+      return {
+        accuracy: 0,
+        loss: 0,
+        trainingDataSize: dataSize,
       }
-      const validationData = {
-        features: processedDataset.features.slice(trainSize),
-        rewards: processedDataset.rewards.slice(trainSize),
-      }
+    }
+    return null
+  }
 
-      // TensorFlow.jsモデルの学習実行
-      const trainingResult = await this.tensorFlowTrainer.trainModel(
-        model,
-        trainData,
-        validationData,
+  /**
+   * 学習用データセットを準備・検証
+   */
+  private async prepareTrainingDataset(
+    dataSize: number,
+  ): Promise<{ features: number[][]; rewards: number[] } | null> {
+    const batchResult =
+      await this.batchProcessingService.processDataFromDateRange(
+        new Date(Date.now() - 24 * 60 * 60 * 1000), // 過去24時間
+        new Date(),
         {
-          epochs: this.config.epochs,
           batchSize: this.config.batchSize,
           validationSplit: this.config.validationSplit,
-          learningRate: this.config.learningRate,
-          verbose: 0,
+          shuffle: true,
+          normalizeRewards: true,
+          maxSamples: Math.min(dataSize, this.config.batchSize),
         },
       )
 
-      console.log('✅ Training completed:', trainingResult)
+    const processedDataset = batchResult.processedDataset as unknown as {
+      features: number[][]
+      rewards: number[]
+    }
 
-      return {
-        accuracy: trainingResult.validationAccuracy,
-        loss: trainingResult.validationLoss,
-        trainingDataSize: dataSize,
-      }
-    } catch (error) {
-      console.error('❌ Training failed:', error)
-      throw error
+    // データの存在チェック
+    if (
+      !processedDataset.features ||
+      !processedDataset.rewards ||
+      processedDataset.features.length === 0 ||
+      processedDataset.rewards.length === 0
+    ) {
+      console.log(
+        '📊 No processed training data available - this is normal for the first few games',
+      )
+      return null
+    }
+
+    // データ整合性の確認
+    if (processedDataset.features.length !== processedDataset.rewards.length) {
+      console.warn(
+        '⚠️ Features and rewards data length mismatch:',
+        processedDataset.features.length,
+        'vs',
+        processedDataset.rewards.length,
+      )
+      return null
+    }
+
+    console.log(
+      `✅ Training data validation passed: ${processedDataset.features.length} samples ready for training`,
+    )
+    return processedDataset
+  }
+
+  /**
+   * TensorFlow.js学習を実行
+   */
+  private async executeTensorFlowTraining(
+    processedDataset: { features: number[][]; rewards: number[] },
+    dataSize: number,
+  ): Promise<{ accuracy: number; loss: number; trainingDataSize: number }> {
+    // TensorFlow.jsモデルを作成
+    const model = this.tensorFlowTrainer.createModel({
+      type: this.config.modelArchitecture,
+      inputShape: [processedDataset.features[0].length],
+      layers: [
+        { type: 'dense', units: 128, activation: 'relu' },
+        { type: 'dropout', rate: 0.3 },
+        { type: 'dense', units: 64, activation: 'relu' },
+        { type: 'dense', units: 1, activation: 'linear' },
+      ],
+    })
+
+    // 学習データを分割
+    const trainSize = Math.floor(
+      processedDataset.features.length * (1 - this.config.validationSplit),
+    )
+    const trainData = {
+      features: processedDataset.features.slice(0, trainSize),
+      rewards: processedDataset.rewards.slice(0, trainSize),
+    }
+    const validationData = {
+      features: processedDataset.features.slice(trainSize),
+      rewards: processedDataset.rewards.slice(trainSize),
+    }
+
+    // TensorFlow.jsモデルの学習実行
+    const trainingResult = await this.tensorFlowTrainer.trainModel(
+      model,
+      trainData,
+      validationData,
+      {
+        epochs: this.config.epochs,
+        batchSize: this.config.batchSize,
+        validationSplit: this.config.validationSplit,
+        learningRate: this.config.learningRate,
+        verbose: 0,
+      },
+    )
+
+    console.log('✅ Training completed:', trainingResult)
+
+    return {
+      accuracy: trainingResult.validationAccuracy,
+      loss: trainingResult.validationLoss,
+      trainingDataSize: dataSize,
     }
   }
 
