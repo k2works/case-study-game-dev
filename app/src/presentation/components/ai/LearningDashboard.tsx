@@ -249,15 +249,17 @@ interface DashboardLayoutProps {
 
 function DashboardLayout({ currentModel, children }: DashboardLayoutProps) {
   return (
-    <div className="p-6 min-h-screen">
+    <div className="p-6 min-h-screen bg-gray-50 dark:bg-purple-900">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
-          <h1 className="text-2xl font-bold text-white mb-2">
+        <div className="bg-white/10 dark:bg-purple-800/50 backdrop-blur-md p-6 rounded-lg border border-white/20 dark:border-purple-600">
+          <h1 className="text-2xl font-bold text-white dark:text-purple-100 mb-2">
             🧠 AI学習ダッシュボード
           </h1>
-          <p className="text-white/80">
+          <p className="text-white/80 dark:text-purple-200">
             現在のモデル:{' '}
-            <span className="font-semibold text-blue-300">{currentModel}</span>
+            <span className="font-semibold text-blue-300 dark:text-purple-300">
+              {currentModel}
+            </span>
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">{children}</div>
@@ -288,8 +290,8 @@ function LearningControlPanel({
   onStopLearning,
 }: LearningControlPanelProps) {
   return (
-    <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
-      <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
+    <div className="bg-white/10 dark:bg-purple-800/50 backdrop-blur-md p-6 rounded-lg border border-white/20 dark:border-purple-600">
+      <h2 className="text-lg font-semibold text-white dark:text-purple-100 mb-4 flex items-center">
         ⚙️ 学習設定
       </h2>
       <LearningStatusDisplay
@@ -320,14 +322,16 @@ function LearningStatusDisplay({
   learningProgress: number
 }) {
   return (
-    <div className="mb-4 p-3 bg-white/10 rounded-lg border border-white/20">
+    <div className="mb-4 p-3 bg-white/10 dark:bg-purple-700/30 rounded-lg border border-white/20 dark:border-purple-600">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-white">学習状態</span>
+        <span className="text-sm font-medium text-white dark:text-purple-100">
+          学習状態
+        </span>
         <span
           className={`px-2 py-1 rounded text-xs font-medium ${
             isLearning
-              ? 'bg-blue-500/20 text-blue-200'
-              : 'bg-white/20 text-white/80'
+              ? 'bg-blue-500/20 dark:bg-purple-600/30 text-blue-200 dark:text-purple-300'
+              : 'bg-white/20 dark:bg-purple-600/30 text-white/80 dark:text-purple-300'
           }`}
         >
           {isLearning ? '学習中' : '待機中'}

@@ -24,23 +24,27 @@ export const AIControlPanel = ({
   }
 
   return (
-    <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
-      <h3 className="text-white font-semibold mb-3 flex items-center">
+    <div className="mt-6 p-4 bg-white/5 dark:bg-purple-800/50 rounded-lg border border-white/10 dark:border-purple-600">
+      <h3 className="text-white dark:text-purple-100 font-semibold mb-3 flex items-center">
         🤖 AI自動プレイ
       </h3>
 
       <div className="space-y-3">
         {/* AI ON/OFF トグル */}
         <div className="flex items-center justify-between">
-          <span className="text-white/80 text-sm">AI自動プレイ</span>
+          <span className="text-white/80 dark:text-purple-300 text-sm">
+            AI自動プレイ
+          </span>
           <button
             onClick={onToggleAI}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              aiEnabled ? 'bg-blue-600' : 'bg-gray-600'
+              aiEnabled
+                ? 'bg-blue-600 dark:bg-purple-700'
+                : 'bg-gray-600 dark:bg-purple-700'
             }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-purple-100 transition-transform ${
                 aiEnabled ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
@@ -50,8 +54,10 @@ export const AIControlPanel = ({
         {/* AI思考速度調整 */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-white/80 text-sm">思考速度</span>
-            <span className="text-white text-sm">
+            <span className="text-white/80 dark:text-purple-300 text-sm">
+              思考速度
+            </span>
+            <span className="text-white dark:text-purple-100 text-sm">
               {aiSettings.thinkingSpeed}ms
             </span>
           </div>
@@ -62,12 +68,12 @@ export const AIControlPanel = ({
             step="100"
             value={aiSettings.thinkingSpeed}
             onChange={(e) => handleSpeedChange(parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-2 bg-gray-700 dark:bg-purple-600 rounded-lg appearance-none cursor-pointer accent-blue-600 dark:accent-purple-500"
           />
         </div>
 
         {aiEnabled && (
-          <div className="text-xs text-blue-300 bg-blue-900/30 p-2 rounded space-y-1">
+          <div className="text-xs text-blue-300 dark:text-purple-400 bg-blue-900/30 dark:bg-purple-800/30 p-2 rounded space-y-1">
             <div>🤖 AI が自動でぷよを操作します</div>
             <div>🔄 ゲームオーバー後も自動で再開します</div>
           </div>

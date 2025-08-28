@@ -157,12 +157,14 @@ export function StrategySettings({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div className="bg-white dark:bg-purple-800 rounded-lg shadow-sm border border-gray-200 dark:border-purple-600 p-4">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">AI戦略設定</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-purple-100">
+          AI戦略設定
+        </h3>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-3 py-1 text-sm bg-blue-600 dark:bg-purple-700 text-white rounded hover:bg-blue-700 dark:hover:bg-purple-800"
         >
           カスタム戦略を作成
         </button>
@@ -175,27 +177,29 @@ export function StrategySettings({
             data-testid="strategy-item"
             className={`p-3 rounded-lg border cursor-pointer transition-colors ${
               activeStrategy?.id === strategy.id
-                ? 'bg-blue-100 border-blue-300'
-                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                ? 'bg-blue-100 dark:bg-purple-900/50 border-blue-300 dark:border-purple-500'
+                : 'bg-gray-50 dark:bg-purple-700/50 border-gray-200 dark:border-purple-600 hover:bg-gray-100 dark:hover:bg-purple-600/50'
             }`}
             onClick={() => handleSetActiveStrategy(strategy.id)}
           >
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
-                  <h4 className="font-medium text-gray-800">{strategy.name}</h4>
+                  <h4 className="font-medium text-gray-800 dark:text-purple-100">
+                    {strategy.name}
+                  </h4>
                   {strategy.isDefault && (
-                    <span className="px-2 py-0.5 text-xs bg-gray-200 text-gray-600 rounded">
+                    <span className="px-2 py-0.5 text-xs bg-gray-200 dark:bg-purple-600 text-gray-600 dark:text-purple-200 rounded">
                       デフォルト
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600 dark:text-purple-300 mt-1">
                   {strategy.description}
                 </p>
 
                 {/* パラメータ表示 */}
-                <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-500">
+                <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-500 dark:text-purple-400">
                   <div>連鎖優先度: {strategy.parameters.chainPriority}</div>
                   <div>スピード優先度: {strategy.parameters.speedPriority}</div>
                   <div>防御優先度: {strategy.parameters.defensePriority}</div>
@@ -212,7 +216,7 @@ export function StrategySettings({
                     e.stopPropagation()
                     handleDeleteConfirm(strategy)
                   }}
-                  className="ml-2 p-1 text-red-600 hover:text-red-800"
+                  className="ml-2 p-1 text-red-600 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200"
                   title="戦略を削除"
                 >
                   ×
@@ -319,7 +323,7 @@ export function StrategySettings({
             <div className="flex space-x-2 mt-6">
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+                className="flex-1 px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 キャンセル
               </button>
@@ -329,7 +333,7 @@ export function StrategySettings({
                   !createFormData.name.trim() ||
                   !createFormData.description.trim()
                 }
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-800 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
                 作成
               </button>
@@ -341,22 +345,24 @@ export function StrategySettings({
       {/* 削除確認モーダル */}
       {isDeleteModalOpen && strategyToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-            <h3 className="text-lg font-semibold mb-2">戦略を削除</h3>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm w-full">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              戦略を削除
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
               「{strategyToDelete.name}
               」を削除しますか？この操作は取り消せません。
             </p>
             <div className="flex space-x-2">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+                className="flex-1 px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 キャンセル
               </button>
               <button
                 onClick={handleDeleteStrategy}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="flex-1 px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded hover:bg-red-700 dark:hover:bg-red-800"
               >
                 削除
               </button>

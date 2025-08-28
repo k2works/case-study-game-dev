@@ -12,6 +12,12 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+.dark .mayah-ai-evaluation-display {
+  background: linear-gradient(135deg, #581c87 0%, #7c3aed 100%);
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 6px rgba(139, 92, 246, 0.3);
+}
+
 .evaluation-header {
   border-bottom: 2px solid #6366f1;
   padding-bottom: 1rem;
@@ -23,6 +29,10 @@
   margin: 0 0 0.5rem 0;
   font-size: 1.4rem;
   font-weight: 600;
+}
+
+.dark .evaluation-header h3 {
+  color: #c4b5fd;
 }
 
 .phase-indicator {
@@ -64,6 +74,10 @@
   font-style: italic;
 }
 
+.dark .phase-description {
+  color: #e9d5ff;
+}
+
 .evaluation-content {
   display: grid;
   gap: 1.5rem;
@@ -76,11 +90,20 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.dark .current-evaluation {
+  background: #6b21a8;
+  box-shadow: 0 2px 4px rgba(107, 33, 168, 0.4);
+}
+
 .current-evaluation h4 {
   color: #374151;
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+.dark .current-evaluation h4 {
+  color: #f3e8ff;
 }
 
 .evaluation-summary {
@@ -98,6 +121,11 @@
   background: #f9fafb;
   border-radius: 8px;
   min-width: 100px;
+}
+
+.dark .score-display,
+.dark .confidence-display {
+  background: #7c3aed;
 }
 
 .score-value {
@@ -128,6 +156,11 @@
   border-radius: 0 4px 4px 0;
   font-size: 0.875rem;
   color: #4b5563;
+}
+
+.dark .evaluation-reason {
+  background: #7c2d92;
+  color: #f3e8ff;
 }
 
 .candidate-moves {
