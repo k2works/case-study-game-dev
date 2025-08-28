@@ -9,7 +9,11 @@ test.describe('AI自動プレイ機能 E2Eテスト', () => {
   
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    // networkidleではなく、DOMContentLoadedでページ読み込みを待機
+    await page.waitForLoadState('domcontentloaded')
+    
+    // アプリケーションの基本要素が読み込まれるまで待機
+    await page.waitForSelector('h1', { timeout: 10000 })
     
     // 必要に応じてコンソールエラーを監視
     page.on('console', msg => {

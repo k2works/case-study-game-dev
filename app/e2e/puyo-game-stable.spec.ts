@@ -3,7 +3,11 @@ import { test, expect } from '@playwright/test'
 test.describe('ぷよぷよゲーム 安定E2Eテスト', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    // networkidleではなく、DOMContentLoadedでページ読み込みを待機
+    await page.waitForLoadState('domcontentloaded')
+    
+    // アプリケーションの基本要素が読み込まれるまで待機
+    await page.waitForSelector('h1', { timeout: 10000 })
   })
 
   test('アプリケーションが正常に起動する', async ({ page }) => {

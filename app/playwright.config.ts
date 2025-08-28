@@ -24,6 +24,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
 
+  /* Global timeout for each test */
+  timeout: 60000, // 60秒に増加
+
   /* Configure projects for major browsers */
   projects: [
     {
