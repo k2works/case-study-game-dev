@@ -1,8 +1,6 @@
 import type { GamePort } from './application/ports/GamePort'
-import type { PerformanceStatistics } from './application/services/PerformanceAnalysisService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AISettings } from './domain/models/ai'
-import type { PerformanceReport } from './domain/models/ai/index'
 import { defaultContainer } from './infrastructure/di/DefaultContainer'
 import { GameBoard } from './presentation/components/GameBoard'
 import { GameInfo } from './presentation/components/GameInfo'
@@ -58,8 +56,8 @@ const TabNavigation = ({
   currentTab,
   onTabChange,
 }: {
-  currentTab: 'game' | 'learning' | 'autoLearning'
-  onTabChange: (tab: 'game' | 'learning' | 'autoLearning') => void
+  currentTab: 'game' | 'learning' | 'autoLearning' | 'analysis'
+  onTabChange: (tab: 'game' | 'learning' | 'autoLearning' | 'analysis') => void
 }) => {
   return (
     <div className="mb-8">
@@ -73,6 +71,16 @@ const TabNavigation = ({
           }`}
         >
           🎮 ゲーム
+        </button>
+        <button
+          onClick={() => onTabChange('analysis')}
+          className={`py-4 px-6 text-lg font-semibold rounded-t-lg transition-colors ${
+            currentTab === 'analysis'
+              ? 'bg-white/20 text-white border-b-2 border-purple-400'
+              : 'text-white/60 hover:text-white/80 hover:bg-white/10'
+          }`}
+        >
+          📊 パフォーマンス分析
         </button>
         <button
           onClick={() => onTabChange('autoLearning')}
@@ -109,9 +117,6 @@ const GameLayout = ({
   aiSettings,
   onToggleAI,
   onAISettingsChange,
-  statistics,
-  comparisonReport,
-  resetData,
 }: {
   game: GameViewModel
   gameService: GamePort
@@ -121,9 +126,6 @@ const GameLayout = ({
   aiSettings: AISettings
   onToggleAI: () => void
   onAISettingsChange: (settings: AISettings) => void
-  statistics: PerformanceStatistics
-  comparisonReport: PerformanceReport
-  resetData: () => void
 }) => {
   return (
     <div className="max-w-4xl mx-auto">
@@ -156,15 +158,6 @@ const GameLayout = ({
             <GameBoard game={game} />
           </div>
         </div>
-      </div>
-
-      {/* パフォーマンス分析パネル */}
-      <div className="mt-8">
-        <PerformanceAnalysis
-          statistics={statistics}
-          comparisonReport={comparisonReport}
-          onResetData={resetData}
-        />
       </div>
 
       <footer className="text-center mt-8">
@@ -311,9 +304,6 @@ function App() {
             aiSettings={gameSystem.aiSettings}
             onToggleAI={gameSystem.handleToggleAI}
             onAISettingsChange={gameSystem.handleAISettingsChange}
-            statistics={gameSystem.statistics}
-            comparisonReport={gameSystem.comparisonReport}
-            resetData={gameSystem.resetData}
           />
         ) : learningSystem.currentTab === 'learning' ? (
           <LearningDashboard
@@ -332,6 +322,12 @@ function App() {
             onStartABTest={learningSystem.handleStartABTest}
             onStopABTest={learningSystem.handleStopABTest}
             onCompareModels={learningSystem.handleCompareModels}
+          />
+        ) : learningSystem.currentTab === 'analysis' ? (
+          <PerformanceAnalysis
+            statistics={gameSystem.statistics}
+            comparisonReport={gameSystem.comparisonReport}
+            onResetData={gameSystem.resetData}
           />
         ) : (
           <AutoLearningGameDashboard

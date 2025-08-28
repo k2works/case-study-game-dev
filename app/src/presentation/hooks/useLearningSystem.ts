@@ -89,7 +89,7 @@ function createModelComparison(
 export const useLearningSystem = (learningService: LearningService) => {
   // 学習システム状態管理
   const [currentTab, setCurrentTab] = useState<
-    'game' | 'learning' | 'autoLearning'
+    'game' | 'learning' | 'autoLearning' | 'analysis'
   >('game')
   const [isLearning, setIsLearning] = useState(false)
   const [learningProgress, setLearningProgress] = useState(0)
