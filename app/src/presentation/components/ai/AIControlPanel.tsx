@@ -67,8 +67,9 @@ export const AIControlPanel = ({
         </div>
 
         {aiEnabled && (
-          <div className="text-xs text-blue-300 bg-blue-900/30 p-2 rounded">
-            AI が自動でぷよを操作します
+          <div className="text-xs text-blue-300 bg-blue-900/30 p-2 rounded space-y-1">
+            <div>🤖 AI が自動でぷよを操作します</div>
+            <div>🔄 ゲームオーバー後も自動で再開します</div>
           </div>
         )}
       </div>

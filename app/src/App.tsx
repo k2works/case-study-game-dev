@@ -1,6 +1,5 @@
 import type { GamePort } from './application/ports/GamePort'
 import type { PerformanceStatistics } from './application/services/PerformanceAnalysisService'
-import type { MayahEvaluationResult } from './application/services/ai/MayahAIService'
 import type { GameViewModel } from './application/viewmodels/GameViewModel'
 import type { AISettings } from './domain/models/ai'
 import type { PerformanceReport } from './domain/models/ai/index'
@@ -10,8 +9,6 @@ import { GameInfo } from './presentation/components/GameInfo'
 import { AIControlPanel } from './presentation/components/ai/AIControlPanel'
 import { AutoLearningGameDashboard } from './presentation/components/ai/AutoLearningGameDashboard'
 import { LearningDashboard } from './presentation/components/ai/LearningDashboard'
-import { MayahAIEvaluationDisplay } from './presentation/components/ai/MayahAIEvaluationDisplay'
-import './presentation/components/ai/MayahAIEvaluationDisplay.css'
 import { PerformanceAnalysis } from './presentation/components/ai/PerformanceAnalysis'
 import { useAutoFall } from './presentation/hooks/useAutoFall'
 import { useGameSystem } from './presentation/hooks/useGameSystem'
@@ -112,9 +109,6 @@ const GameLayout = ({
   aiSettings,
   onToggleAI,
   onAISettingsChange,
-  mayahEvaluationResult,
-  candidateMoves,
-  currentPhase,
   statistics,
   comparisonReport,
   resetData,
@@ -127,13 +121,6 @@ const GameLayout = ({
   aiSettings: AISettings
   onToggleAI: () => void
   onAISettingsChange: (settings: AISettings) => void
-  mayahEvaluationResult: MayahEvaluationResult | null
-  candidateMoves: Array<{
-    move: { x: number; rotation: number; score: number }
-    evaluation: MayahEvaluationResult
-    rank: number
-  }>
-  currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c'
   statistics: PerformanceStatistics
   comparisonReport: PerformanceReport
   resetData: () => void
@@ -169,15 +156,6 @@ const GameLayout = ({
             <GameBoard game={game} />
           </div>
         </div>
-      </div>
-
-      {/* Mayah AI評価表示パネル */}
-      <div className="mt-8">
-        <MayahAIEvaluationDisplay
-          evaluationResult={mayahEvaluationResult}
-          candidateMoves={candidateMoves}
-          currentPhase={currentPhase}
-        />
       </div>
 
       {/* パフォーマンス分析パネル */}
@@ -333,9 +311,6 @@ function App() {
             aiSettings={gameSystem.aiSettings}
             onToggleAI={gameSystem.handleToggleAI}
             onAISettingsChange={gameSystem.handleAISettingsChange}
-            mayahEvaluationResult={gameSystem.mayahEvaluationResult}
-            candidateMoves={gameSystem.candidateMoves}
-            currentPhase={gameSystem.currentPhase}
             statistics={gameSystem.statistics}
             comparisonReport={gameSystem.comparisonReport}
             resetData={gameSystem.resetData}

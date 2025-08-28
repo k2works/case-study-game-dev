@@ -213,7 +213,38 @@ export const useGameSystem = (
 
   // AI自動プレイの実行
   useEffect(() => {
-    if (!aiEnabled || game.state !== 'playing' || !game.currentPuyoPair) {
+    if (!aiEnabled) {
+      return
+    }
+
+    // AI有効時にゲームオーバーになった場合、自動でリセットして新しいゲームを開始
+    if (game.state === 'gameOver') {
+      const restartTimer = setTimeout(() => {
+        const newGame = gameService.startNewGame()
+        updateGame(newGame)
+        setMayahEvaluationResult(null)
+        setCandidateMoves([])
+      }, aiSettings.thinkingSpeed)
+
+      return () => {
+        clearTimeout(restartTimer)
+      }
+    }
+
+    // ゲーム開始待ち状態の場合、自動でゲームを開始
+    if (game.state === 'ready') {
+      const startTimer = setTimeout(() => {
+        const newGame = gameService.startNewGame()
+        updateGame(newGame)
+      }, aiSettings.thinkingSpeed)
+
+      return () => {
+        clearTimeout(startTimer)
+      }
+    }
+
+    // プレイ中でない、または現在のぷよペアがない場合は何もしない
+    if (game.state !== 'playing' || !game.currentPuyoPair) {
       return
     }
 
