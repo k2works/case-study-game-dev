@@ -95,7 +95,7 @@ const TabNavigation = ({
               : 'text-white/60 hover:text-white/80 hover:bg-white/10'
           }`}
         >
-          🧠 機械学習
+          🧠 AI学習
         </button>
       </nav>
     </div>

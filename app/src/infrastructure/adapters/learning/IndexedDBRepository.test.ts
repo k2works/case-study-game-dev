@@ -173,7 +173,7 @@ describeWithIndexedDB('IndexedDBTrainingDataRepository', () => {
       await initPromise
 
       // Assert
-      expect(mockIndexedDB.open).toHaveBeenCalledWith('PuyoTrainingData', 1)
+      expect(mockIndexedDB.open).toHaveBeenCalledWith('PuyoTrainingData', 2)
     })
 
     it('データベース初期化エラーを処理する', async () => {
@@ -228,12 +228,12 @@ describeWithIndexedDB('IndexedDBTrainingDataRepository', () => {
         ['training_data'],
         'readwrite',
       )
-      expect(mockObjectStore.add).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...sampleTrainingData,
-          timestampNumber: expect.any(Number),
-        }),
-      )
+      const savedData = mockObjectStore.add.mock.calls[0][0]
+      expect(savedData).toEqual({
+        ...sampleTrainingData,
+        timestamp: expect.any(String),
+        timestampNumber: expect.any(Number),
+      })
     })
 
     it('保存エラーを適切に処理する', async () => {
@@ -309,13 +309,29 @@ describeWithIndexedDB('IndexedDBTrainingDataRepository', () => {
     it('日付範囲でデータを取得できる', async () => {
       // Arrange
       const openRequest = { ...mockRequest }
-      const rangeRequest = { ...mockRequest }
+      const getAllRequest = { ...mockRequest }
       const startDate = new Date('2025-01-01')
       const endDate = new Date('2025-01-31')
-      const mockData = [sampleTrainingData]
+
+      // テスト用データ（範囲内）
+      const dataInRange = {
+        ...sampleTrainingData,
+        timestamp: new Date('2025-01-15').toISOString(),
+        timestampNumber: new Date('2025-01-15').getTime(),
+      }
+
+      // テスト用データ（範囲外）
+      const dataOutOfRange = {
+        ...sampleTrainingData,
+        id: 'test-data-2',
+        timestamp: new Date('2024-12-15').toISOString(),
+        timestampNumber: new Date('2024-12-15').getTime(),
+      }
+
+      const allMockData = [dataInRange, dataOutOfRange]
 
       mockIndexedDB.open.mockReturnValue(openRequest)
-      mockIndex.getAll.mockReturnValue(rangeRequest)
+      mockObjectStore.getAll.mockReturnValue(getAllRequest)
 
       // データベース初期化
       const initPromise = repository.initialize()
@@ -329,23 +345,20 @@ describeWithIndexedDB('IndexedDBTrainingDataRepository', () => {
       // Act
       const getRangePromise = repository.findByDateRange(startDate, endDate)
 
-      // 取得成功をシミュレート
-      rangeRequest.result = mockData
-      const rangeSuccessEvent = { target: rangeRequest } as Event & {
+      // 全データ取得成功をシミュレート
+      getAllRequest.result = allMockData
+      const getAllSuccessEvent = { target: getAllRequest } as Event & {
         target: IDBRequest
       }
-      rangeRequest.onsuccess?.(rangeSuccessEvent)
+      getAllRequest.onsuccess?.(getAllSuccessEvent)
       const result = await getRangePromise
 
       // Assert
-      expect(mockObjectStore.index).toHaveBeenCalledWith('timestamp')
-      expect(mockIndex.getAll).toHaveBeenCalledWith(
-        expect.objectContaining({
-          lower: startDate.getTime(),
-          upper: endDate.getTime(),
-        }),
+      expect(mockObjectStore.getAll).toHaveBeenCalled()
+      expect(result).toHaveLength(1)
+      expect(result[0].timestamp.getTime()).toBe(
+        new Date('2025-01-15').getTime(),
       )
-      expect(result).toEqual(mockData)
     })
 
     it('データ数を取得できる', async () => {
