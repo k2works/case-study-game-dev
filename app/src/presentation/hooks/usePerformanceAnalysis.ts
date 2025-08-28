@@ -121,9 +121,19 @@ export function usePerformanceAnalysis({
   // 連鎖数の追跡
   useEffect(() => {
     if (currentSessionRef.current && game.lastChain > 0) {
+      const oldMaxChain = currentSessionRef.current.maxChain
+      const newMaxChain = Math.max(oldMaxChain, game.lastChain)
+
+      console.debug('Chain tracking:', {
+        gameLastChain: game.lastChain,
+        oldMaxChain,
+        newMaxChain,
+        sessionId: currentSessionRef.current.gameId,
+      })
+
       currentSessionRef.current = {
         ...currentSessionRef.current,
-        maxChain: Math.max(currentSessionRef.current.maxChain, game.lastChain),
+        maxChain: newMaxChain,
       }
     }
   }, [game.lastChain])
@@ -132,15 +142,27 @@ export function usePerformanceAnalysis({
   useEffect(() => {
     if (game.state === 'gameOver' && currentSessionRef.current) {
       const endTime = new Date()
+      const finalMaxChain = Math.max(
+        currentSessionRef.current.maxChain,
+        game.lastChain,
+      )
       const sessionData = {
         gameId: currentSessionRef.current.gameId,
         startTime: currentSessionRef.current.startTime,
         endTime,
         finalScore: game.score.current,
-        maxChain: Math.max(currentSessionRef.current.maxChain, game.lastChain),
+        maxChain: finalMaxChain,
         totalMoves: currentSessionRef.current.moveCount + 1, // 概算
         aiEnabled,
       }
+
+      console.debug('Recording game session:', {
+        sessionData,
+        gameLastChain: game.lastChain,
+        trackedMaxChain: currentSessionRef.current.maxChain,
+        finalMaxChain,
+        aiEnabled,
+      })
 
       performanceService.recordGameSession(sessionData)
       currentSessionRef.current = null

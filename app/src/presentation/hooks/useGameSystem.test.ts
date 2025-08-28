@@ -69,6 +69,7 @@ const createMockPerformanceService = (): PerformanceAnalysisService => ({
     sessions: [],
     gameResults: [],
   }),
+  getAIvsHumanComparison: vi.fn().mockReturnValue(null),
   reset: vi.fn(),
   startGameSession: vi.fn(),
   endGameSession: vi.fn(),
