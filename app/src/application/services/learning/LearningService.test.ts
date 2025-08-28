@@ -9,6 +9,67 @@ import type { BatchProcessingService } from './BatchProcessingService'
 import type { DataCollectionService } from './DataCollectionService'
 import { type LearningConfig, LearningService } from './LearningService'
 
+// TensorFlow.jsのモック
+vi.mock('@tensorflow/tfjs', () => ({
+  sequential: vi.fn(() => ({
+    add: vi.fn(),
+    compile: vi.fn(),
+    fit: vi.fn().mockResolvedValue({
+      history: {
+        loss: [0.5, 0.3, 0.2],
+        val_loss: [0.6, 0.4, 0.3],
+        accuracy: [0.7, 0.8, 0.85],
+        val_accuracy: [0.6, 0.75, 0.8],
+      },
+    }),
+    evaluate: vi.fn().mockResolvedValue([0.2, 0.85]),
+    save: vi.fn().mockResolvedValue(undefined),
+    dispose: vi.fn(),
+    summary: vi.fn(),
+    countParams: vi.fn().mockReturnValue(1024),
+  })),
+  layers: {
+    dense: vi.fn(() => ({ name: 'dense_mock' })),
+    dropout: vi.fn(() => ({ name: 'dropout_mock' })),
+  },
+  train: {
+    adam: vi.fn(() => ({ name: 'adam_optimizer' })),
+  },
+  tensor2d: vi.fn(() => ({
+    dispose: vi.fn(),
+    shape: [1, 8],
+  })),
+  tensor1d: vi.fn(() => ({
+    dispose: vi.fn(),
+    shape: [1],
+  })),
+  loadLayersModel: vi.fn().mockRejectedValue(new Error('No model found')),
+}))
+
+// TensorFlowTrainerのモック
+vi.mock('./TensorFlowTrainer', () => ({
+  TensorFlowTrainer: vi.fn().mockImplementation(() => ({
+    createModel: vi.fn().mockReturnValue({
+      add: vi.fn(),
+      compile: vi.fn(),
+      fit: vi.fn().mockResolvedValue({
+        history: {
+          loss: [0.5, 0.3, 0.2],
+          val_loss: [0.6, 0.4, 0.3],
+          accuracy: [0.7, 0.8, 0.85],
+          val_accuracy: [0.6, 0.75, 0.8],
+        },
+      }),
+      evaluate: vi.fn().mockResolvedValue([0.2, 0.85]),
+      save: vi.fn().mockResolvedValue(undefined),
+      dispose: vi.fn(),
+      summary: vi.fn(),
+      countParams: vi.fn().mockReturnValue(1024),
+    }),
+    saveModel: vi.fn().mockResolvedValue(undefined),
+  })),
+}))
+
 // モックサービス
 const mockDataCollectionService = {
   collectData: vi.fn(),
@@ -109,13 +170,26 @@ describe('LearningService', () => {
           totalSamples: 2,
         },
         validation: {
-          batches: [],
-          totalSamples: 0,
+          batches: [
+            {
+              features: [
+                [0.6, 0.3, 0.5, 0.4, 0.3, 0.2, 0.3, 0.2],
+                [0.7, 0.4, 0.6, 0.3, 0.4, 0.3, 0.2, 0.3],
+              ],
+              rewards: [0.9, 0.85],
+              size: 2,
+              metadata: {
+                ids: ['3', '4'],
+                timestamps: [new Date(), new Date()],
+              },
+            },
+          ],
+          totalSamples: 2,
         },
         statistics: {
-          totalSamples: 2,
+          totalSamples: 4,
           trainingSamples: 2,
-          validationSamples: 0,
+          validationSamples: 2,
           rewardStatistics: { mean: 0.9, std: 0.1, min: 0.8, max: 1.0 },
         },
       },
@@ -292,7 +366,7 @@ describe('LearningService', () => {
       for (const config of configs) {
         const result = await service.startLearning(config)
         expect(result.success).toBe(true)
-        expect(result.modelPath).toContain(config.modelArchitecture)
+        expect(result.modelPath).toMatch(/^indexeddb:\/\/puyo-ai-model-\d+$/)
       }
     })
   })

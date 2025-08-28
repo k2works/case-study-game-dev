@@ -1,4 +1,13 @@
-import type { BatchProcessingService } from './BatchProcessingService'
+import { TensorFlowTrainer } from '../../../domain/services/learning/TensorFlowTrainer'
+import type {
+  ModelArchitecture,
+  TrainingConfig,
+  TrainingData,
+} from '../../../domain/services/learning/TensorFlowTrainer'
+import type {
+  BatchProcessingResult,
+  BatchProcessingService,
+} from './BatchProcessingService'
 import type { DataCollectionService } from './DataCollectionService'
 
 /**
@@ -70,6 +79,7 @@ export interface CrossValidationResult {
 export class LearningService {
   private readonly dataCollectionService: DataCollectionService
   private readonly batchProcessingService: BatchProcessingService
+  private readonly tensorFlowTrainer: TensorFlowTrainer
 
   constructor(
     dataCollectionService: DataCollectionService,
@@ -77,6 +87,7 @@ export class LearningService {
   ) {
     this.dataCollectionService = dataCollectionService
     this.batchProcessingService = batchProcessingService
+    this.tensorFlowTrainer = new TensorFlowTrainer()
     // dataCollectionServiceは将来の直接データ収集機能で使用予定
     void this.dataCollectionService
   }
@@ -88,66 +99,168 @@ export class LearningService {
     const startTime = performance.now()
 
     try {
-      // 設定検証
+      console.log('LearningService: Step 1 - Validating config')
       this.validateLearningConfig(config)
 
-      // データ処理
-      console.log('Starting data processing for learning...', {
+      const processedResult = await this.processLearningData(config)
+      const trainingDataSet = await this.prepareTrainingDataSet(processedResult)
+      const modelResult = await this.executeModelTraining(
+        config,
+        trainingDataSet,
+      )
+
+      return this.generateLearningResult(
+        processedResult,
+        modelResult,
+        performance.now() - startTime,
+      )
+    } catch (error) {
+      return this.handleLearningError(error)
+    }
+  }
+
+  /**
+   * データ処理を実行
+   */
+  private async processLearningData(config: LearningConfig) {
+    console.log(
+      'LearningService: Step 2 - Starting data processing for learning...',
+      {
         startDate: config.dataRange.startDate,
         endDate: config.dataRange.endDate,
-      })
+      },
+    )
 
-      const processedResult =
-        await this.batchProcessingService.processDataFromDateRange(
-          config.dataRange.startDate,
-          config.dataRange.endDate,
-          {
-            batchSize: config.batchSize,
-            validationSplit: config.validationSplit,
-            shuffle: config.shuffle,
-            normalizeRewards: config.normalizeRewards,
-            maxSamples: config.maxSamples,
-          },
-        )
+    const processedResult =
+      await this.batchProcessingService.processDataFromDateRange(
+        config.dataRange.startDate,
+        config.dataRange.endDate,
+        {
+          batchSize: config.batchSize,
+          validationSplit: config.validationSplit,
+          shuffle: config.shuffle,
+          normalizeRewards: config.normalizeRewards,
+          maxSamples: config.maxSamples,
+        },
+      )
 
-      console.log('Data processing completed successfully')
+    console.log(
+      'LearningService: Step 3 - Data processing completed successfully',
+    )
 
-      // データ不足チェック
-      if (processedResult.processedDataset.training.totalSamples === 0) {
-        throw new Error('Insufficient training data')
-      }
-
-      // モデル学習実行（スタブ実装）
-      const modelResult = await this.trainModel(config, processedResult)
-
-      const endTime = performance.now()
-      const trainingTime = endTime - startTime
-
-      // 学習統計生成
-      const statistics: LearningStatistics = {
-        totalSamples: processedResult.processedDataset.statistics.totalSamples,
-        trainingAccuracy: modelResult.trainingAccuracy,
-        validationAccuracy: modelResult.validationAccuracy,
-        trainingTime,
-        modelSize: modelResult.modelSize,
-      }
-
-      return Object.freeze({
-        success: true,
-        modelPath: modelResult.modelPath,
-        statistics: Object.freeze(statistics),
-      }) as LearningResult
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes('Invalid learning configuration')) {
-          throw error
-        }
-        if (error.message.includes('Insufficient training data')) {
-          throw error
-        }
-      }
-      throw new Error(`Learning failed: ${(error as Error).message}`)
+    console.log('LearningService: Step 4 - Checking data sufficiency')
+    if (processedResult.processedDataset.training.totalSamples === 0) {
+      throw new Error('Insufficient training data')
     }
+
+    return processedResult
+  }
+
+  /**
+   * 学習データセットを準備
+   */
+  private async prepareTrainingDataSet(processedResult: BatchProcessingResult) {
+    console.log(
+      'LearningService: Step 5 - Converting processed result to training data...',
+    )
+
+    this.logProcessedResultStructure(processedResult)
+    const trainingDataSet = this.convertToTrainingData(processedResult)
+    this.logConvertedDataStructure(trainingDataSet)
+
+    return trainingDataSet
+  }
+
+  // eslint-disable-next-line complexity
+  private logProcessedResultStructure(
+    processedResult: BatchProcessingResult,
+  ): void {
+    const dataset = processedResult?.processedDataset
+    console.log('ProcessedResult structure:', {
+      hasDataset: !!dataset,
+      hasTraining: !!dataset?.training,
+      hasValidation: !!dataset?.validation,
+      trainingBatches: dataset?.training?.batches?.length || 0,
+      validationBatches: dataset?.validation?.batches?.length || 0,
+    })
+  }
+
+  // eslint-disable-next-line complexity
+  private logConvertedDataStructure(trainingDataSet: {
+    trainingData: TrainingData
+    validationData: TrainingData
+  }): void {
+    const { trainingData, validationData } = trainingDataSet
+    console.log('LearningService: Step 6 - Training data converted:', {
+      trainingFeatures: trainingData.features?.length || 0,
+      trainingRewards: trainingData.rewards?.length || 0,
+      validationFeatures: validationData.features?.length || 0,
+      validationRewards: validationData.rewards?.length || 0,
+    })
+  }
+
+  /**
+   * モデル学習を実行
+   */
+  private async executeModelTraining(
+    config: LearningConfig,
+    trainingDataSet: {
+      trainingData: TrainingData
+      validationData: TrainingData
+    },
+  ) {
+    console.log('LearningService: Step 7 - Starting TensorFlow model training')
+    return await this.trainModel(config, trainingDataSet)
+  }
+
+  /**
+   * 学習結果を生成
+   */
+  private generateLearningResult(
+    processedResult: BatchProcessingResult,
+    modelResult: {
+      trainingAccuracy: number
+      validationAccuracy: number
+      modelSize: number
+      modelPath: string
+    },
+    trainingTime: number,
+  ): LearningResult {
+    console.log('LearningService: Step 8 - Generating learning statistics')
+    const statistics: LearningStatistics = {
+      totalSamples: processedResult.processedDataset.statistics.totalSamples,
+      trainingAccuracy: modelResult.trainingAccuracy,
+      validationAccuracy: modelResult.validationAccuracy,
+      trainingTime,
+      modelSize: modelResult.modelSize,
+    }
+
+    return Object.freeze({
+      success: true,
+      modelPath: modelResult.modelPath,
+      statistics: Object.freeze(statistics),
+    }) as LearningResult
+  }
+
+  /**
+   * 学習エラーを処理
+   */
+  private handleLearningError(error: unknown): never {
+    console.error('LearningService: Error occurred during learning:', error)
+    console.error('LearningService: Error stack:', (error as Error).stack)
+
+    if (error instanceof Error) {
+      if (error.message.includes('Invalid learning configuration')) {
+        console.error('LearningService: Configuration validation failed')
+        throw error
+      }
+      if (error.message.includes('Insufficient training data')) {
+        console.error('LearningService: Insufficient training data')
+        throw error
+      }
+    }
+    console.error('LearningService: Unknown error occurred')
+    throw new Error(`Learning failed: ${(error as Error).message}`)
   }
 
   /**
@@ -268,34 +381,275 @@ export class LearningService {
   }
 
   /**
-   * モデル学習実行（スタブ実装）
+   * 実際のTensorFlow.js学習実行
    */
   private async trainModel(
     config: LearningConfig,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    processedResult: any,
+    processedResult: {
+      trainingData: TrainingData
+      validationData: TrainingData
+    },
   ): Promise<{
     trainingAccuracy: number
     validationAccuracy: number
     modelSize: number
     modelPath: string
   }> {
-    // 実際のTensorFlow.js学習処理はTODO-6で実装
-    // ここではスタブとして固定値を返す
-    void processedResult // 将来のTensorFlow.js統合で使用予定
-    await new Promise((resolve) => setTimeout(resolve, 100)) // 学習時間シミュレーション
+    const { trainingData, validationData } = processedResult
 
-    const trainingAccuracy = 0.85 + Math.random() * 0.1 // 0.85-0.95の範囲
-    const validationAccuracy = 0.8 + Math.random() * 0.1 // 0.8-0.9の範囲
-    const modelSize = Math.floor(1000 + Math.random() * 9000) // 1KB-10KB
-    const modelPath = `models/${config.modelArchitecture}_${Date.now()}.json`
-
-    return {
-      trainingAccuracy,
-      validationAccuracy,
-      modelSize,
-      modelPath,
+    // TensorFlow.jsモデルアーキテクチャを構築
+    // FeatureEngineeringServiceが生成する8次元特徴量に合わせる
+    const architecture: ModelArchitecture = {
+      type: config.modelArchitecture === 'dense' ? 'dense' : 'cnn',
+      inputShape: [8], // FeatureEngineeringServiceの8次元特徴量
+      layers: this.createModelLayers(config.modelArchitecture),
     }
+
+    // モデル作成
+    const model = this.tensorFlowTrainer.createModel(architecture)
+
+    // 学習設定
+    const trainingConfig: TrainingConfig = {
+      epochs: config.epochs,
+      batchSize: config.batchSize,
+      validationSplit: config.validationSplit,
+      learningRate: config.learningRate,
+      verbose: 1,
+    }
+
+    try {
+      // 学習実行
+      const trainingResult = await this.tensorFlowTrainer.trainModel(
+        model,
+        trainingData,
+        validationData,
+        trainingConfig,
+      )
+
+      // モデル保存
+      const modelPath = `indexeddb://puyo-ai-model-${Date.now()}`
+      await this.tensorFlowTrainer.saveModel(model, modelPath)
+
+      // メインモデルとしても保存
+      await this.tensorFlowTrainer.saveModel(model, 'indexeddb://puyo-ai-model')
+
+      return {
+        trainingAccuracy: trainingResult.trainAccuracy,
+        validationAccuracy: trainingResult.validationAccuracy,
+        modelSize: this.calculateModelSize(model),
+        modelPath,
+      }
+    } finally {
+      // リソースクリーンアップ
+      model.dispose()
+    }
+  }
+
+  /**
+   * BatchProcessingServiceの結果をTensorFlow用のTrainingDataに変換
+   */
+  private convertToTrainingData(batchResult: BatchProcessingResult): {
+    trainingData: TrainingData
+    validationData: TrainingData
+  } {
+    this.validateBatchResult(batchResult)
+
+    const trainingData = this.extractDatasetPart(
+      batchResult.processedDataset.training.batches,
+      'Training',
+    )
+    const validationData = this.extractDatasetPart(
+      batchResult.processedDataset.validation.batches,
+      'Validation',
+    )
+
+    return { trainingData, validationData }
+  }
+
+  private validateBatchResult(batchResult: BatchProcessingResult): void {
+    if (!batchResult?.processedDataset) {
+      throw new Error('No processed dataset available')
+    }
+
+    if (!batchResult.processedDataset.training?.batches) {
+      throw new Error('No training batches available')
+    }
+
+    if (!batchResult.processedDataset.validation?.batches) {
+      throw new Error('No validation batches available')
+    }
+  }
+
+  private extractDatasetPart(
+    batches: readonly {
+      features: readonly (readonly number[])[]
+      rewards: readonly number[]
+    }[],
+    dataType: string,
+  ): TrainingData {
+    const features = this.extractFeaturesFromBatches(batches)
+    const rewards = this.extractRewardsFromBatches(batches)
+
+    if (features.length === 0 || rewards.length === 0) {
+      throw new Error(`${dataType} data cannot be empty after extraction`)
+    }
+
+    return { features, rewards }
+  }
+
+  /**
+   * バッチからフィーチャーを抽出
+   */
+  private extractFeaturesFromBatches(
+    batches: readonly {
+      features: readonly (readonly number[])[]
+      rewards: readonly number[]
+    }[],
+  ): number[][] {
+    if (!batches || batches.length === 0) {
+      console.warn('No batches available for feature extraction')
+      return []
+    }
+
+    this.logBatchStructure(batches, 'features')
+
+    const allFeatures: number[][] = []
+    for (const batch of batches) {
+      if (!batch?.features) {
+        console.warn('Batch has no features:', batch)
+        continue
+      }
+
+      this.extractFeaturesFromBatch(batch, allFeatures)
+    }
+
+    console.log('extractFeaturesFromBatches: Extracted features', {
+      totalFeatures: allFeatures.length,
+      firstFeatureLength: allFeatures[0]?.length,
+    })
+
+    return allFeatures
+  }
+
+  private extractFeaturesFromBatch(
+    batch: { features: readonly (readonly number[])[] },
+    allFeatures: number[][],
+  ): void {
+    for (let i = 0; i < batch.features.length; i++) {
+      const feature = batch.features[i]
+      if (!feature) {
+        console.warn(`Feature at index ${i} is undefined/null:`, feature)
+        continue
+      }
+
+      if (typeof feature.length === 'undefined') {
+        console.error('Feature has no length property:', {
+          feature,
+          type: typeof feature,
+          index: i,
+        })
+        throw new Error(`Feature at index ${i} has no length property`)
+      }
+
+      allFeatures.push([...feature])
+    }
+  }
+
+  private logBatchStructure(
+    batches: readonly {
+      features?: readonly (readonly number[])[]
+      rewards?: readonly number[]
+    }[],
+    type: 'features' | 'rewards',
+  ): void {
+    console.log(
+      `extract${type === 'features' ? 'Features' : 'Rewards'}FromBatches: Processing batches`,
+      {
+        batchCount: batches.length,
+        firstBatch: batches[0]
+          ? {
+              hasProperty: type in batches[0],
+              propertyType: typeof batches[0][type],
+              propertyLength: batches[0][type]?.length,
+              firstItem: batches[0][type]?.[0],
+            }
+          : null,
+      },
+    )
+  }
+
+  /**
+   * バッチから報酬を抽出
+   */
+  private extractRewardsFromBatches(
+    batches: readonly {
+      features: readonly (readonly number[])[]
+      rewards: readonly number[]
+    }[],
+  ): number[] {
+    if (!batches || batches.length === 0) {
+      console.warn('No batches available for reward extraction')
+      return []
+    }
+
+    this.logBatchStructure(batches, 'rewards')
+
+    const allRewards: number[] = []
+    for (const batch of batches) {
+      if (!batch?.rewards) {
+        console.warn('Batch has no rewards:', batch)
+        continue
+      }
+
+      this.validateRewardsBatch(batch)
+      allRewards.push(...batch.rewards)
+    }
+
+    console.log('extractRewardsFromBatches: Extracted rewards', {
+      totalRewards: allRewards.length,
+    })
+
+    return allRewards
+  }
+
+  private validateRewardsBatch(batch: { rewards: readonly number[] }): void {
+    if (typeof batch.rewards.length === 'undefined') {
+      console.error('Batch rewards has no length property:', {
+        rewards: batch.rewards,
+        type: typeof batch.rewards,
+      })
+      throw new Error('Batch rewards has no length property')
+    }
+  }
+
+  /**
+   * モデルレイヤー設定を作成
+   */
+  private createModelLayers(modelArchitecture: 'dense' | 'cnn') {
+    if (modelArchitecture === 'dense') {
+      return [
+        { type: 'dense' as const, units: 128, activation: 'relu' },
+        { type: 'dropout' as const, rate: 0.2 },
+        { type: 'dense' as const, units: 64, activation: 'relu' },
+        { type: 'dropout' as const, rate: 0.2 },
+        { type: 'dense' as const, units: 32, activation: 'relu' },
+        { type: 'dense' as const, units: 1, activation: 'linear' },
+      ]
+    } else {
+      // CNN用の設定（将来の実装）
+      return [
+        { type: 'dense' as const, units: 64, activation: 'relu' },
+        { type: 'dense' as const, units: 1, activation: 'linear' },
+      ]
+    }
+  }
+
+  /**
+   * モデルサイズを計算
+   */
+  private calculateModelSize(model: { countParams(): number }) {
+    const params = model.countParams()
+    return Math.floor(params * 4) // 32bit float = 4bytes per parameter
   }
 
   /**

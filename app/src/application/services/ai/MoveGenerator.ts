@@ -19,7 +19,7 @@ export class MoveGenerator implements MoveGeneratorPort {
 
     const moves: PossibleMove[] = []
     const field = gameState.field
-    const rotations = [0, 90, 180, 270]
+    const rotations = [0, 1, 2, 3] // 回転回数（0-3）
 
     // 各回転状態と各列の組み合わせを生成
     for (const rotation of rotations) {
@@ -84,13 +84,13 @@ export class MoveGenerator implements MoveGeneratorPort {
    */
   private getRotationOffset(rotation: number): { x: number; y: number } | null {
     switch (rotation) {
-      case 0: // 上
+      case 0: // 0回転（上）
         return { x: 0, y: -1 }
-      case 90: // 右
+      case 1: // 1回転（右）
         return { x: 1, y: 0 }
-      case 180: // 下
+      case 2: // 2回転（下）
         return { x: 0, y: 1 }
-      case 270: // 左
+      case 3: // 3回転（左）
         return { x: -1, y: 0 }
       default:
         return null

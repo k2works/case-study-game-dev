@@ -353,7 +353,7 @@ export const useLearningSystem = (learningService: LearningService) => {
 
         // 本番環境のみデータベースをクリアして新しいモックデータを生成
         if (typeof window !== 'undefined' && window.indexedDB) {
-          await repository.clear()
+          //await repository.clear()
           console.log('Database cleared for fresh start')
 
           // 学習用モックデータを生成して保存

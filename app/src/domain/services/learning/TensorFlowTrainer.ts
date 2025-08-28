@@ -115,6 +115,23 @@ export class TensorFlowTrainer {
         verbose: config.verbose,
       })
 
+      console.log('TensorFlow training completed. History structure:', {
+        hasHistory: !!history.history,
+        historyKeys: history.history ? Object.keys(history.history) : [],
+        lossLength: history.history.loss
+          ? (history.history.loss as number[]).length
+          : 0,
+        accuracyLength: history.history.accuracy
+          ? (history.history.accuracy as number[]).length
+          : 0,
+        valLossLength: history.history.val_loss
+          ? (history.history.val_loss as number[]).length
+          : 0,
+        valAccuracyLength: history.history.val_accuracy
+          ? (history.history.val_accuracy as number[]).length
+          : 0,
+      })
+
       const trainLoss = this.getLastValue(history.history.loss as number[])
       const trainAccuracy = this.getLastValue(
         history.history.accuracy as number[],
@@ -366,6 +383,10 @@ export class TensorFlowTrainer {
   }
 
   private getLastValue(values: number[]): number {
+    if (!values || !Array.isArray(values) || values.length === 0) {
+      console.warn('getLastValue: Invalid or empty values array:', values)
+      return 0
+    }
     return values[values.length - 1] || 0
   }
 

@@ -13,7 +13,7 @@ import {
   AutoLearningGameService,
   DEFAULT_AUTO_LEARNING_GAME_CONFIG,
 } from '../../application/services/ai/AutoLearningGameService'
-import { MayahAIService } from '../../application/services/ai/MayahAIService'
+import { MLAIService } from '../../application/services/ai/MLAIService'
 import StrategyService from '../../application/services/ai/StrategyService'
 import { BatchProcessingService } from '../../application/services/learning/BatchProcessingService'
 import { DataCollectionServiceImpl } from '../../application/services/learning/DataCollectionService'
@@ -84,8 +84,12 @@ export class DefaultContainer {
       true,
     )
 
-    // AI Service: MayahAIService（mayah型評価システム Phase 4a-4c）を使用
-    container.register<AIPort>('AIPort', () => new MayahAIService(), true)
+    // AI Service: MLAIService（TensorFlow.js機械学習統合AIサービス）を使用
+    container.register<AIPort>(
+      'AIPort',
+      () => new MLAIService(container.resolve<StrategyPort>('StrategyPort')),
+      true,
+    )
 
     // パフォーマンス分析
     container.register<PerformancePort>(

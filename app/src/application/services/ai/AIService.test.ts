@@ -120,7 +120,7 @@ describe('AIService', () => {
 
       expect(move.x).toBeGreaterThanOrEqual(0)
       expect(move.x).toBeLessThan(6)
-      expect([0, 90, 180, 270]).toContain(move.rotation)
+      expect([0, 1, 2, 3]).toContain(move.rotation)
       expect(move.score).toBeGreaterThan(0)
     })
 

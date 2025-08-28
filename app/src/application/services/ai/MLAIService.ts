@@ -60,31 +60,13 @@ export class MLAIService implements AIPort {
    */
   private async initializeModel(): Promise<void> {
     try {
-      // シンプルなニューラルネットワークモデルを作成
-      this.model = tf.sequential({
-        layers: [
-          tf.layers.dense({
-            inputShape: [42], // 6x7フィールド入力
-            units: 64,
-            activation: 'relu',
-          }),
-          tf.layers.dropout({ rate: 0.2 }),
-          tf.layers.dense({
-            units: 32,
-            activation: 'relu',
-          }),
-          tf.layers.dense({
-            units: 1, // スコア出力
-            activation: 'linear',
-          }),
-        ],
-      })
+      // まず学習済みモデルの読み込みを試行
+      await this.loadTrainedModel()
 
-      this.model.compile({
-        optimizer: tf.train.adam(0.001),
-        loss: 'meanSquaredError',
-        metrics: ['mae'],
-      })
+      if (!this.model) {
+        // 学習済みモデルがない場合はデフォルトモデルを作成
+        await this.createDefaultModel()
+      }
 
       this.modelReady = true
       console.log('ML model initialized successfully')
@@ -95,54 +77,165 @@ export class MLAIService implements AIPort {
   }
 
   /**
-   * ゲーム状態をテンソル入力に変換
+   * 学習済みモデルを読み込み
    */
-  private gameStateToTensor(gameState: AIGameState): tf.Tensor2D {
-    const fieldData = this.extractFieldData(gameState)
-    this.normalizeFieldData(fieldData)
-    return tf.tensor2d([fieldData], [1, 42])
+  private async loadTrainedModel(): Promise<void> {
+    try {
+      // IndexedDBから保存されたモデルを読み込み
+      this.model = await tf.loadLayersModel('indexeddb://puyo-ai-model')
+      console.log('Trained model loaded from IndexedDB')
+    } catch (error) {
+      console.warn('No trained model found, will create default model:', error)
+      this.model = null
+    }
   }
 
   /**
-   * フィールドデータの抽出
+   * デフォルトモデルを作成
    */
-  private extractFieldData(gameState: AIGameState): number[] {
-    const fieldData: number[] = []
+  private async createDefaultModel(): Promise<void> {
+    // シンプルなニューラルネットワークモデルを作成
+    // FeatureEngineeringServiceの8次元特徴量に合わせる
+    this.model = tf.sequential({
+      layers: [
+        tf.layers.dense({
+          inputShape: [8], // FeatureEngineeringServiceの8次元特徴量
+          units: 64,
+          activation: 'relu',
+        }),
+        tf.layers.dropout({ rate: 0.2 }),
+        tf.layers.dense({
+          units: 32,
+          activation: 'relu',
+        }),
+        tf.layers.dense({
+          units: 1, // スコア出力
+          activation: 'linear',
+        }),
+      ],
+    })
 
-    for (let y = 0; y < gameState.field.height; y++) {
-      for (let x = 0; x < gameState.field.width; x++) {
-        const cell = gameState.field.cells[x]?.[y]
-        fieldData.push(this.cellToNumber(cell))
+    this.model.compile({
+      optimizer: tf.train.adam(0.001),
+      loss: 'meanSquaredError',
+      metrics: ['mae'],
+    })
+
+    console.log('Default model created')
+  }
+
+  /**
+   * ゲーム状態をテンソル入力に変換（8次元特徴量）
+   */
+  private gameStateToTensor(gameState: AIGameState): tf.Tensor2D {
+    const features = this.extractFeatures(gameState)
+    return tf.tensor2d([features], [1, 8])
+  }
+
+  /**
+   * ゲーム状態から8次元特徴量を抽出
+   */
+  private extractFeatures(gameState: AIGameState): number[] {
+    // FeatureEngineeringServiceと同様の8次元特徴量を生成
+    const features: number[] = []
+
+    // 1. フィールド密度
+    const fieldDensity = this.calculateFieldDensity(gameState)
+    features.push(fieldDensity)
+
+    // 2. 連鎖ポテンシャル（簡易版）
+    const chainPotential = this.calculateChainPotential(gameState)
+    features.push(chainPotential / 100) // 正規化
+
+    // 3-4. 現在のぷよペア位置（正規化）
+    if (gameState.currentPuyoPair) {
+      features.push(gameState.currentPuyoPair.x / 5) // X座標正規化
+      features.push(gameState.currentPuyoPair.rotation / 3) // 回転正規化
+    } else {
+      features.push(0.5) // デフォルト値
+      features.push(0)
+    }
+
+    // 5-8. 色分布
+    const colorDist = this.calculateColorDistribution(gameState)
+    features.push(colorDist.red)
+    features.push(colorDist.blue)
+    features.push(colorDist.yellow)
+    features.push(colorDist.green)
+
+    return features
+  }
+
+  /**
+   * フィールド密度を計算
+   */
+  private calculateFieldDensity(gameState: AIGameState): number {
+    let filledCells = 0
+    const totalCells = gameState.field.width * gameState.field.height
+
+    for (let x = 0; x < gameState.field.width; x++) {
+      for (let y = 0; y < gameState.field.height; y++) {
+        if (gameState.field.cells[x]?.[y]) {
+          filledCells++
+        }
       }
     }
 
-    return fieldData
+    return filledCells / totalCells
   }
 
   /**
-   * セルの値を数値に変換
+   * 連鎖ポテンシャルを計算（簡易版）
    */
-  private cellToNumber(cell: string | null): number {
-    if (cell === null) return 0
+  private calculateChainPotential(gameState: AIGameState): number {
+    // 簡易版: フィールドの中段の密度から推定
+    let midLevelCells = 0
+    const midLevel = Math.floor(gameState.field.height / 2)
 
-    const colorMap: Record<string, number> = {
-      red: 1,
-      blue: 2,
-      green: 3,
-      yellow: 4,
+    for (let x = 0; x < gameState.field.width; x++) {
+      for (let y = midLevel - 2; y <= midLevel + 2; y++) {
+        if (gameState.field.cells[x]?.[y]) {
+          midLevelCells++
+        }
+      }
     }
 
-    return colorMap[cell] || 0
+    return midLevelCells * 5 // 簡易スコア
   }
 
   /**
-   * フィールドデータの正規化（42要素に調整）
+   * 色分布を計算
    */
-  private normalizeFieldData(fieldData: number[]): void {
-    while (fieldData.length < 42) {
-      fieldData.push(0)
+  private calculateColorDistribution(gameState: AIGameState): {
+    red: number
+    blue: number
+    yellow: number
+    green: number
+  } {
+    const colors = { red: 0, blue: 0, yellow: 0, green: 0 }
+    let total = 0
+
+    for (let x = 0; x < gameState.field.width; x++) {
+      for (let y = 0; y < gameState.field.height; y++) {
+        const cell = gameState.field.cells[x]?.[y]
+        if (cell && cell in colors) {
+          colors[cell as keyof typeof colors]++
+          total++
+        }
+      }
     }
-    fieldData.splice(42)
+
+    // 正規化
+    if (total > 0) {
+      return {
+        red: colors.red / total,
+        blue: colors.blue / total,
+        yellow: colors.yellow / total,
+        green: colors.green / total,
+      }
+    }
+
+    return { red: 0.25, blue: 0.25, yellow: 0.25, green: 0.25 }
   }
 
   /**
@@ -377,6 +470,50 @@ export class MLAIService implements AIPort {
    */
   isModelReady(): boolean {
     return this.modelReady
+  }
+
+  /**
+   * 外部の学習済みモデルを読み込み
+   */
+  async loadModel(modelPath: string): Promise<boolean> {
+    try {
+      const newModel = await tf.loadLayersModel(modelPath)
+
+      // 既存モデルを破棄
+      if (this.model) {
+        this.model.dispose()
+      }
+
+      this.model = newModel
+      this.modelReady = true
+      console.log(`Model loaded successfully from: ${modelPath}`)
+
+      return true
+    } catch (error) {
+      console.error('Failed to load model:', error)
+      return false
+    }
+  }
+
+  /**
+   * 現在のモデルを保存
+   */
+  async saveModel(
+    modelPath: string = 'indexeddb://puyo-ai-model',
+  ): Promise<boolean> {
+    if (!this.model) {
+      console.warn('No model to save')
+      return false
+    }
+
+    try {
+      await this.model.save(modelPath)
+      console.log(`Model saved successfully to: ${modelPath}`)
+      return true
+    } catch (error) {
+      console.error('Failed to save model:', error)
+      return false
+    }
   }
 
   /**
