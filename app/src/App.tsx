@@ -78,16 +78,6 @@ const TabNavigation = ({
           🎮 ゲーム
         </button>
         <button
-          onClick={() => onTabChange('learning')}
-          className={`py-4 px-6 text-lg font-semibold rounded-t-lg transition-colors ${
-            currentTab === 'learning'
-              ? 'bg-white/20 text-white border-b-2 border-blue-400'
-              : 'text-white/60 hover:text-white/80 hover:bg-white/10'
-          }`}
-        >
-          🧠 AI学習
-        </button>
-        <button
           onClick={() => onTabChange('autoLearning')}
           className={`py-4 px-6 text-lg font-semibold rounded-t-lg transition-colors ${
             currentTab === 'autoLearning'
@@ -95,7 +85,17 @@ const TabNavigation = ({
               : 'text-white/60 hover:text-white/80 hover:bg-white/10'
           }`}
         >
-          🚀 自動学習
+          🚀 学習データ
+        </button>
+        <button
+          onClick={() => onTabChange('learning')}
+          className={`py-4 px-6 text-lg font-semibold rounded-t-lg transition-colors ${
+            currentTab === 'learning'
+              ? 'bg-white/20 text-white border-b-2 border-blue-400'
+              : 'text-white/60 hover:text-white/80 hover:bg-white/10'
+          }`}
+        >
+          🧠 機械学習
         </button>
       </nav>
     </div>
