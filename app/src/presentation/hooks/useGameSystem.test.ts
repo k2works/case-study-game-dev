@@ -71,6 +71,7 @@ const createMockPerformanceService = (): PerformanceAnalysisService => ({
   }),
   getAIvsHumanComparison: vi.fn().mockReturnValue(null),
   reset: vi.fn(),
+  resetPerformanceData: vi.fn(),
   startGameSession: vi.fn(),
   endGameSession: vi.fn(),
   getComparisonReport: vi.fn().mockReturnValue(null),
@@ -227,6 +228,80 @@ describe('useGameSystem', () => {
 
       // Assert: 自動的にゲームは再開されない
       expect(gameService.startNewGame).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('追加のゲーム機能', () => {
+    it('ゲーム状態の更新が正常に動作する', () => {
+      const { result } = renderHook(() =>
+        useGameSystem(gameService, inputService, aiService, performanceService),
+      )
+
+      const newGame: GameViewModel = {
+        field: { width: 6, height: 12, cells: [] },
+        currentPuyoPair: {
+          main: { color: 'red' },
+          sub: { color: 'blue' },
+          x: 3,
+          y: 1,
+          rotation: 1,
+        },
+        nextPuyoPair: null,
+        state: 'playing',
+        score: { current: 500 },
+      }
+
+      act(() => {
+        result.current.updateGame(newGame)
+      })
+
+      expect(result.current.game.state).toBe('playing')
+      expect(result.current.game.score.current).toBe(500)
+    })
+
+    it('AI設定の更新が正常に動作する', () => {
+      const { result } = renderHook(() =>
+        useGameSystem(gameService, inputService, aiService, performanceService),
+      )
+
+      const newSettings = { enabled: true, thinkingSpeed: 500 }
+
+      act(() => {
+        result.current.handleAISettingsChange(newSettings)
+      })
+
+      expect(aiService.updateSettings).toHaveBeenCalledWith(newSettings)
+    })
+
+    it('ゲームサービスが正常に利用可能', () => {
+      const { result } = renderHook(() =>
+        useGameSystem(gameService, inputService, aiService, performanceService),
+      )
+
+      expect(result.current.gameService).toBeDefined()
+      expect(result.current.gameService).toBe(gameService)
+    })
+
+    it('パフォーマンスサービスが利用可能である', () => {
+      const { result } = renderHook(() =>
+        useGameSystem(gameService, inputService, aiService, performanceService),
+      )
+
+      expect(result.current.performanceService).toBeDefined()
+      expect(result.current.performanceService).toBe(performanceService)
+    })
+
+    it('データリセットが正常に動作する', () => {
+      const { result } = renderHook(() =>
+        useGameSystem(gameService, inputService, aiService, performanceService),
+      )
+
+      act(() => {
+        result.current.resetData()
+      })
+
+      // データリセットが実行されることを確認
+      expect(result.current.statistics).toBeDefined()
     })
   })
 })
