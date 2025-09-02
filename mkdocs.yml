@@ -84,10 +84,12 @@ nav:
     - イテレーション2ふりかえり: development/iteration-2-retrospective.md
     - イテレーション3完了報告書: development/iteration-3-completion-report.md
     - イテレーション3ふりかえり: development/iteration-3-retrospective.md
-    - イテレーション5完了報告書: development/iteration-5-completion-report.md
-    - イテレーション5ふりかえり: development/iteration-5-retrospective.md
     - イテレーション4完了報告書: development/iteration-4-completion-report.md
     - イテレーション4ふりかえり: development/iteration-4-retrospective.md
+    - イテレーション5完了報告書: development/iteration-5-completion-report.md
+    - イテレーション5ふりかえり: development/iteration-5-retrospective.md
+    - イテレーション6完了報告書: development/イテレーション6_完了報告書.md
+    - イテレーション6ふりかえり: development/イテレーション6_ふりかえり_KPT.md
   - 運用:
     - 運用概要: operation/index.md
     - セットアップ: operation/セットアップ.md
