@@ -1,0 +1,812 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>ユーザーインターフェース整合性分析 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ユーザーインターフェース整合性分析
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">ユーザーインターフェース整合性分析<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>設計ドキュメント（docs/design/ユーザーインターフェース設計.md）と実際の実装（app/src/components/、app/src/App.tsx）の整合性を分析します。</p>
+<h2 id="_3">分析結果サマリー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>分類</th>
+<th>設計書</th>
+<th>実装</th>
+<th>整合性</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>全体レイアウト</strong></td>
+<td>3エリア構成</td>
+<td>3エリア構成</td>
+<td>✅</td>
+<td>完全一致</td>
+</tr>
+<tr>
+<td><strong>ゲームフィールド</strong></td>
+<td>6×12表示</td>
+<td>6×14表示</td>
+<td>⚠️</td>
+<td>実装で改良</td>
+</tr>
+<tr>
+<td><strong>ぷよ表示</strong></td>
+<td>5色対応</td>
+<td>4色実装</td>
+<td>⚠️</td>
+<td>部分実装</td>
+</tr>
+<tr>
+<td><strong>操作システム</strong></td>
+<td>キーボード+タッチ</td>
+<td>キーボードのみ</td>
+<td>⚠️</td>
+<td>タッチ未実装</td>
+</tr>
+<tr>
+<td><strong>ゲーム状態UI</strong></td>
+<td>5画面</td>
+<td>4画面</td>
+<td>⚠️</td>
+<td>タイトル画面未実装</td>
+</tr>
+<tr>
+<td><strong>アニメーション</strong></td>
+<td>詳細定義</td>
+<td>高品質実装</td>
+<td>✅</td>
+<td>実装で拡張</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">詳細分析<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="1">1. 全体レイアウト ✅<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+<div class="highlight"><pre><span></span><code>{スコア・連鎖・レベル} | {ゲームフィールド} | {NEXT・設定}
+</code></pre></div></p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="nx">div</span><span class="w"> </span><span class="nx">className</span><span class="o">=</span><span class="s2">&quot;game-play-area&quot;</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="o">&lt;</span><span class="nx">div</span><span class="w"> </span><span class="nx">className</span><span class="o">=</span><span class="s2">&quot;game-board-area&quot;</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="nx">GameBoard</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="w">  </span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="w">  </span><span class="o">&lt;</span><span class="nx">div</span><span class="w"> </span><span class="nx">className</span><span class="o">=</span><span class="s2">&quot;game-info-area&quot;</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="nx">ScoreDisplay</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="nx">NextPuyoDisplay</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="nx">HighScoreDisplay</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="w">  </span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ✅ 完全一致。レイアウト構造は設計通り実装されている。</p>
+<h3 id="2">2. ゲームフィールド ⚠️<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+- 6×12表示（隠しライン非表示）
+- 各セル: 40×40px</p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// GameBoard.tsx</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">visibleStartY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">visibleHeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">14</span><span class="w"> </span><span class="c1">// y=2からy=15まで（14行）を表示</span>
+
+<span class="c1">// Field.ts</span>
+<span class="k">public</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">16</span><span class="w"> </span><span class="c1">// 隠しライン2行 + 表示フィールド14行</span>
+<span class="k">public</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6</span>
+<span class="k">public</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">visibleHeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">14</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ⚠️ 設計より2行多い表示。実際のぷよぷよに近い実装で改良されている。</p>
+<h3 id="3">3. ぷよ表示 ⚠️<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+- 5色対応: R=赤, G=緑, B=青, Y=黄, P=紫
+- 丸角正方形、ドロップシャドウ</p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// Puyo.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="nx">PuyoColor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">RED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">BLUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;blue&#39;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">  </span><span class="nx">GREEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;green&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">YELLOW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;yellow&#39;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ⚠️ 紫色が未実装。基本4色のみ対応。</p>
+<h3 id="4">4. 操作システム ⚠️<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+<div class="highlight"><pre><span></span><code>キーボード: ←→↓↑ Space P R
+タッチ: スワイプ、タップ、操作ボタン
+</code></pre></div></p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// useKeyboard.ts - キーボードのみ実装</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">keyMap</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">ArrowLeft</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;moveLeft&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">ArrowRight</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;moveRight&#39;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">  </span><span class="nx">ArrowUp</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;rotate&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">ArrowDown</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;drop&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39; &#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;hardDrop&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Space</span>
+<span class="w">  </span><span class="nx">KeyZ</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;rotate&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">KeyP</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;pause&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">KeyR</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;restart&#39;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ⚠️ タッチ操作が未実装。モバイル対応は今後の課題。</p>
+<h3 id="5-ui">5. ゲーム状態UI ⚠️<a class="headerlink" href="#5-ui" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+1. タイトル画面
+2. ゲーム中
+3. ポーズ画面<br />
+4. ゲームオーバー画面</p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// App.tsx - ゲーム状態管理</span>
+<span class="kd">enum</span><span class="w"> </span><span class="nx">GameState</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">READY</span><span class="p">,</span><span class="w">    </span><span class="c1">// タイトル相当だが別画面なし</span>
+<span class="w">  </span><span class="nx">PLAYING</span><span class="p">,</span><span class="w">  </span><span class="c1">// ✅ 実装済み</span>
+<span class="w">  </span><span class="nx">PAUSED</span><span class="p">,</span><span class="w">   </span><span class="c1">// ✅ オーバーレイで実装</span>
+<span class="w">  </span><span class="nx">GAME_OVER</span><span class="w"> </span><span class="c1">// ✅ GameOverDisplay実装</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ⚠️ 専用タイトル画面が未実装。Ready状態でアプリ内開始。</p>
+<h3 id="6">6. レスポンシブデザイン ❌<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+- デスクトップ (1024px〜): 横配置
+- タブレット (768px〜1023px): 調整配置
+- モバイル (〜767px): 縦配置</p>
+<p><strong>実装での実現:</strong>
+- CSS でのレスポンシブ定義なし
+- 固定レイアウトのみ</p>
+<p><strong>評価:</strong> ❌ 完全未実装。将来のIteration 4で対応予定。</p>
+<h3 id="7">7. アニメーション ✅<a class="headerlink" href="#7" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+- ぷよ落下: ease-in
+- ぷよ消去: 0.3秒フェードアウト
+- 連鎖表示: ポップアップ</p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// GameBoard.tsx - 高品質なアニメーション実装</span>
+<span class="o">&lt;</span><span class="nx">AnimatedPuyo</span><span class="w"> </span><span class="nx">fallDuration</span><span class="o">=</span><span class="p">{</span><span class="mf">0.3</span><span class="p">}</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="nx">DisappearEffect</span><span class="w"> </span><span class="nx">duration</span><span class="o">=</span><span class="p">{</span><span class="mf">0.8</span><span class="p">}</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="nx">ChainDisplay</span><span class="w"> </span><span class="nx">chainCount</span><span class="o">=</span><span class="p">{</span><span class="nx">chain</span><span class="p">.</span><span class="nx">chainCount</span><span class="p">}</span><span class="w"> </span><span class="o">/&gt;</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ✅ 設計を上回る高品質実装。設定でアニメーション無効化も可能。</p>
+<h3 id="8">8. カラーパレット ✅<a class="headerlink" href="#8" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+<div class="highlight"><pre><span></span><code>赤ぷよ: #FF6B6B
+緑ぷよ: #51CF66  
+青ぷよ: #339AF0
+黄ぷよ: #FFD43B
+</code></pre></div></p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c">/* GameBoard.css */</span>
+<span class="p">.</span><span class="nc">puyo</span><span class="p">.</span><span class="nc">red</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#ff6b6b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">.</span><span class="nc">puyo</span><span class="p">.</span><span class="nc">green</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#51cf66</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">.</span><span class="nc">puyo</span><span class="p">.</span><span class="nc">blue</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#339af0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">.</span><span class="nc">puyo</span><span class="p">.</span><span class="nc">yellow</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#ffd43b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ✅ 色仕様が完全一致。</p>
+<h3 id="9">9. アクセシビリティ対応 ⚠️<a class="headerlink" href="#9" title="Permanent link">&para;</a></h3>
+<p><strong>設計書での定義:</strong>
+- カラーユニバーサルデザイン
+- キーボードナビゲーション<br />
+- スクリーンリーダー対応
+- モーション設定</p>
+<p><strong>実装での実現:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// 部分的実装</span>
+<span class="o">-</span><span class="w"> </span><span class="err">✅</span><span class="w"> </span><span class="nx">キーボード操作完全対応</span>
+<span class="o">-</span><span class="w"> </span><span class="err">✅</span><span class="w"> </span><span class="nx">アニメーション無効化設定</span>
+<span class="o">-</span><span class="w"> </span><span class="err">❌</span><span class="w"> </span><span class="nx">ARIAラベル未実装</span>
+<span class="o">-</span><span class="w"> </span><span class="err">❌</span><span class="w"> </span><span class="nx">高コントラストモード未対応</span>
+</code></pre></div></p>
+<p><strong>評価:</strong> ⚠️ 基本的な対応のみ。詳細は将来実装。</p>
+<h2 id="_5">実装で拡張された要素<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="1_1">1. ハイスコアシステム<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h3>
+<p><strong>設計書:</strong> 未定義<br />
+<strong>実装:</strong> ローカルストレージベースの完全実装</p>
+<h3 id="2_1">2. 音響システム<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h3>
+<p><strong>設計書:</strong> 基本定義のみ
+<strong>実装:</strong> 効果音・BGM・音量制御の高品質実装</p>
+<h3 id="3_1">3. 設定システム<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h3>
+<p><strong>設計書:</strong> 基本定義のみ
+<strong>実装:</strong> 包括的な設定パネルとローカル保存</p>
+<h3 id="4-di">4. DI アーキテクチャ<a class="headerlink" href="#4-di" title="Permanent link">&para;</a></h3>
+<p><strong>設計書:</strong> 未定義
+<strong>実装:</strong> 完全な依存性注入システム</p>
+<h2 id="_6">整合性評価<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_7">🟢 高整合性領域<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>全体レイアウト</strong>: 設計通りの3エリア構成</li>
+<li><strong>ゲームフィールド</strong>: 基本構造一致、表示行数は改良</li>
+<li><strong>アニメーション</strong>: 設計を上回る品質で実装</li>
+<li><strong>カラーパレット</strong>: 完全一致</li>
+</ol>
+<h3 id="_8">🟡 部分整合性領域<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>ぷよ色数</strong>: 4色実装（紫色未対応）</li>
+<li><strong>操作システム</strong>: キーボードのみ（タッチ未実装）</li>
+<li><strong>ゲーム状態</strong>: 機能的同等だが画面構成が異なる</li>
+<li><strong>アクセシビリティ</strong>: 基本対応のみ</li>
+</ol>
+<h3 id="_9">🔴 未整合領域<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>レスポンシブデザイン</strong>: 完全未実装</li>
+<li><strong>タイトル画面</strong>: 専用画面未実装</li>
+<li><strong>タッチ操作</strong>: モバイル対応未実装</li>
+</ol>
+<h2 id="_10">推奨対応<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="priority-1-iteration-4">Priority 1 (Iteration 4で対応予定)<a class="headerlink" href="#priority-1-iteration-4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>レスポンシブデザイン</strong>: CSS Media Query による対応</li>
+<li><strong>タッチ操作</strong>: React のタッチイベント実装</li>
+</ul>
+<h3 id="priority-2">Priority 2 (将来的に)<a class="headerlink" href="#priority-2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>紫色ぷよ</strong>: 5色対応で難易度向上</li>
+<li><strong>専用タイトル画面</strong>: ブランディング強化</li>
+<li><strong>詳細アクセシビリティ</strong>: ARIA、高コントラスト対応</li>
+</ul>
+<h3 id="priority-3">Priority 3 (検討事項)<a class="headerlink" href="#priority-3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>設計書更新</strong>: 実装ベースでの設計書修正検討</li>
+</ul>
+<h2 id="_11">結論<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p><strong>整合性スコア: 78/100</strong></p>
+<ul>
+<li>✅ <strong>機能的整合性</strong>: 高い実装品質</li>
+<li>✅ <strong>UX品質</strong>: 設計を上回るアニメーション・音響</li>
+<li>⚠️ <strong>モバイル対応</strong>: 今後の重要課題  </li>
+<li>⚠️ <strong>アクセシビリティ</strong>: 基本対応済み、詳細は今後</li>
+</ul>
+<p>実装は設計の意図を適切に実現し、多くの箇所で設計を上回る品質を提供。特にアニメーション、音響、設定システムは設計にない高品質な実装。モバイル・アクセシビリティは Iteration 4 での対応が期待される。</p>
+<h2 id="_12">次のアクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Iteration 4 対応</strong>: レスポンシブデザイン、タッチ操作実装</li>
+<li><strong>アクセシビリティ強化</strong>: ARIA ラベル、高コントラスト対応</li>
+<li><strong>5色対応検討</strong>: 紫色ぷよ追加でゲーム性向上</li>
+<li><strong>設計書更新</strong>: 実装の優れた点を設計書に反映検討</li>
+</ol>
+<h2 id="_13">実装整合性サマリー<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<p><strong>本ドキュメント（2025-08-09作成）は現在の実装状態を分析</strong></p>
+<h3 id="_14">✅ 完全実装済み<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>基本UI構成（ゲームフィールド、スコア、NEXT）</li>
+<li>アニメーション（落下・消去・連鎖）</li>
+<li>音響システム（効果音・BGM）</li>
+<li>キーボード操作</li>
+</ul>
+<h3 id="_15">⚠️ 部分実装<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li>4色ぷよ（紫色未対応）</li>
+<li>基本アクセシビリティ（詳細未対応）</li>
+<li>デスクトップ専用UI（レスポンシブ未対応）</li>
+</ul>
+<h3 id="_16">🔄 将来実装予定<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li>タッチ操作（Iteration 4）</li>
+<li>レスポンシブデザイン（Iteration 4）  </li>
+<li>詳細アクセシビリティ（将来バージョン）</li>
+</ul>
+<p><strong>設計思想:</strong> ユーザビリティを重視し、設計を上回る実装品質を達成</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

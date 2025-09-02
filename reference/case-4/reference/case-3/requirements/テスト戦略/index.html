@@ -1,0 +1,845 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>テスト戦略 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              テスト戦略
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">テスト戦略<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>ぷよぷよゲームの品質を保証するため、テスト駆動開発（TDD）を採用し、包括的なテスト戦略を策定します。</p>
+<h2 id="tdd">TDD開発サイクル<a class="headerlink" href="#tdd" title="Permanent link">&para;</a></h2>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IlNUQVRFIiBoZWlnaHQ9IjUxMnB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6MzU2cHg7aGVpZ2h0OjUxMnB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDM1NiA1MTIiIHdpZHRoPSIzNTZweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxnIGlkPSJSRUQiPjxyZWN0IGZpbGw9IiNGMDgwODAiIGhlaWdodD0iNTAiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNTAiIHg9IjEzNy4zNSIgeT0iMTAzIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iMTM3LjM1IiB4Mj0iMTg3LjM1IiB5MT0iMTI5LjI5NjkiIHkyPSIxMjkuMjk2OSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI3LjIyNzUiIHg9IjE0OC43MzYyIiB5PSIxMjAuOTk1MSI+UmVkPC90ZXh0PjwvZz48ZyBpZD0iR1JFRU4iPjxyZWN0IGZpbGw9IiM5MEVFOTAiIGhlaWdodD0iNTAiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNjIuNzA0MSIgeD0iNyIgeT0iMjMwIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iNyIgeDI9IjY5LjcwNDEiIHkxPSIyNTYuMjk2OSIgeTI9IjI1Ni4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDIuNzA0MSIgeD0iMTciIHk9IjI0Ny45OTUxIj5HcmVlbjwvdGV4dD48L2c+PGcgaWQ9IlJFRkFDVE9SIj48cmVjdCBmaWxsPSIjQUREOEU2IiBoZWlnaHQ9IjUwIiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijc5LjM1NjQiIHg9IjEyMi42NyIgeT0iMzU3Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iMTIyLjY3IiB4Mj0iMjAyLjAyNjQiIHkxPSIzODMuMjk2OSIgeTI9IjM4My4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTkuMzU2NCIgeD0iMTMyLjY3IiB5PSIzNzQuOTk1MSI+UmVmYWN0b3I8L3RleHQ+PC9nPjxlbGxpcHNlIGN4PSIxNjIuMzUiIGN5PSIxNiIgZmlsbD0iIzIyMjIyMiIgcng9IjEwIiByeT0iMTAiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MTsiLz48ZWxsaXBzZSBjeD0iMTYyLjM1IiBjeT0iNDk1IiBmaWxsPSJub25lIiByeD0iMTEiIHJ5PSIxMSIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxlbGxpcHNlIGN4PSIxNjIuMzUiIGN5PSI0OTUiIGZpbGw9IiMyMjIyMjIiIHJ4PSI2IiByeT0iNiIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJHTU4yIiBkYXRhLXNvdXJjZS1saW5lPSIxMSIgZGF0YS11aWQ9ImVudDAwMDMiIGlkPSJlbnRpdHlfR01OMiI+PHBhdGggZD0iTTIyMi44NSwxMDcuODcgTDIyMi44NSwxMjQgTDE4Ny44MiwxMjggTDIyMi44NSwxMzIgTDIyMi44NSwxNDguMTM1NiBBMCwwIDAgMCAwIDIyMi44NSwxNDguMTM1NiBMMzQ3Ljg1MDEsMTQ4LjEzNTYgQTAsMCAwIDAgMCAzNDcuODUwMSwxNDguMTM1NiBMMzQ3Ljg1MDEsMTE3Ljg3IEwzMzcuODUwMSwxMDcuODcgTDIyMi44NSwxMDcuODcgQTAsMCAwIDAgMCAyMjIuODUsMTA3Ljg3IiBmaWxsPSIjRkVGRkREIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48cGF0aCBkPSJNMzM3Ljg1MDEsMTA3Ljg3IEwzMzcuODUwMSwxMTcuODcgTDM0Ny44NTAxLDExNy44NyBMMzM3Ljg1MDEsMTA3Ljg3IiBmaWxsPSIjRkVGRkREIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDQuMDAwMSIgeD0iMjI4Ljg1IiB5PSIxMjQuOTM2OSI+JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7JiMxMjUwMTsmIzEyNDQ5OyYjMTI1NDA7JiMxMjQ3MzsmIzEyNDg4OzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3OC4wMDAxIiB4PSIyMjguODUiIHk9IjE0MC4wNjk3Ij4mIzIwMTgxOyYjMjcwOTY7JiMxMjM5ODsmIzI2MTI2OyYjMzA5MDY7JiMyMTI3MDs8L3RleHQ+PC9nPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJHTU41IiBkYXRhLXNvdXJjZS1saW5lPSIxMiIgZGF0YS11aWQ9ImVudDAwMDYiIGlkPSJlbnRpdHlfR01ONSI+PHBhdGggZD0iTTEwNC4zNSwyMzQuODcgTDEwNC4zNSwyNTEgTDY5LjgxLDI1NSBMMTA0LjM1LDI1OSBMMTA0LjM1LDI3NS4xMzU2IEEwLDAgMCAwIDAgMTA0LjM1LDI3NS4xMzU2IEwyMTYuMzUwMSwyNzUuMTM1NiBBMCwwIDAgMCAwIDIxNi4zNTAxLDI3NS4xMzU2IEwyMTYuMzUwMSwyNDQuODcgTDIwNi4zNTAxLDIzNC44NyBMMTA0LjM1LDIzNC44NyBBMCwwIDAgMCAwIDEwNC4zNSwyMzQuODciIGZpbGw9IiNGRUZGREQiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxwYXRoIGQ9Ik0yMDYuMzUwMSwyMzQuODcgTDIwNi4zNTAxLDI0NC44NyBMMjE2LjM1MDEsMjQ0Ljg3IEwyMDYuMzUwMSwyMzQuODciIGZpbGw9IiNGRUZGREQiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjkxLjAwMDEiIHg9IjExMC4zNSIgeT0iMjUxLjkzNjkiPiYjMjEyMDU7JiMyMDMxNjsmIzEyMzc3OyYjMTI0Mjc7JiMxMjQ2NzsmIzEyNTQwOyYjMTI0ODk7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjkxLjAwMDEiIHg9IjExMC4zNSIgeT0iMjY3LjA2OTciPiYjMjYzNjg7JiMzMDcwMTsmIzM2MzE3OyYjMzg2MjY7JiMxMjM5ODsmIzIzNDU1OyYjMzUwMTM7PC90ZXh0PjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iR01OOCIgZGF0YS1zb3VyY2UtbGluZT0iMTMiIGRhdGEtdWlkPSJlbnQwMDA5IiBpZD0iZW50aXR5X0dNTjgiPjxwYXRoIGQ9Ik0yMzcuMzUsMzYxLjg3IEwyMzcuMzUsMzc4IEwyMDIuNTIsMzgyIEwyMzcuMzUsMzg2IEwyMzcuMzUsNDAyLjEzNTYgQTAsMCAwIDAgMCAyMzcuMzUsNDAyLjEzNTYgTDM0OS4zNTAxLDQwMi4xMzU2IEEwLDAgMCAwIDAgMzQ5LjM1MDEsNDAyLjEzNTYgTDM0OS4zNTAxLDM3MS44NyBMMzM5LjM1MDEsMzYxLjg3IEwyMzcuMzUsMzYxLjg3IEEwLDAgMCAwIDAgMjM3LjM1LDM2MS44NyIgZmlsbD0iI0ZFRkZERCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHBhdGggZD0iTTMzOS4zNTAxLDM2MS44NyBMMzM5LjM1MDEsMzcxLjg3IEwzNDkuMzUwMSwzNzEuODcgTDMzOS4zNTAxLDM2MS44NyIgZmlsbD0iI0ZFRkZERCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTEuMDAwMSIgeD0iMjQzLjM1IiB5PSIzNzguOTM2OSI+JiMxMjM2NTsmIzEyNDI4OyYjMTIzNTY7JiMxMjM5NDsmIzEyNDY3OyYjMTI1NDA7JiMxMjQ4OTs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjUuMDAwMSIgeD0iMjQzLjM1IiB5PSIzOTQuMDY5NyI+JiMzNTM3MzsmIzM1MzM2OyYjMTIzOTg7JiMyNTkxMzsmIzIxODkyOzwvdGV4dD48L2c+PCEtLWxpbmsgKnN0YXJ0KiB0byBSRUQtLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0iLnN0YXJ0LiIgZGF0YS1lbnRpdHktMj0iUkVEIiBkYXRhLXNvdXJjZS1saW5lPSI1IiBkYXRhLXVpZD0ibG5rMyIgaWQ9ImxpbmtfLnN0YXJ0Ll9SRUQiPjxwYXRoIGQ9Ik0xNjIuMzUsMjYuMzggQzE2Mi4zNSw0My4xMSAxNjIuMzUsNzIuNTkgMTYyLjM1LDk2LjYzIiBmaWxsPSJub25lIiBpZD0iKnN0YXJ0Ki10by1SRUQiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Mi4zNSwxMDIuNjMsMTY2LjM1LDkzLjYzLDE2Mi4zNSw5Ny42MywxNTguMzUsOTMuNjMsMTYyLjM1LDEwMi42MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzMC4wMDAyIiB4PSIxNjMuMzUiIHk9IjY5LjA2NjkiPiYjMjI4MzM7JiMyNTk0MzsmIzEyMzc3OyYjMTI0Mjc7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7JiMxMjQzNDsmIzI2MzYwOyYjMTIzNjc7PC90ZXh0PjwvZz48IS0tbGluayBSRUQgdG8gR1JFRU4tLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0iUkVEIiBkYXRhLWVudGl0eS0yPSJHUkVFTiIgZGF0YS1zb3VyY2UtbGluZT0iNiIgZGF0YS11aWQ9ImxuazQiIGlkPSJsaW5rX1JFRF9HUkVFTiI+PHBhdGggZD0iTTEzOC4xNSwxNTMuNCBDMTE2LjMsMTc1LjQyIDg4LjU0NjIsMjAzLjQwMDkgNjYuNzE2MiwyMjUuNDAwOSIgZmlsbD0ibm9uZSIgaWQ9IlJFRC10by1HUkVFTiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iNjIuNDksMjI5LjY2LDcxLjY2ODYsMjI2LjA4ODgsNjYuMDExOCwyMjYuMTEwOCw2NS45ODk5LDIyMC40NTQsNjIuNDksMjI5LjY2IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNzguMDAwMSIgeD0iMTA4Ljc4IiB5PSIxOTYuMDY2OSI+JiMyNjM2ODsmIzIzNTY3OyYjMzg0ODA7JiMxMjM5ODsmIzIzNDU1OyYjMzUwMTM7PC90ZXh0PjwvZz48IS0tbGluayBHUkVFTiB0byBSRUZBQ1RPUi0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJHUkVFTiIgZGF0YS1lbnRpdHktMj0iUkVGQUNUT1IiIGRhdGEtc291cmNlLWxpbmU9IjciIGRhdGEtdWlkPSJsbms1IiBpZD0ibGlua19HUkVFTl9SRUZBQ1RPUiI+PHBhdGggZD0iTTYyLjU1LDI4MC40IEM4NC40LDMwMi40MiAxMTIuMTUzOCwzMzAuNDAwOSAxMzMuOTgzOCwzNTIuNDAwOSIgZmlsbD0ibm9uZSIgaWQ9IkdSRUVOLXRvLVJFRkFDVE9SIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzguMjEsMzU2LjY2LDEzNC43MTAxLDM0Ny40NTQsMTM0LjY4ODIsMzUzLjExMDgsMTI5LjAzMTQsMzUzLjA4ODgsMTM4LjIxLDM1Ni42NiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijc4LjAwMDEiIHg9IjEwOC43OCIgeT0iMzIzLjA2NjkiPiYjMTI0Njc7JiMxMjU0MDsmIzEyNDg5OyYjMTI0MzQ7JiMyNTkxMzsmIzIxODkyOzwvdGV4dD48L2c+PCEtLWxpbmsgUkVGQUNUT1IgdG8gUkVELS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9IlJFRkFDVE9SIiBkYXRhLWVudGl0eS0yPSJSRUQiIGRhdGEtc291cmNlLWxpbmU9IjgiIGRhdGEtdWlkPSJsbms2IiBpZD0ibGlua19SRUZBQ1RPUl9SRUQiPjxwYXRoIGQ9Ik0xODYuMjEsMzU2Ljg4IEMyMDMuMywzMzcuOCAyMjQuOSwzMDkuNTMgMjM0LjM1LDI4MCBDMjQxLjEyLDI1OC44MyAyNDEuMTIsMjUxLjE3IDIzNC4zNSwyMzAgQzIyNC45LDIwMC40NyAyMDcuMzAzMiwxNzYuNjY5MyAxOTAuMjEzMiwxNTcuNTg5MyIgZmlsbD0ibm9uZSIgaWQ9IlJFRkFDVE9SLXRvLVJFRCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTg2LjIxLDE1My4xMiwxODkuMjM1MiwxNjIuNDkyNywxODkuNTQ2LDE1Ni44NDQ0LDE5NS4xOTQzLDE1Ny4xNTUyLDE4Ni4yMSwxNTMuMTIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1Mi4wMDAxIiB4PSIyNDAuNDMiIHk9IjI1OS41NjY5Ij4mIzI3NDI1OyYjMTIzOTg7JiMyNzIzMTsmIzMzMDIxOzwvdGV4dD48L2c+PCEtLWxpbmsgUkVGQUNUT1IgdG8gKmVuZCotLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0iUkVGQUNUT1IiIGRhdGEtZW50aXR5LTI9Ii5lbmQuIiBkYXRhLXNvdXJjZS1saW5lPSI5IiBkYXRhLXVpZD0ibG5rOCIgaWQ9ImxpbmtfUkVGQUNUT1JfLmVuZC4iPjxwYXRoIGQ9Ik0xNjIuMzUsNDA3LjM2IEMxNjIuMzUsNDMxLjIzIDE2Mi4zNSw0NjAuNDYgMTYyLjM1LDQ3Ny43MSIgZmlsbD0ibm9uZSIgaWQ9IlJFRkFDVE9SLXRvLSplbmQqIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjIuMzUsNDgzLjcxLDE2Ni4zNSw0NzQuNzEsMTYyLjM1LDQ3OC43MSwxNTguMzUsNDc0LjcxLDE2Mi4zNSw0ODMuNzEiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTcuMDAwMSIgeD0iMTYzLjM1IiB5PSI0NTAuMDY2OSI+JiMxMjQ1MjsmIzEyNDg2OyYjMTI1MjQ7JiMxMjU0MDsmIzEyNDcxOyYjMTI1MTk7JiMxMjUzMTsmIzIzNDM2OyYjMjAxMDI7PC90ZXh0PjwvZz48IS0tU1JDPVtOUDNESmk5MDdDSmwtbkdSbDlkbTBYbkNaNVBrY1pKVW40RjVXWVBEY3hKclJkVUhPNDBublk4NDNFNFowR3FHM0dTNHZNZC10TEJVR2hPakxaZGtwa25sUGpPbTlMRjZDTDQtWnM3OW1BQW1aeFVLby1vNWNUUHFJSzU2ODJUck1MUHpHcjhLWENGR2FrTXRRdWllUHdJcWdVYVh2YzF0eF9YODM4cmRvZk1DcUNkc0FPeDdUX29DMTZSVDN6VC0xZ2k2ZjBXcTNzR0FqMDNhcVFyX1diTDZ0Q0pER0x1Mmt1cmh6YnZVclh4MDZoNUhxLWxTZTQwQVk2NVMwV0NQMF9xNlVpakhKckRNb1E1VkRHZnQxd3FMbnRyalVkSi1OLVNiRVFOQkV6NDFQdjQ5cTF4R0NIa0xkNWFVOExMUnhUTnZCZ25iR2MycVdEZjBNbHVwVmFvZnBmVmp6Z2V5aE5nX1FDek9nUjgxTTJ6YUhUa1BEeThGTVF6OGdRbFhZLVJHY3htaXctcmUtc1E3UUJ6cjF3RzRMV3dpanB5S2hwX3EtV05VbWwtSjdtMDBdLS0+PC9nPjwvc3ZnPg==" class="uml" alt="uml diagram" title="" /></p>
+<h2 id="3">3層テスト戦略<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkNMQVNTIiBoZWlnaHQ9IjU2MXB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6ODM5cHg7aGVpZ2h0OjU2MXB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDgzOSA1NjEiIHdpZHRoPSI4MzlweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjwhLS1jbHVzdGVyIGUyZS0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0iZTJlIiBkYXRhLXNvdXJjZS1saW5lPSI2IiBkYXRhLXVpZD0iZW50MDAwMiIgaWQ9ImNsdXN0ZXJfZTJlIj48cmVjdCBmaWxsPSIjRkZFMEUwIiBoZWlnaHQ9IjIxNS42IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMzMzMzMzM7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNDI0IiB4PSI3IiB5PSI4NC4zMiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3MC44NjgiIHg9IjE4My41NjYiIHk9Ijk5LjMxNTEiPkUyRSYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDYuMzA2NiIgeD0iMTk1Ljg0NjciIHk9IjExNS42MTIiPigxMCUpPC90ZXh0PjwvZz48IS0tY2x1c3RlciBpbnRlZ3JhdGlvbi0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0iaW50ZWdyYXRpb24iIGRhdGEtc291cmNlLWxpbmU9IjEyIiBkYXRhLXVpZD0iZW50MDAwNiIgaWQ9ImNsdXN0ZXJfaW50ZWdyYXRpb24iPjxyZWN0IGZpbGw9IiNFMEZGRTAiIGhlaWdodD0iMjE1LjYiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzMzMzMzMztzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIzNjIiIHg9IjQ3MSIgeT0iODQuMzIiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjkuOTk5NyIgeD0iNjE3LjAwMDIiIHk9Ijk5LjMxNTEiPiYjMzIxMTM7JiMyMTUxMjsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjQ2LjMwNjYiIHg9IjYyOC44NDY3IiB5PSIxMTUuNjEyIj4oMzAlKTwvdGV4dD48L2c+PCEtLWNsdXN0ZXIgdW5pdC0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0idW5pdCIgZGF0YS1zb3VyY2UtbGluZT0iMTgiIGRhdGEtdWlkPSJlbnQwMDEwIiBpZD0iY2x1c3Rlcl91bml0Ij48cmVjdCBmaWxsPSIjRTBFMEZGIiBoZWlnaHQ9IjIxNS41OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMzMzMzMzO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjM2OCIgeD0iMzQ0IiB5PSIzMzkuOTIiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjkuOTk5NyIgeD0iNDkzLjAwMDIiIHk9IjM1NC45MTUxIj4mIzIxMzM2OyYjMjAzMDc7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0Ni4zMDY2IiB4PSI1MDQuODQ2NyIgeT0iMzcxLjIxMiI+KDYwJSk8L3RleHQ+PC9nPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iNyIgZGF0YS11aWQ9ImVudDAwMDMiIGlkPSJlbnRpdHlfLi4uLi4uLi4uLi4iPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTY3Ljk5OTMiIHg9IjMxIiB5PSIxNDMuMzIiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTMuOTk5MyIgeD0iMzgiIHk9IjE1OC4zMTUxIj4mIzEyNTE4OyYjMTI1NDA7JiMxMjQ3MDsmIzEyNTQwOyYjMTI0NzE7JiMxMjQ5MDsmIzEyNTIyOyYjMTI0NTg7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7PC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjMyIiB4Mj0iMTk3Ljk5OTMiIHkxPSIxNjMuNjE2OSIgeTI9IjE2My42MTY5Ii8+PC9nPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLi4uLi4uIiBkYXRhLXNvdXJjZS1saW5lPSI4IiBkYXRhLXVpZD0iZW50MDAwNCIgaWQ9ImVudGl0eV8uLi4uLi4uLi4uIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE1My45OTk0IiB4PSIyMzQiIHk9IjE0My4zMiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzOS45OTk0IiB4PSIyNDEiIHk9IjE1OC4zMTUxIj4mIzEyNDYzOyYjMTI1MjU7JiMxMjQ3MzsmIzEyNTAyOyYjMTI1MjE7JiMxMjQ1NDsmIzEyNDcwOyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OzwvdGV4dD48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHgxPSIyMzUiIHgyPSIzODYuOTk5NCIgeTE9IjE2My42MTY5IiB5Mj0iMTYzLjYxNjkiLz48L2c+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9Ii4uLi4uLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjkiIGRhdGEtdWlkPSJlbnQwMDA1IiBpZD0iZW50aXR5Xy4uLi4uLi4uLi4iPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUzLjk5OTQiIHg9IjEzNiIgeT0iMjM5LjYyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTM5Ljk5OTQiIHg9IjE0MyIgeT0iMjU0LjYxNTEiPiYjMTI0OTc7JiMxMjUwMTsmIzEyNDU3OyYjMTI1NDA7JiMxMjUxMDsmIzEyNTMxOyYjMTI0NzM7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7PC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjEzNyIgeDI9IjI4OC45OTk0IiB5MT0iMjU5LjkxNjkiIHkyPSIyNTkuOTE2OSIvPjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMTMiIGRhdGEtdWlkPSJlbnQwMDA3IiBpZD0iZW50aXR5Xy4uLi4uLi4uLi4iPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUzLjk5OTQiIHg9IjQ5NSIgeT0iMTQzLjMyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTM5Ljk5OTQiIHg9IjUwMiIgeT0iMTU4LjMxNTEiPiYjMTI0Njc7JiMxMjUzMTsmIzEyNTA5OyYjMTI1NDA7JiMxMjQ5MzsmIzEyNTMxOyYjMTI0ODg7JiMzODI5MTsmIzM2ODk5OyYjMjU2NTg7PC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjQ5NiIgeDI9IjY0Ny45OTk0IiB5MT0iMTYzLjYxNjkiIHkyPSIxNjMuNjE2OSIvPjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iQVBJLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjE0IiBkYXRhLXVpZD0iZW50MDAwOCIgaWQ9ImVudGl0eV9BUEkuLi4uLiI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMDYuMTQ4MSIgeD0iNjgzLjkzIiB5PSIxNDMuMzIiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI5Mi4xNDgxIiB4PSI2OTAuOTMiIHk9IjE1OC4zMTUxIj5BUEkmIzMyMTEzOyYjMjE1MTI7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7PC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjY4NC45MyIgeDI9Ijc4OS4wNzgxIiB5MT0iMTYzLjYxNjkiIHkyPSIxNjMuNjE2OSIvPjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMTUiIGRhdGEtdWlkPSJlbnQwMDA5IiBpZD0iZW50aXR5Xy4uLi4uLi4iPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTExLjk5OTYiIHg9IjUxNiIgeT0iMjM5LjYyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTcuOTk5NiIgeD0iNTIzIiB5PSIyNTQuNjE1MSI+JiMyOTM2NjsmIzI0OTA3OyYjMzE2NDk7JiMyOTcwMjsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iNTE3IiB4Mj0iNjI2Ljk5OTYiIHkxPSIyNTkuOTE2OSIgeTI9IjI1OS45MTY5Ii8+PC9nPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMTkiIGRhdGEtdWlkPSJlbnQwMDExIiBpZD0iZW50aXR5Xy4uLi4uLi4uIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEyNS45OTk1IiB4PSIzNjgiIHk9IjM5OC45MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjExMS45OTk1IiB4PSIzNzUiIHk9IjQxMy45MTUxIj4mIzEyNDg5OyYjMTI1MTM7JiMxMjQ1MjsmIzEyNTMxOyYjMTI1MjU7JiMxMjQ3MjsmIzEyNDgzOyYjMTI0NjM7PC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjM2OSIgeDI9IjQ5Mi45OTk1IiB5MT0iNDE5LjIxNjkiIHkyPSI0MTkuMjE2OSIvPjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iLi4uLi4uLi4uIiBkYXRhLXNvdXJjZS1saW5lPSIyMCIgZGF0YS11aWQ9ImVudDAwMTIiIGlkPSJlbnRpdHlfLi4uLi4uLi4uIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEzOS45OTk1IiB4PSI1MjkiIHk9IjM5OC45MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEyNS45OTk1IiB4PSI1MzYiIHk9IjQxMy45MTUxIj4mIzEyNTE4OyYjMTI1NDA7JiMxMjQ4NjsmIzEyNDUxOyYjMTI1MjI7JiMxMjQ4NjsmIzEyNDUxOyYjMzgzMDY7JiMyNTk2ODs8L3RleHQ+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iNTMwIiB4Mj0iNjY3Ljk5OTUiIHkxPSI0MTkuMjE2OSIgeTI9IjQxOS4yMTY5Ii8+PC9nPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSIuLi4uLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjIxIiBkYXRhLXVpZD0iZW50MDAxMyIgaWQ9ImVudGl0eV8uLi4uLi4uLi4iPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTM5Ljk5OTUiIHg9IjM2OCIgeT0iNDk1LjIxIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTI1Ljk5OTUiIHg9IjM3NSIgeT0iNTEwLjIwNTEiPiYjMjA0OTE7JiMyMTAyOTsmIzEyNDY3OyYjMTI1MzE7JiMxMjUwOTsmIzEyNTQwOyYjMTI0OTM7JiMxMjUzMTsmIzEyNDg4OzwvdGV4dD48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHgxPSIzNjkiIHgyPSI1MDYuOTk5NSIgeTE9IjUxNS41MDY5IiB5Mj0iNTE1LjUwNjkiLz48L2c+PCEtLWxpbmsgdW5pdCB0byBpbnRlZ3JhdGlvbi0tPjwhLS1saW5rIGludGVncmF0aW9uIHRvIGUyZS0tPjwhLS1TUkM9W1RQNUZJbTkxNkNSbC1vYU05UVkzaTJicTMzOU13RFF6RWNwa085aXM2LUR3WWEzYzlUYUttSDJiSXU1UFdhQl9hRW1Gek1kVVRYVV9ISmozUXZsSzMwcDNwRkMteHMtVUFIU2pVY1dtdXExYjlFeU9qNTBZd2Y2SURWQjUwaENocjVvdElwUEphcGJESjJMaEN2RW14eEVDN0NnbmVsb0s5bElxWmIxM19laFdSakY1UE1yWEFRNFFQUE1hSVVZSXFwTFQyX3RqdFZzbUg0S084Qm1aZHlacjZRNkVDNDgtY1pkQ1hGbVV1TFFVVEg2Nm8wVW9RNXU1UG1XVHY0RFgxdlM4T3RhVmdOdzMxYS1GTmlrRGlzT1lMZWl3ZkMwQ254QWZjakdyR0hyWnZjRFgzMVVvSUxGa3RNY3RGUXRzX1RQUmY1aFJ0OVhoNERxNHpPYl9xV1prVWE2aHpYLVJycHBfXzZaN3NMT1lqV2dyNzA0YmlFOTFkWUJxYTV6QmQzMmU1bUc4R3ZpQk1YWnNIU0hvQy1yVS1QczdJRTlMNnZ2eHktVmgxOXRpY3poUWlxb0pxOXRLUVptYTlIdk9OMUQtIC1YUzBdLS0+PC9nPjwvc3ZnPg==" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="1-unit-tests">1. 単体テスト（Unit Tests）<a class="headerlink" href="#1-unit-tests" title="Permanent link">&para;</a></h3>
+<p><strong>対象:</strong></p>
+<ul>
+<li>ドメインモデル（Puyo, Field, Game, Chain）</li>
+<li>ビジネスロジック（スコア計算、連鎖検出）</li>
+<li>ユーティリティ関数</li>
+<li>個別のReactコンポーネント</li>
+</ul>
+<p><strong>ツール:</strong></p>
+<ul>
+<li>Vitest: 高速なテストランナー</li>
+<li>React Testing Library: コンポーネントテスト</li>
+<li>Mock Service Worker: API モック</li>
+</ul>
+<p><strong>テストケース例:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Puyo&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;同じ色のぷよを判定できる&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">puyo1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">puyo2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">puyo3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">BLUE</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">puyo1</span><span class="p">.</span><span class="nx">isSameColor</span><span class="p">(</span><span class="nx">puyo2</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">puyo1</span><span class="p">.</span><span class="nx">isSameColor</span><span class="p">(</span><span class="nx">puyo3</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Field&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;4つ以上連結したぷよを検出できる&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Field</span><span class="p">(</span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="mf">13</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// ぷよを配置</span>
+<span class="w">    </span><span class="nx">field</span><span class="p">.</span><span class="nx">placePuyo</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">),</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">12</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">field</span><span class="p">.</span><span class="nx">placePuyo</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">),</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">12</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">field</span><span class="p">.</span><span class="nx">placePuyo</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">),</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">12</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">field</span><span class="p">.</span><span class="nx">placePuyo</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">),</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">12</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">connected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">findConnectedPuyos</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">12</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">connected</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mf">4</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="2-integration-tests">2. 統合テスト（Integration Tests）<a class="headerlink" href="#2-integration-tests" title="Permanent link">&para;</a></h3>
+<p><strong>対象:</strong></p>
+<ul>
+<li>レイヤー間の連携</li>
+<li>状態管理の統合</li>
+<li>イベントフローの検証</li>
+</ul>
+<p><strong>ツール:</strong></p>
+<ul>
+<li>Vitest</li>
+<li>React Testing Library</li>
+<li>Testing Hooks</li>
+</ul>
+<p><strong>テストケース例:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;GameController Integration&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ぷよの移動から表示更新まで&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getByTestId</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span><span class="w"> </span><span class="o">/&gt;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">gameBoard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getByTestId</span><span class="p">(</span><span class="s1">&#39;game-board&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 左移動</span>
+<span class="w">    </span><span class="nx">fireEvent</span><span class="p">.</span><span class="nx">keyDown</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ArrowLeft&#39;</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// フィールドの更新を確認</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">waitFor</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">gameBoard</span><span class="p">).</span><span class="nx">toHaveTextContent</span><span class="p">(</span><span class="s1">&#39;移動完了&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="3-e2eend-to-end-tests">3. E2Eテスト（End-to-End Tests）<a class="headerlink" href="#3-e2eend-to-end-tests" title="Permanent link">&para;</a></h3>
+<p><strong>対象:</strong></p>
+<ul>
+<li>完全なユーザーシナリオ</li>
+<li>ブラウザ互換性</li>
+<li>パフォーマンス</li>
+</ul>
+<p><strong>ツール:</strong></p>
+<ul>
+<li>Playwright: クロスブラウザ自動化</li>
+<li>Lighthouse: パフォーマンス測定</li>
+</ul>
+<p><strong>テストケース例:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ゲーム開始から連鎖まで&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">page</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">page</span><span class="p">.</span><span class="kr">goto</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// ゲーム開始</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">page</span><span class="p">.</span><span class="nx">click</span><span class="p">(</span><span class="s1">&#39;button:has-text(&quot;スタート&quot;)&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// ぷよ操作</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">page</span><span class="p">.</span><span class="nx">keyboard</span><span class="p">.</span><span class="nx">press</span><span class="p">(</span><span class="s1">&#39;ArrowLeft&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">page</span><span class="p">.</span><span class="nx">keyboard</span><span class="p">.</span><span class="nx">press</span><span class="p">(</span><span class="s1">&#39;ArrowLeft&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">page</span><span class="p">.</span><span class="nx">keyboard</span><span class="p">.</span><span class="nx">press</span><span class="p">(</span><span class="s1">&#39;Space&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// ハードドロップ</span>
+
+<span class="w">  </span><span class="c1">// 連鎖発生を確認</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">expect</span><span class="p">(</span><span class="nx">page</span><span class="p">.</span><span class="nx">locator</span><span class="p">(</span><span class="s1">&#39;.chain-counter&#39;</span><span class="p">)).</span><span class="nx">toContainText</span><span class="p">(</span><span class="s1">&#39;1連鎖&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="_3">レイヤー別テスト戦略<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">プレゼンテーション層<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><strong>テスト内容:</strong></p>
+<ul>
+<li>コンポーネントの表示</li>
+<li>ユーザーインタラクション</li>
+<li>レスポンシブデザイン</li>
+</ul>
+<p><strong>アプローチ:</strong></p>
+<ul>
+<li>スナップショットテスト</li>
+<li>ビジュアルリグレッションテスト</li>
+<li>アクセシビリティテスト</li>
+</ul>
+<h3 id="_5">アプリケーション層<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><strong>テスト内容:</strong></p>
+<ul>
+<li>ユースケースの実行</li>
+<li>入力検証</li>
+<li>エラーハンドリング</li>
+</ul>
+<p><strong>アプローチ:</strong></p>
+<ul>
+<li>モックを使用した独立テスト</li>
+<li>境界値テスト</li>
+<li>異常系テスト</li>
+</ul>
+<h3 id="_6">ドメイン層<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><strong>テスト内容:</strong></p>
+<ul>
+<li>ビジネスルール</li>
+<li>不変条件</li>
+<li>ドメインイベント</li>
+</ul>
+<p><strong>アプローチ:</strong></p>
+<ul>
+<li>プロパティベーステスト</li>
+<li>状態遷移テスト</li>
+<li>イベント駆動テスト</li>
+</ul>
+<h3 id="_7">インフラストラクチャ層<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p><strong>テスト内容:</strong></p>
+<ul>
+<li>外部システム連携</li>
+<li>データ永続化</li>
+<li>パフォーマンス</li>
+</ul>
+<p><strong>アプローチ:</strong></p>
+<ul>
+<li>インメモリ実装でのテスト</li>
+<li>契約テスト</li>
+<li>負荷テスト</li>
+</ul>
+<h2 id="_8">パフォーマンステスト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjM0OHB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6NjI3cHg7aGVpZ2h0OjM0OHB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDYyNyAzNDgiIHdpZHRoPSI2MjdweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjwhLS1jbHVzdGVyID8/Pz8/Pz8/Pz8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4uLi4uLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjEiIGRhdGEtdWlkPSJlbnQwMDAyIiBpZD0iY2x1c3Rlcl8uLi4uLi4uLi4uLi4uIj48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjE1NS42IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMjczIiB4PSI3IiB5PSI3Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE4MS45OTkyIiB4PSI1Mi41MDA0IiB5PSIyMS45OTUxIj4mIzEyNTI0OyYjMTI1MzE7JiMxMjQ4MDsmIzEyNTIyOyYjMTI1MzE7JiMxMjQ2NDsmIzEyNDk3OyYjMTI1MDE7JiMxMjQ1NzsmIzEyNTQwOyYjMTI1MTA7JiMxMjUzMTsmIzEyNDczOzwvdGV4dD48L2c+PCEtLWNsdXN0ZXIgPz8/Pz8/Pz8/Py0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0iLi4uLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iNyIgZGF0YS11aWQ9ImVudDAwMDYiIGlkPSJjbHVzdGVyXy4uLi4uLi4uLi4iPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTU1LjYiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSIzMTciIHg9IjMwNCIgeT0iNyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzkuOTk5NCIgeD0iMzkyLjUwMDMiIHk9IjIxLjk5NTEiPiYjMTI0NjY7JiMxMjU0MDsmIzEyNTEyOyYjMTI0OTc7JiMxMjUwMTsmIzEyNDU3OyYjMTI1NDA7JiMxMjUxMDsmIzEyNTMxOyYjMTI0NzM7PC90ZXh0PjwvZz48IS0tY2x1c3RlciA/Pz8/Py0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0iLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjEzIiBkYXRhLXVpZD0iZW50MDAxMCIgaWQ9ImNsdXN0ZXJfLi4uLi4iPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTU1LjU5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMjc1IiB4PSI3IiB5PSIxODYuNiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OS45OTk3IiB4PSIxMDkuNTAwMiIgeT0iMjAxLjU5NTEiPiYjMzYwMDA7JiMzMzY1NTsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgZnBzLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImZwcyIgZGF0YS1zb3VyY2UtbGluZT0iMiIgZGF0YS11aWQ9ImVudDAwMDMiIGlkPSJlbnRpdHlfZnBzIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIyLjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjczLjM4MTciIHg9IjIzLjMxIiB5PSI0MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjUzLjM4MTciIHg9IjMzLjMxIiB5PSI1Ny45OTUxIj5GUFMmIzI4MjA0OyYjMjM0NTA7PC90ZXh0PjwvZz48IS0tZW50aXR5IGNscy0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJjbHMiIGRhdGEtc291cmNlLWxpbmU9IjMiIGRhdGEtdWlkPSJlbnQwMDA0IiBpZD0iZW50aXR5X2NscyI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyMi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMzEuOTk5NSIgeD0iMTMyIiB5PSI0MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjExMS45OTk1IiB4PSIxNDIiIHk9IjU3Ljk5NTEiPiYjMTI1MjQ7JiMxMjQ1MjsmIzEyNDUwOyYjMTI0NTQ7JiMxMjQ4ODsmIzEyNDcxOyYjMTI1MDE7JiMxMjQ4ODs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgZmNwLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImZjcCIgZGF0YS1zb3VyY2UtbGluZT0iNCIgZGF0YS11aWQ9ImVudDAwMDUiIGlkPSJlbnRpdHlfZmNwIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIyLjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEwMy45OTk2IiB4PSIyMyIgeT0iMTI0LjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My45OTk2IiB4PSIzMyIgeT0iMTQwLjI5NTEiPiYjMjEwMjE7JiMyMjIzODsmIzI1NTUxOyYjMzAwMTE7JiMyNjE3ODsmIzM4MjkxOzwvdGV4dD48L2c+PCEtLWVudGl0eSBpbnB1dC0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJpbnB1dCIgZGF0YS1zb3VyY2UtbGluZT0iOCIgZGF0YS11aWQ9ImVudDAwMDciIGlkPSJlbnRpdHlfaW5wdXQiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMjIuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNzUuOTk5OCIgeD0iMzIwIiB5PSI0MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU1Ljk5OTgiIHg9IjMzMCIgeT0iNTcuOTk1MSI+JiMyMDgzNzsmIzIxMTQ3OyYjMzY5MzM7JiMyNDMxMDs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgYW5pbWF0aW9uLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImFuaW1hdGlvbiIgZGF0YS1zb3VyY2UtbGluZT0iOSIgZGF0YS11aWQ9ImVudDAwMDgiIGlkPSJlbnRpdHlfYW5pbWF0aW9uIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIyLjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE3My45OTkzIiB4PSI0MzEiIHk9IjQyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTUzLjk5OTMiIHg9IjQ0MSIgeT0iNTcuOTk1MSI+JiMxMjQ1MDsmIzEyNDkxOyYjMTI1MTM7JiMxMjU0MDsmIzEyNDcxOyYjMTI1MTk7JiMxMjUzMTsmIzI4MzY5OyYjMTI0MjU7JiMxMjM2MzsmIzEyMzczOzwvdGV4dD48L2c+PCEtLWVudGl0eSBtZW1vcnktLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0ibWVtb3J5IiBkYXRhLXNvdXJjZS1saW5lPSIxMCIgZGF0YS11aWQ9ImVudDAwMDkiIGlkPSJlbnRpdHlfbWVtb3J5Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIyLjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEwMy45OTk2IiB4PSIzMjAiIHk9IjEyNC4zIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODMuOTk5NiIgeD0iMzMwIiB5PSIxNDAuMjk1MSI+JiMxMjUxMzsmIzEyNTE0OyYjMTI1MjI7JiMyMDM1MTsmIzI5OTkyOyYjMzczMjc7PC90ZXh0PjwvZz48IS0tZW50aXR5IG1hbnktLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0ibWFueSIgZGF0YS1zb3VyY2UtbGluZT0iMTQiIGRhdGEtdWlkPSJlbnQwMDExIiBpZD0iZW50aXR5X21hbnkiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMjIuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTAzLjk5OTYiIHg9IjIzIiB5PSIyMjEuNiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgzLjk5OTYiIHg9IjMzIiB5PSIyMzcuNTk1MSI+JiMyMjgyMzsmIzM3MzI3OyYjMTI0MDc7JiMxMjQyNDsmIzIwOTY2OyYjMjk3MDI7PC90ZXh0PjwvZz48IS0tZW50aXR5IGxvbmctLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0ibG9uZyIgZGF0YS1zb3VyY2UtbGluZT0iMTUiIGRhdGEtdWlkPSJlbnQwMDEyIiBpZD0iZW50aXR5X2xvbmciPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMjIuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTAzLjk5OTYiIHg9IjE2MiIgeT0iMjIxLjYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My45OTk2IiB4PSIxNzIiIHk9IjIzNy41OTUxIj4mIzM4MjYzOyYjMjYxNzg7JiMzODI5MTsmIzEyNTAzOyYjMTI1MjQ7JiMxMjQ1Mjs8L3RleHQ+PC9nPjwhLS1lbnRpdHkgY2hhaW4tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iY2hhaW4iIGRhdGEtc291cmNlLWxpbmU9IjE2IiBkYXRhLXVpZD0iZW50MDAxMyIgaWQ9ImVudGl0eV9jaGFpbiI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyMi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI3NS45OTk4IiB4PSIzNyIgeT0iMzAzLjg5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuOTk5OCIgeD0iNDciIHk9IjMxOS44ODUxIj4mIzM2ODk5OyYjMzIxNTQ7JiMzNjg5OTsmIzM3NzgyOzwvdGV4dD48L2c+PCEtLVNSQz1bWFAzWElpOUc1Q1VfeG9kNjdnUkZHS3ptTU1PM1RvVHBWUDBHdDNzZUF3YWJFSUNiaUo4amFHVzNCTFJxQ0FVeGtSVmV4aXY5ekFLbGJ5bFh6X19wRXlTa3cwd1huTDkxckgzYzJBeThUT0hQLWM0bDIxczQwRGFKbVdWMksweFZEVkxPcU9jemhzZXhrdGxIc3ZtX3pwTUxMREkzU2NLcEp1bE82RGFUaVdjMlhzb0xqZTBkQ1JzS096b3h1T0RYdkZqbkR1b2tNVEF4cDdocWliOUo1RmtONjVqOFdUNF9GaHBubTR5N1lUbFd1TDlNNlJIeXZFSElHV1ZRMkJUZkRaTVFZZFdLVGYyVGVEajZEdjA5R1dzSkU4UDVqd2k4TldIZHR2elZTVlNuUVZhSUNta2NQTFZfUUF1TmVfTVBBNnVBQVJkanJjaXk1SzVxTHlXeXRmaDQ1eXNpWEQzZ1hhWTJMTk8xWEFsaVVmOGVNUklPNF9OeFVEYU5SdEJVby12dUkwb2dyN3UwXS0tPjwvZz48L3N2Zz4=" class="uml" alt="uml diagram" title="" /></p>
+<p><strong>パフォーマンス目標:</strong></p>
+<ul>
+<li>60 FPS の維持</li>
+<li>入力遅延 &lt; 16ms</li>
+<li>メモリリーク 0</li>
+<li>初回描画 &lt; 3秒</li>
+</ul>
+<h2 id="_9">テストデータ管理<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">フィクスチャ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// テスト用フィールドデータ</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">fixtures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">emptyField</span><span class="o">:</span><span class="w"> </span><span class="kt">createEmptyField</span><span class="p">(),</span>
+<span class="w">  </span><span class="nx">nearChain</span><span class="o">:</span><span class="w"> </span><span class="kt">createFieldWithPattern</span><span class="p">([</span>
+<span class="w">    </span><span class="s1">&#39;......&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;......&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;...R..&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;..RR..&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;..RB..&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">]),</span>
+<span class="w">  </span><span class="nx">gameOver</span><span class="o">:</span><span class="w"> </span><span class="kt">createFieldWithPattern</span><span class="p">([</span>
+<span class="w">    </span><span class="s1">&#39;..RB..&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;RRBBGG&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;RRBBGG&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// ... 満杯状態</span>
+<span class="w">  </span><span class="p">])</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3 id="_11">ファクトリー<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// テストデータ生成</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">factories</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">puyo</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">color?</span><span class="o">:</span><span class="w"> </span><span class="kt">PuyoColor</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">(</span><span class="nx">color</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">13</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Field</span><span class="p">(</span><span class="nx">width</span><span class="p">,</span><span class="w"> </span><span class="nx">height</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">game</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">status?</span><span class="o">:</span><span class="w"> </span><span class="kt">GameStatus</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Game</span><span class="p">(</span><span class="nx">status</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">GameStatus</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">)</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2 id="cicd">CI/CDでのテスト実行<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/test.yml</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test</span>
+
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pull_request</span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-node@v3</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm ci</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run unit tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run test:unit</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run integration tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run test:integration</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run E2E tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run test:e2e</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload coverage</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecov/codecov-action@v3</span>
+</code></pre></div>
+<h2 id="_12">テストカバレッジ目標<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">レイヤー別カバレッジ目標<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>レイヤー</th>
+<th>カバレッジ目標</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ドメイン層</td>
+<td>95%以上</td>
+</tr>
+<tr>
+<td>アプリケーション層</td>
+<td>85%以上</td>
+</tr>
+<tr>
+<td>プレゼンテーション層</td>
+<td>80%以上</td>
+</tr>
+<tr>
+<td>インフラストラクチャ層</td>
+<td>70%以上</td>
+</tr>
+<tr>
+<td><strong>全体</strong></td>
+<td><strong>85%以上</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="codecov">Codecov統合設定<a class="headerlink" href="#codecov" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>目標値</th>
+<th>闾値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全体プロジェクト</td>
+<td>85%</td>
+<td>2%</td>
+</tr>
+<tr>
+<td>新規コード（Patch）</td>
+<td>90%</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>関数カバレッジ</td>
+<td>90%</td>
+<td>-</td>
+</tr>
+<tr>
+<td>ブランチカバレッジ</td>
+<td>80%</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">カバレッジ管理機能<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>PRコメント</strong>: カバレッジ変化の自動レポート</li>
+<li><strong>トレンド解析</strong>: 長期的な品質変化の追跡</li>
+<li><strong>闾値アラート</strong>: カバレッジ低下時のCI失敗</li>
+<li><strong>バッジ表示</strong>: READMEでのリアルタイムステータス</li>
+</ul>
+<h2 id="_15">テスト実行方針<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">開発時<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ファイル保存時に関連テストを自動実行</li>
+<li>プリコミットフックでテスト実行</li>
+<li>TDDサイクルの厳守</li>
+</ul>
+<h3 id="cicd_1">CI/CD<a class="headerlink" href="#cicd_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>プルリクエスト時に全テスト実行</li>
+<li>マージ時にE2Eテスト実行</li>
+<li>定期的な負荷テスト実行</li>
+</ul>
+<h3 id="_17">リリース前<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li>全ブラウザでのE2Eテスト</li>
+<li>パフォーマンステスト</li>
+<li>セキュリティテスト</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

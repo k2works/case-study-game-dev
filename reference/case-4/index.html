@@ -1,0 +1,1132 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+        <link rel="prev" href="../case-3/">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Case4 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Case4
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 プロジェクト概要・戦略的決定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 プロジェクト概要・戦略的決定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 プロジェクトのゴール
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔥 重要な戦略的転換
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚡ 技術的ハイライト
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Phase 1 要件・設計ドキュメント
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Phase 1 要件・設計ドキュメント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 要件定義
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ 設計仕様
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      📝 アーキテクチャ決定記録
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📝 アーキテクチャ決定記録">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      アーキテクチャ・設計
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      技術スタック
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      開発プロセス・手法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      品質管理・アーキテクチャ検証
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      インフラ・運用
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Phase 2-3実績・完了
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎮 開発ロードマップ
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎮 開発ロードマップ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v10-mvp-" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1.0 (MVP) - 基本ゲーム
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v11-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1.1 (AI機能追加) - 戦略的投入
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v12-mayah-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1.2 (mayah AI評価システム) - 完了実績 ✅
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v121-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1.2.1 (AI学習システム統合) - 完了実績 ✅
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v13-14-" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1.3-1.4 - 将来拡張（長期計画）
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏁 Phase 3 開発実績
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏁 Phase 3 開発実績">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#6-2025-09-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      イテレーション6（完了）✅ - 2025-09-02
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-2025-08-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      イテレーション5（完了）✅ - 2025-08-25
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-2025-08-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      イテレーション4（完了）✅ - 2025-08-19
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-2025-08-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      イテレーション3（完了）✅ - 2025-08-18
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-2025-01-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      イテレーション2（完了）✅ - 2025-01-16
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2025-08-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      イテレーション1（完了）✅ - 2025-08-13
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 開発プロセス実績
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 開発プロセス実績">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      アジャイル開発実践
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      技術的成果
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      プロジェクト管理成果
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">まずこれを読もうリスト<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">🚀 プロジェクト概要・戦略的決定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">🎯 プロジェクトのゴール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><strong>AI搭載ぷよぷよゲーム</strong>の開発により、従来のゲーム実装との差別化を図り、最新のWeb技術（TensorFlow.js）を活用したユニークなゲーム体験を提供する。</p>
+<h3 id="_4">🔥 重要な戦略的転換<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AI機能を低優先度から高優先度に格上げ</strong></li>
+<li><strong>MVP直後（v1.1）でAI自動プレイ機能を投入</strong></li>
+<li><strong>v1.2でAI学習システムを実装し継続的性能向上を実現</strong></li>
+</ul>
+<h3 id="_5">⚡ 技術的ハイライト<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>関数型プログラミング</strong>: Lodash/fpによるイミュータブル設計</li>
+<li><strong>TDD + AI/ML</strong>: VitestとProperty-Based Testing</li>
+<li><strong>ヘキサゴナルアーキテクチャ</strong>: AI機能統合に対応したクリーンアーキテクチャ</li>
+</ul>
+<h2 id="phase-1">🎯 Phase 1 要件・設計ドキュメント<a class="headerlink" href="#phase-1" title="Permanent link">&para;</a></h2>
+<h3 id="_6">📋 要件定義<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="requirements/%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E8%A8%88%E7%94%BB/">リリース計画</a> - <strong>🔥 AI機能をMVP直後に投入する戦略的リリース計画</strong>。v1.1でAI機能、v1.2でAI学習システムを実装。</li>
+<li><a href="requirements/%E4%BB%95%E6%A7%98/">仕様</a> - システムの要件をまとめる。ユーザーの視点からシステムが何をするかを理解するために必要。</li>
+<li><a href="requirements/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AA%E3%83%BC/">ユーザーストーリー</a> - <strong>🤖 エピック2「AIによるオートプレイ」を高優先度に格上げ</strong>。AI自動プレイ・分析・戦略機能を定義。</li>
+<li><a href="requirements/%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9/">ユースケース</a> - システムの機能を表す。システムが何をするかを理解するのに必要。</li>
+<li><a href="requirements/%E3%83%86%E3%82%B9%E3%83%88%E6%88%A6%E7%95%A5/">テスト戦略</a> - <strong>🧪 AI・機械学習層テストを含むTDD開発サイクル</strong>。Vitest + React Testing Libraryでの包括的テスト戦略。</li>
+<li><a href="requirements/%E9%9D%9E%E6%A9%9F%E8%83%BD%E8%A6%81%E4%BB%B6/">非機能要件</a> - パフォーマンス、セキュリティ、可用性などの非機能要件を定義。</li>
+<li><a href="requirements/%E9%81%8B%E7%94%A8%E8%A6%81%E4%BB%B6/">運用要件</a> - CI/CD、監視、運用手順などの運用要件を定義。</li>
+<li><a href="requirements/%E6%8A%80%E8%A1%93%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF/">技術スタック</a> - <strong>🚀 TensorFlow.js統合済み技術構成</strong>。React + TypeScript + AI/MLライブラリの統合スタック。</li>
+</ul>
+<h3 id="_7">🏗️ 設計仕様<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="design/%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88/">アーキテクチャ設計</a> - <strong>⚡ ヘキサゴナルアーキテクチャ</strong>によるシステム設計。AI機能統合に対応した全体像。</li>
+<li><a href="design/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AB%E8%A8%AD%E8%A8%88/">データモデル設計</a> - <strong>🔧 関数型プログラミング対応</strong>。イミュータブルデータ構造と純粋関数による設計。</li>
+<li><a href="design/%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E3%83%A2%E3%83%87%E3%83%AB%E8%A8%AD%E8%A8%88/">ドメインモデル設計</a> - <strong>🎯 DDD戦術的パターン</strong>によるドメインモデルとユビキタス言語の定義。</li>
+<li><a href="design/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%83%BC%E3%82%B9%E8%A8%AD%E8%A8%88/">ユーザーインターフェース設計</a> - <strong>🎨 AI思考可視化UI</strong>を含むUI/UXデザインとレスポンシブ対応。</li>
+<li><a href="design/%E5%AE%9F%E8%A3%85%E6%88%A6%E7%95%A5/">実装戦略</a> - <strong>⚙️ 関数型 + TDD開発フロー</strong>。Lodash/fpを活用した段階的実装アプローチ。</li>
+</ul>
+<h3 id="_8">📝 アーキテクチャ決定記録<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="adr/">ADR一覧</a> - <strong>📚 13個の重要な技術・戦略決定</strong>を記録。TensorFlow.js統合・Web Workers AI処理を含む全体戦略。（Phase 1-3で全ADR実装完了✅）</li>
+</ul>
+<h4 id="_9">アーキテクチャ・設計<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="adr/001-%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E9%81%B8%E5%AE%9A/">ADR-001: アーキテクチャ選定</a> - ヘキサゴナルアーキテクチャ採用の決定</li>
+<li><a href="adr/003-%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E9%A7%86%E5%8B%95%E8%A8%AD%E8%A8%88%E6%8E%A1%E7%94%A8/">ADR-003: ドメイン駆動設計採用</a> - DDD戦術的パターンの採用</li>
+<li><a href="adr/011-%E3%83%98%E3%82%AD%E3%82%B5%E3%82%B4%E3%83%8A%E3%83%AB%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E3%83%AA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0/">ADR-011: ヘキサゴナルアーキテクチャリファクタリング</a> - アーキテクチャ完全準拠への改善</li>
+</ul>
+<h4 id="_10">技術スタック<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="adr/002-%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89%E6%8A%80%E8%A1%93%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E9%81%B8%E5%AE%9A/">ADR-002: フロントエンド技術スタック選定</a> - React + TypeScript構成の選定</li>
+<li><a href="adr/012-TensorFlow.js%E7%B5%B1%E5%90%88/">ADR-012: TensorFlow.js統合</a> - <strong>🤖 AI思考エンジン統合決定</strong></li>
+<li><a href="./adr/013-Web Workers AI処理.md">ADR-013: Web Workers AI処理</a> - <strong>⚡ 非同期AI処理基盤決定</strong></li>
+</ul>
+<h4 id="_11">開発プロセス・手法<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="adr/004-TDD%E9%96%8B%E7%99%BA%E6%89%8B%E6%B3%95%E6%8E%A1%E7%94%A8/">ADR-004: TDD開発手法採用</a> - テスト駆動開発手法の採用</li>
+<li><a href="adr/006-%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E6%8E%A1%E7%94%A8/">ADR-006: 関数型プログラミング採用</a> - 関数型プログラミングパラダイムの採用</li>
+<li><a href="adr/007-%E3%83%86%E3%82%B9%E3%83%88%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E5%A4%89%E6%9B%B4/">ADR-007: テストライブラリ変更</a> - <strong>🔄 Vitest + React Testing Library採用</strong></li>
+</ul>
+<h4 id="_12">品質管理・アーキテクチャ検証<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="adr/008-%E3%82%B5%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%9E%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E8%A4%87%E9%9B%91%E5%BA%A6%E5%88%B6%E9%99%90/">ADR-008: サイクロマティック複雑度制限</a> - 複雑度制限による品質管理</li>
+<li><a href="adr/009-dependency-cruiser%E6%8E%A1%E7%94%A8/">ADR-009: dependency-cruiser採用</a> - アーキテクチャルール検証</li>
+<li><a href="adr/010-Codecov%E6%8E%A1%E7%94%A8/">ADR-010: Codecov採用</a> - コード品質管理サービス採用</li>
+</ul>
+<h4 id="_13">インフラ・運用<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="adr/005-Vercel%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88%E6%8E%A1%E7%94%A8/">ADR-005: Vercelデプロイメント採用</a> - Vercelホスティング戦略</li>
+</ul>
+<h2 id="phase-2-3">🚀 Phase 2-3実績・完了<a class="headerlink" href="#phase-2-3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="./development">開発ドキュメント</a> - <strong>✅ イテレーション5完了実績</strong>を含む開発手順とガイドライン。mayah AI評価システムの実装完了。</li>
+<li><a href="development/iteration-5-completion-report/">イテレーション5完了報告書</a> - <strong>🤖 mayah AI評価システム実装完了</strong>の詳細実績</li>
+<li><a href="development/iteration-5-retrospective/">イテレーション5ふりかえり</a> - <strong>⚡ 3つのAI評価サービス実装</strong>のKPT分析</li>
+<li><a href="development/iteration-4-completion-report/">イテレーション4完了報告書</a> - <strong>📊 AI分析・戦略機能実装完了</strong>の詳細実績</li>
+<li><a href="development/iteration-4-retrospective/">イテレーション4ふりかえり</a> - <strong>🎯 mayah AI設計拡張</strong>のKPT分析</li>
+<li><a href="development/iteration-3-completion-report/">イテレーション3完了報告書</a> - <strong>🤖 AI機能基盤実装完了</strong>の詳細実績</li>
+<li><a href="development/iteration-3-retrospective/">イテレーション3ふりかえり</a> - <strong>⚡ TensorFlow.js・Web Workers統合</strong>のKPT分析</li>
+<li><a href="development/iteration-2-completion-report/">イテレーション2完了報告書</a> - <strong>🎯 テストカバレッジ91.18%達成</strong>の詳細実績</li>
+<li><a href="development/iteration-2-retrospective/">イテレーション2ふりかえり</a> - <strong>🚀 目標超過達成（91.18%）</strong>のKPT分析</li>
+<li><a href="development/iteration1-completion-report/">イテレーション1完了報告書</a> - 予定より3日早期完了の詳細実績</li>
+<li><a href="development/iteration1-retrospective/">イテレーション1ふりかえり</a> - KPT方式による改善点抽出</li>
+<li><a href="./operation">運用ドキュメント</a> - <strong>✅ 運用基盤構築完了</strong>。CI/CD・品質管理・自動テスト体制確立。AI処理監視体制追加。</li>
+<li><a href="./journal">日誌</a> - <strong>📊 開発履歴記録</strong>。Phase 1-3の実装軌跡とベストプラクティス蓄積。</li>
+</ul>
+<h2 id="_14">🎮 開発ロードマップ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="v10-mvp-">v1.0 (MVP) - 基本ゲーム<a class="headerlink" href="#v10-mvp-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>イテレーション1完了（2025-08-13）</strong>: 基本ゲームプレイ機能</li>
+<li>✅ <strong>イテレーション2完了（2025-01-16）</strong>: テストカバレッジ91.18%達成</li>
+<li>✅ 関数型プログラミング基盤</li>
+<li>✅ TDD開発サイクル確立</li>
+<li>✅ 高品質コードベース確立（91.18%カバレッジ）</li>
+</ul>
+<h3 id="v11-ai-">v1.1 (AI機能追加) - 戦略的投入<a class="headerlink" href="#v11-ai-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>🤖 AI自動プレイ機能</strong>（基盤完成）</li>
+<li>TensorFlow.js 4層ニューラルネットワーク</li>
+<li>Web Workers非同期処理</li>
+<li>AIControlPanel（思考速度調整）</li>
+<li>AIInsights（リアルタイム可視化）</li>
+<li>✅ <strong>📊 AIパフォーマンス分析</strong>（完成）</li>
+<li>PerformanceAnalysisService実装</li>
+<li>セッションデータ記録・統計収集</li>
+<li>人間プレイヤー比較機能</li>
+<li>✅ <strong>⚙️ AI戦略設定</strong>（完成）</li>
+<li>複数AI戦略（攻撃型、防御型、連鎖重視）</li>
+<li>StrategySettings UI実装</li>
+<li>戦略保存・読み込み機能</li>
+</ul>
+<h3 id="v12-mayah-ai-">v1.2 (mayah AI評価システム) - 完了実績 ✅<a class="headerlink" href="#v12-mayah-ai-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>🧠 mayah AI 4要素評価システム完成</strong></li>
+<li>OperationEvaluationService（511行・関数型プログラミング）</li>
+<li>ChainEvaluationService（1,089行・GTR定跡・パターンマッチング）</li>
+<li>StrategyEvaluationService（772行・発火判断・状況分析・リスク管理）</li>
+<li>✅ <strong>⚡ 高度技術パターン実証</strong>（関数型・システム統合・パターンマッチング）</li>
+<li>✅ <strong>📊 品質実績</strong>: TypeScript型カバレッジ94%、平均評価時間85ms</li>
+</ul>
+<h3 id="v121-ai-">v1.2.1 (AI学習システム統合) - 完了実績 ✅<a class="headerlink" href="#v121-ai-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>🤖 AI学習システム11コンポーネント完全実装</strong></li>
+<li>TensorFlowTrainer（学習エンジン）</li>
+<li>LearningService（学習管理）</li>
+<li>AutoLearningGameService（自動学習ゲーム統合）</li>
+<li>DataCollectionService、BatchProcessingService等</li>
+<li>✅ <strong>🛠️ テスト品質向上プロセス確立</strong></li>
+<li>単体テストエラー4件→0件完全解決</li>
+<li>システマチックなテスト修正アプローチ導入</li>
+<li>✅ <strong>📊 品質実績</strong>: 21 SP完了、テストカバレッジ80.57%維持、テスト成功率98.3%</li>
+</ul>
+<h3 id="v13-14-">v1.3-1.4 - 将来拡張（長期計画）<a class="headerlink" href="#v13-14-" title="Permanent link">&para;</a></h3>
+<ul>
+<li>🎯 AI学習システム完全統合・最適化</li>
+<li>🎨 視覚・音響効果強化</li>
+<li>📱 モバイル対応・PWA</li>
+<li>⚡ パフォーマンス最適化</li>
+</ul>
+<h2 id="phase-3">🏁 Phase 3 開発実績<a class="headerlink" href="#phase-3" title="Permanent link">&para;</a></h2>
+<h3 id="6-2025-09-02">イテレーション6（完了）✅ - 2025-09-02<a class="headerlink" href="#6-2025-09-02" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>🤖 AI学習システム統合完了</strong>（11コンポーネント実装）</li>
+<li><strong>📈 Story Points 21完了</strong>（100%達成）</li>
+<li><strong>⚡ 技術実装成果</strong>:</li>
+<li>✅ TensorFlowTrainer（学習エンジン）実装</li>
+<li>✅ LearningService（学習管理）実装</li>
+<li>✅ AutoLearningGameService（自動学習ゲーム統合）実装</li>
+<li>✅ DataCollectionService、BatchProcessingService等学習関連サービス実装</li>
+<li><strong>🛠️ テスト品質向上</strong>: 単体テストエラー4件→0件完全解決、体系的修正アプローチ確立</li>
+<li><strong>🎯 品質実績</strong>: テストカバレッジ80.57%維持、テスト成功率98.3%（1,034/1,052件通過）</li>
+<li><strong>🏆 戦略的意義</strong>: AI学習システム基盤完成により、継続的AI性能向上基盤確立</li>
+<li><strong>📊 技術成果</strong>: AI学習データパイプライン完成、テスト品質管理プロセス標準化</li>
+<li><strong>📝 詳細</strong>: <a href="development/%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B36_%E5%AE%8C%E4%BA%86%E5%A0%B1%E5%91%8A%E6%9B%B8/">完了報告書</a> | <a href="development/%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B36_%E3%81%B5%E3%82%8A%E3%81%8B%E3%81%88%E3%82%8A_KPT/">ふりかえり</a></li>
+</ul>
+<h3 id="5-2025-08-25">イテレーション5（完了）✅ - 2025-08-25<a class="headerlink" href="#5-2025-08-25" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>🧠 mayah AI評価システム実装完了</strong>（操作・連鎖・戦略評価）</li>
+<li><strong>📈 Story Points 39完了</strong>（100%達成）</li>
+<li><strong>⚡ 技術実装成果</strong>:</li>
+<li>✅ OperationEvaluationService実装（511行・関数型プログラミング実証）</li>
+<li>✅ ChainEvaluationService実装（1,089行・GTR定跡・パターンマッチング実証）</li>
+<li>✅ StrategyEvaluationService実装（772行・発火判断・状況分析・リスク管理実証）</li>
+<li>✅ <strong>総実装行数2,372行</strong>・高度技術パターン採用</li>
+<li><strong>🎯 品質実績</strong>: TypeScript型カバレッジ94%、平均評価時間85ms、重大バグ0件</li>
+<li><strong>🏆 戦略的意義</strong>: mayah AI 4要素評価システム完成により、ぷよぷよAI分野での技術優位性確立</li>
+<li><strong>📊 技術成果</strong>: 関数型プログラミング・システム統合設計・パターンマッチングの実証完了</li>
+<li><strong>📝 詳細</strong>: <a href="development/iteration-5-completion-report/">完了報告書</a> | <a href="development/iteration-5-retrospective/">ふりかえり</a></li>
+</ul>
+<h3 id="4-2025-08-19">イテレーション4（完了）✅ - 2025-08-19<a class="headerlink" href="#4-2025-08-19" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AI分析・戦略機能実装完了</strong>（v1.1 Phase2）</li>
+<li><strong>Story Points 29完了</strong>（100%達成）</li>
+<li><strong>機能実装成果</strong>:</li>
+<li>PerformanceAnalysisService実装（AIパフォーマンス分析）</li>
+<li>StrategyService拡張（複数AI戦略システム）</li>
+<li>ChartDataService実装（データ可視化機能）</li>
+<li>mayah AI設計拡張（4要素評価システム設計）</li>
+<li><strong>品質実績</strong>: 602件テスト成功（97.6%）、受け入れ基準4/4達成、重大バグ0件</li>
+<li><strong>戦略的成果</strong>: mayah AI実装設計（76 SP・15週間拡張）、長期ロードマップ策定（～v3.0）</li>
+<li><strong>詳細</strong>: <a href="development/iteration-4-completion-report/">完了報告書</a> | <a href="development/iteration-4-retrospective/">ふりかえり</a></li>
+</ul>
+<h3 id="3-2025-08-18">イテレーション3（完了）✅ - 2025-08-18<a class="headerlink" href="#3-2025-08-18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AI機能基盤実装完了</strong>（TensorFlow.js + Web Workers）</li>
+<li><strong>Story Points 21完了</strong>（100%達成）</li>
+<li><strong>技術統合成果</strong>: </li>
+<li>TensorFlow.js v4.22.0統合成功</li>
+<li>Web Workers非同期処理実装</li>
+<li>AI可視化UI完成（AIControlPanel, AIInsights）</li>
+<li>EvaluationService関数型リファクタリング完了（2025-08-19追加）</li>
+<li><strong>品質実績</strong>: 489件テスト（100%通過）、E2E 65件（100%通過）、カバレッジ80.57%</li>
+<li><strong>アーキテクチャ成果</strong>: services/ai/ディレクトリ構造化、domain/services/ai配置、関数型パターン導入</li>
+<li><strong>詳細</strong>: <a href="development/iteration-3-completion-report/">完了報告書</a> | <a href="development/iteration-3-retrospective/">ふりかえり</a></li>
+</ul>
+<h3 id="2-2025-01-16">イテレーション2（完了）✅ - 2025-01-16<a class="headerlink" href="#2-2025-01-16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>テストカバレッジ大幅向上</strong>（63.91% → 91.18%）</li>
+<li><strong>目標を大幅超過達成</strong>（目標80% → 実績91.18%）</li>
+<li><strong>domain/services</strong>: 37.84% → 98.19%（+60.35%）</li>
+<li><strong>infrastructure/adapters</strong>: 16.9% → 99.03%（+82.13%）</li>
+<li><strong>実装成果</strong>: 100個のテストケース追加、3A手法採用</li>
+<li><strong>品質実績</strong>: 403件テスト成功、テスト実行時間4.58秒</li>
+<li><strong>詳細</strong>: <a href="development/iteration-2-completion-report/">完了報告書</a> | <a href="development/iteration-2-retrospective/">ふりかえり</a></li>
+</ul>
+<h3 id="1-2025-08-13">イテレーション1（完了）✅ - 2025-08-13<a class="headerlink" href="#1-2025-08-13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>予定より3日早期完了</strong>（効率性127%）</li>
+<li><strong>テスト176件成功</strong>、重大バグ0件</li>
+<li><strong>TDD + 関数型</strong>の効果実証</li>
+<li><strong>実装成果</strong>: ドメインモデル（Puyo, Field, Game）、基本UI、操作システム</li>
+<li><strong>品質実績</strong>: カバレッジ73.78%、セキュリティ脆弱性0件</li>
+<li><strong>詳細</strong>: <a href="development/iteration1-completion-report/">完了報告書</a> | <a href="development/iteration1-retrospective/">ふりかえり</a></li>
+</ul>
+<h2 id="_15">📚 開発プロセス実績<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">アジャイル開発実践<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>XP（エクストリームプログラミング）</strong>手法の完全実践</li>
+<li><strong>イテレーション型開発</strong>による段階的価値提供</li>
+<li><strong>受け入れ駆動開発</strong>による品質保証</li>
+</ul>
+<h3 id="_17">技術的成果<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ヘキサゴナルアーキテクチャ</strong>の効果的な実装</li>
+<li><strong>関数型プログラミング</strong>による保守性向上</li>
+<li><strong>3層テスト戦略</strong>（単体・統合・E2E）の確立</li>
+<li><strong>継続的品質管理</strong>の自動化体制構築</li>
+<li><strong>AI機能統合</strong>（TensorFlow.js + Web Workers）の成功実装</li>
+<li><strong>非同期処理基盤</strong>によるパフォーマンス向上</li>
+<li><strong>関数型リファクタリング</strong>による評価ロジック純粋関数化</li>
+<li><strong>🧠 mayah AI評価システム完成</strong>（2,372行・高度技術パターン実証）</li>
+<li><strong>⚡ 高性能評価基盤</strong>（平均評価時間85ms・TypeScript型カバレッジ94%）</li>
+<li><strong>🎯 技術優位性確立</strong>（関数型・システム統合・パターンマッチング実証完了）</li>
+</ul>
+<h3 id="_18">プロジェクト管理成果<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>包括的ドキュメント体系</strong>の確立</li>
+<li><strong>ADR（アーキテクチャ決定記録）</strong>による透明な意思決定</li>
+<li><strong>KPTふりかえり</strong>による継続的改善文化</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

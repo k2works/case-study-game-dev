@@ -1,0 +1,868 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>ADR-006: 関数型プログラミング（Functional Programming）採用 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-006-functional-programming" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR-006: 関数型プログラミング（Functional Programming）採用
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="adr-006-functional-programming">ADR-006: 関数型プログラミング（Functional Programming）採用<a class="headerlink" href="#adr-006-functional-programming" title="Permanent link">&para;</a></h1>
+<h2 id="_1">ステータス<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>採用</p>
+<h2 id="_2">背景<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>ぷよぷよゲーム開発において、複雑な状態変更と非同期処理が多数発生する。従来のオブジェクト指向アプローチでは副作用による予期しないバグや、状態の追跡困難、テストの複雑化が課題となる。CLAUDE.local.mdで関数型アプローチの採用が指示されており、保守性とテスト容易性の向上を目的として関数型プログラミングの採用を検討する。</p>
+<h2 id="_3">検討事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">関数型プログラミングの適用判断基準<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>状態管理の複雑さ:</strong> ゲーム状態、フィールド状態、連鎖状態の管理</li>
+<li><strong>副作用の頻度:</strong> DOM操作、非同期処理、状態更新</li>
+<li><strong>テスタビリティ:</strong> 単体テスト、統合テスト、E2Eテストの効率</li>
+<li><strong>並行処理:</strong> ゲームループ、アニメーション、入力処理</li>
+</ol>
+<h3 id="_5">従来の命令型アプローチとの比較<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="_6">命令型アプローチ（従来手法）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nx">Field</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="nx">grid</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">Puyo</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">)[][];</span>
+
+<span class="w">  </span><span class="nx">applyGravity</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 直接状態を変更</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">let</span><span class="w"> </span><span class="nx">writeIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">y</span><span class="o">--</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">grid</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">grid</span><span class="p">[</span><span class="nx">writeIndex</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">grid</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">];</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">writeIndex</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="nx">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="nx">grid</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="nx">writeIndex</span><span class="o">--</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>問題点:</strong>
+- 状態の直接変更による副作用
+- テスト時のモック・スタブの必要性
+- 並行処理時の競合状態リスク
+- デバッグ時の状態追跡困難</p>
+<h4 id="_7">関数型アプローチ（採用手法）<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">fp</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;lodash/fp&#39;</span><span class="p">;</span>
+
+<span class="c1">// イミュータブルな状態変更</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">applyGravity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">Field</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Field</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">newGrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">times</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">times</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">width</span><span class="p">),</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// 純粋な変換処理</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span><span class="w"> </span><span class="nx">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">column</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">flow</span><span class="p">(</span>
+<span class="w">      </span><span class="nx">fp</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mf">0</span><span class="p">),</span>
+<span class="w">      </span><span class="nx">fp</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">grid</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]),</span>
+<span class="w">      </span><span class="nx">fp</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">puyo</span><span class="o">:</span><span class="w"> </span><span class="kt">Puyo</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">puyo</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="kc">null</span><span class="p">),</span>
+<span class="w">      </span><span class="nx">fp</span><span class="p">.</span><span class="nx">reverse</span>
+<span class="w">    </span><span class="p">)(</span><span class="nx">field</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">[];</span>
+
+<span class="w">    </span><span class="c1">// 新しい位置でのぷよ作成</span>
+<span class="w">    </span><span class="nx">column</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">puyo</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">newY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">height</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">index</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">newPuyo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">movePuyoTo</span><span class="p">(</span><span class="nx">createPosition</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">newY</span><span class="p">),</span><span class="w"> </span><span class="nx">puyo</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">newGrid</span><span class="p">[</span><span class="nx">newY</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">newPuyo</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">createFieldFromGrid</span><span class="p">(</span><span class="nx">newGrid</span><span class="p">,</span><span class="w"> </span><span class="nx">field</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<p><strong>利点:</strong>
+- 状態の不変性による予測可能性
+- 純粋関数による簡単なテスト
+- 副作用の分離と制御
+- 関数合成による宣言的なロジック</p>
+<h2 id="_8">決定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p><strong>関数型プログラミング原則とLodash/fpライブラリを採用する</strong></p>
+<h3 id="_9">採用する関数型プリンシパル<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>純粋関数 (Pure Functions)</strong></li>
+<li>同じ入力には常に同じ出力</li>
+<li>副作用の排除</li>
+<li>
+<p>参照透過性の保証</p>
+</li>
+<li>
+<p><strong>イミュータビリティ (Immutability)</strong></p>
+</li>
+<li><code>Object.freeze()</code>によるデータ保護</li>
+<li>状態変更時の新しいインスタンス作成</li>
+<li>
+<p>構造的共有によるパフォーマンス最適化</p>
+</li>
+<li>
+<p><strong>高階関数 (Higher-Order Functions)</strong></p>
+</li>
+<li><code>map</code>, <code>filter</code>, <code>reduce</code>の活用</li>
+<li>カリー化による関数の部分適用</li>
+<li>
+<p>関数を値として扱う設計</p>
+</li>
+<li>
+<p><strong>関数合成 (Function Composition)</strong></p>
+</li>
+<li><code>fp.flow</code>, <code>fp.pipe</code>による処理の連鎖</li>
+<li>小さな関数の組み合わせ</li>
+<li>宣言的なデータ変換パイプライン</li>
+</ol>
+<h3 id="_10">採用ライブラリとパターン<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h4 id="lodashfp">Lodash/fp<a class="headerlink" href="#lodashfp" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">fp</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;lodash/fp&#39;</span><span class="p">;</span>
+
+<span class="c1">// カリー化された関数群</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">filterPuyosByColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="kt">PuyoColor</span><span class="p">,</span><span class="w"> </span><span class="nx">puyos</span><span class="o">:</span><span class="w"> </span><span class="kt">Puyo</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">[]</span><span class="w"> </span><span class="p">=&gt;</span>
+<span class="w">    </span><span class="nx">puyos</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">puyo</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">puyo</span><span class="p">.</span><span class="nx">color</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">color</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">// 関数合成によるデータ変換</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">processChain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">flow</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">detectErasableGroups</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">fp</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">group</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">group</span><span class="p">.</span><span class="nx">size</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">4</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">groups</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span>
+<span class="w">    </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">removeGroups</span><span class="p">(</span><span class="nx">field</span><span class="p">,</span><span class="w"> </span><span class="nx">groups</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">score</span><span class="o">:</span><span class="w"> </span><span class="kt">calculateChainScore</span><span class="p">(</span><span class="nx">groups</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">chainCount</span><span class="o">:</span><span class="w"> </span><span class="kt">groups.length</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">);</span>
+</code></pre></div>
+<h4 id="fast-check-property-based-testing">fast-check (Property-Based Testing)<a class="headerlink" href="#fast-check-property-based-testing" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nx">fc</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;fast-check&#39;</span><span class="p">;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Position functions&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;movePosition should preserve distance&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fc</span><span class="p">.</span><span class="nx">assert</span><span class="p">(</span><span class="nx">fc</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span>
+<span class="w">      </span><span class="nx">fc</span><span class="p">.</span><span class="nx">integer</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">10</span><span class="p">),</span><span class="w"> </span><span class="nx">fc</span><span class="p">.</span><span class="nx">integer</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">10</span><span class="p">),</span>
+<span class="w">      </span><span class="nx">fc</span><span class="p">.</span><span class="nx">integer</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">),</span><span class="w"> </span><span class="nx">fc</span><span class="p">.</span><span class="nx">integer</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">),</span>
+<span class="w">      </span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="nx">dx</span><span class="p">,</span><span class="w"> </span><span class="nx">dy</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createPosition</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">moved</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">movePosition</span><span class="p">(</span><span class="nx">dx</span><span class="p">,</span><span class="w"> </span><span class="nx">dy</span><span class="p">,</span><span class="w"> </span><span class="nx">pos</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">moved</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">pos</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">moved</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">pos</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">expect</span><span class="p">(</span><span class="nx">distance</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">dx</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">dy</span><span class="p">));</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">));</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="_11">実装戦略<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">アーキテクチャ層別適用<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkNMQVNTIiBoZWlnaHQ9IjE2MHB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6OTgzcHg7aGVpZ2h0OjE2MHB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDk4MyAxNjAiIHdpZHRoPSI5ODNweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjwhLS1jbHVzdGVyID8/Pz8/Pz8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4uLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjMiIGRhdGEtdWlkPSJlbnQwMDAyIiBpZD0iY2x1c3Rlcl8uLi4uLi4uLi4uIj48cGF0aCBkPSJNOC41LDYgTDE0OS40OTk0LDYgQTMuNzUsMy43NSAwIDAgMSAxNTEuOTk5NCw4LjUgTDE1OC45OTk0LDI4LjI5NjkgTDI1OS41LDI4LjI5NjkgQTIuNSwyLjUgMCAwIDEgMjYyLDMwLjc5NjkgTDI2MiwxNTEuMzkgQTIuNSwyLjUgMCAwIDEgMjU5LjUsMTUzLjg5IEw4LjUsMTUzLjg5IEEyLjUsMi41IDAgMCAxIDYsMTUxLjM5IEw2LDguNSBBMi41LDIuNSAwIDAgMSA4LjUsNiIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7IiB4MT0iNiIgeDI9IjE1OC45OTk0IiB5MT0iMjguMjk2OSIgeTI9IjI4LjI5NjkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTM5Ljk5OTQiIHg9IjEwIiB5PSIyMC45OTUxIj4mIzEyNTAzOyYjMTI1MjQ7JiMxMjQ3NjsmIzEyNTMxOyYjMTI0ODY7JiMxMjU0MDsmIzEyNDcxOyYjMTI1MTk7JiMxMjUzMTsmIzIzNjUyOzwvdGV4dD48L2c+PCEtLWNsdXN0ZXIgPz8/Pz8/Pz8/LS0+PGcgY2xhc3M9ImNsdXN0ZXIiIGRhdGEtZW50aXR5PSIuLi4uLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjExIiBkYXRhLXVpZD0iZW50MDAwNCIgaWQ9ImNsdXN0ZXJfLi4uLi4uLi4uIj48cGF0aCBkPSJNMjg4LjUsNiBMNDE1LjQ5OTUsNiBBMy43NSwzLjc1IDAgMCAxIDQxNy45OTk1LDguNSBMNDI0Ljk5OTUsMjguMjk2OSBMNTEzLjUsMjguMjk2OSBBMi41LDIuNSAwIDAgMSA1MTYsMzAuNzk2OSBMNTE2LDE1MS4zOSBBMi41LDIuNSAwIDAgMSA1MTMuNSwxNTMuODkgTDI4OC41LDE1My44OSBBMi41LDIuNSAwIDAgMSAyODYsMTUxLjM5IEwyODYsOC41IEEyLjUsMi41IDAgMCAxIDI4OC41LDYiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgeDE9IjI4NiIgeDI9IjQyNC45OTk1IiB5MT0iMjguMjk2OSIgeTI9IjI4LjI5NjkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTI1Ljk5OTUiIHg9IjI5MCIgeT0iMjAuOTk1MSI+JiMxMjQ1MDsmIzEyNTAzOyYjMTI1MjI7JiMxMjQ2NTsmIzEyNTQwOyYjMTI0NzE7JiMxMjUxOTsmIzEyNTMxOyYjMjM2NTI7PC90ZXh0PjwvZz48IS0tY2x1c3RlciA/Pz8/Py0tPjxnIGNsYXNzPSJjbHVzdGVyIiBkYXRhLWVudGl0eT0iLi4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjE5IiBkYXRhLXVpZD0iZW50MDAwNiIgaWQ9ImNsdXN0ZXJfLi4uLi4iPjxwYXRoIGQ9Ik01NDIuNSw2IEw2MTMuNDk5Nyw2IEEzLjc1LDMuNzUgMCAwIDEgNjE1Ljk5OTcsOC41IEw2MjIuOTk5NywyOC4yOTY5IEw3NjkuNSwyOC4yOTY5IEEyLjUsMi41IDAgMCAxIDc3MiwzMC43OTY5IEw3NzIsMTUxLjM5IEEyLjUsMi41IDAgMCAxIDc2OS41LDE1My44OSBMNTQyLjUsMTUzLjg5IEEyLjUsMi41IDAgMCAxIDU0MCwxNTEuMzkgTDU0MCw4LjUgQTIuNSwyLjUgMCAwIDEgNTQyLjUsNiIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7IiB4MT0iNTQwIiB4Mj0iNjIyLjk5OTciIHkxPSIyOC4yOTY5IiB5Mj0iMjguMjk2OSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OS45OTk3IiB4PSI1NDQiIHk9IjIwLjk5NTEiPiYjMTI0ODk7JiMxMjUxMzsmIzEyNDUyOyYjMTI1MzE7JiMyMzY1Mjs8L3RleHQ+PC9nPjwhLS1jbHVzdGVyID8/Pz8/Pz8/Pz8/LS0+PGcgY2xhc3M9ImNsdXN0ZXIiIGRhdGEtZW50aXR5PSIuLi4uLi4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMjciIGRhdGEtdWlkPSJlbnQwMDA4IiBpZD0iY2x1c3Rlcl8uLi4uLi4uLi4uLiI+PHBhdGggZD0iTTc5OC41LDYgTDk1My40OTkzLDYgQTMuNzUsMy43NSAwIDAgMSA5NTUuOTk5Myw4LjUgTDk2Mi45OTkzLDI4LjI5NjkgTDk3My41LDI4LjI5NjkgQTIuNSwyLjUgMCAwIDEgOTc2LDMwLjc5NjkgTDk3NiwxNTEuMzkgQTIuNSwyLjUgMCAwIDEgOTczLjUsMTUzLjg5IEw3OTguNSwxNTMuODkgQTIuNSwyLjUgMCAwIDEgNzk2LDE1MS4zOSBMNzk2LDguNSBBMi41LDIuNSAwIDAgMSA3OTguNSw2IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiIHgxPSI3OTYiIHgyPSI5NjIuOTk5MyIgeTE9IjI4LjI5NjkiIHkyPSIyOC4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE1My45OTkzIiB4PSI4MDAiIHk9IjIwLjk5NTEiPiYjMTI0NTI7JiMxMjUzMTsmIzEyNTAxOyYjMTI1MjE7JiMxMjQ3MzsmIzEyNDg4OyYjMTI1MjE7JiMxMjQ2MzsmIzEyNDgxOyYjMTI1MTU7JiMyMzY1Mjs8L3RleHQ+PC9nPjwhLS1jbGFzcyBSZWFjdCBIb29rcy0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJSZWFjdCBIb29rcyIgZGF0YS1zb3VyY2UtbGluZT0iNCIgZGF0YS11aWQ9ImVudDAwMDMiIGlkPSJlbnRpdHlfUmVhY3QgSG9va3MiPjxyZWN0IGZpbGw9IiNFNkYzRkYiIGhlaWdodD0iOTYuODkwNiIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMjI0LjkzOTUiIHg9IjIxLjUzIiB5PSI0MSIvPjxlbGxpcHNlIGN4PSI4NS45NDE2IiBjeT0iNTciIGZpbGw9IiNBREQxQjIiIHJ4PSIxMSIgcnk9IjExIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTg4LjkxMDQsNjIuNjQwNiBRODguMzMyMiw2Mi45Mzc1IDg3LjY5MTYsNjMuMDc4MSBRODcuMDUxLDYzLjIzNDQgODYuMzQ3OSw2My4yMzQ0IFE4My44NDc5LDYzLjIzNDQgODIuNTE5Nyw2MS41OTM4IFE4MS4yMDcyLDU5LjkzNzUgODEuMjA3Miw1Ni44MTI1IFE4MS4yMDcyLDUzLjY4NzUgODIuNTE5Nyw1Mi4wMzEzIFE4My44NDc5LDUwLjM3NSA4Ni4zNDc5LDUwLjM3NSBRODcuMDUxLDUwLjM3NSA4Ny42OTE2LDUwLjUzMTMgUTg4LjM0NzksNTAuNjg3NSA4OC45MTA0LDUwLjk4NDQgTDg4LjkxMDQsNTMuNzAzMSBRODguMjg1NCw1My4xMjUgODcuNjkxNiw1Mi44NTk0IFE4Ny4wOTc5LDUyLjU3ODEgODYuNDcyOSw1Mi41NzgxIFE4NS4xMjkxLDUyLjU3ODEgODQuNDQxNiw1My42NTYzIFE4My43NTQxLDU0LjcxODggODMuNzU0MSw1Ni44MTI1IFE4My43NTQxLDU4LjkwNjMgODQuNDQxNiw1OS45ODQ0IFE4NS4xMjkxLDYxLjA0NjkgODYuNDcyOSw2MS4wNDY5IFE4Ny4wOTc5LDYxLjA0NjkgODcuNjkxNiw2MC43ODEzIFE4OC4yODU0LDYwLjUgODguOTEwNCw1OS45MjE5IEw4OC45MTA0LDYyLjY0MDYgWiAiIGZpbGw9IiMwMDAwMDAiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4Ny42MTYyIiB4PSIxMDYuNDQxNiIgeT0iNjEuODQ2NyI+UmVhY3QgSG9va3M8L3RleHQ+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iMjIuNTMiIHgyPSIyNDUuNDY5NSIgeTE9IjczIiB5Mj0iNzMiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHgxPSIyMi41MyIgeDI9IjI0NS40Njk1IiB5MT0iODEiIHkyPSI4MSIvPjxlbGxpcHNlIGN4PSIzMi41MyIgY3k9Ijk0LjY0ODQiIGZpbGw9IiM4NEJFODQiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE1Mi45NDczIiB4PSI0MS41MyIgeT0iOTcuOTk1MSI+dXNlU3RhdGUgKEltbXV0YWJsZSk8L3RleHQ+PGVsbGlwc2UgY3g9IjMyLjUzIiBjeT0iMTEwLjk0NTMiIGZpbGw9IiM4NEJFODQiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE5OC45Mzk1IiB4PSI0MS41MyIgeT0iMTE0LjI5MiI+dXNlUmVkdWNlciAoUHVyZSBmdW5jdGlvbnMpPC90ZXh0PjxlbGxpcHNlIGN4PSIzMi41MyIgY3k9IjEyNy4yNDIyIiBmaWxsPSIjODRCRTg0IiByeD0iMyIgcnk9IjMiIHN0eWxlPSJzdHJva2U6IzAzODA0ODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNzIuNTgwMSIgeD0iNDEuNTMiIHk9IjEzMC41ODg5Ij51c2VNZW1vIChNZW1vaXphdGlvbik8L3RleHQ+PC9nPjwhLS1jbGFzcyBVc2UgQ2FzZXMtLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iVXNlIENhc2VzIiBkYXRhLXNvdXJjZS1saW5lPSIxMiIgZGF0YS11aWQ9ImVudDAwMDUiIGlkPSJlbnRpdHlfVXNlIENhc2VzIj48cmVjdCBmaWxsPSIjRTZGM0ZGIiBoZWlnaHQ9Ijk2Ljg5MDYiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE5Ny4yMjY2IiB4PSIzMDIuMzkiIHk9IjQxIi8+PGVsbGlwc2UgY3g9IjM2MC42NzMyIiBjeT0iNTciIGZpbGw9IiNBREQxQjIiIHJ4PSIxMSIgcnk9IjExIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTM2My42NDIsNjIuNjQwNiBRMzYzLjA2MzgsNjIuOTM3NSAzNjIuNDIzMiw2My4wNzgxIFEzNjEuNzgyNiw2My4yMzQ0IDM2MS4wNzk1LDYzLjIzNDQgUTM1OC41Nzk1LDYzLjIzNDQgMzU3LjI1MTMsNjEuNTkzOCBRMzU1LjkzODgsNTkuOTM3NSAzNTUuOTM4OCw1Ni44MTI1IFEzNTUuOTM4OCw1My42ODc1IDM1Ny4yNTEzLDUyLjAzMTMgUTM1OC41Nzk1LDUwLjM3NSAzNjEuMDc5NSw1MC4zNzUgUTM2MS43ODI2LDUwLjM3NSAzNjIuNDIzMiw1MC41MzEzIFEzNjMuMDc5NSw1MC42ODc1IDM2My42NDIsNTAuOTg0NCBMMzYzLjY0Miw1My43MDMxIFEzNjMuMDE3LDUzLjEyNSAzNjIuNDIzMiw1Mi44NTk0IFEzNjEuODI5NSw1Mi41NzgxIDM2MS4yMDQ1LDUyLjU3ODEgUTM1OS44NjA3LDUyLjU3ODEgMzU5LjE3MzIsNTMuNjU2MyBRMzU4LjQ4NTcsNTQuNzE4OCAzNTguNDg1Nyw1Ni44MTI1IFEzNTguNDg1Nyw1OC45MDYzIDM1OS4xNzMyLDU5Ljk4NDQgUTM1OS44NjA3LDYxLjA0NjkgMzYxLjIwNDUsNjEuMDQ2OSBRMzYxLjgyOTUsNjEuMDQ2OSAzNjIuNDIzMiw2MC43ODEzIFEzNjMuMDE3LDYwLjUgMzYzLjY0Miw1OS45MjE5IEwzNjMuNjQyLDYyLjY0MDYgWiAiIGZpbGw9IiMwMDAwMDAiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3Mi4xNjAyIiB4PSIzODEuMTczMiIgeT0iNjEuODQ2NyI+VXNlIENhc2VzPC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjMwMy4zOSIgeDI9IjQ5OC42MTY2IiB5MT0iNzMiIHkyPSI3MyIvPjxlbGxpcHNlIGN4PSIzMTMuMzkiIGN5PSI4Ni42NDg0IiBmaWxsPSJub25lIiByeD0iMyIgcnk9IjMiIHN0eWxlPSJzdHJva2U6IzAzODA0ODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNzEuMjI2NiIgeD0iMzIyLjM5IiB5PSI4OS45OTUxIj5QdXJlIGNvbW1hbmQgaGFuZGxlcnM8L3RleHQ+PGVsbGlwc2UgY3g9IjMxMy4zOSIgY3k9IjEwMi45NDUzIiBmaWxsPSJub25lIiByeD0iMyIgcnk9IjMiIHN0eWxlPSJzdHJva2U6IzAzODA0ODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTAuMTE3MiIgeD0iMzIyLjM5IiB5PSIxMDYuMjkyIj5GdW5jdGlvbiBjb21wb3NpdGlvbjwvdGV4dD48ZWxsaXBzZSBjeD0iMzEzLjM5IiBjeT0iMTE5LjI0MjIiIGZpbGw9Im5vbmUiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE2MC4xNjYiIHg9IjMyMi4zOSIgeT0iMTIyLjU4ODkiPkVycm9yIGhhbmRsaW5nIG1vbmFkczwvdGV4dD48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHgxPSIzMDMuMzkiIHgyPSI0OTguNjE2NiIgeTE9IjEyOS44OTA2IiB5Mj0iMTI5Ljg5MDYiLz48L2c+PCEtLWNsYXNzIFB1cmUgRG9tYWluIExvZ2ljLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IlB1cmUgRG9tYWluIExvZ2ljIiBkYXRhLXNvdXJjZS1saW5lPSIyMCIgZGF0YS11aWQ9ImVudDAwMDciIGlkPSJlbnRpdHlfUHVyZSBEb21haW4gTG9naWMiPjxyZWN0IGZpbGw9IiNFNkYzRkYiIGhlaWdodD0iOTYuODkwNiIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTk5LjMxMTUiIHg9IjU1Ni4zNCIgeT0iNDEiLz48ZWxsaXBzZSBjeD0iNTg3LjM0MzEiIGN5PSI1NyIgZmlsbD0iI0FERDFCMiIgcng9IjExIiByeT0iMTEiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48cGF0aCBkPSJNNTkwLjMxMTksNjIuNjQwNiBRNTg5LjczMzgsNjIuOTM3NSA1ODkuMDkzMSw2My4wNzgxIFE1ODguNDUyNSw2My4yMzQ0IDU4Ny43NDk0LDYzLjIzNDQgUTU4NS4yNDk0LDYzLjIzNDQgNTgzLjkyMTMsNjEuNTkzOCBRNTgyLjYwODgsNTkuOTM3NSA1ODIuNjA4OCw1Ni44MTI1IFE1ODIuNjA4OCw1My42ODc1IDU4My45MjEzLDUyLjAzMTMgUTU4NS4yNDk0LDUwLjM3NSA1ODcuNzQ5NCw1MC4zNzUgUTU4OC40NTI1LDUwLjM3NSA1ODkuMDkzMSw1MC41MzEzIFE1ODkuNzQ5NCw1MC42ODc1IDU5MC4zMTE5LDUwLjk4NDQgTDU5MC4zMTE5LDUzLjcwMzEgUTU4OS42ODY5LDUzLjEyNSA1ODkuMDkzMSw1Mi44NTk0IFE1ODguNDk5NCw1Mi41NzgxIDU4Ny44NzQ0LDUyLjU3ODEgUTU4Ni41MzA2LDUyLjU3ODEgNTg1Ljg0MzEsNTMuNjU2MyBRNTg1LjE1NTYsNTQuNzE4OCA1ODUuMTU1Niw1Ni44MTI1IFE1ODUuMTU1Niw1OC45MDYzIDU4NS44NDMxLDU5Ljk4NDQgUTU4Ni41MzA2LDYxLjA0NjkgNTg3Ljg3NDQsNjEuMDQ2OSBRNTg4LjQ5OTQsNjEuMDQ2OSA1ODkuMDkzMSw2MC43ODEzIFE1ODkuNjg2OSw2MC41IDU5MC4zMTE5LDU5LjkyMTkgTDU5MC4zMTE5LDYyLjY0MDYgWiAiIGZpbGw9IiMwMDAwMDAiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzEuNzQ5IiB4PSI2MDQuODk5NCIgeT0iNjEuODQ2NyI+UHVyZSBEb21haW4gTG9naWM8L3RleHQ+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iNTU3LjM0IiB4Mj0iNzU0LjY1MTUiIHkxPSI3MyIgeTI9IjczIi8+PGVsbGlwc2UgY3g9IjU2Ny4zNCIgY3k9Ijg2LjY0ODQiIGZpbGw9Im5vbmUiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE3My4zMTE1IiB4PSI1NzYuMzQiIHk9Ijg5Ljk5NTEiPkltbXV0YWJsZSB2YWx1ZSBvYmplY3RzPC90ZXh0PjxlbGxpcHNlIGN4PSI1NjcuMzQiIGN5PSIxMDIuOTQ1MyIgZmlsbD0ibm9uZSIgcng9IjMiIHJ5PSIzIiBzdHlsZT0ic3Ryb2tlOiMwMzgwNDg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTY2LjA4NTkiIHg9IjU3Ni4zNCIgeT0iMTA2LjI5MiI+UHVyZSBidXNpbmVzcyBmdW5jdGlvbnM8L3RleHQ+PGVsbGlwc2UgY3g9IjU2Ny4zNCIgY3k9IjExOS4yNDIyIiBmaWxsPSJub25lIiByeD0iMyIgcnk9IjMiIHN0eWxlPSJzdHJva2U6IzAzODA0ODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTYuODE2NCIgeD0iNTc2LjM0IiB5PSIxMjIuNTg4OSI+RnVuY3Rpb25hbCBhZ2dyZWdhdGVzPC90ZXh0PjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgeDE9IjU1Ny4zNCIgeDI9Ijc1NC42NTE1IiB5MT0iMTI5Ljg5MDYiIHkyPSIxMjkuODkwNiIvPjwvZz48IS0tY2xhc3MgU2lkZSBFZmZlY3RzLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IlNpZGUgRWZmZWN0cyIgZGF0YS1zb3VyY2UtbGluZT0iMjgiIGRhdGEtdWlkPSJlbnQwMDA5IiBpZD0iZW50aXR5X1NpZGUgRWZmZWN0cyI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI5Ni44OTA2IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNDguNTI3MyIgeD0iODExLjc0IiB5PSI0MSIvPjxlbGxpcHNlIGN4PSI4NDIuMDQxOCIgY3k9IjU3IiBmaWxsPSIjQUREMUIyIiByeD0iMTEiIHJ5PSIxMSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwYXRoIGQ9Ik04NDUuMDEwNSw2Mi42NDA2IFE4NDQuNDMyNCw2Mi45Mzc1IDg0My43OTE4LDYzLjA3ODEgUTg0My4xNTExLDYzLjIzNDQgODQyLjQ0OCw2My4yMzQ0IFE4MzkuOTQ4LDYzLjIzNDQgODM4LjYxOTksNjEuNTkzOCBRODM3LjMwNzQsNTkuOTM3NSA4MzcuMzA3NCw1Ni44MTI1IFE4MzcuMzA3NCw1My42ODc1IDgzOC42MTk5LDUyLjAzMTMgUTgzOS45NDgsNTAuMzc1IDg0Mi40NDgsNTAuMzc1IFE4NDMuMTUxMSw1MC4zNzUgODQzLjc5MTgsNTAuNTMxMyBRODQ0LjQ0OCw1MC42ODc1IDg0NS4wMTA1LDUwLjk4NDQgTDg0NS4wMTA1LDUzLjcwMzEgUTg0NC4zODU1LDUzLjEyNSA4NDMuNzkxOCw1Mi44NTk0IFE4NDMuMTk4LDUyLjU3ODEgODQyLjU3Myw1Mi41NzgxIFE4NDEuMjI5Myw1Mi41NzgxIDg0MC41NDE4LDUzLjY1NjMgUTgzOS44NTQzLDU0LjcxODggODM5Ljg1NDMsNTYuODEyNSBRODM5Ljg1NDMsNTguOTA2MyA4NDAuNTQxOCw1OS45ODQ0IFE4NDEuMjI5Myw2MS4wNDY5IDg0Mi41NzMsNjEuMDQ2OSBRODQzLjE5OCw2MS4wNDY5IDg0My43OTE4LDYwLjc4MTMgUTg0NC4zODU1LDYwLjUgODQ1LjAxMDUsNTkuOTIxOSBMODQ1LjAxMDUsNjIuNjQwNiBaICIgZmlsbD0iIzAwMDAwMCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgyLjUyMzQiIHg9Ijg1OS40NDIxIiB5PSI2MS44NDY3Ij5TaWRlIEVmZmVjdHM8L3RleHQ+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB4MT0iODEyLjc0IiB4Mj0iOTU5LjI2NzMiIHkxPSI3MyIgeTI9IjczIi8+PGVsbGlwc2UgY3g9IjgyMi43NCIgY3k9Ijg2LjY0ODQiIGZpbGw9Im5vbmUiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk0LjExMDQiIHg9IjgzMS43NCIgeT0iODkuOTk1MSI+SU8gb3BlcmF0aW9uczwvdGV4dD48ZWxsaXBzZSBjeD0iODIyLjc0IiBjeT0iMTAyLjk0NTMiIGZpbGw9Im5vbmUiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEyMC43Mjk1IiB4PSI4MzEuNzQiIHk9IjEwNi4yOTIiPkV4dGVybmFsIEFQSSBjYWxsczwvdGV4dD48ZWxsaXBzZSBjeD0iODIyLjc0IiBjeT0iMTE5LjI0MjIiIGZpbGw9Im5vbmUiIHJ4PSIzIiByeT0iMyIgc3R5bGU9InN0cm9rZTojMDM4MDQ4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEyMi41MjczIiB4PSI4MzEuNzQiIHk9IjEyMi41ODg5Ij5TdGF0ZSBwZXJzaXN0ZW5jZTwvdGV4dD48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHgxPSI4MTIuNzQiIHgyPSI5NTkuMjY3MyIgeTE9IjEyOS44OTA2IiB5Mj0iMTI5Ljg5MDYiLz48L2c+PCEtLVNSQz1bVFA3RklpRDA0Q1JsVU9lbk5iZXkyandiOWJZZWpCSHVia3JjNmpTY3NSQVJZNVd5YzBOSDFuM0ZfVzVIMTJhVUhFWlIzQnc3Y3dJampLS01YamJsWGxiLXA2bTRFMTA5V2p5dlFoSFJ4SXZpVVpsLWpreXhwZVpuOEdpSE4zOXRQRHVlZHZCdjg3RDVQYWh2OXZiZC1fc1VGQmFtVGRaNGowUXRZdW9kaTJfYktCa18weVZFNWNHUVVvYkI0TWhERUN2SXJlLW1OaWJUMzNBRTJjZ1RKMjRDaWVJZEdZUHdMWnQwTTRBallFQVM1T013U3M3VjRibC1LRUF6S1p4djctbkc4cElPbmJNaXFmRkJFNlA5MENTc0hBWXFyVnFQSGI0UklJc0F0Q2dVS2I5TFZJODk4UE85Ml9HZ2FCYVhTcV92cW5mNFFST2RPb09JUUNiR3kxTU9uTVJXYjRLUFdrb1Y4NF9yN0JFVlFOaWRFc1luZW9MRzVXNEJHdU1YdFY0UUtTYjJ2ZlJDMi1MVlBBeEJ2OXRDOVBkN2x1bXo0STF1V3E1WHg1UEtSUDBaTDZwa3c5c2JnMGdfdEt1SkU4a1lHZ25rUXprcXEyYWM3MGs0N20wMF0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_13">段階的導入計画<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Phase 1: コアデータ構造 (完了)</strong></li>
+<li>Value Objectsの関数型変換</li>
+<li>基本的な純粋関数の実装</li>
+<li>
+<p>Lodash/fpの導入</p>
+</li>
+<li>
+<p><strong>Phase 2: ビジネスロジック</strong></p>
+</li>
+<li>ゲームロジックの関数型実装</li>
+<li>連鎖検出の純粋関数化</li>
+<li>
+<p>状態変更の関数合成</p>
+</li>
+<li>
+<p><strong>Phase 3: 副作用の制御</strong></p>
+</li>
+<li>IO Monadパターンの導入</li>
+<li>非同期処理の関数型アプローチ</li>
+<li>エラーハンドリングの統一</li>
+</ol>
+<h3 id="_14">テスト戦略<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h4 id="pure-functions">単体テスト (Pure Functions)<a class="headerlink" href="#pure-functions" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// テスト用のモック・スタブが不要</span>
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;純粋関数テスト&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;createPuyo should create valid puyo&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createPosition</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">puyo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createPuyo</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">,</span><span class="w"> </span><span class="nx">position</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">puyo</span><span class="p">.</span><span class="nx">color</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">PuyoColor</span><span class="p">.</span><span class="nx">RED</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">puyo</span><span class="p">.</span><span class="nx">position</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">position</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<h4 id="_15">プロパティベーステスト<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nx">fc</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;fast-check&#39;</span><span class="p">;</span>
+
+<span class="nx">test</span><span class="p">(</span><span class="s1">&#39;フィールド操作の不変性&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">fc</span><span class="p">.</span><span class="nx">assert</span><span class="p">(</span><span class="nx">fc</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">fieldArbitrary</span><span class="p">,</span><span class="w"> </span><span class="nx">puyoArbitrary</span><span class="p">,</span>
+<span class="w">    </span><span class="p">(</span><span class="nx">field</span><span class="p">,</span><span class="w"> </span><span class="nx">puyo</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">newField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">placePuyo</span><span class="p">(</span><span class="nx">puyo</span><span class="p">,</span><span class="w"> </span><span class="nx">field</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// 元のフィールドは変更されない</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">field</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">newField</span><span class="p">);</span>
+<span class="w">      </span><span class="c1">// 新しいフィールドに変更が反映される</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">getPuyoAt</span><span class="p">(</span><span class="nx">newField</span><span class="p">,</span><span class="w"> </span><span class="nx">puyo</span><span class="p">.</span><span class="nx">position</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">puyo</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">));</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="_16">ドメインモデルへの適用<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h3 id="ddd">DDD + 関数型プログラミング<a class="headerlink" href="#ddd" title="Permanent link">&para;</a></h3>
+<h4 id="functional-aggregates">関数型集約 (Functional Aggregates)<a class="headerlink" href="#functional-aggregates" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// 従来の集約クラス</span>
+<span class="kd">class</span><span class="w"> </span><span class="nx">Game</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">AggregateRoot</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="cm">/* ... */</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="nx">placePuyo</span><span class="p">(</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="kt">PlacePuyoCommand</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">DomainEvent</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 関数型集約</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Game</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">GameId</span><span class="p">;</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">Field</span><span class="p">;</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">currentPuyo</span><span class="o">:</span><span class="w"> </span><span class="kt">PuyoPair</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">handlePlacePuyo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="kt">PlacePuyoCommand</span><span class="p">,</span><span class="w"> </span><span class="nx">game</span><span class="o">:</span><span class="w"> </span><span class="kt">Game</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">Game</span><span class="p">,</span><span class="w"> </span><span class="nx">DomainEvent</span><span class="p">[]]</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 純粋関数による状態変更</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">newGame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">flow</span><span class="p">(</span>
+<span class="w">      </span><span class="nx">validatePlacement</span><span class="p">(</span><span class="nx">command</span><span class="p">.</span><span class="nx">position</span><span class="p">),</span>
+<span class="w">      </span><span class="nx">applyPuyoPlacement</span><span class="p">(</span><span class="nx">command</span><span class="p">.</span><span class="nx">position</span><span class="p">),</span>
+<span class="w">      </span><span class="nx">processChains</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">updateScore</span>
+<span class="w">    </span><span class="p">)(</span><span class="nx">game</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">events</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createDomainEvents</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span><span class="w"> </span><span class="nx">newGame</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="nx">newGame</span><span class="p">,</span><span class="w"> </span><span class="nx">events</span><span class="p">];</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">);</span>
+</code></pre></div>
+<h4 id="_17">ドメインサービスの関数型実装<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">ChainDetectionService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">detectChains</span><span class="o">:</span><span class="w"> </span><span class="kt">fp.curry</span><span class="p">((</span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">Field</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ChainResult</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">flow</span><span class="p">(</span>
+<span class="w">      </span><span class="nx">findErasableGroups</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">fp</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">group</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">group</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">4</span><span class="p">),</span>
+<span class="w">      </span><span class="nx">calculateChainScore</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">createChainResult</span>
+<span class="w">    </span><span class="p">)(</span><span class="nx">field</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}),</span>
+
+<span class="w">  </span><span class="nx">findConnectedPuyos</span><span class="o">:</span><span class="w"> </span><span class="kt">fp.curry</span><span class="p">((</span><span class="nx">position</span><span class="o">:</span><span class="w"> </span><span class="kt">Position</span><span class="p">,</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">Field</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Puyo</span><span class="p">[]</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">breadthFirstSearch</span><span class="p">(</span><span class="nx">position</span><span class="p">,</span><span class="w"> </span><span class="nx">isSameColor</span><span class="p">,</span><span class="w"> </span><span class="nx">field</span><span class="p">);</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2 id="_18">パフォーマンス考慮事項<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<h3 id="_19">イミュータビリティのパフォーマンス対策<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>構造的共有 (Structural Sharing)</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1">// Immerを使用したパフォーマンス最適化</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">produce</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;immer&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">optimizedFieldUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">Field</span><span class="p">,</span><span class="w"> </span><span class="nx">updates</span><span class="o">:</span><span class="w"> </span><span class="kt">PuyoUpdate</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="nx">Field</span><span class="w"> </span><span class="p">=&gt;</span>
+<span class="w">  </span><span class="nx">produce</span><span class="p">(</span><span class="nx">field</span><span class="p">,</span><span class="w"> </span><span class="nx">draft</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">updates</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">update</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">draft</span><span class="p">.</span><span class="nx">grid</span><span class="p">[</span><span class="nx">update</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">y</span><span class="p">][</span><span class="nx">update</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">update</span><span class="p">.</span><span class="nx">puyo</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>メモ化 (Memoization)</strong>
+   <div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">memoize</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;lodash&#39;</span><span class="p">;</span>
+
+<span class="c1">// 計算量の多い純粋関数をメモ化</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">memoizedChainDetection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">memoize</span><span class="p">(</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">Field</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ChainDetectionService</span><span class="p">.</span><span class="nx">detectChains</span><span class="p">(</span><span class="nx">field</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">field</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">field</span><span class="p">.</span><span class="nx">grid</span><span class="p">)</span><span class="w"> </span><span class="c1">// カスタムキー関数</span>
+<span class="p">);</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="_20">結果<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<h3 id="_21">期待される効果<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>バグの削減:</strong></li>
+<li>副作用による予期しない状態変更の防止</li>
+<li>
+<p>イミュータビリティによる並行処理の安全性</p>
+</li>
+<li>
+<p><strong>テスト容易性:</strong></p>
+</li>
+<li>純粋関数による単体テストの簡素化</li>
+<li>
+<p>プロパティベーステストによる網羅的検証</p>
+</li>
+<li>
+<p><strong>保守性の向上:</strong></p>
+</li>
+<li>関数の合成による柔軟な機能拡張</li>
+<li>
+<p>宣言的コードによる可読性向上</p>
+</li>
+<li>
+<p><strong>パフォーマンス:</strong></p>
+</li>
+<li>メモ化による重複計算の回避</li>
+<li>純粋関数による並列処理の最適化</li>
+</ol>
+<h3 id="_22">メトリクス<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>純粋関数率:</strong> ドメイン層90%以上</li>
+<li><strong>イミュータビリティ率:</strong> データモデル100%</li>
+<li><strong>テスト実行速度:</strong> モック不要により50%向上目標</li>
+<li><strong>循環的複雑度:</strong> 平均3以下（関数分割効果）</li>
+</ul>
+<h2 id="_23">リスク・制約<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
+<h3 id="_24">潜在的リスク<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>学習コスト:</strong> 関数型プログラミングパラダイムの習得</li>
+<li><strong>パフォーマンス:</strong> イミュータブル操作による一時的なメモリ増加</li>
+<li><strong>デバッグ:</strong> 関数合成による実行フローの複雑化</li>
+</ol>
+<h3 id="_25">対策<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>段階的導入:</strong> 既存コードを漸進的に関数型に移行</li>
+<li><strong>チーム教育:</strong> 関数型プログラミングの基礎研修</li>
+<li><strong>パフォーマンス監視:</strong> メモリ使用量とGCの継続的監視</li>
+</ol>
+<h2 id="adr">関連ADR<a class="headerlink" href="#adr" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ADR-003: ドメイン駆動設計採用</li>
+<li>ADR-004: TDD開発手法採用</li>
+<li>ADR-002: フロントエンド技術スタック選定</li>
+</ul>
+<hr />
+<p><strong>日付:</strong> 2025-08-12<br />
+<strong>作成者:</strong> Claude Code<br />
+<strong>レビュー者:</strong> 開発チーム・技術リード<br />
+<strong>次回見直し:</strong> 2025-11-12（3ヶ月後）</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

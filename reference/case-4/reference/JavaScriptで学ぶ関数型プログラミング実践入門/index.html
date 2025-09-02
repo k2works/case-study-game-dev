@@ -1,0 +1,796 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>JavaScriptで学ぶ関数型プログラミング実践入門 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#javascript" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              JavaScriptで学ぶ関数型プログラミング実践入門
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="javascript">JavaScriptで学ぶ関数型プログラミング実践入門<a class="headerlink" href="#javascript" title="Permanent link">&para;</a></h1>
+<h3 id="1">1. はじめに<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<p>このプロジェクトのコードベースを参考に、JavaScript/TypeScriptにおける関数型プログラミングの基本的な概念と実践方法を解説します。特に、Lodash/fpのようなライブラリがどのように関数型プログラミングをサポートし、コードの可読性、保守性、テスト容易性を向上させるかを示します。</p>
+<h4 id="_1">関数型プログラミングとは？ なぜ今注目されているのか？<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h4>
+<p>関数型プログラミング（Functional Programming, FP）は、プログラムを「関数」の組み合わせとして構築するプログラミングパラダイムです。状態の変更（ミューテーション）を避け、純粋な関数とイミュータブルなデータ構造を重視します。</p>
+<p>近年、マルチコアプロセッサの普及や並行処理の重要性の高まりとともに、関数型プログラミングが再び注目されています。状態の変更を避けることで、並行処理における競合状態（race condition）のリスクを減らし、コードの予測可能性とテスト容易性を向上させることができます。</p>
+<h4 id="_2">本記事で扱う範囲<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h4>
+<p>本記事では、以下の関数型プログラミングの主要な概念と、それらがどのようにプロジェクトのコードに適用されているかを解説します。</p>
+<ul>
+<li>純粋関数 (Pure Functions)</li>
+<li>イミュータビリティ (Immutability)</li>
+<li>高階関数 (Higher-Order Functions)</li>
+<li>カリー化 (Currying)</li>
+<li>関数合成 (Function Composition) とパイプライン処理 (Pipelining)</li>
+</ul>
+<h4 id="_3">本プロジェクトにおける関数型プログラミングの採用背景（推測）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<p>このプロジェクトのコードベース、特にテストコードにLodash/fpが多用されていることから、開発チーム内で関数型プログラミングの思想が共有され、その実践が推奨されていたと推測されます。これにより、コードの品質向上、特にテストのしやすさや保守性の面でメリットを享受しようとしたと考えられます。</p>
+<h3 id="2">2. 関数型プログラミングの基本概念<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<h4 id="pure-functions">純粋関数 (Pure Functions)<a class="headerlink" href="#pure-functions" title="Permanent link">&para;</a></h4>
+<p>純粋関数とは、以下の2つの条件を満たす関数のことです。</p>
+<ol>
+<li><strong>同じ入力には常に同じ出力が返される（参照透過性）:</strong> 関数は、引数以外の外部の状態に依存せず、また外部の状態を変更しません。</li>
+<li><strong>副作用がない:</strong> 関数は、引数の変更、グローバル変数の変更、I/O操作（ファイルの読み書き、ネットワークリクエストなど）といった、関数の外部に影響を与える操作を行いません。</li>
+</ol>
+<p><strong>なぜ純粋関数が重要なのか？</strong>
+*   <strong>テスト容易性:</strong> 副作用がなく、入力と出力が常に一対一で対応するため、テストが非常に簡単になります。
+*   <strong>並行処理:</strong> 共有状態を変更しないため、複数の純粋関数を並行して実行しても競合状態が発生しません。
+*   <strong>推論のしやすさ:</strong> 関数の動作が予測可能であるため、コードの理解やデバッグが容易になります。</p>
+<p><strong><code>src/app.ts</code> の <code>sum</code> 関数を例に解説</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/app.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">sum</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>sum</code> 関数は、引数 <code>a</code> と <code>b</code> の値のみに依存し、常にその合計を返します。また、関数の外部の状態を変更することもありません。これは純粋関数の典型的な例です。</p>
+<h4 id="immutability">イミュータビリティ (Immutability)<a class="headerlink" href="#immutability" title="Permanent link">&para;</a></h4>
+<p>イミュータビリティとは、「一度作成されたデータは変更できない」という特性のことです。データを変更する代わりに、変更を適用した新しいデータのコピーを作成します。</p>
+<p><strong>なぜイミュータビリティが重要なのか？</strong>
+*   <strong>状態変更の追跡:</strong> データの変更履歴が明確になり、プログラムの状態がどのように変化したかを追跡しやすくなります。
+*   <strong>バグの削減:</strong> 意図しない副作用や競合状態によるバグを防ぎます。
+*   <strong>並行処理の安全性:</strong> 共有データが変更されないため、複数のスレッドやプロセスから安全にアクセスできます。</p>
+<p><strong>Lodashのテストコードにおけるイミュータブルな操作の例</strong></p>
+<p><code>src/app.test.ts</code> のLodash/fpのテストでは、オブジェクト操作においてイミュータビリティが重視されています。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/app.test.ts (Lodash/fpのテストより抜粋)</span>
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;オブジェクトに対する操作&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;lodash/fp&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">dataObject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span><span class="w"> </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;fp.set&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// fp.set は元の dataObject を変更せず、新しいオブジェクトを返す</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">newObject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">30</span><span class="p">)(</span><span class="nx">dataObject</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">newObject</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">30</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">dataObject</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span><span class="w"> </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// 元のオブジェクトは変更されない</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;fp.update&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// fp.update も元の dataObject を変更せず、新しいオブジェクトを返す</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">updatedObject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">name</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">())(</span><span class="nx">dataObject</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">updatedObject</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;ALICE&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">dataObject</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span><span class="w"> </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// 元のオブジェクトは変更されない</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;fp.merge&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// fp.merge も元の dataObject を変更せず、新しいオブジェクトを返す</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">mergedObject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span><span class="w"> </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Los Angeles&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">country</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;USA&quot;</span><span class="w"> </span><span class="p">})(</span><span class="nx">dataObject</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">mergedObject</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">country</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;USA&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">dataObject</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span><span class="w"> </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// 元のオブジェクトは変更されない</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<p><code>fp.set</code>、<code>fp.update</code>、<code>fp.merge</code> といった関数は、元の <code>dataObject</code> を直接変更するのではなく、変更が適用された新しいオブジェクトを返しています。これにより、元のデータが保護され、予期せぬ変更によるバグを防ぐことができます。</p>
+<h4 id="higher-order-functions">高階関数 (Higher-Order Functions)<a class="headerlink" href="#higher-order-functions" title="Permanent link">&para;</a></h4>
+<p>高階関数とは、以下のいずれか、または両方を満たす関数のことです。</p>
+<ol>
+<li><strong>関数を引数として受け取る</strong></li>
+<li><strong>関数を戻り値として返す</strong></li>
+</ol>
+<p>JavaScriptでは、<code>map</code>、<code>filter</code>、<code>reduce</code> などが代表的な高階関数です。</p>
+<p><strong>Lodashのテストコードにおける高階関数の利用例</strong></p>
+<p><code>src/app.test.ts</code> のLodashのテストには、高階関数の利用例が多数含まれています。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/app.test.ts (Lodashのテストより抜粋)</span>
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;filter/map/reduce&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;lodash&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">dataList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;E&quot;</span><span class="p">];</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;_.filter&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// フィルタリング関数を引数として受け取る</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">dataList</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s2">&quot;C&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s2">&quot;D&quot;</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">([</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;D&quot;</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;_.map&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// マッピング関数を引数として受け取る</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">dataList</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s2">&quot;X&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">data</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">([</span><span class="s2">&quot;XA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;XB&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;XC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;XD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;XE&quot;</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;_.reduce&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// リデューサー関数と初期値を引数として受け取る</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">dataList</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">val</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">val</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;X&quot;</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s2">&quot;XABCDE&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>これらの例では、<code>_.filter</code>、<code>_.map</code>、<code>_.reduce</code> が、それぞれフィルタリング、マッピング、集約のロジックを関数として受け取っています。これにより、汎用的な処理ロジックを再利用し、コードの柔軟性を高めることができます。</p>
+<h3 id="3-lodashfp">3. Lodash/fp を用いた実践<a class="headerlink" href="#3-lodashfp" title="Permanent link">&para;</a></h3>
+<h4 id="lodashfp">Lodash/fp の紹介<a class="headerlink" href="#lodashfp" title="Permanent link">&para;</a></h4>
+<p>Lodash/fpは、Lodashの関数を関数型プログラミングの原則に沿って再設計したモジュールです。主な特徴は以下の通りです。</p>
+<ul>
+<li><strong>データ優先ではなく関数優先（データ最後）:</strong> 処理対象のデータが関数の最後の引数として渡されます。これにより、関数合成が容易になります。</li>
+<li><strong>自動カリー化:</strong> すべての関数が自動的にカリー化されています。</li>
+<li><strong>イミュータビリティ:</strong> すべての関数が元のデータを変更せず、新しいデータを返します。</li>
+</ul>
+<h4 id="currying">カリー化 (Currying)<a class="headerlink" href="#currying" title="Permanent link">&para;</a></h4>
+<p>カリー化とは、複数の引数を取る関数を、1つの引数だけを受け取り、残りの引数を受け取る新しい関数を返す一連の関数に変換するプロセスです。</p>
+<p><strong>Lodash/fp のテストコードにおけるカリー化された関数の利用例</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/app.test.ts (Lodash/fpのテストより抜粋)</span>
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;Lodash/fpの基本的な使い方&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;lodash/fp&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;fp.range&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// fp.range(0)(10) は fp.range(0, 10) と同じ意味</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fp</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mf">0</span><span class="p">)(</span><span class="mf">10</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="mf">7</span><span class="p">,</span><span class="w"> </span><span class="mf">8</span><span class="p">,</span><span class="w"> </span><span class="mf">9</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;fp.filter&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// フィルタリング関数を先に渡し、後からデータリストを渡す</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">dataList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">];</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fp</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)(</span><span class="nx">dataList</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">([</span>
+<span class="w">      </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">test</span><span class="p">(</span><span class="s2">&quot;fp.map&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// マッピング関数を先に渡し、後からデータリストを渡す</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">dataList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">];</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fp</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2</span><span class="p">)(</span><span class="nx">dataList</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">([</span>
+<span class="w">      </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="mf">8</span><span class="p">,</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<p><code>fp.range(0)(10)</code> のように、<code>fp.range</code> は最初の引数 <code>0</code> を受け取ると、残りの引数 <code>10</code> を待つ新しい関数を返します。これにより、部分適用（partial application）が容易になり、再利用可能な関数をより柔軟に作成できます。</p>
+<h4 id="function-composition-pipelining">関数合成 (Function Composition) とパイプライン処理 (Pipelining)<a class="headerlink" href="#function-composition-pipelining" title="Permanent link">&para;</a></h4>
+<p>関数合成とは、複数の関数を組み合わせて新しい関数を作成することです。パイプライン処理は、データが複数の関数を順番に通過するような処理の流れを指します。</p>
+<p>Lodash/fpは、<code>fp.flow</code> や <code>fp.pipe</code> といった関数を提供し、関数合成をサポートします。これにより、一連の処理をより宣言的かつ読みやすく記述できます。</p>
+<p><strong>テストコードから読み取れる関数合成の考え方</strong></p>
+<p>Lodash/fpのテストコードには直接 <code>fp.flow</code> や <code>fp.pipe</code> の使用例はありませんが、カリー化された関数を組み合わせることで、関数合成の準備ができています。</p>
+<p>例えば、偶数をフィルタリングして2倍にする処理を考えます。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// テストコードには直接ないが、概念を示す例</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;lodash/fp&quot;</span><span class="p">);</span>
+
+<span class="c1">// 偶数のみフィルタリングする関数</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">filterEven</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">n</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span>
+
+<span class="c1">// 各要素を2倍にする関数</span>
+<span class="kd">const</span><span class="w"> </span><span class="kr">double</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">n</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
+
+<span class="c1">// これらを合成して新しい関数を作成</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">processNumbers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fp</span><span class="p">.</span><span class="nx">flow</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">filterEven</span><span class="p">,</span><span class="w"> </span><span class="c1">// 最初にフィルタリング</span>
+<span class="w">  </span><span class="kr">double</span><span class="w">      </span><span class="c1">// 次に2倍</span>
+<span class="p">);</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">];</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">processNumbers</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span><span class="w"> </span><span class="c1">// [4, 8]</span>
+</code></pre></div>
+<p><code>fp.flow</code> は、<code>filterEven</code> と <code>double</code> という2つの関数を合成し、新しい関数 <code>processNumbers</code> を作成します。この <code>processNumbers</code> 関数にデータを渡すと、データは <code>filterEven</code> を通過し、その結果が <code>double</code> に渡され、最終的な結果が得られます。これにより、処理の流れが明確になり、中間変数を減らすことができます。</p>
+<h3 id="4">4. プロジェクトにおける関数型プログラミングの適用例<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<h4 id="srcappts-rle"><code>src/app.ts</code> の <code>rle</code> 関数の実装と、そのテストコードにおける関数型的なアプローチの可能性<a class="headerlink" href="#srcappts-rle" title="Permanent link">&para;</a></h4>
+<p><code>src/app.ts</code> に実装されている <code>rle</code> (Run-Length Encoding) 関数は、現在のところ命令型スタイルで記述されています。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/app.ts (元の rle 関数)</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">rle</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">input</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">input</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">input</span><span class="p">[</span><span class="nx">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">input</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">count</span><span class="p">;</span>
+<span class="w">      </span><span class="nx">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>この関数を関数型プログラミングの原則に沿ってリファクタリングすると、<code>reduce</code> を使用してイミュータブルな状態遷移を表現できます。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 関数型スタイルでの rle 関数のリファクタリング案</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">rleFunctional</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">input</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">chars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">lastChar</span><span class="p">,</span><span class="w"> </span><span class="nx">count</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">chars</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">currentChar</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">index</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 最初の文字の初期化</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">lastChar</span><span class="o">:</span><span class="w"> </span><span class="kt">currentChar</span><span class="p">,</span><span class="w"> </span><span class="nx">count</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">currentChar</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">acc</span><span class="p">.</span><span class="nx">lastChar</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">count</span><span class="o">:</span><span class="w"> </span><span class="kt">acc.count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">newResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">acc</span><span class="p">.</span><span class="nx">result</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">acc</span><span class="p">.</span><span class="nx">lastChar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">acc</span><span class="p">.</span><span class="nx">count</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="kt">newResult</span><span class="p">,</span><span class="w"> </span><span class="nx">lastChar</span><span class="o">:</span><span class="w"> </span><span class="kt">currentChar</span><span class="p">,</span><span class="w"> </span><span class="nx">count</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">lastChar</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">count</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// reduceの初期値はダミー</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">lastChar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">count</span><span class="p">;</span><span class="w"> </span><span class="c1">// 最後のグループを追加</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>このリファクタリング案では、可変変数を使用せず、<code>reduce</code> の各ステップで新しいオブジェクトを返すことでイミュータビリティを保っています。これにより、関数の動作がより予測可能になり、テストやデバッグが容易になります。</p>
+<h4 id="srcapptestts-lodashfp"><code>src/app.test.ts</code> にあるLodash/fpのテストが、実際のアプリケーションコードでどのように活用できるか<a class="headerlink" href="#srcapptestts-lodashfp" title="Permanent link">&para;</a></h4>
+<p><code>src/app.test.ts</code> に含まれるLodash/fpのテストは、単なるテストケースとしてだけでなく、関数型プログラミングのパターン集としても機能します。これらのテストで示されているイミュータブルなデータ操作、カリー化された関数の利用、高階関数によるデータ変換のパターンは、実際のアプリケーションコードで以下のように活用できます。</p>
+<ul>
+<li><strong>データ変換パイプライン:</strong> 複数のデータ変換処理を <code>fp.flow</code> や <code>fp.pipe</code> を使って合成し、読みやすく、再利用可能なパイプラインを構築できます。</li>
+<li><strong>状態管理:</strong> アプリケーションの状態をイミュータブルなオブジェクトとして扱い、<code>fp.set</code>, <code>fp.update</code>, <code>fp.merge</code> などの関数を使って状態を更新することで、状態変更の追跡を容易にし、バグを減らすことができます。</li>
+<li><strong>汎用ユーティリティ関数の作成:</strong> カリー化された関数を活用して、特定の引数が固定された汎用的なユーティリティ関数を簡単に作成し、コードの重複を避けることができます。</li>
+</ul>
+<h3 id="5">5. 関数型プログラミングのメリットと課題<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<h4 id="_4">メリット<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>コードの可読性と保守性の向上:</strong> 純粋関数とイミュータビリティにより、関数の動作が予測可能になり、コードの理解と変更が容易になります。</li>
+<li><strong>テスト容易性:</strong> 副作用がないため、関数を単体でテストしやすくなります。</li>
+<li><strong>並行処理の安全性:</strong> 共有状態の変更を避けるため、並行処理における競合状態のリスクが低減します。</li>
+<li><strong>再利用性:</strong> 汎用的な高階関数やカリー化された関数は、さまざまな状況で再利用できます。</li>
+</ul>
+<h4 id="_5">課題<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>学習コスト:</strong> 命令型プログラミングに慣れている開発者にとっては、概念の理解や思考様式の転換に時間がかかる場合があります。</li>
+<li><strong>パフォーマンス（場合による）:</strong> イミュータブルな操作では、データのコピーが頻繁に発生するため、大規模なデータセットを扱う場合にパフォーマンスのオーバーヘッドが生じる可能性があります。ただし、現代のJavaScriptエンジンやライブラリは最適化されており、ほとんどのケースでは問題になりません。</li>
+<li><strong>既存のパラダイムからの移行:</strong> 既存の命令型コードベースに関数型プログラミングを導入する場合、段階的な移行計画とチーム全体の理解が必要です。</li>
+</ul>
+<h3 id="6">6. まとめと今後の展望<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
+<h4 id="_6">本記事の要約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<p>本記事では、プロジェクトのコードベースを参考に、JavaScript/TypeScriptにおける関数型プログラミングの主要な概念（純粋関数、イミュータビリティ、高階関数、カリー化、関数合成）と、Lodash/fpのようなライブラリを用いた実践方法を解説しました。特に、テストコードからこれらの概念がどのように読み取れるか、そして実際のアプリケーションコードでどのように活用できるかを示しました。</p>
+<h4 id="_7">関数型プログラミングを学ぶためのリソース<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Lodash/fpの公式ドキュメント</li>
+<li>Ramda.js（Lodash/fpと同様の関数型ユーティリティライブラリ）</li>
+<li>関数型プログラミングに関する書籍やオンラインコース</li>
+</ul>
+<h4 id="_8">プロジェクトにおけるさらなる関数型プログラミングの適用可能性<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<p>このプロジェクトでは、Lodash/fpのテストコードを通じて関数型プログラミングの概念が導入されていますが、実際のアプリケーションコード全体に関数型プログラミングの原則をより深く適用することで、さらなるコード品質の向上が期待できます。例えば、状態管理ライブラリ（Reduxなど）と組み合わせることで、アプリケーション全体の状態遷移をより予測可能に管理できるようになります。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

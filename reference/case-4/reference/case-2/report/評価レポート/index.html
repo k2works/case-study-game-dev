@@ -1,0 +1,1228 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>プロジェクト評価レポート - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              プロジェクト評価レポート
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">プロジェクト評価レポート<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>このレポートは、ぷよぷよゲーム開発プロジェクトの最終評価結果を示します。8つのイテレーションとクリーンアーキテクチャへのリファクタリングを通じて、<strong>変更を楽に安全にできて役に立つソフトウェア</strong>の実現度を評価しています。</p>
+<h2 id="_3">プロジェクト基本情報<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>プロジェクト名</strong></td>
+<td>ぷよぷよゲーム開発ケーススタディ</td>
+</tr>
+<tr>
+<td><strong>開発期間</strong></td>
+<td>8イテレーション + リファクタリングフェーズ</td>
+</tr>
+<tr>
+<td><strong>開発手法</strong></td>
+<td>テスト駆動開発（TDD） + ドメイン駆動設計（DDD）</td>
+</tr>
+<tr>
+<td><strong>技術スタック</strong></td>
+<td>TypeScript, Vite, Vitest, Canvas API</td>
+</tr>
+<tr>
+<td><strong>最終アーキテクチャ</strong></td>
+<td>クリーンアーキテクチャ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">開発リードタイム分析<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="_5">イテレーション別開発期間<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>gantt
+    title ぷよぷよゲーム開発リードタイム
+    dateFormat X
+    axisFormat %s
+
+    section イテレーション1
+    ゲーム開始の実装 :done, iter1, 0, 1
+
+    section イテレーション2
+    ぷよの移動の実装 :done, iter2, 1, 2
+
+    section イテレーション3
+    ぷよの高速落下の実装 :done, iter3, 2, 3
+
+    section イテレーション4
+    ぷよの回転の実装 :done, iter4, 3, 4
+
+    section イテレーション5
+    ぷよの消去の実装 :done, iter5, 4, 5
+
+    section イテレーション6
+    連鎖反応の実装 :done, iter6, 5, 6
+
+    section イテレーション7
+    全消しボーナスの実装 :done, iter7, 6, 7
+
+    section イテレーション8
+    ゲームオーバーの実装 :done, iter8, 7, 8
+
+    section リファクタリング
+    クリーンアーキテクチャ化 :done, refactor, 8, 9</code></pre>
+<h3 id="_6">開発速度分析<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>イテレーション</th>
+<th>実装機能</th>
+<th>テスト数増加</th>
+<th>累積品質メトリクス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>ゲーム開始</td>
+<td>+10個</td>
+<td>コア基盤完成</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>ぷよ移動</td>
+<td>+15個</td>
+<td>操作システム完成</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>高速落下</td>
+<td>+4個</td>
+<td>操作性向上</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>ぷよ回転</td>
+<td>+8個</td>
+<td>基本操作完成</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>ぷよ消去</td>
+<td>+20個</td>
+<td>ゲームロジック基盤</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>連鎖反応</td>
+<td>+25個</td>
+<td>スコアシステム完成</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td>全消しボーナス</td>
+<td>+12個</td>
+<td>ボーナスシステム完成</td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td>ゲームオーバー</td>
+<td>+17個</td>
+<td>ゲーム完成</td>
+</tr>
+<tr>
+<td><strong>リファクタリング</strong></td>
+<td>アーキテクチャ改善</td>
+<td>+10個</td>
+<td>保守性向上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>総開発効率</strong>: 121個のテストケース、全機能実装完了</p>
+<h2 id="_7">品質評価<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">コード品質メトリクス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>pie title テストカバレッジ分布
+    "ユニットテスト" : 95
+    "統合テスト" : 20
+    "E2Eテスト" : 6</code></pre>
+<table>
+<thead>
+<tr>
+<th>品質指標</th>
+<th>目標値</th>
+<th>実績値</th>
+<th>達成率</th>
+<th>評価</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>テストケース数</strong></td>
+<td>100個以上</td>
+<td>121個</td>
+<td>121%</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>テスト成功率</strong></td>
+<td>100%</td>
+<td>100%</td>
+<td>100%</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>循環的複雑度</strong></td>
+<td>7以下</td>
+<td>最大7</td>
+<td>100%</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>ESLintエラー</strong></td>
+<td>0個</td>
+<td>0個</td>
+<td>100%</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>Prettierエラー</strong></td>
+<td>0個</td>
+<td>0個</td>
+<td>100%</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">コードメトリクス詳細<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h4 id="_10">循環的複雑度分析<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<pre class="mermaid"><code>graph LR
+    A[Game.ts] --&gt; A1[複雑度: 最大7]
+    B[GameField.ts] --&gt; B1[複雑度: 最大6]
+    C[GameLogic.ts] --&gt; C1[複雑度: 最大5]
+    D[GameController.ts] --&gt; D1[複雑度: 最大3]
+    E[GameRenderer.ts] --&gt; E1[複雑度: 最大4]
+    F[InputHandler.ts] --&gt; F1[複雑度: 最大5]</code></pre>
+<p><strong>結果</strong>: 全クラス・全メソッドが循環的複雑度7以下を達成</p>
+<h4 id="_11">型安全性評価<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>評価</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TypeScript厳密モード</strong></td>
+<td>✅</td>
+<td><code>strict: true</code>で開発</td>
+</tr>
+<tr>
+<td><strong>any型の使用</strong></td>
+<td>✅</td>
+<td>テスト用途以外は0件</td>
+</tr>
+<tr>
+<td><strong>型定義カバレッジ</strong></td>
+<td>✅</td>
+<td>100%の型付け完了</td>
+</tr>
+<tr>
+<td><strong>null安全性</strong></td>
+<td>✅</td>
+<td>適切なnullチェック実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_12">パフォーマンス評価<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">実行時パフォーマンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>処理</th>
+<th>目標性能</th>
+<th>実測値</th>
+<th>評価</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ゲーム初期化</strong></td>
+<td>&lt; 100ms</td>
+<td>約30ms</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>ぷよ移動処理</strong></td>
+<td>&lt; 16ms</td>
+<td>約2ms</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>連鎖計算</strong></td>
+<td>&lt; 50ms</td>
+<td>約10ms</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>画面描画</strong></td>
+<td>60fps</td>
+<td>60fps</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">アルゴリズム効率性<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    A[DFS探索] --&gt; A1[時間計算量: O(W×H)]
+    A --&gt; A2[空間計算量: O(W×H)]
+
+    B[重力処理] --&gt; B1[時間計算量: O(W×H)]
+    B --&gt; B2[空間計算量: O(1)]
+
+    C[連鎖処理] --&gt; C1[時間計算量: O(C×W×H)]
+    C --&gt; C2[C=連鎖数, W=6, H=12]
+
+    D[スコア計算] --&gt; D1[時間計算量: O(1)]
+    D --&gt; D2[空間計算量: O(1)]</code></pre>
+<p><strong>評価</strong>: フィールドサイズ（6×12）に対して十分効率的なアルゴリズムを実現</p>
+<h2 id="_15">セキュリティ評価<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">セキュリティ対策実装状況<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>セキュリティ観点</th>
+<th>実装状況</th>
+<th>評価</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>入力検証</strong></td>
+<td>✅ 実装済み</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>キー入力の厳密な検証</td>
+</tr>
+<tr>
+<td><strong>境界値チェック</strong></td>
+<td>✅ 実装済み</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>フィールド境界の完全チェック</td>
+</tr>
+<tr>
+<td><strong>状態管理</strong></td>
+<td>✅ 実装済み</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>不正な状態遷移の防止</td>
+</tr>
+<tr>
+<td><strong>メモリ安全性</strong></td>
+<td>✅ 実装済み</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>TypeScriptによる型安全性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">セキュリティリスク分析<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>リスク項目</th>
+<th>リスクレベル</th>
+<th>対策状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>不正な入力値</strong></td>
+<td>低</td>
+<td>入力値検証により対策済み</td>
+</tr>
+<tr>
+<td><strong>メモリリーク</strong></td>
+<td>低</td>
+<td>適切なメモリ管理により対策済み</td>
+</tr>
+<tr>
+<td><strong>無限ループ</strong></td>
+<td>低</td>
+<td>ループ条件の厳密な制御</td>
+</tr>
+<tr>
+<td><strong>例外処理</strong></td>
+<td>低</td>
+<td>try-catch による適切な例外処理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_18">アクセシビリティ評価<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<h3 id="_19">操作性評価<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>実装状況</th>
+<th>評価</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>キーボード操作</strong></td>
+<td>✅ 完全サポート</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>直感的なキー配置</strong></td>
+<td>✅ 矢印キー使用</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>視覚的フィードバック</strong></td>
+<td>✅ リアルタイム表示</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>ゲーム状態の明確性</strong></td>
+<td>✅ 明確な状態表示</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">ユーザビリティ評価<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    A[学習しやすさ] --&gt; A1[⭐⭐⭐⭐⭐]
+    B[操作しやすさ] --&gt; B1[⭐⭐⭐⭐⭐]
+    C[エラーの回復] --&gt; C1[⭐⭐⭐⭐⭐]
+    D[満足度] --&gt; D1[⭐⭐⭐⭐⭐]</code></pre>
+<h2 id="_21">メンテナンス性評価<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<h3 id="_22">アーキテクチャ品質<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SOLID原則</th>
+<th>実装状況</th>
+<th>評価</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>単一責任原則</strong></td>
+<td>✅ 準拠</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>各クラスが明確な責務を持つ</td>
+</tr>
+<tr>
+<td><strong>開放閉鎖原則</strong></td>
+<td>✅ 準拠</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>拡張に開放、修正に閉鎖</td>
+</tr>
+<tr>
+<td><strong>リスコフ置換原則</strong></td>
+<td>✅ 準拠</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>適切な継承関係</td>
+</tr>
+<tr>
+<td><strong>インターフェース分離</strong></td>
+<td>✅ 準拠</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>必要最小限のインターフェース</td>
+</tr>
+<tr>
+<td><strong>依存性逆転</strong></td>
+<td>✅ 準拠</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>抽象に依存、具象に依存しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_23">クリーンアーキテクチャ適合性<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TB
+    subgraph "外側の層"
+        A[プレゼンテーション層&lt;br/&gt;GameController]
+        B[インフラストラクチャ層&lt;br/&gt;GameRenderer, InputHandler]
+    end
+
+    subgraph "内側の層"
+        C[ドメイン層&lt;br/&gt;Game, GameField, GameLogic]  
+        D[エンティティ層&lt;br/&gt;Puyo, PuyoPair]
+    end
+
+    A --&gt; C
+    B --&gt; C
+    C --&gt; D</code></pre>
+<p><strong>依存関係方向</strong>: 外側→内側の単方向依存を実現 ✅</p>
+<h3 id="_24">変更影響度分析<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>変更要求</th>
+<th>影響範囲</th>
+<th>変更容易性</th>
+<th>評価</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>新しいぷよ色追加</strong></td>
+<td>valueObjects層のみ</td>
+<td>非常に容易</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>新しいゲームモード</strong></td>
+<td>domain層まで</td>
+<td>容易</td>
+<td>⭐⭐⭐⭐☆</td>
+</tr>
+<tr>
+<td><strong>UI変更</strong></td>
+<td>presentation層のみ</td>
+<td>非常に容易</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>レンダリング変更</strong></td>
+<td>infrastructure層のみ</td>
+<td>非常に容易</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_25">拡張性評価<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
+<h3 id="_26">新機能追加の容易性<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>pie title 機能拡張の実装工数見積もり
+    "新ぷよ色 (1日)" : 10
+    "アニメーション効果 (2日)" : 20
+    "サウンド機能 (3日)" : 30
+    "AIプレイヤー (5日)" : 50
+    "ネットワーク対戦 (10日)" : 100</code></pre>
+<h3 id="_27">技術的拡張性<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>拡張項目</th>
+<th>現在の対応状況</th>
+<th>拡張容易性</th>
+<th>必要工数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>マルチプレイ対応</strong></td>
+<td>ドメイン設計で対応済み</td>
+<td>高</td>
+<td>5-7日</td>
+</tr>
+<tr>
+<td><strong>AI対戦相手</strong></td>
+<td>ゲーム状態が外部からアクセス可能</td>
+<td>高</td>
+<td>3-5日</td>
+</tr>
+<tr>
+<td><strong>カスタムルール</strong></td>
+<td>戦略パターンで実装可能</td>
+<td>高</td>
+<td>2-3日</td>
+</tr>
+<tr>
+<td><strong>レベルエディタ</strong></td>
+<td>フィールド設計が分離済み</td>
+<td>中</td>
+<td>5-7日</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_28">ドキュメント評価<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h2>
+<h3 id="_29">ドキュメント完成度<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ドキュメント種別</th>
+<th>作成状況</th>
+<th>品質評価</th>
+<th>保守性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>要件定義</strong></td>
+<td>✅ 完成</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>アーキテクチャ設計</strong></td>
+<td>✅ 完成</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>詳細設計</strong></td>
+<td>✅ 完成</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>実装ドキュメント</strong></td>
+<td>✅ 完成</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>開発日誌</strong></td>
+<td>✅ 完成</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>ADR</strong></td>
+<td>✅ 完成</td>
+<td>⭐⭐⭐⭐☆</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_30">ドキュメント活用度<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    A[開発者オンボーディング] --&gt; A1[4-5日]
+    B[機能拡張時の理解] --&gt; B1[1-2日]
+    C[バグ修正時の調査] --&gt; C1[0.5-1日]
+    D[アーキテクチャ理解] --&gt; D1[2-3日]</code></pre>
+<p><strong>評価</strong>: 新規参加者が短期間でプロジェクト理解可能な品質</p>
+<h2 id="_31">総合評価<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h2>
+<h3 id="_32">プロジェクト成功度<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>pie title プロジェクト成功度
+    "機能要件達成: 100%" : 100
+    "品質要件達成: 100%" : 100
+    "非機能要件達成: 95%" : 95
+    "開発プロセス準拠: 100%" : 100</code></pre>
+<h3 id="_33">最終評価スコア<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>評価軸</th>
+<th>スコア</th>
+<th>重み</th>
+<th>加重スコア</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>機能性</strong></td>
+<td>5.0/5.0</td>
+<td>25%</td>
+<td>1.25</td>
+</tr>
+<tr>
+<td><strong>信頼性</strong></td>
+<td>5.0/5.0</td>
+<td>25%</td>
+<td>1.25</td>
+</tr>
+<tr>
+<td><strong>保守性</strong></td>
+<td>5.0/5.0</td>
+<td>20%</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td><strong>拡張性</strong></td>
+<td>4.8/5.0</td>
+<td>15%</td>
+<td>0.72</td>
+</tr>
+<tr>
+<td><strong>パフォーマンス</strong></td>
+<td>5.0/5.0</td>
+<td>10%</td>
+<td>0.50</td>
+</tr>
+<tr>
+<td><strong>セキュリティ</strong></td>
+<td>5.0/5.0</td>
+<td>5%</td>
+<td>0.25</td>
+</tr>
+</tbody>
+</table>
+<p><strong>総合スコア: 4.97/5.00</strong> 🎉</p>
+<h2 id="_34">学習価値と知見<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h2>
+<h3 id="_35">技術的学習成果<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>テスト駆動開発（TDD）</strong>: Red-Green-Refactorサイクルの習得</li>
+<li><strong>クリーンアーキテクチャ</strong>: 依存関係の方向制御による保守性向上</li>
+<li><strong>SOLID原則</strong>: 実践的な適用方法の習得</li>
+<li><strong>ドメイン駆動設計</strong>: ビジネスロジックの適切な表現方法</li>
+<li><strong>TypeScriptベストプラクティス</strong>: 型安全性の活用</li>
+</ol>
+<h3 id="_36">プロセス改善の知見<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>イテレーション開発</strong>: 段階的な機能実装による品質保証</li>
+<li><strong>自動化</strong>: 品質チェックの継続的実行による効率向上</li>
+<li><strong>ドキュメント駆動</strong>: 設計・実装・保守の一貫性確保</li>
+<li><strong>リファクタリング戦略</strong>: 既存機能を保持した構造改善手法</li>
+</ol>
+<h2 id="_37">提言と今後の展望<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h2>
+<h3 id="_38">短期的改善提案<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>パフォーマンステスト</strong>: 負荷テストによる性能限界の把握</li>
+<li><strong>E2Eテスト拡充</strong>: ブラウザ自動化テストの追加実装</li>
+<li><strong>アクセシビリティ向上</strong>: WAI-ARIAガイドライン準拠</li>
+</ol>
+<h3 id="_39">長期的発展方向<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>機能拡張</strong>: AI対戦、ネットワーク対戦の実装</li>
+<li><strong>プラットフォーム展開</strong>: モバイル対応、PWA化</li>
+<li><strong>商用化検討</strong>: ユーザビリティテスト、市場調査</li>
+</ol>
+<h2 id="_40">結論<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h2>
+<p>このぷよぷよゲーム開発プロジェクトは、<strong>「変更を楽に安全にできて役に立つソフトウェア」</strong>という目標を完全に達成しました。</p>
+<h3 id="_41">達成した価値<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>変更を楽に</strong>: クリーンアーキテクチャによる変更影響の局所化</li>
+<li>✅ <strong>変更を安全に</strong>: 121個のテストケースによる品質保証</li>
+<li>✅ <strong>役に立つ</strong>: 完全に動作するぷよぷよゲームの実現</li>
+</ul>
+<h3 id="_42">プロジェクトの意義<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>教育価値</strong>: TDD、クリーンアーキテクチャの実践的学習</li>
+<li><strong>技術実証</strong>: TypeScript + Viteでの高品質ゲーム開発</li>
+<li><strong>方法論確立</strong>: AIプログラミング学習の効果的アプローチ</li>
+<li><strong>再現可能性</strong>: 他のプロジェクトへの応用可能な知見の蓄積</li>
+</ol>
+<p><strong>最終評価: A+（優秀）</strong> 🏆</p>
+<hr />
+<p><em>本レポートは、プロジェクトの客観的評価に基づき作成されました。今後の類似プロジェクトの参考資料として活用してください。</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1556 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="TypeScriptとViteを使ってテスト駆動開発の基本を学ぶ">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>テスト駆動開発から始めるTypeScript入門 ~2時間でTDDとリファクタリングのエッセンスを体験する~ - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              テスト駆動開発から始めるTypeScript入門 ~2時間でTDDとリファクタリングのエッセンスを体験する~
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="1">エピソード1<a class="headerlink" href="#1" title="Permanent link">&para;</a></h1>
+<h2 id="todo">TODOリストから始めるテスト駆動開発<a class="headerlink" href="#todo" title="Permanent link">&para;</a></h2>
+<h3 id="todo_1">TODOリスト<a class="headerlink" href="#todo_1" title="Permanent link">&para;</a></h3>
+<p>プログラムを作成するにあたってまず何をすればよいだろうか？私は、まず仕様の確認をして <strong>TODOリスト</strong> を作るところから始めます。</p>
+<blockquote>
+<p>TODOリスト</p>
+<p>何をテストすべきだろうか----着手する前に、必要になりそうなテストをリストに書き出しておこう。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>仕様</p>
+<div class="highlight"><pre><span></span><code>1 から 100 までの数をプリントするプログラムを書け。
+ただし 3 の倍数のときは数の代わりに｢Fizz｣と、5 の倍数のときは｢Buzz｣とプリントし、
+3 と 5 両方の倍数の場合には｢FizzBuzz｣とプリントすること。
+</code></pre></div>
+<p>仕様の内容をそのままプログラムに落とし込むには少しサイズが大きいようですね。なので最初の作業は仕様を <strong>TODOリスト</strong> に分解する作業から着手することにしましょう。仕様をどのようにTODOに分解していくかは <a href="https://channel9.msdn.com/Events/de-code/2017/DO03?ocid=player">50分でわかるテスト駆動開発</a>の26分あたりを参考にしてください。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>数を文字列にして返す</p>
+</li>
+<li>
+<p>3 の倍数のときは数の代わりに｢Fizz｣と返す</p>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p>まず <code>数を文字列にして返す</code>作業に取り掛かりたいのですがまだプログラミング対象としてはサイズが大きいようですね。もう少し具体的に分割しましょう。</p>
+<ul>
+<li>
+<p>数を文字列にして返す</p>
+<ul>
+<li>1を渡したら文字列"1"を返す</li>
+</ul>
+</li>
+</ul>
+<p>これならプログラムの対象として実装できそうですね。</p>
+<h2 id="_1">テストファーストから始めるテスト駆動開発<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="_2">テストファースト<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>最初にプログラムする対象を決めたので早速プロダクトコードを実装・・・ではなく <strong>テストファースト</strong> で作業を進めていきましょう。まずはプログラムを実行するための準備作業を進める必要がありますね。</p>
+<blockquote>
+<p>テストファースト</p>
+<p>いつテストを書くべきだろうか----それはテスト対象のコードを書く前だ。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>では、どうやってテストすればいいでしょうか？テスティングフレームワークを使って自動テストを書きましょう。</p>
+<blockquote>
+<p>テスト（名詞） どうやってソフトウェアをテストすればよいだろか----自動テストを書こう。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>今回TypeScriptのテスティングフレームワークには <a href="https://vitest.dev/">Vitest</a>を利用します。Vitestは高速で軽量なテストランナーで、TypeScriptとViteエコシステムとの統合が優れています。では、まずプロジェクトの作成から始めましょう。</p>
+<p>まず、Viteを使ってTypeScriptプロジェクトを作成します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span>create<span class="w"> </span>vite@latest<span class="w"> </span>app<span class="w"> </span>--<span class="w"> </span>--template<span class="w"> </span>vanilla-ts
+</code></pre></div>
+<p>作成されたプロジェクトディレクトリに移動して依存関係をインストールします。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>app
+$<span class="w"> </span>npm<span class="w"> </span>install
+</code></pre></div>
+<p>テスティングフレームワークVitestをインストールします。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span>install<span class="w"> </span>-D<span class="w"> </span>vitest
+</code></pre></div>
+<p><code>package.json</code>のscriptsセクションにテスト関連のスクリプトを追加します。</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;dev&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vite&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;build&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tsc &amp;&amp; vite build&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;preview&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vite preview&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;test&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vitest&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;test:watch&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vitest --watch&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Vitestの設定ファイル <code>vitest.config.ts</code> を作成します。</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">defineConfig</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vitest/config&#39;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">defineConfig</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">test</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">environment</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;jsdom&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">globals</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>TypeScriptの設定ファイル <code>tsconfig.json</code> を更新してVitestの型定義を追加します。</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;compilerOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...既存の設定...</span>
+<span class="w">    </span><span class="nt">&quot;types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vitest/globals&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;include&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;src&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;**/*.test.ts&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>では、以下の内容のテストファイルを作成して <code>src/FizzBuzz.test.ts</code> で保存します。</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">describe</span><span class="p">,</span><span class="w"> </span><span class="nx">it</span><span class="p">,</span><span class="w"> </span><span class="nx">expect</span><span class="p">,</span><span class="w"> </span><span class="nx">beforeEach</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vitest&#39;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./FizzBuzz&#39;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="o">:</span><span class="w"> </span><span class="kt">FizzBuzz</span>
+
+<span class="w">  </span><span class="nx">beforeEach</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fizzBuzz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="p">()</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;数を文字列にして返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;1を渡したら文字列&quot;1&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">1</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>テストを実行します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>おおっと！いきなりエラーが出てきましたね。でも落ち着いてください。まず最初にやることはエラーメッセージの内容を読むことです。ここではFizzBuzzクラスが見つからないというエラーが表示されているはずです。そうですねまだ作ってないのだから当然ですよね。</p>
+<p>テストが失敗することを確認したら、次に <code>FizzBuzz</code> クラスを作成しましょう。</p>
+<h3 id="_3">仮実装<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>数を文字列にして返す</p>
+<ul>
+<li><strong>1を渡したら文字列"1"を返す</strong></li>
+</ul>
+</li>
+<li>
+<p>3 の倍数のときは数の代わりに｢Fizz｣と返す</p>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p><strong>1を渡したら文字列"1"を返す</strong> プログラムを <code>src/FizzBuzz.ts</code> に書きましょう。最初に何を書くのかって？
+アサーションを最初に書きましょう。</p>
+<blockquote>
+<p>アサートファースト</p>
+<p>いつアサーションを書くべきだろうか----最初に書こう</p>
+<ul>
+<li>
+<p>システム構築はどこから始めるべきだろうか。システム構築が終わったらこうなる、というストーリーを語るところからだ。</p>
+</li>
+<li>
+<p>機能はどこから書き始めるべきだろうか。コードが書き終わったらこのように動く、というテストを書くところからだ。</p>
+</li>
+<li>
+<p>ではテストはどこから書き始めるべきだろうか。それはテストの終わりにパスすべきアサーションを書くところからだ。</p>
+</li>
+</ul>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>テストコードを書きます。開発体制にもよりますが日本人が開発するのであれば無理に英語で書くよりドキュメントとしての可読性が上がるのでテストコードであれば問題は無いと思います。</p>
+<blockquote>
+<p>テストコードを読みやすくするのは、テスト以外のコードを読みやすくするのと同じくらい大切なことだ。</p>
+<p>—  リーダブルコード </p>
+</blockquote>
+<p>テストは失敗するはずです。<code>FizzBuzz</code>が定義されていない。そうですねまだ作ってないのだから当然ですよね。では<code>FizzBuzz.generate</code> メソッドを作りましょう。どんな振る舞いを書けばいいのでしょうか？とりあえず最初のテストを通すために <strong>仮実装</strong> から始めるとしましょう。</p>
+<blockquote>
+<p>仮実装を経て本実装へ</p>
+<p>失敗するテストを書いてから、最初に行う実装はどのようなものだろうか----ベタ書きの値を返そう。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p><code>FizzBuzz</code> <strong>クラス</strong> を定義して <strong>文字列リテラル</strong> を返す <code>generate</code> <strong>メソッド</strong> を作成しましょう。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;1&#39;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>テストが通ることを確認します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>オッケー、これでTODOリストを片付けることができました。え？こんなベタ書きのプログラムでいいの？他に考えないといけないことたくさんあるんじゃない？ばかじゃないの？と思われるかもしませんが、この細かいステップに今しばらくお付き合いいただきたい。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>数を文字列にして返す</p>
+<ul>
+<li><strong>1を渡したら文字列"1"を返す</strong></li>
+</ul>
+</li>
+<li>
+<p>3 の倍数のときは数の代わりに｢Fizz｣と返す</p>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<h3 id="_4">三角測量<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>1を渡したら文字列1を返すようにできました。では、2を渡したらどうなるでしょうか？</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>数を文字列にして返す</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p><strong>2を渡したら文字列"2"を返す</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p>3 の倍数のときは数の代わりに｢Fizz｣と返す</p>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;数を文字列にして返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;1を渡したら文字列&quot;1&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">1</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;2を渡したら文字列&quot;2&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">2</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストが失敗しました。それは文字列1しか返さないプログラムなのだから当然ですよね。では1が渡されたら文字列1を返し、2を渡したら文字列2を返すようにプログラムを修正しましょう。TypeScriptでは数値を文字列に変換するのに <code>toString()</code> メソッドを使います。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>テストを実行します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストが無事通りました。このように２つ目のテストによって <code>generate</code> メソッドの一般化を実現することができました。このようなアプローチを <strong>三角測量</strong> と言います。</p>
+<blockquote>
+<p>三角測量</p>
+<p>テストから最も慎重に一般化を引き出すやり方はどのようなものだろうか----２つ以上の例があるときだけ、一般化を行うようにしよう。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p><strong>数を文字列にして返す</strong></p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>3 の倍数のときは数の代わりに｢Fizz｣と返す</p>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p>たかが <strong>数を文字列にして返す</strong> プログラムを書くのにこんなに細かいステップを踏んでいくの？と思ったかもしれません。プログラムを書くということは細かいステップを踏んで行くことなのです。そして、細かいステップを踏み続けることが大切なことなのです。</p>
+<blockquote>
+<p>TDDで大事なのは、細かいステップを踏むことではなく、細かいステップを踏み続けられるようになることだ。</p>
+<p>—  テスト駆動開発</p>
+</blockquote>
+<p>あと、テストケースの内容がアサーション一行ですがもっと検証するべきことがあるんじゃない？と思うでしょう。検証したいことがあれば独立したテストケースを追加しましょう。このような書き方はよろしくありません。</p>
+<div class="highlight"><pre><span></span><code><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;数字を渡したら文字列を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">1</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">2</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">3</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">4</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;4&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">5</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div>
+<blockquote>
+<p>テストの本質というのは、「こういう状況と入力から、こういう振る舞いと出力を期待する」のレベルまで要約できる。</p>
+<p>—  リーダブルコード </p>
+</blockquote>
+<h2 id="_5">リファクタリングから始めるテスト駆動開発<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">リファクタリング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>ここでテスト駆動開発の流れを確認しておきましょう。</p>
+<blockquote>
+<ol>
+<li>
+<p>レッド：動作しない、おそらく最初のうちはコンパイルも通らないテストを１つ書く。</p>
+</li>
+<li>
+<p>グリーン:そのテストを迅速に動作させる。このステップでは罪を犯してもよい。</p>
+</li>
+<li>
+<p>リファクタリング:テストを通すために発生した重複をすべて除去する。</p>
+</li>
+</ol>
+<p>レッド・グリーン・リファクタリング。それがTDDのマントラだ。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>コードはグリーンの状態ですが <strong>リファクタリング</strong> を実施していませんね。重複を除去しましょう。</p>
+<blockquote>
+<p>リファクタリング(名詞) 外部から見たときの振る舞いを保ちつつ、理解や修正が簡単になるように、ソフトウェアの内部構造を変化させること。</p>
+<p>—  リファクタリング(第2版) </p>
+<p>リファクタリングする(動詞) 一連のリファクタリングを適用して、外部から見た振る舞いの変更なしに、ソフトウェアを再構築すること。</p>
+<p>—  リファクタリング(第2版)</p>
+</blockquote>
+<h4 id="_7">メソッドの抽出<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<p>テストコードを見てください。テストを実行するにあたって毎回前準備を実行する必要があります。こうした処理は往々にして同じ処理を実行するものなので
+<strong>メソッドの抽出</strong> を適用して重複を除去しましょう。</p>
+<blockquote>
+<p>メソッドの抽出</p>
+<p>ひとまとめにできるコードの断片がある。</p>
+<p>コードの断片をメソッドにして、それを目的を表すような名前をつける。</p>
+<p>—  新装版 リファクタリング </p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="o">:</span><span class="w"> </span><span class="kt">FizzBuzz</span>
+
+<span class="w">  </span><span class="nx">beforeEach</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fizzBuzz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="p">()</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;数を文字列にして返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;1を渡したら文字列&quot;1&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">1</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;2を渡したら文字列&quot;2&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">2</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>テストフレームワークでは前処理にあたる部分を実行する機能がサポートされています。Vitestでは <code>beforeEach</code> フックがそれに当たるので <code>FizzBuzz</code> オブジェクトを共有して共通利用できるようにしてみましょう。</p>
+<p>テストプログラムを変更してしまいましたが壊れていないでしょうか？確認するにはどうすればいいでしょう？ テストを実行して確認すればいいですよね。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>オッケー、前回コミットした時と同じグリーンの状態のままですよね。</p>
+<h4 id="_8">変数名の変更<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<p>もう一つ気になるところがあります。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>引数の名前が分かりやすいですが、処理の内容を見るとさらに改善の余地があります。ここは <strong>変数名の変更</strong> を適用して人間にとって読みやすいコードにリファクタリングしましょう。</p>
+<blockquote>
+<p>コンパイラがわかるコードは誰にでも書ける。すぐれたプログラマは人間にとってわかりやすいコードを書く。</p>
+<p>—  リファクタリング(第2版) </p>
+<p>名前は短いコメントだと思えばいい。短くてもいい名前をつければ、それだけ多くの情報を伝えることができる。</p>
+<p>—  リーダブルコード </p>
+</blockquote>
+<p>現在のコードはすでに適切な変数名になっていますが、内部処理を改善してみましょう。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>続いて、変更で壊れていないかを確認します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>オッケー、この時点でテストコードとプロダクトコードを変更しましたがその変更はすでに作成した自動テストによって壊れていないことを簡単に確認することができました。</p>
+<h3 id="_9">明白な実装<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>次は <strong>3を渡したら文字列"Fizz"</strong> を返すプログラムに取り組むとしましょう。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>3 の倍数のときは数の代わりに｢Fizz｣と返す</p>
+<ul>
+<li><strong>3を渡したら文字列"Fizz"を返す</strong></li>
+</ul>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p>まずは、<strong>テストファースト</strong> <strong>アサートファースト</strong> で小さなステップで進めていくんでしたよね。</p>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;3の倍数の場合&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;3を渡したら文字列&quot;Fizz&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">3</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Fizz&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>さて、失敗するテストを書いたので次はテストを通すためのプロダクトコードを書くわけですがどうしましょうか？　<strong>仮実装</strong>　でベタなコードを書きますか？実現したい振る舞いは<code>もし3を渡したらならば文字列Fizzを返す</code> です。英語なら <code>If number is 3, result is Fizz</code>といったところでしょうか。ここは <strong>明白な実装</strong> で片付けた方が早いでしょう。</p>
+<blockquote>
+<p>明白な実装</p>
+<p>シンプルな操作を実現するにはどうすればいいだろうか----そのまま実装しよう。</p>
+<p>仮実装や三角測量は、細かく細かく刻んだ小さなステップだ。だが、ときには実装をどうすべきか既に見えていることが。
+そのまま進もう。例えば先ほどのplusメソッドくらいシンプルなものを仮実装する必要が本当にあるだろうか。
+普通は、その必要はない。頭に浮かんだ明白な実装をただ単にコードに落とすだけだ。もしもレッドバーが出て驚いたら、あらためてもう少し歩幅を小さくしよう。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>ここでは <strong>if文</strong> と <strong>剰余演算子</strong> を使ってみましょう。なんかプログラムっぽくなってきましたね。
+3で割で割り切れる場合はFizzを返すということは <strong>数値リテラル</strong> 3で割った余りが0の場合は <strong>文字列リテラル</strong> Fizzを返すということなので余りを求める <strong>演算子</strong> を使います。TypeScriptでは剰余演算子 <code>%</code> を使用します。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Fizz&#39;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストがグリーンになりました。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>~~3 の倍数のときは数の代わりに｢Fizz｣と返す~~</p>
+<ul>
+<li>~~3を渡したら文字列"Fizz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+<ul>
+<li>5を渡したら文字列"Buzz"を返す</li>
+</ul>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p>レッド・グリーンときたので次はリファクタリングですね。ここではすでに可読性の高いコードになっているので、特にリファクタリングは必要ありません。</p>
+<p>だんだんとリズムに乗ってきました。ここはギアを上げて <strong>明白な実装</strong> で引き続き <strong>TODOリスト</strong> の内容を片付けていきましょう。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>~~3の倍数のときは数の代わりに｢Fizz｣と返す~~</p>
+<ul>
+<li>~~3を渡したら文字列"Fizz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>5 の倍数のときは｢Buzz｣と返す</p>
+<ul>
+<li><strong>5を渡したら文字列"Buzz"を返す</strong></li>
+</ul>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p><strong>テストファースト</strong> <strong>アサートファースト</strong> で最初に失敗するテストを書いて</p>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;5の倍数の場合&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;5を渡したら文字列&quot;Buzz&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">5</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p><strong>if/else if/else文</strong> を使って条件分岐を追加しましょう。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Fizz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Buzz&#39;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストが通りました。</p>
+<p>次に、3と5の両方の倍数の場合のテストを追加します。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>~~3の倍数のときは数の代わりに｢Fizz｣と返す~~</p>
+<ul>
+<li>~~3を渡したら文字列"Fizz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~5 の倍数のときは｢Buzz｣と返す~~</p>
+<ul>
+<li>~~5を渡したら文字列"Buzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す</p>
+<ul>
+<li><strong>15を渡したら文字列"FizzBuzz"を返す</strong></li>
+</ul>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;3と5の両方の倍数の場合&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;15を渡したら文字列&quot;FizzBuzz&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">15</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストが失敗しました。3と5の両方の倍数の場合の実装を追加します。条件の順番を変更して、最も具体的な条件から始めます。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FizzBuzz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Fizz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Buzz&#39;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストが通りました。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>~~3の倍数のときは数の代わりに｢Fizz｣と返す~~</p>
+<ul>
+<li>~~3を渡したら文字列"Fizz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~5 の倍数のときは｢Buzz｣と返す~~</p>
+<ul>
+<li>~~5を渡したら文字列"Buzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す~~</p>
+<ul>
+<li>~~15を渡したら文字列"FizzBuzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>1 から 100 までの数</p>
+<ul>
+<li><strong>1から100までの数を配列で返す</strong></li>
+</ul>
+</li>
+<li>
+<p>プリントする</p>
+</li>
+</ul>
+<p>次に、1から100までの数をプリントする機能を追加します。まず、配列を返すメソッドのテストを追加します。</p>
+<div class="highlight"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;1から100までの数をプリントする&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;1から100までの数を配列で返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generateList</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">100</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">0</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">1</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">2</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Fizz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">4</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">14</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">99</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p><code>generateList</code>メソッドを実装します。</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FizzBuzz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Fizz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Buzz&#39;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nx">generateList</span><span class="p">(</span><span class="nx">start</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">end</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">start</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">end</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>--run
+</code></pre></div>
+<p>テストが通りました。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>~~3の倍数のときは数の代わりに｢Fizz｣と返す~~</p>
+<ul>
+<li>~~3を渡したら文字列"Fizz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~5 の倍数のときは｢Buzz｣と返す~~</p>
+<ul>
+<li>~~5を渡したら文字列"Buzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す~~</p>
+<ul>
+<li>~~15を渡したら文字列"FizzBuzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~1 から 100 までの数~~</p>
+<ul>
+<li>~~1から100までの数を配列で返す~~</li>
+</ul>
+</li>
+<li>
+<p>プリントする</p>
+<ul>
+<li><strong>Webページに結果を表示する</strong></li>
+</ul>
+</li>
+</ul>
+<p>最後に、Webページで結果を表示する機能を実装します。<code>src/main.ts</code>ファイルを更新します。</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="s1">&#39;./style.css&#39;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./FizzBuzz&#39;</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="p">()</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="o">&lt;</span><span class="nx">HTMLDivElement</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span><span class="o">!</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">  &lt;div&gt;</span>
+<span class="sb">    &lt;h1&gt;FizzBuzz&lt;/h1&gt;</span>
+<span class="sb">    &lt;div class=&quot;card&quot;&gt;</span>
+<span class="sb">      &lt;button id=&quot;generateBtn&quot; type=&quot;button&quot;&gt;1から100までのFizzBuzzを生成&lt;/button&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;div id=&quot;result&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">  &lt;/div&gt;</span>
+<span class="sb">`</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">generateBtn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="o">&lt;</span><span class="nx">HTMLButtonElement</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;#generateBtn&#39;</span><span class="p">)</span><span class="o">!</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">resultDiv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="o">&lt;</span><span class="nx">HTMLDivElement</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;#result&#39;</span><span class="p">)</span><span class="o">!</span>
+
+<span class="nx">generateBtn</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generateList</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">100</span><span class="p">)</span>
+<span class="w">  </span><span class="nx">resultDiv</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">    &lt;h2&gt;結果:&lt;/h2&gt;</span>
+<span class="sb">    &lt;div class=&quot;fizzbuzz-grid&quot;&gt;</span>
+<span class="sb">      </span><span class="si">${</span><span class="nx">results</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">value</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">        &lt;div class=&quot;fizzbuzz-item </span><span class="si">${</span><span class="nx">getFizzBuzzClass</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span><span class="sb">&quot;&gt;</span>
+<span class="sb">          &lt;span class=&quot;number&quot;&gt;</span><span class="si">${</span><span class="nx">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="si">}</span><span class="sb">&lt;/span&gt;</span>
+<span class="sb">          &lt;span class=&quot;result&quot;&gt;</span><span class="si">${</span><span class="nx">value</span><span class="si">}</span><span class="sb">&lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">      `</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">  `</span>
+<span class="p">})</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">getFizzBuzzClass</span><span class="p">(</span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">value</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;fizzbuzz&#39;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">value</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;Fizz&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;fizz&#39;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">value</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;buzz&#39;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;number&#39;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>また、<code>src/style.css</code>にFizzBuzz用のスタイルを追加します。</p>
+<div class="highlight"><pre><span></span><code><span class="p">.</span><span class="nc">fizzbuzz-grid</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="k">grid</span><span class="p">;</span>
+<span class="w">  </span><span class="k">grid-template-columns</span><span class="p">:</span><span class="w"> </span><span class="nf">repeat</span><span class="p">(</span><span class="kc">auto</span><span class="nv">-fit</span><span class="p">,</span><span class="w"> </span><span class="nf">minmax</span><span class="p">(</span><span class="mi">80</span><span class="kt">px</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="p">));</span>
+<span class="w">  </span><span class="k">gap</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="k">margin-top</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">  </span><span class="k">max-width</span><span class="p">:</span><span class="w"> </span><span class="mi">800</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="k">margin-left</span><span class="p">:</span><span class="w"> </span><span class="kc">auto</span><span class="p">;</span>
+<span class="w">  </span><span class="k">margin-right</span><span class="p">:</span><span class="w"> </span><span class="kc">auto</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
+<span class="w">  </span><span class="k">flex-direction</span><span class="p">:</span><span class="w"> </span><span class="kc">column</span><span class="p">;</span>
+<span class="w">  </span><span class="k">align-items</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">  </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#333</span><span class="p">;</span>
+<span class="w">  </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#1a1a1a</span><span class="p">;</span>
+<span class="w">  </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">all</span><span class="w"> </span><span class="mf">0.2</span><span class="kt">s</span><span class="w"> </span><span class="kc">ease</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="p">:</span><span class="nd">hover</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">transform</span><span class="p">:</span><span class="w"> </span><span class="nb">translateY</span><span class="p">(</span><span class="mi">-2</span><span class="kt">px</span><span class="p">);</span>
+<span class="w">  </span><span class="k">box-shadow</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.3</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="p">.</span><span class="nc">fizz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#2d4a2d</span><span class="p">;</span>
+<span class="w">  </span><span class="k">border-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#4a7c4a</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="p">.</span><span class="nc">buzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#4a2d2d</span><span class="p">;</span>
+<span class="w">  </span><span class="k">border-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#7c4a4a</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="p">.</span><span class="nc">fizzbuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#4a4a2d</span><span class="p">;</span>
+<span class="w">  </span><span class="k">border-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#7c7c4a</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="w"> </span><span class="p">.</span><span class="nc">number</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="kt">em</span><span class="p">;</span>
+<span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#888</span><span class="p">;</span>
+<span class="w">  </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">fizzbuzz-item</span><span class="w"> </span><span class="p">.</span><span class="nc">result</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mf">1.1</span><span class="kt">em</span><span class="p">;</span>
+<span class="w">  </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>開発サーバーを起動して結果を確認します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>dev
+</code></pre></div>
+<p>ブラウザで <code>http://localhost:5173/</code> を開いてボタンをクリックすると、1から100までのFizzBuzzの結果が美しいグリッドレイアウトで表示されます。</p>
+<p>TODOリスト</p>
+<ul>
+<li>
+<p>~~数を文字列にして返す~~</p>
+<ul>
+<li>
+<p>~~1を渡したら文字列"1"を返す~~</p>
+</li>
+<li>
+<p>~~2を渡したら文字列"2"を返す~~</p>
+</li>
+</ul>
+</li>
+<li>
+<p>~~3の倍数のときは数の代わりに｢Fizz｣と返す~~</p>
+<ul>
+<li>~~3を渡したら文字列"Fizz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~5 の倍数のときは｢Buzz｣と返す~~</p>
+<ul>
+<li>~~5を渡したら文字列"Buzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~3 と 5 両方の倍数の場合には｢FizzBuzz｣と返す~~</p>
+<ul>
+<li>~~15を渡したら文字列"FizzBuzz"を返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~1 から 100 までの数~~</p>
+<ul>
+<li>~~1から100までの数を配列で返す~~</li>
+</ul>
+</li>
+<li>
+<p>~~プリントする~~</p>
+<ul>
+<li>~~Webページに結果を表示する~~</li>
+</ul>
+</li>
+</ul>
+<h2 id="_10">完成したコード<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="fizzbuzz-srcfizzbuzzts">FizzBuzzクラス (src/FizzBuzz.ts)<a class="headerlink" href="#fizzbuzz-srcfizzbuzzts" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">generate</span><span class="p">(</span><span class="kt">number</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;FizzBuzz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Fizz&#39;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Buzz&#39;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nx">generateList</span><span class="p">(</span><span class="nx">start</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">end</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">start</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">end</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">result</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="srcfizzbuzztestts">テストコード (src/FizzBuzz.test.ts)<a class="headerlink" href="#srcfizzbuzztestts" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">describe</span><span class="p">,</span><span class="w"> </span><span class="nx">it</span><span class="p">,</span><span class="w"> </span><span class="nx">expect</span><span class="p">,</span><span class="w"> </span><span class="nx">beforeEach</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vitest&#39;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./FizzBuzz&#39;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="o">:</span><span class="w"> </span><span class="kt">FizzBuzz</span>
+
+<span class="w">  </span><span class="nx">beforeEach</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fizzBuzz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">FizzBuzz</span><span class="p">()</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;数を文字列にして返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;1を渡したら文字列&quot;1&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">1</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;2を渡したら文字列&quot;2&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">2</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;3の倍数の場合&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;3を渡したら文字列&quot;Fizz&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">3</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Fizz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;5の倍数の場合&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;5を渡したら文字列&quot;Buzz&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">5</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;3と5の両方の倍数の場合&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;15を渡したら文字列&quot;FizzBuzz&quot;を返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="mf">15</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;1から100までの数をプリントする&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;1から100までの数を配列で返す&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fizzBuzz</span><span class="p">.</span><span class="nx">generateList</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">100</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">0</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">1</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">2</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Fizz&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">4</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">14</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;FizzBuzz&#39;</span><span class="p">)</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mf">99</span><span class="p">]).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">&#39;Buzz&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<h2 id="_11">まとめ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>TypeScriptとViteを使用したテスト駆動開発によるFizzBuzzの実装を通じて、以下のことを学びました：</p>
+<h3 id="_12">テスト駆動開発の基本サイクル<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>レッド</strong>: 失敗するテストを書く</li>
+<li><strong>グリーン</strong>: テストを通すための最小限の実装</li>
+<li><strong>リファクタリング</strong>: コードの改善</li>
+</ol>
+<h3 id="tdd">TDDの重要な技法<a class="headerlink" href="#tdd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>テストファースト</strong>: プロダクトコードを書く前にテストを書く</li>
+<li><strong>アサートファースト</strong>: テストの最初にアサーションを書く</li>
+<li><strong>仮実装</strong>: 最初はベタ書きの値でテストを通す</li>
+<li><strong>三角測量</strong>: 複数の例がある時だけ一般化する</li>
+<li><strong>明白な実装</strong>: シンプルな場合は直接実装する</li>
+</ul>
+<h3 id="_13">リファクタリングの技法<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>メソッドの抽出</strong>: 重複するコードをメソッドに抽出</li>
+<li><strong>変数名の変更</strong>: より読みやすい名前に変更</li>
+</ul>
+<h3 id="typescriptvite">TypeScriptとViteの利点<a class="headerlink" href="#typescriptvite" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>型安全性</strong>: TypeScriptによる開発時エラーの早期発見</li>
+<li><strong>高速テスト</strong>: Vitestによる高速なテスト実行</li>
+<li><strong>モダンな開発環境</strong>: Viteによる高速なビルドとHMR</li>
+<li><strong>優れた開発体験</strong>: 豊富なツールサポートと統合</li>
+</ul>
+<blockquote>
+<p>テスト駆動開発は、プログラミング中の不安をコントロールする手法だ。</p>
+<p>—  テスト駆動開発 </p>
+</blockquote>
+<p>この小さなプログラムを通じて、テスト駆動開発の基本的な流れを体験することができました。実際のプロジェクトでもこの手法を活用することで、品質の高いソフトウェアを継続的に開発することができるでしょう。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

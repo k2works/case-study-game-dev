@@ -1,0 +1,824 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>イテレーション1 ふりかえり - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              イテレーション1 ふりかえり
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="1">イテレーション1 ふりかえり<a class="headerlink" href="#1" title="Permanent link">&para;</a></h1>
+<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>イテレーション</strong>: 1</li>
+<li><strong>期間</strong>: 2025-08-16 ～ 2025-08-30（予定）</li>
+<li><strong>実際の完了日</strong>: 2025-08-13（3日早期完了）</li>
+<li><strong>目標</strong>: 基本的なゲームプレイ機能の実装</li>
+<li><strong>ふりかえり方式</strong>: KPT（Keep-Problem-Try）</li>
+</ul>
+<h2 id="_2">成果サマリー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">定量的成果<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>実装ファイル</strong>: 21ファイル</li>
+<li><strong>テストファイル</strong>: 10ファイル</li>
+<li><strong>テスト結果</strong>: </li>
+<li>単体・統合テスト: 116件成功、1件スキップ</li>
+<li>E2Eテスト: 50件成功（5ブラウザ）</li>
+<li><strong>テストカバレッジ</strong>: 73.78%</li>
+<li><strong>Story Points</strong>: 13（実績）</li>
+<li><strong>重大バグ</strong>: 0件</li>
+</ul>
+<h3 id="_4">機能的成果<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ フィールド(6×12)表示</li>
+<li>✅ ぷよの基本操作(移動・回転・落下)</li>
+<li>✅ 基本的なゲームルール動作</li>
+<li>✅ キーボード入力処理</li>
+<li>✅ TailwindCSS v4セットアップ</li>
+<li>✅ E2Eテストスイート構築</li>
+</ul>
+<h2 id="kpt">KPTふりかえり<a class="headerlink" href="#kpt" title="Permanent link">&para;</a></h2>
+<h3 id="keep">Keep（うまくいったこと、続けたいこと）<a class="headerlink" href="#keep" title="Permanent link">&para;</a></h3>
+<h4 id="_5">開発プロセス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>TDD開発サイクル</strong></li>
+<li>Red-Green-Refactorサイクルを徹底</li>
+<li>品質の高いコードを実現</li>
+<li>
+<p>バグの早期発見・修正が可能</p>
+</li>
+<li>
+<p><strong>3層テスト戦略</strong></p>
+</li>
+<li>単体・統合・E2Eテストの完全実装</li>
+<li>高い信頼性を確保</li>
+<li>
+<p>リグレッション防止効果</p>
+</li>
+<li>
+<p><strong>継続的品質チェック</strong></p>
+</li>
+<li>コミット前の自動品質確認</li>
+<li>lint, format, test, buildの実行</li>
+<li>
+<p>一貫した品質基準の維持</p>
+</li>
+<li>
+<p><strong>関数型アプローチ</strong></p>
+</li>
+<li>純粋関数中心の設計</li>
+<li>副作用の最小化</li>
+<li>テスタビリティの向上</li>
+</ul>
+<h4 id="_6">技術実装<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>ヘキサゴナルアーキテクチャ</strong></li>
+<li>明確な層分離</li>
+<li>依存関係の適切な管理</li>
+<li>
+<p>保守性・拡張性の確保</p>
+</li>
+<li>
+<p><strong>TypeScript活用</strong></p>
+</li>
+<li>型安全性による開発効率向上</li>
+<li>コンパイル時エラー検出</li>
+<li>
+<p>IDE支援の充実</p>
+</li>
+<li>
+<p><strong>Zustand状態管理</strong></p>
+</li>
+<li>シンプルで効果的な状態管理</li>
+<li>Redux比較で軽量</li>
+<li>
+<p>学習コストの低さ</p>
+</li>
+<li>
+<p><strong>TailwindCSS v4</strong></p>
+</li>
+<li>最新技術の活用</li>
+<li>高速なスタイリング</li>
+<li>一貫したデザインシステム</li>
+</ul>
+<h4 id="_7">プロジェクト管理<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>包括的ドキュメント</strong></li>
+<li>ADR、設計書、要件書の体系的管理</li>
+<li>意思決定の透明性</li>
+<li>
+<p>知識の蓄積と共有</p>
+</li>
+<li>
+<p><strong>クロスブラウザテスト</strong></p>
+</li>
+<li>5ブラウザでの動作確認</li>
+<li>互換性の確保</li>
+<li>
+<p>ユーザー体験の安定性</p>
+</li>
+<li>
+<p><strong>早期完了</strong></p>
+</li>
+<li>予定より3日早い完了</li>
+<li>効率的な開発プロセス</li>
+<li>リスクバッファの確保</li>
+</ul>
+<h3 id="problem">Problem（問題だったこと、課題）<a class="headerlink" href="#problem" title="Permanent link">&para;</a></h3>
+<h4 id="_8">技術課題<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>E2Eテスト設定</strong></li>
+<li>ポート設定の不整合（3000 vs 3004）</li>
+<li>初期設定に予想外の時間を要した</li>
+<li>
+<p>設定ファイル間の整合性チェック不足</p>
+</li>
+<li>
+<p><strong>dependency-cruiser警告</strong></p>
+</li>
+<li>setup.tsファイルのorphan警告</li>
+<li>アーキテクチャルール検証の軽微な問題</li>
+<li>
+<p>設定の微調整が必要</p>
+</li>
+<li>
+<p><strong>コメント不足</strong></p>
+</li>
+<li>実装コードでのコメント記述が最小限</li>
+<li>複雑なロジックの説明不足</li>
+<li>将来の保守性への影響懸念</li>
+</ul>
+<h4 id="_9">プロセス課題<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>スキップテスト</strong></li>
+<li>Game.test.tsで1件のテストスキップ</li>
+<li>チェーン機能の未実装による</li>
+<li>
+<p>テスト完全性の課題</p>
+</li>
+<li>
+<p><strong>テストカバレッジ</strong></p>
+</li>
+<li>一部分岐でカバレッジ未達成（73.78%）</li>
+<li>エラーハンドリング部分の不足</li>
+<li>エッジケースのテスト不足</li>
+</ul>
+<h4 id="_10">ドキュメント課題<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>実装詳細ドキュメント</strong></li>
+<li>コード内ドキュメントが最小限</li>
+<li>API仕様の記述不足</li>
+<li>
+<p>使用例の不足</p>
+</li>
+<li>
+<p><strong>運用手順</strong></p>
+</li>
+<li>本番運用に向けた詳細手順が未整備</li>
+<li>デプロイ・監視・バックアップ手順の不足</li>
+<li>インシデント対応手順の未定義</li>
+</ul>
+<h3 id="try">Try（次に試したいこと、改善案）<a class="headerlink" href="#try" title="Permanent link">&para;</a></h3>
+<h4 id="_11">技術改善<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>テスト設定統一</strong></li>
+<li>開発・テスト環境の設定ファイル統一管理</li>
+<li>ポート番号などの一元管理</li>
+<li>
+<p>設定変更時の影響範囲明確化</p>
+</li>
+<li>
+<p><strong>JSDoc導入</strong></p>
+</li>
+<li>関数・クラスレベルでのドキュメント充実</li>
+<li>型情報と使用例の記述</li>
+<li>
+<p>自動ドキュメント生成の活用</p>
+</li>
+<li>
+<p><strong>カバレッジ向上</strong></p>
+</li>
+<li>未テスト分岐の追加テスト作成</li>
+<li>エラーハンドリングテストの強化</li>
+<li>
+<p>エッジケースの網羅的テスト</p>
+</li>
+<li>
+<p><strong>型安全性強化</strong></p>
+</li>
+<li>より厳密な型定義</li>
+<li>バリデーション機能の追加</li>
+<li>実行時型チェックの導入</li>
+</ul>
+<h4 id="_12">プロセス改善<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>スキップテスト解消</strong></li>
+<li>次イテレーションでの実装とテスト完了</li>
+<li>TODOテストの計画的解消</li>
+<li>
+<p>テスト駆動開発の徹底</p>
+</li>
+<li>
+<p><strong>CI/CD最適化</strong></p>
+</li>
+<li>テスト実行時間の短縮</li>
+<li>並列実行の活用</li>
+<li>
+<p>キャッシュ戦略の最適化</p>
+</li>
+<li>
+<p><strong>コードレビュー</strong></p>
+</li>
+<li>セルフレビューチェックリスト作成</li>
+<li>品質ゲートの強化</li>
+<li>ピアレビューの導入検討</li>
+</ul>
+<h4 id="_13">チーム・プロジェクト改善<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>運用準備</strong></li>
+<li>デプロイ手順の文書化</li>
+<li>監視・アラート設定</li>
+<li>
+<p>バックアップ・復旧手順整備</p>
+</li>
+<li>
+<p><strong>パフォーマンス最適化</strong></p>
+</li>
+<li>バンドルサイズのさらなる削減</li>
+<li>レンダリング最適化</li>
+<li>
+<p>メモリ使用量の最適化</p>
+</li>
+<li>
+<p><strong>アクセシビリティ強化</strong></p>
+</li>
+<li>WCAG準拠レベル向上</li>
+<li>キーボードナビゲーション改善</li>
+<li>スクリーンリーダー対応強化</li>
+</ul>
+<h2 id="_14">アクションアイテム<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="2">即座実行（イテレーション2開始前）<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>設定ファイル統一</strong>: ポート設定の一元管理</li>
+<li><strong>スキップテスト解消</strong>: チェーン機能実装計画作成</li>
+<li><strong>JSDoc導入</strong>: ドキュメント記述規約策定</li>
+</ol>
+<h3 id="2_1">イテレーション2での実装<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>カバレッジ向上</strong>: 未テスト分岐の追加テスト作成</li>
+<li><strong>運用手順整備</strong>: デプロイ・監視手順の文書化</li>
+<li><strong>エラーハンドリング強化</strong>: より堅牢なエラー処理実装</li>
+</ol>
+<h3 id="v10">長期的改善（v1.0リリース前）<a class="headerlink" href="#v10" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>パフォーマンス最適化</strong>: バンドルサイズ削減</li>
+<li><strong>アクセシビリティ対応</strong>: WCAG AA準拠</li>
+<li><strong>CI/CD最適化</strong>: テスト実行時間の短縮</li>
+</ol>
+<h2 id="_15">学習・気づき<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">技術的学習<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>TDD実践</strong>: Red-Green-Refactorサイクルの効果を実感</li>
+<li><strong>関数型設計</strong>: 純粋関数の設計パターン習得</li>
+<li><strong>E2E設定</strong>: 環境設定の一貫性の重要性を再認識</li>
+</ul>
+<h3 id="_17">プロセス学習<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>早期完了</strong>: 適切な見積もりとリスク管理の効果</li>
+<li><strong>継続的品質</strong>: 品質チェックの自動化による効率向上</li>
+<li><strong>ドキュメント</strong>: 包括的ドキュメントの保守性向上効果</li>
+</ul>
+<h3 id="_18">チーム学習<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>透明性</strong>: ADRによる意思決定の透明性確保</li>
+<li><strong>知識共有</strong>: ドキュメント体系による知識の蓄積</li>
+<li><strong>品質文化</strong>: 品質ファーストの開発文化醸成</li>
+</ul>
+<h2 id="_19">まとめ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
+<p>イテレーション1は予定より早期に完了し、すべての受け入れ基準を満たす高品質な成果を達成しました。TDD開発サイクルと3層テスト戦略が特に効果的で、今後も継続します。</p>
+<p>一方で、E2Eテスト設定やドキュメント不足など改善点も明確になりました。次のイテレーション2では、これらの課題を解決しながら、消去・連鎖システムの実装に取り組みます。</p>
+<p><strong>総合評価</strong>: 優秀（予定を上回る成果と品質を達成）</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,781 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>運用ドキュメント - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              運用ドキュメント
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">運用ドキュメント<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>ぷよぷよゲームプロジェクトの運用・保守・監視に関するドキュメント群です。開発環境から本番環境まで、包括的な運用手順と設定情報を提供します。</p>
+<h2 id="_3">ドキュメント一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">環境構築・設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97/">セットアップ</a> - 開発環境のセットアップ手順</li>
+<li><a href="%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/">環境構築</a> - 各種環境の構築手順</li>
+<li><a href="MkDocs_GitHub_Actions%E8%A8%AD%E5%AE%9A/">MkDocs GitHub Actions設定</a> - GitHub ActionsでMkDocsを自動化する手順</li>
+</ul>
+<h2 id="_5">運用環境<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="phase-2">Phase 2実装済み運用基盤（完了）✅<a class="headerlink" href="#phase-2" title="Permanent link">&para;</a></h3>
+<h4 id="1">イテレーション1運用実績✅<a class="headerlink" href="#1" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>テスト自動化</strong>: 176件テスト自動実行、成功率99.4%</li>
+<li><strong>E2E自動化</strong>: 5ブラウザクロステスト完全自動化</li>
+<li><strong>品質ゲート</strong>: リント・フォーマット・ビルド自動チェック</li>
+<li><strong>継続的デプロイ</strong>: プッシュ時の自動デプロイメント確認済み</li>
+</ul>
+<h4 id="2">イテレーション2運用実績✅<a class="headerlink" href="#2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>テスト品質向上</strong>: 403件テスト実行、テストカバレッジ91.18%達成</li>
+<li><strong>関数型導入</strong>: lodash/fp統合による設計品質向上</li>
+<li><strong>アーキテクチャ改善</strong>: stores配置最適化、未使用コード除去</li>
+</ul>
+<h4 id="3">イテレーション3運用実績✅<a class="headerlink" href="#3" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AI機能統合</strong>: TensorFlow.js v4.22.0統合、Web Workers実装</li>
+<li><strong>テスト継続</strong>: 489件テスト実行（100%通過）、E2E 65件（100%通過）</li>
+<li><strong>パフォーマンス</strong>: AI処理非ブロッキング化、メインスレッド保護</li>
+<li><strong>品質維持</strong>: カバレッジ80.57%、全品質ゲート通過</li>
+<li><strong>関数型リファクタリング</strong>: EvaluationService純粋関数化（17テスト追加）</li>
+</ul>
+<h4 id="4">イテレーション4運用実績✅<a class="headerlink" href="#4" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AI分析・戦略機能</strong>: PerformanceAnalysisService、StrategyService拡張実装</li>
+<li><strong>データ可視化</strong>: Recharts統合、チャートコンポーネント実装</li>
+<li><strong>品質維持</strong>: 602件テスト成功（97.6%）、受け入れ基準100%達成</li>
+<li><strong>mayah AI設計</strong>: 4要素評価システム設計拡張、76 SP計画策定</li>
+</ul>
+<h4 id="5">イテレーション5運用実績✅<a class="headerlink" href="#5" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>mayah AI評価システム</strong>: 3つの評価サービス実装（2,372行）</li>
+<li><strong>高度技術パターン</strong>: 関数型プログラミング、システム統合設計、パターンマッチング実証</li>
+<li><strong>品質実績</strong>: TypeScript型カバレッジ94%、平均評価時間85ms</li>
+<li><strong>技術成果</strong>: mayah AI 4要素評価システム完成、39 SP完了（100%）</li>
+</ul>
+<h4 id="6">イテレーション6運用実績✅<a class="headerlink" href="#6" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AI学習システム統合</strong>: 11コンポーネント完全実装（TensorFlowTrainer、LearningService等）</li>
+<li><strong>テスト品質向上</strong>: 単体テストエラー4件→0件完全解決、体系的修正プロセス確立</li>
+<li><strong>品質実績</strong>: テストカバレッジ80.57%維持、テスト成功率98.3%（1,034/1,052件通過）</li>
+<li><strong>技術成果</strong>: AI学習基盤完成、21 SP完了（100%）、テスト品質向上プロセス確立</li>
+</ul>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjY3MXB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6MTAwOXB4O2hlaWdodDo2NzFweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDA5IDY3MSIgd2lkdGg9IjEwMDlweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjwhLS1jbHVzdGVyID8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjUiIGRhdGEtdWlkPSJlbnQwMDAyIiBpZD0iY2x1c3Rlcl8uLi4uIj48cGF0aCBkPSJNNDU4LjUsNiBMNTE1LjQ5OTgsNiBBMy43NSwzLjc1IDAgMCAxIDUxNy45OTk4LDguNSBMNTI0Ljk5OTgsMjguMjk2OSBMOTk5LjUsMjguMjk2OSBBMi41LDIuNSAwIDAgMSAxMDAyLDMwLjc5NjkgTDEwMDIsMTAwLjggQTIuNSwyLjUgMCAwIDEgOTk5LjUsMTAzLjMgTDQ1OC41LDEwMy4zIEEyLjUsMi41IDAgMCAxIDQ1NiwxMDAuOCBMNDU2LDguNSBBMi41LDIuNSAwIDAgMSA0NTguNSw2IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiIHgxPSI0NTYiIHgyPSI1MjQuOTk5OCIgeTE9IjI4LjI5NjkiIHkyPSIyOC4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU1Ljk5OTgiIHg9IjQ2MCIgeT0iMjAuOTk1MSI+JiMzODI4MzsmIzMwMzMwOyYjMjk4NzI7JiMyMjY1OTs8L3RleHQ+PC9nPjwhLS1jbHVzdGVyIENJL0NEIFBpcGVsaW5lLS0+PGcgY2xhc3M9ImNsdXN0ZXIiIGRhdGEtZW50aXR5PSJDSS5DRCBQaXBlbGluZSIgZGF0YS1zb3VyY2UtbGluZT0iMTEiIGRhdGEtdWlkPSJlbnQwMDA2IiBpZD0iY2x1c3Rlcl9DSS5DRCBQaXBlbGluZSI+PHBhdGggZD0iTTQ3NC41LDEyNy4zIEw1ODYuNTAyLDEyNy4zIEEzLjc1LDMuNzUgMCAwIDEgNTg5LjAwMiwxMjkuOCBMNTk2LjAwMiwxNDkuNTk2OSBMODU2LjUsMTQ5LjU5NjkgQTIuNSwyLjUgMCAwIDEgODU5LDE1Mi4wOTY5IEw4NTksNDM0LjY5IEEyLjUsMi41IDAgMCAxIDg1Ni41LDQzNy4xOSBMNDc0LjUsNDM3LjE5IEEyLjUsMi41IDAgMCAxIDQ3Miw0MzQuNjkgTDQ3MiwxMjkuOCBBMi41LDIuNSAwIDAgMSA0NzQuNSwxMjcuMyIgZmlsbD0iI0U2RjNGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7IiB4MT0iNDcyIiB4Mj0iNTk2LjAwMiIgeTE9IjE0OS41OTY5IiB5Mj0iMTQ5LjU5NjkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTExLjAwMiIgeD0iNDc2IiB5PSIxNDIuMjk1MSI+Q0kvQ0QgUGlwZWxpbmU8L3RleHQ+PC9nPjwhLS1jbHVzdGVyID8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4iIGRhdGEtc291cmNlLWxpbmU9IjE4IiBkYXRhLXVpZD0iZW50MDAxMSIgaWQ9ImNsdXN0ZXJfLi4uLiI+PHBhdGggZD0iTTguNSw2IEw2NS40OTk4LDYgQTMuNzUsMy43NSAwIDAgMSA2Ny45OTk4LDguNSBMNzQuOTk5OCwyOC4yOTY5IEw0MjkuNSwyOC4yOTY5IEEyLjUsMi41IDAgMCAxIDQzMiwzMC43OTY5IEw0MzIsMjIyLjA5IEEyLjUsMi41IDAgMCAxIDQyOS41LDIyNC41OSBMOC41LDIyNC41OSBBMi41LDIuNSAwIDAgMSA2LDIyMi4wOSBMNiw4LjUgQTIuNSwyLjUgMCAwIDEgOC41LDYiIGZpbGw9IiNFNkZGRTYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgeDE9IjYiIHgyPSI3NC45OTk4IiB5MT0iMjguMjk2OSIgeTI9IjI4LjI5NjkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuOTk5OCIgeD0iMTAiIHk9IjIwLjk5NTEiPiYjMjE2OTc7JiMzNjA3NDsmIzMxNjQ5OyYjMjk3MDI7PC90ZXh0PjwvZz48IS0tY2x1c3RlciA/Pz8/Pz8tLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9Ii4uLi4uLiIgZGF0YS1zb3VyY2UtbGluZT0iMjUiIGRhdGEtdWlkPSJlbnQwMDE2IiBpZD0iY2x1c3Rlcl8uLi4uLi4iPjxwYXRoIGQ9Ik01MDYuNSw0NjEuMTkgTDU5MS40OTk2LDQ2MS4xOSBBMy43NSwzLjc1IDAgMCAxIDU5My45OTk2LDQ2My42OSBMNjAwLjk5OTYsNDgzLjQ4NjkgTDg2OS41LDQ4My40ODY5IEEyLjUsMi41IDAgMCAxIDg3Miw0ODUuOTg2OSBMODcyLDY2Mi4yOCBBMi41LDIuNSAwIDAgMSA4NjkuNSw2NjQuNzggTDUwNi41LDY2NC43OCBBMi41LDIuNSAwIDAgMSA1MDQsNjYyLjI4IEw1MDQsNDYzLjY5IEEyLjUsMi41IDAgMCAxIDUwNi41LDQ2MS4xOSIgZmlsbD0iI0ZGRTZDQyIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7IiB4MT0iNTA0IiB4Mj0iNjAwLjk5OTYiIHkxPSI0ODMuNDg2OSIgeTI9IjQ4My40ODY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgzLjk5OTYiIHg9IjUwOCIgeT0iNDc2LjE4NTEiPiYjMTI0ODc7JiMxMjUwMzsmIzEyNTI1OyYjMTI0NTI7JiMyOTg3MjsmIzIyNjU5OzwvdGV4dD48L2c+PCEtLWVudGl0eSBMb2NhbCBEZXZlbG9wbWVudC0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJMb2NhbCBEZXZlbG9wbWVudCIgZGF0YS1zb3VyY2UtbGluZT0iNiIgZGF0YS11aWQ9ImVudDAwMDMiIGlkPSJlbnRpdHlfTG9jYWwgRGV2ZWxvcG1lbnQiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTc1LjIyODUiIHg9IjQ3Mi4zOSIgeT0iNDEiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNSIgeD0iNjI3LjYxODUiIHk9IjQ2Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI2MjUuNjE4NSIgeT0iNDgiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjYyNS42MTg1IiB5PSI1MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzNS4yMjg1IiB4PSI0ODcuMzkiIHk9IjczLjk5NTEiPkxvY2FsIERldmVsb3BtZW50PC90ZXh0PjwvZz48IS0tZW50aXR5IFZpdGUgRGV2IFNlcnZlci0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJWaXRlIERldiBTZXJ2ZXIiIGRhdGEtc291cmNlLWxpbmU9IjciIGRhdGEtdWlkPSJlbnQwMDA0IiBpZD0iZW50aXR5X1ZpdGUgRGV2IFNlcnZlciI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTAuMDU4NiIgeD0iNjgyLjk3IiB5PSI0MSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE1IiB4PSI4MTMuMDI4NiIgeT0iNDYiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjgxMS4wMjg2IiB5PSI0OCIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iODExLjAyODYiIHk9IjUyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTEwLjA1ODYiIHg9IjY5Ny45NyIgeT0iNzMuOTk1MSI+Vml0ZSBEZXYgU2VydmVyPC90ZXh0PjwvZz48IS0tZW50aXR5IEhvdCBSZWxvYWQtLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iSG90IFJlbG9hZCIgZGF0YS1zb3VyY2UtbGluZT0iOCIgZGF0YS11aWQ9ImVudDAwMDUiIGlkPSJlbnRpdHlfSG90IFJlbG9hZCI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMTcuMjkzOSIgeD0iODY4LjM1IiB5PSI0MSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE1IiB4PSI5NjUuNjQzOSIgeT0iNDYiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9Ijk2My42NDM5IiB5PSI0OCIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iOTYzLjY0MzkiIHk9IjUyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNzcuMjkzOSIgeD0iODgzLjM1IiB5PSI3My45OTUxIj5Ib3QgUmVsb2FkPC90ZXh0PjwvZz48IS0tZW50aXR5IEdpdEh1YiBBY3Rpb25zLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdpdEh1YiBBY3Rpb25zIiBkYXRhLXNvdXJjZS1saW5lPSIxMiIgZGF0YS11aWQ9ImVudDAwMDciIGlkPSJlbnRpdHlfR2l0SHViIEFjdGlvbnMiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTQ0LjM1MDYiIHg9IjQ4Ny44MiIgeT0iMTYyLjMiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNSIgeD0iNjEyLjE3MDYiIHk9IjE2Ny4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI2MTAuMTcwNiIgeT0iMTY5LjMiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjYxMC4xNzA2IiB5PSIxNzMuMyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwNC4zNTA2IiB4PSI1MDIuODIiIHk9IjE5NS4yOTUxIj5HaXRIdWIgQWN0aW9uczwvdGV4dD48L2c+PCEtLWVudGl0eSBOb2RlLmpzIE1hdHJpeCBUZXN0LS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9Ik5vZGUuanMgTWF0cml4IFRlc3QiIGRhdGEtc291cmNlLWxpbmU9IjEzIiBkYXRhLXVpZD0iZW50MDAwOCIgaWQ9ImVudGl0eV9Ob2RlLmpzIE1hdHJpeCBUZXN0Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE3NS4wOTg2IiB4PSI2NjcuNDUiIHk9IjE2Mi4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUiIHg9IjgyMi41NDg2IiB5PSIxNjcuMyIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iODIwLjU0ODYiIHk9IjE2OS4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI4MjAuNTQ4NiIgeT0iMTczLjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzUuMDk4NiIgeD0iNjgyLjQ1IiB5PSIxOTUuMjk1MSI+Tm9kZS5qcyBNYXRyaXggVGVzdDwvdGV4dD48L2c+PCEtLWVudGl0eSBRdWFsaXR5IEdhdGVzLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IlF1YWxpdHkgR2F0ZXMiIGRhdGEtc291cmNlLWxpbmU9IjE0IiBkYXRhLXVpZD0iZW50MDAwOSIgaWQ9ImVudGl0eV9RdWFsaXR5IEdhdGVzIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEzNS4yOTk4IiB4PSI1MDguMzUiIHk9IjI2OC41OSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE1IiB4PSI2MjMuNjQ5OCIgeT0iMjczLjU5Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI2MjEuNjQ5OCIgeT0iMjc1LjU5Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI2MjEuNjQ5OCIgeT0iMjc5LjU5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTUuMjk5OCIgeD0iNTIzLjM1IiB5PSIzMDEuNTg1MSI+UXVhbGl0eSBHYXRlczwvdGV4dD48L2c+PCEtLWVudGl0eSBBdXRvbWF0ZWQgRGVwbG95bWVudC0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJBdXRvbWF0ZWQgRGVwbG95bWVudCIgZGF0YS1zb3VyY2UtbGluZT0iMTUiIGRhdGEtdWlkPSJlbnQwMDEwIiBpZD0iZW50aXR5X0F1dG9tYXRlZCBEZXBsb3ltZW50Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjIwNy43OTQ5IiB4PSI0ODguMSIgeT0iMzc0Ljg5Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUiIHg9IjY3NS44OTQ5IiB5PSIzNzkuODkiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjY3My44OTQ5IiB5PSIzODEuODkiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjY3My44OTQ5IiB5PSIzODUuODkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNjcuNzk0OSIgeD0iNTAzLjEiIHk9IjQwNy44ODUxIj5BdXRvbWF0ZWQgRGVwbG95bWVudDwvdGV4dD48L2c+PCEtLWVudGl0eSBFU0xpbnQgQ2hlY2stLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iRVNMaW50IENoZWNrIiBkYXRhLXNvdXJjZS1saW5lPSIxOSIgZGF0YS11aWQ9ImVudDAwMTIiIGlkPSJlbnRpdHlfRVNMaW50IENoZWNrIj48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEzMS4zMDA4IiB4PSIzNS4zNSIgeT0iNDEiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNSIgeD0iMTQ2LjY1MDgiIHk9IjQ2Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSIxNDQuNjUwOCIgeT0iNDgiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjE0NC42NTA4IiB5PSI1MiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjkxLjMwMDgiIHg9IjUwLjM1IiB5PSI3My45OTUxIj5FU0xpbnQgQ2hlY2s8L3RleHQ+PC9nPjwhLS1lbnRpdHkgVGVzdCBFeGVjdXRpb24tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iVGVzdCBFeGVjdXRpb24iIGRhdGEtc291cmNlLWxpbmU9IjIwIiBkYXRhLXVpZD0iZW50MDAxMyIgaWQ9ImVudGl0eV9UZXN0IEV4ZWN1dGlvbiI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNDMuNTMwMyIgeD0iMjAxLjIzIiB5PSI0MSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE1IiB4PSIzMjQuNzYwMyIgeT0iNDYiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjMyMi43NjAzIiB5PSI0OCIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iMzIyLjc2MDMiIHk9IjUyIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTAzLjUzMDMiIHg9IjIxNi4yMyIgeT0iNzMuOTk1MSI+VGVzdCBFeGVjdXRpb248L3RleHQ+PC9nPjwhLS1lbnRpdHkgQ292ZXJhZ2UgUmVwb3J0LS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkNvdmVyYWdlIFJlcG9ydCIgZGF0YS1zb3VyY2UtbGluZT0iMjEiIGRhdGEtdWlkPSJlbnQwMDE0IiBpZD0iZW50aXR5X0NvdmVyYWdlIFJlcG9ydCI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTguNTYyNSIgeD0iMjEuNzIiIHk9IjE2Mi4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUiIHg9IjE2MC4yODI1IiB5PSIxNjcuMyIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iMTU4LjI4MjUiIHk9IjE2OS4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSIxNTguMjgyNSIgeT0iMTczLjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTguNTYyNSIgeD0iMzYuNzIiIHk9IjE5NS4yOTUxIj5Db3ZlcmFnZSBSZXBvcnQ8L3RleHQ+PC9nPjwhLS1lbnRpdHkgQXJjaGl0ZWN0dXJlIFZhbGlkYXRpb24tLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iQXJjaGl0ZWN0dXJlIFZhbGlkYXRpb24iIGRhdGEtc291cmNlLWxpbmU9IjIyIiBkYXRhLXVpZD0iZW50MDAxNSIgaWQ9ImVudGl0eV9BcmNoaXRlY3R1cmUgVmFsaWRhdGlvbiI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIyMDAuOTkzMiIgeD0iMjE1LjUiIHk9IjE2Mi4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUiIHg9IjM5Ni40OTMyIiB5PSIxNjcuMyIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iMzk0LjQ5MzIiIHk9IjE2OS4zIi8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSIzOTQuNDkzMiIgeT0iMTczLjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNjAuOTkzMiIgeD0iMjMwLjUiIHk9IjE5NS4yOTUxIj5BcmNoaXRlY3R1cmUgVmFsaWRhdGlvbjwvdGV4dD48L2c+PCEtLWVudGl0eSBWZXJjZWwgUHJldmlldy0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJWZXJjZWwgUHJldmlldyIgZGF0YS1zb3VyY2UtbGluZT0iMjYiIGRhdGEtdWlkPSJlbnQwMDE3IiBpZD0iZW50aXR5X1ZlcmNlbCBQcmV2aWV3Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjQ2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE0My42NDY1IiB4PSI1MjAuMTgiIHk9IjQ5Ni4xOSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMTAiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE1IiB4PSI2NDMuODI2NSIgeT0iNTAxLjE5Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI2NDEuODI2NSIgeT0iNTAzLjE5Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI0IiB4PSI2NDEuODI2NSIgeT0iNTA3LjE5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTAzLjY0NjUiIHg9IjUzNS4xOCIgeT0iNTI5LjE4NTEiPlZlcmNlbCBQcmV2aWV3PC90ZXh0PjwvZz48IS0tZW50aXR5IFZlcmNlbCBQcm9kdWN0aW9uLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IlZlcmNlbCBQcm9kdWN0aW9uIiBkYXRhLXNvdXJjZS1saW5lPSIyNyIgZGF0YS11aWQ9ImVudDAwMTgiIGlkPSJlbnRpdHlfVmVyY2VsIFByb2R1Y3Rpb24iPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iNDYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTYzLjYzNDgiIHg9IjUyMC4xOCIgeT0iNjAyLjQ4Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIxMCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUiIHg9IjY2My44MTQ4IiB5PSI2MDcuNDgiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjY2MS44MTQ4IiB5PSI2MDkuNDgiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjQiIHg9IjY2MS44MTQ4IiB5PSI2MTMuNDgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMjMuNjM0OCIgeD0iNTM1LjE4IiB5PSI2MzUuNDc1MSI+VmVyY2VsIFByb2R1Y3Rpb248L3RleHQ+PC9nPjwhLS1lbnRpdHkgQ0ROIERpc3RyaWJ1dGlvbi0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJDRE4gRGlzdHJpYnV0aW9uIiBkYXRhLXNvdXJjZS1saW5lPSIyOCIgZGF0YS11aWQ9ImVudDAwMTkiIGlkPSJlbnRpdHlfQ0ROIERpc3RyaWJ1dGlvbiI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI0Ni4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTcuMTU0MyIgeD0iNjk4LjQyIiB5PSI0OTYuMTkiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjEwIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNSIgeD0iODM1LjU3NDMiIHk9IjUwMS4xOSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iODMzLjU3NDMiIHk9IjUwMy4xOSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNCIgeD0iODMzLjU3NDMiIHk9IjUwNy4xOSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjExNy4xNTQzIiB4PSI3MTMuNDIiIHk9IjUyOS4xODUxIj5DRE4gRGlzdHJpYnV0aW9uPC90ZXh0PjwvZz48IS0tbGluayBMb2NhbCBEZXZlbG9wbWVudCB0byBHaXRIdWIgQWN0aW9ucy0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJMb2NhbCBEZXZlbG9wbWVudCIgZGF0YS1lbnRpdHktMj0iR2l0SHViIEFjdGlvbnMiIGRhdGEtc291cmNlLWxpbmU9IjMxIiBkYXRhLXVpZD0ibG5rMjAiIGlkPSJsaW5rX0xvY2FsIERldmVsb3BtZW50X0dpdEh1YiBBY3Rpb25zIj48cGF0aCBkPSJNNTYwLDg3LjU5IEM1NjAsMTA4LjkxIDU2MCwxMzQuODEgNTYwLDE1Ni4xMSIgZmlsbD0ibm9uZSIgaWQ9IkxvY2FsIERldmVsb3BtZW50LXRvLUdpdEh1YiBBY3Rpb25zIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI1NjAsMTYyLjExLDU2NCwxNTMuMTEsNTYwLDE1Ny4xMSw1NTYsMTUzLjExLDU2MCwxNjIuMTEiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48L2c+PCEtLWxpbmsgR2l0SHViIEFjdGlvbnMgdG8gUXVhbGl0eSBHYXRlcy0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJHaXRIdWIgQWN0aW9ucyIgZGF0YS1lbnRpdHktMj0iUXVhbGl0eSBHYXRlcyIgZGF0YS1zb3VyY2UtbGluZT0iMzIiIGRhdGEtdWlkPSJsbmsyMSIgaWQ9ImxpbmtfR2l0SHViIEFjdGlvbnNfUXVhbGl0eSBHYXRlcyI+PHBhdGggZD0iTTU2My40NywyMDkuMDcgQzU2Ni4xNiwyMjYuNTcgNTY4LjkzNzQsMjQ0LjczOTggNTcxLjYyNzQsMjYyLjIxOTgiIGZpbGw9Im5vbmUiIGlkPSJHaXRIdWIgQWN0aW9ucy10by1RdWFsaXR5IEdhdGVzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI1NzIuNTQsMjY4LjE1LDU3NS4xMjQ2LDI1OC42NDYzLDU3MS43Nzk1LDI2My4yMDgyLDU2Ny4yMTc2LDI1OS44NjMxLDU3Mi41NCwyNjguMTUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48L2c+PCEtLWxpbmsgUXVhbGl0eSBHYXRlcyB0byBBdXRvbWF0ZWQgRGVwbG95bWVudC0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJRdWFsaXR5IEdhdGVzIiBkYXRhLWVudGl0eS0yPSJBdXRvbWF0ZWQgRGVwbG95bWVudCIgZGF0YS1zb3VyY2UtbGluZT0iMzMiIGRhdGEtdWlkPSJsbmsyMiIgaWQ9ImxpbmtfUXVhbGl0eSBHYXRlc19BdXRvbWF0ZWQgRGVwbG95bWVudCI+PHBhdGggZD0iTTU3OS40NywzMTUuMzcgQzU4Mi4xNiwzMzIuODcgNTg0LjkzNzQsMzUxLjAzOTggNTg3LjYyNzQsMzY4LjUxOTgiIGZpbGw9Im5vbmUiIGlkPSJRdWFsaXR5IEdhdGVzLXRvLUF1dG9tYXRlZCBEZXBsb3ltZW50IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI1ODguNTQsMzc0LjQ1LDU5MS4xMjQ2LDM2NC45NDYzLDU4Ny43Nzk1LDM2OS41MDgyLDU4My4yMTc2LDM2Ni4xNjMxLDU4OC41NCwzNzQuNDUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48L2c+PCEtLWxpbmsgQXV0b21hdGVkIERlcGxveW1lbnQgdG8gVmVyY2VsIFByZXZpZXctLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0iQXV0b21hdGVkIERlcGxveW1lbnQiIGRhdGEtZW50aXR5LTI9IlZlcmNlbCBQcmV2aWV3IiBkYXRhLXNvdXJjZS1saW5lPSIzNCIgZGF0YS11aWQ9ImxuazIzIiBpZD0ibGlua19BdXRvbWF0ZWQgRGVwbG95bWVudF9WZXJjZWwgUHJldmlldyI+PHBhdGggZD0iTTU5Miw0MjEuNDggQzU5Miw0NDIuODEgNTkyLDQ2OC43IDU5Miw0OTAiIGZpbGw9Im5vbmUiIGlkPSJBdXRvbWF0ZWQgRGVwbG95bWVudC10by1WZXJjZWwgUHJldmlldyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iNTkyLDQ5Niw1OTYsNDg3LDU5Miw0OTEsNTg4LDQ4Nyw1OTIsNDk2IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PC9nPjwhLS1saW5rIFZlcmNlbCBQcmV2aWV3IHRvIFZlcmNlbCBQcm9kdWN0aW9uLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9IlZlcmNlbCBQcmV2aWV3IiBkYXRhLWVudGl0eS0yPSJWZXJjZWwgUHJvZHVjdGlvbiIgZGF0YS1zb3VyY2UtbGluZT0iMzUiIGRhdGEtdWlkPSJsbmsyNCIgaWQ9ImxpbmtfVmVyY2VsIFByZXZpZXdfVmVyY2VsIFByb2R1Y3Rpb24iPjxwYXRoIGQ9Ik01OTQuMTcsNTQyLjk3IEM1OTUuODUsNTYwLjQ2IDU5Ny41ODk0LDU3OC41ODcyIDU5OS4yNTk0LDU5Ni4wNjcyIiBmaWxsPSJub25lIiBpZD0iVmVyY2VsIFByZXZpZXctdG8tVmVyY2VsIFByb2R1Y3Rpb24iIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjU5OS44Myw2MDIuMDQsNjAyLjk1NTksNTkyLjcwMDQsNTk5LjM1NDUsNTk3LjA2MjcsNTk0Ljk5MjIsNTkzLjQ2MTIsNTk5LjgzLDYwMi4wNCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjwvZz48IS0tU1JDPVtUTDdCSWlEMDVEdGRBc3haa2hlR2tYSEE3Y3FYUk1mUTJZOTVxaWRMWmFxcDhQZEs1ZDZYMUxzdTRHTjVmVTlBSzBIdF9hdWZyUnptR2NuRE96dERkN2xjZGlWYTdEb2Q3ZTlJc0xEQ214SFdKSWxlY3hla3ZOdTZnYk90cDl0dktEVXJXZzhpWGJNcExjY1FMa2dmYzRrSVJ2RVVWTzBXVnpyVXBrdV9QalRscXlVbjNDVkloaTY4eE9BQTB0SVB0cVVGandOVDVrS09HejMwTzgyMUdDZ0NXb0tPampFTUpiQmhiQ2c2ZWFBVC1rV0FUVmROakRYU2VobVNUUTE4RTZMVUE5UktjOEZoWG81S1JIeEc4SkduWkNNczh6a2JWMEdiY3NGQ0FhUVN6U05QNEd2eWJ1cUlKc2RId1N0ZnZfbHB4RkxYVGRLa1BuOEJOUXJYSzgtM3FhTkk0X2pZNlQyNklBQk9YbTBLOVpCNVlvcHFNSDFSQTBRYUFvOEo3V0s4Qk03N2lIRGtNZEtvbGZZQ3hvUlpieWRQcXhvX2ZReUdxWXFDMkJmRzN0MTB5UVlUMGZXSmFSYy1NV0VMWGdBM0poSUdNVjRGYUN6bG1UeU1DcTMyb2ZRdVY0eXVndWpUM0lTbF9lLUowMWRNOGtDdF0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_6">技術スタック<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">カテゴリ</th>
+<th style="text-align: left;">技術</th>
+<th style="text-align: left;">バージョン</th>
+<th style="text-align: left;">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>ドキュメンテーション</strong></td>
+<td style="text-align: left;">MkDocs + Material</td>
+<td style="text-align: left;">latest</td>
+<td style="text-align: left;">プロジェクトドキュメント</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>アプリケーション</strong></td>
+<td style="text-align: left;">React + TypeScript</td>
+<td style="text-align: left;">19.1.1 / 5.8.3</td>
+<td style="text-align: left;">ゲームアプリケーション</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ビルド</strong></td>
+<td style="text-align: left;">Vite</td>
+<td style="text-align: left;">7.1.2</td>
+<td style="text-align: left;">開発・ビルドツール</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>テスト</strong></td>
+<td style="text-align: left;">Vitest + Playwright</td>
+<td style="text-align: left;">3.2.4 / 1.54.2</td>
+<td style="text-align: left;">単体・E2Eテスト</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>品質管理</strong></td>
+<td style="text-align: left;">ESLint + Prettier</td>
+<td style="text-align: left;">latest</td>
+<td style="text-align: left;">コード品質</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>機械学習</strong></td>
+<td style="text-align: left;">TensorFlow.js</td>
+<td style="text-align: left;">4.22.0</td>
+<td style="text-align: left;">AI思考エンジン</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>非同期処理</strong></td>
+<td style="text-align: left;">Web Workers</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">AI処理並列実行</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CI/CD</strong></td>
+<td style="text-align: left;">GitHub Actions</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">継続的統合・デプロイ</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ホスティング</strong></td>
+<td style="text-align: left;">Vercel</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">アプリケーション配信</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>監視</strong></td>
+<td style="text-align: left;">Codecov</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">テストカバレッジ監視</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">開発・運用フロー<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">開発フロー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkFDVElWSVRZIiBoZWlnaHQ9Ijg4OXB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6NDU1cHg7aGVpZ2h0Ojg4OXB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDQ1NSA4ODkiIHdpZHRoPSI0NTVweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxlbGxpcHNlIGN4PSIyNDEuNDQ2MiIgY3k9IjIwIiBmaWxsPSIjMjIyMjIyIiByeD0iMTAiIHJ5PSIxMCIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMzYyLjE0MDYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjM1NC40MzE0IiB4PSI4OS44MzgiIHk9IjQwIi8+PHBhdGggZD0iTTE4My44Mzc3LDQwIEwxODMuODM3Nyw0OS4yOTY5IEwxNzMuODM3Nyw1OS4yOTY5IEw4OS44MzgsNTkuMjk2OSIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODMuOTk5NiIgeD0iOTIuODM4IiB5PSI1My45OTUxIj4mIzEyNTI1OyYjMTI1NDA7JiMxMjQ1OTsmIzEyNTIzOyYjMzgyODM7JiMzMDMzMDs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjgwLjAwMDUiIHg9IjIwMS40NDU5IiB5PSI3Ni4yOTY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjAuMDAwNSIgeD0iMjExLjQ0NTkiIHk9Ijk3LjQzNTUiPiYjMTI0Njc7JiMxMjU0MDsmIzEyNDg5OyYjMjI3OTM7JiMyNjM1Njs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEyOC4wMDA4IiB4PSIxNzcuNDQ1NyIgeT0iMTMwLjI2NTYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDguMDAwOCIgeD0iMTg3LjQ0NTciIHk9IjE1MS40MDQzIj4mIzEyNTI1OyYjMTI1NDA7JiMxMjQ1OTsmIzEyNTIzOyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyYjMjM0NTU7JiMzNDg5Mjs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjkyLjAwMDUiIHg9IjE5NS40NDU5IiB5PSIxODQuMjM0NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcyLjAwMDUiIHg9IjIwNS40NDU5IiB5PSIyMDUuMzczIj4mIzIxNjk3OyYjMzYwNzQ7JiMxMjQ4MTsmIzEyNDU1OyYjMTI0ODM7JiMxMjQ2Mzs8L3RleHQ+PHBvbHlnb24gZmlsbD0iI0YxRjFGMSIgcG9pbnRzPSIyMTkuNTkxMywyMzguMjAzMSwyNjMuMzAxMSwyMzguMjAzMSwyNzUuMzAxMSwyNTAuMjAzMSwyNjMuMzAxMSwyNjIuMjAzMSwyMTkuNTkxMywyNjIuMjAzMSwyMDcuNTkxMywyNTAuMjAzMSwyMTkuNTkxMywyMzguMjAzMSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDMuNzA5OCIgeD0iMjE5LjU5MTMiIHk9IjI1NC4wMTEyIj4mIzIxNjk3OyYjMzYwNzQ7T0s/PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE5LjAwODMiIHg9IjE4OC41ODMiIHk9IjI0Ny42MDg5Ij55ZXM8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTMuNzAxNyIgeD0iMjc1LjMwMTEiIHk9IjI0Ny42MDg5Ij5ubzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iOTIuMDAwNSIgeD0iMTA5LjgzOCIgeT0iMjcyLjIwMzEiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3Mi4wMDA1IiB4PSIxMTkuODM4IiB5PSIyOTMuMzQxOCI+JiMxMjQ2NzsmIzEyNTExOyYjMTI0ODM7JiMxMjQ4ODsmIzIwMzE2OyYjMjUxMDQ7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OC4wMDA0IiB4PSIyOTMuMDUzOCIgeT0iMjcyLjIwMzEiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0OC4wMDA0IiB4PSIzMDMuMDUzOCIgeT0iMjkzLjM0MTgiPiYjMjA0NjI7JiMyNzQ5MTsmIzIzNTUwOyYjMjQ1NDA7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIyMTAuNDMwOSIgeD0iMjIxLjgzODYiIHk9IjMyNi4xNzE5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTkwLjQzMDkiIHg9IjIzMS44Mzg2IiB5PSIzNDcuMzEwNSI+JiMyMDQ2MjsmIzI3NDkxOyYjMjM1NTA7JiMyNDU0MDs7IC0tJmd0OyA6JiMxMjUyNTsmIzEyNTQwOyYjMTI0NTk7JiMxMjUyMzsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODsmIzIzNDU1OyYjMzQ4OTI7PC90ZXh0Pjxwb2x5Z29uIGZpbGw9IiNGMUYxRjEiIHBvaW50cz0iMjQxLjQ0NjIsMzY2LjE0MDYsMjUzLjQ0NjIsMzc4LjE0MDYsMjQxLjQ0NjIsMzkwLjE0MDYsMjI5LjQ0NjIsMzc4LjE0MDYsMjQxLjQ0NjIsMzY2LjE0MDYiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNDI0LjE3MTkiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjQwMi45Nzk2IiB4PSIxMSIgeT0iNDEyLjE0MDYiLz48cGF0aCBkPSJNMTE5LjcyNDYsNDEyLjE0MDYgTDExOS43MjQ2LDQyMS40Mzc1IEwxMDkuNzI0Niw0MzEuNDM3NSBMMTEsNDMxLjQzNzUiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk4LjcyNDYiIHg9IjE0IiB5PSI0MjYuMTM1NyI+Q0kvQ0QgUGlwZWxpbmU8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEzMy40NDM1IiB4PSIxNzQuNzI0NCIgeT0iNDQ4LjQzNzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTMuNDQzNSIgeD0iMTg0LjcyNDQiIHk9IjQ2OS41NzYyIj5HaXRIdWIgQWN0aW9ucyYjMzYyMTU7JiMyMTIwNTs8L3RleHQ+PHJlY3QgZmlsbD0iIzU1NTU1NSIgaGVpZ2h0PSI2IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiM1NTU1NTU7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMzI1LjA2NyIgeD0iNzguOTEyNyIgeT0iNTAyLjQwNjMiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTM0LjUzMzUiIHg9IjkyLjkxMjciIHk9IjUyOC40MDYzIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTE0LjUzMzUiIHg9IjEwMi45MTI3IiB5PSI1NDkuNTQ0OSI+Tm9kZS5qcyAyMC54ICYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTM0LjUzMzUiIHg9IjI1NS40NDYyIiB5PSI1MjguNDA2MyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjExNC41MzM1IiB4PSIyNjUuNDQ2MiIgeT0iNTQ5LjU0NDkiPk5vZGUuanMgMjIueCAmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PHJlY3QgZmlsbD0iIzU1NTU1NSIgaGVpZ2h0PSI2IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiM1NTU1NTU7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMzI1LjA2NyIgeD0iNzguOTEyNyIgeT0iNTgyLjM3NSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMDQuMDAwNiIgeD0iMTg5LjQ0NTgiIHk9IjYwOC4zNzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4NC4wMDA2IiB4PSIxOTkuNDQ1OCIgeT0iNjI5LjUxMzciPiYjMjE2OTc7JiMzNjA3NDsmIzEyNDY2OyYjMTI1NDA7JiMxMjQ4ODsmIzMwOTA2OyYjMzU0Njk7PC90ZXh0Pjxwb2x5Z29uIGZpbGw9IiNGMUYxRjEiIHBvaW50cz0iMjExLjAyNzIsNjYyLjM0MzgsMjcxLjg2NTIsNjYyLjM0MzgsMjgzLjg2NTIsNjc0LjM0MzgsMjcxLjg2NTIsNjg2LjM0MzgsMjExLjAyNzIsNjg2LjM0MzgsMTk5LjAyNzIsNjc0LjM0MzgsMjExLjAyNzIsNjYyLjM0MzgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjYwLjgzOCIgeD0iMjExLjAyNzIiIHk9IjY3OC4xNTE5Ij4mIzEyMzc3OyYjMTI0MDk7JiMxMjM5MDsmIzI1MTA0OyYjMjExNTE7PzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxOS4wMDgzIiB4PSIxODAuMDE4OSIgeT0iNjcxLjc0OTUiPnllczwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMy43MDE3IiB4PSIyODMuODY1MiIgeT0iNjcxLjc0OTUiPm5vPC90ZXh0Pjxwb2x5Z29uIGZpbGw9IiNGMUYxRjEiIHBvaW50cz0iMTA5LjkyMDIsNjk2LjM0MzgsMjAxLjI4NzksNjk2LjM0MzgsMjEzLjI4NzksNzA4LjM0MzgsMjAxLjI4NzksNzIwLjM0MzgsMTA5LjkyMDIsNzIwLjM0MzgsOTcuOTIwMiw3MDguMzQzOCwxMDkuOTIwMiw2OTYuMzQzOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTEuMzY3NyIgeD0iMTA5LjkyMDIiIHk9IjcxMi4xNTE5Ij5kZXZlbG9wIGJyYW5jaD88L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTkuMDA4MyIgeD0iNzguOTExOSIgeT0iNzA1Ljc0OTUiPnllczwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMy43MDE3IiB4PSIyMTMuMjg3OSIgeT0iNzA1Ljc0OTUiPm5vPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMjkuODQwNCIgeD0iMjMiIHk9IjczMC4zNDM4Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA5Ljg0MDQiIHg9IjMzIiB5PSI3NTEuNDgyNCI+VmVyY2VsJiMzMzI1ODsmIzIxMjA1OyYjMTI0ODc7JiMxMjUwMzsmIzEyNTI1OyYjMTI0NTI7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI4MC4wMDA1IiB4PSIxODMuMjg3NiIgeT0iNzMwLjM0MzgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2MC4wMDA1IiB4PSIxOTMuMjg3NiIgeT0iNzUxLjQ4MjQiPiYjMTI0OTk7JiMxMjUyMzsmIzEyNDg5OyYjMjM0MzY7JiMyMDEwMjs8L3RleHQ+PHBvbHlnb24gZmlsbD0iI0YxRjFGMSIgcG9pbnRzPSIxNTUuNjA0LDc3MC4zMTI1LDE2Ny42MDQsNzgyLjMxMjUsMTU1LjYwNCw3OTQuMzEyNSwxNDMuNjA0LDc4Mi4zMTI1LDE1NS42MDQsNzcwLjMxMjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OC4wMDA0IiB4PSIyOTMuMjg4MSIgeT0iNjk2LjM0MzgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0OC4wMDA0IiB4PSIzMDMuMjg4MSIgeT0iNzE3LjQ4MjQiPiYjMjI4MzM7JiMyNTk0MzsmIzM2ODkwOyYjMzA2OTM7PC90ZXh0Pjxwb2x5Z29uIGZpbGw9IiNGMUYxRjEiIHBvaW50cz0iMjQxLjQ0NjIsODAwLjMxMjUsMjUzLjQ0NjIsODEyLjMxMjUsMjQxLjQ0NjIsODI0LjMxMjUsMjI5LjQ0NjIsODEyLjMxMjUsMjQxLjQ0NjIsODAwLjMxMjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxlbGxpcHNlIGN4PSIyNDEuNDQ2MiIgY3k9Ijg2Ny4zMTI1IiBmaWxsPSJub25lIiByeD0iMTEiIHJ5PSIxMSIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxlbGxpcHNlIGN4PSIyNDEuNDQ2MiIgY3k9Ijg2Ny4zMTI1IiBmaWxsPSIjMjIyMjIyIiByeD0iNiIgcnk9IjYiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjQxLjQ0NjIiIHgyPSIyNDEuNDQ2MiIgeTE9IjExMC4yNjU2IiB5Mj0iMTMwLjI2NTYiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIzNy40NDYyLDEyMC4yNjU2LDI0MS40NDYyLDEzMC4yNjU2LDI0NS40NDYyLDEyMC4yNjU2LDI0MS40NDYyLDEyNC4yNjU2IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI0MS40NDYyIiB4Mj0iMjQxLjQ0NjIiIHkxPSIxNjQuMjM0NCIgeTI9IjE4NC4yMzQ0Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIyMzcuNDQ2MiwxNzQuMjM0NCwyNDEuNDQ2MiwxODQuMjM0NCwyNDUuNDQ2MiwxNzQuMjM0NCwyNDEuNDQ2MiwxNzguMjM0NCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIzMjcuMDU0IiB4Mj0iMzI3LjA1NCIgeTE9IjMwNi4xNzE5IiB5Mj0iMzI2LjE3MTkiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjMyMy4wNTQsMzE2LjE3MTksMzI3LjA1NCwzMjYuMTcxOSwzMzEuMDU0LDMxNi4xNzE5LDMyNy4wNTQsMzIwLjE3MTkiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjA3LjU5MTMiIHgyPSIxNTUuODM4MyIgeTE9IjI1MC4yMDMxIiB5Mj0iMjUwLjIwMzEiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTU1LjgzODMiIHgyPSIxNTUuODM4MyIgeTE9IjI1MC4yMDMxIiB5Mj0iMjcyLjIwMzEiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE1MS44MzgzLDI2Mi4yMDMxLDE1NS44MzgzLDI3Mi4yMDMxLDE1OS44MzgzLDI2Mi4yMDMxLDE1NS44MzgzLDI2Ni4yMDMxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI3NS4zMDExIiB4Mj0iMzI3LjA1NCIgeTE9IjI1MC4yMDMxIiB5Mj0iMjUwLjIwMzEiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzI3LjA1NCIgeDI9IjMyNy4wNTQiIHkxPSIyNTAuMjAzMSIgeTI9IjI3Mi4yMDMxIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzMjMuMDU0LDI2Mi4yMDMxLDMyNy4wNTQsMjcyLjIwMzEsMzMxLjA1NCwyNjIuMjAzMSwzMjcuMDU0LDI2Ni4yMDMxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjE1NS44MzgzIiB4Mj0iMTU1LjgzODMiIHkxPSIzMDYuMTcxOSIgeTI9IjM3OC4xNDA2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjE1NS44MzgzIiB4Mj0iMjI5LjQ0NjIiIHkxPSIzNzguMTQwNiIgeTI9IjM3OC4xNDA2Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIyMTkuNDQ2MiwzNzQuMTQwNiwyMjkuNDQ2MiwzNzguMTQwNiwyMTkuNDQ2MiwzODIuMTQwNiwyMjMuNDQ2MiwzNzguMTQwNiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIzMjcuMDU0IiB4Mj0iMzI3LjA1NCIgeTE9IjM2MC4xNDA2IiB5Mj0iMzc4LjE0MDYiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzI3LjA1NCIgeDI9IjI1My40NDYyIiB5MT0iMzc4LjE0MDYiIHkyPSIzNzguMTQwNiIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjYzLjQ0NjIsMzc0LjE0MDYsMjUzLjQ0NjIsMzc4LjE0MDYsMjYzLjQ0NjIsMzgyLjE0MDYsMjU5LjQ0NjIsMzc4LjE0MDYiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjQxLjQ0NjIiIHgyPSIyNDEuNDQ2MiIgeTE9IjIxOC4yMDMxIiB5Mj0iMjM4LjIwMzEiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIzNy40NDYyLDIyOC4yMDMxLDI0MS40NDYyLDIzOC4yMDMxLDI0NS40NDYyLDIyOC4yMDMxLDI0MS40NDYyLDIzMi4yMDMxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI0MS40NDYyIiB4Mj0iMjQxLjQ0NjIiIHkxPSIzMCIgeTI9Ijc2LjI5NjkiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIzNy40NDYyLDY2LjI5NjksMjQxLjQ0NjIsNzYuMjk2OSwyNDUuNDQ2Miw2Ni4yOTY5LDI0MS40NDYyLDcwLjI5NjkiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTYwLjE3OTQiIHgyPSIxNjAuMTc5NCIgeTE9IjUwOC40MDYzIiB5Mj0iNTI4LjQwNjMiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE1Ni4xNzk0LDUxOC40MDYzLDE2MC4xNzk0LDUyOC40MDYzLDE2NC4xNzk0LDUxOC40MDYzLDE2MC4xNzk0LDUyMi40MDYzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjMyMi43MTI5IiB4Mj0iMzIyLjcxMjkiIHkxPSI1MDguNDA2MyIgeTI9IjUyOC40MDYzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzMTguNzEyOSw1MTguNDA2MywzMjIuNzEyOSw1MjguNDA2MywzMjYuNzEyOSw1MTguNDA2MywzMjIuNzEyOSw1MjIuNDA2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNjAuMTc5NCIgeDI9IjE2MC4xNzk0IiB5MT0iNTYyLjM3NSIgeTI9IjU4Mi4zNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE1Ni4xNzk0LDU3Mi4zNzUsMTYwLjE3OTQsNTgyLjM3NSwxNjQuMTc5NCw1NzIuMzc1LDE2MC4xNzk0LDU3Ni4zNzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzIyLjcxMjkiIHgyPSIzMjIuNzEyOSIgeTE9IjU2Mi4zNzUiIHkyPSI1ODIuMzc1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzMTguNzEyOSw1NzIuMzc1LDMyMi43MTI5LDU4Mi4zNzUsMzI2LjcxMjksNTcyLjM3NSwzMjIuNzEyOSw1NzYuMzc1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI0MS40NDYyIiB4Mj0iMjQxLjQ0NjIiIHkxPSI0ODIuNDA2MyIgeTI9IjUwMi40MDYzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIyMzcuNDQ2Miw0OTIuNDA2MywyNDEuNDQ2Miw1MDIuNDA2MywyNDUuNDQ2Miw0OTIuNDA2MywyNDEuNDQ2Miw0OTYuNDA2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyNDEuNDQ2MiIgeDI9IjI0MS40NDYyIiB5MT0iNTg4LjM3NSIgeTI9IjYwOC4zNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIzNy40NDYyLDU5OC4zNzUsMjQxLjQ0NjIsNjA4LjM3NSwyNDUuNDQ2Miw1OTguMzc1LDI0MS40NDYyLDYwMi4zNzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iOTcuOTIwMiIgeDI9Ijg3LjkyMDIiIHkxPSI3MDguMzQzOCIgeTI9IjcwOC4zNDM4Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9Ijg3LjkyMDIiIHgyPSI4Ny45MjAyIiB5MT0iNzA4LjM0MzgiIHkyPSI3MzAuMzQzOCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iODMuOTIwMiw3MjAuMzQzOCw4Ny45MjAyLDczMC4zNDM4LDkxLjkyMDIsNzIwLjM0MzgsODcuOTIwMiw3MjQuMzQzOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyMTMuMjg3OSIgeDI9IjIyMy4yODc5IiB5MT0iNzA4LjM0MzgiIHkyPSI3MDguMzQzOCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyMjMuMjg3OSIgeDI9IjIyMy4yODc5IiB5MT0iNzA4LjM0MzgiIHkyPSI3MzAuMzQzOCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjE5LjI4NzksNzIwLjM0MzgsMjIzLjI4NzksNzMwLjM0MzgsMjI3LjI4NzksNzIwLjM0MzgsMjIzLjI4NzksNzI0LjM0MzgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iODcuOTIwMiIgeDI9Ijg3LjkyMDIiIHkxPSI3NjQuMzEyNSIgeTI9Ijc4Mi4zMTI1Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9Ijg3LjkyMDIiIHgyPSIxNDMuNjA0IiB5MT0iNzgyLjMxMjUiIHkyPSI3ODIuMzEyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTMzLjYwNCw3NzguMzEyNSwxNDMuNjA0LDc4Mi4zMTI1LDEzMy42MDQsNzg2LjMxMjUsMTM3LjYwNCw3ODIuMzEyNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyMjMuMjg3OSIgeDI9IjIyMy4yODc5IiB5MT0iNzY0LjMxMjUiIHkyPSI3ODIuMzEyNSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyMjMuMjg3OSIgeDI9IjE2Ny42MDQiIHkxPSI3ODIuMzEyNSIgeTI9Ijc4Mi4zMTI1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNzcuNjA0LDc3OC4zMTI1LDE2Ny42MDQsNzgyLjMxMjUsMTc3LjYwNCw3ODYuMzEyNSwxNzMuNjA0LDc4Mi4zMTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjE5OS4wMjcyIiB4Mj0iMTU1LjYwNCIgeTE9IjY3NC4zNDM4IiB5Mj0iNjc0LjM0MzgiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTU1LjYwNCIgeDI9IjE1NS42MDQiIHkxPSI2NzQuMzQzOCIgeTI9IjY5Ni4zNDM4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNTEuNjA0LDY4Ni4zNDM4LDE1NS42MDQsNjk2LjM0MzgsMTU5LjYwNCw2ODYuMzQzOCwxNTUuNjA0LDY5MC4zNDM4IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI4My44NjUyIiB4Mj0iMzI3LjI4ODMiIHkxPSI2NzQuMzQzOCIgeTI9IjY3NC4zNDM4Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjMyNy4yODgzIiB4Mj0iMzI3LjI4ODMiIHkxPSI2NzQuMzQzOCIgeTI9IjY5Ni4zNDM4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzMjMuMjg4Myw2ODYuMzQzOCwzMjcuMjg4Myw2OTYuMzQzOCwzMzEuMjg4Myw2ODYuMzQzOCwzMjcuMjg4Myw2OTAuMzQzOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNTUuNjA0IiB4Mj0iMTU1LjYwNCIgeTE9Ijc5NC4zMTI1IiB5Mj0iODEyLjMxMjUiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTU1LjYwNCIgeDI9IjIyOS40NDYyIiB5MT0iODEyLjMxMjUiIHkyPSI4MTIuMzEyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjE5LjQ0NjIsODA4LjMxMjUsMjI5LjQ0NjIsODEyLjMxMjUsMjE5LjQ0NjIsODE2LjMxMjUsMjIzLjQ0NjIsODEyLjMxMjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzI3LjI4ODMiIHgyPSIzMjcuMjg4MyIgeTE9IjczMC4zMTI1IiB5Mj0iODEyLjMxMjUiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzI3LjI4ODMiIHgyPSIyNTMuNDQ2MiIgeTE9IjgxMi4zMTI1IiB5Mj0iODEyLjMxMjUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI2My40NDYyLDgwOC4zMTI1LDI1My40NDYyLDgxMi4zMTI1LDI2My40NDYyLDgxNi4zMTI1LDI1OS40NDYyLDgxMi4zMTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI0MS40NDYyIiB4Mj0iMjQxLjQ0NjIiIHkxPSI2NDIuMzQzOCIgeTI9IjY2Mi4zNDM4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIyMzcuNDQ2Miw2NTIuMzQzOCwyNDEuNDQ2Miw2NjIuMzQzOCwyNDUuNDQ2Miw2NTIuMzQzOCwyNDEuNDQ2Miw2NTYuMzQzOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyNDEuNDQ2MiIgeDI9IjI0MS40NDYyIiB5MT0iMzkwLjE0MDYiIHkyPSI0NDguNDM3NSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjM3LjQ0NjIsNDM4LjQzNzUsMjQxLjQ0NjIsNDQ4LjQzNzUsMjQ1LjQ0NjIsNDM4LjQzNzUsMjQxLjQ0NjIsNDQyLjQzNzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjQxLjQ0NjIiIHgyPSIyNDEuNDQ2MiIgeTE9IjgyNC4zMTI1IiB5Mj0iODU2LjMxMjUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIzNy40NDYyLDg0Ni4zMTI1LDI0MS40NDYyLDg1Ni4zMTI1LDI0NS40NDYyLDg0Ni4zMTI1LDI0MS40NDYyLDg1MC4zMTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PCEtLVNSQz1bVlAxVEl5OUc2Q1Zsem9hRU5rYzU1YnV3QUNBVzhnWWtrZnp3cEROT25oUVlZQTNqVzJ6ZjQ4WTk5S1hiMU9mQU1PSEktTTRVWnl2bHFSUENEWS13RU4yVV91X2R2UVRnZEE4blo2b3psQ1BCOGw4MVFHN3YxQUM5ZjNjdnBleWhWSHl3UEk5V1RFcW9vVDV3UmRKeG5iZUw1bVdhM0tPRkk5UXNRLVBUbUtmZktKVXgzSTB3NkN6MDIxV1RiYzd1OUZCXzFqa1JvbTZhZlIyOF8yVE8zS3B4cnNvSVA4VFZyTDdzWWNNbWU2QmE1b0toN1d4UWV6TzN4TnBKR1BNVC13OVdTMGR6bG11TTR0b0lFVkNTNmpyT1lBd1k3THg2MFl6WXZ5V3JOYmlfWkE2TGs0c2V2bGk3cFBVaWpQRUlTaTE0amdHNDNrc2hBQm1PRWFRcDJRb0o4Y3dGdXFLTjRfT29yZHBhVDljOUNMdVRkVGRuVlR6aU40eFRXNXUxbEdWd2F0Sy1sUVh2NVRiMDBYelhHUDlISkU3NFU2ZkV1SXZNdWJXbUNtcmhRbzBQODZOUllMN3RZMEhJVDBKYlFCaW14QVZfckJXOE1keVBiU2dKeXZqbnhUNWJKakthLUdTMF0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_9">品質ゲート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkFDVElWSVRZIiBoZWlnaHQ9IjEyMTdweCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSIgc3R5bGU9IndpZHRoOjI3MnB4O2hlaWdodDoxMjE3cHg7YmFja2dyb3VuZDojRkZGRkZGOyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjcyIDEyMTciIHdpZHRoPSIyNzJweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxlbGxpcHNlIGN4PSIxMzYuMDE2MyIgY3k9IjIwIiBmaWxsPSIjMjIyMjIyIiByeD0iMTAiIHJ5PSIxMCIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI4MC4wMDA1IiB4PSI5Ni4wMTYiIHk9IjUwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjAuMDAwNSIgeD0iMTA2LjAxNiIgeT0iNzEuMTM4NyI+JiMxMjQ2NzsmIzEyNTQwOyYjMTI0ODk7JiMyMjc5MzsmIzI2MzU2OzwvdGV4dD48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjI0NC4xNzE5IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiIHdpZHRoPSIxNjQuMjM2OCIgeD0iNTMuODk3OSIgeT0iOTMuOTY4OCIvPjxwYXRoIGQ9Ik0xMTkuODk3Niw5My45Njg4IEwxMTkuODk3NiwxMDMuMjY1NiBMMTA5Ljg5NzYsMTEzLjI2NTYgTDUzLjg5NzksMTEzLjI2NTYiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU1Ljk5OTgiIHg9IjU2Ljg5NzkiIHk9IjEwNy45NjM5Ij4mIzM4NzQ1OyYjMzAzNDA7JiMzNTI5OTsmIzI2NTEyOzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iODEuNTI5NSIgeD0iOTUuMjUxNSIgeT0iMTMwLjI2NTYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2MS41Mjk1IiB4PSIxMDUuMjUxNSIgeT0iMTUxLjQwNDMiPkVTTGludCYjMjM0NTU7JiMzNDg5Mjs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijg4LjYxMzUiIHg9IjkxLjcwOTUiIHk9IjE4NC4yMzQ0Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjguNjEzNSIgeD0iMTAxLjcwOTUiIHk9IjIwNS4zNzMiPlByZXR0aWVyJiMzMDkwNjsmIzM1NDY5OzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTQ0LjIzNjgiIHg9IjYzLjg5NzkiIHk9IjIzOC4yMDMxIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTI0LjIzNjgiIHg9IjczLjg5NzkiIHk9IjI1OS4zNDE4Ij5UeXBlU2NyaXB0JiMyMjQxMTsmIzEyNDgxOyYjMTI0NTU7JiMxMjQ4MzsmIzEyNDYzOzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTMxLjA1MzQiIHg9IjcwLjQ4OTYiIHk9IjI5Mi4xNzE5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTExLjA1MzQiIHg9IjgwLjQ4OTYiIHk9IjMxMy4zMTA1Ij4mIzM1MDc5OyYjMzg2MDk7JiMyNDIzMDsmIzEyNDgxOyYjMTI0NTU7JiMxMjQ4MzsmIzEyNDYzOygmIzg4MDQ7Nyk8L3RleHQ+PHJlY3QgZmlsbD0ibm9uZSIgaGVpZ2h0PSIxOTAuMjAzMSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7IiB3aWR0aD0iMTgzLjI3OTUiIHg9IjQ0LjM3NjUiIHk9IjM0OC4xNDA2Ii8+PHBhdGggZD0iTTE4MC4zNzYsMzQ4LjE0MDYgTDE4MC4zNzYsMzU3LjQzNzUgTDE3MC4zNzYsMzY3LjQzNzUgTDQ0LjM3NjUsMzY3LjQzNzUiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEyNS45OTk1IiB4PSI0Ny4zNzY1IiB5PSIzNjIuMTM1NyI+JiMxMjQ1MDsmIzEyNTQwOyYjMTI0NjE7JiMxMjQ4NjsmIzEyNDYzOyYjMTI0ODE7JiMxMjUxNTsmIzI2OTA4OyYjMzUzODg7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNjMuMjc5NSIgeD0iNTQuMzc2NSIgeT0iMzg0LjQzNzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNDMuMjc5NSIgeD0iNjQuMzc2NSIgeT0iNDA1LjU3NjIiPmRlcGVuZGVuY3ktY3J1aXNlciYjMjM0NTU7JiMzNDg5Mjs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjExNi4wMDA3IiB4PSI3OC4wMTU5IiB5PSI0MzguNDA2MyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk2LjAwMDciIHg9Ijg4LjAxNTkiIHk9IjQ1OS41NDQ5Ij4mIzEyNTI0OyYjMTI0NTI7JiMxMjUxNjsmIzEyNTQwOyYjMjAzODE7JiMyMzM4NDsmIzMwOTA2OyYjMzU0Njk7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Mi4wMDA1IiB4PSI5MC4wMTYiIHk9IjQ5Mi4zNzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3Mi4wMDA1IiB4PSIxMDAuMDE2IiB5PSI1MTMuNTEzNyI+JiMyNDQ5MDsmIzI5ODcyOyYjMjAzODE7JiMyMzM4NDsmIzMwOTA2OyYjMzU0Njk7PC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMjQ0LjE3MTkiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjE3MS4xOTc1IiB4PSI1MC40MTc1IiB5PSI1NDguMzQzOCIvPjxwYXRoIGQ9Ik0xMzAuNDE3Miw1NDguMzQzOCBMMTMwLjQxNzIsNTU3LjY0MDYgTDEyMC40MTcyLDU2Ny42NDA2IEw1MC40MTc1LDU2Ny42NDA2IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OS45OTk3IiB4PSI1My40MTc1IiB5PSI1NjIuMzM4OSI+JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7JiMyMzQ1NTsmIzM0ODkyOzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTIzLjk1MTYiIHg9Ijc0LjA0MDUiIHk9IjU4NC42NDA2Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTAzLjk1MTYiIHg9Ijg0LjA0MDUiIHk9IjYwNS43NzkzIj4mIzIxMzM2OyYjMjAzMDc7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7KFZpdGVzdCk8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjgwLjAwMDUiIHg9Ijk2LjAxNiIgeT0iNjM4LjYwOTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2MC4wMDA1IiB4PSIxMDYuMDE2IiB5PSI2NTkuNzQ4Ij4mIzMyMTEzOyYjMjE1MTI7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTEuMTk3NSIgeD0iNjAuNDE3NSIgeT0iNjkyLjU3ODEiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzEuMTk3NSIgeD0iNzAuNDE3NSIgeT0iNzEzLjcxNjgiPkUyRSYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyhQbGF5d3JpZ2h0KTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTA0LjAwMDYiIHg9Ijg0LjAxNTkiIHk9Ijc0Ni41NDY5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODQuMDAwNiIgeD0iOTQuMDE1OSIgeT0iNzY3LjY4NTUiPiYjMTI0NTk7JiMxMjQ5NjsmIzEyNTI0OyYjMTI0ODM7JiMxMjQ3MjsmIzI4MjA0OyYjMjM0NTA7PC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTkwLjIwMzEiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjE2NC4yMzY4IiB4PSI1My44OTc5IiB5PSI4MDIuNTE1NiIvPjxwYXRoIGQ9Ik0xMzMuODk3Niw4MDIuNTE1NiBMMTMzLjg5NzYsODExLjgxMjUgTDEyMy44OTc2LDgyMS44MTI1IEw1My44OTc5LDgyMS44MTI1IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OS45OTk3IiB4PSI1Ni44OTc5IiB5PSI4MTYuNTEwNyI+JiMxMjQ5OTsmIzEyNTIzOyYjMTI0ODk7JiMyNjkwODsmIzM1Mzg4OzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTQ0LjIzNjgiIHg9IjYzLjg5NzkiIHk9IjgzOC44MTI1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTI0LjIzNjgiIHg9IjczLjg5NzkiIHk9Ijg1OS45NTEyIj5UeXBlU2NyaXB0JiMxMjQ2NzsmIzEyNTMxOyYjMTI0OTc7JiMxMjQ1MjsmIzEyNTIzOzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNzkuNjMxMSIgeD0iOTYuMjAwNyIgeT0iODkyLjc4MTMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1OS42MzExIiB4PSIxMDYuMjAwNyIgeT0iOTEzLjkxOTkiPlZpdGUmIzEyNDk5OyYjMTI1MjM7JiMxMjQ4OTs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjgwLjAwMDUiIHg9Ijk2LjAxNiIgeT0iOTQ2Ljc1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjAuMDAwNSIgeD0iMTA2LjAxNiIgeT0iOTY3Ljg4ODciPiYjMjUxMDQ7JiMyNjUyNDsmIzI5Mjg5OyYjMjY5MDg7JiMzNTM4ODs8L3RleHQ+PHBvbHlnb24gZmlsbD0iI0YxRjFGMSIgcG9pbnRzPSIxMDUuNTk3MywxMDEyLjcxODgsMTY2LjQzNTMsMTAxMi43MTg4LDE3OC40MzUzLDEwMjQuNzE4OCwxNjYuNDM1MywxMDM2LjcxODgsMTA1LjU5NzMsMTAzNi43MTg4LDkzLjU5NzMsMTAyNC43MTg4LDEwNS41OTczLDEwMTIuNzE4OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjAuODM4IiB4PSIxMDUuNTk3MyIgeT0iMTAyOC41MjY5Ij4mIzEyMzc3OyYjMTI0MDk7JiMxMjM5MDsmIzI1MTA0OyYjMjExNTE7PzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxOS4wMDgzIiB4PSI3NC41ODkiIHk9IjEwMjIuMTI0NSI+eWVzPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzLjcwMTciIHg9IjE3OC40MzUzIiB5PSIxMDIyLjEyNDUiPm5vPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMTUuMDE2MyIgeD0iMTEiIHk9IjEwNDYuNzE4OCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk1LjAxNjMiIHg9IjIxIiB5PSIxMDY3Ljg1NzQiPiYjOTk4OTsgJiMyMTY5NzsmIzM2MDc0OyYjMTI0NjY7JiMxMjU0MDsmIzEyNDg4OyYjMzY4OTA7JiMzNjk0Mjs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjkyLjAwMDUiIHg9IjIyLjUwNzkiIHk9IjExMDAuNjg3NSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcyLjAwMDUiIHg9IjMyLjUwNzkiIHk9IjExMjEuODI2MiI+JiMxMjQ4NzsmIzEyNTAzOyYjMTI1MjU7JiMxMjQ1MjsmIzIxNDg3OyYjMzMwMjE7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMTUuMDE2MyIgeD0iMTQ2LjAxNjMiIHk9IjEwNDYuNzE4OCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk1LjAxNjMiIHg9IjE1Ni4wMTYzIiB5PSIxMDY3Ljg1NzQiPiYjMTAwNjA7ICYjMjE2OTc7JiMzNjA3NDsmIzEyNDY2OyYjMTI1NDA7JiMxMjQ4ODsmIzIyODMzOyYjMjU5NDM7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OC4wMDA0IiB4PSIxNjkuNTI0MiIgeT0iMTEwMC42ODc1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDguMDAwNCIgeD0iMTc5LjUyNDIiIHk9IjExMjEuODI2MiI+JiMyMDQ2MjsmIzI3NDkxOyYjMjQ1MTc7JiMzNTIwMTs8L3RleHQ+PHBvbHlnb24gZmlsbD0iI0YxRjFGMSIgcG9pbnRzPSIxMzYuMDE2MywxMTQwLjY1NjMsMTQ4LjAxNjMsMTE1Mi42NTYzLDEzNi4wMTYzLDExNjQuNjU2MywxMjQuMDE2MywxMTUyLjY1NjMsMTM2LjAxNjMsMTE0MC42NTYzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48ZWxsaXBzZSBjeD0iMTM2LjAxNjMiIGN5PSIxMTk1LjY1NjMiIGZpbGw9Im5vbmUiIHJ4PSIxMSIgcnk9IjExIiBzdHlsZT0ic3Ryb2tlOiMyMjIyMjI7c3Ryb2tlLXdpZHRoOjE7Ii8+PGVsbGlwc2UgY3g9IjEzNi4wMTYzIiBjeT0iMTE5NS42NTYzIiBmaWxsPSIjMjIyMjIyIiByeD0iNiIgcnk9IjYiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTM2LjAxNjMiIHgyPSIxMzYuMDE2MyIgeTE9IjMwIiB5Mj0iNTAiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDQwLDEzNi4wMTYzLDUwLDE0MC4wMTYzLDQwLDEzNi4wMTYzLDQ0IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzNi4wMTYzIiB4Mj0iMTM2LjAxNjMiIHkxPSIxNjQuMjM0NCIgeTI9IjE4NC4yMzQ0Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzIuMDE2MywxNzQuMjM0NCwxMzYuMDE2MywxODQuMjM0NCwxNDAuMDE2MywxNzQuMjM0NCwxMzYuMDE2MywxNzguMjM0NCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzYuMDE2MyIgeDI9IjEzNi4wMTYzIiB5MT0iMjE4LjIwMzEiIHkyPSIyMzguMjAzMSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTMyLjAxNjMsMjI4LjIwMzEsMTM2LjAxNjMsMjM4LjIwMzEsMTQwLjAxNjMsMjI4LjIwMzEsMTM2LjAxNjMsMjMyLjIwMzEiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTM2LjAxNjMiIHgyPSIxMzYuMDE2MyIgeTE9IjI3Mi4xNzE5IiB5Mj0iMjkyLjE3MTkiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDI4Mi4xNzE5LDEzNi4wMTYzLDI5Mi4xNzE5LDE0MC4wMTYzLDI4Mi4xNzE5LDEzNi4wMTYzLDI4Ni4xNzE5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzNi4wMTYzIiB4Mj0iMTM2LjAxNjMiIHkxPSI4My45Njg4IiB5Mj0iMTMwLjI2NTYiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDEyMC4yNjU2LDEzNi4wMTYzLDEzMC4yNjU2LDE0MC4wMTYzLDEyMC4yNjU2LDEzNi4wMTYzLDEyNC4yNjU2IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzNi4wMTYzIiB4Mj0iMTM2LjAxNjMiIHkxPSI0MTguNDA2MyIgeTI9IjQzOC40MDYzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzIuMDE2Myw0MjguNDA2MywxMzYuMDE2Myw0MzguNDA2MywxNDAuMDE2Myw0MjguNDA2MywxMzYuMDE2Myw0MzIuNDA2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzYuMDE2MyIgeDI9IjEzNi4wMTYzIiB5MT0iNDcyLjM3NSIgeTI9IjQ5Mi4zNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDQ4Mi4zNzUsMTM2LjAxNjMsNDkyLjM3NSwxNDAuMDE2Myw0ODIuMzc1LDEzNi4wMTYzLDQ4Ni4zNzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTM2LjAxNjMiIHgyPSIxMzYuMDE2MyIgeTE9IjMyNi4xNDA2IiB5Mj0iMzg0LjQzNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDM3NC40Mzc1LDEzNi4wMTYzLDM4NC40Mzc1LDE0MC4wMTYzLDM3NC40Mzc1LDEzNi4wMTYzLDM3OC40Mzc1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzNi4wMTYzIiB4Mj0iMTM2LjAxNjMiIHkxPSI2MTguNjA5NCIgeTI9IjYzOC42MDk0Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzIuMDE2Myw2MjguNjA5NCwxMzYuMDE2Myw2MzguNjA5NCwxNDAuMDE2Myw2MjguNjA5NCwxMzYuMDE2Myw2MzIuNjA5NCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzYuMDE2MyIgeDI9IjEzNi4wMTYzIiB5MT0iNjcyLjU3ODEiIHkyPSI2OTIuNTc4MSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTMyLjAxNjMsNjgyLjU3ODEsMTM2LjAxNjMsNjkyLjU3ODEsMTQwLjAxNjMsNjgyLjU3ODEsMTM2LjAxNjMsNjg2LjU3ODEiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTM2LjAxNjMiIHgyPSIxMzYuMDE2MyIgeTE9IjcyNi41NDY5IiB5Mj0iNzQ2LjU0NjkiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDczNi41NDY5LDEzNi4wMTYzLDc0Ni41NDY5LDE0MC4wMTYzLDczNi41NDY5LDEzNi4wMTYzLDc0MC41NDY5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzNi4wMTYzIiB4Mj0iMTM2LjAxNjMiIHkxPSI1MjYuMzQzOCIgeTI9IjU4NC42NDA2Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzIuMDE2Myw1NzQuNjQwNiwxMzYuMDE2Myw1ODQuNjQwNiwxNDAuMDE2Myw1NzQuNjQwNiwxMzYuMDE2Myw1NzguNjQwNiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzYuMDE2MyIgeDI9IjEzNi4wMTYzIiB5MT0iODcyLjc4MTMiIHkyPSI4OTIuNzgxMyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTMyLjAxNjMsODgyLjc4MTMsMTM2LjAxNjMsODkyLjc4MTMsMTQwLjAxNjMsODgyLjc4MTMsMTM2LjAxNjMsODg2Ljc4MTMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTM2LjAxNjMiIHgyPSIxMzYuMDE2MyIgeTE9IjkyNi43NSIgeTI9Ijk0Ni43NSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTMyLjAxNjMsOTM2Ljc1LDEzNi4wMTYzLDk0Ni43NSwxNDAuMDE2Myw5MzYuNzUsMTM2LjAxNjMsOTQwLjc1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzNi4wMTYzIiB4Mj0iMTM2LjAxNjMiIHkxPSI3ODAuNTE1NiIgeTI9IjgzOC44MTI1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzIuMDE2Myw4MjguODEyNSwxMzYuMDE2Myw4MzguODEyNSwxNDAuMDE2Myw4MjguODEyNSwxMzYuMDE2Myw4MzIuODEyNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSI2OC41MDgxIiB4Mj0iNjguNTA4MSIgeTE9IjEwODAuNjg3NSIgeTI9IjExMDAuNjg3NSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iNjQuNTA4MSwxMDkwLjY4NzUsNjguNTA4MSwxMTAwLjY4NzUsNzIuNTA4MSwxMDkwLjY4NzUsNjguNTA4MSwxMDk0LjY4NzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjAzLjUyNDQiIHgyPSIyMDMuNTI0NCIgeTE9IjEwODAuNjg3NSIgeTI9IjExMDAuNjg3NSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTk5LjUyNDQsMTA5MC42ODc1LDIwMy41MjQ0LDExMDAuNjg3NSwyMDcuNTI0NCwxMDkwLjY4NzUsMjAzLjUyNDQsMTA5NC42ODc1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjkzLjU5NzMiIHgyPSI2OC41MDgxIiB5MT0iMTAyNC43MTg4IiB5Mj0iMTAyNC43MTg4Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjY4LjUwODEiIHgyPSI2OC41MDgxIiB5MT0iMTAyNC43MTg4IiB5Mj0iMTA0Ni43MTg4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI2NC41MDgxLDEwMzYuNzE4OCw2OC41MDgxLDEwNDYuNzE4OCw3Mi41MDgxLDEwMzYuNzE4OCw2OC41MDgxLDEwNDAuNzE4OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNzguNDM1MyIgeDI9IjIwMy41MjQ0IiB5MT0iMTAyNC43MTg4IiB5Mj0iMTAyNC43MTg4Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjIwMy41MjQ0IiB4Mj0iMjAzLjUyNDQiIHkxPSIxMDI0LjcxODgiIHkyPSIxMDQ2LjcxODgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE5OS41MjQ0LDEwMzYuNzE4OCwyMDMuNTI0NCwxMDQ2LjcxODgsMjA3LjUyNDQsMTAzNi43MTg4LDIwMy41MjQ0LDEwNDAuNzE4OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSI2OC41MDgxIiB4Mj0iNjguNTA4MSIgeTE9IjExMzQuNjU2MyIgeTI9IjExNTIuNjU2MyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSI2OC41MDgxIiB4Mj0iMTI0LjAxNjMiIHkxPSIxMTUyLjY1NjMiIHkyPSIxMTUyLjY1NjMiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjExNC4wMTYzLDExNDguNjU2MywxMjQuMDE2MywxMTUyLjY1NjMsMTE0LjAxNjMsMTE1Ni42NTYzLDExOC4wMTYzLDExNTIuNjU2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyMDMuNTI0NCIgeDI9IjIwMy41MjQ0IiB5MT0iMTEzNC42NTYzIiB5Mj0iMTE1Mi42NTYzIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjIwMy41MjQ0IiB4Mj0iMTQ4LjAxNjMiIHkxPSIxMTUyLjY1NjMiIHkyPSIxMTUyLjY1NjMiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE1OC4wMTYzLDExNDguNjU2MywxNDguMDE2MywxMTUyLjY1NjMsMTU4LjAxNjMsMTE1Ni42NTYzLDE1NC4wMTYzLDExNTIuNjU2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzYuMDE2MyIgeDI9IjEzNi4wMTYzIiB5MT0iOTgwLjcxODgiIHkyPSIxMDEyLjcxODgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzMi4wMTYzLDEwMDIuNzE4OCwxMzYuMDE2MywxMDEyLjcxODgsMTQwLjAxNjMsMTAwMi43MTg4LDEzNi4wMTYzLDEwMDYuNzE4OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMzYuMDE2MyIgeDI9IjEzNi4wMTYzIiB5MT0iMTE2NC42NTYzIiB5Mj0iMTE4NC42NTYzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMzIuMDE2MywxMTc0LjY1NjMsMTM2LjAxNjMsMTE4NC42NTYzLDE0MC4wMTYzLDExNzQuNjU2MywxMzYuMDE2MywxMTc4LjY1NjMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48IS0tU1JDPVtQTEJCSWlEMDVEdEZMbUhOd1NBRDZvNVRrRWhFWFEydWJ0UkswS2IzQ1k5NTE5Rm5xVllpWWdZcjNzbjNneEtGZHIyYnNkX25UZkJxQnZuNFkyLU9wVG5wcFp0ZHRYYzNwa2FLOEdNaUhzMHpPM1B0UkZWb0FPd0c5VzEySUxnTEhlUjUyby1fdVRVaFJZYXQ4Z3FZOUo0eklMSkFzc05fUVktRWIyYVRLcWdteGJMVV9TUS1BQ25hRDNvVHI4YjZVTWFOYzBiTTdIVzNnb0NtdHphVU5YeG5yemhGa2xuWEUtRW5FNWh4dkdqTTlHWGJqTzFqMkw4V081Tk5BVlpObEoxNjJjak9KTTRyY0hiRHdpbDRtN2VLMkxXSkIwVU9FQnQxVXY2dHBnRG1fQnRYN1RfekJseG4zVW5VVzZNX3NlTFVWRnp5eTdPSThWOGllVFlXOGhCWUZUX3BOM1AySDJLbmJsV2NKWXREUExQcWloME9haTZ3MVBPQnFXTHBUenJrYXhWcF9fczVhVTNQRnNSek5jZHVMRThTWEdGVVlnUDFiYVdaeGN1c3Z2T0FkZHRwZkdfUmF0YjkxbEMycDFTbVF1QjBUeWVKQ09ha09iTUlDelk4OFVNWmkyZG40ekRfUjgzcjQ3dzZ4NzB6RnBHRm1kTGswcGkzclhBVV9CM1ppeFN1bWFpNmJjR3I3S1lCVXQtYnRCYnRKeS00VEQxbGt3cWd4c193RExFOHIxSVBIeVlXUVVxSl0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h2 id="_10">環境別設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="local-development">Local Development<a class="headerlink" href="#local-development" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>起動コマンド:</strong>
+  <code>npm run dev</code></li>
+<li><strong>ポート:</strong>
+  3000</li>
+<li><strong>Hot Reload:</strong>
+  有効</li>
+<li><strong>テスト:</strong>
+  <code>npm run test</code></li>
+</ul>
+<h3 id="ci-environment-github-actions">CI Environment (GitHub Actions)<a class="headerlink" href="#ci-environment-github-actions" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Node.js バージョン:</strong>
+  20.x, 22.x (マトリックステスト)</li>
+<li><strong>実行OS:</strong>
+  Ubuntu Latest</li>
+<li><strong>キャッシュ:</strong>
+  npm cache有効</li>
+<li><strong>並列実行:</strong>
+  複数Node.jsバージョン同時実行</li>
+</ul>
+<h3 id="production-vercel">Production (Vercel)<a class="headerlink" href="#production-vercel" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>デプロイトリガー:</strong>
+  develop branchへのpush</li>
+<li><strong>ビルドコマンド:</strong>
+  <code>npm run build</code></li>
+<li><strong>出力ディレクトリ:</strong>
+  <code>dist</code></li>
+<li><strong>CDN:</strong>
+  グローバル配信</li>
+</ul>
+<h2 id="_11">監視・ログ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">テストカバレッジ監視<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>サービス:</strong>
+  Codecov</li>
+<li><strong>レポート:</strong>
+  プルリクエスト時自動コメント</li>
+<li><strong>しきい値:</strong>
+  80%目標（現在80.57%達成済み）</li>
+</ul>
+<h3 id="_13">品質メトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>サイクロマティック複雑度:</strong>
+  最大7</li>
+<li><strong>型安全性:</strong>
+  TypeScript strict mode</li>
+<li><strong>アーキテクチャ違反:</strong>
+  dependency-cruiser自動検出</li>
+</ul>
+<h2 id="_14">運用手順<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="_15">緊急対応<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>問題検知:</strong>
+   GitHub Actions失敗通知、Vercelデプロイエラー</li>
+<li><strong>影響範囲確認:</strong>
+   テスト結果、ビルドログ確認</li>
+<li><strong>修正対応:</strong>
+   ローカル環境で再現・修正</li>
+<li><strong>検証:</strong>
+   品質ゲート通過確認</li>
+<li><strong>デプロイ:</strong>
+   修正版のリリース</li>
+</ol>
+<h3 id="_16">定期メンテナンス<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>依存関係更新:</strong>
+  セキュリティパッチ適用</li>
+<li><strong>ドキュメント更新:</strong>
+  設定変更の記録</li>
+<li><strong>パフォーマンス監視:</strong>
+  ビルド時間・テスト実行時間</li>
+</ul>
+<h2 id="phase-3">Phase 3運用準備<a class="headerlink" href="#phase-3" title="Permanent link">&para;</a></h2>
+<h3 id="_17">イテレーション運用<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ブランチ戦略:</strong>
+  feature -&gt; develop -&gt; main</li>
+<li><strong>レビュープロセス:</strong>
+  プルリクエストレビュー</li>
+<li><strong>デプロイ戦略:</strong>
+  段階的リリース</li>
+</ul>
+<h3 id="_18">監視強化実績・予定<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h4 id="3_1">実装済み監視（イテレーション3）✅<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AI処理パフォーマンス:</strong>
+  Web Workers非ブロッキング処理監視</li>
+<li><strong>TensorFlow.js統合:</strong>
+  CDNロード状況、モデル初期化監視</li>
+<li><strong>メモリ管理:</strong>
+  TensorFlowリソース適切なdispose監視</li>
+</ul>
+<h4 id="_19">今後の監視強化予定<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>パフォーマンス監視:</strong>
+  ゲーム実行時パフォーマンス、AI思考時間</li>
+<li><strong>ユーザー体験監視:</strong>
+  操作性・レスポンス性、AI操作観戦体験</li>
+<li><strong>エラー監視:</strong>
+  実行時エラー追跡、AI処理エラー</li>
+</ul>
+<h2 id="_20">関連ドキュメント<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../requirements/">要件定義</a></li>
+<li><a href="../design/">設計ドキュメント</a></li>
+<li><a href="../development/">開発ドキュメント</a></li>
+<li><a href="../adr/">アーキテクチャ決定記録 (ADR)</a></li>
+</ul>
+<hr />
+<p><strong>最終更新:</strong> 2025-09-02（イテレーション6 AI学習システム統合運用実績記録時）<br />
+<strong>更新者:</strong> Claude Code Assistant</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

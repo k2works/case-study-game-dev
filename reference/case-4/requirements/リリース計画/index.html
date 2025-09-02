@@ -1,0 +1,1744 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Game Development project.">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>リリース計画 - ゲーム開発のケーススタディ</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-header__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ゲーム開発のケーススタディ
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              リリース計画
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case1
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case2
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../case-3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Case4
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ゲーム開発のケーススタディ" class="md-nav__button md-logo" aria-label="ゲーム開発のケーススタディ" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ゲーム開発のケーススタディ
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/case-study-game-dev" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    case-study-game-dev
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../case-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Case4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">リリース計画<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>ぷよぷよゲームプロジェクトのリリース計画について説明します。ユーザーストーリー・ユースケースの優先順位に基づき、段階的なリリース戦略を策定します。</p>
+<h2 id="_3">リリース戦略<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">基本方針<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkFDVElWSVRZIiBoZWlnaHQ9IjEwODZweCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSIgc3R5bGU9IndpZHRoOjI1M3B4O2hlaWdodDoxMDg2cHg7YmFja2dyb3VuZDojRkZGRkZGOyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjUzIDEwODYiIHdpZHRoPSIyNTNweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxlbGxpcHNlIGN4PSIxMjkuMTk5MiIgY3k9IjIwIiBmaWxsPSIjMjIyMjIyIiByeD0iMTAiIHJ5PSIxMCIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTkwLjIwMzEiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjIzMS4zOTg0IiB4PSIxMSIgeT0iNDAuODAxOCIvPjxwYXRoIGQ9Ik0yMzcuMzk4NCw0MC44MDE4IEwyMzcuMzk4NCw1MC4wOTg2IEwyMjcuMzk4NCw2MC4wOTg2IEwxMSw2MC4wOTg2IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyMTYuMzk4NCIgeD0iMTQiIHk9IjU0Ljc5NjkiPk1WUCAoTWluaW11bSBWaWFibGUgUHJvZHVjdCk8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEwNC4wMDA2IiB4PSI3Ny4xOTg5IiB5PSI3Ny4wOTg2Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODQuMDAwNiIgeD0iODcuMTk4OSIgeT0iOTguMjM3MyI+JiMyMjUyMjsmIzI2NDEyOyYjMTI0NjY7JiMxMjU0MDsmIzEyNTEyOyYjMjcyMzE7JiMzMzAyMTs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEwNC4wMDA2IiB4PSI3Ny4xOTg5IiB5PSIxMzEuMDY3NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijg0LjAwMDYiIHg9Ijg3LjE5ODkiIHk9IjE1Mi4yMDYxIj4mIzEyNDY3OyYjMTI0NTA7JiMyMDMwNzsmIzM5NDQzOyYjMTIzOTg7JiMyNTU1MjsmIzIwMzc5OzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTUyLjAwMSIgeD0iNTMuMTk4NyIgeT0iMTg1LjAzNjEiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzIuMDAxIiB4PSI2My4xOTg3IiB5PSIyMDYuMTc0OCI+JiMyNjA4OTsmIzI2Mzk5OyYjMTI1MDE7JiMxMjQ1MTsmIzEyNTQwOyYjMTI0ODk7JiMxMjQ5NjsmIzEyNDgzOyYjMTI0NjM7JiMyMTQ1NDsmIzM4NTk4OzwvdGV4dD48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjE5MC4yMDMxIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiIHdpZHRoPSIxNTkuNzQ4OSIgeD0iNDkuMzI0OCIgeT0iMjQxLjAwNDkiLz48cGF0aCBkPSJNMTc0Ljk1NDQsMjQxLjAwNDkgTDE3NC45NTQ0LDI1MC4zMDE4IEwxNjQuOTU0NCwyNjAuMzAxOCBMNDkuMzI0OCwyNjAuMzAxOCIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTE1LjYyOTYiIHg9IjUyLjMyNDgiIHk9IjI1NSI+djEuMSAoQUkmIzI3MjMxOyYjMzMwMjE7JiMzNjg2MTsmIzIxMTUyOyk8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjExNS43NDg3IiB4PSI3MS4zMjQ5IiB5PSIyNzcuMzAxOCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk1Ljc0ODciIHg9IjgxLjMyNDkiIHk9IjI5OC40NDA0Ij5BSSYjMzMyNTg7JiMyMTIwNTsmIzEyNTAzOyYjMTI1MjQ7JiMxMjQ1MjsmIzI3MjMxOyYjMzMwMjE7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMzkuNzQ4OSIgeD0iNTkuMzI0OCIgeT0iMzMxLjI3MDUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTkuNzQ4OSIgeD0iNjkuMzI0OCIgeT0iMzUyLjQwOTIiPkFJJiMxMjQ5NzsmIzEyNTAxOyYjMTI0NTc7JiMxMjU0MDsmIzEyNTEwOyYjMTI1MzE7JiMxMjQ3MzsmIzIwOTk4OyYjMjY1MTI7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI3OS43NDg0IiB4PSI4OS4zMjUiIHk9IjM4NS4yMzkzIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTkuNzQ4NCIgeD0iOTkuMzI1IiB5PSI0MDYuMzc3OSI+QUkmIzI1MTI2OyYjMzAwNTM7JiMzNTM3MzsmIzIzNDUwOzwvdGV4dD48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjE5MC4yMDMxIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiIHdpZHRoPSIxMzYuMDAwNyIgeD0iNjEuMTk4OSIgeT0iNDQyLjAwOTgiLz48cGF0aCBkPSJNMTg2LjgyODUsNDQyLjAwOTggTDE4Ni44Mjg1LDQ1MS4zMDY2IEwxNzYuODI4NSw0NjEuMzA2NiBMNjEuMTk4OSw0NjEuMzA2NiIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTE1LjYyOTYiIHg9IjY0LjE5ODkiIHk9IjQ1Ni4wMDQ5Ij52MS4yIChBSSYjMjMzOTg7JiMzMjcyMjsmIzI3MjMxOyYjMzMwMjE7KTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTE2LjAwMDciIHg9IjcxLjE5ODkiIHk9IjQ3OC4zMDY2Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iOTYuMDAwNyIgeD0iODEuMTk4OSIgeT0iNDk5LjQ0NTMiPiYjMjcyMzE7JiMyNjgwMDsmIzIzMzk4OyYjMzI3MjI7JiMxMjQ3MTsmIzEyNDczOyYjMTI0ODY7JiMxMjUxMjs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjExNS43NDg3IiB4PSI3MS4zMjQ5IiB5PSI1MzIuMjc1NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk1Ljc0ODciIHg9IjgxLjMyNDkiIHk9IjU1My40MTQxIj5BSSYjMjMzOTg7JiMzMjcyMjsmIzEyNDg3OyYjMTI1NDA7JiMxMjQ3OTsmIzIxNDU0OyYjMzg1OTg7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMTYuMDAwNyIgeD0iNzEuMTk4OSIgeT0iNTg2LjI0NDEiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI5Ni4wMDA3IiB4PSI4MS4xOTg5IiB5PSI2MDcuMzgyOCI+JiMyMzM5ODsmIzMyNzIyOyYjMTI1MTQ7JiMxMjQ4NzsmIzEyNTIzOyYjMjYzNjg7JiMzNjk2OTsmIzIxMjcwOzwvdGV4dD48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjE5MC4yMDMxIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiIHdpZHRoPSIxNzcuOTIzMyIgeD0iNDAuMjM3NSIgeT0iNjQzLjAxNDYiLz48cGF0aCBkPSJNMjA4LjE2MDksNjQzLjAxNDYgTDIwOC4xNjA5LDY1Mi4zMTE1IEwxOTguMTYwOSw2NjIuMzExNSBMNDAuMjM3NSw2NjIuMzExNSIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTU3LjkyMzMiIHg9IjQzLjIzNzUiIHk9IjY1Ny4wMDk4Ij52MS4zICgmIzEyNTE4OyYjMTI1NDA7JiMxMjQ3MDsmIzEyNTQwOyYjMjAzMDc7JiMzOTQ0MzsmIzIxNTIxOyYjMTk5Nzg7KTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTA0LjAwMDYiIHg9Ijc3LjE5ODkiIHk9IjY3OS4zMTE1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODQuMDAwNiIgeD0iODcuMTk4OSIgeT0iNzAwLjQ1MDIiPiYjMzUyMjI7JiMzNTIyNjsmIzEyNTM5OyYjMzg4OTk7JiMzODkxMTsmIzIxMTc3OyYjMjY1MjQ7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI3Ny4zNjkzIiB4PSI5MC41MTQ2IiB5PSI3MzMuMjgwMyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU3LjM2OTMiIHg9IjEwMC41MTQ2IiB5PSI3NTQuNDE4OSI+VUkvVVgmIzI1OTEzOyYjMjE4OTI7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMjguMDAwOCIgeD0iNjUuMTk4OCIgeT0iNzg3LjI0OSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwOC4wMDA4IiB4PSI3NS4xOTg4IiB5PSI4MDguMzg3NyI+JiMxMjUxODsmIzEyNTQwOyYjMTI0NzA7JiMxMjU0MDsmIzI4Mjg4OyYjMzYyNzU7JiMyNDIzMDsmIzIxNTIxOyYjMTk5Nzg7PC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTkwLjIwMzEiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjE2MC4wMDA5IiB4PSI0OS4xOTg4IiB5PSI4NDMuMjE3OCIvPjxwYXRoIGQ9Ik0xNjEuMTIyMyw4NDMuMjE3OCBMMTYxLjEyMjMsODUyLjUxNDYgTDE1MS4xMjIzLDg2Mi41MTQ2IEw0OS4xOTg4LDg2Mi41MTQ2IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDEuOTIzNiIgeD0iNTIuMTk4OCIgeT0iODU3LjIxMjkiPnYxLjQgKCYjMjcyMzE7JiMzMzAyMTsmIzI1MzEzOyYjMjQzNzM7KTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTA0LjAwMDYiIHg9Ijc3LjE5ODkiIHk9Ijg3OS41MTQ2Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODQuMDAwNiIgeD0iODcuMTk4OSIgeT0iOTAwLjY1MzMiPiYjMzUzNTI7JiMzNzY4MjsmIzEyNTM5OyYjMzUzNzM7JiMyMzQ1MDsmIzI3MjMxOyYjMzMwMjE7PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Mi4wMDA1IiB4PSI4My4xOTg5IiB5PSI5MzMuNDgzNCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcyLjAwMDUiIHg9IjkzLjE5ODkiIHk9Ijk1NC42MjIxIj4mIzEyNTE0OyYjMTI0OTY7JiMxMjQ1MjsmIzEyNTIzOyYjMjM1NTA7JiMyNDU0MDs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE0MC4wMDA5IiB4PSI1OS4xOTg4IiB5PSI5ODcuNDUyMSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEyMC4wMDA5IiB4PSI2OS4xOTg4IiB5PSIxMDA4LjU5MDgiPiYjMTI0OTc7JiMxMjUwMTsmIzEyNDU3OyYjMTI1NDA7JiMxMjUxMDsmIzEyNTMxOyYjMTI0NzM7JiMyNjM2ODsmIzM2OTY5OyYjMjEyNzA7PC90ZXh0PjxlbGxpcHNlIGN4PSIxMjkuMTk5MiIgY3k9IjEwNjQuNDIwOSIgZmlsbD0ibm9uZSIgcng9IjExIiByeT0iMTEiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MTsiLz48ZWxsaXBzZSBjeD0iMTI5LjE5OTIiIGN5PSIxMDY0LjQyMDkiIGZpbGw9IiMyMjIyMjIiIHJ4PSI2IiByeT0iNiIgc3R5bGU9InN0cm9rZTojMjIyMjIyO3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuMTk5MiIgeDI9IjEyOS4xOTkyIiB5MT0iMTExLjA2NzQiIHkyPSIxMzEuMDY3NCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTI1LjE5OTIsMTIxLjA2NzQsMTI5LjE5OTIsMTMxLjA2NzQsMTMzLjE5OTIsMTIxLjA2NzQsMTI5LjE5OTIsMTI1LjA2NzQiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTI5LjE5OTIiIHgyPSIxMjkuMTk5MiIgeTE9IjE2NS4wMzYxIiB5Mj0iMTg1LjAzNjEiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEyNS4xOTkyLDE3NS4wMzYxLDEyOS4xOTkyLDE4NS4wMzYxLDEzMy4xOTkyLDE3NS4wMzYxLDEyOS4xOTkyLDE3OS4wMzYxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEyOS4xOTkyIiB4Mj0iMTI5LjE5OTIiIHkxPSIzMCIgeTI9Ijc3LjA5ODYiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEyNS4xOTkyLDY3LjA5ODYsMTI5LjE5OTIsNzcuMDk4NiwxMzMuMTk5Miw2Ny4wOTg2LDEyOS4xOTkyLDcxLjA5ODYiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTI5LjE5OTIiIHgyPSIxMjkuMTk5MiIgeTE9IjMxMS4yNzA1IiB5Mj0iMzMxLjI3MDUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEyNS4xOTkyLDMyMS4yNzA1LDEyOS4xOTkyLDMzMS4yNzA1LDEzMy4xOTkyLDMyMS4yNzA1LDEyOS4xOTkyLDMyNS4yNzA1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEyOS4xOTkyIiB4Mj0iMTI5LjE5OTIiIHkxPSIzNjUuMjM5MyIgeTI9IjM4NS4yMzkzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5MiwzNzUuMjM5MywxMjkuMTk5MiwzODUuMjM5MywxMzMuMTk5MiwzNzUuMjM5MywxMjkuMTk5MiwzNzkuMjM5MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuMTk5MiIgeDI9IjEyOS4xOTkyIiB5MT0iMjE5LjAwNDkiIHkyPSIyNzcuMzAxOCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTI1LjE5OTIsMjY3LjMwMTgsMTI5LjE5OTIsMjc3LjMwMTgsMTMzLjE5OTIsMjY3LjMwMTgsMTI5LjE5OTIsMjcxLjMwMTgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTI5LjE5OTIiIHgyPSIxMjkuMTk5MiIgeTE9IjUxMi4yNzU0IiB5Mj0iNTMyLjI3NTQiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEyNS4xOTkyLDUyMi4yNzU0LDEyOS4xOTkyLDUzMi4yNzU0LDEzMy4xOTkyLDUyMi4yNzU0LDEyOS4xOTkyLDUyNi4yNzU0IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEyOS4xOTkyIiB4Mj0iMTI5LjE5OTIiIHkxPSI1NjYuMjQ0MSIgeTI9IjU4Ni4yNDQxIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5Miw1NzYuMjQ0MSwxMjkuMTk5Miw1ODYuMjQ0MSwxMzMuMTk5Miw1NzYuMjQ0MSwxMjkuMTk5Miw1ODAuMjQ0MSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuMTk5MiIgeDI9IjEyOS4xOTkyIiB5MT0iNDE5LjIwOCIgeTI9IjQ3OC4zMDY2Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5Miw0NjguMzA2NiwxMjkuMTk5Miw0NzguMzA2NiwxMzMuMTk5Miw0NjguMzA2NiwxMjkuMTk5Miw0NzIuMzA2NiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuMTk5MiIgeDI9IjEyOS4xOTkyIiB5MT0iNzEzLjI4MDMiIHkyPSI3MzMuMjgwMyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTI1LjE5OTIsNzIzLjI4MDMsMTI5LjE5OTIsNzMzLjI4MDMsMTMzLjE5OTIsNzIzLjI4MDMsMTI5LjE5OTIsNzI3LjI4MDMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTI5LjE5OTIiIHgyPSIxMjkuMTk5MiIgeTE9Ijc2Ny4yNDkiIHkyPSI3ODcuMjQ5Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5Miw3NzcuMjQ5LDEyOS4xOTkyLDc4Ny4yNDksMTMzLjE5OTIsNzc3LjI0OSwxMjkuMTk5Miw3ODEuMjQ5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEyOS4xOTkyIiB4Mj0iMTI5LjE5OTIiIHkxPSI2MjAuMjEyOSIgeTI9IjY3OS4zMTE1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5Miw2NjkuMzExNSwxMjkuMTk5Miw2NzkuMzExNSwxMzMuMTk5Miw2NjkuMzExNSwxMjkuMTk5Miw2NzMuMzExNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuMTk5MiIgeDI9IjEyOS4xOTkyIiB5MT0iOTEzLjQ4MzQiIHkyPSI5MzMuNDgzNCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTI1LjE5OTIsOTIzLjQ4MzQsMTI5LjE5OTIsOTMzLjQ4MzQsMTMzLjE5OTIsOTIzLjQ4MzQsMTI5LjE5OTIsOTI3LjQ4MzQiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTI5LjE5OTIiIHgyPSIxMjkuMTk5MiIgeTE9Ijk2Ny40NTIxIiB5Mj0iOTg3LjQ1MjEiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEyNS4xOTkyLDk3Ny40NTIxLDEyOS4xOTkyLDk4Ny40NTIxLDEzMy4xOTkyLDk3Ny40NTIxLDEyOS4xOTkyLDk4MS40NTIxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEyOS4xOTkyIiB4Mj0iMTI5LjE5OTIiIHkxPSI4MjEuMjE3OCIgeTI9Ijg3OS41MTQ2Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5Miw4NjkuNTE0NiwxMjkuMTk5Miw4NzkuNTE0NiwxMzMuMTk5Miw4NjkuNTE0NiwxMjkuMTk5Miw4NzMuNTE0NiIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMjkuMTk5MiIgeDI9IjEyOS4xOTkyIiB5MT0iMTAyMS40MjA5IiB5Mj0iMTA1My40MjA5Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxMjUuMTk5MiwxMDQzLjQyMDksMTI5LjE5OTIsMTA1My40MjA5LDEzMy4xOTkyLDEwNDMuNDIwOSwxMjkuMTk5MiwxMDQ3LjQyMDkiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48IS0tU1JDPVtSUDVCSnk5MDU4TnRfSE1EZ3hoSGVBdm1uUEE1WUhrQ010bWljaVdaTURtTzQtbU9LMjFRN3UyMVhZZmdHdHI3dWVFTl9KNk42VGZfdU5HNkw5OWs5ZkRwQy1VeHZ5b3M0YXFmV2YyYWZ3cDhZUld1alJJb0I0ZkJTYm9FZk1GWVlYblRzemVLYnJFOVpWSXdDWnFieFdmMVI3SThfV1pnNncwVWUyalk2R3hnQm1mMUs1a1dEV1J6U3hUdjNsbEZ2NEdSVkRVZUpZZU1xR3IwOUwxbHM5Q1pHMWVXMUVlQkZaYnNRemI1T016WVd2dDBKNDJLR2M3a3hEWHpkQl9ZdzUzT29UdFpHV2JHMUgxVHVWT043V2UzRWNLQ1lwN2dXRVdzUk5vTzlOTURwU2NYRUlwVEVTcWRfNXByOFN2dkhGbmEza3FwUmlnOXo0dVFocm03elBEUTBpaElyQ25vOUFFU1hySmpTUGhXTTYtbXFHRkhDLXctWE9qYjctb3lBMDRvc1ZpRlVsQnNpN093LUNocDFIb3B4OVhMRzV0TlFCYzZaVkRqS2pTZjhuQVVaUW9JWXBPazd0WlRfX0NXZE9wcHFTOFRhemx1RzFUNFlNU2FYTWxTVW4tMWNmVGthVnZmYnJWcXp3clUzOHJzSlBGV2Jzeml3cXBxQU5pb3Z4UUlJRnUwXS0tPjwvZz48L3N2Zz4=" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_5">リリース原則<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>価値駆動:</strong> ユーザー価値を最優先</li>
+<li><strong>段階的リリース:</strong> 小さく頻繁なリリース</li>
+<li><strong>フィードバック重視:</strong> ユーザーからの継続的フィードバック</li>
+<li><strong>品質保証:</strong> 各リリースでの品質基準維持</li>
+<li><strong>後方互換:</strong> 既存機能への影響最小化</li>
+</ol>
+<h2 id="_6">リリースバージョン詳細<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="mvp-v10-">MVP (v1.0) - 基本ゲーム体験<a class="headerlink" href="#mvp-v10-" title="Permanent link">&para;</a></h3>
+<p><strong>目標:</strong> プレイ可能な最小限のぷよぷよゲーム</p>
+<h4 id="_7">含まれる機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>ユーザーストーリー</th>
+<th>Story Points</th>
+<th>優先度</th>
+<th>受け入れ基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-001: 基本ゲームプレイ</td>
+<td>8</td>
+<td>最高</td>
+<td>フィールド表示、ぷよ落下、基本ルール</td>
+</tr>
+<tr>
+<td>US-002: 操作システム</td>
+<td>5</td>
+<td>最高</td>
+<td>キーボード操作、移動・回転</td>
+</tr>
+<tr>
+<td>US-003: 消去システム</td>
+<td>8</td>
+<td>最高</td>
+<td>4つ以上消去、連鎖、重力適用</td>
+</tr>
+<tr>
+<td>US-004: ゲーム状態管理</td>
+<td>5</td>
+<td>高</td>
+<td>スコア表示、ゲームオーバー、リスタート</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_8">技術仕様<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>フロントエンド:</strong> React 18 + TypeScript</li>
+<li><strong>状態管理:</strong> Zustand</li>
+<li><strong>スタイリング:</strong> Tailwind CSS</li>
+<li><strong>テスト:</strong> Vitest + React Testing Library</li>
+<li><strong>デプロイ:</strong> Vercel</li>
+</ul>
+<h4 id="_9">成功指標<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li>ゲーム完了率: 60%以上</li>
+<li>平均プレイ時間: 5分以上</li>
+<li>致命的バグ: 0件</li>
+<li>ユーザビリティスコア: 70点以上</li>
+</ul>
+<h3 id="v11-ai">v1.1 - AI機能追加<a class="headerlink" href="#v11-ai" title="Permanent link">&para;</a></h3>
+<p><strong>目標:</strong> AI自動プレイによる差別化とユーザー学習支援</p>
+<h4 id="_10">含まれる機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>ユーザーストーリー</th>
+<th>Story Points</th>
+<th>優先度</th>
+<th>受け入れ基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-005: AI自動プレイ機能</td>
+<td>13</td>
+<td>高</td>
+<td>AI自動プレイ、思考可視化、速度調整</td>
+</tr>
+<tr>
+<td>US-007: AIパフォーマンス分析</td>
+<td>8</td>
+<td>中</td>
+<td>連鎖成功率、統計データ、比較機能</td>
+</tr>
+<tr>
+<td>US-008: AI戦略設定</td>
+<td>8</td>
+<td>中</td>
+<td>戦略選択、パラメータ調整、保存機能</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_11">技術追加<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>機械学習:</strong> TensorFlow.js</li>
+<li><strong>AI思考可視化:</strong> Canvas描画</li>
+<li><strong>データ分析:</strong> 統計ライブラリ</li>
+<li><strong>ワーカー:</strong> Web Workers（AI処理用）</li>
+</ul>
+<h4 id="_12">成功指標<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<ul>
+<li>AI機能利用率: 60%以上</li>
+<li>AIプレイ観戦時間: 3分以上</li>
+<li>AI戦略変更率: 40%以上</li>
+<li>AI機能満足度: 75点以上</li>
+</ul>
+<h3 id="v12-ai">v1.2 - AI学習機能<a class="headerlink" href="#v12-ai" title="Permanent link">&para;</a></h3>
+<p><strong>目標:</strong> 機械学習による継続的なAI性能向上</p>
+<h4 id="_13">含まれる機能<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>ユーザーストーリー</th>
+<th>Story Points</th>
+<th>優先度</th>
+<th>受け入れ基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-006: AI学習システム</td>
+<td>21</td>
+<td>中</td>
+<td>機械学習アルゴリズム、学習データ収集、性能向上</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_14">技術追加<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>モデル学習:</strong> TensorFlow.js学習機能</li>
+<li><strong>データ収集:</strong> プレイデータ蓄積システム</li>
+<li><strong>モデル管理:</strong> バージョニング機能</li>
+</ul>
+<h4 id="_15">成功指標<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
+<ul>
+<li>AI性能向上: 20%以上</li>
+<li>学習データ収集率: 80%以上</li>
+<li>学習効果可視化: ダッシュボード完成</li>
+<li>モデル更新頻度: 週次</li>
+</ul>
+<h3 id="v13-">v1.3 - ユーザー体験向上<a class="headerlink" href="#v13-" title="Permanent link">&para;</a></h3>
+<p><strong>目標:</strong> 楽しく魅力的なゲーム体験の提供</p>
+<h4 id="_16">含まれる機能<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>ユーザーストーリー</th>
+<th>Story Points</th>
+<th>優先度</th>
+<th>受け入れ基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-009: 視覚効果</td>
+<td>5</td>
+<td>中</td>
+<td>消去エフェクト、連鎖演出</td>
+</tr>
+<tr>
+<td>US-010: 音響効果</td>
+<td>3</td>
+<td>中</td>
+<td>効果音、BGM、音量調節</td>
+</tr>
+<tr>
+<td>US-011: UI/UX改善</td>
+<td>3</td>
+<td>中</td>
+<td>操作説明、ポーズ機能</td>
+</tr>
+<tr>
+<td>US-012: アニメーション</td>
+<td>5</td>
+<td>中</td>
+<td>落下・消去アニメーション</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_17">技術追加<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>アニメーション:</strong> Framer Motion</li>
+<li><strong>音響:</strong> Web Audio API</li>
+<li><strong>エフェクト:</strong> Canvas アニメーション</li>
+</ul>
+<h4 id="_18">成功指標<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h4>
+<ul>
+<li>ユーザー満足度: 80点以上</li>
+<li>セッション継続率: 70%以上</li>
+<li>音響機能利用率: 80%以上</li>
+<li>アニメーション評価: 4.0/5.0以上</li>
+</ul>
+<h3 id="v14-">v1.4 - 機能拡張・最適化<a class="headerlink" href="#v14-" title="Permanent link">&para;</a></h3>
+<p><strong>目標:</strong> 長期利用とより広いユーザー層への対応</p>
+<h4 id="_19">含まれる機能<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>ユーザーストーリー</th>
+<th>Story Points</th>
+<th>優先度</th>
+<th>受け入れ基準</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US-013: 記録管理</td>
+<td>3</td>
+<td>低</td>
+<td>ハイスコア、プレイ履歴</td>
+</tr>
+<tr>
+<td>US-014: 設定機能</td>
+<td>3</td>
+<td>低</td>
+<td>ゲーム設定、カスタマイゼーション</td>
+</tr>
+<tr>
+<td>US-015: モバイル対応</td>
+<td>5</td>
+<td>低</td>
+<td>タッチ操作、レスポンシブ</td>
+</tr>
+<tr>
+<td>US-016: パフォーマンス最適化</td>
+<td>5</td>
+<td>低</td>
+<td>60FPS、メモリ最適化</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_20">技術追加<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>PWA:</strong> Service Worker</li>
+<li><strong>分析:</strong> Vercel Analytics</li>
+<li><strong>最適化:</strong> Bundle分析・最適化</li>
+</ul>
+<h4 id="_21">成功指標<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h4>
+<ul>
+<li>モバイル利用率: 40%以上</li>
+<li>パフォーマンススコア: 90点以上</li>
+<li>ハイスコア機能利用率: 60%以上</li>
+<li>設定変更率: 30%以上</li>
+</ul>
+<h2 id="_22">開発スケジュール<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
+<h3 id="_23">ガントチャート<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>gantt
+    title ぷよぷよゲーム開発スケジュール（2025-09-01更新版 - AI学習システム実装進行中）
+    dateFormat  YYYY-MM-DD
+    section Phase 1 要件
+    要件定義           :done, req, 2025-08-12, 2025-08-12
+    ユーザーストーリー作成 :done, us, 2025-08-12, 2025-08-12
+    技術選定           :done, tech, 2025-08-12, 2025-08-12
+
+    section Phase 2 構築・配置
+    環境構築           :done, env, 2025-08-13, 1d
+    CI/CD構築         :done, cicd, 2025-08-13, 1d
+
+    section MVP (v1.0) - 完了実績 🎉
+    イテレーション1     :done, iter1, 2025-08-13, 1d
+    イテレーション2     :done, iter2, 2025-08-16, 1d
+    MVP完成           :done, mvp-done, 2025-08-16, 1d
+    MVP本番リリース    :milestone, mvp-rel, 2025-08-16, 0d
+
+    section v1.1 (AI機能) - 完了実績 🤖
+    AI基盤実装Phase1   :done, v11-1, 2025-08-17, 2d
+    イテレーション3完了 :done, iter3-done, 2025-08-18, 1d
+    AI機能基盤完成     :milestone, v11-phase1, 2025-08-18, 0d
+    イテレーション4完了 :done, iter4-done, 2025-08-19, 1d
+    AIパフォーマンス分析完了 :done, v11-2-done, 2025-08-19, 1d
+    AI戦略設定完了     :done, v11-3-done, 2025-08-19, 1d
+    v1.1統合完了      :milestone, v11-done, 2025-08-19, 0d
+
+    section v1.2 (mayah AI実装) - 完了実績 🧠
+    イテレーション5完了 :done, iter5-done, 2025-08-25, 1d
+    mayah AI評価システム完成 :done, mayah-done, 2025-08-25, 1d
+    4要素評価実装完了 :milestone, mayah-4elements, 2025-08-25, 0d
+
+    section v1.2 (AI学習) - 進行中 🚧
+    イテレーション6実装 :active, iter6-impl, 2025-09-01, 7d
+    AI学習システム統合 :iter6-int, 2025-09-08, 3d
+    v1.2完成予定      :milestone, v12-done, 2025-09-11, 0d
+
+    section v1.3-1.4 (将来拡張) - 計画調整中 📋
+    UX・音響効果      :v13-1, 2025-09-15, 2w
+    モバイル対応      :v14-1, 2025-10-01, 2w
+    最終統合テスト    :v14-test, 2025-10-15, 1w
+    v1.4最終リリース  :milestone, v14-rel, 2025-10-22, 0d</code></pre>
+<h3 id="_24">マイルストーン詳細（更新版）<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<h4 id="m1-mvp-2025-01-16">M1: MVP完成 (2025-01-16) ✅<strong>完了済み</strong><a class="headerlink" href="#m1-mvp-2025-01-16" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ 基本ゲーム機能完全動作</li>
+<li>✅ 設計リファクタリング完了（品質大幅向上）</li>
+<li>✅ テストカバレッジ91.18%達成</li>
+<li><strong>追加成果:</strong></li>
+<li>関数型プログラミング採用</li>
+<li>Value Objects導入</li>
+<li>不変データ構造実装</li>
+<li>AI実装に最適な基盤構築</li>
+</ul>
+<h4 id="m15-ai-2025-08-18">M1.5: AI機能基盤完成 (2025-08-18) ✅<strong>完了済み</strong><a class="headerlink" href="#m15-ai-2025-08-18" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ TensorFlow.js v4.22.0統合完了</li>
+<li>✅ Web Workers非同期処理実装完了</li>
+<li>✅ AI可視化UI完成（AIControlPanel, AIInsights）</li>
+<li>✅ ヘキサゴナルアーキテクチャ維持</li>
+<li><strong>技術成果:</strong></li>
+<li>4層ニューラルネットワーク実装</li>
+<li>メインスレッド非ブロッキング化</li>
+<li>リアルタイム思考表示機能</li>
+<li>フォールバック機構実装</li>
+</ul>
+<h4 id="m2-v11-2025-08-19">M2: v1.1完成 (2025-08-19) ✅<strong>完了済み</strong><a class="headerlink" href="#m2-v11-2025-08-19" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ AIパフォーマンス分析機能完成</li>
+<li>✅ AI戦略設定機能完成  </li>
+<li>✅ 統合テスト・品質確認完了</li>
+<li><strong>追加成果:</strong></li>
+<li>29 SP完了（100%達成）</li>
+<li>テスト602件成功（97.6%）</li>
+<li>受け入れ基準100%達成</li>
+</ul>
+<h4 id="m3-v12-mayah-ai-2025-08-25">M3: v1.2 mayah AI評価システム完成 (2025-08-25) ✅<strong>完了済み</strong><a class="headerlink" href="#m3-v12-mayah-ai-2025-08-25" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ <strong>mayah型4要素評価システム実装完成</strong></li>
+<li>✅ <strong>3つの評価サービス実装（2,372行）</strong></li>
+<li>✅ <strong>パターンマッチング実装（GTR等5バリアント）</strong></li>
+<li>✅ <strong>高度技術パターン実証完了</strong></li>
+<li>✅ <strong>関数型プログラミング実証完了</strong></li>
+<li><strong>品質実績:</strong></li>
+<li>39 SP完了（100%達成）</li>
+<li>TypeScript型カバレッジ94%達成</li>
+<li>平均評価時間85ms（高性能実現）</li>
+</ul>
+<h4 id="m4-v14-2026-02-06">M4: v1.4最終完成 (2026-02-06) 📋<strong>統合計画</strong><a class="headerlink" href="#m4-v14-2026-02-06" title="Permanent link">&para;</a></h4>
+<ul>
+<li>📋 視覚・音響効果実装</li>
+<li>📋 モバイル対応完了</li>
+<li>📋 mayah AI統合完成確認</li>
+<li>📋 全機能統合テスト完了</li>
+</ul>
+<h4 id="m5-v20-mayah-2026-05-24">M5: v2.0 mayah完全版 (2026-05-24) 💪<strong>長期目標</strong><a class="headerlink" href="#m5-v20-mayah-2026-05-24" title="Permanent link">&para;</a></h4>
+<ul>
+<li>💪 <strong>競技レベルAI完成（mayah AIレベル到達）</strong></li>
+<li>💪 <strong>AI vs AI対戦機能</strong></li>
+<li>💪 <strong>定跡パターン自動学習</strong></li>
+<li>💪 <strong>RensaHandTree高度化</strong></li>
+</ul>
+<h2 id="_25">イテレーション計画<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
+<h3 id="iteration-1-mvp">Iteration 1: ゲーム基盤 (MVP) ✅<a class="headerlink" href="#iteration-1-mvp" title="Permanent link">&para;</a></h3>
+<h4 id="_26">期間<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h4>
+<p>2025-08-16 ～ 2025-08-30 (2週間)</p>
+<h4 id="_27">目標<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h4>
+<p>基本的なゲームプレイ機能の実装</p>
+<h4 id="todo">TODO詳細<a class="headerlink" href="#todo" title="Permanent link">&para;</a></h4>
+<p><strong>Week 1 (8/16-8/22):</strong></p>
+<ol class="task-list">
+<li>
+<p><strong>ドメインモデル実装</strong></p>
+</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> Puyo, Field, Game クラス基本実装</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 基本的なゲームロジック</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 単体テスト作成</p>
+</li>
+<li>
+<p><strong>基本UI実装</strong></p>
+</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> GameBoard コンポーネント</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> ゲーム状態表示</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 基本スタイリング (TailwindCSS v4)</li>
+</ol>
+<p><strong>Week 2 (8/23-8/30):</strong></p>
+<ol class="task-list">
+<li><strong>操作システム</strong></li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> キーボード入力処理</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> ぷよ移動・回転ロジック</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 統合テスト</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> E2Eテスト追加実装</li>
+</ol>
+<h4 id="_28">受け入れ基準<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> フィールド(6×12)表示</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> ぷよの基本操作(移動・回転・落下)</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 基本的なゲームルール動作</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 単体テストカバレッジ80%以上</li>
+</ul>
+<h4 id="_29">実績<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h4>
+<ul>
+<li>完了日: 2025-08-13 (予定より早く完了)</li>
+<li>Story Points: 13 (実績)</li>
+<li>テストカバレッジ: 単体テスト116件、統合テスト31件、E2E50件</li>
+<li>重大バグ: </li>
+</ul>
+<h3 id="iteration-2">Iteration 2: テストカバレッジ向上 ✅<a class="headerlink" href="#iteration-2" title="Permanent link">&para;</a></h3>
+<h4 id="_30">期間<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h4>
+<p>2025-01-16 (1日間)</p>
+<h4 id="_31">目標<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h4>
+<p>テストカバレッジを80%以上に向上させる</p>
+<h4 id="todo_1">TODO詳細<a class="headerlink" href="#todo_1" title="Permanent link">&para;</a></h4>
+<p><strong>Day 1 (1/16) - 実績:</strong></p>
+<ol class="task-list">
+<li><strong>CollisionServiceテスト作成</strong> ✅</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 28個のテストケース作成</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 100%カバレッジ達成</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 3A手法による構造化テスト</p>
+</li>
+<li>
+<p><strong>PuyoSpawningServiceテスト拡張</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 既存テストの拡張（27ケース）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 関数型ユーティリティのテスト追加</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 99.5%カバレッジ達成</p>
+</li>
+<li>
+<p><strong>ChainDetectionServiceテスト確認</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 25個のテストケース確認</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 97.77%カバレッジ達成</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 複雑な連鎖ロジックのテスト網羅</p>
+</li>
+<li>
+<p><strong>品質改善施策</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 3A手法（Arrange, Act, Assert）の標準化</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 日本語によるテストケース記述</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> テストの可読性と保守性向上</p>
+</li>
+<li>
+<p><strong>カバレッジ分析と最適化</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 最低カバレッジ領域の特定</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 体系的なテスト追加アプローチ</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 目標80%の大幅超過達成（91.18%）</li>
+</ol>
+<h4 id="_32">受け入れ基準<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> テストカバレッジ80%以上達成</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> domain/servicesの低カバレッジ改善</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> infrastructure/adaptersのテスト追加</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 全テスト成功（エラー0）</li>
+</ul>
+<h4 id="2025-01-16">実績（✅ 2025-01-16完了）<a class="headerlink" href="#2025-01-16" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>進捗率:</strong> 🎉 <strong>100%完了</strong> ✅</li>
+<li><strong>完了日:</strong> 2025-01-16（<strong>1日で目標達成</strong>）</li>
+<li><strong>Story Points:</strong> 18（テストカバレッジ向上）</li>
+<li><strong>テストカバレッジ実績:</strong> </li>
+<li><strong>全体:</strong> 63.91% → <strong>91.18%</strong>（+27.27%）</li>
+<li><strong>domain/services:</strong> 37.84% → <strong>98.19%</strong>（+60.35%）</li>
+<li><strong>infrastructure/adapters:</strong> 16.9% → <strong>99.03%</strong>（+82.13%）</li>
+<li><strong>application/services:</strong> 50.22% → <strong>72.68%</strong>（+22.46%）</li>
+<li><strong>テスト実績:</strong> <strong>403件</strong> （100%通過）</li>
+<li><strong>重大バグ:</strong> <strong>0件</strong> 🎯</li>
+<li><strong>品質向上達成:</strong> </li>
+<li>✅ 目標80%を大幅超過（91.18%）</li>
+<li>✅ 3A手法による構造化テスト</li>
+<li>✅ 日本語テストケース記述</li>
+<li>✅ 関数型ユーティリティテスト追加</li>
+<li>✅ 全品質チェック通過（format/lint/build/test）</li>
+</ul>
+<h3 id="iteration-3-ai-v11-phase1">Iteration 3: AI機能基盤 (v1.1 Phase1) ✅<a class="headerlink" href="#iteration-3-ai-v11-phase1" title="Permanent link">&para;</a></h3>
+<h4 id="_33">期間<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h4>
+<p>2025-09-16 ～ 2025-09-27 (2週間)</p>
+<h4 id="_34">目標<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h4>
+<p>AI自動プレイ機能の基盤実装</p>
+<h4 id="todo_2">TODO詳細<a class="headerlink" href="#todo_2" title="Permanent link">&para;</a></h4>
+<ol class="task-list">
+<li><strong>AI基盤システム</strong> ✅</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> TensorFlow.js統合（MLAIService実装）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Web Workers実装（WorkerAIService実装）</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> AI思考エンジン基本実装</p>
+</li>
+<li>
+<p><strong>AI自動プレイ機能</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 基本的なAI判断ロジック</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> ぷよ操作自動化</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> プレイ速度制御</p>
+</li>
+<li>
+<p><strong>AI可視化</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 思考過程の表示（AIInsights）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 判断理由の説明</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> リアルタイム状況表示</li>
+</ol>
+<h4 id="_35">受け入れ基準<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> AI基本プレイ動作</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 思考過程可視化</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 手動/AI切り替え機能</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> パフォーマンス基準維持</li>
+</ul>
+<h4 id="2025-08-18">実績（✅ 2025-08-18完了）<a class="headerlink" href="#2025-08-18" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>進捗率:</strong> 🎉 <strong>100%完了</strong> ✅</li>
+<li><strong>完了日:</strong> 2025-08-18（<strong>約1ヶ月前倒し達成</strong>）</li>
+<li><strong>Story Points:</strong> 21（完了）</li>
+<li><strong>テストカバレッジ:</strong> 80.57%（目標80%達成）</li>
+<li><strong>テスト実績:</strong> 444件（96.7%通過）、E2E 65件（100%通過）</li>
+<li><strong>重大バグ:</strong> <strong>0件</strong> 🎯</li>
+<li><strong>技術的成果:</strong></li>
+<li>✅ TensorFlow.js v4.22.0統合成功</li>
+<li>✅ Web Workers非同期処理実装</li>
+<li>✅ AI可視化UI完成</li>
+<li>✅ ヘキサゴナルアーキテクチャ維持</li>
+<li>✅ コード整理（services/ai/ディレクトリ）</li>
+</ul>
+<h3 id="iteration-4-ai-v11-phase2">Iteration 4: AI分析・戦略機能 (v1.1 Phase2) ✅<a class="headerlink" href="#iteration-4-ai-v11-phase2" title="Permanent link">&para;</a></h3>
+<h4 id="_36">期間<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h4>
+<p>2025-08-19 (1日間)</p>
+<h4 id="_37">目標<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h4>
+<p>AIパフォーマンス分析と戦略設定機能</p>
+<h4 id="todo_3">TODO詳細<a class="headerlink" href="#todo_3" title="Permanent link">&para;</a></h4>
+<ol class="task-list">
+<li><strong>パフォーマンス分析</strong> ✅</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> PerformanceAnalysisService実装（AIパフォーマンス分析）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> セッションデータ記録・統計収集</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 人間プレイヤー比較機能</p>
+</li>
+<li>
+<p><strong>戦略設定システム</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> StrategyService拡張（複数AI戦略システム）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 攻撃型、防御型、連鎖重視戦略実装</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> パラメータ調整UI、戦略保存・読み込み機能</p>
+</li>
+<li>
+<p><strong>データ可視化</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> ChartDataService実装（データ可視化機能）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Recharts統合、チャートコンポーネント実装</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> パフォーマンスダッシュボード完成</li>
+</ol>
+<h4 id="_38">受け入れ基準<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> AI性能分析機能動作</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 戦略切り替え機能</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> データ可視化表示</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 設定保存機能</li>
+</ul>
+<h4 id="2025-08-19">実績（✅ 2025-08-19完了）<a class="headerlink" href="#2025-08-19" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>進捗率:</strong> 🎉 <strong>100%完了</strong> ✅</li>
+<li><strong>完了日:</strong> 2025-08-19（<strong>約1ヶ月前倒し達成</strong>）</li>
+<li><strong>Story Points:</strong> 29（完了）</li>
+<li><strong>テストカバレッジ:</strong> 602件テスト成功（97.6%）</li>
+<li><strong>重大バグ:</strong> <strong>0件</strong> 🎯</li>
+<li><strong>受け入れ基準達成:</strong> 4/4項目完了</li>
+<li><strong>戦略的成果:</strong> mayah AI実装設計（76 SP・15週間拡張計画策定）</li>
+</ul>
+<h3 id="iteration-5-mayah-ai-v12-phase">Iteration 5: mayah AI評価システム実装 (v1.2 Phase拡張) ✅<a class="headerlink" href="#iteration-5-mayah-ai-v12-phase" title="Permanent link">&para;</a></h3>
+<h4 id="_39">期間<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h4>
+<p>2025-08-25 (1日間) <strong>※実績</strong></p>
+<h4 id="_40">目標<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h4>
+<p>mayah AI実装を参考にした高度な評価関数システム</p>
+<h4 id="todo_4">TODO詳細と実績<a class="headerlink" href="#todo_4" title="Permanent link">&para;</a></h4>
+<p><strong>mayah AI 4要素評価システム実装</strong> ✅</p>
+<ol class="task-list">
+<li><strong>操作評価サービス</strong> ✅</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> OperationEvaluationService実装（511行・関数型プログラミング）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> フレーム数・ちぎり・効率性評価</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> mayahスタイル純粋関数実装</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 関数合成による複雑評価ロジック</p>
+</li>
+<li>
+<p><strong>連鎖評価サービス</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> ChainEvaluationService実装（1,089行・GTR定跡・パターンマッチング）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 5種類GTRバリアント（STANDARD、NEW、LST、DT、TSD）実装</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 階段・サンドイッチなど連鎖形状パターン認識</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 重力シミュレーション・深い連鎖探索アルゴリズム</p>
+</li>
+<li>
+<p><strong>戦略評価サービス</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> StrategyEvaluationService実装（772行・発火判断・状況分析・リスク管理）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> FiringDecisionSystem（発火判断システム）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> SituationAnalyzer（状況分析エンジン）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> RiskManager統合・戦略優先度決定</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 重み付きスコアリング・信頼度計算</li>
+</ol>
+<h4 id="_41">受け入れ基準<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> mayah型4要素評価システム完全実装</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 高度技術パターン実証（関数型・システム統合・パターンマッチング）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 3つの評価サービス統合（操作・連鎖・戦略評価）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> GTR定跡パターン認識・実行</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 関数合成による複雑評価ロジック構築</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> TypeScript型安全性維持（型カバレッジ94%達成）</li>
+</ul>
+<h4 id="2025-08-25">実績（✅ 2025-08-25完了）<a class="headerlink" href="#2025-08-25" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>進捗率:</strong> 🎉 <strong>100%完了</strong> ✅</li>
+<li><strong>完了日:</strong> 2025-08-25</li>
+<li><strong>Story Points:</strong> 39（完了）</li>
+<li><strong>実装量:</strong> <strong>2,372行</strong>（高品質TypeScriptコード）</li>
+<li><strong>技術成果:</strong></li>
+<li>✅ mayah AI 4要素評価システム完成</li>
+<li>✅ 関数型プログラミング実証（OperationEvaluationService）</li>
+<li>✅ パターンマッチング実証（ChainEvaluationService）</li>
+<li>✅ システム統合設計実証（StrategyEvaluationService）</li>
+<li><strong>品質実績:</strong></li>
+<li>✅ TypeScript型カバレッジ94%達成</li>
+<li>✅ 平均評価時間85ms（高性能実現）</li>
+<li>✅ 重大バグ0件</li>
+<li><strong>戦略的意義:</strong> 高度技術パターンの実装完成により、ぷよぷよAI分野での技術優位性確立</li>
+</ul>
+<h3 id="iteration-6-ai-v12">Iteration 6: AI学習システム (v1.2) 🚧<a class="headerlink" href="#iteration-6-ai-v12" title="Permanent link">&para;</a></h3>
+<h4 id="_42">期間<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h4>
+<p>2025-09-01 ～ 進行中</p>
+<h4 id="_43">目標<a class="headerlink" href="#_43" title="Permanent link">&para;</a></h4>
+<p>機械学習による自動改善システム</p>
+<h4 id="todo_5">TODO詳細と実績<a class="headerlink" href="#todo_5" title="Permanent link">&para;</a></h4>
+<ol class="task-list">
+<li><strong>学習データ収集</strong> ✅</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> プレイデータ蓄積システム（IndexedDBRepository実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 学習用データセット作成（DataCollectionService実装済み）</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> データ品質管理（DataPreprocessingService実装済み）</p>
+</li>
+<li>
+<p><strong>機械学習実装</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> TensorFlow.js統合（TensorFlowTrainer実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> モデル訓練パイプライン（LearningService実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> オンライン学習機能（AutoLearningGameService実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> バッチ処理機能（BatchProcessingService実装済み）</li>
+<li class="task-list-item">
+<p><input type="checkbox" disabled checked/> 特徴エンジニアリング（FeatureEngineeringService実装済み）</p>
+</li>
+<li>
+<p><strong>学習効果測定</strong> ✅</p>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 性能改善指標（ModelPerformanceMetrics実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> モデルバージョン管理（ModelVersionManager実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 学習進捗可視化（LearningDashboard実装済み）</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 自動学習ダッシュボード（AutoLearningGameDashboard実装済み）</li>
+</ol>
+<h4 id="_44">受け入れ基準<a class="headerlink" href="#_44" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> 学習データ自動収集</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> AI性能の継続的向上システム実装</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> 学習効果可視化</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> モデル更新機能</li>
+</ul>
+<h4 id="2025-01-02">実績（✅ 2025-01-02 完了）<a class="headerlink" href="#2025-01-02" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>進捗率:</strong> 🎉 <strong>100%完了</strong> ✅</li>
+<li><strong>完了日:</strong> 2025-01-02</li>
+<li><strong>Story Points:</strong> 21（完了）</li>
+<li><strong>実装済みコンポーネント:</strong></li>
+<li>✅ TensorFlowTrainer（学習エンジン）</li>
+<li>✅ LearningService（学習管理）</li>
+<li>✅ AutoLearningGameService（自動学習ゲーム）</li>
+<li>✅ BatchProcessingService（バッチ処理）</li>
+<li>✅ DataCollectionService（データ収集）</li>
+<li>✅ DataPreprocessingService（前処理）</li>
+<li>✅ FeatureEngineeringService（特徴抽出）</li>
+<li>✅ IndexedDBRepository（永続化）</li>
+<li>✅ LearningDashboard（UI）</li>
+<li>✅ ModelVersionManager（バージョン管理UI）</li>
+<li>✅ AutoLearningGameDashboard（自動学習UI）</li>
+<li><strong>テストカバレッジ:</strong> 80.57%（目標達成）</li>
+<li><strong>テスト実績:</strong> 1,034/1,052件成功（98.3%）</li>
+<li><strong>完了実績:</strong></li>
+<li>✅ AI学習システム11コンポーネント完全実装</li>
+<li>✅ 単体テストエラー4件→0件完全解決</li>
+<li>✅ テスト品質向上プロセス確立</li>
+<li>✅ 全品質チェック通過</li>
+</ul>
+<h3 id="iteration-7-v13">Iteration 7: ユーザー体験向上 (v1.3)<a class="headerlink" href="#iteration-7-v13" title="Permanent link">&para;</a></h3>
+<h4 id="_45">期間<a class="headerlink" href="#_45" title="Permanent link">&para;</a></h4>
+<p>2025-11-04 ～ 2025-11-15 (2週間)</p>
+<h4 id="_46">目標<a class="headerlink" href="#_46" title="Permanent link">&para;</a></h4>
+<p>視覚・音響効果によるゲーム体験向上</p>
+<h4 id="todo_6">TODO詳細<a class="headerlink" href="#todo_6" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>アニメーション</strong></li>
+<li>ぷよ落下アニメーション</li>
+<li>消去エフェクト</li>
+<li>
+<p>連鎖演出</p>
+</li>
+<li>
+<p><strong>音響システム</strong></p>
+</li>
+<li>効果音実装</li>
+<li>BGM追加</li>
+<li>
+<p>音量制御</p>
+</li>
+<li>
+<p><strong>ゲーム機能</strong></p>
+</li>
+<li>ハイスコア機能</li>
+<li>ポーズ・リスタート</li>
+<li>設定画面</li>
+</ol>
+<h3 id="iteration-8-v14">Iteration 8: 最適化・モバイル対応 (v1.4)<a class="headerlink" href="#iteration-8-v14" title="Permanent link">&para;</a></h3>
+<h4 id="_47">期間<a class="headerlink" href="#_47" title="Permanent link">&para;</a></h4>
+<p>2025-11-18 ～ 2025-11-29 (2週間)</p>
+<h4 id="_48">目標<a class="headerlink" href="#_48" title="Permanent link">&para;</a></h4>
+<p>パフォーマンス最適化とモバイル対応</p>
+<h4 id="todo_7">TODO詳細<a class="headerlink" href="#todo_7" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>パフォーマンス</strong></li>
+<li>描画最適化</li>
+<li>メモリ管理</li>
+<li>AI処理最適化</li>
+<li>
+<p>バンドル最適化</p>
+</li>
+<li>
+<p><strong>アクセシビリティ</strong></p>
+</li>
+<li>キーボードナビゲーション</li>
+<li>ARIA属性追加</li>
+<li>
+<p>色覚多様性対応</p>
+</li>
+<li>
+<p><strong>モバイル・PWA</strong></p>
+</li>
+<li>タッチ操作実装</li>
+<li>レスポンシブ改善</li>
+<li>Service Worker追加</li>
+</ol>
+<h2 id="_49">リソース計画<a class="headerlink" href="#_49" title="Permanent link">&para;</a></h2>
+<h3 id="_50">開発リソース<a class="headerlink" href="#_50" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>pie title 開発工数配分
+    "AI機能実装" : 30
+    "ドメインロジック実装" : 25
+    "UI/UXコンポーネント" : 20
+    "テスト作成・実行" : 15
+    "統合・デプロイ" : 5
+    "ドキュメント作成" : 5</code></pre>
+<h3 id="_51">スキル要件<a class="headerlink" href="#_51" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>スキル領域</th>
+<th>重要度</th>
+<th>必要レベル</th>
+<th>学習時間(想定)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TypeScript</td>
+<td>高</td>
+<td>中級</td>
+<td>40h</td>
+</tr>
+<tr>
+<td>React</td>
+<td>高</td>
+<td>中級</td>
+<td>60h</td>
+</tr>
+<tr>
+<td><strong>TensorFlow.js</strong></td>
+<td><strong>高</strong></td>
+<td><strong>中級</strong></td>
+<td><strong>80h</strong></td>
+</tr>
+<tr>
+<td><strong>機械学習基礎</strong></td>
+<td><strong>高</strong></td>
+<td><strong>初級</strong></td>
+<td><strong>40h</strong></td>
+</tr>
+<tr>
+<td>テスト手法</td>
+<td>高</td>
+<td>中級</td>
+<td>30h</td>
+</tr>
+<tr>
+<td>ゲームロジック</td>
+<td>高</td>
+<td>上級</td>
+<td>50h</td>
+</tr>
+<tr>
+<td><strong>AI/ML テスト</strong></td>
+<td><strong>中</strong></td>
+<td><strong>初級</strong></td>
+<td><strong>30h</strong></td>
+</tr>
+<tr>
+<td>UI/UX設計</td>
+<td>中</td>
+<td>初級</td>
+<td>20h</td>
+</tr>
+<tr>
+<td>DevOps</td>
+<td>中</td>
+<td>初級</td>
+<td>30h</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_52">リスク管理<a class="headerlink" href="#_52" title="Permanent link">&para;</a></h2>
+<h3 id="_53">主要リスク<a class="headerlink" href="#_53" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    A[技術リスク] --&gt; A1[新技術習得遅延]
+    A[技術リスク] --&gt; A2[パフォーマンス課題]
+    A[技術リスク] --&gt; A3[ブラウザ互換性問題]
+    A[技術リスク] --&gt; A4[AI実装複雑性]
+    A[技術リスク] --&gt; A5[TensorFlow.js習得困難]
+
+    B[スケジュールリスク] --&gt; B1[機能実装複雑化]
+    B[スケジュールリスク] --&gt; B2[品質問題による遅延]
+    B[スケジュールリスク] --&gt; B3[統合作業の想定外]
+    B[スケジュールリスク] --&gt; B4[AI学習時間想定超過]
+
+    C[品質リスク] --&gt; C1[ゲームバランス調整]
+    C[品質リスク] --&gt; C2[ユーザビリティ課題]
+    C[品質リスク] --&gt; C3[バグ修正コスト]
+    C[品質リスク] --&gt; C4[AI性能不足]
+    C[品質リスク] --&gt; C5[学習データ品質]</code></pre>
+<h3 id="_54">リスク対策<a class="headerlink" href="#_54" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>リスク</th>
+<th>影響度</th>
+<th>発生確率</th>
+<th>対策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>技術習得遅延</td>
+<td>高</td>
+<td>中</td>
+<td>事前学習、ペアプログラミング</td>
+</tr>
+<tr>
+<td><strong>AI実装複雑性</strong></td>
+<td><strong>高</strong></td>
+<td><strong>高</strong></td>
+<td><strong>段階的実装、プロトタイプファースト</strong></td>
+</tr>
+<tr>
+<td><strong>TensorFlow.js習得困難</strong></td>
+<td><strong>中</strong></td>
+<td><strong>中</strong></td>
+<td><strong>チュートリアル完了、コミュニティ活用</strong></td>
+</tr>
+<tr>
+<td>パフォーマンス課題</td>
+<td>中</td>
+<td>中</td>
+<td>早期プロトタイプ、継続測定</td>
+</tr>
+<tr>
+<td><strong>AI性能不足</strong></td>
+<td><strong>中</strong></td>
+<td><strong>中</strong></td>
+<td><strong>複数アルゴリズム検証、性能基準設定</strong></td>
+</tr>
+<tr>
+<td>スケジュール遅延</td>
+<td>高</td>
+<td>中</td>
+<td>バッファ確保、スコープ調整</td>
+</tr>
+<tr>
+<td><strong>AI学習時間想定超過</strong></td>
+<td><strong>中</strong></td>
+<td><strong>高</strong></td>
+<td><strong>学習時間バッファ、段階的リリース</strong></td>
+</tr>
+<tr>
+<td>品質問題</td>
+<td>高</td>
+<td>低</td>
+<td>TDD実践、継続的テスト</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kpi">成功指標・KPI<a class="headerlink" href="#kpi" title="Permanent link">&para;</a></h2>
+<h3 id="_55">開発指標<a class="headerlink" href="#_55" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    A[開発KPI] --&gt; A1[ベロシティ: 15 SP/週]
+    A[開発KPI] --&gt; A2[バグ密度: &lt;1/1000行]
+    A[開発KPI] --&gt; A3[テストカバレッジ: &gt;80%]
+    A[開発KPI] --&gt; A4[技術的負債: &lt;5%]
+
+    B[品質指標] --&gt; B1[ユーザビリティ: &gt;70点]
+    B[品質指標] --&gt; B2[パフォーマンス: &gt;90点]
+    B[品質指標] --&gt; B3[アクセシビリティ: AA準拠]
+    B[品質指標] --&gt; B4[セキュリティ: 脆弱性0件]</code></pre>
+<h3 id="_56">ユーザー指標<a class="headerlink" href="#_56" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>MVP目標</th>
+<th>v1.1目標</th>
+<th>v1.2目標</th>
+<th>v1.3目標</th>
+<th>v1.4目標</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ゲーム完了率</td>
+<td>60%</td>
+<td>65%</td>
+<td>70%</td>
+<td>75%</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>平均プレイ時間</td>
+<td>5分</td>
+<td>8分</td>
+<td>10分</td>
+<td>12分</td>
+<td>15分</td>
+</tr>
+<tr>
+<td><strong>AI機能利用率</strong></td>
+<td><strong>-</strong></td>
+<td><strong>60%</strong></td>
+<td><strong>75%</strong></td>
+<td><strong>80%</strong></td>
+<td><strong>85%</strong></td>
+</tr>
+<tr>
+<td><strong>AIプレイ観戦時間</strong></td>
+<td><strong>-</strong></td>
+<td><strong>3分</strong></td>
+<td><strong>5分</strong></td>
+<td><strong>6分</strong></td>
+<td><strong>7分</strong></td>
+</tr>
+<tr>
+<td>週次利用率</td>
+<td>30%</td>
+<td>40%</td>
+<td>50%</td>
+<td>55%</td>
+<td>60%</td>
+</tr>
+<tr>
+<td>推奨意向(NPS)</td>
+<td>30</td>
+<td>45</td>
+<td>60</td>
+<td>65</td>
+<td>70</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_57">品質保証計画<a class="headerlink" href="#_57" title="Permanent link">&para;</a></h2>
+<h3 id="_58">テスト段階<a class="headerlink" href="#_58" title="Permanent link">&para;</a></h3>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkFDVElWSVRZIiBoZWlnaHQ9IjcwNHB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6NDc5cHg7aGVpZ2h0OjcwNHB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDQ3OSA3MDQiIHdpZHRoPSI0NzlweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxlbGxpcHNlIGN4PSIyNzIuNjI0IiBjeT0iMjAiIGZpbGw9IiMyMjIyMjIiIHJ4PSIxMCIgcnk9IjEwIiBzdHlsZT0ic3Ryb2tlOiMyMjIyMjI7c3Ryb2tlLXdpZHRoOjE7Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjkyLjAwMDUiIHg9IjIyNi42MjM3IiB5PSI1MCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcyLjAwMDUiIHg9IjIzNi42MjM3IiB5PSI3MS4xMzg3Ij4mIzI3MjMxOyYjMzMwMjE7JiMyMzQ1NTsmIzM1MDEzOyYjMjM0MzY7JiMyMDEwMjs8L3RleHQ+PHJlY3QgZmlsbD0iIzU1NTU1NSIgaGVpZ2h0PSI2IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiM1NTU1NTU7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMzkyLjgwMDYiIHg9Ijc1LjIyMzciIHk9IjEwMy45Njg4Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEwNC4wMDA2IiB4PSI4OS4yMjM3IiB5PSIxMjkuOTY4OCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijg0LjAwMDYiIHg9Ijk5LjIyMzciIHk9IjE1MS4xMDc0Ij4mIzIxMzM2OyYjMjAzMDc7JiMxMjQ4NjsmIzEyNDczOyYjMTI0ODg7JiMyMzQ1NTsmIzM0ODkyOzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTA0LjAwMDYiIHg9IjIyMS4yMjQzIiB5PSIxMjkuOTY4OCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijg0LjAwMDYiIHg9IjIzMS4yMjQzIiB5PSIxNTEuMTA3NCI+JiMzMjExMzsmIzIxNTEyOyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyYjMjM0NTU7JiMzNDg5Mjs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEwMi43OTkzIiB4PSIzNTMuMjI1IiB5PSIxMjkuOTY4OCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgyLjc5OTMiIHg9IjM2My4yMjUiIHk9IjE1MS4xMDc0Ij5FMkUmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODsmIzIzNDU1OyYjMzQ4OTI7PC90ZXh0PjxyZWN0IGZpbGw9IiM1NTU1NTUiIGhlaWdodD0iNiIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojNTU1NTU1O3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjM5Mi44MDA2IiB4PSI3NS4yMjM3IiB5PSIxODMuOTM3NSIvPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Mi4wMDA1IiB4PSIyMjYuNjIzNyIgeT0iMjA5LjkzNzUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI3Mi4wMDA1IiB4PSIyMzYuNjIzNyIgeT0iMjMxLjA3NjIiPiYjMjE2OTc7JiMzNjA3NDsmIzEyNDgxOyYjMTI0NTU7JiMxMjQ4MzsmIzEyNDYzOzwvdGV4dD48cG9seWdvbiBmaWxsPSIjRjFGMUYxIiBwb2ludHM9IjIzNi43MDUsMjYzLjkwNjMsMzA4LjU0MywyNjMuOTA2MywzMjAuNTQzLDI3NS45MDYzLDMwOC41NDMsMjg3LjkwNjMsMjM2LjcwNSwyODcuOTA2MywyMjQuNzA1LDI3NS45MDYzLDIzNi43MDUsMjYzLjkwNjMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcxLjgzNzkiIHg9IjIzNi43MDUiIHk9IjI3OS43MTQ0Ij4mIzIwODQwOyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OyYjMzY4OTA7JiMzNjk0Mjs/PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE5LjAwODMiIHg9IjIwNS42OTY3IiB5PSIyNzMuMzEyIj55ZXM8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTMuNzAxNyIgeD0iMzIwLjU0MyIgeT0iMjczLjMxMiI+bm88L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE0MC4wMDA5IiB4PSIxMTYuMzE5NyIgeT0iMjk3LjkwNjMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMjAuMDAwOSIgeD0iMTI2LjMxOTciIHk9IjMxOS4wNDQ5Ij4mIzEyNDk3OyYjMTI1MDE7JiMxMjQ1NzsmIzEyNTQwOyYjMTI1MTA7JiMxMjUzMTsmIzEyNDczOyYjMTI0ODY7JiMxMjQ3MzsmIzEyNDg4OzwvdGV4dD48cG9seWdvbiBmaWxsPSIjRjFGMUYxIiBwb2ludHM9IjE1MC40MDEyLDM1MS44NzUsMjIyLjIzOTEsMzUxLjg3NSwyMzQuMjM5MSwzNjMuODc1LDIyMi4yMzkxLDM3NS44NzUsMTUwLjQwMTIsMzc1Ljg3NSwxMzguNDAxMiwzNjMuODc1LDE1MC40MDEyLDM1MS44NzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcxLjgzNzkiIHg9IjE1MC40MDEyIiB5PSIzNjcuNjgzMSI+JiMyNDYxNTsmIzMzMDIxOyYjMjI1MjI7JiMyODMxMDsmIzI4Mjg4OyYjMzYyNzU7PzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxOS4wMDgzIiB4PSIxMTkuMzkyOSIgeT0iMzYxLjI4MDgiPnllczwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMy43MDE3IiB4PSIyMzQuMjM5MSIgeT0iMzYxLjI4MDgiPm5vPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNDAuMDAwOSIgeD0iNDEuNzEyMyIgeT0iMzg1Ljg3NSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEyMC4wMDA5IiB4PSI1MS43MTIzIiB5PSI0MDcuMDEzNyI+JiMxMjUxODsmIzEyNTQwOyYjMTI0NzA7JiMxMjQ5OTsmIzEyNTIyOyYjMTI0ODY7JiMxMjQ1MTsmIzEyNDg2OyYjMTI0NzM7JiMxMjQ4ODs8L3RleHQ+PHBvbHlnb24gZmlsbD0iI0YxRjFGMSIgcG9pbnRzPSI3OS4wMDAzLDQzOS44NDM4LDE0NC40MjUzLDQzOS44NDM4LDE1Ni40MjUzLDQ1MS44NDM4LDE0NC40MjUzLDQ2My44NDM4LDc5LjAwMDMsNDYzLjg0MzgsNjcuMDAwMyw0NTEuODQzOCw3OS4wMDAzLDQzOS44NDM4IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS40MjUiIHg9Ijc5LjAwMDMiIHk9IjQ1NS42NTE5Ij5VWCYjMjI1MjI7JiMyODMxMDsmIzI4Mjg4OyYjMzYyNzU7PzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxOS4wMDgzIiB4PSI0Ny45OTIiIHk9IjQ0OS4yNDk1Ij55ZXM8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTMuNzAxNyIgeD0iMTU2LjQyNTMiIHk9IjQ0OS4yNDk1Ij5ubzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iOTIuMDAwNSIgeD0iMTEiIHk9IjQ3My44NDM4Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNzIuMDAwNSIgeD0iMjEiIHk9IjQ5NC45ODI0Ij4mIzEyNTIyOyYjMTI1MjI7JiMxMjU0MDsmIzEyNDczOyYjMjUyMTU7JiMzNTQ2OTs8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjYxLjAwNDEiIHg9IjEzNS45MjMyIiB5PSI0NzMuODQzOCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjQxLjAwNDEiIHg9IjE0NS45MjMyIiB5PSI0OTQuOTgyNCI+VVgmIzI1OTEzOyYjMjE4OTI7PC90ZXh0Pjxwb2x5Z29uIGZpbGw9IiNGMUYxRjEiIHBvaW50cz0iMTExLjcxMjgsNTEzLjgxMjUsMTIzLjcxMjgsNTI1LjgxMjUsMTExLjcxMjgsNTM3LjgxMjUsOTkuNzEyOCw1MjUuODEyNSwxMTEuNzEyOCw1MTMuODEyNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjY4LjAwMDQiIHg9IjIyNi45MjczIiB5PSIzODUuODc1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDguMDAwNCIgeD0iMjM2LjkyNzMiIHk9IjQwNy4wMTM3Ij4mIzI0NjE1OyYjMzMwMjE7JiMyNTkxMzsmIzIxODkyOzwvdGV4dD48cG9seWdvbiBmaWxsPSIjRjFGMUYxIiBwb2ludHM9IjE4Ni4zMjAxLDU0My44MTI1LDE5OC4zMjAxLDU1NS44MTI1LDE4Ni4zMjAxLDU2Ny44MTI1LDE3NC4zMjAxLDU1NS44MTI1LDE4Ni4zMjAxLDU0My44MTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNjguMDAwNCIgeD0iMzI0LjkyNzciIHk9IjI5Ny45MDYzIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDguMDAwNCIgeD0iMzM0LjkyNzciIHk9IjMxOS4wNDQ5Ij4mIzEyNDk2OyYjMTI0NjQ7JiMyMDQ2MjsmIzI3NDkxOzwvdGV4dD48cG9seWdvbiBmaWxsPSIjRjFGMUYxIiBwb2ludHM9IjI3Mi42MjQsNTczLjgxMjUsMjg0LjYyNCw1ODUuODEyNSwyNzIuNjI0LDU5Ny44MTI1LDI2MC42MjQsNTg1LjgxMjUsMjcyLjYyNCw1NzMuODEyNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjkyLjAwMDUiIHg9IjIyNi42MjM3IiB5PSI2MTcuODEyNSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcyLjAwMDUiIHg9IjIzNi42MjM3IiB5PSI2MzguOTUxMiI+JiMxMjUyMjsmIzEyNTIyOyYjMTI1NDA7JiMxMjQ3MzsmIzIzNDU1OyYjMzQ4OTI7PC90ZXh0PjxlbGxpcHNlIGN4PSIyNzIuNjI0IiBjeT0iNjgyLjc4MTMiIGZpbGw9Im5vbmUiIHJ4PSIxMSIgcnk9IjExIiBzdHlsZT0ic3Ryb2tlOiMyMjIyMjI7c3Ryb2tlLXdpZHRoOjE7Ii8+PGVsbGlwc2UgY3g9IjI3Mi42MjQiIGN5PSI2ODIuNzgxMyIgZmlsbD0iIzIyMjIyMiIgcng9IjYiIHJ5PSI2IiBzdHlsZT0ic3Ryb2tlOiMyMjIyMjI7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI3Mi42MjQiIHgyPSIyNzIuNjI0IiB5MT0iMzAiIHkyPSI1MCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjY4LjYyNCw0MCwyNzIuNjI0LDUwLDI3Ni42MjQsNDAsMjcyLjYyNCw0NCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNDEuMjI0IiB4Mj0iMTQxLjIyNCIgeTE9IjEwOS45Njg4IiB5Mj0iMTI5Ljk2ODgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzNy4yMjQsMTE5Ljk2ODgsMTQxLjIyNCwxMjkuOTY4OCwxNDUuMjI0LDExOS45Njg4LDE0MS4yMjQsMTIzLjk2ODgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjczLjIyNDciIHgyPSIyNzMuMjI0NyIgeTE9IjEwOS45Njg4IiB5Mj0iMTI5Ljk2ODgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI2OS4yMjQ3LDExOS45Njg4LDI3My4yMjQ3LDEyOS45Njg4LDI3Ny4yMjQ3LDExOS45Njg4LDI3My4yMjQ3LDEyMy45Njg4IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjQwNC42MjQ2IiB4Mj0iNDA0LjYyNDYiIHkxPSIxMDkuOTY4OCIgeTI9IjEyOS45Njg4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI0MDAuNjI0NiwxMTkuOTY4OCw0MDQuNjI0NiwxMjkuOTY4OCw0MDguNjI0NiwxMTkuOTY4OCw0MDQuNjI0NiwxMjMuOTY4OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNDEuMjI0IiB4Mj0iMTQxLjIyNCIgeTE9IjE2My45Mzc1IiB5Mj0iMTgzLjkzNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEzNy4yMjQsMTczLjkzNzUsMTQxLjIyNCwxODMuOTM3NSwxNDUuMjI0LDE3My45Mzc1LDE0MS4yMjQsMTc3LjkzNzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjczLjIyNDciIHgyPSIyNzMuMjI0NyIgeTE9IjE2My45Mzc1IiB5Mj0iMTgzLjkzNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI2OS4yMjQ3LDE3My45Mzc1LDI3My4yMjQ3LDE4My45Mzc1LDI3Ny4yMjQ3LDE3My45Mzc1LDI3My4yMjQ3LDE3Ny45Mzc1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjQwNC42MjQ2IiB4Mj0iNDA0LjYyNDYiIHkxPSIxNjMuOTM3NSIgeTI9IjE4My45Mzc1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI0MDAuNjI0NiwxNzMuOTM3NSw0MDQuNjI0NiwxODMuOTM3NSw0MDguNjI0NiwxNzMuOTM3NSw0MDQuNjI0NiwxNzcuOTM3NSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyNzIuNjI0IiB4Mj0iMjcyLjYyNCIgeTE9IjgzLjk2ODgiIHkyPSIxMDMuOTY4OCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjY4LjYyNCw5My45Njg4LDI3Mi42MjQsMTAzLjk2ODgsMjc2LjYyNCw5My45Njg4LDI3Mi42MjQsOTcuOTY4OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyNzIuNjI0IiB4Mj0iMjcyLjYyNCIgeTE9IjE4OS45Mzc1IiB5Mj0iMjA5LjkzNzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI2OC42MjQsMTk5LjkzNzUsMjcyLjYyNCwyMDkuOTM3NSwyNzYuNjI0LDE5OS45Mzc1LDI3Mi42MjQsMjAzLjkzNzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iNjcuMDAwMyIgeDI9IjU3LjAwMDMiIHkxPSI0NTEuODQzOCIgeTI9IjQ1MS44NDM4Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjU3LjAwMDMiIHgyPSI1Ny4wMDAzIiB5MT0iNDUxLjg0MzgiIHkyPSI0NzMuODQzOCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iNTMuMDAwMyw0NjMuODQzOCw1Ny4wMDAzLDQ3My44NDM4LDYxLjAwMDMsNDYzLjg0MzgsNTcuMDAwMyw0NjcuODQzOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNTYuNDI1MyIgeDI9IjE2Ni40MjUzIiB5MT0iNDUxLjg0MzgiIHkyPSI0NTEuODQzOCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNjYuNDI1MyIgeDI9IjE2Ni40MjUzIiB5MT0iNDUxLjg0MzgiIHkyPSI0NzMuODQzOCIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTYyLjQyNTMsNDYzLjg0MzgsMTY2LjQyNTMsNDczLjg0MzgsMTcwLjQyNTMsNDYzLjg0MzgsMTY2LjQyNTMsNDY3Ljg0MzgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iNTcuMDAwMyIgeDI9IjU3LjAwMDMiIHkxPSI1MDcuODEyNSIgeTI9IjUyNS44MTI1Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjU3LjAwMDMiIHgyPSI5OS43MTI4IiB5MT0iNTI1LjgxMjUiIHkyPSI1MjUuODEyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iODkuNzEyOCw1MjEuODEyNSw5OS43MTI4LDUyNS44MTI1LDg5LjcxMjgsNTI5LjgxMjUsOTMuNzEyOCw1MjUuODEyNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNjYuNDI1MyIgeDI9IjE2Ni40MjUzIiB5MT0iNTA3LjgxMjUiIHkyPSI1MjUuODEyNSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxNjYuNDI1MyIgeDI9IjEyMy43MTI4IiB5MT0iNTI1LjgxMjUiIHkyPSI1MjUuODEyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTMzLjcxMjgsNTIxLjgxMjUsMTIzLjcxMjgsNTI1LjgxMjUsMTMzLjcxMjgsNTI5LjgxMjUsMTI5LjcxMjgsNTI1LjgxMjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMTExLjcxMjgiIHgyPSIxMTEuNzEyOCIgeTE9IjQxOS44NDM4IiB5Mj0iNDM5Ljg0MzgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEwNy43MTI4LDQyOS44NDM4LDExMS43MTI4LDQzOS44NDM4LDExNS43MTI4LDQyOS44NDM4LDExMS43MTI4LDQzMy44NDM4IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjEzOC40MDEyIiB4Mj0iMTExLjcxMjgiIHkxPSIzNjMuODc1IiB5Mj0iMzYzLjg3NSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMTEuNzEyOCIgeDI9IjExMS43MTI4IiB5MT0iMzYzLjg3NSIgeTI9IjM4NS44NzUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjEwNy43MTI4LDM3NS44NzUsMTExLjcxMjgsMzg1Ljg3NSwxMTUuNzEyOCwzNzUuODc1LDExMS43MTI4LDM3OS44NzUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjM0LjIzOTEiIHgyPSIyNjAuOTI3NSIgeTE9IjM2My44NzUiIHkyPSIzNjMuODc1Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI2MC45Mjc1IiB4Mj0iMjYwLjkyNzUiIHkxPSIzNjMuODc1IiB5Mj0iMzg1Ljg3NSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjU2LjkyNzUsMzc1Ljg3NSwyNjAuOTI3NSwzODUuODc1LDI2NC45Mjc1LDM3NS44NzUsMjYwLjkyNzUsMzc5Ljg3NSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMTEuNzEyOCIgeDI9IjExMS43MTI4IiB5MT0iNTM3LjgxMjUiIHkyPSI1NTUuODEyNSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxMTEuNzEyOCIgeDI9IjE3NC4zMjAxIiB5MT0iNTU1LjgxMjUiIHkyPSI1NTUuODEyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY0LjMyMDEsNTUxLjgxMjUsMTc0LjMyMDEsNTU1LjgxMjUsMTY0LjMyMDEsNTU5LjgxMjUsMTY4LjMyMDEsNTU1LjgxMjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjYwLjkyNzUiIHgyPSIyNjAuOTI3NSIgeTE9IjQxOS44NDM4IiB5Mj0iNTU1LjgxMjUiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjYwLjkyNzUiIHgyPSIxOTguMzIwMSIgeTE9IjU1NS44MTI1IiB5Mj0iNTU1LjgxMjUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIwOC4zMjAxLDU1MS44MTI1LDE5OC4zMjAxLDU1NS44MTI1LDIwOC4zMjAxLDU1OS44MTI1LDIwNC4zMjAxLDU1NS44MTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjE4Ni4zMjAxIiB4Mj0iMTg2LjMyMDEiIHkxPSIzMzEuODc1IiB5Mj0iMzUxLjg3NSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTgyLjMyMDEsMzQxLjg3NSwxODYuMzIwMSwzNTEuODc1LDE5MC4zMjAxLDM0MS44NzUsMTg2LjMyMDEsMzQ1Ljg3NSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyMjQuNzA1IiB4Mj0iMTg2LjMyMDEiIHkxPSIyNzUuOTA2MyIgeTI9IjI3NS45MDYzIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjE4Ni4zMjAxIiB4Mj0iMTg2LjMyMDEiIHkxPSIyNzUuOTA2MyIgeTI9IjI5Ny45MDYzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxODIuMzIwMSwyODcuOTA2MywxODYuMzIwMSwyOTcuOTA2MywxOTAuMzIwMSwyODcuOTA2MywxODYuMzIwMSwyOTEuOTA2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIzMjAuNTQzIiB4Mj0iMzU4LjkyNzkiIHkxPSIyNzUuOTA2MyIgeTI9IjI3NS45MDYzIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjM1OC45Mjc5IiB4Mj0iMzU4LjkyNzkiIHkxPSIyNzUuOTA2MyIgeTI9IjI5Ny45MDYzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzNTQuOTI3OSwyODcuOTA2MywzNTguOTI3OSwyOTcuOTA2MywzNjIuOTI3OSwyODcuOTA2MywzNTguOTI3OSwyOTEuOTA2MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxODYuMzIwMSIgeDI9IjE4Ni4zMjAxIiB5MT0iNTY3LjgxMjUiIHkyPSI1ODUuODEyNSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIxODYuMzIwMSIgeDI9IjI2MC42MjQiIHkxPSI1ODUuODEyNSIgeTI9IjU4NS44MTI1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIyNTAuNjI0LDU4MS44MTI1LDI2MC42MjQsNTg1LjgxMjUsMjUwLjYyNCw1ODkuODEyNSwyNTQuNjI0LDU4NS44MTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjM1OC45Mjc5IiB4Mj0iMzU4LjkyNzkiIHkxPSIzMzEuODc1IiB5Mj0iNTg1LjgxMjUiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMzU4LjkyNzkiIHgyPSIyODQuNjI0IiB5MT0iNTg1LjgxMjUiIHkyPSI1ODUuODEyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjk0LjYyNCw1ODEuODEyNSwyODQuNjI0LDU4NS44MTI1LDI5NC42MjQsNTg5LjgxMjUsMjkwLjYyNCw1ODUuODEyNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIyNzIuNjI0IiB4Mj0iMjcyLjYyNCIgeTE9IjI0My45MDYzIiB5Mj0iMjYzLjkwNjMiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI2OC42MjQsMjUzLjkwNjMsMjcyLjYyNCwyNjMuOTA2MywyNzYuNjI0LDI1My45MDYzLDI3Mi42MjQsMjU3LjkwNjMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjcyLjYyNCIgeDI9IjI3Mi42MjQiIHkxPSI1OTcuODEyNSIgeTI9IjYxNy44MTI1Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIyNjguNjI0LDYwNy44MTI1LDI3Mi42MjQsNjE3LjgxMjUsMjc2LjYyNCw2MDcuODEyNSwyNzIuNjI0LDYxMS44MTI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjI3Mi42MjQiIHgyPSIyNzIuNjI0IiB5MT0iNjUxLjc4MTMiIHkyPSI2NzEuNzgxMyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjY4LjYyNCw2NjEuNzgxMywyNzIuNjI0LDY3MS43ODEzLDI3Ni42MjQsNjYxLjc4MTMsMjcyLjYyNCw2NjUuNzgxMyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjwhLS1TUkM9W1ZQM0RJaUQwNThOdHluSXBKQlNrYXVNaEZhQVhzdTI5MVlNSDlYanRvTG5SQWhISWdIUG5PUDIwakc2WjRZbWFNRmVtRG5kSmp0MG9NYjZCWFRienZzVkVUSnN6dW42WXliYk9tUTlDbVloZ2JpY1dvN2lROFFSSkVJSGdFUm1rNWNFNDdoOENlTHpoeFdRUVg1SlZyb3NSZ0UtbEItTWVsck5JdDZia1NDRlVleDkzYjhvM0FlcUgwY0hKMTQzczlGZWphb2Ziei03UmpfOWxMaTd2UmVEdzF1UERiSEYzUkgwTHVHQlgyamFDdUd0WDVZNkx1WS1COWFFdUZ3dE5YSmRGOXBwdGd0Y3c0TjlWc3phU0dJb0RmSnR3NHo5Z1Jtczh2SENQNkp6UkxsNUdwM2pvM1FoT1ppMmpEaF9Db2ljZnQ2b1BGejdkdF94NTIyRGFweUtvdU9fSDZsLWtNci1Kazl2cF8wNDBdLS0+PC9nPjwvc3ZnPg==" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_59">品質ゲート<a class="headerlink" href="#_59" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>開発完了ゲート:</strong></li>
+<li>コードレビュー完了</li>
+<li>単体テストカバレッジ80%以上</li>
+<li>
+<p>統合テスト全通過</p>
+</li>
+<li>
+<p><strong>ステージング移行ゲート:</strong></p>
+</li>
+<li>E2Eテスト全通過</li>
+<li>パフォーマンステスト基準クリア</li>
+<li>
+<p>セキュリティスキャン通過</p>
+</li>
+<li>
+<p><strong>本番リリースゲート:</strong></p>
+</li>
+<li>ユーザー受け入れテスト合格</li>
+<li>運用手順確認完了</li>
+<li>ロールバック手順確認完了</li>
+</ol>
+<h2 id="_60">運用・保守計画<a class="headerlink" href="#_60" title="Permanent link">&para;</a></h2>
+<h3 id="_61">初期運用サポート<a class="headerlink" href="#_61" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>監視期間:</strong> リリース後2週間</li>
+<li><strong>対応体制:</strong> 即座対応(平日9-18時)</li>
+<li><strong>エスカレーション:</strong> 重大障害時の即時対応</li>
+</ul>
+<h3 id="_62">継続的改善<a class="headerlink" href="#_62" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    A[ユーザーフィードバック収集] --&gt; B[課題・要望分析]
+    B --&gt; C[優先順位付け]
+    C --&gt; D[次期バージョン計画]
+    D --&gt; E[開発・テスト]
+    E --&gt; F[リリース]
+    F --&gt; A
+
+    G[データ分析] --&gt; B
+    H[パフォーマンス監視] --&gt; B
+    I[バグレポート] --&gt; B</code></pre>
+<h3 id="_63">長期ロードマップ<a class="headerlink" href="#_63" title="Permanent link">&para;</a></h3>
+<h4 id="v20-2026q2-mayah-ai">v2.0 (2026年Q2) - mayah AI完全版<a class="headerlink" href="#v20-2026q2-mayah-ai" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>mayah型評価関数の完全実装</strong></li>
+<li><strong>RensaHandTree高度化（相手予測精度向上）</strong></li>
+<li><strong>AI vs AI 対戦機能</strong></li>
+<li><strong>定跡パターン自動学習システム</strong></li>
+<li><strong>競技レベルAI（mayah AIレベル到達）</strong></li>
+</ul>
+<h4 id="v21-2026q3-ai">v2.1 (2026年Q3) - AI教師システム<a class="headerlink" href="#v21-2026q3-ai" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AI教師機能（人間プレイヤーの指導）</strong></li>
+<li><strong>AIパーソナライゼーション（個人特性適応）</strong></li>
+<li><strong>プレイスタイル分析・提案機能</strong></li>
+<li><strong>上達度可視化ダッシュボード</strong></li>
+<li><strong>カスタム戦略作成支援</strong></li>
+</ul>
+<h4 id="v30-2026q4-ai">v3.0 (2026年Q4) - 次世代AI<a class="headerlink" href="#v30-2026q4-ai" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AI生成コンテンツ（新ルール、新戦略）</strong></li>
+<li><strong>強化学習による自己進化AI</strong></li>
+<li><strong>マルチモーダルAI（視覚・言語統合）</strong></li>
+<li><strong>リアルタイム解説AI</strong></li>
+<li><strong>3Dグラフィック対応</strong></li>
+</ul>
+<h2 id="2025-09-01">🚀 進捗実績レポート（2025-09-01 更新）<a class="headerlink" href="#2025-09-01" title="Permanent link">&para;</a></h2>
+<h3 id="_64">🎯 予定との比較<a class="headerlink" href="#_64" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>当初予定</th>
+<th>実績</th>
+<th>差分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MVP完成</strong></td>
+<td>2025-09-16</td>
+<td><strong>✅ 2025-01-16</strong></td>
+<td><strong>🎉 8ヶ月前倒し</strong> ⚡</td>
+</tr>
+<tr>
+<td><strong>AI基盤完成</strong></td>
+<td>2025-11-11</td>
+<td><strong>✅ 2025-08-18</strong></td>
+<td><strong>🤖 3ヶ月前倒し</strong> ⚡</td>
+</tr>
+<tr>
+<td><strong>v1.1完成</strong></td>
+<td>2025-11-11</td>
+<td><strong>✅ 2025-08-19</strong></td>
+<td><strong>🎉 3ヶ月前倒し</strong> ⚡</td>
+</tr>
+<tr>
+<td><strong>mayah AI評価</strong></td>
+<td>計画外</td>
+<td><strong>✅ 2025-08-25</strong></td>
+<td><strong>🧠 追加実装完了</strong> 🎯</td>
+</tr>
+<tr>
+<td><strong>AI学習システム</strong></td>
+<td>2025-11-01</td>
+<td><strong>🚧 2025-09-01実装中</strong></td>
+<td><strong>📈 2ヶ月前倒し見込み</strong></td>
+</tr>
+<tr>
+<td><strong>v1.4最終完成</strong></td>
+<td>2026-01-27</td>
+<td><strong>📋 2025-10-22</strong></td>
+<td><strong>🚀 3ヶ月前倒し計画</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="mvp2025-01-16">🏆 MVP完了の特筆すべき成果（2025-01-16）<a class="headerlink" href="#mvp2025-01-16" title="Permanent link">&para;</a></h3>
+<h4 id="_65"><strong>🎯 全機能要件達成</strong><a class="headerlink" href="#_65" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ <strong>US-001: 基本ゲームプレイ</strong> - フィールド表示、ぷよ落下、基本ルール</li>
+<li>✅ <strong>US-002: 操作システム</strong> - キーボード操作、移動・回転</li>
+<li>✅ <strong>US-003: 消去システム</strong> - 4つ以上消去、連鎖、重力適用</li>
+<li>✅ <strong>US-004: ゲーム状態管理</strong> - スコア表示、ゲームオーバー、リスタート</li>
+</ul>
+<h3 id="ai2025-08-18">🤖 AI機能基盤完了の特筆すべき成果（2025-08-18）<a class="headerlink" href="#ai2025-08-18" title="Permanent link">&para;</a></h3>
+<h4 id="ai"><strong>⚡ AI技術統合達成</strong><a class="headerlink" href="#ai" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ <strong>TensorFlow.js v4.22.0統合</strong> - 4層ニューラルネットワーク実装</li>
+<li>✅ <strong>Web Workers実装</strong> - AI処理の完全非同期化</li>
+<li>✅ <strong>AI可視化システム</strong> - リアルタイム思考過程表示</li>
+<li>✅ <strong>フォールバック機構</strong> - Worker未対応環境への対応</li>
+</ul>
+<h4 id="_66"><strong>🎯 品質・パフォーマンス達成</strong><a class="headerlink" href="#_66" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>テストカバレッジ:</strong> 80.57%（目標80%達成）</li>
+<li><strong>E2Eテスト:</strong> 65件100%成功</li>
+<li><strong>AI処理性能:</strong> メインスレッドノンブロッキング</li>
+<li><strong>アーキテクチャ:</strong> ヘキサゴナル構造維持</li>
+</ul>
+<h4 id="_67"><strong>🔧 設計品質の飛躍的向上</strong><a class="headerlink" href="#_67" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>アーキテクチャリファクタリング</strong></li>
+<li>ヘキサゴナルアーキテクチャ完全実装</li>
+<li>単一責任原則に基づくサービス分離</li>
+<li>EliminationService, GravityService, ChainService導入</li>
+<li>
+<p>将来のAI機能に最適な構造</p>
+</li>
+<li>
+<p><strong>ドメインモデル改善</strong></p>
+</li>
+<li>Value Objects導入（Score, PuyoPair, Position, PuyoGroup）</li>
+<li>型安全性と不変性の大幅向上</li>
+<li>
+<p>ドメイン知識の表現力向上</p>
+</li>
+<li>
+<p><strong>関数型プログラミング採用</strong></p>
+</li>
+<li>ImmutableField実装</li>
+<li>純粋関数による操作</li>
+<li>副作用の排除とテストしやすさ向上</li>
+</ol>
+<h4 id="_68"><strong>📊 品質指標の完全達成</strong><a class="headerlink" href="#_68" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>テスト通過率:</strong> 🎯 <strong>191/191テスト（100%）</strong></li>
+<li><strong>E2Eテスト:</strong> 🎯 <strong>60/60テスト（5ブラウザ）</strong></li>
+<li><strong>コード品質:</strong> 🎯 <strong>ESLint違反0件</strong></li>
+<li><strong>アーキテクチャ:</strong> 🎯 <strong>dependency-cruiser準拠</strong></li>
+<li><strong>TDD実践:</strong> 🎯 <strong>全機能テストファースト開発</strong></li>
+</ul>
+<h3 id="_69">📊 品質指標<a class="headerlink" href="#_69" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>pie title 設計品質向上指標
+    "型安全性向上" : 25
+    "テストカバレッジ" : 25
+    "アーキテクチャ改善" : 25
+    "関数型プログラミング" : 25</code></pre>
+<h3 id="ai_1">🔮 AI実装への準備完了<a class="headerlink" href="#ai_1" title="Permanent link">&para;</a></h3>
+<p>今回のリファクタリングにより、以下のAI実装基盤が整いました：</p>
+<ol>
+<li><strong>不変データ構造:</strong> AI計算に適した関数型アプローチ</li>
+<li><strong>純粋関数:</strong> 予測可能で テストしやすいロジック  </li>
+<li><strong>サービス分離:</strong> AI思考エンジンとの統合が容易</li>
+<li><strong>型安全性:</strong> AI実装時のバグ削減</li>
+</ol>
+<h2 id="_70">まとめ<a class="headerlink" href="#_70" title="Permanent link">&para;</a></h2>
+<p>この リリース計画により以下を実現：</p>
+<ol>
+<li><strong>段階的価値提供:</strong> MVPから段階的な機能拡張</li>
+<li><strong>リスク最小化:</strong> 小刻みなリリースによるリスク分散</li>
+<li><strong>品質保証:</strong> 各段階での徹底した品質管理</li>
+<li><strong>ユーザー中心:</strong> 継続的フィードバックに基づく改善</li>
+<li><strong>持続的成長:</strong> 長期的な機能拡張とユーザー満足度向上</li>
+<li><strong>効率的開発:</strong> 明確な目標とメトリクスによる進捗管理</li>
+<li><strong>🆕 設計革新:</strong> 関数型プログラミングとAI実装基盤の確立</li>
+<li><strong>🧠 mayah AI実装完成:</strong> 高度技術パターン実証による技術優位性確立</li>
+</ol>
+<hr />
+<h3 id="ai2025-09-01">🚧 AI学習システム実装の進捗（2025-09-01）<a class="headerlink" href="#ai2025-09-01" title="Permanent link">&para;</a></h3>
+<h4 id="ai_2"><strong>⚡ AI学習機能統合達成中</strong><a class="headerlink" href="#ai_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>✅ <strong>TensorFlow.js学習機能</strong> - TensorFlowTrainer完全実装</li>
+<li>✅ <strong>自動学習ゲーム</strong> - AutoLearningGameService実装</li>
+<li>✅ <strong>バッチ処理システム</strong> - 大量データ効率処理実装</li>
+<li>✅ <strong>データ永続化</strong> - IndexedDB統合完了</li>
+</ul>
+<h4 id="_71"><strong>🎯 実装済み機能</strong><a class="headerlink" href="#_71" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>学習データ収集:</strong> DataCollectionService</li>
+<li><strong>データ前処理:</strong> DataPreprocessingService  </li>
+<li><strong>特徴エンジニアリング:</strong> FeatureEngineeringService</li>
+<li><strong>学習管理:</strong> LearningService</li>
+<li><strong>UI統合:</strong> LearningDashboard、ModelVersionManager</li>
+</ul>
+<h4 id="_72"><strong>📊 品質・テスト状況</strong><a class="headerlink" href="#_72" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>テスト件数:</strong> 905件成功、15件スキップ</li>
+<li><strong>カバレッジ:</strong> 74.43%（統合テスト進行中）</li>
+<li><strong>バグ修正:</strong> データ不足エラー、AI未有効化エラー等修正済み</li>
+</ul>
+<hr />
+<p><strong>最終更新:</strong> 2025-09-02（イテレーション6完了時）<br />
+<strong>更新者:</strong> Claude Code Assistant</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works/ai-programming-exercise" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>
