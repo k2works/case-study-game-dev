@@ -9,14 +9,25 @@ import type { TimerPort } from '../../application/ports/TimerPort'
 import { GameApplicationService } from '../../application/services/GameApplicationService'
 import { InputApplicationService } from '../../application/services/InputApplicationService'
 import { PerformanceAnalysisService } from '../../application/services/PerformanceAnalysisService'
-import { MayahAIService } from '../../application/services/ai/MayahAIService'
+import {
+  AutoLearningGameService,
+  DEFAULT_AUTO_LEARNING_GAME_CONFIG,
+} from '../../application/services/ai/AutoLearningGameService'
+import { MLAIService } from '../../application/services/ai/MLAIService'
 import StrategyService from '../../application/services/ai/StrategyService'
+import { BatchProcessingService } from '../../application/services/learning/BatchProcessingService'
+import { DataCollectionServiceImpl } from '../../application/services/learning/DataCollectionService'
+import { DataPreprocessingService } from '../../application/services/learning/DataPreprocessingService'
+import { LearningService } from '../../application/services/learning/LearningService'
 import * as ChainDetectionService from '../../domain/services/ChainDetectionService'
 import { PuyoSpawningService } from '../../domain/services/PuyoSpawningService'
+import { FeatureEngineeringService } from '../../domain/services/learning/FeatureEngineeringService'
 import { BrowserTimerAdapter } from '../adapters/BrowserTimerAdapter'
 import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter'
 import { PerformanceAdapter } from '../adapters/PerformanceAdapter'
 import { StrategyAdapter } from '../adapters/StrategyAdapter'
+import { IndexedDBTrainingDataRepository } from '../adapters/learning/IndexedDBRepository'
+import { MockTrainingDataRepository } from '../adapters/learning/MockTrainingDataRepository'
 
 /**
  * デフォルトの依存性注入コンテナ設定
@@ -73,8 +84,12 @@ export class DefaultContainer {
       true,
     )
 
-    // AI Service: MayahAIService（mayah型評価システム Phase 4a-4c）を使用
-    container.register<AIPort>('AIPort', () => new MayahAIService(), true)
+    // AI Service: MLAIService（TensorFlow.js機械学習統合AIサービス）を使用
+    container.register<AIPort>(
+      'AIPort',
+      () => new MLAIService(container.resolve<StrategyPort>('StrategyPort')),
+      true,
+    )
 
     // パフォーマンス分析
     container.register<PerformancePort>(
@@ -103,6 +118,99 @@ export class DefaultContainer {
       'StrategyService',
       () =>
         new StrategyService(container.resolve<StrategyPort>('StrategyPort')),
+      true,
+    )
+
+    // 学習システム
+    container.register(
+      'IndexedDBRepository',
+      () => {
+        // テスト環境やIndexedDBが利用できない環境の場合はMockRepositoryを使用
+        const isTestEnvironment =
+          (typeof process !== 'undefined' &&
+            process.env?.NODE_ENV === 'test') ||
+          typeof indexedDB === 'undefined'
+
+        if (isTestEnvironment) {
+          const mockRepository = new MockTrainingDataRepository()
+          // モックリポジトリも初期化
+          mockRepository.initialize().catch((error) => {
+            console.warn('Failed to initialize Mock repository:', error)
+          })
+          return mockRepository
+        }
+
+        const repository = new IndexedDBTrainingDataRepository()
+        // 非同期初期化を自動実行 (エラーは警告として処理)
+        repository.initialize().catch((error) => {
+          console.warn('Failed to initialize IndexedDB repository:', error)
+        })
+        return repository
+      },
+      true,
+    )
+
+    container.register<DataCollectionServiceImpl>(
+      'DataCollectionService',
+      () =>
+        new DataCollectionServiceImpl(
+          container.resolve<IndexedDBTrainingDataRepository>(
+            'IndexedDBRepository',
+          ),
+        ),
+      true,
+    )
+
+    container.register<FeatureEngineeringService>(
+      'FeatureEngineeringService',
+      () => new FeatureEngineeringService(),
+      true,
+    )
+
+    container.register<DataPreprocessingService>(
+      'DataPreprocessingService',
+      () =>
+        new DataPreprocessingService(
+          container.resolve<FeatureEngineeringService>(
+            'FeatureEngineeringService',
+          ),
+        ),
+      true,
+    )
+
+    container.register<BatchProcessingService>(
+      'BatchProcessingService',
+      () =>
+        new BatchProcessingService(
+          container.resolve<DataCollectionServiceImpl>('DataCollectionService'),
+          container.resolve<DataPreprocessingService>(
+            'DataPreprocessingService',
+          ),
+        ),
+      true,
+    )
+
+    container.register<LearningService>(
+      'LearningService',
+      () =>
+        new LearningService(
+          container.resolve<DataCollectionServiceImpl>('DataCollectionService'),
+          container.resolve<BatchProcessingService>('BatchProcessingService'),
+        ),
+      true,
+    )
+
+    // 完全な自動学習ゲームシステム
+    container.register<AutoLearningGameService>(
+      'AutoLearningGameService',
+      () =>
+        new AutoLearningGameService(
+          container.resolve<GamePort>('GamePort'),
+          container.resolve<AIPort>('AIPort'),
+          container.resolve<DataCollectionServiceImpl>('DataCollectionService'),
+          container.resolve<BatchProcessingService>('BatchProcessingService'),
+          DEFAULT_AUTO_LEARNING_GAME_CONFIG,
+        ),
       true,
     )
 
@@ -141,6 +249,22 @@ class DefaultContainerWrapper {
 
   getStrategyService(): StrategyService {
     return this.container.resolve<StrategyService>('StrategyService')
+  }
+
+  getLearningService(): LearningService {
+    return this.container.resolve<LearningService>('LearningService')
+  }
+
+  getDataCollectionService(): DataCollectionServiceImpl {
+    return this.container.resolve<DataCollectionServiceImpl>(
+      'DataCollectionService',
+    )
+  }
+
+  getAutoLearningGameService(): AutoLearningGameService {
+    return this.container.resolve<AutoLearningGameService>(
+      'AutoLearningGameService',
+    )
   }
 }
 

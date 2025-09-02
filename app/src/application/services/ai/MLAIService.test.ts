@@ -27,6 +27,7 @@ vi.mock('@tensorflow/tfjs', () => ({
   tensor2d: vi.fn(() => ({
     dispose: vi.fn(),
   })),
+  loadLayersModel: vi.fn().mockRejectedValue(new Error('No model found')),
 }))
 
 describe('MLAIService', () => {

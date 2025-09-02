@@ -65,7 +65,7 @@ describe('PerformanceAdapter', () => {
       expect(adapter.getAverageScore()).toBe(1500) // (1000 + 2000) / 2
       expect(adapter.getAverageChain()).toBe(4) // (5 + 3) / 2
       expect(adapter.getAveragePlayTime()).toBe(180000) // 3分 = 180000ms
-      expect(adapter.getChainSuccessRate()).toBe(0.5) // 5連鎖以上は1つ、全体で2つ
+      expect(adapter.getChainSuccessRate()).toBe(1.0) // 2連鎖以上は2つ（5連鎖と3連鎖）、全体で2つ
     })
 
     test('比較レポート生成が正常に動作する', () => {

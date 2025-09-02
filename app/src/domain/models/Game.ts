@@ -26,6 +26,7 @@ export interface Game {
   readonly currentPuyoPair: PuyoPair | null
   readonly nextPuyoPair: PuyoPair | null
   readonly currentPuyo: PuyoData | null
+  readonly lastChainCount: number
   readonly createdAt: Date
   readonly updatedAt: Date
 }
@@ -39,6 +40,7 @@ export const createGame = (): Game => ({
   currentPuyoPair: null,
   nextPuyoPair: null,
   currentPuyo: null,
+  lastChainCount: 0,
   createdAt: new Date(),
   updatedAt: new Date(),
 })
@@ -359,6 +361,7 @@ export const placePuyoPair = (game: Game): Game => {
       score: newScore,
       currentPuyoPair: null,
       currentPuyo: null,
+      lastChainCount: chainResult.chainCount,
       updatedAt: new Date(),
     })
   } catch {
@@ -368,6 +371,7 @@ export const placePuyoPair = (game: Game): Game => {
       state: 'gameOver',
       currentPuyoPair: null,
       currentPuyo: null,
+      lastChainCount: 0,
       updatedAt: new Date(),
     }
   }

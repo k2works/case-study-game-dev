@@ -104,7 +104,7 @@ describe('MoveGenerator', () => {
       expect(validMoves.length).toBeLessThan(24)
     })
 
-    it('右端の列での90度回転は境界外になり無効', () => {
+    it('右端の列での1回転は境界外になり無効', () => {
       const emptyCells = Array(12)
         .fill(null)
         .map(() => Array(6).fill(null))
@@ -112,15 +112,15 @@ describe('MoveGenerator', () => {
 
       const moves = moveGenerator.generateMoves(gameState)
 
-      // 右端の列（x=5）で90度回転（右向き）の手は無効
+      // 右端の列（x=5）で1回転（右向き）の手は無効
       const rightEdgeRightRotation = moves.find(
-        (move) => move.x === 5 && move.rotation === 90,
+        (move) => move.x === 5 && move.rotation === 1,
       )
       expect(rightEdgeRightRotation).toBeDefined()
       expect(rightEdgeRightRotation?.isValid).toBe(false)
     })
 
-    it('左端の列での270度回転は境界外になり無効', () => {
+    it('左端の列での3回転は境界外になり無効', () => {
       const emptyCells = Array(12)
         .fill(null)
         .map(() => Array(6).fill(null))
@@ -128,9 +128,9 @@ describe('MoveGenerator', () => {
 
       const moves = moveGenerator.generateMoves(gameState)
 
-      // 左端の列（x=0）で270度回転（左向き）の手は無効
+      // 左端の列（x=0）で3回転（左向き）の手は無効
       const leftEdgeLeftRotation = moves.find(
-        (move) => move.x === 0 && move.rotation === 270,
+        (move) => move.x === 0 && move.rotation === 3,
       )
       expect(leftEdgeLeftRotation).toBeDefined()
       expect(leftEdgeLeftRotation?.isValid).toBe(false)
@@ -156,7 +156,7 @@ describe('MoveGenerator', () => {
       expect(validMove?.secondaryPosition).toEqual({ x: 2, y: 10 })
     })
 
-    it('90度回転時の正しい座標を計算する', () => {
+    it('1回転時の正しい座標を計算する', () => {
       const emptyCells = Array(12)
         .fill(null)
         .map(() => Array(6).fill(null))
@@ -164,7 +164,7 @@ describe('MoveGenerator', () => {
 
       const moves = moveGenerator.generateMoves(gameState)
       const rightRotationMove = moves.find(
-        (move) => move.x === 2 && move.rotation === 90,
+        (move) => move.x === 2 && move.rotation === 1,
       )
 
       // 落下後の最終位置を期待
@@ -172,7 +172,7 @@ describe('MoveGenerator', () => {
       expect(rightRotationMove?.secondaryPosition).toEqual({ x: 3, y: 11 })
     })
 
-    it('180度回転時の正しい座標を計算する', () => {
+    it('2回転時の正しい座標を計算する', () => {
       const emptyCells = Array(12)
         .fill(null)
         .map(() => Array(6).fill(null))
@@ -180,7 +180,7 @@ describe('MoveGenerator', () => {
 
       const moves = moveGenerator.generateMoves(gameState)
       const downRotationMove = moves.find(
-        (move) => move.x === 2 && move.rotation === 180,
+        (move) => move.x === 2 && move.rotation === 2,
       )
 
       // 落下後の最終位置を期待
@@ -188,7 +188,7 @@ describe('MoveGenerator', () => {
       expect(downRotationMove?.secondaryPosition).toEqual({ x: 2, y: 11 })
     })
 
-    it('270度回転時の正しい座標を計算する', () => {
+    it('3回転時の正しい座標を計算する', () => {
       const emptyCells = Array(12)
         .fill(null)
         .map(() => Array(6).fill(null))
@@ -196,7 +196,7 @@ describe('MoveGenerator', () => {
 
       const moves = moveGenerator.generateMoves(gameState)
       const leftRotationMove = moves.find(
-        (move) => move.x === 2 && move.rotation === 270,
+        (move) => move.x === 2 && move.rotation === 3,
       )
 
       // 落下後の最終位置を期待

@@ -19,8 +19,9 @@ import { evaluateMove as evaluateOperation } from '../../../domain/services/ai/O
 import { evaluateShape } from '../../../domain/services/ai/ShapeEvaluationService'
 import {
   type StrategyEvaluationResult,
-  StrategyEvaluationService,
+  type StrategyEvaluationSettings,
   createDefaultStrategySettings,
+  evaluateStrategy,
 } from '../../../domain/services/ai/StrategyEvaluationService'
 import type { StrategyPriority } from '../../../domain/services/ai/StrategyTypes'
 import type { AIPort } from '../../ports/AIPort'
@@ -45,7 +46,7 @@ export class MayahAIService implements AIPort {
   private settings: AISettings
   private enabled = false
   private moveGenerator: MoveGeneratorPort
-  private strategyEvaluationService: StrategyEvaluationService
+  private strategyEvaluationSettings: StrategyEvaluationSettings
   private currentPhase: 'Phase 4a' | 'Phase 4b' | 'Phase 4c' = 'Phase 4c'
   private lastEvaluationResult: MayahEvaluationResult | null = null
   private candidateMovesWithEvaluation: Array<{
@@ -60,9 +61,7 @@ export class MayahAIService implements AIPort {
       thinkingSpeed: 1000,
     }
     this.moveGenerator = new MoveGenerator()
-    this.strategyEvaluationService = new StrategyEvaluationService(
-      createDefaultStrategySettings(),
-    )
+    this.strategyEvaluationSettings = createDefaultStrategySettings()
   }
 
   /**
@@ -105,54 +104,6 @@ export class MayahAIService implements AIPort {
   setEnabled(enabled: boolean): void {
     this.enabled = enabled
     this.settings.enabled = enabled
-  }
-
-  /**
-   * 最後の評価結果を取得（非同期）
-   */
-  async getLastEvaluationResult(): Promise<MayahEvaluationResult | null> {
-    return this.lastEvaluationResult
-  }
-
-  /**
-   * 候補手とその評価を取得（非同期）
-   */
-  async getCandidateMovesWithEvaluation(): Promise<
-    Array<{
-      move: AIMove
-      evaluation: MayahEvaluationResult
-      rank: number
-    }>
-  > {
-    return this.candidateMovesWithEvaluation
-  }
-
-  /**
-   * 最後の評価結果を取得（同期）
-   * UI用
-   */
-  getLastEvaluation(): MayahEvaluationResult | null {
-    return this.lastEvaluationResult
-  }
-
-  /**
-   * 候補手とその評価を取得（同期）
-   * UI用
-   */
-  getLastCandidateMoves(): Array<{
-    move: AIMove
-    evaluation: MayahEvaluationResult
-    rank: number
-  }> {
-    return this.candidateMovesWithEvaluation
-  }
-
-  /**
-   * 現在の実装フェーズを取得
-   * UI用
-   */
-  getCurrentPhase(): 'Phase 4a' | 'Phase 4b' | 'Phase 4c' {
-    return this.currentPhase
   }
 
   /**
@@ -268,10 +219,11 @@ export class MayahAIService implements AIPort {
     // 戦略評価を実行
     const possibleMoves = this.moveGenerator.generateMoves(gameState)
     const chainPatterns: ChainPattern[] = [] // 今回は基本実装のため空配列
-    const strategyEvaluation = this.strategyEvaluationService.evaluateStrategy(
+    const strategyEvaluation = evaluateStrategy(
       gameState,
       possibleMoves,
       chainPatterns,
+      this.strategyEvaluationSettings,
     )
 
     // 統合評価を実行（戦略評価を含む）
@@ -467,5 +419,30 @@ export class MayahAIService implements AIPort {
    */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  /**
+   * 最後の評価結果を取得
+   */
+  getLastEvaluationResult(): MayahEvaluationResult | null {
+    return this.lastEvaluationResult
+  }
+
+  /**
+   * 候補手と評価結果のランキングを取得
+   */
+  getCandidateMovesWithEvaluation(): Array<{
+    move: AIMove
+    evaluation: MayahEvaluationResult
+    rank: number
+  }> {
+    return [...this.candidateMovesWithEvaluation]
+  }
+
+  /**
+   * 現在のフェーズを取得
+   */
+  getCurrentPhase(): 'Phase 4a' | 'Phase 4b' | 'Phase 4c' {
+    return this.currentPhase
   }
 }

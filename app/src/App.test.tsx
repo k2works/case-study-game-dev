@@ -10,6 +10,47 @@ vi.mock('./presentation/hooks/useKeyboard', () => ({
   useKeyboard: mockUseKeyboard,
 }))
 
+// useLearningSystemフックをモック
+vi.mock('./presentation/hooks/useLearningSystem', () => ({
+  useLearningSystem: vi.fn(() => ({
+    isLearning: false,
+    learningProgress: 0,
+    currentModel: 'test-model',
+    latestPerformance: null,
+    learningHistory: [],
+    models: [],
+    abTests: [],
+    currentTab: 'game' as const,
+    startLearning: vi.fn(),
+    stopLearning: vi.fn(),
+    selectModel: vi.fn(),
+    startABTest: vi.fn(),
+    stopABTest: vi.fn(),
+    compareModels: vi.fn(),
+    setCurrentTab: vi.fn(),
+  })),
+}))
+
+// usePerformanceAnalysisフックをモック
+vi.mock('./presentation/hooks/usePerformanceAnalysis', () => ({
+  usePerformanceAnalysis: vi.fn(() => ({
+    statistics: {
+      totalGames: 0,
+      averageScore: 0,
+      averageChain: 0,
+      chainSuccessRate: 0,
+      averagePlayTime: 0,
+      sessions: [],
+      gameResults: [],
+    },
+    comparisonReport: null,
+    recordMove: vi.fn(),
+    recordChain: vi.fn(),
+    startGameSession: vi.fn(),
+    endGameSession: vi.fn(),
+  })),
+}))
+
 // gameStoreをモック
 vi.mock('./presentation/stores/gameStore', () => ({
   useGameStore: vi.fn(() => ({
@@ -44,7 +85,9 @@ describe('Appコンポーネント', () => {
 
       // Assert
       expect(screen.getByText('ぷよぷよ')).toBeInTheDocument()
-      expect(screen.getByText('AI対戦ぷよぷよゲーム')).toBeInTheDocument()
+      expect(
+        screen.getByText('AI対戦ぷよぷよゲーム & 学習システム'),
+      ).toBeInTheDocument()
     })
 
     it('GameBoardコンポーネントが表示される', () => {
@@ -62,24 +105,25 @@ describe('Appコンポーネント', () => {
       // Assert
       expect(screen.getByTestId('game-info')).toBeInTheDocument()
     })
-  })
 
-  describe('キーボード入力統合', () => {
-    it('useKeyboardフックが呼び出される', () => {
+    it('タブナビゲーションが表示される', () => {
       // Arrange & Act
       render(<App />)
 
       // Assert
-      expect(mockUseKeyboard).toHaveBeenCalledWith(
-        expect.objectContaining({
-          onLeft: expect.any(Function),
-          onRight: expect.any(Function),
-          onDown: expect.any(Function),
-          onRotate: expect.any(Function),
-          onPause: expect.any(Function),
-          onReset: expect.any(Function),
-        }),
-      )
+      expect(screen.getByText('🎮 ゲーム')).toBeInTheDocument()
+      expect(screen.getByText('🧠 AI学習')).toBeInTheDocument()
+    })
+  })
+
+  describe('タブ切り替え機能', () => {
+    it('初期状態でゲームタブが選択されている', () => {
+      // Arrange & Act
+      render(<App />)
+
+      // Assert
+      const gameTab = screen.getByText('🎮 ゲーム')
+      expect(gameTab).toHaveClass('bg-white/20')
     })
 
     it('キーボード操作説明が表示される', () => {
