@@ -523,4 +523,38 @@ describe('ゲーム', () => {
       expect(anyGame.mode).toBe('newPuyo')
     })
   })
+
+  describe('スコア計算', () => {
+    it('4つのぷよを消去すると基本スコアが加算される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+      const score = anyGame._score
+
+      // 横に4つ赤いぷよを配置
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(2, 12, '#ff0000')
+      stage.setPuyo(3, 12, '#ff0000')
+
+      // checkEraseモードに設定
+      anyGame.mode = 'checkErase'
+
+      // 初期スコアを確認
+      expect(score.getScore()).toBe(0)
+
+      // 更新処理（消去判定）
+      anyGame.update()
+
+      // erasingモードに遷移
+      expect(anyGame.mode).toBe('erasing')
+
+      // 更新処理（消去実行）
+      anyGame.update()
+
+      // スコアが加算されていることを確認（4個消去 = 40点）
+      expect(score.getScore()).toBe(40)
+    })
+  })
 })

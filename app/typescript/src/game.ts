@@ -150,6 +150,9 @@ export class Game {
   private updateErasing(): void {
     for (const group of this.erasableGroups) {
       this.stage.erasePuyos(group)
+      // スコアを計算（1個につき10点）
+      const points = group.length * 10
+      this._score.addScore(points)
     }
     this.erasableGroups = []
     // 消去後は落下判定へ
