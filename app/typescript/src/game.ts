@@ -23,6 +23,7 @@ export class Game {
   private stage!: Stage
   private _player!: Player
   private _score!: Score
+  private isRunning: boolean = false
 
   constructor() {
     // コンストラクタでは何もしない
@@ -33,15 +34,52 @@ export class Game {
     this.config = new Config()
     this.puyoImage = new PuyoImage(this.config)
     this.stage = new Stage(this.config, this.puyoImage)
+    this.stage.initialize()
     this._player = new Player(this.config, this.stage, this.puyoImage)
+    this._player.createNewPuyo()
     this._score = new Score()
 
     // ゲームモードを設定
-    this.mode = 'start'
+    this.mode = 'playing'
+    this.isRunning = false
+  }
+
+  // ゲームを開始する
+  start(): void {
+    if (!this.isRunning) {
+      this.isRunning = true
+      this.loop()
+    }
   }
 
   loop(): void {
+    if (!this.isRunning) return
+
+    // 更新
+    this.update()
+
+    // 描画
+    this.draw()
+
     // ゲームループの処理
     requestAnimationFrame(this.loop.bind(this))
+  }
+
+  // ゲームの状態を更新
+  private update(): void {
+    if (this.mode === 'playing') {
+      this._player.update()
+    }
+  }
+
+  // 画面を描画
+  private draw(): void {
+    // ステージをクリア
+    this.stage.clear()
+
+    // ぷよを描画
+    if (this.mode === 'playing') {
+      this._player.draw()
+    }
   }
 }
