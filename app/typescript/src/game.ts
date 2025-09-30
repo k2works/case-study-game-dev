@@ -119,7 +119,8 @@ export class Game {
     if (this.erasableGroups.length > 0) {
       this.mode = 'erasing'
     } else {
-      this.mode = 'newPuyo'
+      // 消去対象がない場合は落下判定へ
+      this.mode = 'checkFall'
     }
   }
 

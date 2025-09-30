@@ -130,6 +130,10 @@ describe('ゲーム', () => {
 
       // 消去判定（消すぷよなし）
       anyGame.update()
+      expect(anyGame.mode).toBe('checkFall')
+
+      // 落下判定（落下可能なぷよなし）
+      anyGame.update()
       expect(anyGame.mode).toBe('newPuyo')
 
       // 新ぷよ生成
@@ -234,7 +238,7 @@ describe('ゲーム', () => {
       expect(stage.getPuyo(3, 12)).toBe('')
     })
 
-    it('消すぷよがない場合は、newPuyoモードに遷移する', () => {
+    it('消すぷよがない場合は、checkFallモードに遷移する', () => {
       game.initialize()
 
       const anyGame = game as any
@@ -251,8 +255,8 @@ describe('ゲーム', () => {
       // 更新処理
       anyGame.update()
 
-      // newPuyoモードに遷移していることを確認
-      expect(anyGame.mode).toBe('newPuyo')
+      // checkFallモードに遷移していることを確認
+      expect(anyGame.mode).toBe('checkFall')
     })
 
     it('newPuyoモードでは新しいぷよが生成されてplayingモードに戻る', () => {
