@@ -201,6 +201,38 @@ describe('プレイヤー', () => {
       expect(anyPlayer.puyoX).toBe(1)
       expect(anyPlayer.rotation).toBe(3)
     })
+
+    it('横向きに回転しようとした際、回転先にぷよがあれば回転できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 右側にぷよを配置（右回転すると衝突する位置）
+      stage.setPuyo(4, 5, '#ff0000')
+
+      // 右回転を試みる
+      player.rotateRight()
+
+      // 回転していないことを確認
+      expect(anyPlayer.rotation).toBe(0)
+    })
+
+    it('縦向きに回転しようとした際、回転先にぷよがあれば回転できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 3 // 左向き
+
+      // 上側にぷよを配置（右回転で上向きになると衝突する位置）
+      stage.setPuyo(3, 4, '#0000ff')
+
+      // 右回転を試みる（左→上になるので1回で衝突）
+      player.rotateRight()
+
+      // 回転していないことを確認
+      expect(anyPlayer.rotation).toBe(3)
+    })
   })
 
   describe('高速落下', () => {

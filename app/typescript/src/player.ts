@@ -141,12 +141,17 @@ export class Player {
     const nextRotation = (this.rotation + 1) % 4
 
     // 壁キック処理
+    let newX = this.puyoX
     if (nextRotation === 1 && this.puyoX === this._config.stageCols - 1) {
       // 右向きになるときに右端にいる場合は左に移動
-      this.puyoX--
+      newX = this.puyoX - 1
     }
 
-    this.rotation = nextRotation
+    // 回転可能かチェック
+    if (this.canRotate(newX, nextRotation)) {
+      this.puyoX = newX
+      this.rotation = nextRotation
+    }
   }
 
   // 反時計回りに回転
@@ -155,12 +160,53 @@ export class Player {
     const nextRotation = (this.rotation + 3) % 4
 
     // 壁キック処理
+    let newX = this.puyoX
     if (nextRotation === 3 && this.puyoX === 0) {
       // 左向きになるときに左端にいる場合は右に移動
-      this.puyoX++
+      newX = this.puyoX + 1
     }
 
-    this.rotation = nextRotation
+    // 回転可能かチェック
+    if (this.canRotate(newX, nextRotation)) {
+      this.puyoX = newX
+      this.rotation = nextRotation
+    }
+  }
+
+  // 回転可能かチェック
+  private canRotate(x: number, rotation: number): boolean {
+    // 2つ目のぷよの位置を計算
+    const offset = this.getSecondPuyoOffsetForRotation(rotation)
+    const x2 = x + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 軸ぷよの位置チェック（通常は現在位置なので問題ないが念のため）
+    if (this._stage.getPuyo(x, this.puyoY) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよの位置チェック
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return false
+    }
+
+    return true
+  }
+
+  // 指定した回転状態での2つ目のぷよの相対位置を取得
+  private getSecondPuyoOffsetForRotation(rotation: number): { dx: number; dy: number } {
+    switch (rotation) {
+      case 0:
+        return { dx: 0, dy: -1 } // 上
+      case 1:
+        return { dx: 1, dy: 0 } // 右
+      case 2:
+        return { dx: 0, dy: 1 } // 下
+      case 3:
+        return { dx: -1, dy: 0 } // 左
+      default:
+        return { dx: 0, dy: -1 }
+    }
   }
 
   // ぷよの色を取得（回転状態に応じた2つ目のぷよの位置を考慮）
