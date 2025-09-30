@@ -227,4 +227,31 @@ describe('プレイヤー', () => {
       expect(anyPlayer.puyoY).toBe(config.stageRows - 1)
     })
   })
+
+  describe('着地判定', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('下に移動できない場合、着地したと判定する', () => {
+      // ステージの一番下に移動
+      const anyPlayer = player as any
+      anyPlayer.puyoY = config.stageRows - 1
+
+      // 着地判定
+      const landed = player.checkLanded()
+
+      // 着地していることを確認
+      expect(landed).toBe(true)
+    })
+
+    it('下に移動できる場合、着地していないと判定する', () => {
+      // 初期位置（上部）
+      const landed = player.checkLanded()
+
+      // 着地していないことを確認
+      expect(landed).toBe(false)
+    })
+  })
 })

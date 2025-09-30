@@ -113,4 +113,22 @@ describe('ゲーム', () => {
       expect(player.puyoY).toBe(initialY + 1)
     })
   })
+
+  describe('着地と次のぷよ生成', () => {
+    it('ぷよが着地すると、新しいぷよが上部に生成される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const player = anyGame._player
+
+      // ぷよを下端まで移動
+      player.puyoY = anyGame.config.stageRows - 1
+
+      // 1フレーム更新
+      anyGame.update()
+
+      // 新しいぷよが上部に生成されていることを確認
+      expect(player.puyoY).toBe(0)
+    })
+  })
 })

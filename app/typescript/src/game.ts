@@ -71,15 +71,22 @@ export class Game {
     if (this.mode === 'playing') {
       this._player.update()
 
-      // 下キーが押されている場合は高速落下
-      if (this._player.isDownKeyPressed()) {
-        this._player.moveDown()
+      // 着地判定
+      if (this._player.checkLanded()) {
+        // 次のぷよを生成
+        this._player.createNewPuyo()
+        this._frame = 0
       } else {
-        // 自由落下処理
-        this._frame++
-        if (this._frame >= this.fallSpeed) {
-          this._frame = 0
+        // 下キーが押されている場合は高速落下
+        if (this._player.isDownKeyPressed()) {
           this._player.moveDown()
+        } else {
+          // 自由落下処理
+          this._frame++
+          if (this._frame >= this.fallSpeed) {
+            this._frame = 0
+            this._player.moveDown()
+          }
         }
       }
     }

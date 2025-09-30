@@ -173,6 +173,15 @@ export class Player {
     return this.inputKeyDown
   }
 
+  // 着地判定
+  checkLanded(): boolean {
+    // 下端チェック
+    if (this.puyoY >= this._config.stageRows - 1) {
+      return true
+    }
+    return false
+  }
+
   // プレイヤー操作を初期化する
   initialize(): void {
     // TODO: プレイヤー操作の初期化処理
