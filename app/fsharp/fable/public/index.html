@@ -4,11 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Puyo Puyo - F# Fable</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
+    <div class="container">
         <h1>Puyo Puyo Game</h1>
-        <canvas id="game-canvas" width="400" height="600"></canvas>
+
+        <div class="game-area">
+            <div class="board-section">
+                <canvas id="game-canvas"></canvas>
+            </div>
+
+            <div class="info-section">
+                <div class="next-section">
+                    <h2>NEXT</h2>
+                    <canvas id="next-canvas" width="60" height="70"></canvas>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">SCORE</span>
+                        <span class="stat-value" id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LEVEL</span>
+                        <span class="stat-value" id="level">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CHAIN</span>
+                        <span class="stat-value" id="chain">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">TIME</span>
+                        <span class="stat-value" id="time">0:00</span>
+                    </div>
+                </div>
+
+                <button id="start-button" class="start-button">START</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>←/→</strong>: Move left/right</li>
+                <li><strong>↑</strong>: Rotate</li>
+                <li><strong>↓</strong>: Soft drop</li>
+                <li><strong>Space</strong>: Hard drop</li>
+            </ul>
+        </div>
     </div>
     <script src="bundle.js"></script>
 </body>
