@@ -9,6 +9,7 @@
     <Compile Include="Domain/BoardTests.fs" />
     <Compile Include="Domain/PuyoTests.fs" />
     <Compile Include="Domain/GameLogicTests.fs" />
+    <Compile Include="Elmish/UpdateTests.fs" />
     <Compile Include="Tests.fs" />
   </ItemGroup>
 
