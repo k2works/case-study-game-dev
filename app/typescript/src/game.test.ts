@@ -524,6 +524,57 @@ describe('ゲーム', () => {
     })
   })
 
+  describe('スコア表示', () => {
+    it('スコア表示要素が存在する', () => {
+      // Arrange: スコア表示用のDOM要素を作成
+      document.body.innerHTML = `
+        <div id="app">
+          <canvas id="stage"></canvas>
+          <div id="score">0</div>
+        </div>
+      `
+
+      // Act: ゲームを初期化
+      game.initialize()
+
+      // Assert: スコア表示要素が存在することを確認
+      const scoreElement = document.getElementById('score')
+      expect(scoreElement).not.toBeNull()
+      expect(scoreElement?.textContent).toBe('0')
+    })
+
+    it('スコアが更新されると表示も更新される', () => {
+      // Arrange: スコア表示用のDOM要素を作成
+      document.body.innerHTML = `
+        <div id="app">
+          <canvas id="stage"></canvas>
+          <div id="score">0</div>
+        </div>
+      `
+
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+      const scoreElement = document.getElementById('score')
+
+      // 横に4つ赤いぷよを配置
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(2, 12, '#ff0000')
+      stage.setPuyo(3, 12, '#ff0000')
+
+      anyGame.mode = 'checkErase'
+
+      // Act: ぷよを消去してスコアを更新
+      anyGame.update() // checkErase → erasing
+      anyGame.update() // erasing → checkFall
+
+      // Assert: スコア表示が更新されている
+      expect(scoreElement?.textContent).toBe('40')
+    })
+  })
+
   describe('スコア計算', () => {
     it('4つのぷよを消去すると基本スコアが加算される', () => {
       game.initialize()

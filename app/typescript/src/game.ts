@@ -42,6 +42,9 @@ export class Game {
     this._score = new Score()
     this._combinationCount = 0 // 連鎖カウントを初期化
 
+    // スコア表示を初期化
+    this.updateScoreDisplay()
+
     // ゲームモードを設定
     this.mode = 'playing'
     this.isRunning = false
@@ -161,6 +164,10 @@ export class Game {
       this._score.addScore(points)
     }
     this.erasableGroups = []
+
+    // スコア表示を更新
+    this.updateScoreDisplay()
+
     // 消去後は落下判定へ
     this.mode = 'checkFall'
   }
@@ -216,6 +223,14 @@ export class Game {
     // 落下中のぷよを描画
     if (this.mode === 'playing') {
       this._player.draw()
+    }
+  }
+
+  // スコア表示を更新
+  private updateScoreDisplay(): void {
+    const scoreElement = document.getElementById('score')
+    if (scoreElement) {
+      scoreElement.textContent = this._score.getScore().toString()
     }
   }
 }

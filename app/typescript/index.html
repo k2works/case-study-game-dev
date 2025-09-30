@@ -27,12 +27,27 @@
         font-size: 14px;
         color: #666;
       }
+      .score-display {
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+      .score-label {
+        font-size: 16px;
+        color: #666;
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
     <div id="app">
       <h1>ぷよぷよ</h1>
       <canvas id="stage" width="192" height="416"></canvas>
+      <div class="score-display">
+        <span class="score-label">スコア:</span>
+        <span id="score">0</span>
+      </div>
       <div class="info">矢印キー: 移動 | Z/X: 回転</div>
     </div>
     <script type="module" src="/src/main.ts"></script>
