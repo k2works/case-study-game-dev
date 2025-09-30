@@ -26,6 +26,7 @@
   "homepage": "https://github.com/k2works/ai-programing-exercise#readme",
   "type": "module",
   "dependencies": {
+    "@k2works/claude-code-booster": "^0.4.0",
     "gulp": "^5.0.0"
   }
 }
