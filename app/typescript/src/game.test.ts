@@ -175,6 +175,61 @@ describe('ゲーム', () => {
       // 軸ぷよ(3,11)が配置済みぷよと重なっているので即座着地
       expect(anyGame.mode).toBe('checkErase')
     })
+
+    it('重なった状態で左右キーを押しても移動しない', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const player = anyGame._player
+
+      // 縦向きぷよ（rotation=0）をx=3, y=12に配置して着地させる
+      player.puyoX = 3
+      player.puyoY = 12
+      player.rotation = 0
+
+      anyGame.mode = 'playing'
+      anyGame.update() // 着地
+
+      // 消去・落下・新ぷよ生成
+      anyGame.update() // checkErase
+      anyGame.update() // checkFall
+      anyGame.update() // newPuyo
+
+      // 次のぷよを横向きで配置済みぷよの上に重ねる
+      player.puyoX = 3
+      player.puyoY = 11
+      player.rotation = 1
+
+      // 左キーを押す
+      const leftEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' })
+      document.dispatchEvent(leftEvent)
+
+      anyGame.mode = 'playing'
+      anyGame.update()
+
+      // 重なっているので移動していない
+      expect(player.puyoX).toBe(3)
+      expect(anyGame.mode).toBe('checkErase')
+
+      // 右キーを押す試み（新ぷよ生成後）
+      anyGame.update() // checkErase
+      anyGame.update() // checkFall
+      anyGame.update() // newPuyo
+
+      player.puyoX = 3
+      player.puyoY = 11
+      player.rotation = 1
+
+      const rightEvent = new KeyboardEvent('keydown', { key: 'ArrowRight' })
+      document.dispatchEvent(rightEvent)
+
+      anyGame.mode = 'playing'
+      anyGame.update()
+
+      // 重なっているので移動していない
+      expect(player.puyoX).toBe(3)
+      expect(anyGame.mode).toBe('checkErase')
+    })
   })
 
   describe('着地と次のぷよ生成', () => {
