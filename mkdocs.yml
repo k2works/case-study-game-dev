@@ -1,8 +1,8 @@
-site_name: ゲーム開発のケーススタディ
-site_description: Documentation for the Game Development project.
+site_name: Site Name
+site_description: Site Description
 site_author: Project Team
-repo_url: https://github.com/k2works/case-study-game-dev
-repo_name: case-study-game-dev
+repo_url: https://github.com/k2works/claude-code-booster
+repo_name: claude-code-booster
 
 theme:
   name: material
@@ -49,15 +49,11 @@ extra:
   plantuml_url: http://www.plantuml.com/plantuml
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/k2works/ai-programming-exercise
-      name: GitHub Repository
+      link: https://github.com/k2works
+      name: GitHub Repository/claude-code-booster
 
 plugins:
   - search
 
 nav:
   - Home: index.md
-  - Case1: ./reference/case-1/index.md
-  - Case2: ./reference/case-2/index.md
-  - Case3: ./reference/case-3/index.md
-  - Case4: ./reference/case-4/index.md

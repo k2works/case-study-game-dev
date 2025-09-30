@@ -26,6 +26,6 @@
   "homepage": "https://github.com/k2works/ai-programing-exercise#readme",
   "type": "module",
   "dependencies": {
-    "gulp": "^4.0.2"
+    "gulp": "^5.0.0"
   }
 }
