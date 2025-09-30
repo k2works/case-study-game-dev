@@ -16,6 +16,7 @@ describe('ゲーム', () => {
             <div id="score"></div>
             <div id="next"></div>
             <div id="next2"></div>
+            <div id="gameOver"></div>
         `
 
     // Canvas のモックを作成
@@ -665,6 +666,84 @@ describe('ゲーム', () => {
       // 2連鎖目のスコア（4個 × 10点 × 8倍 = 320点）
       // 合計: 70点 + 320点 = 390点
       expect(score.getScore()).toBe(390)
+    })
+  })
+
+  describe('ゲームオーバー', () => {
+    it('新しいぷよの生成位置にぷよがある場合、ゲームオーバーになる', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 新しいぷよが生成される位置（中央上部）にぷよを配置
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+      stage.setPuyo(centerCol, 0, '#ff0000')
+
+      // 新ぷよ生成モードに設定
+      anyGame.mode = 'newPuyo'
+
+      // 新ぷよ生成を試みる
+      anyGame.update()
+
+      // ゲームオーバーモードになっていることを確認
+      expect(anyGame.mode).toBe('gameOver')
+    })
+
+    it('ゲームオーバー後はゲームが停止する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 新しいぷよが生成される位置にぷよを配置
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+      stage.setPuyo(centerCol, 0, '#ff0000')
+
+      // ゲームオーバーにする
+      anyGame.mode = 'newPuyo'
+      anyGame.update()
+
+      expect(anyGame.mode).toBe('gameOver')
+
+      // ゲームオーバー後にupdateを呼んでもモードが変わらないことを確認
+      anyGame.update()
+      expect(anyGame.mode).toBe('gameOver')
+    })
+
+    it('ゲームオーバー時に「GAME OVER」が表示される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+
+      // 初期位置にぷよを配置してゲームオーバーにする
+      stage.setPuyo(centerCol, 0, '#ff0000')
+
+      // 新しいぷよの生成を試みる
+      anyGame.mode = 'newPuyo'
+      anyGame.update()
+
+      // 描画処理を呼び出す
+      anyGame.draw()
+
+      // ゲームオーバー表示要素が表示されることを確認
+      const gameOverElement = document.getElementById('gameOver')
+      expect(gameOverElement).not.toBeNull()
+      expect(gameOverElement?.style.display).toBe('block')
+    })
+
+    it('プレイ中は「GAME OVER」が非表示になっている', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      anyGame.mode = 'playing'
+      anyGame.draw()
+
+      // ゲームオーバー表示要素が非表示であることを確認
+      const gameOverElement = document.getElementById('gameOver')
+      expect(gameOverElement?.style.display).toBe('none')
     })
   })
 })

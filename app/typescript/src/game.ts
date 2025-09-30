@@ -206,6 +206,14 @@ export class Game {
 
   // 新ぷよ生成モードの更新処理
   private updateNewPuyo(): void {
+    // 新しいぷよの生成位置を確認
+    const centerCol = Math.floor(this.config.stageCols / 2)
+    if (this.stage.getPuyo(centerCol, 0) !== '') {
+      // 生成位置が埋まっている場合はゲームオーバー
+      this.mode = 'gameOver'
+      return
+    }
+
     this._player.createNewPuyo()
     this._frame = 0
     this._combinationCount = 0 // 連鎖カウントをリセット
@@ -223,6 +231,17 @@ export class Game {
     // 落下中のぷよを描画
     if (this.mode === 'playing') {
       this._player.draw()
+    }
+
+    // ゲームオーバー表示の制御
+    this.updateGameOverDisplay()
+  }
+
+  // ゲームオーバー表示を更新
+  private updateGameOverDisplay(): void {
+    const gameOverElement = document.getElementById('gameOver')
+    if (gameOverElement) {
+      gameOverElement.style.display = this.mode === 'gameOver' ? 'block' : 'none'
     }
   }
 
