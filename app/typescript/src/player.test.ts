@@ -185,4 +185,46 @@ describe('プレイヤー', () => {
       expect(anyPlayer.rotation).toBe(3)
     })
   })
+
+  describe('高速落下', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('下キーが押されると、下向きの移動フラグが立つ', () => {
+      // キーダウンイベントをシミュレート（下キー）
+      const event = new KeyboardEvent('keydown', { key: 'ArrowDown' })
+      document.dispatchEvent(event)
+
+      const anyPlayer = player as any
+      expect(anyPlayer.inputKeyDown).toBe(true)
+    })
+
+    it('下に移動できる場合、下に移動する', () => {
+      // 初期位置を記録
+      const anyPlayer = player as any
+      const initialY = anyPlayer.puyoY
+
+      // 下に移動
+      const result = player.moveDown()
+
+      // 位置が1つ下に移動していることを確認
+      expect(result).toBe(true)
+      expect(anyPlayer.puyoY).toBe(initialY + 1)
+    })
+
+    it('ステージの下端にいる場合、下に移動できない', () => {
+      // ステージの一番下に移動
+      const anyPlayer = player as any
+      anyPlayer.puyoY = config.stageRows - 1
+
+      // 下に移動を試みる
+      const result = player.moveDown()
+
+      // 移動できないことを確認
+      expect(result).toBe(false)
+      expect(anyPlayer.puyoY).toBe(config.stageRows - 1)
+    })
+  })
 })

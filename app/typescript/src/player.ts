@@ -11,6 +11,7 @@ export class Player {
   // キー入力フラグ
   private inputKeyLeft: boolean = false
   private inputKeyRight: boolean = false
+  private inputKeyDown: boolean = false
 
   // ぷよの位置
   private puyoX: number = 0
@@ -31,16 +32,19 @@ export class Player {
 
   // キーダウンイベントハンドラ
   private onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'ArrowLeft') {
-      this.inputKeyLeft = true
-    } else if (event.key === 'ArrowRight') {
-      this.inputKeyRight = true
-    } else if (event.key === 'z' || event.key === 'Z') {
-      // Z キーで反時計回り回転
-      this.rotateLeft()
-    } else if (event.key === 'x' || event.key === 'X') {
-      // X キーで時計回り回転
-      this.rotateRight()
+    const keyActions: Record<string, () => void> = {
+      ArrowLeft: () => (this.inputKeyLeft = true),
+      ArrowRight: () => (this.inputKeyRight = true),
+      ArrowDown: () => (this.inputKeyDown = true),
+      z: () => this.rotateLeft(),
+      Z: () => this.rotateLeft(),
+      x: () => this.rotateRight(),
+      X: () => this.rotateRight(),
+    }
+
+    const action = keyActions[event.key]
+    if (action) {
+      action()
     }
   }
 
@@ -50,6 +54,8 @@ export class Player {
       this.inputKeyLeft = false
     } else if (event.key === 'ArrowRight') {
       this.inputKeyRight = false
+    } else if (event.key === 'ArrowDown') {
+      this.inputKeyDown = false
     }
   }
 
@@ -73,6 +79,18 @@ export class Player {
     if (this.puyoX < this._config.stageCols - 1) {
       this.puyoX++
     }
+  }
+
+  // 下に移動
+  moveDown(): boolean {
+    // 下端チェック
+    if (this.puyoY >= this._config.stageRows - 1) {
+      return false
+    }
+
+    // 移動可能な場合は下に移動
+    this.puyoY++
+    return true
   }
 
   // 時計回りに回転
