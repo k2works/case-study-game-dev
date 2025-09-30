@@ -168,6 +168,11 @@ export class Player {
     this._stage.drawPuyo(x2, y2, this.getPuyoColor(1))
   }
 
+  // 下キーが押されているかを取得
+  isDownKeyPressed(): boolean {
+    return this.inputKeyDown
+  }
+
   // プレイヤー操作を初期化する
   initialize(): void {
     // TODO: プレイヤー操作の初期化処理

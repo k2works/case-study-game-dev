@@ -94,5 +94,23 @@ describe('ゲーム', () => {
       // ぷよが下に移動していることを確認
       expect(player.puyoY).toBeGreaterThan(initialY)
     })
+
+    it('下キーが押されている時は、毎フレームぷよが下に移動する', () => {
+      game.initialize()
+
+      // 下キーを押す
+      const downEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' })
+      document.dispatchEvent(downEvent)
+
+      const anyGame = game as any
+      const player = anyGame._player
+      const initialY = player.puyoY
+
+      // 1フレーム更新
+      anyGame.update()
+
+      // ぷよが下に移動していることを確認
+      expect(player.puyoY).toBe(initialY + 1)
+    })
   })
 })
