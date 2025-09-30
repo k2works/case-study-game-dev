@@ -1,0 +1,22 @@
+# Build results
+bin/
+obj/
+.vs/
+*.user
+
+# Bolero output
+wwwroot/js/
+wwwroot/css/
+
+# IDE
+.idea/
+*.suo
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
