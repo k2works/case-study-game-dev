@@ -36,6 +36,7 @@ export class Player {
       ArrowLeft: () => (this.inputKeyLeft = true),
       ArrowRight: () => (this.inputKeyRight = true),
       ArrowDown: () => (this.inputKeyDown = true),
+      ArrowUp: () => this.rotateRight(),
       z: () => this.rotateLeft(),
       Z: () => this.rotateLeft(),
       x: () => this.rotateRight(),

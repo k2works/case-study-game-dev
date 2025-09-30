@@ -263,6 +263,19 @@ describe('プレイヤー', () => {
       expect(anyPlayer.rotation).toBe((initialRotation + 3) % 4)
     })
 
+    it('上キーを押すと時計回りに回転する', () => {
+      // 初期回転状態を記録
+      const anyPlayer = player as any
+      const initialRotation = anyPlayer.rotation
+
+      // 上キーダウンイベントをシミュレート
+      const event = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+      document.dispatchEvent(event)
+
+      // 回転状態が1増えていることを確認
+      expect(anyPlayer.rotation).toBe((initialRotation + 1) % 4)
+    })
+
     it('回転状態が4になると0に戻る', () => {
       // 回転状態を3に設定
       const anyPlayer = player as any
