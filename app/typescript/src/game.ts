@@ -58,6 +58,28 @@ export class Game {
     }
   }
 
+  // ゲームをリスタートする
+  restart(): void {
+    // ステージをクリア
+    this.stage.initialize()
+
+    // スコアをリセット
+    this._score = new Score()
+    this.updateScoreDisplay()
+
+    // 連鎖カウントをリセット
+    this._combinationCount = 0
+
+    // フレームカウントをリセット
+    this._frame = 0
+
+    // 新しいぷよを生成
+    this._player.createNewPuyo()
+
+    // ゲームモードをplayingに変更
+    this.mode = 'playing'
+  }
+
   loop(): void {
     if (!this.isRunning) return
 

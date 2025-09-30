@@ -746,4 +746,54 @@ describe('ゲーム', () => {
       expect(gameOverElement?.style.display).toBe('none')
     })
   })
+
+  describe('リスタート機能', () => {
+    it('restart()を呼ぶとゲームが初期状態に戻る', () => {
+      game.initialize()
+      const anyGame = game as any
+
+      // スコアを加算
+      anyGame._score.addScore(100)
+      expect(anyGame._score.getScore()).toBe(100)
+
+      // ステージにぷよを配置
+      const stage = anyGame.stage
+      stage.setPuyo(0, 12, '#ff0000')
+
+      // ゲームオーバー状態にする
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+      stage.setPuyo(centerCol, 0, '#ff0000')
+      anyGame.mode = 'newPuyo'
+      anyGame.update()
+      expect(anyGame.mode).toBe('gameOver')
+
+      // リスタート
+      anyGame.restart()
+
+      // 初期状態に戻っていることを確認
+      expect(anyGame._score.getScore()).toBe(0)
+      expect(anyGame.mode).toBe('playing')
+      expect(stage.getPuyo(0, 12)).toBe('')
+    })
+
+    it('リスタート後にゲームが正常に動作する', () => {
+      game.initialize()
+      const anyGame = game as any
+
+      // 一度ゲームオーバーにする
+      const stage = anyGame.stage
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+      stage.setPuyo(centerCol, 0, '#ff0000')
+      anyGame.mode = 'newPuyo'
+      anyGame.update()
+
+      // リスタート
+      anyGame.restart()
+
+      // プレイヤー操作が可能なことを確認
+      expect(anyGame.mode).toBe('playing')
+      anyGame.update()
+      // エラーが発生しないことを確認
+    })
+  })
 })
