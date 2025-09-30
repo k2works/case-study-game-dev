@@ -69,16 +69,70 @@ export class Player {
 
   // 左に移動
   moveLeft(): void {
-    if (this.puyoX > 0) {
+    if (this.canMoveLeft()) {
       this.puyoX--
     }
   }
 
   // 右に移動
   moveRight(): void {
-    if (this.puyoX < this._config.stageCols - 1) {
+    if (this.canMoveRight()) {
       this.puyoX++
     }
+  }
+
+  // 左に移動できるかチェック
+  private canMoveLeft(): boolean {
+    // 左端チェック
+    if (this.puyoX <= 0) {
+      return false
+    }
+
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 軸ぷよの左をチェック
+    if (this._stage.getPuyo(this.puyoX - 1, this.puyoY) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよが左側にある場合（rotation=3）
+    if (this.rotation === 3) {
+      // 2つ目のぷよの左をチェック
+      if (this._stage.getPuyo(x2 - 1, y2) !== '') {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // 右に移動できるかチェック
+  private canMoveRight(): boolean {
+    // 右端チェック
+    if (this.puyoX >= this._config.stageCols - 1) {
+      return false
+    }
+
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 軸ぷよの右をチェック
+    if (this._stage.getPuyo(this.puyoX + 1, this.puyoY) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよが右側にある場合（rotation=1）
+    if (this.rotation === 1) {
+      // 2つ目のぷよの右をチェック
+      if (this._stage.getPuyo(x2 + 1, y2) !== '') {
+        return false
+      }
+    }
+
+    return true
   }
 
   // 下に移動

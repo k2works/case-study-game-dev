@@ -123,6 +123,70 @@ describe('プレイヤー', () => {
       // 位置が変わっていないことを確認
       expect(anyPlayer.puyoX).toBe(config.stageCols - 1)
     })
+
+    it('左にぷよがある場合、左に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 左側（軸ぷよの左）にぷよを配置
+      stage.setPuyo(2, 5, '#ff0000')
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
+
+    it('右にぷよがある場合、右に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 右側（軸ぷよの右）にぷよを配置
+      stage.setPuyo(4, 5, '#0000ff')
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
+
+    it('横向きで左にぷよがある場合、左に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよが右）
+
+      // 左側（軸ぷよの左）にぷよを配置
+      stage.setPuyo(2, 5, '#00ff00')
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
+
+    it('横向きで右にぷよがある場合、右に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよが右）
+
+      // 2つ目のぷよのさらに右にぷよを配置
+      stage.setPuyo(5, 5, '#ffff00')
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
   })
 
   describe('ぷよの回転', () => {
