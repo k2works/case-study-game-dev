@@ -556,5 +556,64 @@ describe('ゲーム', () => {
       // スコアが加算されていることを確認（4個消去 = 40点）
       expect(score.getScore()).toBe(40)
     })
+
+    it('連鎖が発生するとボーナスが加算される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+      const score = anyGame._score
+
+      // ステージ配置:
+      // 縦  0    1    2    3    4    5
+      //  8:           青
+      //  9:           青
+      // 10:           青
+      // 11: 赤   赤   赤   赤
+      // 12: 赤   赤   青   赤
+      //
+      // 1連鎖目: 下の赤8つが消える
+      // 2連鎖目: 青が列2に落下して下端から縦4つ揃い消える
+
+      // 下段: 赤を配置（7個、列2の行12は青）
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(3, 12, '#ff0000')
+      stage.setPuyo(0, 11, '#ff0000')
+      stage.setPuyo(1, 11, '#ff0000')
+      stage.setPuyo(2, 11, '#ff0000')
+      stage.setPuyo(3, 11, '#ff0000')
+
+      // 青を配置：列2の下端に1つ、上部に3つ
+      stage.setPuyo(2, 12, '#0000ff') // 下端（赤の間に挟まれている）
+      stage.setPuyo(2, 8, '#0000ff') // 上部
+      stage.setPuyo(2, 9, '#0000ff')
+      stage.setPuyo(2, 10, '#0000ff')
+
+      // checkEraseモードに設定
+      anyGame.mode = 'checkErase'
+
+      // 初期スコアを確認
+      expect(score.getScore()).toBe(0)
+
+      // 1連鎖目: 赤いぷよ消去
+      anyGame.update() // checkErase → erasing
+      anyGame.update() // erasing → checkFall
+
+      // 1連鎖目のスコア（7個 × 10点 × 1倍 = 70点）
+      expect(score.getScore()).toBe(70)
+
+      // 落下処理
+      anyGame.update() // checkFall → fall
+      anyGame.update() // fall → checkErase
+
+      // 2連鎖目: 青いぷよ消去（青が下に落ちて4つ連結）
+      anyGame.update() // checkErase → erasing
+      anyGame.update() // erasing → checkFall
+
+      // 2連鎖目のスコア（4個 × 10点 × 8倍 = 320点）
+      // 合計: 70点 + 320点 = 390点
+      expect(score.getScore()).toBe(390)
+    })
   })
 })

@@ -40,6 +40,7 @@ export class Game {
     this._player = new Player(this.config, this.stage, this.puyoImage)
     this._player.createNewPuyo()
     this._score = new Score()
+    this._combinationCount = 0 // 連鎖カウントを初期化
 
     // ゲームモードを設定
     this.mode = 'playing'
@@ -139,6 +140,8 @@ export class Game {
     this.erasableGroups = this.stage.checkErasablePuyos()
 
     if (this.erasableGroups.length > 0) {
+      // 消去対象がある場合は連鎖カウントを増やす
+      this._combinationCount++
       this.mode = 'erasing'
     } else {
       // 消去対象がない場合は落下判定へ
@@ -148,15 +151,34 @@ export class Game {
 
   // 消去実行モードの更新処理
   private updateErasing(): void {
+    // 連鎖ボーナス倍率を取得
+    const chainMultiplier = this.getChainMultiplier(this._combinationCount)
+
     for (const group of this.erasableGroups) {
       this.stage.erasePuyos(group)
-      // スコアを計算（1個につき10点）
-      const points = group.length * 10
+      // スコアを計算（1個につき10点 × 連鎖ボーナス）
+      const points = group.length * 10 * chainMultiplier
       this._score.addScore(points)
     }
     this.erasableGroups = []
     // 消去後は落下判定へ
     this.mode = 'checkFall'
+  }
+
+  // 連鎖ボーナスの倍率を取得
+  private getChainMultiplier(chainCount: number): number {
+    // 連鎖倍率テーブル
+    const multipliers = [0, 1, 8, 16, 32, 64, 96, 128, 160, 192, 224, 256]
+
+    if (chainCount <= 0) {
+      return 1
+    }
+
+    if (chainCount >= multipliers.length) {
+      return multipliers[multipliers.length - 1]
+    }
+
+    return multipliers[chainCount]
   }
 
   // 落下判定モードの更新処理
@@ -179,6 +201,7 @@ export class Game {
   private updateNewPuyo(): void {
     this._player.createNewPuyo()
     this._frame = 0
+    this._combinationCount = 0 // 連鎖カウントをリセット
     this.mode = 'playing'
   }
 
