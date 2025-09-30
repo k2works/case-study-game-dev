@@ -258,6 +258,38 @@ describe('プレイヤー', () => {
       expect(result).toBe(false)
       expect(anyPlayer.puyoY).toBe(initialY)
     })
+
+    it('横向きのぷよで片方の下にだけぷよがある場合、下に移動できない', () => {
+      const anyPlayer = player as any
+      const initialY = anyPlayer.puyoY
+      anyPlayer.rotation = 1 // 右向き
+
+      // 軸ぷよの下にだけぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, initialY + 1, '#ff0000')
+      // 2つ目のぷよ(右側)の下は空白
+
+      // 下に移動を試みる
+      const result = player.moveDown()
+
+      // 片方だけ支持されている状態なので移動できない
+      expect(result).toBe(false)
+      expect(anyPlayer.puyoY).toBe(initialY)
+    })
+
+    it('横向きのぷよで両方の下が空白の場合、下に移動できる', () => {
+      const anyPlayer = player as any
+      const initialY = anyPlayer.puyoY
+      anyPlayer.rotation = 1 // 右向き
+
+      // 両方の下が空白
+
+      // 下に移動を試みる
+      const result = player.moveDown()
+
+      // 移動できることを確認
+      expect(result).toBe(true)
+      expect(anyPlayer.puyoY).toBe(initialY + 1)
+    })
   })
 
   describe('着地判定', () => {

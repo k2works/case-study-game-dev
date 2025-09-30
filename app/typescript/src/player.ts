@@ -83,27 +83,56 @@ export class Player {
 
   // 下に移動
   moveDown(): boolean {
-    // 下端チェック
-    if (this.puyoY >= this._config.stageRows - 1) {
-      return false
-    }
-
-    // 下のセルにぷよがあるかチェック
-    if (this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== '') {
-      return false
-    }
-
-    // 2つ目のぷよの下もチェック
-    const offset = this.getSecondPuyoOffset()
-    const x2 = this.puyoX + offset.dx
-    const y2 = this.puyoY + offset.dy
-    if (this._stage.getPuyo(x2, y2 + 1) !== '') {
+    // 1つ下に移動できるかチェック（回転状態に応じた判定）
+    if (!this.canMoveDown()) {
       return false
     }
 
     // 移動可能な場合は下に移動
     this.puyoY++
     return true
+  }
+
+  // 下に移動できるかチェック
+  private canMoveDown(): boolean {
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 回転状態に応じて移動可能判定を行う
+    switch (this.rotation) {
+      case 0: // 上向き（2つ目のぷよが上）
+        return this.canMainPuyoMoveDown()
+      case 2: // 下向き（2つ目のぷよが下）
+        return this.canSecondPuyoMoveDown(x2, y2)
+      case 1: // 右向き（2つ目のぷよが右）
+      case 3: {
+        // 左向き（2つ目のぷよが左）
+        return this.canBothPuyosMoveDown(x2, y2)
+      }
+      default:
+        return false
+    }
+  }
+
+  // 軸ぷよが下に移動できるかチェック
+  private canMainPuyoMoveDown(): boolean {
+    return (
+      this.puyoY < this._config.stageRows - 1 &&
+      this._stage.getPuyo(this.puyoX, this.puyoY + 1) === ''
+    )
+  }
+
+  // 2つ目のぷよが下に移動できるかチェック
+  private canSecondPuyoMoveDown(x2: number, y2: number): boolean {
+    return y2 < this._config.stageRows - 1 && this._stage.getPuyo(x2, y2 + 1) === ''
+  }
+
+  // 両方のぷよが下に移動できるかチェック
+  private canBothPuyosMoveDown(x2: number, y2: number): boolean {
+    const mainCanMove = this.canMainPuyoMoveDown()
+    const secondCanMove = this.canSecondPuyoMoveDown(x2, y2)
+    return mainCanMove && secondCanMove
   }
 
   // 時計回りに回転
