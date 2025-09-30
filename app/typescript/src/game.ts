@@ -24,6 +24,7 @@ export class Game {
   private _player!: Player
   private _score!: Score
   private isRunning: boolean = false
+  private fallSpeed: number = 30 // 30フレームごとに1マス落下
 
   constructor() {
     // コンストラクタでは何もしない
@@ -69,6 +70,13 @@ export class Game {
   private update(): void {
     if (this.mode === 'playing') {
       this._player.update()
+
+      // 自由落下処理
+      this._frame++
+      if (this._frame >= this.fallSpeed) {
+        this._frame = 0
+        this._player.moveDown()
+      }
     }
   }
 

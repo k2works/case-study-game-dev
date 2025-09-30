@@ -76,4 +76,23 @@ describe('ゲーム', () => {
       }
     })
   })
+
+  describe('自由落下', () => {
+    it('フレームカウントが一定値に達すると、ぷよが自動的に下に移動する', () => {
+      game.initialize()
+
+      // privateフィールドにアクセスするためにany型にキャスト
+      const anyGame = game as any
+      const player = anyGame._player
+      const initialY = player.puyoY
+
+      // フレームカウントを自由落下速度まで進める（30フレーム）
+      for (let i = 0; i < 30; i++) {
+        anyGame.update()
+      }
+
+      // ぷよが下に移動していることを確認
+      expect(player.puyoY).toBeGreaterThan(initialY)
+    })
+  })
 })
