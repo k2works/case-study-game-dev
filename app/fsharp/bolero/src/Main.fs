@@ -4,6 +4,7 @@ open Bolero
 open Bolero.Html
 open Elmish
 open Microsoft.AspNetCore.Components
+open Microsoft.AspNetCore.Components.Web
 open PuyoGame.Elmish.Model
 open PuyoGame.Elmish.Update
 open PuyoGame.Domain
@@ -79,10 +80,22 @@ let renderGameInfo (model: Model) =
         }
     }
 
+/// キーボードイベントハンドラ
+let handleKeyDown (dispatch: Message -> unit) (e: KeyboardEventArgs) =
+    match e.Key with
+    | "ArrowLeft" -> dispatch MoveLeft
+    | "ArrowRight" -> dispatch MoveRight
+    | "ArrowDown" -> dispatch MoveDown
+    | "ArrowUp" -> dispatch Rotate
+    | " " -> dispatch HardDrop
+    | _ -> ()
+
 /// メインビュー
 let view (model: Model) dispatch =
     div {
         attr.``class`` "container"
+        attr.tabindex 0
+        on.keydown (fun e -> handleKeyDown dispatch e)
         h1 { text "Puyo Puyo Game" }
 
         div {
