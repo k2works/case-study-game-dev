@@ -188,25 +188,46 @@ export class Player {
 
   // 着地判定
   checkLanded(): boolean {
-    // 下端チェック
-    if (this.puyoY >= this._config.stageRows - 1) {
-      return true
-    }
-
-    // 下のセルにぷよがあるかチェック
-    if (this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== '') {
-      return true
-    }
-
-    // 2つ目のぷよの下もチェック
+    // 2つ目のぷよの位置を取得
     const offset = this.getSecondPuyoOffset()
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
-    if (this._stage.getPuyo(x2, y2 + 1) !== '') {
-      return true
-    }
 
-    return false
+    // 回転状態に応じて着地判定を行う
+    switch (this.rotation) {
+      case 0: // 上向き（2つ目のぷよが上）
+        return this.checkMainPuyoLanded()
+      case 2: // 下向き（2つ目のぷよが下）
+        return this.checkSecondPuyoLanded(x2, y2)
+      case 1: // 右向き（2つ目のぷよが右）
+      case 3: {
+        // 左向き（2つ目のぷよが左）
+        // 横向きの場合は両方の下をチェック
+        return this.checkBothPuyosLanded(x2, y2)
+      }
+      default:
+        return false
+    }
+  }
+
+  // 軸ぷよの着地判定
+  private checkMainPuyoLanded(): boolean {
+    return (
+      this.puyoY >= this._config.stageRows - 1 ||
+      this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== ''
+    )
+  }
+
+  // 2つ目のぷよの着地判定
+  private checkSecondPuyoLanded(x2: number, y2: number): boolean {
+    return y2 >= this._config.stageRows - 1 || this._stage.getPuyo(x2, y2 + 1) !== ''
+  }
+
+  // 両方のぷよの着地判定
+  private checkBothPuyosLanded(x2: number, y2: number): boolean {
+    const mainPuyoLanded = this.checkMainPuyoLanded()
+    const secondPuyoLanded = this.checkSecondPuyoLanded(x2, y2)
+    return mainPuyoLanded && secondPuyoLanded
   }
 
   // 着地したぷよをステージに配置

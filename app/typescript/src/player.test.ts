@@ -299,5 +299,37 @@ describe('プレイヤー', () => {
       // 着地していることを確認
       expect(landed).toBe(true)
     })
+
+    it('横向きのぷよで片方の下が空白の場合、着地していないと判定する', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよは右）
+
+      // 軸ぷよの下にだけぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, 6, '#ff0000')
+      // 2つ目のぷよの下は空白
+
+      // 着地判定
+      const landed = player.checkLanded()
+
+      // 2つ目のぷよが宙に浮いているので着地していない
+      expect(landed).toBe(false)
+    })
+
+    it('横向きのぷよで両方の下にぷよがある場合、着地したと判定する', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き
+
+      // 両方の下にぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, 6, '#ff0000')
+      stage.setPuyo(anyPlayer.puyoX + 1, 6, '#0000ff')
+
+      // 着地判定
+      const landed = player.checkLanded()
+
+      // 着地していることを確認
+      expect(landed).toBe(true)
+    })
   })
 })
