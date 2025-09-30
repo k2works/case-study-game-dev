@@ -472,7 +472,7 @@ describe('プレイヤー', () => {
       expect(landed).toBe(true)
     })
 
-    it('横向きのぷよで片方の下が空白の場合、着地していないと判定する', () => {
+    it('横向きのぷよで片方の下だけぷよがある場合、着地したと判定する', () => {
       const anyPlayer = player as any
       anyPlayer.puyoY = 5
       anyPlayer.rotation = 1 // 右向き（2つ目のぷよは右）
@@ -484,8 +484,8 @@ describe('プレイヤー', () => {
       // 着地判定
       const landed = player.checkLanded()
 
-      // 2つ目のぷよが宙に浮いているので着地していない
-      expect(landed).toBe(false)
+      // 軸ぷよの下にぷよがあるので着地している
+      expect(landed).toBe(true)
     })
 
     it('横向きのぷよで両方の下にぷよがある場合、着地したと判定する', () => {

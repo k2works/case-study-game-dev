@@ -378,7 +378,7 @@ export class Player {
   private checkBothPuyosLanded(x2: number, y2: number): boolean {
     const mainPuyoLanded = this.checkMainPuyoLanded()
     const secondPuyoLanded = this.checkSecondPuyoLanded(x2, y2)
-    return mainPuyoLanded && secondPuyoLanded
+    return mainPuyoLanded || secondPuyoLanded
   }
 
   // 着地したぷよをステージに配置

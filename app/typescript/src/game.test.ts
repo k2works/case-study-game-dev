@@ -230,6 +230,46 @@ describe('ゲーム', () => {
       expect(player.puyoX).toBe(3)
       expect(anyGame.mode).toBe('checkErase')
     })
+
+    it('横向きぷよが自動落下で縦向きぷよに重なる前に着地する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const player = anyGame._player
+
+      // 縦向きぷよをx=3, y=12に配置して着地させる
+      player.puyoX = 3
+      player.puyoY = 12
+      player.rotation = 0
+
+      anyGame.mode = 'playing'
+      anyGame.update() // 着地
+
+      // 消去・落下・新ぷよ生成
+      anyGame.update() // checkErase
+      anyGame.update() // checkFall
+      anyGame.update() // newPuyo
+
+      // 次のぷよを横向きでx=3, y=0から開始
+      player.puyoX = 3
+      player.puyoY = 0
+      player.rotation = 1 // 右向き（2つ目がx=4）
+
+      anyGame.mode = 'playing'
+
+      // y=0から落下していき、y=10で着地する（y=11は配置済みぷよがあるため）
+      // fallSpeed=30なので、30フレームごとに1マス落下する
+      let totalFrames = 0
+      while (anyGame.mode === 'playing' && totalFrames < 1000) {
+        anyGame.update()
+        totalFrames++
+      }
+
+      // y=10で着地するはず
+      expect(player.puyoY).toBe(10)
+      expect(anyGame.mode).toBe('checkErase')
+      expect(totalFrames).toBeLessThan(1000) // 無限ループ防止
+    })
   })
 
   describe('着地と次のぷよ生成', () => {
