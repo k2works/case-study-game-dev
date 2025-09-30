@@ -20,6 +20,8 @@ export default [
         document: 'readonly',
         requestAnimationFrame: 'readonly',
         KeyboardEvent: 'readonly',
+        HTMLCanvasElement: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
       },
     },
     plugins: {
