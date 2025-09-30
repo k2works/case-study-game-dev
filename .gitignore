@@ -138,3 +138,5 @@ site
 
 !docs/**/CLAUDE.local.md
 .claude
+.cpcache
+.clj-kondo
