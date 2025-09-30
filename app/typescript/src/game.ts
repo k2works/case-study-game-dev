@@ -45,9 +45,22 @@ export class Game {
     // スコア表示を初期化
     this.updateScoreDisplay()
 
+    // リスタートボタンのイベントリスナーを設定
+    this.setupRestartButton()
+
     // ゲームモードを設定
     this.mode = 'playing'
     this.isRunning = false
+  }
+
+  // リスタートボタンのイベントリスナーを設定
+  private setupRestartButton(): void {
+    const restartButton = document.getElementById('restart')
+    if (restartButton) {
+      restartButton.addEventListener('click', () => {
+        this.restart()
+      })
+    }
   }
 
   // ゲームを開始する
@@ -257,6 +270,9 @@ export class Game {
 
     // ゲームオーバー表示の制御
     this.updateGameOverDisplay()
+
+    // リスタートボタンの表示制御
+    this.updateRestartButtonDisplay()
   }
 
   // ゲームオーバー表示を更新
@@ -264,6 +280,14 @@ export class Game {
     const gameOverElement = document.getElementById('gameOver')
     if (gameOverElement) {
       gameOverElement.style.display = this.mode === 'gameOver' ? 'block' : 'none'
+    }
+  }
+
+  // リスタートボタンの表示を更新
+  private updateRestartButtonDisplay(): void {
+    const restartButton = document.getElementById('restart')
+    if (restartButton) {
+      restartButton.style.display = this.mode === 'gameOver' ? 'block' : 'none'
     }
   }
 

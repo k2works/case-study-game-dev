@@ -17,6 +17,7 @@ describe('ゲーム', () => {
             <div id="next"></div>
             <div id="next2"></div>
             <div id="gameOver"></div>
+            <button id="restart"></button>
         `
 
     // Canvas のモックを作成
@@ -794,6 +795,64 @@ describe('ゲーム', () => {
       expect(anyGame.mode).toBe('playing')
       anyGame.update()
       // エラーが発生しないことを確認
+    })
+
+    it('リスタートボタンをクリックするとゲームがリスタートする', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // スコアを加算
+      anyGame._score.addScore(100)
+
+      // ゲームオーバーにする
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+      stage.setPuyo(centerCol, 0, '#ff0000')
+      anyGame.mode = 'newPuyo'
+      anyGame.update()
+
+      // リスタートボタンをクリック
+      const restartButton = document.getElementById('restart')
+      expect(restartButton).not.toBeNull()
+      restartButton?.click()
+
+      // ゲームがリスタートされることを確認
+      expect(anyGame._score.getScore()).toBe(0)
+      expect(anyGame.mode).toBe('playing')
+    })
+
+    it('ゲームオーバー時にリスタートボタンが表示される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // ゲームオーバーにする
+      const centerCol = Math.floor(anyGame.config.stageCols / 2)
+      stage.setPuyo(centerCol, 0, '#ff0000')
+      anyGame.mode = 'newPuyo'
+      anyGame.update()
+
+      // 描画処理を呼び出す
+      anyGame.draw()
+
+      // リスタートボタンが表示されることを確認
+      const restartButton = document.getElementById('restart')
+      expect(restartButton).not.toBeNull()
+      expect(restartButton?.style.display).toBe('block')
+    })
+
+    it('プレイ中はリスタートボタンが非表示になっている', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      anyGame.mode = 'playing'
+      anyGame.draw()
+
+      // リスタートボタンが非表示であることを確認
+      const restartButton = document.getElementById('restart')
+      expect(restartButton?.style.display).toBe('none')
     })
   })
 })
