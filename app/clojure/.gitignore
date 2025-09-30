@@ -1,0 +1,35 @@
+# Compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Shadow-cljs
+.shadow-cljs/
+node_modules/
+public/js/
+
+# Package managers
+package-lock.json
+yarn.lock
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+target/
+out/
+
+# Logs
+*.log
+
+# Temp files
+*.swp
+*.swo
+*~
