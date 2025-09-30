@@ -118,4 +118,85 @@ export class Stage {
       }
     }
   }
+
+  // 指定座標から連結しているぷよを探索（BFS）
+  findConnectedPuyos(x: number, y: number): { x: number; y: number }[] {
+    const color = this.getPuyo(x, y)
+    if (color === '') {
+      return []
+    }
+
+    const connected: { x: number; y: number }[] = []
+    const visited = new Set<string>()
+    const queue: { x: number; y: number }[] = [{ x, y }]
+
+    while (queue.length > 0) {
+      const current = queue.shift()!
+      const key = `${current.x},${current.y}`
+
+      if (visited.has(key)) {
+        continue
+      }
+
+      visited.add(key)
+      connected.push(current)
+
+      // 上下左右の4方向を探索
+      const directions = [
+        { dx: 0, dy: -1 }, // 上
+        { dx: 0, dy: 1 }, // 下
+        { dx: -1, dy: 0 }, // 左
+        { dx: 1, dy: 0 }, // 右
+      ]
+
+      for (const dir of directions) {
+        const nx = current.x + dir.dx
+        const ny = current.y + dir.dy
+        const nKey = `${nx},${ny}`
+
+        if (!visited.has(nKey) && this.getPuyo(nx, ny) === color) {
+          queue.push({ x: nx, y: ny })
+        }
+      }
+    }
+
+    return connected
+  }
+
+  // 消去可能なぷよのグループを検出（4つ以上連結）
+  checkErasablePuyos(): { x: number; y: number }[][] {
+    const erasableGroups: { x: number; y: number }[][] = []
+    const checked = new Set<string>()
+
+    for (let row = 0; row < this._config.stageRows; row++) {
+      for (let col = 0; col < this._config.stageCols; col++) {
+        const key = `${col},${row}`
+        if (checked.has(key) || this.getPuyo(col, row) === '') {
+          continue
+        }
+
+        // 連結しているぷよを探索
+        const connected = this.findConnectedPuyos(col, row)
+
+        // 探索済みとしてマーク
+        for (const pos of connected) {
+          checked.add(`${pos.x},${pos.y}`)
+        }
+
+        // 4つ以上連結していたら消去対象
+        if (connected.length >= 4) {
+          erasableGroups.push(connected)
+        }
+      }
+    }
+
+    return erasableGroups
+  }
+
+  // 指定座標のぷよを消去
+  erasePuyos(positions: { x: number; y: number }[]): void {
+    for (const pos of positions) {
+      this.setPuyo(pos.x, pos.y, '')
+    }
+  }
 }
