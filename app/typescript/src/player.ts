@@ -35,6 +35,12 @@ export class Player {
       this.inputKeyLeft = true
     } else if (event.key === 'ArrowRight') {
       this.inputKeyRight = true
+    } else if (event.key === 'z' || event.key === 'Z') {
+      // Z キーで反時計回り回転
+      this.rotateLeft()
+    } else if (event.key === 'x' || event.key === 'X') {
+      // X キーで時計回り回転
+      this.rotateRight()
     }
   }
 
@@ -95,6 +101,53 @@ export class Player {
     }
 
     this.rotation = nextRotation
+  }
+
+  // ぷよの色を取得（回転状態に応じた2つ目のぷよの位置を考慮）
+  private getPuyoColor(index: number): string {
+    const colors = ['#ff0000', '#0000ff', '#00ff00', '#ffff00']
+    return colors[index % colors.length]
+  }
+
+  // 2つ目のぷよの相対位置を取得
+  private getSecondPuyoOffset(): { dx: number; dy: number } {
+    switch (this.rotation) {
+      case 0:
+        return { dx: 0, dy: -1 } // 上
+      case 1:
+        return { dx: 1, dy: 0 } // 右
+      case 2:
+        return { dx: 0, dy: 1 } // 下
+      case 3:
+        return { dx: -1, dy: 0 } // 左
+      default:
+        return { dx: 0, dy: -1 }
+    }
+  }
+
+  // プレイヤー操作を更新
+  update(): void {
+    // 左右キーの入力に応じて移動
+    if (this.inputKeyLeft) {
+      this.moveLeft()
+      this.inputKeyLeft = false // 連続移動を防ぐ
+    }
+    if (this.inputKeyRight) {
+      this.moveRight()
+      this.inputKeyRight = false // 連続移動を防ぐ
+    }
+  }
+
+  // ぷよを描画
+  draw(): void {
+    // 1つ目のぷよ（軸ぷよ）
+    this._stage.drawPuyo(this.puyoX, this.puyoY, this.getPuyoColor(0))
+
+    // 2つ目のぷよ
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+    this._stage.drawPuyo(x2, y2, this.getPuyoColor(1))
   }
 
   // プレイヤー操作を初期化する
