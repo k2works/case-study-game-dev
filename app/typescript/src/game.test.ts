@@ -115,7 +115,7 @@ describe('ゲーム', () => {
   })
 
   describe('着地と次のぷよ生成', () => {
-    it('ぷよが着地すると、新しいぷよが上部に生成される', () => {
+    it('ぷよが着地すると、checkEraseモードを経て新しいぷよが上部に生成される', () => {
       game.initialize()
 
       const anyGame = game as any
@@ -124,8 +124,17 @@ describe('ゲーム', () => {
       // ぷよを下端まで移動
       player.puyoY = anyGame.config.stageRows - 1
 
-      // 1フレーム更新
+      // 1フレーム更新（着地）
       anyGame.update()
+      expect(anyGame.mode).toBe('checkErase')
+
+      // 消去判定（消すぷよなし）
+      anyGame.update()
+      expect(anyGame.mode).toBe('newPuyo')
+
+      // 新ぷよ生成
+      anyGame.update()
+      expect(anyGame.mode).toBe('playing')
 
       // 新しいぷよが上部に生成されていることを確認
       expect(player.puyoY).toBe(0)
@@ -148,6 +157,117 @@ describe('ゲーム', () => {
 
       // ステージにぷよが配置されていることを確認
       expect(stage.getPuyo(landedX, landedY)).not.toBe('')
+    })
+  })
+
+  describe('ぷよ消去', () => {
+    it('4つ連結したぷよが着地すると、checkEraseモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 横に3つ赤いぷよを事前配置
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(2, 12, '#ff0000')
+
+      // プレイヤーの軸ぷよを(3, 12)に配置して着地させる
+      const player = anyGame._player
+      player.puyoX = 3
+      player.puyoY = 12
+      player.rotation = 0 // 2つ目のぷよは上
+
+      // 着地処理を実行
+      anyGame.update()
+
+      // checkEraseモードに遷移していることを確認
+      expect(anyGame.mode).toBe('checkErase')
+    })
+
+    it('checkEraseモードで4つ以上連結したぷよがあると、erasingモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 横に4つ赤いぷよを配置
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(2, 12, '#ff0000')
+      stage.setPuyo(3, 12, '#ff0000')
+
+      // checkEraseモードに設定
+      anyGame.mode = 'checkErase'
+
+      // 更新処理
+      anyGame.update()
+
+      // erasingモードに遷移していることを確認
+      expect(anyGame.mode).toBe('erasing')
+    })
+
+    it('erasingモードではぷよが消去される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 横に4つ赤いぷよを配置
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(2, 12, '#ff0000')
+      stage.setPuyo(3, 12, '#ff0000')
+
+      // checkEraseモードで消去対象を検出
+      anyGame.mode = 'checkErase'
+      anyGame.update()
+
+      // erasingモードで消去実行
+      expect(anyGame.mode).toBe('erasing')
+      anyGame.update()
+
+      // ぷよが消去されていることを確認
+      expect(stage.getPuyo(0, 12)).toBe('')
+      expect(stage.getPuyo(1, 12)).toBe('')
+      expect(stage.getPuyo(2, 12)).toBe('')
+      expect(stage.getPuyo(3, 12)).toBe('')
+    })
+
+    it('消すぷよがない場合は、newPuyoモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 3つだけ配置（消去対象外）
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#ff0000')
+      stage.setPuyo(2, 12, '#ff0000')
+
+      // checkEraseモードに設定
+      anyGame.mode = 'checkErase'
+
+      // 更新処理
+      anyGame.update()
+
+      // newPuyoモードに遷移していることを確認
+      expect(anyGame.mode).toBe('newPuyo')
+    })
+
+    it('newPuyoモードでは新しいぷよが生成されてplayingモードに戻る', () => {
+      game.initialize()
+
+      const anyGame = game as any
+
+      // newPuyoモードに設定
+      anyGame.mode = 'newPuyo'
+
+      // 更新処理
+      anyGame.update()
+
+      // playingモードに戻っていることを確認
+      expect(anyGame.mode).toBe('playing')
     })
   })
 })

@@ -25,6 +25,7 @@ export class Game {
   private _score!: Score
   private isRunning: boolean = false
   private fallSpeed: number = 30 // 30フレームごとに1マス落下
+  private erasableGroups: { x: number; y: number }[][] = [] // 消去対象のぷよグループ
 
   constructor() {
     // コンストラクタでは何もしない
@@ -68,30 +69,74 @@ export class Game {
 
   // ゲームの状態を更新
   private update(): void {
-    if (this.mode === 'playing') {
-      this._player.update()
+    const handlers: Record<GameMode, () => void> = {
+      start: () => {},
+      playing: () => this.updatePlaying(),
+      checkErase: () => this.updateCheckErase(),
+      erasing: () => this.updateErasing(),
+      newPuyo: () => this.updateNewPuyo(),
+      checkFall: () => {},
+      fall: () => {},
+      gameOver: () => {},
+    }
 
-      // 着地判定
-      if (this._player.checkLanded()) {
-        // 着地したぷよをステージに配置
-        this._player.placePuyoOnStage()
-        // 次のぷよを生成
-        this._player.createNewPuyo()
+    const handler = handlers[this.mode]
+    if (handler) {
+      handler()
+    }
+  }
+
+  // プレイ中の更新処理
+  private updatePlaying(): void {
+    this._player.update()
+
+    if (this._player.checkLanded()) {
+      this._player.placePuyoOnStage()
+      this._frame = 0
+      this.mode = 'checkErase'
+    } else {
+      this.handleFalling()
+    }
+  }
+
+  // 落下処理
+  private handleFalling(): void {
+    if (this._player.isDownKeyPressed()) {
+      this._player.moveDown()
+    } else {
+      this._frame++
+      if (this._frame >= this.fallSpeed) {
         this._frame = 0
-      } else {
-        // 下キーが押されている場合は高速落下
-        if (this._player.isDownKeyPressed()) {
-          this._player.moveDown()
-        } else {
-          // 自由落下処理
-          this._frame++
-          if (this._frame >= this.fallSpeed) {
-            this._frame = 0
-            this._player.moveDown()
-          }
-        }
+        this._player.moveDown()
       }
     }
+  }
+
+  // 消去判定モードの更新処理
+  private updateCheckErase(): void {
+    this.erasableGroups = this.stage.checkErasablePuyos()
+
+    if (this.erasableGroups.length > 0) {
+      this.mode = 'erasing'
+    } else {
+      this.mode = 'newPuyo'
+    }
+  }
+
+  // 消去実行モードの更新処理
+  private updateErasing(): void {
+    for (const group of this.erasableGroups) {
+      this.stage.erasePuyos(group)
+    }
+    this.erasableGroups = []
+    this.mode = 'checkErase'
+  }
+
+  // 新ぷよ生成モードの更新処理
+  private updateNewPuyo(): void {
+    this._player.createNewPuyo()
+    this._frame = 0
+    this.mode = 'playing'
   }
 
   // 画面を描画
