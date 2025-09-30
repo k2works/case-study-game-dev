@@ -8,9 +8,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bolero" Version="0.23.0" />
-    <PackageReference Include="Bolero.Build" Version="0.23.0" />
-    <PackageReference Include="Bolero.HotReload" Version="0.23.0" />
+    <PackageReference Include="Bolero" Version="0.24.38" />
+    <PackageReference Include="Bolero.Build" Version="0.24.38" />
+    <PackageReference Include="Bolero.HotReload" Version="0.24.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" />
   </ItemGroup>
 </Project>
