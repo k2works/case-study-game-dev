@@ -88,21 +88,37 @@ export class Game {
 
   // プレイ中の更新処理
   private updatePlaying(): void {
-    this._player.update()
-
-    // 重なり判定
+    // 重なり判定（移動前にチェック）
     if (this._player.isOverlapping()) {
       // 重なっている場合は即座に着地処理
       this._player.placePuyoOnStage()
       this._frame = 0
       this.mode = 'checkErase'
-    } else if (this._player.checkLanded()) {
+      return
+    }
+
+    // 着地判定
+    if (this._player.checkLanded()) {
       this._player.placePuyoOnStage()
       this._frame = 0
       this.mode = 'checkErase'
-    } else {
-      this.handleFalling()
+      return
     }
+
+    // プレイヤー操作を更新（移動処理）
+    this._player.update()
+
+    // 移動後に再度重なり判定
+    if (this._player.isOverlapping()) {
+      // 移動後に重なった場合も即座に着地処理
+      this._player.placePuyoOnStage()
+      this._frame = 0
+      this.mode = 'checkErase'
+      return
+    }
+
+    // 自動落下処理
+    this.handleFalling()
   }
 
   // 落下処理
