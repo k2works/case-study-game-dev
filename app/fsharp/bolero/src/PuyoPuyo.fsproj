@@ -1,10 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Domain Models -->
+    <Compile Include="Domain/Types.fs" />
+    <Compile Include="Domain/Board.fs" />
+    <Compile Include="Domain/Puyo.fs" />
+    <Compile Include="Domain/GameLogic.fs" />
+
+    <!-- Elmish -->
+    <Compile Include="Elmish/Model.fs" />
+    <Compile Include="Elmish/Update.fs" />
+
+    <!-- Main -->
     <Compile Include="Main.fs" />
+    <Compile Include="Startup.fs" />
   </ItemGroup>
 
   <ItemGroup>
