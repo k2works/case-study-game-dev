@@ -7,6 +7,7 @@ export class Stage {
   private _puyoImage: PuyoImage
   private canvas: HTMLCanvasElement | null = null
   private context: CanvasRenderingContext2D | null = null
+  private stageData: string[][] = []
 
   constructor(config: Config, puyoImage: PuyoImage) {
     this._config = config
@@ -22,6 +23,15 @@ export class Stage {
     }
     this.canvas = canvas
     this.context = canvas.getContext('2d')
+
+    // ステージデータを初期化（全て空）
+    this.stageData = []
+    for (let row = 0; row < this._config.stageRows; row++) {
+      this.stageData[row] = []
+      for (let col = 0; col < this._config.stageCols; col++) {
+        this.stageData[row][col] = ''
+      }
+    }
   }
 
   // ステージをクリア（背景を描画）
@@ -79,5 +89,33 @@ export class Stage {
     this.context.beginPath()
     this.context.arc(px + size / 3, py + size / 3, size / 6, 0, Math.PI * 2)
     this.context.fill()
+  }
+
+  // ステージデータからぷよを取得
+  getPuyo(x: number, y: number): string {
+    if (y < 0 || y >= this._config.stageRows || x < 0 || x >= this._config.stageCols) {
+      return ''
+    }
+    return this.stageData[y][x]
+  }
+
+  // ステージデータにぷよを配置
+  setPuyo(x: number, y: number, color: string): void {
+    if (y < 0 || y >= this._config.stageRows || x < 0 || x >= this._config.stageCols) {
+      return
+    }
+    this.stageData[y][x] = color
+  }
+
+  // ステージに配置された全てのぷよを描画
+  drawStagePuyos(): void {
+    for (let row = 0; row < this._config.stageRows; row++) {
+      for (let col = 0; col < this._config.stageCols; col++) {
+        const color = this.stageData[row][col]
+        if (color !== '') {
+          this.drawPuyo(col, row, color)
+        }
+      }
+    }
   }
 }

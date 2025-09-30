@@ -182,6 +182,18 @@ export class Player {
     return false
   }
 
+  // 着地したぷよをステージに配置
+  placePuyoOnStage(): void {
+    // 1つ目のぷよ（軸ぷよ）
+    this._stage.setPuyo(this.puyoX, this.puyoY, this.getPuyoColor(0))
+
+    // 2つ目のぷよ
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+    this._stage.setPuyo(x2, y2, this.getPuyoColor(1))
+  }
+
   // プレイヤー操作を初期化する
   initialize(): void {
     // TODO: プレイヤー操作の初期化処理

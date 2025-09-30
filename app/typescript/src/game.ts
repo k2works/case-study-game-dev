@@ -73,6 +73,8 @@ export class Game {
 
       // 着地判定
       if (this._player.checkLanded()) {
+        // 着地したぷよをステージに配置
+        this._player.placePuyoOnStage()
         // 次のぷよを生成
         this._player.createNewPuyo()
         this._frame = 0
@@ -97,7 +99,10 @@ export class Game {
     // ステージをクリア
     this.stage.clear()
 
-    // ぷよを描画
+    // ステージに配置されたぷよを描画
+    this.stage.drawStagePuyos()
+
+    // 落下中のぷよを描画
     if (this.mode === 'playing') {
       this._player.draw()
     }

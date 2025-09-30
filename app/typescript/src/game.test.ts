@@ -130,5 +130,24 @@ describe('ゲーム', () => {
       // 新しいぷよが上部に生成されていることを確認
       expect(player.puyoY).toBe(0)
     })
+
+    it('ぷよが着地すると、ステージにぷよが配置される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const player = anyGame._player
+      const stage = anyGame.stage
+
+      // ぷよの位置を記録
+      const landedX = player.puyoX
+      const landedY = anyGame.config.stageRows - 1
+      player.puyoY = landedY
+
+      // 1フレーム更新（着地処理）
+      anyGame.update()
+
+      // ステージにぷよが配置されていることを確認
+      expect(stage.getPuyo(landedX, landedY)).not.toBe('')
+    })
   })
 })
