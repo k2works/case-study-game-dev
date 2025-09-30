@@ -4,14 +4,13 @@
   "description": "F# Puyo Puyo Game with Fable and TDD",
   "main": "public/bundle.js",
   "scripts": {
+    "prebuild": "dotnet fable src -o dist",
     "start": "webpack-dev-server",
-    "build": "webpack",
+    "build": "npm run prebuild && webpack",
     "test": "dotnet test tests/",
     "watch": "webpack --watch"
   },
   "dependencies": {
-    "fable-compiler": "^2.1.0",
-    "fable-loader": "^2.1.9"
   },
   "devDependencies": {
     "webpack": "^5.88.0",

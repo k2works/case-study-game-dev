@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: './src/Main.fs.js',
+    entry: './dist/Main.js',
     output: {
         path: path.join(__dirname, './public'),
         filename: 'bundle.js',
@@ -12,13 +12,5 @@ module.exports = {
             directory: path.join(__dirname, './public'),
         },
         port: 8080,
-    },
-    module: {
-        rules: [
-            {
-                test: /\.fs(x|proj)?$/,
-                use: 'fable-loader'
-            }
-        ]
     }
 };
