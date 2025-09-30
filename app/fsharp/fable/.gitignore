@@ -1,0 +1,25 @@
+# Build results
+bin/
+obj/
+.vs/
+*.user
+
+# Node modules
+node_modules/
+
+# Output
+public/bundle.js
+public/bundle.js.map
+
+# IDE
+.idea/
+*.suo
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
