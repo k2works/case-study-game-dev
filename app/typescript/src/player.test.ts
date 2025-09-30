@@ -13,11 +13,28 @@ describe('プレイヤー', () => {
   beforeEach(() => {
     // DOMの準備
     document.body.innerHTML = `
-            <div id="stage"></div>
+            <canvas id="stage"></canvas>
         `
+
+    // Canvas のモックを作成
+    const canvas = document.getElementById('stage') as any
+    canvas.getContext = () => ({
+      fillStyle: '',
+      strokeStyle: '',
+      lineWidth: 0,
+      fillRect: () => {},
+      beginPath: () => {},
+      moveTo: () => {},
+      lineTo: () => {},
+      stroke: () => {},
+      arc: () => {},
+      fill: () => {},
+    })
+
     config = new Config()
     puyoImage = new PuyoImage(config)
     stage = new Stage(config, puyoImage)
+    stage.initialize()
     player = new Player(config, stage, puyoImage)
   })
 
@@ -226,6 +243,21 @@ describe('プレイヤー', () => {
       expect(result).toBe(false)
       expect(anyPlayer.puyoY).toBe(config.stageRows - 1)
     })
+
+    it('下のセルにぷよがある場合、下に移動できない', () => {
+      const anyPlayer = player as any
+      const initialY = anyPlayer.puyoY
+
+      // 下のセルにぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, initialY + 1, '#ff0000')
+
+      // 下に移動を試みる
+      const result = player.moveDown()
+
+      // 移動できないことを確認
+      expect(result).toBe(false)
+      expect(anyPlayer.puyoY).toBe(initialY)
+    })
   })
 
   describe('着地判定', () => {
@@ -252,6 +284,20 @@ describe('プレイヤー', () => {
 
       // 着地していないことを確認
       expect(landed).toBe(false)
+    })
+
+    it('下のセルにぷよがある場合、着地したと判定する', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoY = 5
+
+      // 下のセルにぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, 6, '#ff0000')
+
+      // 着地判定
+      const landed = player.checkLanded()
+
+      // 着地していることを確認
+      expect(landed).toBe(true)
     })
   })
 })

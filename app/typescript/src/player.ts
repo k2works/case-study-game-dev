@@ -88,6 +88,19 @@ export class Player {
       return false
     }
 
+    // 下のセルにぷよがあるかチェック
+    if (this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよの下もチェック
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+    if (this._stage.getPuyo(x2, y2 + 1) !== '') {
+      return false
+    }
+
     // 移動可能な場合は下に移動
     this.puyoY++
     return true
@@ -179,6 +192,20 @@ export class Player {
     if (this.puyoY >= this._config.stageRows - 1) {
       return true
     }
+
+    // 下のセルにぷよがあるかチェック
+    if (this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== '') {
+      return true
+    }
+
+    // 2つ目のぷよの下もチェック
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+    if (this._stage.getPuyo(x2, y2 + 1) !== '') {
+      return true
+    }
+
     return false
   }
 
