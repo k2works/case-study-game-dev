@@ -5,6 +5,7 @@ open PuyoGame.Domain.Board
 open PuyoGame.Domain.Puyo
 open PuyoGame.Domain.GameLogic
 open PuyoGame.Elmish.Model
+open PuyoGame.Elmish.Commands
 open Elmish
 
 /// ゲームオーバー判定（上部 2 行にぷよがある場合）
@@ -33,7 +34,7 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                 Score = 0
                 ChainCount = 0
                 GameStatus = Playing
-        }, Cmd.none
+        }, startGameLoop ()
 
     | MoveLeft ->
         match model.CurrentPiece with
@@ -94,7 +95,7 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                         model with
                             CurrentPiece = Some nextPiece
                             NextPiece = Some newNextPiece
-                    }, Cmd.none
+                    }, scheduleNextTick ()
                 | None ->
                     let newPiece = spawnNewPuyoPair ()
                     let nextPiece = spawnNewPuyoPair ()
@@ -102,13 +103,13 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                         model with
                             CurrentPiece = Some newPiece
                             NextPiece = Some nextPiece
-                    }, Cmd.none
+                    }, scheduleNextTick ()
 
             | Some currentPiece ->
                 if canFall model.Board currentPiece then
                     // まだ落下できる場合
                     let movedPiece = movePuyoPairDown model.Board currentPiece
-                    { model with CurrentPiece = Some movedPiece }, Cmd.none
+                    { model with CurrentPiece = Some movedPiece }, scheduleNextTick ()
                 else
                     // 落下できない場合 - 固定処理
                     let fixedBoard = fixPuyoPairToBoard model.Board currentPiece
@@ -138,7 +139,7 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                                     NextPiece = Some newNextPiece
                                     Score = model.Score + chainResult.TotalScore
                                     ChainCount = chainResult.ChainCount
-                            }, Cmd.none
+                            }, scheduleNextTick ()
                         | None ->
                             {
                                 model with
@@ -146,7 +147,7 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                                     CurrentPiece = None
                                     Score = model.Score + chainResult.TotalScore
                                     ChainCount = chainResult.ChainCount
-                            }, Cmd.none
+                            }, scheduleNextTick ()
 
     | NoOp ->
         model, Cmd.none

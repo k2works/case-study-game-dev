@@ -12,6 +12,7 @@
 
     <!-- Elmish -->
     <Compile Include="Elmish/Model.fs" />
+    <Compile Include="Elmish/Commands.fs" />
     <Compile Include="Elmish/Update.fs" />
 
     <!-- Main -->
