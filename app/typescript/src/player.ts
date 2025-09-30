@@ -16,6 +16,9 @@ export class Player {
   private puyoX: number = 0
   private puyoY: number = 0
 
+  // ぷよの回転状態（0:上, 1:右, 2:下, 3:左）
+  private rotation: number = 0
+
   constructor(config: Config, stage: Stage, puyoImage: PuyoImage) {
     this._config = config
     this._stage = stage
@@ -49,6 +52,7 @@ export class Player {
     // 初期位置（中央上部）にぷよを配置
     this.puyoX = Math.floor(this._config.stageCols / 2)
     this.puyoY = 0
+    this.rotation = 0
   }
 
   // 左に移動
@@ -63,6 +67,34 @@ export class Player {
     if (this.puyoX < this._config.stageCols - 1) {
       this.puyoX++
     }
+  }
+
+  // 時計回りに回転
+  rotateRight(): void {
+    // 次の回転状態を計算
+    const nextRotation = (this.rotation + 1) % 4
+
+    // 壁キック処理
+    if (nextRotation === 1 && this.puyoX === this._config.stageCols - 1) {
+      // 右向きになるときに右端にいる場合は左に移動
+      this.puyoX--
+    }
+
+    this.rotation = nextRotation
+  }
+
+  // 反時計回りに回転
+  rotateLeft(): void {
+    // 次の回転状態を計算（負の値にならないように3を足す）
+    const nextRotation = (this.rotation + 3) % 4
+
+    // 壁キック処理
+    if (nextRotation === 3 && this.puyoX === 0) {
+      // 左向きになるときに左端にいる場合は右に移動
+      this.puyoX++
+    }
+
+    this.rotation = nextRotation
   }
 
   // プレイヤー操作を初期化する
