@@ -114,6 +114,30 @@ describe('ゲーム', () => {
     })
   })
 
+  describe('重なり検出と即座着地', () => {
+    it('配置済みぷよと重なっている場合、即座に着地処理が実行される', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const player = anyGame._player
+      const stage = anyGame.stage
+
+      // ステージにぷよを配置
+      stage.setPuyo(3, 5, '#ff0000')
+
+      // プレイヤーぷよを重なる位置に配置
+      player.puyoX = 3
+      player.puyoY = 5
+      player.rotation = 0
+
+      // 更新処理を実行
+      anyGame.update()
+
+      // 即座にcheckEraseモードに遷移していることを確認
+      expect(anyGame.mode).toBe('checkErase')
+    })
+  })
+
   describe('着地と次のぷよ生成', () => {
     it('ぷよが着地すると、checkEraseモードを経て新しいぷよが上部に生成される', () => {
       game.initialize()

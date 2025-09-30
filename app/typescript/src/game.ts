@@ -90,7 +90,13 @@ export class Game {
   private updatePlaying(): void {
     this._player.update()
 
-    if (this._player.checkLanded()) {
+    // 重なり判定
+    if (this._player.isOverlapping()) {
+      // 重なっている場合は即座に着地処理
+      this._player.placePuyoOnStage()
+      this._frame = 0
+      this.mode = 'checkErase'
+    } else if (this._player.checkLanded()) {
       this._player.placePuyoOnStage()
       this._frame = 0
       this.mode = 'checkErase'

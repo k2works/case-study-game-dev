@@ -70,6 +70,50 @@ describe('プレイヤー', () => {
     })
   })
 
+  describe('重なり状態の検出', () => {
+    beforeEach(() => {
+      player.createNewPuyo()
+    })
+
+    it('現在位置が配置済みぷよと重なっている場合、移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 現在の軸ぷよの位置に配置済みぷよを配置（重なり状態）
+      stage.setPuyo(3, 5, '#ff0000')
+
+      // 左に移動を試みる
+      const canLeft = anyPlayer.canMoveLeft()
+      // 右に移動を試みる
+      const canRight = anyPlayer.canMoveRight()
+
+      // 重なっている場合は移動不可
+      expect(canLeft).toBe(false)
+      expect(canRight).toBe(false)
+    })
+
+    it('横向きぷよが配置済みぷよと重なっている場合、移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよが右）
+
+      // 2つ目のぷよの位置に配置済みぷよを配置（重なり状態）
+      stage.setPuyo(4, 5, '#0000ff')
+
+      // 左に移動を試みる
+      const canLeft = anyPlayer.canMoveLeft()
+      // 右に移動を試みる
+      const canRight = anyPlayer.canMoveRight()
+
+      // 重なっている場合は移動不可
+      expect(canLeft).toBe(false)
+      expect(canRight).toBe(false)
+    })
+  })
+
   describe('ぷよの移動', () => {
     beforeEach(() => {
       // 新しいぷよを作成

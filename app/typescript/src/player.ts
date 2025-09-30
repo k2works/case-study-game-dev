@@ -92,6 +92,16 @@ export class Player {
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
 
+    // 現在位置の重なりチェック（軸ぷよ）
+    if (this._stage.getPuyo(this.puyoX, this.puyoY) !== '') {
+      return false
+    }
+
+    // 現在位置の重なりチェック（2つ目のぷよ）
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return false
+    }
+
     // 軸ぷよの左をチェック
     if (this._stage.getPuyo(this.puyoX - 1, this.puyoY) !== '') {
       return false
@@ -118,6 +128,16 @@ export class Player {
     const offset = this.getSecondPuyoOffset()
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
+
+    // 現在位置の重なりチェック（軸ぷよ）
+    if (this._stage.getPuyo(this.puyoX, this.puyoY) !== '') {
+      return false
+    }
+
+    // 現在位置の重なりチェック（2つ目のぷよ）
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return false
+    }
 
     // 軸ぷよの右をチェック
     if (this._stage.getPuyo(this.puyoX + 1, this.puyoY) !== '') {
@@ -369,6 +389,25 @@ export class Player {
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
     this._stage.setPuyo(x2, y2, this.getPuyoColor(1))
+  }
+
+  // 配置済みぷよと重なっているかチェック
+  isOverlapping(): boolean {
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 軸ぷよが重なっているか
+    if (this._stage.getPuyo(this.puyoX, this.puyoY) !== '') {
+      return true
+    }
+
+    // 2つ目のぷよが重なっているか
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return true
+    }
+
+    return false
   }
 
   // プレイヤー操作を初期化する
