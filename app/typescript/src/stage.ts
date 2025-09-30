@@ -199,4 +199,43 @@ export class Stage {
       this.setPuyo(pos.x, pos.y, '')
     }
   }
+
+  // 落下可能なぷよがあるかチェック
+  checkFall(): boolean {
+    for (let col = 0; col < this._config.stageCols; col++) {
+      for (let row = 0; row < this._config.stageRows - 1; row++) {
+        // ぷよがあって、その下が空白なら落下可能
+        if (this.getPuyo(col, row) !== '' && this.getPuyo(col, row + 1) === '') {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  // 重力を適用（全列のぷよを下に詰める）
+  applyGravity(): void {
+    for (let col = 0; col < this._config.stageCols; col++) {
+      this.applyGravityToColumn(col)
+    }
+  }
+
+  // 1列に対して重力を適用
+  private applyGravityToColumn(col: number): void {
+    // 下から順にぷよを詰める
+    let writeRow = this._config.stageRows - 1
+
+    // 下から上にスキャン
+    for (let row = this._config.stageRows - 1; row >= 0; row--) {
+      const puyo = this.getPuyo(col, row)
+      if (puyo !== '') {
+        // ぷよがある場合は書き込み位置に移動
+        if (row !== writeRow) {
+          this.setPuyo(col, writeRow, puyo)
+          this.setPuyo(col, row, '')
+        }
+        writeRow--
+      }
+    }
+  }
 }

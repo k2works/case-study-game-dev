@@ -74,9 +74,9 @@ export class Game {
       playing: () => this.updatePlaying(),
       checkErase: () => this.updateCheckErase(),
       erasing: () => this.updateErasing(),
+      checkFall: () => this.updateCheckFall(),
+      fall: () => this.updateFall(),
       newPuyo: () => this.updateNewPuyo(),
-      checkFall: () => {},
-      fall: () => {},
       gameOver: () => {},
     }
 
@@ -129,6 +129,23 @@ export class Game {
       this.stage.erasePuyos(group)
     }
     this.erasableGroups = []
+    // 消去後は落下判定へ
+    this.mode = 'checkFall'
+  }
+
+  // 落下判定モードの更新処理
+  private updateCheckFall(): void {
+    if (this.stage.checkFall()) {
+      this.mode = 'fall'
+    } else {
+      this.mode = 'newPuyo'
+    }
+  }
+
+  // 落下実行モードの更新処理
+  private updateFall(): void {
+    this.stage.applyGravity()
+    // 落下後は消去判定へ（連鎖処理）
     this.mode = 'checkErase'
   }
 

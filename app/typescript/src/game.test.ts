@@ -270,4 +270,95 @@ describe('ゲーム', () => {
       expect(anyGame.mode).toBe('playing')
     })
   })
+
+  describe('重力落下', () => {
+    it('ぷよ消去後、落下可能なぷよがあればcheckFallモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 縦に積まれたぷよを配置
+      stage.setPuyo(2, 10, '#ff0000')
+      stage.setPuyo(2, 11, '#0000ff')
+      stage.setPuyo(2, 12, '#00ff00')
+
+      // 横に4つ配置して消去可能にする
+      stage.setPuyo(0, 12, '#00ff00')
+      stage.setPuyo(1, 12, '#00ff00')
+      stage.setPuyo(3, 12, '#00ff00')
+
+      // checkEraseモードで消去対象検出
+      anyGame.mode = 'checkErase'
+      anyGame.update()
+      expect(anyGame.mode).toBe('erasing')
+
+      // 消去実行
+      anyGame.update()
+
+      // 落下判定モードに遷移
+      expect(anyGame.mode).toBe('checkFall')
+    })
+
+    it('checkFallモードで落下可能なぷよがあればfallモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 空白の上にぷよを配置
+      stage.setPuyo(2, 5, '#ff0000')
+
+      // checkFallモードに設定
+      anyGame.mode = 'checkFall'
+
+      // 更新処理
+      anyGame.update()
+
+      // fallモードに遷移していることを確認
+      expect(anyGame.mode).toBe('fall')
+    })
+
+    it('fallモードでは重力が適用されcheckEraseモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 空白の上にぷよを配置
+      stage.setPuyo(2, 5, '#ff0000')
+
+      // fallモードに設定
+      anyGame.mode = 'fall'
+
+      // 更新処理
+      anyGame.update()
+
+      // ぷよが落下していることを確認
+      expect(stage.getPuyo(2, 12)).toBe('#ff0000')
+      expect(stage.getPuyo(2, 5)).toBe('')
+
+      // checkEraseモードに遷移（連鎖判定）
+      expect(anyGame.mode).toBe('checkErase')
+    })
+
+    it('落下可能なぷよがない場合はnewPuyoモードに遷移する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const stage = anyGame.stage
+
+      // 下端にぷよを配置（落下不可）
+      stage.setPuyo(2, 12, '#ff0000')
+
+      // checkFallモードに設定
+      anyGame.mode = 'checkFall'
+
+      // 更新処理
+      anyGame.update()
+
+      // newPuyoモードに遷移していることを確認
+      expect(anyGame.mode).toBe('newPuyo')
+    })
+  })
 })

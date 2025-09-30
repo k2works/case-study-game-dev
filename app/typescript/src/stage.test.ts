@@ -240,4 +240,84 @@ describe('ステージ', () => {
       expect(stage.getPuyo(3, 12)).toBe('')
     })
   })
+
+  describe('重力落下', () => {
+    beforeEach(() => {
+      stage.initialize()
+    })
+
+    it('下にぷよがない場合、落下可能と判定される', () => {
+      // 上部にぷよを配置
+      stage.setPuyo(2, 5, '#ff0000')
+
+      // 落下判定
+      const canFall = stage.checkFall()
+
+      // 落下可能であることを確認
+      expect(canFall).toBe(true)
+    })
+
+    it('全てのぷよが着地している場合、落下不可能と判定される', () => {
+      // 下端にぷよを配置
+      stage.setPuyo(0, 12, '#ff0000')
+      stage.setPuyo(1, 12, '#0000ff')
+
+      // 落下判定
+      const canFall = stage.checkFall()
+
+      // 落下不可能であることを確認
+      expect(canFall).toBe(false)
+    })
+
+    it('重力を適用すると、ぷよが下に落下する', () => {
+      // 縦に並んだぷよを配置（間に空白あり）
+      stage.setPuyo(2, 5, '#ff0000')
+      stage.setPuyo(2, 7, '#0000ff')
+      stage.setPuyo(2, 9, '#00ff00')
+
+      // 重力を適用
+      stage.applyGravity()
+
+      // ぷよが下に詰まっていることを確認
+      expect(stage.getPuyo(2, 12)).toBe('#00ff00')
+      expect(stage.getPuyo(2, 11)).toBe('#0000ff')
+      expect(stage.getPuyo(2, 10)).toBe('#ff0000')
+      expect(stage.getPuyo(2, 5)).toBe('')
+      expect(stage.getPuyo(2, 7)).toBe('')
+      expect(stage.getPuyo(2, 9)).toBe('')
+    })
+
+    it('複数列に対して重力が適用される', () => {
+      // 複数列にぷよを配置
+      stage.setPuyo(0, 5, '#ff0000')
+      stage.setPuyo(1, 7, '#0000ff')
+      stage.setPuyo(2, 9, '#00ff00')
+
+      // 重力を適用
+      stage.applyGravity()
+
+      // 各列で下に詰まっていることを確認
+      expect(stage.getPuyo(0, 12)).toBe('#ff0000')
+      expect(stage.getPuyo(1, 12)).toBe('#0000ff')
+      expect(stage.getPuyo(2, 12)).toBe('#00ff00')
+      expect(stage.getPuyo(0, 5)).toBe('')
+      expect(stage.getPuyo(1, 7)).toBe('')
+      expect(stage.getPuyo(2, 9)).toBe('')
+    })
+
+    it('連続した空白がある場合でも正しく落下する', () => {
+      // 空白を挟んでぷよを配置
+      stage.setPuyo(2, 5, '#ff0000')
+      // 6-11は空白
+      stage.setPuyo(2, 12, '#0000ff')
+
+      // 重力を適用
+      stage.applyGravity()
+
+      // 赤いぷよが青いぷよの上に落下
+      expect(stage.getPuyo(2, 12)).toBe('#0000ff')
+      expect(stage.getPuyo(2, 11)).toBe('#ff0000')
+      expect(stage.getPuyo(2, 5)).toBe('')
+    })
+  })
 })
