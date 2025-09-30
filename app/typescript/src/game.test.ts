@@ -136,6 +136,45 @@ describe('ゲーム', () => {
       // 即座にcheckEraseモードに遷移していることを確認
       expect(anyGame.mode).toBe('checkErase')
     })
+
+    it('縦向きぷよが着地後、横向きぷよが重なる位置に来た場合、即座に着地する', () => {
+      game.initialize()
+
+      const anyGame = game as any
+      const player = anyGame._player
+      const stage = anyGame.stage
+
+      // 縦向きぷよ（rotation=0）をx=3, y=12に配置して着地させる
+      player.puyoX = 3
+      player.puyoY = 12 // 最下段
+      player.rotation = 0 // 上向き（2つ目のぷよがy=11）
+
+      // 着地させる
+      anyGame.mode = 'playing'
+      anyGame.update() // 着地検出
+      expect(anyGame.mode).toBe('checkErase')
+
+      // ステージに配置されたぷよを確認
+      expect(stage.getPuyo(3, 12)).not.toBe('')
+      expect(stage.getPuyo(3, 11)).not.toBe('')
+
+      // 消去・落下判定を完了させる
+      anyGame.update() // checkErase
+      anyGame.update() // checkFall
+      anyGame.update() // newPuyo
+
+      // 次のぷよを横向き（rotation=1）で生成して配置済みぷよの上に重ねる
+      player.puyoX = 3
+      player.puyoY = 11 // 配置済みぷよ(3,11)と重なる
+      player.rotation = 1 // 右向き（2つ目のぷよが x=4, y=11）
+
+      // 更新処理
+      anyGame.mode = 'playing'
+      anyGame.update()
+
+      // 軸ぷよ(3,11)が配置済みぷよと重なっているので即座着地
+      expect(anyGame.mode).toBe('checkErase')
+    })
   })
 
   describe('着地と次のぷよ生成', () => {
