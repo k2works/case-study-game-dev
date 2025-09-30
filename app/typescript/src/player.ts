@@ -102,17 +102,18 @@ export class Player {
       return false
     }
 
-    // 軸ぷよの左をチェック
-    if (this._stage.getPuyo(this.puyoX - 1, this.puyoY) !== '') {
+    // 左に移動した後の位置をチェック
+    const newMainX = this.puyoX - 1
+    const newSecondX = x2 - 1
+
+    // 軸ぷよの移動先をチェック
+    if (this._stage.getPuyo(newMainX, this.puyoY) !== '') {
       return false
     }
 
-    // 2つ目のぷよが左側にある場合（rotation=3）
-    if (this.rotation === 3) {
-      // 2つ目のぷよの左をチェック
-      if (this._stage.getPuyo(x2 - 1, y2) !== '') {
-        return false
-      }
+    // 2つ目のぷよの移動先をチェック
+    if (this._stage.getPuyo(newSecondX, y2) !== '') {
+      return false
     }
 
     return true
@@ -139,17 +140,18 @@ export class Player {
       return false
     }
 
-    // 軸ぷよの右をチェック
-    if (this._stage.getPuyo(this.puyoX + 1, this.puyoY) !== '') {
+    // 右に移動した後の位置をチェック
+    const newMainX = this.puyoX + 1
+    const newSecondX = x2 + 1
+
+    // 軸ぷよの移動先をチェック
+    if (this._stage.getPuyo(newMainX, this.puyoY) !== '') {
       return false
     }
 
-    // 2つ目のぷよが右側にある場合（rotation=1）
-    if (this.rotation === 1) {
-      // 2つ目のぷよの右をチェック
-      if (this._stage.getPuyo(x2 + 1, y2) !== '') {
-        return false
-      }
+    // 2つ目のぷよの移動先をチェック
+    if (this._stage.getPuyo(newSecondX, y2) !== '') {
+      return false
     }
 
     return true
