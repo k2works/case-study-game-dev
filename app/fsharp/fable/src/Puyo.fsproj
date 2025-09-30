@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Board.fs" />
+    <Compile Include="Puyo.fs" />
+    <Compile Include="GameLogic.fs" />
+    <Compile Include="Rendering.fs" />
+    <Compile Include="Game.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="4.0.0" />
+    <PackageReference Include="Fable.Browser.Dom" Version="2.14.0" />
+  </ItemGroup>
+</Project>
