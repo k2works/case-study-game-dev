@@ -218,4 +218,25 @@ describe('プレイヤー', () => {
       expect(player['puyoY']).toBe(config.stageRows - 1)
     })
   })
+
+  describe('着地処理', () => {
+    it('下端に着地すると、着地フラグが立つ', () => {
+      // 下端に配置（子ぷよが上にあるので、親ぷよはstageRows - 1）
+      player['puyoY'] = config.stageRows - 1
+
+      // 落下処理を実行（これ以上落ちられないので着地）
+      player.update(1000)
+
+      // 着地フラグが立っていることを確認
+      expect(player.isLanded()).toBe(true)
+    })
+
+    it('着地していない状態では、着地フラグが立たない', () => {
+      // 初期位置（上の方）
+      player.createNewPuyo()
+
+      // 着地フラグが立っていないことを確認
+      expect(player.isLanded()).toBe(false)
+    })
+  })
 })

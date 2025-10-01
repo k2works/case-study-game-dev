@@ -79,6 +79,11 @@ export class Game {
       case 'playing':
         // プレイ中の処理
         this.player.update(deltaTime)
+
+        // ぷよが着地したら新しいぷよを生成
+        if (this.player.isLanded()) {
+          this.mode = 'newPuyo'
+        }
         break
       // 他のモードは後で実装
     }

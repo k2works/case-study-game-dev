@@ -25,6 +25,9 @@ export class Player {
   private dropTimer = 0
   private dropInterval = 1000 // 1秒ごとに落下
 
+  // 着地フラグ
+  private landed = false
+
   // キー入力のフラグ
   private inputKeyLeft = false
   private inputKeyRight = false
@@ -86,6 +89,9 @@ export class Player {
 
     // 回転状態をリセット
     this.rotation = 0
+
+    // 着地フラグをリセット
+    this.landed = false
   }
 
   // 操作中のぷよを描画
@@ -234,7 +240,35 @@ export class Player {
     // 下に移動できるかチェック
     if (this.canMoveDown()) {
       this.puyoY += 1
+    } else {
+      // 着地した
+      this.onLanded()
     }
+  }
+
+  // 着地処理
+  private onLanded(): void {
+    // 着地フラグを立てる
+    this.landed = true
+
+    // ステージにぷよを固定
+    this.fixPuyoToStage()
+  }
+
+  // ステージにぷよを固定
+  private fixPuyoToStage(): void {
+    // 親ぷよを固定
+    this._stage.setPuyo(this.puyoX, this.puyoY, this.puyoColor)
+
+    // 子ぷよを固定
+    const childX = this.puyoX + this.childOffsetX
+    const childY = this.puyoY + this.childOffsetY
+    this._stage.setPuyo(childX, childY, this.childColor)
+  }
+
+  // 着地したかどうかを取得
+  isLanded(): boolean {
+    return this.landed
   }
 
   // 下に移動できるかチェックする
