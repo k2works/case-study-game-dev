@@ -140,3 +140,5 @@ site
 .claude
 .cpcache
 .clj-kondo
+elm-stuff
+.nrepl-port
