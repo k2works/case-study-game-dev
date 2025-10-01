@@ -38,14 +38,43 @@ export class Player {
   private inputKeyRotate = false
   private inputKeyDown = false
 
+  // 次のぷよの色
+  private nextPuyoColor = 0
+  private nextChildColor = 0
+
+  // 次のぷよの Canvas 要素
+  private nextCanvas: HTMLCanvasElement | null = null
+  private nextCtx: CanvasRenderingContext2D | null = null
+
   constructor(config: Config, stage: Stage, puyoImage: PuyoImage) {
     this.config = config
     this._stage = stage
     this.puyoImage = puyoImage
 
+    // 次のぷよ表示用の Canvas を初期化
+    this.initializeNextCanvas()
+
     // キーボードイベントリスナーを設定
     document.addEventListener('keydown', this.onKeyDown.bind(this))
     document.addEventListener('keyup', this.onKeyUp.bind(this))
+  }
+
+  // 次のぷよ表示用の Canvas 初期化
+  private initializeNextCanvas(): void {
+    const nextElement = document.getElementById('next')
+    if (nextElement) {
+      this.nextCanvas = document.createElement('canvas')
+      this.nextCanvas.width = this.config.puyoSize * 2
+      this.nextCanvas.height = this.config.puyoSize * 2
+      this.nextCtx = this.nextCanvas.getContext('2d')
+      nextElement.appendChild(this.nextCanvas)
+
+      // タイトルを追加
+      const title = document.createElement('div')
+      title.textContent = 'Next'
+      title.style.marginBottom = '5px'
+      nextElement.insertBefore(title, this.nextCanvas)
+    }
   }
 
   // キーダウンイベント
@@ -88,9 +117,21 @@ export class Player {
     this.puyoX = Math.floor(this.config.stageCols / 2)
     this.puyoY = 0
 
-    // ランダムな色を設定（1-4の範囲）
-    this.puyoColor = Math.floor(Math.random() * 4) + 1
-    this.childColor = Math.floor(Math.random() * 4) + 1
+    // 次のぷよがある場合はそれを使用、なければランダム生成
+    if (this.nextPuyoColor === 0) {
+      // 初回のみランダム生成
+      this.puyoColor = Math.floor(Math.random() * 4) + 1
+      this.childColor = Math.floor(Math.random() * 4) + 1
+    } else {
+      // 次のぷよを使用
+      this.puyoColor = this.nextPuyoColor
+      this.childColor = this.nextChildColor
+    }
+
+    // 次のぷよを生成
+    this.nextPuyoColor = Math.floor(Math.random() * 4) + 1
+    this.nextChildColor = Math.floor(Math.random() * 4) + 1
+    this.drawNextPuyo()
 
     // 子ぷよは初期状態で上に配置
     this.childOffsetX = 0
@@ -101,6 +142,31 @@ export class Player {
 
     // 着地フラグをリセット
     this.landed = false
+  }
+
+  // 次のぷよを描画
+  private drawNextPuyo(): void {
+    if (!this.nextCtx || !this.nextCanvas) return
+
+    // 背景をクリア
+    this.nextCtx.fillStyle = '#333333'
+    this.nextCtx.fillRect(0, 0, this.nextCanvas.width, this.nextCanvas.height)
+
+    // 次のぷよ（親）を描画
+    this.puyoImage.draw(
+      this.nextCtx,
+      this.config.puyoSize / 2,
+      this.config.puyoSize,
+      this.nextPuyoColor
+    )
+
+    // 次のぷよ（子）を描画（上に配置）
+    this.puyoImage.draw(
+      this.nextCtx,
+      this.config.puyoSize / 2,
+      0,
+      this.nextChildColor
+    )
   }
 
   // 操作中のぷよを描画
