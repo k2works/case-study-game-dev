@@ -238,5 +238,39 @@ describe('プレイヤー', () => {
       // 着地フラグが立っていないことを確認
       expect(player.isLanded()).toBe(false)
     })
+
+    it('他のぷよの上に着地すると、着地フラグが立つ', () => {
+      // ステージに既存のぷよを配置（下端）
+      stage.setPuyo(2, config.stageRows - 1, 1)
+
+      // その上に新しいぷよを配置
+      player.createNewPuyo()
+      player['puyoX'] = 2
+      player['puyoY'] = config.stageRows - 2
+
+      // 落下処理を実行（既存のぷよの上で着地）
+      player.update(1000)
+
+      // 着地フラグが立っていることを確認
+      expect(player.isLanded()).toBe(true)
+    })
+
+    it('他のぷよがある場所には移動できない', () => {
+      // ステージに既存のぷよを配置
+      stage.setPuyo(2, 5, 1)
+
+      // その真上に新しいぷよを配置
+      player.createNewPuyo()
+      player['puyoX'] = 2
+      player['puyoY'] = 3
+
+      // 落下処理を実行（既存のぷよまで落ちる）
+      player.update(1000)
+      player.update(1000)
+
+      // 既存のぷよの上で止まっていることを確認
+      expect(player['puyoY']).toBe(4)
+      expect(player.isLanded()).toBe(true)
+    })
   })
 })

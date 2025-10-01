@@ -131,18 +131,70 @@ export class Player {
 
   // 左に移動
   moveLeft(): void {
-    // 左端チェック
-    if (this.puyoX > 0) {
+    // 左に移動できるかチェック
+    if (this.canMoveLeft()) {
       this.puyoX--
     }
   }
 
   // 右に移動
   moveRight(): void {
-    // 右端チェック
-    if (this.puyoX < this.config.stageCols - 1) {
+    // 右に移動できるかチェック
+    if (this.canMoveRight()) {
       this.puyoX++
     }
+  }
+
+  // 左に移動できるかチェック
+  private canMoveLeft(): boolean {
+    // 左端チェック
+    if (this.puyoX <= 0) {
+      return false
+    }
+
+    // 親ぷよの移動先にぷよがあるかチェック
+    if (this._stage.getPuyo(this.puyoX - 1, this.puyoY) !== 0) {
+      return false
+    }
+
+    // 子ぷよの移動先にぷよがあるかチェック（画面内の場合のみ）
+    const childX = this.puyoX + this.childOffsetX - 1
+    const childY = this.puyoY + this.childOffsetY
+    if (
+      childX >= 0 &&
+      childY >= 0 &&
+      this._stage.getPuyo(childX, childY) !== 0
+    ) {
+      return false
+    }
+
+    return true
+  }
+
+  // 右に移動できるかチェック
+  private canMoveRight(): boolean {
+    // 右端チェック
+    if (this.puyoX >= this.config.stageCols - 1) {
+      return false
+    }
+
+    // 親ぷよの移動先にぷよがあるかチェック
+    if (this._stage.getPuyo(this.puyoX + 1, this.puyoY) !== 0) {
+      return false
+    }
+
+    // 子ぷよの移動先にぷよがあるかチェック（画面内の場合のみ）
+    const childX = this.puyoX + this.childOffsetX + 1
+    const childY = this.puyoY + this.childOffsetY
+    if (
+      childX < this.config.stageCols &&
+      childY >= 0 &&
+      this._stage.getPuyo(childX, childY) !== 0
+    ) {
+      return false
+    }
+
+    return true
   }
 
   // 入力を処理（ゲームループから呼ばれる）
@@ -275,6 +327,7 @@ export class Player {
   private canMoveDown(): boolean {
     // 親ぷよと子ぷよの次の位置
     const nextY = this.puyoY + 1
+    const childX = this.puyoX + this.childOffsetX
     const childNextY = this.puyoY + this.childOffsetY + 1
 
     // 親ぷよが範囲外かチェック
@@ -284,6 +337,16 @@ export class Player {
 
     // 子ぷよが範囲外かチェック
     if (childNextY >= this.config.stageRows) {
+      return false
+    }
+
+    // 親ぷよの移動先にぷよがあるかチェック
+    if (this._stage.getPuyo(this.puyoX, nextY) !== 0) {
+      return false
+    }
+
+    // 子ぷよの移動先にぷよがあるかチェック
+    if (this._stage.getPuyo(childX, childNextY) !== 0) {
       return false
     }
 
