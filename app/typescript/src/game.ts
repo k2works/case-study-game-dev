@@ -279,16 +279,14 @@ export class Game {
   private updateGameOverDisplay(): void {
     const gameOverElement = document.getElementById('gameOver')
     if (gameOverElement) {
-      gameOverElement.style.display = this.mode === 'gameOver' ? 'block' : 'none'
+      gameOverElement.style.display = this.mode === 'gameOver' ? 'flex' : 'none'
     }
   }
 
   // リスタートボタンの表示を更新
   private updateRestartButtonDisplay(): void {
-    const restartButton = document.getElementById('restart')
-    if (restartButton) {
-      restartButton.style.display = this.mode === 'gameOver' ? 'block' : 'none'
-    }
+    // ゲームオーバー時はオーバーレイ内に表示されるため、常に表示
+    // 実際の表示/非表示はゲームオーバー時にユーザーがクリックで制御
   }
 
   // スコア表示を更新
@@ -296,6 +294,19 @@ export class Game {
     const scoreElement = document.getElementById('score')
     if (scoreElement) {
       scoreElement.textContent = this._score.getScore().toString()
+    }
+
+    // レベル表示を更新（スコアベース）
+    const levelElement = document.getElementById('level')
+    if (levelElement) {
+      const level = Math.floor(this._score.getScore() / 1000) + 1
+      levelElement.textContent = level.toString()
+    }
+
+    // 連鎖表示を更新
+    const chainElement = document.getElementById('chain')
+    if (chainElement) {
+      chainElement.textContent = this._combinationCount.toString()
     }
   }
 }

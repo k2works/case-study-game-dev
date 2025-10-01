@@ -1,88 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ぷよぷよ</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-color: #f0f0f0;
-        font-family: sans-serif;
-      }
-      #app {
-        text-align: center;
-      }
-      canvas {
-        border: 2px solid #333;
-        background-color: #fff;
-      }
-      .info {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #666;
-      }
-      .score-display {
-        margin-top: 20px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-      }
-      .score-label {
-        font-size: 16px;
-        color: #666;
-        margin-right: 10px;
-      }
-      #gameOver {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 48px;
-        font-weight: bold;
-        color: #ff0000;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        display: none;
-      }
-      #restart {
-        position: absolute;
-        top: 60%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 10px 30px;
-        font-size: 18px;
-        font-weight: bold;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        display: none;
-      }
-      #restart:hover {
-        background-color: #45a049;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <h1>ぷよぷよ</h1>
-      <div style="position: relative">
-        <canvas id="stage" width="192" height="416"></canvas>
-        <div id="gameOver">GAME OVER</div>
-        <button id="restart">リスタート</button>
-      </div>
-      <div class="score-display">
-        <span class="score-label">スコア:</span>
-        <span id="score">0</span>
-      </div>
-      <div class="info">矢印キー: 移動/回転（↑） | 下: 高速落下 | Z/X: 回転</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Puyo Puyo - TypeScript</title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Puyo Puyo Game</h1>
+
+        <div class="game-area">
+            <div class="board-section">
+                <div style="position: relative">
+                    <canvas id="stage" width="192" height="416"></canvas>
+                    <div id="gameOver" style="display: none;" class="game-over-overlay">
+                        <div class="game-over-text">GAME OVER</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">SCORE</span>
+                        <span class="stat-value" id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LEVEL</span>
+                        <span class="stat-value" id="level">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CHAIN</span>
+                        <span class="stat-value" id="chain">0</span>
+                    </div>
+                </div>
+
+                <button id="restart" class="restart-button">RESTART</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>←/→</strong>: 左右移動</li>
+                <li><strong>↑</strong>: 回転</li>
+                <li><strong>↓</strong>: 高速落下</li>
+                <li><strong>Space</strong>: ハードドロップ</li>
+            </ul>
+        </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
-  </body>
+</body>
 </html>
