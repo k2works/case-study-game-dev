@@ -140,3 +140,6 @@ site
 .claude
 .cpcache
 .clj-kondo
+
+# JetBrains Rider / ReSharper user-specific files
+*.DotSettings.user
