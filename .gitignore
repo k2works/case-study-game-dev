@@ -145,3 +145,10 @@ site
 *.DotSettings.user
 elm-stuff
 .nrepl-port
+target
+.bsp
+# Scala
+*.class
+*.log
+project/target
+project/project
