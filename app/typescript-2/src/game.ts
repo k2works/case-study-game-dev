@@ -80,11 +80,21 @@ export class Game {
         // プレイ中の処理
         this.player.update(deltaTime)
 
-        // ぷよが着地したら新しいぷよを生成
+        // ぷよが着地したら落下チェックへ
         if (this.player.isLanded()) {
-          this.mode = 'newPuyo'
+          this.mode = 'checkFall'
         }
         break
+      case 'checkFall': {
+        // 落下チェック（すべてのぷよが落下し終わるまで繰り返す）
+        let hasFallen = true
+        while (hasFallen) {
+          hasFallen = this.stage.applyGravity()
+        }
+        // 落下完了後、次のぷよ生成へ
+        this.mode = 'newPuyo'
+        break
+      }
       // 他のモードは後で実装
     }
   }
