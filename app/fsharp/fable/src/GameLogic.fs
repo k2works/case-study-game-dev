@@ -68,30 +68,38 @@ let fixPuyoPairToBoard (board: Board) (pair: PuyoPair) : Board =
 
 /// 浮いているぷよを重力で落下させる
 let dropFloatingPuyos (board: Board) : Board =
-    let rec dropLoop currentBoard =
-        let mutable changed = false
-        let mutable newBoard = currentBoard
+    // 各列について、ぷよを下から詰める
+    let mutable result = board
 
-        // 下から 2 番目の行から上に向かって処理
-        for y in (board.Height - 2) .. -1 .. 0 do
-            for x in 0 .. (board.Width - 1) do
-                match getCellAt newBoard { X = x; Y = y } with
-                | Some (Filled color) ->
-                    // 下のセルが空なら落下
-                    match getCellAt newBoard { X = x; Y = y + 1 } with
-                    | Some Empty ->
-                        newBoard <- setCellAt newBoard { X = x; Y = y } Empty
-                        newBoard <- setCellAt newBoard { X = x; Y = y + 1 } (Filled color)
-                        changed <- true
+    for x in 0 .. (board.Width - 1) do
+        // 列内のぷよを上から順に集める (順序を保持)
+        let puyos =
+            [
+                for y in 0 .. (board.Height - 1) do
+                    match getCellAt board { X = x; Y = y } with
+                    | Some (Filled color) -> yield color
                     | _ -> ()
-                | _ -> ()
+            ]
 
-        if changed then
-            dropLoop newBoard
-        else
-            currentBoard
+        // puyos が空でない場合のみ処理
+        if not (List.isEmpty puyos) then
+            // 列を空にする
+            for y in 0 .. (board.Height - 1) do
+                result <- setCellAt result { X = x; Y = y } Empty
 
-    dropLoop board
+            // ぷよを下から詰めていく
+            // puyos は上から順のリストなので、逆順にして下から配置
+            let puyoCount = List.length puyos
+            puyos
+            |> List.rev  // 逆順にする: [Blue, Red, Green, Yellow] → [Yellow, Green, Red, Blue]
+            |> List.iteri (fun i color ->
+                // リストの最初(i=0)が元々下にあったぷよ (Yellow)
+                // これを一番下 (y=11) に配置
+                let y = board.Height - 1 - i
+                result <- setCellAt result { X = x; Y = y } (Filled color)
+            )
+
+    result
 
 /// 指定位置から隣接する同色ぷよを検索（幅優先探索）
 let findAdjacentPuyos (board: Board) (startPos: Position) : Position list =
