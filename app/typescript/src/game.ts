@@ -40,10 +40,27 @@ export class Game {
     this._player = new Player(this.config, this.stage, this.puyoImage)
     this._player.createNewPuyo()
     this._score = new Score()
+    this._combinationCount = 0 // 連鎖カウントを初期化
+
+    // スコア表示を初期化
+    this.updateScoreDisplay()
+
+    // リスタートボタンのイベントリスナーを設定
+    this.setupRestartButton()
 
     // ゲームモードを設定
     this.mode = 'playing'
     this.isRunning = false
+  }
+
+  // リスタートボタンのイベントリスナーを設定
+  private setupRestartButton(): void {
+    const restartButton = document.getElementById('restart')
+    if (restartButton) {
+      restartButton.addEventListener('click', () => {
+        this.restart()
+      })
+    }
   }
 
   // ゲームを開始する
@@ -52,6 +69,28 @@ export class Game {
       this.isRunning = true
       this.loop()
     }
+  }
+
+  // ゲームをリスタートする
+  restart(): void {
+    // ステージをクリア
+    this.stage.initialize()
+
+    // スコアをリセット
+    this._score = new Score()
+    this.updateScoreDisplay()
+
+    // 連鎖カウントをリセット
+    this._combinationCount = 0
+
+    // フレームカウントをリセット
+    this._frame = 0
+
+    // 新しいぷよを生成
+    this._player.createNewPuyo()
+
+    // ゲームモードをplayingに変更
+    this.mode = 'playing'
   }
 
   loop(): void {
@@ -88,15 +127,37 @@ export class Game {
 
   // プレイ中の更新処理
   private updatePlaying(): void {
-    this._player.update()
+    // 重なり判定（移動前にチェック）
+    if (this._player.isOverlapping()) {
+      // 重なっている場合は即座に着地処理
+      this._player.placePuyoOnStage()
+      this._frame = 0
+      this.mode = 'checkErase'
+      return
+    }
 
+    // 着地判定
     if (this._player.checkLanded()) {
       this._player.placePuyoOnStage()
       this._frame = 0
       this.mode = 'checkErase'
-    } else {
-      this.handleFalling()
+      return
     }
+
+    // プレイヤー操作を更新（移動処理）
+    this._player.update()
+
+    // 移動後に再度重なり判定
+    if (this._player.isOverlapping()) {
+      // 移動後に重なった場合も即座に着地処理
+      this._player.placePuyoOnStage()
+      this._frame = 0
+      this.mode = 'checkErase'
+      return
+    }
+
+    // 自動落下処理
+    this.handleFalling()
   }
 
   // 落下処理
@@ -117,20 +178,49 @@ export class Game {
     this.erasableGroups = this.stage.checkErasablePuyos()
 
     if (this.erasableGroups.length > 0) {
+      // 消去対象がある場合は連鎖カウントを増やす
+      this._combinationCount++
       this.mode = 'erasing'
     } else {
-      this.mode = 'newPuyo'
+      // 消去対象がない場合は落下判定へ
+      this.mode = 'checkFall'
     }
   }
 
   // 消去実行モードの更新処理
   private updateErasing(): void {
+    // 連鎖ボーナス倍率を取得
+    const chainMultiplier = this.getChainMultiplier(this._combinationCount)
+
     for (const group of this.erasableGroups) {
       this.stage.erasePuyos(group)
+      // スコアを計算（1個につき10点 × 連鎖ボーナス）
+      const points = group.length * 10 * chainMultiplier
+      this._score.addScore(points)
     }
     this.erasableGroups = []
+
+    // スコア表示を更新
+    this.updateScoreDisplay()
+
     // 消去後は落下判定へ
     this.mode = 'checkFall'
+  }
+
+  // 連鎖ボーナスの倍率を取得
+  private getChainMultiplier(chainCount: number): number {
+    // 連鎖倍率テーブル
+    const multipliers = [0, 1, 8, 16, 32, 64, 96, 128, 160, 192, 224, 256]
+
+    if (chainCount <= 0) {
+      return 1
+    }
+
+    if (chainCount >= multipliers.length) {
+      return multipliers[multipliers.length - 1]
+    }
+
+    return multipliers[chainCount]
   }
 
   // 落下判定モードの更新処理
@@ -151,8 +241,17 @@ export class Game {
 
   // 新ぷよ生成モードの更新処理
   private updateNewPuyo(): void {
+    // 新しいぷよの生成位置を確認
+    const centerCol = Math.floor(this.config.stageCols / 2)
+    if (this.stage.getPuyo(centerCol, 0) !== '') {
+      // 生成位置が埋まっている場合はゲームオーバー
+      this.mode = 'gameOver'
+      return
+    }
+
     this._player.createNewPuyo()
     this._frame = 0
+    this._combinationCount = 0 // 連鎖カウントをリセット
     this.mode = 'playing'
   }
 
@@ -167,6 +266,36 @@ export class Game {
     // 落下中のぷよを描画
     if (this.mode === 'playing') {
       this._player.draw()
+    }
+
+    // ゲームオーバー表示の制御
+    this.updateGameOverDisplay()
+
+    // リスタートボタンの表示制御
+    this.updateRestartButtonDisplay()
+  }
+
+  // ゲームオーバー表示を更新
+  private updateGameOverDisplay(): void {
+    const gameOverElement = document.getElementById('gameOver')
+    if (gameOverElement) {
+      gameOverElement.style.display = this.mode === 'gameOver' ? 'block' : 'none'
+    }
+  }
+
+  // リスタートボタンの表示を更新
+  private updateRestartButtonDisplay(): void {
+    const restartButton = document.getElementById('restart')
+    if (restartButton) {
+      restartButton.style.display = this.mode === 'gameOver' ? 'block' : 'none'
+    }
+  }
+
+  // スコア表示を更新
+  private updateScoreDisplay(): void {
+    const scoreElement = document.getElementById('score')
+    if (scoreElement) {
+      scoreElement.textContent = this._score.getScore().toString()
     }
   }
 }

@@ -70,6 +70,50 @@ describe('プレイヤー', () => {
     })
   })
 
+  describe('重なり状態の検出', () => {
+    beforeEach(() => {
+      player.createNewPuyo()
+    })
+
+    it('現在位置が配置済みぷよと重なっている場合、移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 現在の軸ぷよの位置に配置済みぷよを配置（重なり状態）
+      stage.setPuyo(3, 5, '#ff0000')
+
+      // 左に移動を試みる
+      const canLeft = anyPlayer.canMoveLeft()
+      // 右に移動を試みる
+      const canRight = anyPlayer.canMoveRight()
+
+      // 重なっている場合は移動不可
+      expect(canLeft).toBe(false)
+      expect(canRight).toBe(false)
+    })
+
+    it('横向きぷよが配置済みぷよと重なっている場合、移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよが右）
+
+      // 2つ目のぷよの位置に配置済みぷよを配置（重なり状態）
+      stage.setPuyo(4, 5, '#0000ff')
+
+      // 左に移動を試みる
+      const canLeft = anyPlayer.canMoveLeft()
+      // 右に移動を試みる
+      const canRight = anyPlayer.canMoveRight()
+
+      // 重なっている場合は移動不可
+      expect(canLeft).toBe(false)
+      expect(canRight).toBe(false)
+    })
+  })
+
   describe('ぷよの移動', () => {
     beforeEach(() => {
       // 新しいぷよを作成
@@ -123,6 +167,70 @@ describe('プレイヤー', () => {
       // 位置が変わっていないことを確認
       expect(anyPlayer.puyoX).toBe(config.stageCols - 1)
     })
+
+    it('左にぷよがある場合、左に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 左側（軸ぷよの左）にぷよを配置
+      stage.setPuyo(2, 5, '#ff0000')
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
+
+    it('右にぷよがある場合、右に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 右側（軸ぷよの右）にぷよを配置
+      stage.setPuyo(4, 5, '#0000ff')
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
+
+    it('横向きで左にぷよがある場合、左に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよが右）
+
+      // 左側（軸ぷよの左）にぷよを配置
+      stage.setPuyo(2, 5, '#00ff00')
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
+
+    it('横向きで右にぷよがある場合、右に移動できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよが右）
+
+      // 2つ目のぷよのさらに右にぷよを配置
+      stage.setPuyo(5, 5, '#ffff00')
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(anyPlayer.puyoX).toBe(3)
+    })
   })
 
   describe('ぷよの回転', () => {
@@ -153,6 +261,19 @@ describe('プレイヤー', () => {
 
       // 回転状態が1減っていることを確認（負の値にならないように調整）
       expect(anyPlayer.rotation).toBe((initialRotation + 3) % 4)
+    })
+
+    it('上キーを押すと時計回りに回転する', () => {
+      // 初期回転状態を記録
+      const anyPlayer = player as any
+      const initialRotation = anyPlayer.rotation
+
+      // 上キーダウンイベントをシミュレート
+      const event = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+      document.dispatchEvent(event)
+
+      // 回転状態が1増えていることを確認
+      expect(anyPlayer.rotation).toBe((initialRotation + 1) % 4)
     })
 
     it('回転状態が4になると0に戻る', () => {
@@ -199,6 +320,38 @@ describe('プレイヤー', () => {
 
       // 壁キックにより右に移動していることを確認
       expect(anyPlayer.puyoX).toBe(1)
+      expect(anyPlayer.rotation).toBe(3)
+    })
+
+    it('横向きに回転しようとした際、回転先にぷよがあれば回転できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 0 // 上向き
+
+      // 右側にぷよを配置（右回転すると衝突する位置）
+      stage.setPuyo(4, 5, '#ff0000')
+
+      // 右回転を試みる
+      player.rotateRight()
+
+      // 回転していないことを確認
+      expect(anyPlayer.rotation).toBe(0)
+    })
+
+    it('縦向きに回転しようとした際、回転先にぷよがあれば回転できない', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoX = 3
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 3 // 左向き
+
+      // 上側にぷよを配置（右回転で上向きになると衝突する位置）
+      stage.setPuyo(3, 4, '#0000ff')
+
+      // 右回転を試みる（左→上になるので1回で衝突）
+      player.rotateRight()
+
+      // 回転していないことを確認
       expect(anyPlayer.rotation).toBe(3)
     })
   })
@@ -258,6 +411,38 @@ describe('プレイヤー', () => {
       expect(result).toBe(false)
       expect(anyPlayer.puyoY).toBe(initialY)
     })
+
+    it('横向きのぷよで片方の下にだけぷよがある場合、下に移動できない', () => {
+      const anyPlayer = player as any
+      const initialY = anyPlayer.puyoY
+      anyPlayer.rotation = 1 // 右向き
+
+      // 軸ぷよの下にだけぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, initialY + 1, '#ff0000')
+      // 2つ目のぷよ(右側)の下は空白
+
+      // 下に移動を試みる
+      const result = player.moveDown()
+
+      // 片方だけ支持されている状態なので移動できない
+      expect(result).toBe(false)
+      expect(anyPlayer.puyoY).toBe(initialY)
+    })
+
+    it('横向きのぷよで両方の下が空白の場合、下に移動できる', () => {
+      const anyPlayer = player as any
+      const initialY = anyPlayer.puyoY
+      anyPlayer.rotation = 1 // 右向き
+
+      // 両方の下が空白
+
+      // 下に移動を試みる
+      const result = player.moveDown()
+
+      // 移動できることを確認
+      expect(result).toBe(true)
+      expect(anyPlayer.puyoY).toBe(initialY + 1)
+    })
   })
 
   describe('着地判定', () => {
@@ -292,6 +477,38 @@ describe('プレイヤー', () => {
 
       // 下のセルにぷよを配置
       stage.setPuyo(anyPlayer.puyoX, 6, '#ff0000')
+
+      // 着地判定
+      const landed = player.checkLanded()
+
+      // 着地していることを確認
+      expect(landed).toBe(true)
+    })
+
+    it('横向きのぷよで片方の下だけぷよがある場合、着地したと判定する', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き（2つ目のぷよは右）
+
+      // 軸ぷよの下にだけぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, 6, '#ff0000')
+      // 2つ目のぷよの下は空白
+
+      // 着地判定
+      const landed = player.checkLanded()
+
+      // 軸ぷよの下にぷよがあるので着地している
+      expect(landed).toBe(true)
+    })
+
+    it('横向きのぷよで両方の下にぷよがある場合、着地したと判定する', () => {
+      const anyPlayer = player as any
+      anyPlayer.puyoY = 5
+      anyPlayer.rotation = 1 // 右向き
+
+      // 両方の下にぷよを配置
+      stage.setPuyo(anyPlayer.puyoX, 6, '#ff0000')
+      stage.setPuyo(anyPlayer.puyoX + 1, 6, '#0000ff')
 
       // 着地判定
       const landed = player.checkLanded()

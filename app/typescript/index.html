@@ -27,13 +27,61 @@
         font-size: 14px;
         color: #666;
       }
+      .score-display {
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+      .score-label {
+        font-size: 16px;
+        color: #666;
+        margin-right: 10px;
+      }
+      #gameOver {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        font-weight: bold;
+        color: #ff0000;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        display: none;
+      }
+      #restart {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px 30px;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: none;
+      }
+      #restart:hover {
+        background-color: #45a049;
+      }
     </style>
   </head>
   <body>
     <div id="app">
       <h1>ぷよぷよ</h1>
-      <canvas id="stage" width="192" height="416"></canvas>
-      <div class="info">矢印キー: 移動 | Z/X: 回転</div>
+      <div style="position: relative">
+        <canvas id="stage" width="192" height="416"></canvas>
+        <div id="gameOver">GAME OVER</div>
+        <button id="restart">リスタート</button>
+      </div>
+      <div class="score-display">
+        <span class="score-label">スコア:</span>
+        <span id="score">0</span>
+      </div>
+      <div class="info">矢印キー: 移動/回転（↑） | 下: 高速落下 | Z/X: 回転</div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

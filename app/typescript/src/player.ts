@@ -36,6 +36,7 @@ export class Player {
       ArrowLeft: () => (this.inputKeyLeft = true),
       ArrowRight: () => (this.inputKeyRight = true),
       ArrowDown: () => (this.inputKeyDown = true),
+      ArrowUp: () => this.rotateRight(),
       z: () => this.rotateLeft(),
       Z: () => this.rotateLeft(),
       x: () => this.rotateRight(),
@@ -69,35 +70,98 @@ export class Player {
 
   // 左に移動
   moveLeft(): void {
-    if (this.puyoX > 0) {
+    if (this.canMoveLeft()) {
       this.puyoX--
     }
   }
 
   // 右に移動
   moveRight(): void {
-    if (this.puyoX < this._config.stageCols - 1) {
+    if (this.canMoveRight()) {
       this.puyoX++
     }
   }
 
-  // 下に移動
-  moveDown(): boolean {
-    // 下端チェック
-    if (this.puyoY >= this._config.stageRows - 1) {
+  // 左に移動できるかチェック
+  private canMoveLeft(): boolean {
+    // 左端チェック
+    if (this.puyoX <= 0) {
       return false
     }
 
-    // 下のセルにぷよがあるかチェック
-    if (this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== '') {
-      return false
-    }
-
-    // 2つ目のぷよの下もチェック
     const offset = this.getSecondPuyoOffset()
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
-    if (this._stage.getPuyo(x2, y2 + 1) !== '') {
+
+    // 現在位置の重なりチェック（軸ぷよ）
+    if (this._stage.getPuyo(this.puyoX, this.puyoY) !== '') {
+      return false
+    }
+
+    // 現在位置の重なりチェック（2つ目のぷよ）
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return false
+    }
+
+    // 左に移動した後の位置をチェック
+    const newMainX = this.puyoX - 1
+    const newSecondX = x2 - 1
+
+    // 軸ぷよの移動先をチェック
+    if (this._stage.getPuyo(newMainX, this.puyoY) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよの移動先をチェック
+    if (this._stage.getPuyo(newSecondX, y2) !== '') {
+      return false
+    }
+
+    return true
+  }
+
+  // 右に移動できるかチェック
+  private canMoveRight(): boolean {
+    // 右端チェック
+    if (this.puyoX >= this._config.stageCols - 1) {
+      return false
+    }
+
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 現在位置の重なりチェック（軸ぷよ）
+    if (this._stage.getPuyo(this.puyoX, this.puyoY) !== '') {
+      return false
+    }
+
+    // 現在位置の重なりチェック（2つ目のぷよ）
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return false
+    }
+
+    // 右に移動した後の位置をチェック
+    const newMainX = this.puyoX + 1
+    const newSecondX = x2 + 1
+
+    // 軸ぷよの移動先をチェック
+    if (this._stage.getPuyo(newMainX, this.puyoY) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよの移動先をチェック
+    if (this._stage.getPuyo(newSecondX, y2) !== '') {
+      return false
+    }
+
+    return true
+  }
+
+  // 下に移動
+  moveDown(): boolean {
+    // 1つ下に移動できるかチェック（回転状態に応じた判定）
+    if (!this.canMoveDown()) {
       return false
     }
 
@@ -106,18 +170,65 @@ export class Player {
     return true
   }
 
+  // 下に移動できるかチェック
+  private canMoveDown(): boolean {
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 回転状態に応じて移動可能判定を行う
+    switch (this.rotation) {
+      case 0: // 上向き（2つ目のぷよが上）
+        return this.canMainPuyoMoveDown()
+      case 2: // 下向き（2つ目のぷよが下）
+        return this.canSecondPuyoMoveDown(x2, y2)
+      case 1: // 右向き（2つ目のぷよが右）
+      case 3: {
+        // 左向き（2つ目のぷよが左）
+        return this.canBothPuyosMoveDown(x2, y2)
+      }
+      default:
+        return false
+    }
+  }
+
+  // 軸ぷよが下に移動できるかチェック
+  private canMainPuyoMoveDown(): boolean {
+    return (
+      this.puyoY < this._config.stageRows - 1 &&
+      this._stage.getPuyo(this.puyoX, this.puyoY + 1) === ''
+    )
+  }
+
+  // 2つ目のぷよが下に移動できるかチェック
+  private canSecondPuyoMoveDown(x2: number, y2: number): boolean {
+    return y2 < this._config.stageRows - 1 && this._stage.getPuyo(x2, y2 + 1) === ''
+  }
+
+  // 両方のぷよが下に移動できるかチェック
+  private canBothPuyosMoveDown(x2: number, y2: number): boolean {
+    const mainCanMove = this.canMainPuyoMoveDown()
+    const secondCanMove = this.canSecondPuyoMoveDown(x2, y2)
+    return mainCanMove && secondCanMove
+  }
+
   // 時計回りに回転
   rotateRight(): void {
     // 次の回転状態を計算
     const nextRotation = (this.rotation + 1) % 4
 
     // 壁キック処理
+    let newX = this.puyoX
     if (nextRotation === 1 && this.puyoX === this._config.stageCols - 1) {
       // 右向きになるときに右端にいる場合は左に移動
-      this.puyoX--
+      newX = this.puyoX - 1
     }
 
-    this.rotation = nextRotation
+    // 回転可能かチェック
+    if (this.canRotate(newX, nextRotation)) {
+      this.puyoX = newX
+      this.rotation = nextRotation
+    }
   }
 
   // 反時計回りに回転
@@ -126,12 +237,53 @@ export class Player {
     const nextRotation = (this.rotation + 3) % 4
 
     // 壁キック処理
+    let newX = this.puyoX
     if (nextRotation === 3 && this.puyoX === 0) {
       // 左向きになるときに左端にいる場合は右に移動
-      this.puyoX++
+      newX = this.puyoX + 1
     }
 
-    this.rotation = nextRotation
+    // 回転可能かチェック
+    if (this.canRotate(newX, nextRotation)) {
+      this.puyoX = newX
+      this.rotation = nextRotation
+    }
+  }
+
+  // 回転可能かチェック
+  private canRotate(x: number, rotation: number): boolean {
+    // 2つ目のぷよの位置を計算
+    const offset = this.getSecondPuyoOffsetForRotation(rotation)
+    const x2 = x + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 軸ぷよの位置チェック（通常は現在位置なので問題ないが念のため）
+    if (this._stage.getPuyo(x, this.puyoY) !== '') {
+      return false
+    }
+
+    // 2つ目のぷよの位置チェック
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return false
+    }
+
+    return true
+  }
+
+  // 指定した回転状態での2つ目のぷよの相対位置を取得
+  private getSecondPuyoOffsetForRotation(rotation: number): { dx: number; dy: number } {
+    switch (rotation) {
+      case 0:
+        return { dx: 0, dy: -1 } // 上
+      case 1:
+        return { dx: 1, dy: 0 } // 右
+      case 2:
+        return { dx: 0, dy: 1 } // 下
+      case 3:
+        return { dx: -1, dy: 0 } // 左
+      default:
+        return { dx: 0, dy: -1 }
+    }
   }
 
   // ぷよの色を取得（回転状態に応じた2つ目のぷよの位置を考慮）
@@ -188,25 +340,46 @@ export class Player {
 
   // 着地判定
   checkLanded(): boolean {
-    // 下端チェック
-    if (this.puyoY >= this._config.stageRows - 1) {
-      return true
-    }
-
-    // 下のセルにぷよがあるかチェック
-    if (this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== '') {
-      return true
-    }
-
-    // 2つ目のぷよの下もチェック
+    // 2つ目のぷよの位置を取得
     const offset = this.getSecondPuyoOffset()
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
-    if (this._stage.getPuyo(x2, y2 + 1) !== '') {
-      return true
-    }
 
-    return false
+    // 回転状態に応じて着地判定を行う
+    switch (this.rotation) {
+      case 0: // 上向き（2つ目のぷよが上）
+        return this.checkMainPuyoLanded()
+      case 2: // 下向き（2つ目のぷよが下）
+        return this.checkSecondPuyoLanded(x2, y2)
+      case 1: // 右向き（2つ目のぷよが右）
+      case 3: {
+        // 左向き（2つ目のぷよが左）
+        // 横向きの場合は両方の下をチェック
+        return this.checkBothPuyosLanded(x2, y2)
+      }
+      default:
+        return false
+    }
+  }
+
+  // 軸ぷよの着地判定
+  private checkMainPuyoLanded(): boolean {
+    return (
+      this.puyoY >= this._config.stageRows - 1 ||
+      this._stage.getPuyo(this.puyoX, this.puyoY + 1) !== ''
+    )
+  }
+
+  // 2つ目のぷよの着地判定
+  private checkSecondPuyoLanded(x2: number, y2: number): boolean {
+    return y2 >= this._config.stageRows - 1 || this._stage.getPuyo(x2, y2 + 1) !== ''
+  }
+
+  // 両方のぷよの着地判定
+  private checkBothPuyosLanded(x2: number, y2: number): boolean {
+    const mainPuyoLanded = this.checkMainPuyoLanded()
+    const secondPuyoLanded = this.checkSecondPuyoLanded(x2, y2)
+    return mainPuyoLanded || secondPuyoLanded
   }
 
   // 着地したぷよをステージに配置
@@ -219,6 +392,25 @@ export class Player {
     const x2 = this.puyoX + offset.dx
     const y2 = this.puyoY + offset.dy
     this._stage.setPuyo(x2, y2, this.getPuyoColor(1))
+  }
+
+  // 配置済みぷよと重なっているかチェック
+  isOverlapping(): boolean {
+    const offset = this.getSecondPuyoOffset()
+    const x2 = this.puyoX + offset.dx
+    const y2 = this.puyoY + offset.dy
+
+    // 軸ぷよが重なっているか
+    if (this._stage.getPuyo(this.puyoX, this.puyoY) !== '') {
+      return true
+    }
+
+    // 2つ目のぷよが重なっているか
+    if (this._stage.getPuyo(x2, y2) !== '') {
+      return true
+    }
+
+    return false
   }
 
   // プレイヤー操作を初期化する

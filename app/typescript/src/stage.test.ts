@@ -319,5 +319,43 @@ describe('ステージ', () => {
       expect(stage.getPuyo(2, 11)).toBe('#ff0000')
       expect(stage.getPuyo(2, 5)).toBe('')
     })
+
+    it('横向きに配置されたぷよも正しく落下する', () => {
+      // 縦向きのぷよを配置（下端）
+      stage.setPuyo(2, 11, '#ff0000')
+      stage.setPuyo(2, 12, '#0000ff')
+
+      // その上に横向きのぷよを配置
+      stage.setPuyo(1, 10, '#00ff00')
+      stage.setPuyo(2, 10, '#ffff00')
+
+      // 重力を適用
+      stage.applyGravity()
+
+      // 全てのぷよが正しく積み重なっていることを確認
+      expect(stage.getPuyo(2, 12)).toBe('#0000ff')
+      expect(stage.getPuyo(2, 11)).toBe('#ff0000')
+      expect(stage.getPuyo(2, 10)).toBe('#ffff00')
+      expect(stage.getPuyo(1, 12)).toBe('#00ff00')
+    })
+
+    it('異なる列に配置されたぷよが独立して落下する', () => {
+      // 列1にぷよを配置
+      stage.setPuyo(1, 5, '#ff0000')
+      stage.setPuyo(1, 12, '#0000ff')
+
+      // 列2にぷよを配置
+      stage.setPuyo(2, 7, '#00ff00')
+      stage.setPuyo(2, 12, '#ffff00')
+
+      // 重力を適用
+      stage.applyGravity()
+
+      // 各列で正しく落下していることを確認
+      expect(stage.getPuyo(1, 12)).toBe('#0000ff')
+      expect(stage.getPuyo(1, 11)).toBe('#ff0000')
+      expect(stage.getPuyo(2, 12)).toBe('#ffff00')
+      expect(stage.getPuyo(2, 11)).toBe('#00ff00')
+    })
   })
 })
