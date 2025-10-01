@@ -511,4 +511,25 @@ export class Player {
     }
     return false
   }
+
+  // ゲームオーバー判定
+  checkGameOver(): boolean {
+    // 新しいぷよの配置位置（親ぷよと子ぷよ）
+    const parentX = this.puyoX
+    const parentY = this.puyoY
+    const childX = this.puyoX + this.childOffsetX
+    const childY = this.puyoY + this.childOffsetY
+
+    // 配置位置にすでにぷよがある場合はゲームオーバー
+    if (this._stage.getPuyo(parentX, parentY) !== 0) {
+      return true
+    }
+
+    // 子ぷよの位置もチェック（画面内の場合のみ）
+    if (childY >= 0 && this._stage.getPuyo(childX, childY) !== 0) {
+      return true
+    }
+
+    return false
+  }
 }
