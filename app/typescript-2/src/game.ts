@@ -81,7 +81,13 @@ export class Game {
       case 'newPuyo':
         // 新しいぷよを生成
         this.player.createNewPuyo()
-        this.mode = 'playing'
+
+        // ゲームオーバー判定
+        if (this.player.checkGameOver()) {
+          this.mode = 'gameOver'
+        } else {
+          this.mode = 'playing'
+        }
         break
       case 'playing':
         // プレイ中の処理
@@ -141,7 +147,10 @@ export class Game {
         this.mode = 'checkFall'
         break
       }
-      // 他のモードは後で実装
+      case 'gameOver':
+        // ゲームオーバー表示
+        this.drawGameOver()
+        break
     }
   }
 
@@ -176,6 +185,14 @@ export class Game {
         // 連鎖未発生
         this.chainElement.textContent = `Chain: 0`
       }
+    }
+  }
+
+  // ゲームオーバー表示
+  private drawGameOver(): void {
+    const gameOverElement = document.getElementById('gameOver')
+    if (gameOverElement) {
+      gameOverElement.style.display = 'block'
     }
   }
 }
