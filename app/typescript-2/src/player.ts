@@ -21,6 +21,10 @@ export class Player {
   // 回転状態（0: 上, 1: 右, 2: 下, 3: 左）
   private rotation = 0
 
+  // 落下タイマー
+  private dropTimer = 0
+  private dropInterval = 1000 // 1秒ごとに落下
+
   // キー入力のフラグ
   private inputKeyLeft = false
   private inputKeyRight = false
@@ -136,7 +140,8 @@ export class Player {
   }
 
   // 入力を処理（ゲームループから呼ばれる）
-  update(): void {
+  update(deltaTime = 16): void {
+    // キー入力の処理
     if (this.inputKeyLeft) {
       this.moveLeft()
     } else if (this.inputKeyRight) {
@@ -148,6 +153,15 @@ export class Player {
       this.rotateRight()
       // 連続回転を防ぐため、フラグをリセット
       this.inputKeyRotate = false
+    }
+
+    // 落下タイマーを更新
+    this.dropTimer += deltaTime
+
+    // 落下間隔を超えたら落下処理を実行
+    if (this.dropTimer >= this.dropInterval) {
+      this.applyGravity()
+      this.dropTimer = 0 // タイマーをリセット
     }
   }
 
@@ -213,5 +227,32 @@ export class Player {
         this.childOffsetY = 0
         break
     }
+  }
+
+  // 重力を適用する（ぷよを1マス下に落とす）
+  private applyGravity(): void {
+    // 下に移動できるかチェック
+    if (this.canMoveDown()) {
+      this.puyoY += 1
+    }
+  }
+
+  // 下に移動できるかチェックする
+  private canMoveDown(): boolean {
+    // 親ぷよと子ぷよの次の位置
+    const nextY = this.puyoY + 1
+    const childNextY = this.puyoY + this.childOffsetY + 1
+
+    // 親ぷよが範囲外かチェック
+    if (nextY >= this.config.stageRows) {
+      return false
+    }
+
+    // 子ぷよが範囲外かチェック
+    if (childNextY >= this.config.stageRows) {
+      return false
+    }
+
+    return true
   }
 }

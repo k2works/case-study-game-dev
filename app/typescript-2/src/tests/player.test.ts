@@ -172,4 +172,50 @@ describe('プレイヤー', () => {
       expect(player['rotation']).toBe(3)
     })
   })
+
+  describe('自由落下', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('指定時間が経過すると、ぷよが1マス下に落ちる', () => {
+      // 初期位置を記録
+      const initialY = player['puyoY']
+
+      // 落下間隔を取得（例: 1000ms = 1秒）
+      const dropInterval = 1000
+
+      // ゲームの更新処理を実行（落下間隔分）
+      player.update(dropInterval)
+
+      // 位置が1つ下に移動していることを確認
+      expect(player['puyoY']).toBe(initialY + 1)
+    })
+
+    it('指定時間未満では、ぷよは落ちない', () => {
+      // 初期位置を記録
+      const initialY = player['puyoY']
+
+      // 落下間隔を取得
+      const dropInterval = 1000
+
+      // タイマーを半分だけ進める
+      player.update(dropInterval / 2)
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoY']).toBe(initialY)
+    })
+
+    it('下端に達した場合、それ以上落ちない', () => {
+      // 下端の1つ上に配置
+      player['puyoY'] = config.stageRows - 1
+
+      // 落下処理を実行
+      player.update(1000)
+
+      // 位置が変わっていないことを確認（下端を超えない）
+      expect(player['puyoY']).toBe(config.stageRows - 1)
+    })
+  })
 })

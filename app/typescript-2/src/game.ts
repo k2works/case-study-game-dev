@@ -23,6 +23,7 @@ export class Game {
   private stage!: Stage
   private player!: Player
   private _score!: Score // スコア（後で使用）
+  private lastTime = 0
 
   constructor() {
     // コンストラクタでは何もしない
@@ -45,19 +46,23 @@ export class Game {
   }
 
   // ゲームループの開始
-  loop(): void {
+  loop(currentTime = 0): void {
+    // 前回のフレームからの経過時間を計算
+    const deltaTime = currentTime - this.lastTime
+    this.lastTime = currentTime
+
     // ゲームの更新処理
-    this.update()
+    this.update(deltaTime)
 
     // ゲームの描画処理
     this.draw()
 
     // 次のフレームを予約
-    requestAnimationFrame(() => this.loop())
+    requestAnimationFrame((time) => this.loop(time))
   }
 
   // ゲームの更新処理
-  private update(): void {
+  private update(deltaTime: number): void {
     this.frame++
 
     // ゲームモードに応じた処理
@@ -73,7 +78,7 @@ export class Game {
         break
       case 'playing':
         // プレイ中の処理
-        this.player.update()
+        this.player.update(deltaTime)
         break
       // 他のモードは後で実装
     }
