@@ -1,4 +1,6 @@
-(ns puyo.core)
+(ns puyo.core
+  (:require [puyo.specs :as specs]
+            [cljs.spec.alpha :as s]))
 
 ;; ========== 定数定義 ==========
 (def board-width 8)
@@ -43,6 +45,8 @@
 (defn valid-color?
   "色番号が有効かどうかチェック"
   [color]
+  {:pre [(int? color)]
+   :post [(boolean? %)]}
   (contains? valid-colors color))
 
 (defn get-puyo-color
@@ -63,6 +67,11 @@
    Returns:
      組ぷよマップ {:puyo1 {...} :puyo2 {...} :rotation 0}"
   [color1 color2 x y]
+  {:pre [(s/valid? ::specs/color color1)
+         (s/valid? ::specs/color color2)
+         (s/valid? ::specs/x x)
+         (s/valid? ::specs/y y)]
+   :post [(s/valid? ::specs/puyo-pair %)]}
   (when-not (and (valid-color? color1) (valid-color? color2))
     (throw (js/Error. "Invalid color")))
 
