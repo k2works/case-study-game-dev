@@ -4,16 +4,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ぷよぷよゲーム</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #1a1a1a;
+        font-family: Arial, sans-serif;
+        color: white;
+      }
+      #score,
+      #chain {
+        font-size: 18px;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
     <div style="display: flex; gap: 20px; padding: 20px">
-      <div id="stage"></div>
+      <div id="stage" style="position: relative"></div>
       <div style="display: flex; flex-direction: column; gap: 10px">
         <div id="score"></div>
         <div id="chain"></div>
         <div id="next"></div>
         <div id="next2"></div>
       </div>
+    </div>
+    <div
+      id="gameOver"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: red;
+        font-size: 48px;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+      "
+    >
+      GAME OVER
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
