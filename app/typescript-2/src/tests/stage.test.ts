@@ -110,4 +110,74 @@ describe('ステージ', () => {
       expect(stage.getPuyo(3, 11)).toBe(1)
     })
   })
+
+  describe('ぷよの接続判定', () => {
+    it('同じ色のぷよが4つつながっていると、消去対象になる', () => {
+      // ステージにぷよを配置（1は赤ぷよ）
+      // 2×2の正方形に赤ぷよを配置
+      stage.setPuyo(1, 10, 1)
+      stage.setPuyo(2, 10, 1)
+      stage.setPuyo(1, 11, 1)
+      stage.setPuyo(2, 11, 1)
+
+      // 消去判定
+      const eraseInfo = stage.checkErase()
+
+      // 4つのぷよが消去対象になっていることを確認
+      expect(eraseInfo.erasePuyoCount).toBe(4)
+      expect(eraseInfo.eraseInfo.length).toBeGreaterThan(0)
+    })
+
+    it('異なる色のぷよは消去対象にならない', () => {
+      // ステージにぷよを配置（1は赤ぷよ、2は青ぷよ）
+      // 市松模様に配置
+      stage.setPuyo(1, 10, 1)
+      stage.setPuyo(2, 10, 2)
+      stage.setPuyo(1, 11, 2)
+      stage.setPuyo(2, 11, 1)
+
+      // 消去判定
+      const eraseInfo = stage.checkErase()
+
+      // 消去対象がないことを確認
+      expect(eraseInfo.erasePuyoCount).toBe(0)
+      expect(eraseInfo.eraseInfo.length).toBe(0)
+    })
+
+    it('3つ以下のつながりは消去対象にならない', () => {
+      // 3つだけ並べる
+      stage.setPuyo(1, 11, 1)
+      stage.setPuyo(2, 11, 1)
+      stage.setPuyo(3, 11, 1)
+
+      // 消去判定
+      const eraseInfo = stage.checkErase()
+
+      // 消去対象がないことを確認
+      expect(eraseInfo.erasePuyoCount).toBe(0)
+      expect(eraseInfo.eraseInfo.length).toBe(0)
+    })
+  })
+
+  describe('ぷよの消去と落下', () => {
+    it('消去対象のぷよを消去する', () => {
+      // ステージにぷよを配置
+      stage.setPuyo(1, 10, 1)
+      stage.setPuyo(2, 10, 1)
+      stage.setPuyo(1, 11, 1)
+      stage.setPuyo(2, 11, 1)
+
+      // 消去判定
+      const eraseInfo = stage.checkErase()
+
+      // 消去実行
+      stage.eraseBoards(eraseInfo.eraseInfo)
+
+      // ぷよが消去されていることを確認
+      expect(stage.getPuyo(1, 10)).toBe(0)
+      expect(stage.getPuyo(2, 10)).toBe(0)
+      expect(stage.getPuyo(1, 11)).toBe(0)
+      expect(stage.getPuyo(2, 11)).toBe(0)
+    })
+  })
 })
