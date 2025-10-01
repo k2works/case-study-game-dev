@@ -192,31 +192,37 @@
         (assoc-in [(:y (second positions)) (:x (second positions))] color2))))
 
 (defn drop-floating-puyos
-  "浮いているぷよを重力で落下させる"
+  "浮いているぷよを重力で落下させる（1マスずつ繰り返し落下）"
   [board]
   (loop [current-board board
-         changed? true]
-    (if-not changed?
-      current-board
+         changed? true
+         iteration 0]
+    (if (or (not changed?) (> iteration 100))
+      (do
+        (when (> iteration 100)
+          (js/console.warn "drop-floating-puyos: 無限ループを検出"))
+        current-board)
       (let [new-board
             (reduce
              (fn [acc-board y]
                (reduce
                 (fn [acc-board-x x]
                   (let [puyo-color (get-in acc-board-x [y x])]
-                    (if (and (> puyo-color 0) (< y (- board-height 1)))
-                      (let [below (get-in acc-board-x [(+ y 1) x])]
-                        (if (= below 0)
-                          (-> acc-board-x
-                              (assoc-in [y x] 0)
-                              (assoc-in [(+ y 1) x] puyo-color))
-                          acc-board-x))
+                    ;; ぷよがあり、下が空で、下が範囲内の場合
+                    (if (and (> puyo-color 0)
+                             (< y (- board-height 1))
+                             (= 0 (get-in acc-board-x [(+ y 1) x])))
+                      ;; 1マス下に移動
+                      (-> acc-board-x
+                          (assoc-in [y x] 0)
+                          (assoc-in [(+ y 1) x] puyo-color))
                       acc-board-x)))
                 acc-board
                 (range board-width)))
              current-board
-             (range (- board-height 2) -1 -1))]
-        (recur new-board (not= current-board new-board))))))
+             ;; 下から処理（重要：下のぷよから落とす）
+             (range (- board-height 1) -1 -1))]
+        (recur new-board (not= current-board new-board) (inc iteration))))))
 
 ;; ========== Phase 3: ゲームロジック ==========
 
@@ -560,11 +566,25 @@
         new-board (fix-puyo-pair current-piece board)]
     (swap! game-state assoc :board new-board)))
 
+(defn log-board
+  "デバッグ用: ボードの状態をコンソールに出力"
+  [board label]
+  (js/console.log label)
+  (doseq [y (range 6 board-height)]
+    (let [row (map #(get-in board [y %]) (range board-width))]
+      (js/console.log (str "y=" y ": " (apply str (map #(if (= % 0) "." %) row)))))))
+
 (defn process-line-clear!
-  "ライン消去処理"
+  "ライン消去処理と浮遊ぷよの落下"
   []
   (let [board (:board @game-state)
-        result (execute-chain board)]
+        _ (log-board board "Before execute-chain:")
+        ;; まず浮遊ぷよを落下させる
+        dropped-board (drop-floating-puyos board)
+        _ (log-board dropped-board "After drop-floating-puyos:")
+        ;; その後連鎖処理を実行
+        result (execute-chain dropped-board)
+        _ (log-board (:board result) "After execute-chain:")]
     (swap! game-state assoc
            :board (:board result)
            :score (+ (:score @game-state) (:total-score result))
@@ -666,13 +686,28 @@
       (swap! game-state assoc :current-piece moved-piece)
       (render-game))))
 
+(defn can-rotate?
+  "回転可能かチェック"
+  [puyo-pair board]
+  (let [rotated (rotate-puyo-pair puyo-pair)
+        positions (get-puyo-pair-positions
+                   (get-in rotated [:puyo1 :x])
+                   (get-in rotated [:puyo1 :y])
+                   (:rotation rotated))]
+    (every? (fn [{:keys [x y]}]
+              (and (valid-position? x y)
+                   (= 0 (get-puyo-at board x y))))
+            positions)))
+
 (defn process-rotation!
   "回転処理"
   []
   (when-let [current-piece (:current-piece @game-state)]
-    (let [rotated-piece (rotate-puyo-pair current-piece)]
-      (swap! game-state assoc :current-piece rotated-piece)
-      (render-game))))
+    (let [board (:board @game-state)]
+      (when (can-rotate? current-piece board)
+        (let [rotated-piece (rotate-puyo-pair current-piece)]
+          (swap! game-state assoc :current-piece rotated-piece)
+          (render-game))))))
 
 (defn process-soft-drop!
   "ソフトドロップ処理"
