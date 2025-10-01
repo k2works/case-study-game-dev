@@ -36,6 +36,7 @@ export class Player {
   private inputKeyLeft = false
   private inputKeyRight = false
   private inputKeyRotate = false
+  private inputKeyDown = false
 
   constructor(config: Config, stage: Stage, puyoImage: PuyoImage) {
     this.config = config
@@ -59,6 +60,8 @@ export class Player {
       event.key === 'X'
     ) {
       this.inputKeyRotate = true
+    } else if (event.key === 'ArrowDown') {
+      this.inputKeyDown = true
     }
   }
 
@@ -74,6 +77,8 @@ export class Player {
       event.key === 'X'
     ) {
       this.inputKeyRotate = false
+    } else if (event.key === 'ArrowDown') {
+      this.inputKeyDown = false
     }
   }
 
@@ -233,8 +238,11 @@ export class Player {
     // 落下タイマーを更新
     this.dropTimer += deltaTime
 
+    // 落下速度を取得（下キーが押されていれば高速落下）
+    const dropSpeed = this.getDropSpeed()
+
     // 落下間隔を超えたら落下処理を実行
-    if (this.dropTimer >= this.dropInterval) {
+    if (this.dropTimer >= this.dropInterval / dropSpeed) {
       this.applyGravity()
       this.dropTimer = 0 // タイマーをリセット
     }
@@ -420,5 +428,21 @@ export class Player {
     }
 
     return true
+  }
+
+  // 落下速度を取得
+  getDropSpeed(): number {
+    // 下キーが押されていれば高速落下
+    return this.inputKeyDown ? 10 : 1
+  }
+
+  // 下に移動
+  moveDown(): boolean {
+    // 下に移動できるかチェック
+    if (this.canMoveDown()) {
+      this.puyoY++
+      return true
+    }
+    return false
   }
 }
