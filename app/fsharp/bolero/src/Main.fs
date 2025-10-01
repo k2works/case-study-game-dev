@@ -18,8 +18,14 @@ let cellSize = 30
 let renderBoard (board: Board) (currentPiece: PuyoPair option) =
     let renderCell x y (cell: Cell) =
         let color = cell.ToHex()
+        let isEmpty = color = "#ffffff"
+
         div {
-            attr.style $"position:absolute;left:{x*cellSize}px;top:{y*cellSize}px;width:{cellSize}px;height:{cellSize}px;border:1px solid #ddd;background-color:{color};"
+            attr.style $"position:absolute;left:{x*cellSize}px;top:{y*cellSize}px;width:{cellSize}px;height:{cellSize}px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;"
+            if not isEmpty then
+                div {
+                    attr.style $"width:{cellSize - 8}px;height:{cellSize - 8}px;background-color:{color};border-radius:50%%;border:2px solid #333;"
+                }
         }
 
     let boardCells =
@@ -46,37 +52,55 @@ let renderBoard (board: Board) (currentPiece: PuyoPair option) =
         forEach (boardCells @ pieceCells) id
     }
 
-/// ゲーム情報表示
-let renderGameInfo (model: Model) =
+/// NEXT セクション表示
+let renderNextSection (nextPiece: PuyoPair option) =
     div {
-        attr.``class`` "game-info"
-        h3 { text "NEXT" }
+        attr.``class`` "next-section"
+        h2 { text "NEXT" }
         div {
-            match model.NextPiece with
+            match nextPiece with
             | None -> text ""
             | Some piece ->
                 div {
-                    attr.style "display:flex;flex-direction:column;align-items:center;"
+                    attr.style "display:flex;flex-direction:column;align-items:center;padding:10px;"
                     div {
-                        attr.style $"width:15px;height:15px;background:{piece.Puyo1Color.ToHex()};border-radius:50%%;"
+                        attr.style $"width:20px;height:20px;background:{piece.Puyo1Color.ToHex()};border-radius:50%%;"
                     }
                     div {
-                        attr.style $"width:15px;height:15px;background:{piece.Puyo2Color.ToHex()};border-radius:50%%;margin-top:5px;"
+                        attr.style $"width:20px;height:20px;background:{piece.Puyo2Color.ToHex()};border-radius:50%%;margin-top:5px;"
                     }
                 }
         }
+    }
+
+/// 統計情報セクション表示
+let renderStatsSection (model: Model) =
+    let formatTime (seconds: int) =
+        let mins = seconds / 60
+        let secs = seconds % 60
+        $"{mins}:{secs:D2}"
+
+    div {
+        attr.``class`` "stats-section"
         div {
-            attr.``class`` "stats"
-            p { text $"Score: {model.Score}" }
-            p { text $"Chain: {model.ChainCount}" }
-            p {
-                text (
-                    match model.GameStatus with
-                    | NotStarted -> "Press START"
-                    | Playing -> "Playing"
-                    | GameOver -> "Game Over"
-                )
-            }
+            attr.``class`` "stat-item"
+            span { attr.``class`` "stat-label"; text "SCORE" }
+            span { attr.``class`` "stat-value"; text $"{model.Score}" }
+        }
+        div {
+            attr.``class`` "stat-item"
+            span { attr.``class`` "stat-label"; text "LEVEL" }
+            span { attr.``class`` "stat-value"; text $"{model.Level}" }
+        }
+        div {
+            attr.``class`` "stat-item"
+            span { attr.``class`` "stat-label"; text "CHAIN" }
+            span { attr.``class`` "stat-value"; text $"{model.ChainCount}" }
+        }
+        div {
+            attr.``class`` "stat-item"
+            span { attr.``class`` "stat-label"; text "TIME" }
+            span { attr.``class`` "stat-value"; text (formatTime model.GameTime) }
         }
     }
 
@@ -100,7 +124,6 @@ let view (model: Model) dispatch =
 
         div {
             attr.``class`` "game-area"
-            attr.style "display:flex;gap:30px;"
 
             div {
                 attr.``class`` "board-section"
@@ -109,7 +132,8 @@ let view (model: Model) dispatch =
 
             div {
                 attr.``class`` "info-section"
-                renderGameInfo model
+                renderNextSection model.NextPiece
+                renderStatsSection model
 
                 button {
                     attr.``class`` "start-button"

@@ -32,7 +32,9 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                 CurrentPiece = Some firstPiece
                 NextPiece = Some nextPiece
                 Score = 0
+                Level = 1
                 ChainCount = 0
+                GameTime = 0
                 GameStatus = Playing
         }, startGameLoop ()
 
@@ -114,8 +116,11 @@ let update (message: Message) (model: Model) : Model * Cmd<Message> =
                     // 落下できない場合 - 固定処理
                     let fixedBoard = fixPuyoPairToBoard model.Board currentPiece
 
+                    // 固定後に浮遊ぷよを落下させる
+                    let droppedBoard = dropFloatingPuyos fixedBoard
+
                     // 連鎖処理
-                    let chainResult = executeChain fixedBoard
+                    let chainResult = executeChain droppedBoard
 
                     // ゲームオーバーチェック
                     if isGameOver chainResult.Board then

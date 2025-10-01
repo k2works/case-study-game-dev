@@ -16,7 +16,9 @@ type Model = {
     CurrentPiece: PuyoPair option
     NextPiece: PuyoPair option
     Score: int
+    Level: int
     ChainCount: int
+    GameTime: int
     GameStatus: GameStatus
 }
 
@@ -38,6 +40,8 @@ let init () : Model * Cmd<Message> =
         CurrentPiece = None
         NextPiece = None
         Score = 0
+        Level = 1
         ChainCount = 0
+        GameTime = 0
         GameStatus = NotStarted
     }, Cmd.none
