@@ -72,7 +72,8 @@ export class Game {
         this.mode = 'playing'
         break
       case 'playing':
-        // プレイ中の処理（後で実装）
+        // プレイ中の処理
+        this.player.update()
         break
       // 他のモードは後で実装
     }

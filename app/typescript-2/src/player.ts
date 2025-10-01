@@ -18,10 +18,36 @@ export class Player {
   private childOffsetY = -1 // 初期位置は上
   private childColor = 0
 
+  // キー入力のフラグ
+  private inputKeyLeft = false
+  private inputKeyRight = false
+
   constructor(config: Config, stage: Stage, puyoImage: PuyoImage) {
     this.config = config
     this._stage = stage
     this.puyoImage = puyoImage
+
+    // キーボードイベントリスナーを設定
+    document.addEventListener('keydown', this.onKeyDown.bind(this))
+    document.addEventListener('keyup', this.onKeyUp.bind(this))
+  }
+
+  // キーダウンイベント
+  private onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'ArrowLeft') {
+      this.inputKeyLeft = true
+    } else if (event.key === 'ArrowRight') {
+      this.inputKeyRight = true
+    }
+  }
+
+  // キーアップイベント
+  private onKeyUp(event: KeyboardEvent): void {
+    if (event.key === 'ArrowLeft') {
+      this.inputKeyLeft = false
+    } else if (event.key === 'ArrowRight') {
+      this.inputKeyRight = false
+    }
   }
 
   // 新しいぷよを生成
@@ -72,5 +98,30 @@ export class Player {
   // 子ぷよの相対位置を取得（テスト用）
   getChildOffset(): { x: number; y: number } {
     return { x: this.childOffsetX, y: this.childOffsetY }
+  }
+
+  // 左に移動
+  moveLeft(): void {
+    // 左端チェック
+    if (this.puyoX > 0) {
+      this.puyoX--
+    }
+  }
+
+  // 右に移動
+  moveRight(): void {
+    // 右端チェック
+    if (this.puyoX < this.config.stageCols - 1) {
+      this.puyoX++
+    }
+  }
+
+  // 入力を処理（ゲームループから呼ばれる）
+  update(): void {
+    if (this.inputKeyLeft) {
+      this.moveLeft()
+    } else if (this.inputKeyRight) {
+      this.moveRight()
+    }
   }
 }
