@@ -273,4 +273,40 @@ describe('プレイヤー', () => {
       expect(player.isLanded()).toBe(true)
     })
   })
+
+  describe('回転時の衝突判定', () => {
+    it('他のぷよがある場所には回転できない', () => {
+      // ステージに既存のぷよを配置
+      stage.setPuyo(4, 5, 1) // 右隣にぷよを配置
+
+      // その隣に新しいぷよを配置（子ぷよは上）
+      player.createNewPuyo()
+      player['puyoX'] = 3
+      player['puyoY'] = 5
+      player['rotation'] = 0 // 子ぷよが上
+
+      // 回転状態を記録
+      const initialRotation = player['rotation']
+
+      // 右回転を試みる（子ぷよが右に来る = 既存のぷよと重なる）
+      player.rotateRight()
+
+      // 回転できず、回転状態が変わっていないことを確認
+      expect(player['rotation']).toBe(initialRotation)
+    })
+
+    it('回転可能な場合は回転できる', () => {
+      // 周囲に何もない位置に配置
+      player.createNewPuyo()
+      player['puyoX'] = 3
+      player['puyoY'] = 5
+      player['rotation'] = 0
+
+      // 右回転
+      player.rotateRight()
+
+      // 回転できていることを確認
+      expect(player['rotation']).toBe(1)
+    })
+  })
 })
