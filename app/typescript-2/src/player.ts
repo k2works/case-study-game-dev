@@ -156,6 +156,9 @@ export class Player {
     // 時計回りに回転（0→1→2→3→0）
     this.rotation = (this.rotation + 1) % 4
 
+    // 回転状態に応じて子ぷよの位置を更新
+    this.updateChildOffset()
+
     // 右端で右回転した場合（2つ目のぷよが右にくる場合）
     if (this.rotation === 1 && this.puyoX === this.config.stageCols - 1) {
       // 左に移動（壁キック）
@@ -174,6 +177,9 @@ export class Player {
     // 反時計回りに回転（0→3→2→1→0）
     this.rotation = (this.rotation + 3) % 4
 
+    // 回転状態に応じて子ぷよの位置を更新
+    this.updateChildOffset()
+
     // 右端で右回転した場合（2つ目のぷよが右にくる場合）
     if (this.rotation === 1 && this.puyoX === this.config.stageCols - 1) {
       // 左に移動（壁キック）
@@ -184,6 +190,28 @@ export class Player {
     if (this.rotation === 3 && this.puyoX === 0) {
       // 右に移動（壁キック）
       this.puyoX++
+    }
+  }
+
+  // 回転状態に応じて子ぷよの相対位置を更新
+  private updateChildOffset(): void {
+    switch (this.rotation) {
+      case 0: // 上
+        this.childOffsetX = 0
+        this.childOffsetY = -1
+        break
+      case 1: // 右
+        this.childOffsetX = 1
+        this.childOffsetY = 0
+        break
+      case 2: // 下
+        this.childOffsetX = 0
+        this.childOffsetY = 1
+        break
+      case 3: // 左
+        this.childOffsetX = -1
+        this.childOffsetY = 0
+        break
     }
   }
 }
