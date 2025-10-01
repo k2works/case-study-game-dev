@@ -143,3 +143,5 @@ site
 
 # JetBrains Rider / ReSharper user-specific files
 *.DotSettings.user
+elm-stuff
+.nrepl-port
