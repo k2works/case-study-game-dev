@@ -137,6 +137,7 @@ app/clojure/
 - **ClojureScript**: Lisp ベースの関数型プログラミング言語
 - **shadow-cljs**: ClojureScript のビルドツール
 - **Reagent**: React のラッパーライブラリ
+- **clojure.spec**: データ仕様の定義と検証
 
 #### 開発プロセス
 
@@ -157,6 +158,49 @@ app/clojure/
 - **データ駆動**: マップとベクターによるデータ表現
 - **Reagent/Ratom**: リアクティブな状態管理
 
+#### clojure.spec による仕様定義
+
+プロジェクトでは `clojure.spec` を使用してデータの仕様を定義し、実行時の検証を行っています。
+
+##### 主な仕様定義
+
+```clojure
+;; 基本的な型の仕様
+(s/def ::color (s/int-in 1 6))          ; ぷよの色（1-5）
+(s/def ::x (s/int-in 0 8))              ; x座標（0-7）
+(s/def ::y (s/int-in 0 12))             ; y座標（0-11）
+(s/def ::rotation #{0 1 2 3})           ; 回転角度
+
+;; 複合的な仕様
+(s/def ::puyo (s/keys :req-un [::color ::x ::y]))
+(s/def ::puyo-pair (s/keys :req-un [::puyo1 ::puyo2 ::rotation]))
+(s/def ::board (s/coll-of ::row :kind vector? :count 12))
+(s/def ::game-state (s/keys :req-un [::board ::current-piece ...]))
+```
+
+##### 使用例
+
+```clojure
+;; 関数の事前・事後条件として使用
+(defn create-puyo-pair [color1 color2 x y]
+  {:pre [(s/valid? ::specs/color color1)
+         (s/valid? ::specs/color color2)]
+   :post [(s/valid? ::specs/puyo-pair %)]}
+  ...)
+
+;; データ検証ヘルパー関数
+(specs/validate-and-throw ::specs/board board "Invalid board")
+```
+
+##### テスト
+
+spec の仕様はテストにも活用されています：
+
+```bash
+# spec のテスト実行
+npm test
+```
+
 **[⬆ back to top](#構成)**
 
 ## 参照
@@ -164,3 +208,4 @@ app/clojure/
 - [ClojureScript](https://clojurescript.org/)
 - [shadow-cljs](https://shadow-cljs.github.io/docs/UsersGuide.html)
 - [Reagent](https://reagent-project.github.io/)
+- [clojure.spec](https://clojure.org/guides/spec)
