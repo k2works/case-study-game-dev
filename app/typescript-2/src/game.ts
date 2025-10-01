@@ -62,6 +62,7 @@ export class Game {
   }
 
   // ゲームの更新処理
+  // eslint-disable-next-line complexity
   private update(deltaTime: number): void {
     this.frame++
 
@@ -91,8 +92,27 @@ export class Game {
         while (hasFallen) {
           hasFallen = this.stage.applyGravity()
         }
-        // 落下完了後、次のぷよ生成へ
-        this.mode = 'newPuyo'
+        // 落下完了後、消去チェックへ
+        this.mode = 'checkErase'
+        break
+      }
+      case 'checkErase': {
+        // 消去判定
+        const eraseInfo = this.stage.checkErase()
+
+        if (eraseInfo.erasePuyoCount > 0) {
+          // 消去するぷよがある場合は消去モードへ
+          this.stage.eraseBoards(eraseInfo.eraseInfo)
+          this.mode = 'erasing'
+        } else {
+          // 消去するぷよがない場合は次のぷよ生成へ
+          this.mode = 'newPuyo'
+        }
+        break
+      }
+      case 'erasing': {
+        // 消去後、再度落下チェック（連鎖のため）
+        this.mode = 'checkFall'
         break
       }
       // 他のモードは後で実装
