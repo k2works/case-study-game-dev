@@ -1,127 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Puyo Puyo - ClojureScript</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        #app {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-top: 0;
-        }
-        .game-container {
-            display: flex;
-            gap: 20px;
-        }
-        #game-canvas {
-            border: 2px solid #333;
-            background: #f0f0f0;
-            width: 240px;
-            height: 360px;
-        }
-        .info-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .info-box {
-            background: #f8f8f8;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        .info-box h3 {
-            margin: 0 0 10px 0;
-            color: #667eea;
-        }
-        .info-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        #next-canvas {
-            border: 1px solid #ddd;
-            background: #f8f8f8;
-            width: 60px;
-            height: 80px;
-        }
-        .controls {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .controls p {
-            margin: 5px 0;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #5568d3;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
+    <div class="container">
         <h1>Puyo Puyo Game</h1>
-        <div class="game-container">
-            <canvas id="game-canvas"></canvas>
-            <div class="info-panel">
-                <div class="info-box">
-                    <h3>Score</h3>
-                    <div class="info-value" id="score">0</div>
+
+        <div class="game-area">
+            <div class="board-section">
+                <div style="position: relative">
+                    <canvas id="game-canvas" width="240" height="360"></canvas>
+                    <div id="gameOver" style="display: none;" class="game-over-overlay">
+                        <div class="game-over-text">GAME OVER</div>
+                    </div>
                 </div>
-                <div class="info-box">
-                    <h3>Level</h3>
-                    <div class="info-value" id="level">1</div>
-                </div>
-                <div class="info-box">
-                    <h3>Chain</h3>
-                    <div class="info-value" id="chain">0</div>
-                </div>
-                <div class="info-box">
-                    <h3>Time</h3>
-                    <div class="info-value" id="time">0:00</div>
-                </div>
-                <div class="info-box">
-                    <h3>Next</h3>
-                    <canvas id="next-canvas"></canvas>
-                </div>
-                <div class="controls">
-                    <p><strong>Controls:</strong></p>
-                    <p>← → : Move</p>
-                    <p>↑ : Rotate</p>
-                    <p>↓ : Soft Drop</p>
-                    <p>Space : Hard Drop</p>
-                </div>
-                <button id="start-button">Start Game</button>
-                <button id="restart-button" style="display:none;">Restart</button>
             </div>
+
+            <div class="info-section">
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">SCORE</span>
+                        <span class="stat-value" id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LEVEL</span>
+                        <span class="stat-value" id="level">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CHAIN</span>
+                        <span class="stat-value" id="chain">0</span>
+                    </div>
+                </div>
+
+                <button id="start-button" class="restart-button">START GAME</button>
+                <button id="restart-button" class="restart-button" style="display: none;">RESTART</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>←/→</strong>: 左右移動</li>
+                <li><strong>↑</strong>: 回転</li>
+                <li><strong>↓</strong>: 高速落下</li>
+                <li><strong>Space</strong>: ハードドロップ</li>
+            </ul>
         </div>
     </div>
     <script src="/js/main.js"></script>
