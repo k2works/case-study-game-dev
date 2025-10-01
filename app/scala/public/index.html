@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Puyo Puyo - Scala.js</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Puyo Puyo Game</h1>
+
+        <div class="game-area">
+            <div class="board-section">
+                <div style="position: relative">
+                    <canvas id="stage" width="192" height="288"></canvas>
+                    <div id="gameOver" style="display: none;" class="game-over-overlay">
+                        <div class="game-over-text">GAME OVER</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">SCORE</span>
+                        <span class="stat-value" id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LEVEL</span>
+                        <span class="stat-value" id="level">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CHAIN</span>
+                        <span class="stat-value" id="chain">0</span>
+                    </div>
+                </div>
+
+                <button id="restart" class="restart-button">RESTART</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>←/→</strong>: 左右移動</li>
+                <li><strong>↑</strong>: 回転</li>
+                <li><strong>↓</strong>: 高速落下</li>
+                <li><strong>Space</strong>: ハードドロップ</li>
+            </ul>
+        </div>
+    </div>
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>
