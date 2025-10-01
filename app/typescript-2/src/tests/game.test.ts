@@ -60,4 +60,45 @@ describe('ゲーム', () => {
       }
     })
   })
+
+  describe('ゲームオーバー', () => {
+    beforeEach(() => {
+      // DOMの準備（chainも追加）
+      document.body.innerHTML = `
+        <div id="stage"></div>
+        <div id="score"></div>
+        <div id="chain"></div>
+        <div id="next"></div>
+        <div id="next2"></div>
+      `
+      game = new Game()
+      game.initialize()
+    })
+
+    it('ゲームオーバーになると、ゲームモードがgameOverに変わる', () => {
+      // ステージの上部（中央）にぷよを配置
+      const stage = game['stage']
+      const centerX = Math.floor(game['config'].stageCols / 2)
+      stage.setPuyo(centerX, 0, 1)
+      stage.setPuyo(centerX, 1, 1)
+
+      // ゲームモードを設定
+      game['mode'] = 'newPuyo'
+
+      // requestAnimationFrameのモック
+      const originalRequestAnimationFrame = window.requestAnimationFrame
+      window.requestAnimationFrame = vi.fn()
+
+      try {
+        // ゲームループを実行
+        game.loop()
+
+        // ゲームモードがgameOverになっていることを確認
+        expect(game['mode']).toBe('gameOver')
+      } finally {
+        // モックを元に戻す
+        window.requestAnimationFrame = originalRequestAnimationFrame
+      }
+    })
+  })
 })

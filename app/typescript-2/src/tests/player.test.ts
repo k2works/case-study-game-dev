@@ -351,4 +351,46 @@ describe('プレイヤー', () => {
       expect(player['puyoY']).toBe(config.stageRows - 1)
     })
   })
+
+  describe('ゲームオーバー', () => {
+    beforeEach(() => {
+      // DOMの準備（nextも追加）
+      document.body.innerHTML = `
+        <div id="stage"></div>
+        <div id="next"></div>
+      `
+      config = new Config()
+      puyoImage = new PuyoImage(config)
+      stage = new Stage(config, puyoImage)
+      player = new Player(config, stage, puyoImage)
+    })
+
+    it('新しいぷよを配置できない場合、ゲームオーバーになる', () => {
+      // ステージの上部（中央）にぷよを配置
+      const centerX = Math.floor(config.stageCols / 2)
+      stage.setPuyo(centerX, 0, 1)
+
+      // 新しいぷよの生成
+      player.createNewPuyo()
+
+      // ゲームオーバー判定
+      const isGameOver = player.checkGameOver()
+
+      // ゲームオーバーになっていることを確認
+      expect(isGameOver).toBe(true)
+    })
+
+    it('新しいぷよを配置できる場合、ゲームオーバーにならない', () => {
+      // ステージは空の状態
+
+      // 新しいぷよの生成
+      player.createNewPuyo()
+
+      // ゲームオーバー判定
+      const isGameOver = player.checkGameOver()
+
+      // ゲームオーバーになっていないことを確認
+      expect(isGameOver).toBe(false)
+    })
+  })
 })
