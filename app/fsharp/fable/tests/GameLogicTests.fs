@@ -227,3 +227,128 @@ let ``連鎖処理を実行できる`` () =
     result.ChainCount |> should equal 1
     result.TotalScore |> should equal 1040  // 基本スコア 40 + 全消しボーナス 1000
     isPerfectClear result.Board |> should be True
+
+[<Fact>]
+let ``ゲーム実行フロー: 固定→落下→連鎖なし`` () =
+    let board = createEmptyBoard
+    // 縦に2つのぷよを配置 (x=3, y=10-11)
+    let boardWithBase =
+        board
+        |> fun b -> setCellAt b { X = 3; Y = 10 } (Filled Red)
+        |> fun b -> setCellAt b { X = 3; Y = 11 } (Filled Blue)
+
+    // 横向きの組ぷよを上に配置 (x=2-3, y=8)
+    let puyoPair = {
+        Puyo1Color = Green
+        Puyo2Color = Yellow
+        BasePosition = { X = 2; Y = 8 }
+        Rotation = Deg90  // 横向き: Green が左(x=2)、Yellow が右(x=3)
+    }
+
+    // 1. 固定
+    let fixedBoard = fixPuyoPairToBoard boardWithBase puyoPair
+
+    // 2. 落下
+    let droppedBoard = dropFloatingPuyos fixedBoard
+
+    // 3. 連鎖チェック
+    let chainResult = executeChain droppedBoard
+
+    // 検証: 落下後の配置
+    // x=2: Green が底まで落下 (y=11)
+    match getCellAt chainResult.Board { X = 2; Y = 11 } with
+    | Some (Filled Green) -> ()
+    | other -> failwith $"Expected Green at (2, 11) but got %A{other}"
+
+    // x=3: Yellow が Red の上に落下 (y=9)
+    match getCellAt chainResult.Board { X = 3; Y = 9 } with
+    | Some (Filled Yellow) -> ()
+    | other -> failwith $"Expected Yellow at (3, 9) but got %A{other}"
+
+    // x=3: Red は y=10 のまま
+    match getCellAt chainResult.Board { X = 3; Y = 10 } with
+    | Some (Filled Red) -> ()
+    | other -> failwith $"Expected Red at (3, 10) but got %A{other}"
+
+    // x=3: Blue は y=11 のまま
+    match getCellAt chainResult.Board { X = 3; Y = 11 } with
+    | Some (Filled Blue) -> ()
+    | other -> failwith $"Expected Blue at (3, 11) but got %A{other}"
+
+    // 連鎖は発生しない
+    chainResult.ChainCount |> should equal 0
+    chainResult.TotalScore |> should equal 0
+
+[<Fact>]
+let ``縦2つのぷよの上に横向きぷよを配置した場合に全て底まで落下する`` () =
+    let board = createEmptyBoard
+    // 縦に2つのぷよ (x=3, y=10-11)
+    let board' =
+        board
+        |> fun b -> setCellAt b { X = 3; Y = 10 } (Filled Red)
+        |> fun b -> setCellAt b { X = 3; Y = 11 } (Filled Blue)
+        // 横向きに2つのぷよ (x=2-3, y=8) - 下に空白がある
+        |> fun b -> setCellAt b { X = 2; Y = 8 } (Filled Green)
+        |> fun b -> setCellAt b { X = 3; Y = 8 } (Filled Yellow)
+
+    let droppedBoard = dropFloatingPuyos board'
+
+    // x=2のぷよは底まで落ちるべき (y=11)
+    match getCellAt droppedBoard { X = 2; Y = 11 } with
+    | Some (Filled Green) -> ()
+    | _ -> failwith "Expected Green puyo at (2, 11)"
+
+    // x=3のぷよは既存のぷよの上に積もるべき (y=9)
+    match getCellAt droppedBoard { X = 3; Y = 9 } with
+    | Some (Filled Yellow) -> ()
+    | _ -> failwith "Expected Yellow puyo at (3, 9)"
+
+    // 元の位置は空になっているべき
+    match getCellAt droppedBoard { X = 2; Y = 8 } with
+    | Some Empty -> ()
+    | _ -> failwith "Expected empty cell at (2, 8)"
+
+    match getCellAt droppedBoard { X = 3; Y = 8 } with
+    | Some Empty -> ()
+    | _ -> failwith "Expected empty cell at (3, 8)"
+
+[<Fact>]
+let ``複数の浮遊ぷよが縦に重なっていても全て正しく落下する`` () =
+    let board = createEmptyBoard
+    // 浮遊ぷよを縦に4つ配置 (x=3, y=5,6,7,8) - 底との間に空白がある
+    let board' =
+        board
+        |> fun b -> setCellAt b { X = 3; Y = 5 } (Filled Blue)
+        |> fun b -> setCellAt b { X = 3; Y = 6 } (Filled Red)
+        |> fun b -> setCellAt b { X = 3; Y = 7 } (Filled Green)
+        |> fun b -> setCellAt b { X = 3; Y = 8 } (Filled Yellow)
+
+    let droppedBoard = dropFloatingPuyos board'
+
+    // 全て底に詰まるべき (順序を保持: 上にあったものが上に、下にあったものが下に)
+    // Blue (元y=5, 最上部) → y=8
+    // Red (元y=6) → y=9
+    // Green (元y=7) → y=10
+    // Yellow (元y=8, 最下部) → y=11
+
+    match getCellAt droppedBoard { X = 3; Y = 11 } with
+    | Some (Filled Yellow) -> ()
+    | _ -> failwith "Expected Yellow puyo at (3, 11)"
+
+    match getCellAt droppedBoard { X = 3; Y = 10 } with
+    | Some (Filled Green) -> ()
+    | _ -> failwith "Expected Green puyo at (3, 10)"
+
+    match getCellAt droppedBoard { X = 3; Y = 9 } with
+    | Some (Filled Red) -> ()
+    | _ -> failwith "Expected Red puyo at (3, 9)"
+
+    match getCellAt droppedBoard { X = 3; Y = 8 } with
+    | Some (Filled Blue) -> ()
+    | _ -> failwith "Expected Blue puyo at (3, 8)"
+
+    // 元の位置は空であるべき
+    for y in 5 .. 7 do
+        match getCellAt droppedBoard { X = 3; Y = y } with
+        | Some Empty -> ()
+        | _ -> failwith $"Expected empty cell at (3, {y})"

@@ -8,6 +8,7 @@
     <Compile Include="BoardTests.fs" />
     <Compile Include="PuyoTests.fs" />
     <Compile Include="GameLogicTests.fs" />
+    <Compile Include="DebugDropTest.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
