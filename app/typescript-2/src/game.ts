@@ -123,6 +123,12 @@ export class Game {
           this.stage.eraseBoards(eraseInfo.eraseInfo)
           this.mode = 'erasing'
         } else {
+          // 全消し判定
+          if (this.stage.checkZenkeshi()) {
+            // 全消しボーナスを加算
+            this._score.addZenkeshiBonus()
+          }
+
           // 消去するぷよがない場合は連鎖カウントをリセット
           this._combinationCount = 0
           // 次のぷよ生成へ

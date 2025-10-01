@@ -63,4 +63,18 @@ describe('スコア', () => {
       expect(score.getScore()).toBe(0)
     })
   })
+
+  describe('全消しボーナス', () => {
+    it('全消しするとボーナスが加算される', () => {
+      // 通常のスコア加算
+      score.addScore(4, 1)
+      const normalScore = score.getScore()
+
+      // 全消しボーナス加算
+      score.addZenkeshiBonus()
+
+      // 全消しボーナスが加算されていることを確認
+      expect(score.getScore()).toBeGreaterThan(normalScore)
+    })
+  })
 })
