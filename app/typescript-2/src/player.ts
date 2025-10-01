@@ -18,9 +18,13 @@ export class Player {
   private childOffsetY = -1 // 初期位置は上
   private childColor = 0
 
+  // 回転状態（0: 上, 1: 右, 2: 下, 3: 左）
+  private rotation = 0
+
   // キー入力のフラグ
   private inputKeyLeft = false
   private inputKeyRight = false
+  private inputKeyRotate = false
 
   constructor(config: Config, stage: Stage, puyoImage: PuyoImage) {
     this.config = config
@@ -38,6 +42,12 @@ export class Player {
       this.inputKeyLeft = true
     } else if (event.key === 'ArrowRight') {
       this.inputKeyRight = true
+    } else if (
+      event.key === 'ArrowUp' ||
+      event.key === 'x' ||
+      event.key === 'X'
+    ) {
+      this.inputKeyRotate = true
     }
   }
 
@@ -47,6 +57,12 @@ export class Player {
       this.inputKeyLeft = false
     } else if (event.key === 'ArrowRight') {
       this.inputKeyRight = false
+    } else if (
+      event.key === 'ArrowUp' ||
+      event.key === 'x' ||
+      event.key === 'X'
+    ) {
+      this.inputKeyRotate = false
     }
   }
 
@@ -63,6 +79,9 @@ export class Player {
     // 子ぷよは初期状態で上に配置
     this.childOffsetX = 0
     this.childOffsetY = -1
+
+    // 回転状態をリセット
+    this.rotation = 0
   }
 
   // 操作中のぷよを描画
@@ -122,6 +141,49 @@ export class Player {
       this.moveLeft()
     } else if (this.inputKeyRight) {
       this.moveRight()
+    }
+
+    // 回転キーが押されたら回転する
+    if (this.inputKeyRotate) {
+      this.rotateRight()
+      // 連続回転を防ぐため、フラグをリセット
+      this.inputKeyRotate = false
+    }
+  }
+
+  // 時計回りに回転
+  rotateRight(): void {
+    // 時計回りに回転（0→1→2→3→0）
+    this.rotation = (this.rotation + 1) % 4
+
+    // 右端で右回転した場合（2つ目のぷよが右にくる場合）
+    if (this.rotation === 1 && this.puyoX === this.config.stageCols - 1) {
+      // 左に移動（壁キック）
+      this.puyoX--
+    }
+
+    // 左端で左回転した場合（2つ目のぷよが左にくる場合）
+    if (this.rotation === 3 && this.puyoX === 0) {
+      // 右に移動（壁キック）
+      this.puyoX++
+    }
+  }
+
+  // 反時計回りに回転
+  rotateLeft(): void {
+    // 反時計回りに回転（0→3→2→1→0）
+    this.rotation = (this.rotation + 3) % 4
+
+    // 右端で右回転した場合（2つ目のぷよが右にくる場合）
+    if (this.rotation === 1 && this.puyoX === this.config.stageCols - 1) {
+      // 左に移動（壁キック）
+      this.puyoX--
+    }
+
+    // 左端で左回転した場合（2つ目のぷよが左にくる場合）
+    if (this.rotation === 3 && this.puyoX === 0) {
+      // 右に移動（壁キック）
+      this.puyoX++
     }
   }
 }
