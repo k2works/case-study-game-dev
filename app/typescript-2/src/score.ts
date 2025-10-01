@@ -46,6 +46,14 @@ export class Score {
     this.updateDisplay()
   }
 
+  // 全消しボーナスを加算
+  addZenkeshiBonus(): void {
+    // 全消しボーナス（固定値）
+    const zenkeshiBonus = 3600
+    this.score += zenkeshiBonus
+    this.updateDisplay()
+  }
+
   // スコア表示を更新
   private updateDisplay(): void {
     if (this.element) {
