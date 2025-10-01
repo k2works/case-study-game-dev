@@ -6,7 +6,14 @@
     <title>ぷよぷよゲーム</title>
   </head>
   <body>
-    <canvas id="gameCanvas" width="240" height="360"></canvas>
+    <div style="display: flex; gap: 20px; padding: 20px">
+      <div id="stage"></div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div id="score"></div>
+        <div id="next"></div>
+        <div id="next2"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
