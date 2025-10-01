@@ -25,6 +25,10 @@ export class Player {
   private dropTimer = 0
   private dropInterval = 1000 // 1秒ごとに落下
 
+  // 移動タイマー
+  private moveTimer = 0
+  private moveInterval = 100 // 100ms ごとに移動
+
   // 着地フラグ
   private landed = false
 
@@ -147,8 +151,17 @@ export class Player {
 
   // 左に移動できるかチェック
   private canMoveLeft(): boolean {
-    // 左端チェック
+    // 子ぷよの移動後の位置
+    const childX = this.puyoX + this.childOffsetX - 1
+    const childY = this.puyoY + this.childOffsetY
+
+    // 親ぷよの左端チェック
     if (this.puyoX <= 0) {
+      return false
+    }
+
+    // 子ぷよの左端チェック
+    if (childX < 0) {
       return false
     }
 
@@ -158,13 +171,7 @@ export class Player {
     }
 
     // 子ぷよの移動先にぷよがあるかチェック（画面内の場合のみ）
-    const childX = this.puyoX + this.childOffsetX - 1
-    const childY = this.puyoY + this.childOffsetY
-    if (
-      childX >= 0 &&
-      childY >= 0 &&
-      this._stage.getPuyo(childX, childY) !== 0
-    ) {
+    if (childY >= 0 && this._stage.getPuyo(childX, childY) !== 0) {
       return false
     }
 
@@ -173,8 +180,17 @@ export class Player {
 
   // 右に移動できるかチェック
   private canMoveRight(): boolean {
-    // 右端チェック
+    // 子ぷよの移動後の位置
+    const childX = this.puyoX + this.childOffsetX + 1
+    const childY = this.puyoY + this.childOffsetY
+
+    // 親ぷよの右端チェック
     if (this.puyoX >= this.config.stageCols - 1) {
+      return false
+    }
+
+    // 子ぷよの右端チェック
+    if (childX >= this.config.stageCols) {
       return false
     }
 
@@ -184,13 +200,7 @@ export class Player {
     }
 
     // 子ぷよの移動先にぷよがあるかチェック（画面内の場合のみ）
-    const childX = this.puyoX + this.childOffsetX + 1
-    const childY = this.puyoY + this.childOffsetY
-    if (
-      childX < this.config.stageCols &&
-      childY >= 0 &&
-      this._stage.getPuyo(childX, childY) !== 0
-    ) {
+    if (childY >= 0 && this._stage.getPuyo(childX, childY) !== 0) {
       return false
     }
 
@@ -199,11 +209,18 @@ export class Player {
 
   // 入力を処理（ゲームループから呼ばれる）
   update(deltaTime = 16): void {
-    // キー入力の処理
-    if (this.inputKeyLeft) {
-      this.moveLeft()
-    } else if (this.inputKeyRight) {
-      this.moveRight()
+    // 移動タイマーを更新
+    this.moveTimer += deltaTime
+
+    // キー入力の処理（移動間隔を超えた場合のみ）
+    if (this.moveTimer >= this.moveInterval) {
+      if (this.inputKeyLeft) {
+        this.moveLeft()
+        this.moveTimer = 0
+      } else if (this.inputKeyRight) {
+        this.moveRight()
+        this.moveTimer = 0
+      }
     }
 
     // 回転キーが押されたら回転する
@@ -225,6 +242,11 @@ export class Player {
 
   // 時計回りに回転
   rotateRight(): void {
+    // 回転前の状態を保存
+    const oldRotation = this.rotation
+    const oldOffsetX = this.childOffsetX
+    const oldOffsetY = this.childOffsetY
+
     // 時計回りに回転（0→1→2→3→0）
     this.rotation = (this.rotation + 1) % 4
 
@@ -242,10 +264,24 @@ export class Player {
       // 右に移動（壁キック）
       this.puyoX++
     }
+
+    // 回転可能かチェック
+    if (!this.canRotate()) {
+      // 回転できない場合は元に戻す
+      this.rotation = oldRotation
+      this.childOffsetX = oldOffsetX
+      this.childOffsetY = oldOffsetY
+      return
+    }
   }
 
   // 反時計回りに回転
   rotateLeft(): void {
+    // 回転前の状態を保存
+    const oldRotation = this.rotation
+    const oldOffsetX = this.childOffsetX
+    const oldOffsetY = this.childOffsetY
+
     // 反時計回りに回転（0→3→2→1→0）
     this.rotation = (this.rotation + 3) % 4
 
@@ -262,6 +298,15 @@ export class Player {
     if (this.rotation === 3 && this.puyoX === 0) {
       // 右に移動（壁キック）
       this.puyoX++
+    }
+
+    // 回転可能かチェック
+    if (!this.canRotate()) {
+      // 回転できない場合は元に戻す
+      this.rotation = oldRotation
+      this.childOffsetX = oldOffsetX
+      this.childOffsetY = oldOffsetY
+      return
     }
   }
 
@@ -285,6 +330,30 @@ export class Player {
         this.childOffsetY = 0
         break
     }
+  }
+
+  // 回転可能かチェック
+  private canRotate(): boolean {
+    // 子ぷよの回転後の位置
+    const childX = this.puyoX + this.childOffsetX
+    const childY = this.puyoY + this.childOffsetY
+
+    // 子ぷよが左右の範囲外かチェック
+    if (childX < 0 || childX >= this.config.stageCols) {
+      return false
+    }
+
+    // 子ぷよが下端を超えるかチェック
+    if (childY >= this.config.stageRows) {
+      return false
+    }
+
+    // 子ぷよの位置に既存のぷよがあるかチェック（画面内の場合のみ）
+    if (childY >= 0 && this._stage.getPuyo(childX, childY) !== 0) {
+      return false
+    }
+
+    return true
   }
 
   // 重力を適用する（ぷよを1マス下に落とす）
