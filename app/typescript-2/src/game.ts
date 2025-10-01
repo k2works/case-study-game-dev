@@ -17,13 +17,15 @@ export type GameMode =
 export class Game {
   private mode: GameMode = 'start'
   private frame = 0
-  private _combinationCount = 0 // 連鎖数（後で使用）
+  private _combinationCount = 0 // 現在の連鎖数
+  private _maxChainCount = 0 // 最大連鎖数（表示用）
   private config!: Config
   private puyoImage!: PuyoImage
   private stage!: Stage
   private player!: Player
-  private _score!: Score // スコア（後で使用）
+  private _score!: Score
   private lastTime = 0
+  private chainElement: HTMLElement | null = null
 
   constructor() {
     // コンストラクタでは何もしない
@@ -37,6 +39,10 @@ export class Game {
     this.stage = new Stage(this.config, this.puyoImage)
     this.player = new Player(this.config, this.stage, this.puyoImage)
     this._score = new Score()
+
+    // 連鎖カウント表示要素を取得
+    this.chainElement = document.getElementById('chain')
+    this.updateChainDisplay()
 
     // ゲームモードを設定
     this.mode = 'start'
@@ -101,11 +107,25 @@ export class Game {
         const eraseInfo = this.stage.checkErase()
 
         if (eraseInfo.erasePuyoCount > 0) {
+          // 連鎖カウントを増やす
+          this._combinationCount++
+
+          // 最大連鎖数を更新
+          if (this._combinationCount > this._maxChainCount) {
+            this._maxChainCount = this._combinationCount
+          }
+          this.updateChainDisplay()
+
+          // スコアを加算
+          this._score.addScore(eraseInfo.erasePuyoCount, this._combinationCount)
+
           // 消去するぷよがある場合は消去モードへ
           this.stage.eraseBoards(eraseInfo.eraseInfo)
           this.mode = 'erasing'
         } else {
-          // 消去するぷよがない場合は次のぷよ生成へ
+          // 消去するぷよがない場合は連鎖カウントをリセット
+          this._combinationCount = 0
+          // 次のぷよ生成へ
           this.mode = 'newPuyo'
         }
         break
@@ -133,6 +153,22 @@ export class Game {
         if (ctx) {
           this.player.draw(ctx)
         }
+      }
+    }
+  }
+
+  // 連鎖カウント表示を更新
+  private updateChainDisplay(): void {
+    if (this.chainElement) {
+      if (this._combinationCount > 0) {
+        // 連鎖中は現在の連鎖数を表示
+        this.chainElement.textContent = `Chain: ${this._combinationCount}`
+      } else if (this._maxChainCount > 0) {
+        // 連鎖終了後は最大連鎖数を表示
+        this.chainElement.textContent = `Max Chain: ${this._maxChainCount}`
+      } else {
+        // 連鎖未発生
+        this.chainElement.textContent = `Chain: 0`
       }
     }
   }
