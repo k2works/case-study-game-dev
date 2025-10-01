@@ -168,15 +168,22 @@ let gameStep (ctx: CanvasRenderingContext2D) : unit =
                 gameState <- { gameState with CurrentPiece = Some movedPiece }
             else
                 // 落下できない場合 - 固定処理
+                Browser.Dom.console.log("Fixing puyo pair to board")
                 let fixedBoard = fixPuyoPairToBoard gameState.Board currentPiece
+
+                // 固定後に浮遊ぷよを落下させる
+                Browser.Dom.console.log("Dropping floating puyos after fix")
+                let droppedBoard = dropFloatingPuyos fixedBoard
+
                 gameState <- {
                     gameState with
-                        Board = fixedBoard
+                        Board = droppedBoard
                         CurrentPiece = None
                 }
 
                 // 連鎖処理
-                let chainResult = executeChain fixedBoard
+                Browser.Dom.console.log("Executing chain")
+                let chainResult = executeChain droppedBoard
                 gameState <- {
                     gameState with
                         Board = chainResult.Board
