@@ -527,7 +527,9 @@
   (reset-game-state!)
   (initialize-game-board!)
   (spawn-initial-puyo-pair!)
-  (swap! game-state assoc :game-running true))
+  (swap! game-state assoc :game-running true)
+  (when-let [overlay (.getElementById js/document "gameOver")]
+    (set! (.-style.display overlay) "none")))
 
 ;; T020: ゲーム終了判定
 (defn is-game-over?
@@ -544,11 +546,12 @@
   "ゲームオーバー処理"
   []
   (swap! game-state assoc :game-running false)
+  (when-let [overlay (.getElementById js/document "gameOver")]
+    (set! (.-style.display overlay) "flex"))
   (when-let [btn (.getElementById js/document "restart-button")]
     (set! (.-style.display btn) "block"))
   (when-let [btn (.getElementById js/document "start-button")]
-    (set! (.-style.display btn) "none"))
-  (js/alert (str "Game Over! Score: " (:score @game-state))))
+    (set! (.-style.display btn) "none")))
 
 (defn check-and-handle-game-over!
   "ゲームオーバーチェックと処理"
