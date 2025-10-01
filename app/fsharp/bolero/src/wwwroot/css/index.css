@@ -123,3 +123,101 @@ h1 {
 #main {
     min-height: 200px;
 }
+
+.next-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.next-section h2 {
+    color: #667eea;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.stats-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .game-area {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .board-section {
+        overflow: auto;
+        max-width: 100%;
+    }
+
+    .info-section {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .next-section,
+    .stats-section {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .start-button {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .controls {
+        font-size: 0.9rem;
+    }
+
+    .controls li {
+        font-size: 0.9rem;
+    }
+}
