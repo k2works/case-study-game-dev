@@ -1,0 +1,14 @@
+{
+  "name": "puyo-elm",
+  "version": "1.0.0",
+  "description": "Puyo Puyo game implemented in Elm",
+  "scripts": {
+    "build": "elm make src/Main.elm --output=public/main.js",
+    "build:opt": "elm make src/Main.elm --output=public/main.js --optimize",
+    "serve": "npx http-server public -p 8080 -o",
+    "dev": "npm run build && npm run serve"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
