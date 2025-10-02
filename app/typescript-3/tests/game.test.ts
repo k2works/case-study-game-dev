@@ -87,11 +87,52 @@ describe('ゲーム', () => {
       // モードが checkFall になっている
       expect(game['mode']).toBe('checkFall')
 
-      // さらに更新（重力適用後、落下するぷよがないので newPuyo へ）
+      // さらに更新（重力適用後、落下するぷよがないので checkErase へ）
+      game['update'](0)
+
+      // モードが checkErase になっている
+      expect(game['mode']).toBe('checkErase')
+
+      // さらに更新（消去対象がないので newPuyo へ）
       game['update'](0)
 
       // モードが newPuyo に戻っている
       expect(game['mode']).toBe('newPuyo')
+    })
+  })
+
+  describe('ぷよの消去処理統合', () => {
+    it('4つ以上つながったぷよは消去される', () => {
+      // 初期化
+      game.initialize()
+
+      // ステージに消去対象のぷよを配置
+      const stage = game['stage']
+      stage.setPuyo(1, 10, 1)
+      stage.setPuyo(2, 10, 1)
+      stage.setPuyo(1, 11, 1)
+      stage.setPuyo(2, 11, 1)
+
+      // checkErase モードに設定
+      game['mode'] = 'checkErase'
+
+      // 更新（消去判定と消去実行）
+      game['update'](0)
+
+      // モードが erasing になっている
+      expect(game['mode']).toBe('erasing')
+
+      // さらに更新（消去後の重力チェック）
+      game['update'](0)
+
+      // モードが checkFall になっている
+      expect(game['mode']).toBe('checkFall')
+
+      // ぷよが消去されていることを確認
+      expect(stage.getPuyo(1, 10)).toBe(0)
+      expect(stage.getPuyo(2, 10)).toBe(0)
+      expect(stage.getPuyo(1, 11)).toBe(0)
+      expect(stage.getPuyo(2, 11)).toBe(0)
     })
   })
 })

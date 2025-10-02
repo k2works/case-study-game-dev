@@ -80,14 +80,33 @@ export class Game {
           // ぷよが落下した場合、falling モードへ
           this.mode = 'falling'
         } else {
-          // 落下するぷよがない場合、次のぷよを出す
-          this.mode = 'newPuyo'
+          // 落下するぷよがない場合、消去チェックへ
+          this.mode = 'checkErase'
         }
         break
 
       case 'falling':
         // 落下アニメーション用（一定フレーム待機）
         // 簡略化のため、すぐに checkFall に戻る
+        this.mode = 'checkFall'
+        break
+
+      case 'checkErase':
+        // 消去判定
+        const eraseInfo = this.stage.checkErase()
+        if (eraseInfo.erasePuyoCount > 0) {
+          // 消去対象がある場合、消去処理へ
+          this.stage.eraseBoards(eraseInfo.eraseInfo)
+          this.mode = 'erasing'
+        } else {
+          // 消去対象がない場合、次のぷよを出す
+          this.mode = 'newPuyo'
+        }
+        break
+
+      case 'erasing':
+        // 消去アニメーション用（一定フレーム待機）
+        // 簡略化のため、すぐに checkFall に戻る（消去後の重力適用）
         this.mode = 'checkFall'
         break
     }
