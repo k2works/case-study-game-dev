@@ -3116,7 +3116,7 @@ class Player:
 
 ---
 
-## イテレーション6: ぷよの消去の実装（前半）
+## イテレーション6: ぷよの消去の実装
 
 「ぷよが落ちてくるようになったけど、ぷよぷよの醍醐味はぷよを消すことですよね？」そうですね！ぷよぷよの最も重要な要素の一つは、同じ色のぷよを4つ以上つなげると消去できる機能です。今回は、その「ぷよの消去」機能を実装していきましょう！
 
@@ -3564,9 +3564,6 @@ newPuyo → playing → (着地) → checkFall → (重力適用) →
 
 ---
 
-## イテレーション7以降（準備中）
-
-現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
 ## イテレーション7: 連鎖反応の実装
 
 「連鎖ができるようになると、もっと面白くなりますよね？」そうですね！ぷよぷよの面白さの核心は連鎖反応です。今回は、連鎖反応がどのように実現されているのかを確認していきましょう！
@@ -4319,9 +4316,428 @@ Pyxel でのテキスト描画では、以下のポイントがあります：
    - `draw_game_over()` メソッドでゲームオーバー画面描画
    - モード管理でゲームの状態を制御
 
-このイテレーションで、ゲームの終了条件とゲームオーバー演出が実装できました。これで基本的なぷよぷよゲームが完成しました！次のイテレーションでは、UIをさらに改善して、より遊びやすいゲームにしていきます！
+このイテレーションで、ゲームの終了条件とゲームオーバー演出が実装できました。これで基本的なぷよぷよゲームが完成しました！しかし、プレイテストをすると重大なバグが見つかりました。次のイテレーションでは、このバグを修正していきます！
 
-- イテレーション10: UIの改善
+## イテレーション10: 衝突判定の修正
+
+「ゲームで遊んでいると、おかしな動きをすることがありますね...」そうなんです！実際にゲームをプレイテストした結果、重大なバグが発見されました。このイテレーションでは、TDDの重要な教訓である「テストされていない機能は動作しない」を再確認しながら、バグを修正していきましょう！
+
+### 発見されたバグ
+
+ゲームをプレイテストした結果、以下の重大なバグが発見されました：
+
+1. **回転時の衝突判定の欠落**
+   - 縦にしたぷよ（rotation=2）が既に着地したぷよの位置に回転できてしまう
+   - 回転によって既存のぷよを上書きしてしまう
+
+2. **移動時の衝突判定の欠落**
+   - 左右に移動する際、既に着地したぷよの位置に移動できてしまう
+   - 移動によって既存のぷよを上書きしてしまう
+
+### なぜテストで検出されなかったのか
+
+イテレーション2で移動機能、イテレーション3で回転機能を実装した際、以下のテストケースしか作成していませんでした：
+
+- 壁際での移動・回転（境界チェックのテスト）
+- 回転状態の遷移（0→1→2→3→0）
+
+**欠けていたテストケース**：
+- 既存のぷよがある位置への回転
+- 既存のぷよがある位置への移動
+
+これは TDD における重要な教訓です。「テストされていない機能は動作しない」という原則を再確認できました。
+
+### テスト: 移動時の衝突判定
+
+「まずはテストから書きましょう！」そうですね。バグを修正する前に、バグを再現するテストを書きます。
+
+```python
+# tests/test_player.py（続き）
+def test_cannot_move_left_to_existing_puyo(
+    config: Config, stage: Stage, player: Player
+) -> None:
+    """既存のぷよがある位置には左に移動できない"""
+    # 軸ぷよを (3, 5) に配置（上向き rotation=0）
+    player.puyo_x = 3
+    player.puyo_y = 5
+    player.rotation = 0
+
+    # 左側に障害物を配置
+    stage.set_puyo(2, 5, 1)
+
+    # 左に移動を試みる
+    player.move_left()
+
+    # 移動していないことを確認
+    assert player.puyo_x == 3
+
+
+def test_cannot_move_right_to_existing_puyo(
+    config: Config, stage: Stage, player: Player
+) -> None:
+    """既存のぷよがある位置には右に移動できない"""
+    # 軸ぷよを (2, 5) に配置（上向き rotation=0）
+    player.puyo_x = 2
+    player.puyo_y = 5
+    player.rotation = 0
+
+    # 右側に障害物を配置
+    stage.set_puyo(3, 5, 1)
+
+    # 右に移動を試みる
+    player.move_right()
+
+    # 移動していないことを確認
+    assert player.puyo_x == 2
+
+
+def test_cannot_move_when_next_puyo_hits_obstacle(
+    config: Config, stage: Stage, player: Player
+) -> None:
+    """2つ目のぷよの位置に障害物がある場合も移動できない"""
+    # 軸ぷよを (2, 5) に配置、右向き (rotation=1)
+    player.puyo_x = 2
+    player.puyo_y = 5
+    player.rotation = 1  # 2つ目のぷよは右側(3, 5)
+
+    # 2つ目のぷよの右側（3, 5 の右 = 4, 5）に障害物を配置
+    stage.set_puyo(4, 5, 1)
+
+    # 右に移動を試みる
+    player.move_right()
+
+    # 移動していないことを確認
+    assert player.puyo_x == 2
+```
+
+### テスト: 回転時の衝突判定
+
+次に、回転時の衝突判定のテストを追加します。
+
+```python
+# tests/test_player.py（続き）
+def test_cannot_rotate_to_existing_puyo(
+    config: Config, stage: Stage, player: Player
+) -> None:
+    """既存のぷよがある位置には回転できない"""
+    # 軸ぷよを (2, 5) に配置（上向き rotation=0）
+    player.puyo_x = 2
+    player.puyo_y = 5
+    player.rotation = 0
+
+    # 右側（回転先）に障害物を配置
+    stage.set_puyo(3, 5, 1)
+
+    # 現在の回転状態を記録
+    before_rotation = player.rotation
+
+    # 右回転を試みる（0 → 1 で右向きになる）
+    player.rotate_right()
+
+    # 回転していないことを確認
+    assert player.rotation == before_rotation
+
+
+def test_can_rotate_when_destination_is_empty(
+    config: Config, stage: Stage, player: Player
+) -> None:
+    """回転後の位置が空いていれば回転できる"""
+    # 軸ぷよを (2, 5) に配置（上向き rotation=0）
+    player.puyo_x = 2
+    player.puyo_y = 5
+    player.rotation = 0
+
+    # 右回転を試みる（0 → 1）
+    player.rotate_right()
+
+    # 回転していることを確認
+    assert player.rotation == 1
+```
+
+「これらのテストを実行すると失敗しますね！」そうです。これがバグを再現するテストです（Red）。では、実装を修正していきましょう。
+
+### 実装: 移動時の衝突判定
+
+`can_move_to()` メソッドを新規追加します：
+
+```python
+# src/player.py（続き）
+def _can_move_to(
+    self,
+    axis_x: int,
+    axis_y: int,
+    next_x: int,
+    next_y: int
+) -> bool:
+    """移動可能かチェックする（内部メソッド）
+
+    Args:
+        axis_x: 軸ぷよのX座標
+        axis_y: 軸ぷよのY座標
+        next_x: 2つ目のぷよのX座標
+        next_y: 2つ目のぷよのY座標
+
+    Returns:
+        移動可能ならTrue、それ以外はFalse
+    """
+    # 軸ぷよの範囲チェック
+    if (
+        axis_x < 0 or
+        axis_x >= self.config.stage_cols or
+        axis_y < 0 or
+        axis_y >= self.config.stage_rows
+    ):
+        return False
+
+    # 2つ目のぷよの範囲チェック
+    if (
+        next_x < 0 or
+        next_x >= self.config.stage_cols or
+        next_y < 0 or
+        next_y >= self.config.stage_rows
+    ):
+        return False
+
+    # 軸ぷよの衝突チェック
+    if self.stage.get_puyo(axis_x, axis_y) > 0:
+        return False
+
+    # 2つ目のぷよの衝突チェック
+    if self.stage.get_puyo(next_x, next_y) > 0:
+        return False
+
+    return True
+```
+
+次に、`move_left()` と `move_right()` メソッドを修正します：
+
+```python
+# src/player.py（修正）
+def move_left(self) -> None:
+    """ぷよを左に移動する"""
+    # 移動後の位置を計算
+    new_axis_x = self.puyo_x - 1
+
+    # 2つ目のぷよの位置を計算
+    offset_x = [0, 1, 0, -1][self.rotation]
+    offset_y = [-1, 0, 1, 0][self.rotation]
+    new_next_x = new_axis_x + offset_x
+    new_next_y = self.puyo_y + offset_y
+
+    # 移動可能かチェック
+    if self._can_move_to(new_axis_x, self.puyo_y, new_next_x, new_next_y):
+        self.puyo_x -= 1
+
+
+def move_right(self) -> None:
+    """ぷよを右に移動する"""
+    # 移動後の位置を計算
+    new_axis_x = self.puyo_x + 1
+
+    # 2つ目のぷよの位置を計算
+    offset_x = [0, 1, 0, -1][self.rotation]
+    offset_y = [-1, 0, 1, 0][self.rotation]
+    new_next_x = new_axis_x + offset_x
+    new_next_y = self.puyo_y + offset_y
+
+    # 移動可能かチェック
+    if self._can_move_to(new_axis_x, self.puyo_y, new_next_x, new_next_y):
+        self.puyo_x += 1
+```
+
+### 実装: 回転時の衝突判定
+
+`can_rotate_to()` メソッドを新規追加します：
+
+```python
+# src/player.py（続き）
+def _can_rotate_to(self, next_x: int, next_y: int) -> bool:
+    """回転可能かチェックする（内部メソッド）
+
+    Args:
+        next_x: 回転後の2つ目のぷよのX座標
+        next_y: 回転後の2つ目のぷよのY座標
+
+    Returns:
+        回転可能ならTrue、それ以外はFalse
+    """
+    # 範囲外チェック
+    if (
+        next_x < 0 or
+        next_x >= self.config.stage_cols or
+        next_y < 0 or
+        next_y >= self.config.stage_rows
+    ):
+        return False
+
+    # 既存のぷよとの衝突チェック
+    if self.stage.get_puyo(next_x, next_y) > 0:
+        return False
+
+    return True
+```
+
+次に、`_perform_rotation()` メソッドを修正します（イテレーション3で実装したメソッド）：
+
+```python
+# src/player.py（修正）
+def _perform_rotation(self, new_rotation: int) -> None:
+    """回転処理を実行する（内部メソッド）
+
+    Args:
+        new_rotation: 新しい回転状態
+    """
+    # 回転後の2つ目のぷよの位置を計算
+    offset_x = [0, 1, 0, -1][new_rotation]
+    offset_y = [-1, 0, 1, 0][new_rotation]
+    new_x = self.puyo_x
+    next_x = new_x + offset_x
+    next_y = self.puyo_y + offset_y
+
+    # 壁キック処理
+    if next_x < 0:
+        # 左壁に当たる場合、右にキック
+        new_x += 1
+    elif next_x >= self.config.stage_cols:
+        # 右壁に当たる場合、左にキック
+        new_x -= 1
+
+    # 回転後の位置を再計算
+    final_next_x = new_x + offset_x
+    final_next_y = self.puyo_y + offset_y
+
+    # 回転後の位置が有効かチェック
+    if not self._can_rotate_to(final_next_x, final_next_y):
+        # 回転できない場合は何もしない
+        return
+
+    # 回転を確定
+    self.puyo_x = new_x
+    self.rotation = new_rotation
+```
+
+### 既存テストの修正
+
+既存の回転・移動テストが失敗していた原因は、プレイヤーが Y=0（画面最上部）に配置されており、上向き（rotation=0）の 2 つ目のぷよが Y=-1（画面外）に配置されてしまうためでした。
+
+テストのセットアップを修正します：
+
+```python
+# tests/test_player.py（修正）
+@pytest.fixture
+def player(config: Config, stage: Stage, puyo_image: PuyoImage) -> Player:
+    """Playerのフィクスチャ"""
+    player = Player(config, stage, puyo_image)
+    player.create_new_puyo()
+    # 移動可能な位置に配置
+    player.puyo_y = 5
+    return player
+```
+
+「テストを実行してみましょう！」はい、これでテストが通るはずです（Green）！
+
+### 解説: 衝突判定の実装
+
+今回追加した衝突判定では、以下のことを行っています：
+
+1. **移動時の衝突判定**：
+   - 軸ぷよと2つ目のぷよ、両方の移動先をチェック
+   - 範囲外チェックと既存ぷよとの衝突チェック
+
+2. **回転時の衝突判定**：
+   - 回転後の2つ目のぷよの位置をチェック
+   - 壁キック処理後の最終位置をチェック
+
+### 学んだ教訓
+
+このイテレーションから、以下の重要な教訓を学びました：
+
+1. **テストカバレッジの重要性**
+   - 機能を実装したら、その機能の「正常系」だけでなく「異常系」もテストする
+   - 境界値テストだけでなく、衝突判定のような制約条件もテストする
+
+2. **プレイテストの重要性**
+   - 自動テストでカバーできない部分は手動テストで補完
+   - 実際にゲームを遊んでみることで、テストケースの漏れに気づける
+
+3. **TDD のサイクルを守る**
+   - Red（失敗するテストを書く）
+   - Green（テストを通す最小限の実装）
+   - Refactor（リファクタリング）
+   - **重要**: テストを書かずに実装すると、バグを見逃す可能性が高い
+
+4. **バグ発見時の対応**
+   - まずテストを書いてバグを再現（Red）
+   - テストが失敗することを確認
+   - バグを修正してテストを通す（Green）
+   - 同様のバグを防ぐためのテストを追加
+
+### イテレーション10のまとめ
+
+このイテレーションでは、以下を学びました：
+
+1. **バグの発見と修正**：
+   - プレイテストによる重大なバグの発見
+   - 移動・回転時の衝突判定の欠落
+
+2. **TDDの原則の再確認**：
+   - 「テストされていない機能は動作しない」
+   - バグ修正時も TDD サイクルに従う
+
+3. **実装の改善**：
+   - `_can_move_to()` メソッドで移動時の衝突判定
+   - `_can_rotate_to()` メソッドで回転時の衝突判定
+   - 軸ぷよと2つ目のぷよ、両方のチェック
+
+4. **テストの拡充**：
+   - 移動時の衝突判定テスト（3ケース）
+   - 回転時の衝突判定テスト（2ケース）
+   - 既存テストの修正（初期位置の調整）
+
+これで、ぷよぷよゲームの基本的な機能がすべて実装され、重要なバグも修正されました。次は、これまでの実装を振り返り、TDDの学びをまとめていきましょう！
+
+## ふりかえり
+
+ぷよぷよゲームの実装を完了することができたので、これまでのふりかえりをしておきましょう。
+
+### Keep（続けること）
+
+まず **TODOリスト** を作成して **テストファースト** で１つずつ小さなステップで開発を進めていきました。テスト駆動開発の「Red-Green-Refactor」サイクルに従うことで、コードの品質を保ちながら、段階的に機能を追加していくことができました。
+
+各イテレーションでは、ユーザーストーリーに基づいた機能を、テスト、実装、解説の順に進めていきました。この流れは非常に効果的で、実装の方針が明確になり、必要最小限のコードで機能を実現することができました。
+
+特に以下の点は今後も続けていきたいプラクティスです：
+
+1. ユーザーストーリーからTODOリストへの分解
+2. テストファーストの原則に従った実装
+3. 小さなステップでの開発
+4. リファクタリングによるコードの継続的な改善
+5. プレイテストによる品質確認
+
+### Problem（課題）
+
+開発を進める中で、いくつかの課題も見えてきました。
+
+まず、テストの粒度をどの程度にするかという判断が難しい場面がありました。細かすぎるテストは冗長になり、大きすぎるテストは問題の特定が難しくなります。
+
+また、テストケースの漏れを完全に防ぐことは難しいことがわかりました。イテレーション10で発見した衝突判定のバグは、テストケースの不足が原因でした。
+
+ゲームロジックの複雑さが増すにつれて、テストの維持も難しくなりました。特に、ゲームの状態遷移やモード管理のテストは工夫が必要でした。
+
+### Try（挑戦）
+
+今後は以下のことに挑戦していきたいと思います：
+
+1. より網羅的なテスト戦略の構築 - 正常系と異常系のバランス
+2. プレイテストと自動テストの組み合わせ
+3. より複雑なゲーム機能への挑戦
+4. パフォーマンス最適化とそのテスト手法の習得
+
+これらの知識と経験は、他のプロジェクトにも応用できるものです。テスト駆動開発は、コードの品質を高め、保守性を向上させるための強力な手法です。ぜひ、自分のプロジェクトにも取り入れてみてください。
+
+> 私がかつて発見した、そして多くの人に気づいてもらいたい効果とは、反復可能な振る舞いを規則にまで還元することで、規則の適用は機会的に反復可能になるということだ。
+>
+> — Kent Beck 『テスト駆動開発』
 
 ## 参考資料
 
