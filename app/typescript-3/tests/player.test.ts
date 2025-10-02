@@ -320,4 +320,47 @@ describe('プレイヤー', () => {
       expect(player.hasLanded()).toBe(true)
     })
   })
+
+  describe('高速落下', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('下キーが押されていると、落下速度が上がる', () => {
+      // 下キーを押す
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
+
+      // 通常の落下速度
+      const normalDropSpeed = 1
+      const fastDropSpeed = player.getDropSpeed()
+
+      // 高速落下の速度が通常より速いことを確認
+      expect(fastDropSpeed).toBeGreaterThan(normalDropSpeed)
+    })
+
+    it('下に移動できる場合、下に移動する', () => {
+      // 初期位置を記録
+      const initialY = player['puyoY']
+
+      // 下に移動
+      const canMove = player.moveDown()
+
+      // 位置が1つ下に移動していることを確認
+      expect(canMove).toBe(true)
+      expect(player['puyoY']).toBe(initialY + 1)
+    })
+
+    it('下に障害物がある場合、下に移動できない', () => {
+      // ステージの一番下に移動
+      player['puyoY'] = config.stageRows - 1
+
+      // 下に移動を試みる
+      const canMove = player.moveDown()
+
+      // 移動できないことを確認
+      expect(canMove).toBe(false)
+      expect(player['puyoY']).toBe(config.stageRows - 1)
+    })
+  })
 })

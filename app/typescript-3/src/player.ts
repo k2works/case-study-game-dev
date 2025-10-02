@@ -125,8 +125,8 @@ export class Player {
   }
 
   updateWithDelta(deltaTime: number): void {
-    // タイマーを進める
-    this.dropTimer += deltaTime
+    // タイマーを進める（高速落下の速度を反映）
+    this.dropTimer += deltaTime * this.getDropSpeed()
 
     // 落下間隔に達したら落下処理
     if (this.dropTimer >= this.dropInterval) {
@@ -199,6 +199,20 @@ export class Player {
 
   hasLanded(): boolean {
     return this.landed
+  }
+
+  getDropSpeed(): number {
+    // 下キーが押されていれば高速落下
+    return this.inputKeyDown ? 10 : 1
+  }
+
+  moveDown(): boolean {
+    // 下に移動できるかチェック
+    if (this.canMoveDown()) {
+      this.puyoY++
+      return true
+    }
+    return false
   }
 
   rotateRight(): void {
