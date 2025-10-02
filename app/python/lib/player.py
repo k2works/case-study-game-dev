@@ -107,8 +107,15 @@ class Player:
         elif self.rotation == 3:  # 左
             second_x = new_x - 1
 
+        # 2つ目のぷよが盤面外にはみ出すかチェック
+        # 上方向（y < 0）は許可、下方向と左右方向は禁止
+        if second_y >= self.config.stage_rows:
+            return False
+        if second_x < 0 or second_x >= self.config.stage_cols:
+            return False
+
         # 2つ目のぷよが移動できるかチェック
-        # 盤面外(-1)は有効として扱う
+        # 盤面外（y < 0）の場合はget_puyoが-1を返すが、上方向は有効
         puyo_at_second_pos = self.stage.get_puyo(second_x, second_y)
         if puyo_at_second_pos > 0:
             return False
@@ -137,8 +144,15 @@ class Player:
         elif new_rotation == 3:  # 左
             second_x = self.puyo_x - 1
 
+        # 2つ目のぷよが盤面外にはみ出すかチェック
+        # 上方向（y < 0）は許可、下方向と左右方向は禁止
+        if second_y >= self.config.stage_rows:
+            return False
+        if second_x < 0 or second_x >= self.config.stage_cols:
+            return False
+
         # 2つ目のぷよが回転先に配置できるかチェック
-        # 盤面外(-1)は有効として扱う
+        # 盤面外（y < 0）の場合はget_puyoが-1を返すが、上方向は有効
         puyo_at_second_pos = self.stage.get_puyo(second_x, second_y)
         if puyo_at_second_pos > 0:
             return False
@@ -164,40 +178,50 @@ class Player:
         # 新しい回転状態を計算
         new_rotation = (self.rotation + 1) % 4
 
-        # 回転できるかチェック
+        # 壁キック: 右端で右回転（rotation=1）すると左に移動
+        if new_rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
+            self.puyo_x -= 1
+
+        # 壁キック: 左端で下回転（rotation=3）すると右に移動
+        if new_rotation == 3 and self.puyo_x == 0:
+            self.puyo_x += 1
+
+        # 回転できるかチェック（壁キック後の位置で）
         if not self._can_rotate_to(new_rotation):
+            # 回転できない場合は壁キックを元に戻す
+            if new_rotation == 1 and self.puyo_x == self.config.stage_cols - 2:
+                self.puyo_x += 1
+            if new_rotation == 3 and self.puyo_x == 1:
+                self.puyo_x -= 1
             return
 
         # 回転状態を更新
         self.rotation = new_rotation
-
-        # 壁キック: 右端で右回転（rotation=1）すると左に移動
-        if self.rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
-            self.puyo_x -= 1
-
-        # 壁キック: 左端で下回転（rotation=3）すると右に移動
-        if self.rotation == 3 and self.puyo_x == 0:
-            self.puyo_x += 1
 
     def rotate_left(self) -> None:
         """反時計回りに回転(0→3→2→1→0)"""
         # 新しい回転状態を計算（+3は-1と同じ mod 4）
         new_rotation = (self.rotation + 3) % 4
 
-        # 回転できるかチェック
+        # 壁キック: 右端で右回転（rotation=1）すると左に移動
+        if new_rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
+            self.puyo_x -= 1
+
+        # 壁キック: 左端で下回転（rotation=3）すると右に移動
+        if new_rotation == 3 and self.puyo_x == 0:
+            self.puyo_x += 1
+
+        # 回転できるかチェック（壁キック後の位置で）
         if not self._can_rotate_to(new_rotation):
+            # 回転できない場合は壁キックを元に戻す
+            if new_rotation == 1 and self.puyo_x == self.config.stage_cols - 2:
+                self.puyo_x += 1
+            if new_rotation == 3 and self.puyo_x == 1:
+                self.puyo_x -= 1
             return
 
         # 回転状態を更新
         self.rotation = new_rotation
-
-        # 壁キック: 右端で右回転（rotation=1）すると左に移動
-        if self.rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
-            self.puyo_x -= 1
-
-        # 壁キック: 左端で下回転（rotation=3）すると右に移動
-        if self.rotation == 3 and self.puyo_x == 0:
-            self.puyo_x += 1
 
     def draw(self) -> None:
         """現在のぷよを描画（1つ目と2つ目）"""

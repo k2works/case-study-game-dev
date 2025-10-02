@@ -506,3 +506,27 @@ class TestPlayer:
 
         # 回転状態が変わっていないことを確認
         assert player.rotation == initial_rotation
+
+    def test_下端で下向きに回転できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """下端で下向きに回転できない（盤面外にめり込まない）"""
+        config, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 下端に配置
+        player.puyo_x = 2
+        player.puyo_y = config.stage_rows - 1  # 最下段
+        player.rotation = 0  # 上向き
+
+        # 初期回転状態を記録
+        initial_rotation = player.rotation
+
+        # 右回転を2回試みる（0→1→2 下向きになる）
+        player.rotate_right()  # 0→1（右向き）は成功するはず
+        player.rotate_right()  # 1→2（下向き）は失敗するはず
+
+        # 回転状態が1（右向き）で止まっていることを確認
+        assert player.rotation == 1
