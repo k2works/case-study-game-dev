@@ -209,4 +209,115 @@ describe('プレイヤー', () => {
       expect(player['puyoX']).toBe(1) // 右に1マスキック
     })
   })
+
+  describe('自由落下', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('指定時間が経過すると、ぷよが1マス下に落ちる', () => {
+      // 初期位置を記録
+      const initialY = player['puyoY']
+
+      // 落下間隔を取得（例: 1000ms = 1秒）
+      const dropInterval = player['dropInterval']
+
+      // ゲームの更新処理を実行（落下間隔分）
+      player.updateWithDelta(dropInterval)
+
+      // 位置が1つ下に移動していることを確認
+      expect(player['puyoY']).toBe(initialY + 1)
+    })
+
+    it('指定時間未満では、ぷよは落ちない', () => {
+      // 初期位置を記録
+      const initialY = player['puyoY']
+
+      // 落下間隔を取得
+      const dropInterval = player['dropInterval']
+
+      // タイマーを半分だけ進める
+      player.updateWithDelta(dropInterval / 2)
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoY']).toBe(initialY)
+    })
+
+    it('下端に達した場合、それ以上落ちない', () => {
+      // 下端の1つ上に配置
+      player['puyoY'] = config.stageRows - 1
+
+      // 落下処理を実行
+      player.updateWithDelta(player['dropInterval'])
+
+      // 位置が変わっていないことを確認（下端を超えない）
+      expect(player['puyoY']).toBe(config.stageRows - 1)
+    })
+  })
+
+  describe('ぷよの着地', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('ぷよが下端に着地したら固定される', () => {
+      // 下端の1つ上に配置
+      player['puyoY'] = config.stageRows - 2
+
+      // 落下処理を実行（下端に到達）
+      player.updateWithDelta(player['dropInterval'])
+
+      // 下端に到達している
+      expect(player['puyoY']).toBe(config.stageRows - 1)
+
+      // さらに落下処理を実行
+      player.updateWithDelta(player['dropInterval'])
+
+      // ステージにぷよが固定されていることを確認
+      expect(stage.getPuyo(player['puyoX'], config.stageRows - 1)).toBeGreaterThan(
+        0
+      )
+    })
+
+    it('ぷよが他のぷよの上に着地したら固定される', () => {
+      // 下端にぷよを配置
+      stage.setPuyo(2, config.stageRows - 1, 1)
+
+      // プレイヤーのぷよを下端の2つ上に配置
+      player['puyoY'] = config.stageRows - 3
+
+      // 落下処理を実行（他のぷよの上に到達）
+      player.updateWithDelta(player['dropInterval'])
+
+      // 他のぷよの1つ上に到達している
+      expect(player['puyoY']).toBe(config.stageRows - 2)
+
+      // さらに落下処理を実行
+      player.updateWithDelta(player['dropInterval'])
+
+      // ステージにぷよが固定されていることを確認
+      expect(
+        stage.getPuyo(player['puyoX'], config.stageRows - 2)
+      ).toBeGreaterThan(0)
+    })
+
+    it('ぷよが着地したら着地フラグが立つ', () => {
+      // 下端の1つ上に配置
+      player['puyoY'] = config.stageRows - 2
+
+      // 落下処理を実行（下端に到達）
+      player.updateWithDelta(player['dropInterval'])
+
+      // まだ着地していない
+      expect(player.hasLanded()).toBe(false)
+
+      // さらに落下処理を実行（着地）
+      player.updateWithDelta(player['dropInterval'])
+
+      // 着地フラグが立っている
+      expect(player.hasLanded()).toBe(true)
+    })
+  })
 })

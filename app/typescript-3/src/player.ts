@@ -18,6 +18,9 @@ export class Player {
   private puyoType: number = 0 // 現在のぷよの種類
   private nextPuyoType: number = 0 // 次のぷよの種類
   private rotation: number = 0 // 現在の回転状態
+  private dropTimer: number = 0 // 落下タイマー
+  private dropInterval: number = 1000 // 落下間隔（ミリ秒）
+  private landed: boolean = false // 着地フラグ
 
   constructor(
     private config: Config,
@@ -61,6 +64,7 @@ export class Player {
     this.puyoType = this.getRandomPuyoType()
     this.nextPuyoType = this.getRandomPuyoType()
     this.rotation = 0
+    this.landed = false // 着地フラグをリセット
   }
 
   private getRandomPuyoType(): number {
@@ -118,6 +122,83 @@ export class Player {
       this.rotateRight()
       this.inputKeyUp = false // 回転後フラグをクリア
     }
+  }
+
+  updateWithDelta(deltaTime: number): void {
+    // タイマーを進める
+    this.dropTimer += deltaTime
+
+    // 落下間隔に達したら落下処理
+    if (this.dropTimer >= this.dropInterval) {
+      this.drop()
+      this.dropTimer = 0 // タイマーをリセット
+    }
+
+    // 既存の update 処理も実行
+    this.update()
+  }
+
+  private drop(): void {
+    // 着地判定: 下に移動できるかを確認
+    if (this.canMoveDown()) {
+      this.puyoY++
+    } else {
+      // 着地したらステージに固定
+      this.fixToStage()
+    }
+  }
+
+  private canMoveDown(): boolean {
+    // 下端チェック
+    if (this.puyoY >= this.config.stageRows - 1) {
+      return false
+    }
+
+    // 2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][this.rotation]
+    const offsetY = [-1, 0, 1, 0][this.rotation]
+    const nextX = this.puyoX + offsetX
+    const nextY = this.puyoY + offsetY
+
+    // 軸ぷよの下にぷよがあるかチェック
+    if (this.stage.getPuyo(this.puyoX, this.puyoY + 1) > 0) {
+      return false
+    }
+
+    // 2つ目のぷよの下にぷよがあるかチェック（2つ目のぷよが下にある場合は不要）
+    if (offsetY !== 1) {
+      // 2つ目のぷよが下端を超えていないかチェック
+      if (nextY >= this.config.stageRows - 1) {
+        return false
+      }
+      // 2つ目のぷよの下にぷよがあるかチェック
+      if (this.stage.getPuyo(nextX, nextY + 1) > 0) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  private fixToStage(): void {
+    // 軸ぷよをステージに固定
+    this.stage.setPuyo(this.puyoX, this.puyoY, this.puyoType)
+
+    // 2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][this.rotation]
+    const offsetY = [-1, 0, 1, 0][this.rotation]
+    const nextX = this.puyoX + offsetX
+    const nextY = this.puyoY + offsetY
+
+    // 2つ目のぷよをステージに固定
+    this.stage.setPuyo(nextX, nextY, this.nextPuyoType)
+
+    // 着地フラグを立てる
+    this.landed = true
+  }
+
+  hasLanded(): boolean {
+    return this.landed
   }
 
   rotateRight(): void {
