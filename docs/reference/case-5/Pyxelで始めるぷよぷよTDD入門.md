@@ -3567,8 +3567,229 @@ newPuyo → playing → (着地) → checkFall → (重力適用) →
 ## イテレーション7以降（準備中）
 
 現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
+## イテレーション7: 連鎖反応の実装
 
-- イテレーション7: 連鎖反応の実装
+「連鎖ができるようになると、もっと面白くなりますよね？」そうですね！ぷよぷよの面白さの核心は連鎖反応です。今回は、連鎖反応がどのように実現されているのかを確認していきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで確認するユーザーストーリーを見てみましょう：
+
+> プレイヤーとして、ぷよが消去された後に落下したぷよが再び消去されると連鎖が発生する
+
+「つまり、消去 → 落下 → 消去 → 落下 → ... という連続反応ですね！」そうです！連鎖反応により、プレイヤーは戦略的な配置を考えるようになります。
+
+### TODOリスト
+
+「どんな作業が必要になりますか？」実は、イテレーション6で実装したゲームループが、すでに連鎖反応を実現しているんです！
+
+このイテレーションでは、以下のタスクを行います：
+
+- 連鎖反応がゲームループで実現されていることを確認する
+- 連鎖のテストケースを追加する
+
+「新しい実装は必要ないんですか？」そうなんです。イテレーション6で作成したゲームループの仕組みが、自然に連鎖反応を実現しているんです。
+
+### テスト: 連鎖反応の確認
+
+まず、連鎖反応をテストするテストケースを追加しましょう：
+
+```python
+# tests/test_game.py（続き）
+def test_chain_reaction_occurs_after_erase_and_fall(
+    game: Game, stage: Stage
+) -> None:
+    """ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する"""
+    # ゲームのステージにぷよを配置
+    # 赤ぷよの2×2と、その上に青ぷよが縦に3つ、さらに青ぷよが1つ横に
+    # 0 0 0 0 0 0
+    # 0 0 0 0 0 0
+    # 0 0 0 0 0 0
+    # 0 0 0 0 0 0
+    # 0 0 0 0 0 0
+    # 0 0 2 0 0 0
+    # 0 0 2 0 0 0
+    # 0 0 2 0 0 0
+    # 0 1 1 2 0 0
+    # 0 1 1 0 0 0
+    stage.set_puyo(1, 10, 1)  # 赤
+    stage.set_puyo(2, 10, 1)  # 赤
+    stage.set_puyo(1, 11, 1)  # 赤
+    stage.set_puyo(2, 11, 1)  # 赤
+    stage.set_puyo(3, 10, 2)  # 青（横）
+    stage.set_puyo(2, 7, 2)   # 青（上）
+    stage.set_puyo(2, 8, 2)   # 青（上）
+    stage.set_puyo(2, 9, 2)   # 青（上）
+
+    # checkErase モードに設定
+    game.mode = "checkErase"
+
+    # 1回目の消去判定と消去実行
+    game.update(0)  # checkErase → erasing
+    assert game.mode == "erasing"
+
+    # 消去後の重力チェック
+    game.update(0)  # erasing → checkFall
+    assert game.mode == "checkFall"
+
+    # 重力適用（青ぷよが落下）
+    game.update(0)  # checkFall → falling（落下あり）
+    assert game.mode == "falling"
+
+    # 落下アニメーション
+    game.update(0)  # falling → checkFall
+    assert game.mode == "checkFall"
+
+    # 落下完了まで繰り返し
+    iterations = 0
+    while game.mode != "checkErase" and iterations < 20:
+        game.update(0)
+        iterations += 1
+
+    # checkErase モードに到達している
+    assert game.mode == "checkErase"
+
+    # 2回目の消去判定（連鎖）
+    chain_erase_info = stage.check_erase()
+
+    # 連鎖が発生していることを確認（青ぷよが4つつながっている）
+    assert chain_erase_info["erase_puyo_count"] > 0
+```
+
+「このテストでは何を確認しているんですか？」このテストでは、以下のシナリオを確認しています：
+
+1. まず、特定のパターンでぷよを配置します（赤ぷよの2×2の正方形と、その上に青ぷよが縦に3つ並んでいる状態）
+2. 最初の消去判定で赤ぷよの正方形が消えます
+3. 消去後に落下処理を行うと、上にあった青ぷよが落下します
+4. 落下した結果、新たに青ぷよが4つつながり、連鎖が発生することを確認します
+
+「なるほど、連鎖の仕組みがテストで表現されているんですね！」そうです！このテストは、ぷよぷよの連鎖の基本的な仕組みを表現しています。では、このテストが通るか確認してみましょう。
+
+### 実装: 連鎖判定
+
+「既存のゲームループを見てみると、実は連鎖反応は既に実装されています！」そうなんです。イテレーション6で実装したゲームループの仕組みが、そのまま連鎖反応を実現しているんです。
+
+「え？本当ですか？」はい。ゲームループの実装を見てみましょう：
+
+```python
+# src/game.py の update メソッド（抜粋）
+def update(self, delta_time: float) -> None:
+    """ゲーム状態を更新する"""
+    self.frame += 1
+
+    # モードに応じた処理
+    if self.mode == "newPuyo":
+        # 新しいぷよを作成
+        self.player.create_new_puyo()
+        self.mode = "playing"
+
+    elif self.mode == "playing":
+        # プレイ中の処理（キー入力と自由落下）
+        self.player.update_with_delta(delta_time)
+
+        # 着地したら重力チェックに移行
+        if self.player.has_landed():
+            self.mode = "checkFall"
+
+    elif self.mode == "checkFall":
+        # 重力を適用
+        has_fallen = self.stage.apply_gravity()
+        if has_fallen:
+            # ぷよが落下した場合、falling モードへ
+            self.mode = "falling"
+        else:
+            # 落下するぷよがない場合、消去チェックへ
+            self.mode = "checkErase"
+
+    elif self.mode == "falling":
+        # 落下アニメーション用（一定フレーム待機）
+        # 簡略化のため、すぐに checkFall に戻る
+        self.mode = "checkFall"
+
+    elif self.mode == "checkErase":
+        # 消去判定
+        erase_info = self.stage.check_erase()
+        if erase_info["erase_puyo_count"] > 0:
+            # 消去対象がある場合、消去処理へ
+            self.stage.erase_boards(erase_info["erase_info"])
+            self.mode = "erasing"
+        else:
+            # 消去対象がない場合、次のぷよを出す
+            self.mode = "newPuyo"
+
+    elif self.mode == "erasing":
+        # 消去アニメーション用（一定フレーム待機）
+        # 簡略化のため、すぐに checkFall に戻る（消去後の重力適用）
+        self.mode = "checkFall"
+```
+
+「このゲームループの何が連鎖反応を実現しているんですか？」重要なのは、`erasing` モード後に `checkFall` に戻るという点です。連鎖が発生する流れを見てみましょう：
+
+#### 連鎖の流れ
+
+1. **1回目の消去**：
+   ```
+   checkErase → ぷよが消去される → erasing → checkFall
+   ```
+
+2. **重力適用**：
+   ```
+   checkFall → 上のぷよが落下 → falling → checkFall → 落下完了 → checkErase
+   ```
+
+3. **2回目の消去（連鎖）**：
+   ```
+   checkErase → 落下後に新しい消去パターン発見 → erasing → checkFall
+   ```
+
+4. **連鎖終了**：
+   ```
+   checkFall → 落下なし → checkErase → 消去なし → newPuyo
+   ```
+
+「つまり、`erasing → checkFall → checkErase` のサイクルが連鎖を作っているんですね！」そのとおりです！このサイクルが、消去対象がなくなるまで繰り返されることで、連鎖反応が実現されています。
+
+### テスト実行
+
+それでは、テストを実行してみましょう：
+
+```bash
+pytest tests/test_game.py::test_chain_reaction_occurs_after_erase_and_fall -v
+```
+
+「テストは通ったんですか？」はい！既存の実装で連鎖反応のテストがパスしました。イテレーション6で実装したゲームループが、自然に連鎖反応を実現していたんです。
+
+### イテレーション7のまとめ
+
+このイテレーションでは、以下を学びました：
+
+1. **連鎖反応はゲームループの構造から生まれる**：
+   - `erasing → checkFall → checkErase` のサイクルが連鎖を実現
+   - 消去対象がなくなるまで自動的に繰り返される
+   - 新しいコードを追加せずに、既存の状態遷移だけで実現
+
+2. **テストファースト開発の利点**：
+   - テストを先に書くことで、既存実装の動作を確認できた
+   - 新しいコードを追加せずに、テストだけで機能の動作を検証
+   - 実装が正しく動作していることを確認
+
+3. **シンプルな設計の力**：
+   - 複雑な連鎖ロジックを追加せずに、既存の状態遷移だけで実現
+   - 各モードが単一責任を持つことで、組み合わせが自然に連鎖を生む
+   - モードの状態遷移が直感的でわかりやすい
+
+4. **ゲーム状態の遷移図**：
+
+```
+newPuyo → playing → (着地) → checkFall → (重力適用) →
+  ├─ 落下した → falling → checkFall
+  └─ 落下なし → checkErase →
+      ├─ 消去あり → erasing → checkFall（消去後の重力適用）
+      └─ 消去なし → newPuyo
+```
+
+この状態遷移が、連鎖反応の基盤となっています。次のイテレーションでは、全消しボーナスを実装して、プレイヤーに特別な達成感を提供していきます！
+
 - イテレーション8: 全消しボーナスの実装
 - イテレーション9: ゲームオーバーの実装
 - イテレーション10: UIの改善
