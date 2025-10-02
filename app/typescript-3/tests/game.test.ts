@@ -61,4 +61,37 @@ describe('ゲーム', () => {
       }
     })
   })
+
+  describe('ぷよの着地と次のぷよ', () => {
+    it('ぷよが着地したら次のぷよが出る', () => {
+      // 初期化
+      game.initialize()
+
+      // 最初のぷよが作成される（mode: 'newPuyo' → 'playing'）
+      game['update'](0)
+      expect(game['mode']).toBe('playing')
+
+      // プレイヤーを下端近くに配置
+      game['player']['puyoY'] = game['config'].stageRows - 2
+
+      // 落下処理を実行（着地）
+      game['player'].updateWithDelta(game['player']['dropInterval'])
+      game['player'].updateWithDelta(game['player']['dropInterval'])
+
+      // 着地している
+      expect(game['player'].hasLanded()).toBe(true)
+
+      // ゲームを更新（着地 → checkFall）
+      game['update'](0)
+
+      // モードが checkFall になっている
+      expect(game['mode']).toBe('checkFall')
+
+      // さらに更新（重力適用後、落下するぷよがないので newPuyo へ）
+      game['update'](0)
+
+      // モードが newPuyo に戻っている
+      expect(game['mode']).toBe('newPuyo')
+    })
+  })
 })

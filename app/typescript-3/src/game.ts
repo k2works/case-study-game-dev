@@ -7,7 +7,7 @@ import { Score } from './score'
 export type GameMode =
   | 'start'
   | 'checkFall'
-  | 'fall'
+  | 'falling'
   | 'checkErase'
   | 'erasing'
   | 'newPuyo'
@@ -23,6 +23,7 @@ export class Game {
   private stage!: Stage
   private player!: Player
   private score!: Score
+  private lastTime: number = 0
 
   constructor() {
     // コンストラクタでは何もしない
@@ -40,14 +41,18 @@ export class Game {
     this.mode = 'newPuyo'
   }
 
-  loop(): void {
+  loop(currentTime: number = 0): void {
+    // 経過時間を計算（ミリ秒）
+    const deltaTime = currentTime - this.lastTime
+    this.lastTime = currentTime
+
     // ゲームループの処理
-    this.update()
+    this.update(deltaTime)
     this.draw()
     requestAnimationFrame(this.loop.bind(this))
   }
 
-  private update(): void {
+  private update(deltaTime: number): void {
     this.frame++
 
     // モードに応じた処理
@@ -59,8 +64,31 @@ export class Game {
         break
 
       case 'playing':
-        // プレイ中の処理（キー入力に応じた移動）
-        this.player.update()
+        // プレイ中の処理（キー入力と自由落下）
+        this.player.updateWithDelta(deltaTime)
+
+        // 着地したら重力チェックに移行
+        if (this.player.hasLanded()) {
+          this.mode = 'checkFall'
+        }
+        break
+
+      case 'checkFall':
+        // 重力を適用
+        const hasFallen = this.stage.applyGravity()
+        if (hasFallen) {
+          // ぷよが落下した場合、falling モードへ
+          this.mode = 'falling'
+        } else {
+          // 落下するぷよがない場合、次のぷよを出す
+          this.mode = 'newPuyo'
+        }
+        break
+
+      case 'falling':
+        // 落下アニメーション用（一定フレーム待機）
+        // 簡略化のため、すぐに checkFall に戻る
+        this.mode = 'checkFall'
         break
     }
   }
