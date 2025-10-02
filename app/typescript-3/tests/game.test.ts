@@ -31,15 +31,18 @@ describe('ゲーム', () => {
       expect(game['score']).toBeInstanceOf(Score)
     })
 
-    it('ゲームを初期化すると、ゲームモードがstartになる', () => {
+    it('ゲームを初期化すると、ゲームモードがnewPuyoになる', () => {
       game.initialize()
 
-      expect(game['mode']).toEqual('start')
+      expect(game['mode']).toEqual('newPuyo')
     })
   })
 
   describe('ゲームループ', () => {
     it('ゲームループを開始すると、requestAnimationFrameが呼ばれる', () => {
+      // 初期化してからループを開始
+      game.initialize()
+
       // requestAnimationFrameのモック
       const originalRequestAnimationFrame = window.requestAnimationFrame
       const mockRequestAnimationFrame = vi.fn()

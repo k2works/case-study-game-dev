@@ -48,4 +48,55 @@ describe('プレイヤー', () => {
       expect(player['inputKeyLeft']).toBe(false)
     })
   })
+
+  describe('ぷよの移動', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('左に移動できる場合、左に移動する', () => {
+      // 初期位置を記録
+      const initialX = player['puyoX']
+
+      // 左に移動
+      player.moveLeft()
+
+      // 位置が1つ左に移動していることを確認
+      expect(player['puyoX']).toBe(initialX - 1)
+    })
+
+    it('右に移動できる場合、右に移動する', () => {
+      // 初期位置を記録
+      const initialX = player['puyoX']
+
+      // 右に移動
+      player.moveRight()
+
+      // 位置が1つ右に移動していることを確認
+      expect(player['puyoX']).toBe(initialX + 1)
+    })
+
+    it('左端にいる場合、左に移動できない', () => {
+      // 左端に移動
+      player['puyoX'] = 0
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoX']).toBe(0)
+    })
+
+    it('右端にいる場合、右に移動できない', () => {
+      // 右端に移動（ステージの幅 - 1）
+      player['puyoX'] = config.stageCols - 1
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoX']).toBe(config.stageCols - 1)
+    })
+  })
 })
