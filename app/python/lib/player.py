@@ -39,8 +39,10 @@ class Player:
         # ぷよの状態
         self.puyo_x: int = self.INITIAL_PUYO_X  # ぷよのX座標
         self.puyo_y: int = self.INITIAL_PUYO_Y  # ぷよのY座標
-        self.puyo_type: int = 0  # 現在のぷよの種類
-        self.next_puyo_type: int = 0  # 次のぷよの種類
+        self.puyo_type: int = 0  # 現在のぷよの種類（軸ぷよ）
+        self.next_puyo_type: int = 0  # 現在のぷよのペア（2つ目のぷよ）
+        self.next_pair_puyo1: int = 0  # 次のぷよペアの1つ目
+        self.next_pair_puyo2: int = 0  # 次のぷよペアの2つ目
         self.rotation: int = 0  # 現在の回転状態
 
         # 自由落下タイマー
@@ -68,8 +70,20 @@ class Player:
         """新しいぷよを作成"""
         self.puyo_x = self.INITIAL_PUYO_X
         self.puyo_y = self.INITIAL_PUYO_Y
-        self.puyo_type = self._get_random_puyo_type()
-        self.next_puyo_type = self._get_random_puyo_type()
+
+        # 次のぷよペアがある場合はそれを使用、ない場合はランダム生成
+        if self.next_pair_puyo1 != 0:
+            self.puyo_type = self.next_pair_puyo1
+            self.next_puyo_type = self.next_pair_puyo2
+        else:
+            # 初回のみ
+            self.puyo_type = self._get_random_puyo_type()
+            self.next_puyo_type = self._get_random_puyo_type()
+
+        # 次のぷよペアを生成
+        self.next_pair_puyo1 = self._get_random_puyo_type()
+        self.next_pair_puyo2 = self._get_random_puyo_type()
+
         self.rotation = 0
         self.drop_timer = 0.0
         self.landed = False

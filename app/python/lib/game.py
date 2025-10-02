@@ -99,10 +99,29 @@ class Game:
             if erase_info["erase_puyo_count"] > 0:
                 # 消去対象がある場合、消去処理へ
                 self.stage.erase_boards(erase_info["erase_info"])
+
+                # 連鎖数をインクリメント
+                self.combination_count += 1
+
+                # スコアを計算（全消しフラグは後で判定）
+                self.score.calculate_score(
+                    erase_info["erase_puyo_count"],
+                    self.combination_count,
+                    False
+                )
+
                 self.mode = "erasing"
             else:
                 # 消去対象がない場合、全消し判定を行う
                 self.is_zenkeshi = self.stage.check_zenkeshi()
+
+                # 全消しボーナスを加算
+                if self.is_zenkeshi and self.combination_count > 0:
+                    self.score.calculate_score(0, 0, True)
+
+                # 連鎖数をリセット
+                self.combination_count = 0
+
                 # 次のぷよを出す
                 self.mode = "newPuyo"
 
@@ -127,9 +146,49 @@ class Game:
         if self.mode == "playing":
             self.player.draw()
 
+        # スコアと連鎖数を描画
+        self.draw_ui()
+
         # ゲームオーバー演出
         if self.mode == "gameOver":
             self.draw_game_over()
+
+    def draw_ui(self) -> None:
+        """UI（スコア、連鎖数、次のぷよ）を描画"""
+        # スコア表示位置（ステージの右側）
+        ui_x = self.config.stage_cols * self.config.puyo_size + 10
+
+        # スコア
+        pyxel.text(ui_x, 10, "SCORE", 7)
+        pyxel.text(ui_x, 20, str(self.score.score), 7)
+
+        # 連鎖数（連鎖中のみ表示）
+        if self.combination_count > 0:
+            pyxel.text(ui_x, 40, "CHAIN", 7)
+            pyxel.text(ui_x, 50, str(self.combination_count), 10)
+
+        # 次のぷよ
+        pyxel.text(ui_x, 70, "NEXT", 7)
+        self.draw_next_puyo(ui_x, 85)
+
+    def draw_next_puyo(self, x: int, y: int) -> None:
+        """次のぷよペアを描画
+
+        Args:
+            x: 描画開始X座標
+            y: 描画開始Y座標
+        """
+        # 次のぷよペアのぷよタイプを取得
+        next1 = self.player.next_pair_puyo1
+        next2 = self.player.next_pair_puyo2
+
+        # 1つ目のぷよを描画（上）
+        if next1 > 0:
+            self.puyo_image.draw_at_pixel(x, y, next1)
+
+        # 2つ目のぷよを描画（下）
+        if next2 > 0:
+            self.puyo_image.draw_at_pixel(x, y + self.config.puyo_size, next2)
 
     def draw_game_over(self) -> None:
         """ゲームオーバー画面を描画する"""

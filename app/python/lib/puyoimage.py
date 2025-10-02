@@ -50,3 +50,29 @@ class PuyoImage:
 
         # 枠線を描画(黒)
         pyxel.circb(center_x, center_y, radius, 0)
+
+    def draw_at_pixel(self, x: int, y: int, puyo_type: int) -> None:
+        """ぷよをピクセル座標で描画
+
+        Args:
+            x: X座標(ピクセル単位)
+            y: Y座標(ピクセル単位)
+            puyo_type: ぷよの種類(0-4)
+        """
+        size = self.config.puyo_size
+        color = (
+            self.COLORS[puyo_type]
+            if 0 <= puyo_type < len(self.COLORS)
+            else self.COLORS[0]
+        )
+
+        # 円の中心座標と半径を計算
+        center_x = x + size // 2
+        center_y = y + size // 2
+        radius = size // 2 - 2  # 少し小さめにして余白を作る
+
+        # ぷよを円形で描画
+        pyxel.circ(center_x, center_y, radius, color)
+
+        # 枠線を描画(黒)
+        pyxel.circb(center_x, center_y, radius, 0)
