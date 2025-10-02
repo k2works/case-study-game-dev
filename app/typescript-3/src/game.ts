@@ -99,7 +99,12 @@ export class Game {
           this.stage.eraseBoards(eraseInfo.eraseInfo)
           this.mode = 'erasing'
         } else {
-          // 消去対象がない場合、次のぷよを出す
+          // 消去対象がない場合、全消し判定
+          if (this.stage.checkZenkeshi()) {
+            // 全消しボーナスを加算
+            this.score.addZenkeshiBonus()
+          }
+          // 次のぷよを出す
           this.mode = 'newPuyo'
         }
         break
