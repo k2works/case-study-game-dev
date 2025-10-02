@@ -257,8 +257,8 @@ class TestPlayer:
         # 初期位置を記録
         initial_y = player.puyo_y
 
-        # 落下間隔の半分
-        half_interval = 500
+        # 落下間隔の半分（500ms / 2 = 250ms）
+        half_interval = 250
 
         # ゲームの更新処理を実行（落下間隔未満）
         player.update_with_delta(half_interval)

@@ -45,7 +45,7 @@ class Player:
 
         # 自由落下タイマー
         self.drop_timer: float = 0.0  # 落下タイマー（ミリ秒）
-        self.drop_interval: float = 1000.0  # 落下間隔（1000ms = 1秒）
+        self.drop_interval: float = 500.0  # 落下間隔（500ms = 0.5秒）
 
         # 着地フラグ
         self.landed: bool = False  # 着地したかどうか
