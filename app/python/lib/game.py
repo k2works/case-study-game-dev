@@ -139,7 +139,14 @@ class Game:
         x = (pyxel.width - text_width) // 2
         y = pyxel.height // 2
 
-        # 背景（黒）
-        pyxel.text(x + 1, y + 1, text, 0)
-        # テキスト（赤）
-        pyxel.text(x, y, text, 8)
+        # 太字効果を作るために、テキストを複数回描画する
+        # 黒い輪郭（周囲8方向 + 追加の太字効果）
+        for dx in [-2, -1, 0, 1, 2]:
+            for dy in [-2, -1, 0, 1, 2]:
+                if dx != 0 or dy != 0:
+                    pyxel.text(x + dx, y + dy, text, 0)
+
+        # テキスト本体（赤）を複数回描画して太くする
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                pyxel.text(x + dx, y + dy, text, 8)
