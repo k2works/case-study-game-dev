@@ -11,6 +11,7 @@ from lib.score import Score
 from lib.stage import Stage
 
 GameMode = Literal[
+    "title",
     "start",
     "newPuyo",
     "playing",
@@ -27,7 +28,7 @@ class Game:
 
     def __init__(self) -> None:
         """ゲームの初期化"""
-        self.mode: GameMode = "start"
+        self.mode: GameMode = "title"
         self.frame: int = 0
         self.combination_count: int = 0
         self.is_zenkeshi: bool = False
@@ -41,8 +42,11 @@ class Game:
         self.player = Player(self.config, self.stage, self.puyo_image)
         self.score = Score()
 
-        # ゲームモードを設定
-        self.mode = "start"
+        # ゲーム状態を初期化
+        self.mode = "title"
+        self.frame = 0
+        self.combination_count = 0
+        self.is_zenkeshi = False
 
     def run(self) -> None:
         """ゲームループを開始"""
@@ -56,7 +60,12 @@ class Game:
 
         self.frame += 1
 
-        if self.mode == "start":
+        if self.mode == "title":
+            # タイトル画面でスペースキーまたはEnterキーを押したらゲーム開始
+            if pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.KEY_RETURN):
+                self.mode = "start"
+
+        elif self.mode == "start":
             # ゲーム開始時に新しいぷよを作成
             self.mode = "newPuyo"
 
@@ -131,13 +140,20 @@ class Game:
             self.mode = "checkFall"
 
         elif self.mode == "gameOver":
-            # ゲームオーバー演出（何もしない）
-            pass
+            # ゲームオーバー画面でスペースキーまたはEnterキーを押したらリスタート
+            if pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.KEY_RETURN):
+                # ゲームを再初期化
+                self.initialize()
 
     def draw(self) -> None:
         """画面描画(60FPSで呼ばれる)"""
         # 画面をクリア
         pyxel.cls(0)
+
+        # タイトル画面
+        if self.mode == "title":
+            self.draw_title()
+            return
 
         # ステージを描画
         self.stage.draw()
@@ -189,6 +205,25 @@ class Game:
         # 2つ目のぷよを描画（下）
         if next2 > 0:
             self.puyo_image.draw_at_pixel(x, y + self.config.puyo_size, next2)
+
+    def draw_title(self) -> None:
+        """タイトル画面を描画する"""
+        # タイトルテキスト
+        title = "PUYO PUYO TDD"
+        title_x = (pyxel.width - len(title) * 4) // 2
+        title_y = pyxel.height // 3
+
+        # タイトルを大きく表示（2倍）
+        for dy in range(2):
+            for dx in range(2):
+                pyxel.text(title_x + dx, title_y + dy, title, 10)
+
+        # スタートメッセージを点滅表示
+        if (self.frame // 30) % 2 == 0:
+            start_msg = "PRESS SPACE TO START"
+            msg_x = (pyxel.width - len(start_msg) * 4) // 2
+            msg_y = pyxel.height // 2 + 20
+            pyxel.text(msg_x, msg_y, start_msg, 7)
 
     def draw_game_over(self) -> None:
         """ゲームオーバー画面を描画する"""
@@ -285,3 +320,9 @@ class Game:
                                 scale,
                                 8,  # 赤色
                             )
+
+        # リスタートメッセージを表示
+        restart_msg = "PRESS SPACE TO RESTART"
+        msg_x = (pyxel.width - len(restart_msg) * 4) // 2
+        msg_y = pyxel.height // 2 + 40
+        pyxel.text(msg_x, msg_y, restart_msg, 7)

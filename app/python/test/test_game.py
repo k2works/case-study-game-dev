@@ -32,11 +32,11 @@ class TestGame:
         assert isinstance(game.player, Player)
         assert isinstance(game.score, Score)
 
-    def test_ゲームを初期化すると_ゲームモードがstartになる(self, game: Game) -> None:
-        """ゲームを初期化すると、ゲームモードがstartになる"""
+    def test_ゲームを初期化すると_ゲームモードがtitleになる(self, game: Game) -> None:
+        """ゲームを初期化すると、ゲームモードがtitleになる"""
         game.initialize()
 
-        assert game.mode == "start"
+        assert game.mode == "title"
 
     def test_ゲームループを開始すると_pyxel_runが呼ばれる(self, game: Game) -> None:
         """ゲームループを開始すると、pyxel.runが呼ばれる"""
@@ -155,3 +155,42 @@ class TestGame:
 
         # ゲームモードがgameOverになっていることを確認
         assert game.mode == "gameOver"
+
+    def test_タイトル画面でスペースキーを押すと_ゲームが開始される(
+        self, game: Game
+    ) -> None:
+        """タイトル画面でスペースキーを押すと、ゲームが開始される"""
+        game.initialize()
+
+        # タイトル画面であることを確認
+        assert game.mode == "title"
+
+        # スペースキーを押す
+        with patch("pyxel.btnp") as mock_btnp:
+            mock_btnp.return_value = True
+            game.update()
+
+        # ゲームモードがstartになっていることを確認
+        assert game.mode == "start"
+
+    def test_ゲームオーバー画面でスペースキーを押すと_ゲームが再初期化される(
+        self, game: Game
+    ) -> None:
+        """ゲームオーバー画面でスペースキーを押すと、ゲームが再初期化される"""
+        game.initialize()
+
+        # ゲームオーバー状態にする
+        game.mode = "gameOver"
+        game.combination_count = 5
+        game.score.score = 1000
+
+        # スペースキーを押す
+        with patch("pyxel.btnp") as mock_btnp:
+            mock_btnp.return_value = True
+            game.update()
+
+        # ゲームモードがtitleに戻っていることを確認
+        assert game.mode == "title"
+        # 連鎖数とスコアがリセットされていることを確認
+        assert game.combination_count == 0
+        assert game.score.score == 0
