@@ -3116,6 +3116,115 @@ class Player:
 
 ---
 
+## イテレーション6: ぷよの消去の実装（前半）
+
+「ぷよが落ちてくるようになったけど、ぷよぷよの醍醐味はぷよを消すことですよね？」そうですね！ぷよぷよの最も重要な要素の一つは、同じ色のぷよを4つ以上つなげると消去できる機能です。今回は、その「ぷよの消去」機能を実装していきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、同じ色のぷよを4つ以上つなげると消去できる
+
+「これがぷよぷよの基本ルールですね！」そうです！同じ色のぷよを4つ以上つなげると消去できるというのが、ぷよぷよの基本的なルールです。これを実装することで、ゲームとしての面白さが大きく向上しますね。
+
+### TODOリスト
+
+「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODOリストを作成してみましょう。
+
+「ぷよを消去する」という機能を実現するためには、以下のようなタスクが必要そうですね：
+
+- ぷよの接続判定を実装する（隣接する同じ色のぷよを検出する）
+- 4つ以上つながったぷよの検出を実装する（消去対象となるぷよのグループを特定する）
+- ぷよの消去処理を実装する（消去対象のぷよを実際に消す）
+- ゲームループとの統合（ゲームの更新処理に消去処理を組み込む）
+
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
+
+### テスト: ぷよの接続判定
+
+「最初に何をテストすればいいんでしょうか？」まずは、ぷよの接続判定をテストしましょう。同じ色のぷよが4つ以上つながっているかどうかを判定する機能が必要です。
+
+```python
+# tests/test_stage.py（新規作成または追加）
+import pytest
+from lib.config import Config
+from lib.puyoimage import PuyoImage
+from lib.stage import Stage
+
+class TestStageErase:
+    """ぷよの消去テスト"""
+
+    @pytest.fixture
+    def stage(self, config: Config, puyo_image: PuyoImage) -> Stage:
+        """Stageインスタンスを返す"""
+        return Stage(config, puyo_image)
+
+    def test_four_connected_puyos_are_erasable(
+        self,
+        stage: Stage
+    ) -> None:
+        """同じ色のぷよが4つつながっていると、消去対象になる"""
+        # ステージにぷよを配置（1は赤ぷよ）
+        # 2×2の正方形に赤ぷよを配置
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 1)
+        stage.set_puyo(1, 11, 1)
+        stage.set_puyo(2, 11, 1)
+
+        # 消去判定
+        erase_info = stage.check_erase()
+
+        # 4つのぷよが消去対象になっていることを確認
+        assert erase_info["erase_puyo_count"] == 4
+        assert len(erase_info["erase_info"]) > 0
+
+    def test_different_color_puyos_are_not_erasable(
+        self,
+        stage: Stage
+    ) -> None:
+        """異なる色のぷよは消去対象にならない"""
+        # ステージにぷよを配置（1は赤ぷよ、2は青ぷよ）
+        # 市松模様に配置
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 2)
+        stage.set_puyo(1, 11, 2)
+        stage.set_puyo(2, 11, 1)
+
+        # 消去判定
+        erase_info = stage.check_erase()
+
+        # 消去対象がないことを確認
+        assert erase_info["erase_puyo_count"] == 0
+        assert len(erase_info["erase_info"]) == 0
+
+    def test_three_connected_puyos_are_not_erasable(
+        self,
+        stage: Stage
+    ) -> None:
+        """3つ以下のつながりは消去対象にならない"""
+        # ステージにぷよを配置（1は赤ぷよ）
+        # L字型に3つ配置
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 1)
+        stage.set_puyo(1, 11, 1)
+
+        # 消去判定
+        erase_info = stage.check_erase()
+
+        # 消去対象がないことを確認
+        assert erase_info["erase_puyo_count"] == 0
+        assert len(erase_info["erase_info"]) == 0
+```
+
+「このテストでは何を確認しているんですか？」このテストでは、以下の3つのケースを確認しています：
+
+1. 同じ色のぷよが4つつながっている場合、それらが消去対象になるか
+2. 異なる色のぷよが隣接している場合、それらは消去対象にならないか
+3. 3つ以下のぷよは消去対象にならないか
+
+---
+
 ## イテレーション6以降（準備中）
 
 現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
