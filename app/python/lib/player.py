@@ -279,3 +279,26 @@ class Player:
             self.puyo_y += 1
             return True
         return False
+
+    def check_game_over(self) -> bool:
+        """ゲームオーバー判定を行う
+
+        Returns:
+            ゲームオーバーの場合は True
+        """
+        # 新しいぷよの配置位置（中央上部）
+        x = self.INITIAL_PUYO_X
+        y = self.INITIAL_PUYO_Y
+
+        # 配置位置にすでにぷよがある場合はゲームオーバー
+        # 軸ぷよの位置をチェック
+        if self.stage.get_puyo(x, y) != 0:
+            return True
+
+        # 2つ目のぷよの位置もチェック（回転状態に応じて）
+        # rotation=0 の場合、2つ目のぷよは上に配置される
+        if self.rotation == 0:
+            if y > 0 and self.stage.get_puyo(x, y - 1) != 0:
+                return True
+
+        return False

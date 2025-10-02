@@ -63,7 +63,12 @@ class Game:
         elif self.mode == "newPuyo":
             # 新しいぷよを作成
             self.player.create_new_puyo()
-            self.mode = "playing"
+
+            # ゲームオーバー判定
+            if self.player.check_game_over():
+                self.mode = "gameOver"
+            else:
+                self.mode = "playing"
 
         elif self.mode == "playing":
             # プレイ中の処理（キー入力と自由落下）
@@ -106,6 +111,10 @@ class Game:
             # 簡略化のため、すぐにcheckFallに戻る
             self.mode = "checkFall"
 
+        elif self.mode == "gameOver":
+            # ゲームオーバー演出（何もしない）
+            pass
+
     def draw(self) -> None:
         """画面描画(60FPSで呼ばれる)"""
         # 画面をクリア
@@ -114,6 +123,23 @@ class Game:
         # ステージを描画
         self.stage.draw()
 
-        # プレイヤーのぷよを描画
+        # プレイヤーのぷよを描画（ゲームオーバー以外）
         if self.mode == "playing":
             self.player.draw()
+
+        # ゲームオーバー演出
+        if self.mode == "gameOver":
+            self.draw_game_over()
+
+    def draw_game_over(self) -> None:
+        """ゲームオーバー画面を描画する"""
+        # 画面中央に「GAME OVER」を表示
+        text = "GAME OVER"
+        text_width = len(text) * pyxel.FONT_WIDTH
+        x = (pyxel.width - text_width) // 2
+        y = pyxel.height // 2
+
+        # 背景（黒）
+        pyxel.text(x + 1, y + 1, text, 0)
+        # テキスト（赤）
+        pyxel.text(x, y, text, 8)

@@ -343,3 +343,36 @@ class TestPlayer:
         # 移動できなかったことを確認
         assert result is False
         assert player.puyo_y == config.stage_rows - 1
+
+    def test_新しいぷよを配置できない場合_ゲームオーバーになる(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """新しいぷよを配置できない場合、ゲームオーバーになる"""
+        _, _, stage, player = setup_components
+
+        # ステージの上部にぷよを配置（新しいぷよが配置される位置）
+        stage.set_puyo(2, 0, 1)
+
+        # 新しいぷよの生成
+        player.create_new_puyo()
+
+        # ゲームオーバー判定
+        is_game_over = player.check_game_over()
+
+        # ゲームオーバーになっていることを確認
+        assert is_game_over is True
+
+    def test_新しいぷよを配置できる場合_ゲームオーバーにならない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """新しいぷよを配置できる場合、ゲームオーバーにならない"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよの生成
+        player.create_new_puyo()
+
+        # ゲームオーバー判定
+        is_game_over = player.check_game_over()
+
+        # ゲームオーバーになっていないことを確認
+        assert is_game_over is False

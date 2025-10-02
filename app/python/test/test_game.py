@@ -137,3 +137,21 @@ class TestGame:
         game.update()  # checkErase → newPuyo
         assert game.mode == "newPuyo"
         assert game.is_zenkeshi is True
+
+    def test_ゲームオーバーになると_ゲームモードがgameOverに変わる(
+        self, game: Game
+    ) -> None:
+        """ゲームオーバーになると、ゲームモードがgameOverに変わる"""
+        game.initialize()
+
+        # ステージの上部にぷよを配置（新しいぷよが配置される位置）
+        game.stage.set_puyo(2, 0, 1)
+
+        # ゲームモードを設定
+        game.mode = "newPuyo"
+
+        # ゲームループを実行
+        game.update()
+
+        # ゲームモードがgameOverになっていることを確認
+        assert game.mode == "gameOver"
