@@ -4,14 +4,15 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyxel>=2.5.7",
+]
 
 [dependency-groups]
 dev = [
     "mypy>=1.18.2",
     "pytest>=8.4.2",
     "pytest-cov>=7.0.0",
-    "pyxel>=2.5.7",
     "ruff>=0.13.2",
     "tox>=4.30.2",
 ]
