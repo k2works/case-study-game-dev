@@ -31,10 +31,10 @@ describe('ゲーム', () => {
       expect(game['score']).toBeInstanceOf(Score)
     })
 
-    it('ゲームを初期化すると、ゲームモードがnewPuyoになる', () => {
+    it('ゲームを初期化すると、ゲームモードがstartになる', () => {
       game.initialize()
 
-      expect(game['mode']).toEqual('newPuyo')
+      expect(game['mode']).toEqual('start')
     })
   })
 
@@ -49,7 +49,8 @@ describe('ゲーム', () => {
       window.requestAnimationFrame = mockRequestAnimationFrame
 
       try {
-        game.loop()
+        // ゲームを開始（start() が内部で loop() を呼ぶ）
+        game.start()
 
         expect(mockRequestAnimationFrame).toHaveBeenCalledTimes(1)
         expect(mockRequestAnimationFrame).toHaveBeenCalledWith(
@@ -66,6 +67,8 @@ describe('ゲーム', () => {
     it('ぷよが着地したら次のぷよが出る', () => {
       // 初期化
       game.initialize()
+      // ゲーム開始
+      game.start()
 
       // 最初のぷよが作成される（mode: 'newPuyo' → 'playing'）
       game['update'](0)
@@ -105,6 +108,7 @@ describe('ゲーム', () => {
     it('4つ以上つながったぷよは消去される', () => {
       // 初期化
       game.initialize()
+      game.start()
 
       // ステージに消去対象のぷよを配置
       const stage = game['stage']
@@ -140,6 +144,7 @@ describe('ゲーム', () => {
     it('ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する', () => {
       // 初期化
       game.initialize()
+      game.start()
 
       // ゲームのステージにぷよを配置
       // 赤ぷよの2×2と、その上に青ぷよが縦に3つ、さらに青ぷよが1つ横に
@@ -197,6 +202,7 @@ describe('ゲーム', () => {
     it('盤面上のぷよをすべて消すと全消しボーナスが加算される', () => {
       // 初期化
       game.initialize()
+      game.start()
 
       const stage = game['stage']
       const score = game['score']
@@ -228,6 +234,45 @@ describe('ゲーム', () => {
       // スコアが増加していることを確認
       expect(score.getScore()).toBeGreaterThan(initialScore)
       expect(score.getScore()).toBe(3600) // 全消しボーナスのみ
+    })
+  })
+
+  describe('ゲームオーバー', () => {
+    beforeEach(() => {
+      game.initialize()
+      game.start()
+    })
+
+    it('新しいぷよを配置できない場合、ゲームオーバーになる', () => {
+      // ステージの上部にぷよを配置
+      const stage = game['stage']
+      stage.setPuyo(2, 0, 1)
+      stage.setPuyo(2, 1, 1)
+
+      // 新しいぷよの生成（通常は中央上部に配置される）
+      game['player'].createNewPuyo()
+
+      // ゲームオーバー判定
+      const isGameOver = game['player'].checkGameOver()
+
+      // ゲームオーバーになっていることを確認
+      expect(isGameOver).toBe(true)
+    })
+
+    it('ゲームオーバーになると、ゲームモードがgameOverに変わる', () => {
+      // ステージの上部にぷよを配置
+      const stage = game['stage']
+      stage.setPuyo(2, 0, 1)
+      stage.setPuyo(2, 1, 1)
+
+      // ゲームモードを設定
+      game['mode'] = 'newPuyo'
+
+      // ゲームループを実行
+      game['update'](0)
+
+      // ゲームモードがgameOverになっていることを確認
+      expect(game['mode']).toBe('gameOver')
     })
   })
 })
