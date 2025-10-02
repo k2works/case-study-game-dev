@@ -2425,11 +2425,503 @@ class Player:
 
 ---
 
-## イテレーション4以降（準備中）
+## イテレーション4: ぷよの自由落下の実装
+
+「回転ができるようになったけど、ぷよぷよって自動で落ちていくよね？」そうですね！ぷよぷよでは、ぷよが一定間隔で自動的に下に落ちていきます。今回は、その「自由落下」機能を実装していきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> システムとしてぷよを自由落下させることができる
+
+「ぷよが自動的に落ちていく」という機能は、ぷよぷよの基本中の基本ですね。プレイヤーが何も操作しなくても、時間とともにぷよが下に落ちていく仕組みを作りましょう。
+
+### TODOリスト
+
+「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODOリストを作成してみましょう。
+
+「ぷよを自由落下させる」という機能を実現するためには、以下のようなタスクが必要そうですね：
+
+- 落下タイマーの実装（一定時間ごとに落下処理を実行する仕組み）
+- 自動落下処理の実装（タイマーが発火したときにぷよを1マス下に移動する）
+- 落下可能判定の実装（下に移動できるかどうかをチェックする）
+- 着地処理の実装（ぷよが着地したときの処理）
+- ゲームループとの統合（ゲームの更新処理に自由落下を組み込む）
+
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
+
+### テスト: 落下タイマー
+
+「最初に何をテストすればいいんでしょうか？」まずは、一定時間ごとに落下処理が実行される仕組みをテストしましょう。
+
+```python
+# tests/test_player.py（続き）
+class TestFreeFall:
+    """自由落下のテスト"""
+
+    @pytest.fixture
+    def player_with_puyo(self, player: Player) -> Player:
+        """新しいぷよを作成したPlayerを返す"""
+        player.create_new_puyo()
+        return player
+
+    def test_puyo_falls_after_interval(self, player_with_puyo: Player) -> None:
+        """指定時間が経過すると、ぷよが1マス下に落ちる"""
+        # 初期位置を記録
+        initial_y = player_with_puyo.puyo_y
+
+        # 落下間隔(1000ms = 1秒)
+        drop_interval = 1000
+
+        # ゲームの更新処理を実行（落下間隔分）
+        player_with_puyo.update_with_delta(drop_interval)
+
+        # 位置が1つ下に移動していることを確認
+        assert player_with_puyo.puyo_y == initial_y + 1
+
+    def test_puyo_does_not_fall_before_interval(self, player_with_puyo: Player) -> None:
+        """指定時間未満では、ぷよは落ちない"""
+        # 初期位置を記録
+        initial_y = player_with_puyo.puyo_y
+
+        # 落下間隔
+        drop_interval = 1000
+
+        # タイマーを半分だけ進める
+        player_with_puyo.update_with_delta(drop_interval // 2)
+
+        # 位置が変わっていないことを確認
+        assert player_with_puyo.puyo_y == initial_y
+
+    def test_puyo_does_not_fall_at_bottom(self, player_with_puyo: Player, config: Config) -> None:
+        """下端に達した場合、それ以上落ちない"""
+        # 下端の1つ上に配置
+        player_with_puyo.puyo_y = config.stage_rows - 2
+        player_with_puyo.rotation = 2  # 子ぷよが下
+
+        # 落下処理を実行（2回で下端）
+        player_with_puyo.update_with_delta(1000)
+        player_with_puyo.update_with_delta(1000)
+
+        # 位置が下端にあることを確認（それ以上落ちない）
+        assert player_with_puyo.puyo_y == config.stage_rows - 1
+```
+
+「Pyxelではどうやって時間を扱うんですか？」Pyxelには `pyxel.frame_count` がありますが、ここではより柔軟に制御できるように、`deltaTime` を使った更新方式を採用します。これはTypeScript版と同じアプローチです。
+
+「テストを書いたら、次は実装ですね！」その通りです。Red（失敗）→ Green（成功）→ Refactor（改善）のサイクルで進めていきましょう。
+
+### 実装: 落下タイマー
+
+```python
+# lib/player.py（続き）
+class Player:
+    def __init__(self, config: Config, stage: Stage, puyo_image: PuyoImage) -> None:
+        # ... 既存のコード ...
+        self.drop_timer: float = 0.0  # 落下タイマー（ミリ秒）
+        self.drop_interval: float = 1000.0  # 落下間隔（1秒）
+        self.landed: bool = False  # 着地フラグ
+
+    def update_with_delta(self, delta_time: float) -> None:
+        """時間経過に基づく更新処理"""
+        # タイマーを進める
+        self.drop_timer += delta_time
+
+        # 落下間隔を超えたら落下処理を実行
+        if self.drop_timer >= self.drop_interval:
+            self._drop()
+            self.drop_timer = 0.0  # タイマーをリセット
+
+        # 既存のupdate処理も実行
+        self.update()
+
+    def _drop(self) -> None:
+        """重力を適用する（ぷよを1マス下に落とす）"""
+        # 下に移動できるかチェック
+        if self._can_move_down():
+            self.puyo_y += 1
+        else:
+            # 着地した場合の処理
+            self._fix_to_stage()
+
+    def _can_move_down(self) -> bool:
+        """下に移動できるかチェックする"""
+        # 2つ目のぷよの位置を計算
+        offset_x = [0, 1, 0, -1][self.rotation]
+        offset_y = [-1, 0, 1, 0][self.rotation]
+        next_x = self.puyo_x + offset_x
+        next_y = self.puyo_y + offset_y
+
+        # 2つ目のぷよが下にある場合（rotation=2）
+        if offset_y == 1:
+            # 2つ目のぷよが下端を超えないかチェック
+            if next_y >= self.config.stage_rows - 1:
+                return False
+            # 2つ目のぷよの下にぷよがあるかチェック
+            if self.stage.get_puyo(next_x, next_y + 1) > 0:
+                return False
+        else:
+            # 2つ目のぷよが下以外にある場合
+            # 軸ぷよの下端チェック
+            if self.puyo_y >= self.config.stage_rows - 1:
+                return False
+            # 軸ぷよの下にぷよがあるかチェック
+            if self.stage.get_puyo(self.puyo_x, self.puyo_y + 1) > 0:
+                return False
+
+            # 2つ目のぷよが下端を超えないかチェック
+            if next_y >= self.config.stage_rows - 1:
+                return False
+            # 2つ目のぷよの下にぷよがあるかチェック
+            if self.stage.get_puyo(next_x, next_y + 1) > 0:
+                return False
+
+        return True
+
+    def _fix_to_stage(self) -> None:
+        """ステージに固定する"""
+        # 軸ぷよをステージに固定
+        self.stage.set_puyo(self.puyo_x, self.puyo_y, self.puyo_type)
+
+        # 2つ目のぷよの位置を計算
+        offset_x = [0, 1, 0, -1][self.rotation]
+        offset_y = [-1, 0, 1, 0][self.rotation]
+        next_x = self.puyo_x + offset_x
+        next_y = self.puyo_y + offset_y
+
+        # 2つ目のぷよをステージに固定
+        self.stage.set_puyo(next_x, next_y, self.next_puyo_type)
+
+        # 着地フラグを立てる
+        self.landed = True
+
+    def has_landed(self) -> bool:
+        """着地したかどうかを返す"""
+        return self.landed
+
+    def create_new_puyo(self) -> None:
+        """新しいぷよを作成"""
+        # ... 既存のコード ...
+        self.landed = False  # 着地フラグをリセット
+```
+
+「タイマーを使って一定間隔で落下させるんですね！」そうです！この実装では、以下のことを行っています：
+
+1. `drop_timer` でタイマーを管理
+2. `update_with_delta()` メソッドで経過時間を加算
+3. 一定間隔（`drop_interval`）を超えたら `_drop()` を実行
+4. `_drop()` で下に移動できるかチェックし、移動または着地処理を実行
+
+### テスト: 着地判定
+
+「ぷよが着地したときの処理もテストしたいです！」いいですね！次は、ぷよが着地したときの振る舞いをテストしましょう。
+
+```python
+# tests/test_player.py（続き）
+class TestLanding:
+    """着地判定のテスト"""
+
+    @pytest.fixture
+    def player_with_puyo(self, player: Player) -> Player:
+        """新しいぷよを作成したPlayerを返す"""
+        player.create_new_puyo()
+        return player
+
+    def test_puyo_lands_at_bottom(self, player_with_puyo: Player, config: Config) -> None:
+        """ぷよが下端に着地したら固定される"""
+        # ぷよを下端の1つ上に配置
+        player_with_puyo.puyo_y = config.stage_rows - 2
+        player_with_puyo.rotation = 2  # 子ぷよが下
+
+        # 落下処理を実行
+        player_with_puyo.update_with_delta(1000)
+
+        # 着地していることを確認
+        assert player_with_puyo.has_landed()
+
+    def test_puyo_lands_on_another_puyo(
+        self,
+        player_with_puyo: Player,
+        stage: Stage,
+        config: Config
+    ) -> None:
+        """ぷよが他のぷよの上に着地したら固定される"""
+        # ステージに既存のぷよを配置
+        stage.set_puyo(2, config.stage_rows - 1, 1)
+
+        # ぷよを既存のぷよの2つ上に配置
+        player_with_puyo.puyo_y = config.stage_rows - 3
+        player_with_puyo.rotation = 2  # 子ぷよが下
+
+        # 落下処理を実行
+        player_with_puyo.update_with_delta(1000)
+
+        # 着地していることを確認
+        assert player_with_puyo.has_landed()
+
+    def test_landing_flag_is_set(self, player_with_puyo: Player, config: Config) -> None:
+        """ぷよが着地したら着地フラグが立つ"""
+        # 下端に配置
+        player_with_puyo.puyo_y = config.stage_rows - 1
+
+        # 着地処理を実行
+        player_with_puyo._fix_to_stage()
+
+        # 着地フラグが立っていることを確認
+        assert player_with_puyo.has_landed()
+```
+
+### テスト: 重力判定
+
+「ステージに配置されたぷよにも重力が働くんですよね？」その通りです！着地したぷよの下のぷよが消えたりした場合、上のぷよは落下する必要があります。
+
+```python
+# tests/test_stage.py（続き）
+class TestGravity:
+    """重力判定のテスト"""
+
+    def test_floating_puyo_falls(self, stage: Stage, config: Config) -> None:
+        """個別のぷよに重力が作用する"""
+        # Y=黄色(1) B=青色(2)
+        # 位置 (3, 9), (3, 10), (3, 11) に黄色（下端から3段積み）
+        stage.set_puyo(3, config.stage_rows - 3, 1)
+        stage.set_puyo(3, config.stage_rows - 2, 1)
+        stage.set_puyo(3, config.stage_rows - 1, 1)
+        # 位置 (4, 2) に青色 (浮いている)
+        stage.set_puyo(4, 2, 2)
+
+        # 重力を適用
+        has_fallen = stage.apply_gravity()
+
+        # 青ぷよが1マス落ちていることを確認
+        assert stage.get_puyo(4, 2) == 0
+        assert stage.get_puyo(4, 3) == 2
+        # 黄色ぷよは変わらない（下端に積み重なっているので動かない）
+        assert stage.get_puyo(3, config.stage_rows - 3) == 1
+        assert stage.get_puyo(3, config.stage_rows - 2) == 1
+        assert stage.get_puyo(3, config.stage_rows - 1) == 1
+        # 落下があったことを確認
+        assert has_fallen is True
+
+    def test_no_gravity_when_no_floating_puyo(self, stage: Stage, config: Config) -> None:
+        """浮いているぷよがない場合、何も変化しない"""
+        # 位置 (3, 11) に黄色（下端）
+        stage.set_puyo(3, config.stage_rows - 1, 1)
+
+        # 重力を適用
+        has_fallen = stage.apply_gravity()
+
+        # 変化なし
+        assert stage.get_puyo(3, config.stage_rows - 1) == 1
+        # 落下がないことを確認
+        assert has_fallen is False
+
+    def test_multiple_floating_puyos_fall(self, stage: Stage, config: Config) -> None:
+        """複数の浮いているぷよに重力が作用する"""
+        # 位置 (2, 2), (3, 2), (4, 2) に赤色 (浮いている)
+        stage.set_puyo(2, 2, 1)
+        stage.set_puyo(3, 2, 1)
+        stage.set_puyo(4, 2, 1)
+
+        # 重力を適用
+        has_fallen = stage.apply_gravity()
+
+        # すべて1マス落ちている
+        assert stage.get_puyo(2, 2) == 0
+        assert stage.get_puyo(3, 2) == 0
+        assert stage.get_puyo(4, 2) == 0
+        assert stage.get_puyo(2, 3) == 1
+        assert stage.get_puyo(3, 3) == 1
+        assert stage.get_puyo(4, 3) == 1
+        # 落下があったことを確認
+        assert has_fallen is True
+```
+
+### 実装: 重力処理（Stageクラス）
+
+```python
+# lib/stage.py（続き）
+class Stage:
+    def apply_gravity(self) -> bool:
+        """ステージ上のぷよに重力を適用（1マスずつ落とす）
+
+        Returns:
+            bool: 落下したぷよがあれば True
+        """
+        # フィールドのコピーを作成（移動前の状態を保存）
+        original_field = [row[:] for row in self.field]
+
+        has_fallen = False
+
+        # 下から上に向かって各列をスキャン（列ごとに処理）
+        for x in range(self.config.stage_cols):
+            for y in range(self.config.stage_rows - 2, -1, -1):
+                color = original_field[y][x]
+                if color > 0:
+                    # 元のフィールドで下に空きがあるかチェック
+                    if original_field[y + 1][x] == 0:
+                        # 1マス下に移動
+                        self.field[y + 1][x] = color
+                        self.field[y][x] = 0
+                        has_fallen = True
+
+        return has_fallen
+```
+
+「リストの `[:]` を使うとコピーができるんですね！」そうです！ただし、2次元リストの場合は各行もコピーする必要があるので、リスト内包表記を使っています。
+
+### ゲームループとの統合
+
+「実際のゲームではどうやって使うんですか？」Gameクラスで時間管理とモード遷移を行います。
+
+```python
+# lib/game.py（続き）
+from typing import Literal
+
+GameMode = Literal[
+    "start",
+    "checkFall",
+    "falling",
+    "checkErase",
+    "erasing",
+    "newPuyo",
+    "playing",
+    "gameOver"
+]
+
+class Game:
+    def __init__(self) -> None:
+        # ... 既存のコード ...
+        self.last_time: float = 0.0
+        self.frame: int = 0
+        self.mode: GameMode = "start"
+
+    def update(self) -> None:
+        """Pyxelの更新関数（60FPS）"""
+        # 経過時間を計算（ミリ秒）
+        # Pyxelは60FPSなので、1フレーム = 1000/60 ≈ 16.67ms
+        delta_time = 1000.0 / 60.0
+
+        self.frame += 1
+
+        # モードに応じた処理
+        if self.mode == "newPuyo":
+            # 新しいぷよを作成
+            self.player.create_new_puyo()
+            self.mode = "playing"
+
+        elif self.mode == "playing":
+            # プレイ中の処理（キー入力と自由落下）
+            self.player.update_with_delta(delta_time)
+
+            # 着地したら重力チェックに移行
+            if self.player.has_landed():
+                self.mode = "checkFall"
+
+        elif self.mode == "checkFall":
+            # 重力を適用
+            has_fallen = self.stage.apply_gravity()
+            if has_fallen:
+                # ぷよが落下した場合、fallingモードへ
+                self.mode = "falling"
+            else:
+                # 落下するぷよがない場合、次のぷよを出す
+                self.mode = "newPuyo"
+
+        elif self.mode == "falling":
+            # 落下アニメーション用（一定フレーム待機）
+            # 簡略化のため、すぐにcheckFallに戻る
+            self.mode = "checkFall"
+```
+
+「Pyxelは60FPSで動くから、1フレームあたり約16.67ミリ秒なんですね！」その通りです。Pyxelでは `pyxel.run()` が内部で60FPSのループを管理してくれます。
+
+### イテレーション4のまとめ
+
+このイテレーションでは、ぷよの自由落下と着地処理、重力判定を実装しました。以下がイテレーション4で実施した内容のまとめです：
+
+1. **自由落下機能**
+   - `drop_timer` と `drop_interval` でタイミング管理
+   - `update_with_delta()` メソッドで時間経過に応じた落下処理
+   - 1秒間隔（1000ms）で1マスずつ落下
+
+2. **着地判定**
+   - `_can_move_down()` メソッド: 下に移動できるかチェック
+   - 下端チェック: `puyo_y >= stage_rows - 1`
+   - 軸ぷよの下にぷよがあるかチェック
+   - 2つ目のぷよの下にぷよがあるかチェック
+
+3. **ステージへの固定**
+   - `_fix_to_stage()` メソッド: 着地したぷよをステージに配置
+   - 軸ぷよと2つ目のぷよを両方固定
+   - 着地フラグ（`landed`）を立てる
+
+4. **着地フラグの管理**
+   - `landed` プロパティで着地状態を管理
+   - `has_landed()` メソッドで外部から着地状態を確認
+   - `create_new_puyo()` で着地フラグをリセット
+
+5. **次のぷよ生成**
+   - Gameクラスで着地を検知
+   - `checkFall` モードで重力を適用
+   - 重力適用後、次のぷよを出現
+
+6. **重力処理（Stageクラス）**
+   - `apply_gravity()` メソッド: ステージ上のぷよに重力を適用
+   - フィールドのコピーを作成して移動前の状態を保存
+   - 下から上に向かって各列をスキャン
+   - 1マスずつ落下（一度の呼び出しで1マス）
+   - 落下したぷよがあれば `True` を返す
+
+7. **ゲームフロー**
+   - newPuyo → playing → (着地) → checkFall → falling → checkFall → ... → newPuyo
+   - checkFall: 重力を適用して落下するぷよがあるかチェック
+   - falling: 落下アニメーション（簡略化のため即座にcheckFallに戻る）
+
+8. **Pyxelでの時間管理**
+   - Pyxelは60FPS固定
+   - 1フレーム = 1000/60 ≈ 16.67ミリ秒
+   - `update()` 内で `delta_time` を計算
+   - TypeScript版の `requestAnimationFrame` の `currentTime` 引数と同等の仕組み
+
+9. **テストの作成**
+   - 自由落下のテスト(3テスト)
+     - 指定時間が経過すると、ぷよが1マス下に落ちる
+     - 指定時間未満では、ぷよは落ちない
+     - 下端に達した場合、それ以上落ちない
+   - 着地のテスト(3テスト)
+     - ぷよが下端に着地したら固定される
+     - ぷよが他のぷよの上に着地したら固定される
+     - ぷよが着地したら着地フラグが立つ
+   - 重力判定のテスト(3テスト)
+     - 個別のぷよに重力が作用する
+     - 浮いているぷよがない場合、何も変化しない
+     - 複数の浮いているぷよに重力が作用する
+   - Gameクラスのテスト(1テスト)
+     - ぷよが着地したら次のぷよが出る
+   - 合計 22 テスト(既存12 + 新規10)すべて成功
+
+10. **学んだ重要な概念**
+    - deltaTime による時間ベースの更新
+    - Pyxelの60FPS固定ループの活用
+    - 着地判定の複合的なチェック（下端、軸ぷよ、2つ目のぷよ）
+    - ゲームモードによる状態遷移
+    - フィールドコピーによる安全な重力適用
+
+11. **TypeScript版からの主な変更点**
+    - `requestAnimationFrame` の `currentTime` → 固定60FPSでの `delta_time` 計算
+    - 配列コピー: `field.map(row => [...row])` → `[row[:] for row in field]`
+    - プライベートメソッド: `private` キーワード → `_` プレフィックス
+
+このイテレーションにより、ぷよが自動的に落下し、着地後に次のぷよが出現するようになり、ぷよぷよの基本的なゲームループが完成しました。
+
+---
+
+## イテレーション5以降（準備中）
 
 現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
 
-- イテレーション4: ぷよの自由落下の実装
 - イテレーション5: ぷよの高速落下の実装
 - イテレーション6: ぷよの消去の実装
 - イテレーション7: 連鎖反応の実装
