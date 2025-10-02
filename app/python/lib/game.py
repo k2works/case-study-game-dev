@@ -12,12 +12,12 @@ from lib.stage import Stage
 
 GameMode = Literal[
     "start",
+    "newPuyo",
+    "playing",
     "checkFall",
     "fall",
     "checkErase",
     "erasing",
-    "newPuyo",
-    "playing",
     "gameOver",
 ]
 
@@ -49,14 +49,43 @@ class Game:
 
     def update(self) -> None:
         """ゲーム状態の更新(60FPSで呼ばれる)"""
+        # 経過時間を計算（ミリ秒）
+        # Pyxelは60FPSなので、1フレーム = 1000/60 ≈ 16.67ms
+        delta_time = 1000.0 / 60.0
+
+        self.frame += 1
+
         if self.mode == "start":
             # ゲーム開始時に新しいぷよを作成
+            self.mode = "newPuyo"
+
+        elif self.mode == "newPuyo":
+            # 新しいぷよを作成
             self.player.create_new_puyo()
             self.mode = "playing"
 
-        if self.mode == "playing":
-            # プレイヤーの入力と移動を処理
-            self.player.update()
+        elif self.mode == "playing":
+            # プレイ中の処理（キー入力と自由落下）
+            self.player.update_with_delta(delta_time)
+
+            # 着地したら重力チェックに移行
+            if self.player.has_landed():
+                self.mode = "checkFall"
+
+        elif self.mode == "checkFall":
+            # 重力を適用
+            has_fallen = self.stage.apply_gravity()
+            if has_fallen:
+                # ぷよが落下した場合、fallモードへ
+                self.mode = "fall"
+            else:
+                # 落下するぷよがない場合、次のぷよを出す
+                self.mode = "newPuyo"
+
+        elif self.mode == "fall":
+            # 落下アニメーション用（一定フレーム待機）
+            # 簡略化のため、すぐにcheckFallに戻る
+            self.mode = "checkFall"
 
     def draw(self) -> None:
         """画面描画(60FPSで呼ばれる)"""

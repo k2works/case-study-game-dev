@@ -95,3 +95,26 @@ class Stage:
         if y < 0 or y >= self.config.stage_rows or x < 0 or x >= self.config.stage_cols:
             return -1  # 範囲外
         return self.field[y][x]
+
+    def apply_gravity(self) -> bool:
+        """ステージ上のぷよに重力を適用
+
+        Returns:
+            落下したぷよがあれば True
+        """
+        has_fallen = False
+
+        # フィールドのコピーを作成（移動前の状態を保存）
+        old_field = [row[:] for row in self.field]
+
+        # 下から上に向かって各列をスキャン
+        for x in range(self.config.stage_cols):
+            for y in range(self.config.stage_rows - 2, -1, -1):
+                # ぷよがあり、かつ下が空の場合
+                if old_field[y][x] > 0 and old_field[y + 1][x] == 0:
+                    # 1マス下に移動
+                    self.field[y + 1][x] = old_field[y][x]
+                    self.field[y][x] = 0
+                    has_fallen = True
+
+        return has_fallen

@@ -43,13 +43,24 @@ class Player:
         self.next_puyo_type: int = 0  # 次のぷよの種類
         self.rotation: int = 0  # 現在の回転状態
 
+        # 自由落下タイマー
+        self.drop_timer: float = 0.0  # 落下タイマー（ミリ秒）
+        self.drop_interval: float = 1000.0  # 落下間隔（1000ms = 1秒）
+
+        # 着地フラグ
+        self.landed: bool = False  # 着地したかどうか
+
     def update_input(self) -> None:
         """キー入力状態を更新"""
-        # Pyxelのキー入力をチェック（btnp = ボタンが押された瞬間のみTrue）
-        self.input_key_left = pyxel.btnp(pyxel.KEY_LEFT)
-        self.input_key_right = pyxel.btnp(pyxel.KEY_RIGHT)
-        self.input_key_up = pyxel.btnp(pyxel.KEY_UP)
-        self.input_key_down = pyxel.btnp(pyxel.KEY_DOWN)
+        try:
+            # Pyxelのキー入力をチェック（btnp = ボタンが押された瞬間のみTrue）
+            self.input_key_left = pyxel.btnp(pyxel.KEY_LEFT)
+            self.input_key_right = pyxel.btnp(pyxel.KEY_RIGHT)
+            self.input_key_up = pyxel.btnp(pyxel.KEY_UP)
+            self.input_key_down = pyxel.btnp(pyxel.KEY_DOWN)
+        except:  # noqa: E722
+            # Pyxelが初期化されていない場合（テスト環境など）はスキップ
+            pass
 
     def create_new_puyo(self) -> None:
         """新しいぷよを作成"""
@@ -58,6 +69,8 @@ class Player:
         self.puyo_type = self._get_random_puyo_type()
         self.next_puyo_type = self._get_random_puyo_type()
         self.rotation = 0
+        self.drop_timer = 0.0
+        self.landed = False
 
     def _get_random_puyo_type(self) -> int:
         """ランダムなぷよの種類を生成"""
@@ -142,5 +155,106 @@ class Player:
             self.input_key_up = False  # 回転後フラグをクリア
 
         # Z キーで左回転
-        if pyxel.btnp(pyxel.KEY_Z):
-            self.rotate_left()
+        try:
+            if pyxel.btnp(pyxel.KEY_Z):
+                self.rotate_left()
+        except:  # noqa: E722
+            # Pyxelが初期化されていない場合（テスト環境など）はスキップ
+            pass
+
+    def update_with_delta(self, delta_time: float) -> None:
+        """時間経過に応じてぷよを更新（自由落下処理）
+
+        Args:
+            delta_time: 経過時間（ミリ秒）
+        """
+        # キー入力処理
+        self.update()
+
+        # 既に着地している場合は落下しない
+        if self.landed:
+            return
+
+        # 落下タイマーを更新
+        self.drop_timer += delta_time
+
+        # 落下間隔を超えたら落下処理
+        if self.drop_timer >= self.drop_interval:
+            self.drop_timer = 0.0
+
+            # 下に移動できるかチェック
+            if self._can_move_down():
+                self.puyo_y += 1
+            else:
+                # 着地処理
+                self._fix_to_stage()
+
+    def _can_move_down(self) -> bool:
+        """下に移動できるかチェック
+
+        Returns:
+            下に移動できる場合は True
+        """
+        # 下端チェック
+        if self.puyo_y >= self.config.stage_rows - 1:
+            return False
+
+        # 軸ぷよの下にぷよがあるかチェック
+        if self.stage.get_puyo(self.puyo_x, self.puyo_y + 1) > 0:
+            return False
+
+        # 2つ目のぷよの位置を計算
+        second_x = self.puyo_x
+        second_y = self.puyo_y
+
+        if self.rotation == 0:  # 上
+            second_y = self.puyo_y - 1
+        elif self.rotation == 1:  # 右
+            second_x = self.puyo_x + 1
+        elif self.rotation == 2:  # 下
+            second_y = self.puyo_y + 1
+        elif self.rotation == 3:  # 左
+            second_x = self.puyo_x - 1
+
+        # 2つ目のぷよが下に移動できるかチェック
+        # 2つ目のぷよが上にある場合は軸ぷよと同時に落ちるのでチェック不要
+        if self.rotation == 0:
+            return True
+
+        # 2つ目のぷよの下にぷよがあるかチェック
+        if self.stage.get_puyo(second_x, second_y + 1) > 0:
+            return False
+
+        return True
+
+    def _fix_to_stage(self) -> None:
+        """着地したぷよをステージに固定"""
+        # 軸ぷよを固定
+        self.stage.set_puyo(self.puyo_x, self.puyo_y, self.puyo_type)
+
+        # 2つ目のぷよの位置を計算
+        second_x = self.puyo_x
+        second_y = self.puyo_y
+
+        if self.rotation == 0:  # 上
+            second_y = self.puyo_y - 1
+        elif self.rotation == 1:  # 右
+            second_x = self.puyo_x + 1
+        elif self.rotation == 2:  # 下
+            second_y = self.puyo_y + 1
+        elif self.rotation == 3:  # 左
+            second_x = self.puyo_x - 1
+
+        # 2つ目のぷよを固定
+        self.stage.set_puyo(second_x, second_y, self.next_puyo_type)
+
+        # 着地フラグを立てる
+        self.landed = True
+
+    def has_landed(self) -> bool:
+        """着地したかどうかを返す
+
+        Returns:
+            着地している場合は True
+        """
+        return self.landed

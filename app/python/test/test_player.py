@@ -223,3 +223,65 @@ class TestPlayer:
         # 壁キックにより右に移動していることを確認
         assert player.puyo_x == 1
         assert player.rotation == 3
+
+    def test_指定時間が経過すると_ぷよが1マス下に落ちる(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """指定時間が経過すると、ぷよが1マス下に落ちる"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 初期位置を記録
+        initial_y = player.puyo_y
+
+        # 落下間隔(1000ms = 1秒)
+        drop_interval = 1000
+
+        # ゲームの更新処理を実行（落下間隔分）
+        player.update_with_delta(drop_interval)
+
+        # 1マス下に落ちていることを確認
+        assert player.puyo_y == initial_y + 1
+
+    def test_指定時間未満では_ぷよは落ちない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """指定時間未満では、ぷよは落ちない"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 初期位置を記録
+        initial_y = player.puyo_y
+
+        # 落下間隔の半分
+        half_interval = 500
+
+        # ゲームの更新処理を実行（落下間隔未満）
+        player.update_with_delta(half_interval)
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_y == initial_y
+
+    def test_下端に達した場合_それ以上落ちない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """下端に達した場合、それ以上落ちない"""
+        config, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 下端に移動
+        player.puyo_y = config.stage_rows - 1
+
+        # 落下間隔分の時間を経過させる
+        player.update_with_delta(1000)
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_y == config.stage_rows - 1
+        # 着地フラグが立っていることを確認
+        assert player.has_landed() is True
