@@ -818,13 +818,544 @@ git commit -m 'chore: プロジェクト初期化とPyxel環境セットアッ�
 
 ---
 
-**注意**: イテレーション1以降の内容は、TypeScript 版から Python+Pyxel 版への移植作業中です。続きは順次追加していきます。
+## イテレーション1: ゲーム開始の実装
 
-## イテレーション1以降（準備中）
+さあ、いよいよコードを書き始めましょう！テスト駆動開発では、小さなイテレーション(反復)で機能を少しずつ追加していきます。最初のイテレーションでは、最も基本的な機能である「ゲームの開始」を実装します。
 
-現在、TypeScript 版の内容を Python+Pyxel に適応する作業を進めています。以下のイテレーションが順次追加されます：
+> システム構築はどこから始めるべきだろうか。システム構築が終わったらこうなる、というストーリーを語るところからだ。
+>
+> — Kent Beck 『テスト駆動開発』
 
-- イテレーション1: ゲーム開始の実装
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、新しいゲームを開始できる
+
+このシンプルなストーリーから始めることで、ゲームの基本的な構造を作り、後続の機能追加の土台を築くことができます。では、テスト駆動開発のサイクルに従って、まずはテストから書いていきましょう！
+
+### TODOリスト
+
+さて、ユーザーストーリーを実装するために、まずはTODOリストを作成しましょう。TODOリストは、大きな機能を小さなタスクに分解するのに役立ちます。
+
+> 何をテストすべきだろうか - 着手する前に、必要になりそうなテストをリストに書き出しておこう。
+>
+> — Kent Beck 『テスト駆動開発』
+
+私たちの「新しいゲームを開始できる」というユーザーストーリーを実現するためには、どのようなタスクが必要でしょうか？考えてみましょう：
+
+- ゲームの初期化処理を実装する(ゲームの状態や必要なコンポーネントを設定する)
+- ゲーム画面を表示する(プレイヤーが視覚的にゲームを認識できるようにする)
+- 新しいぷよを生成する(ゲーム開始時に最初のぷよを作成する)
+- ゲームループを開始する(ゲームの継続的な更新と描画を行う)
+
+これらのタスクを一つずつ実装していきましょう。テスト駆動開発では、各タスクに対してテスト→実装→リファクタリングのサイクルを回します。まずは「ゲームの初期化処理」から始めましょう！
+
+### テスト: ゲームの初期化
+
+さて、TODOリストの最初のタスク「ゲームの初期化処理を実装する」に取り掛かりましょう。テスト駆動開発では、まずテストを書くことから始めます。
+
+> テストファースト
+>
+> いつテストを書くべきだろうか——それはテスト対象のコードを書く前だ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+では、ゲームの初期化処理をテストするコードを書いてみましょう。何をテストすべきでしょうか？ゲームが初期化されたとき、必要なコンポーネントが正しく作成され、ゲームの状態が適切に設定されていることを確認する必要がありますね。
+
+```python
+# test/test_game.py
+import pytest
+from lib.game import Game
+from lib.config import Config
+from lib.stage import Stage
+from lib.puyoimage import PuyoImage
+from lib.player import Player
+from lib.score import Score
+
+
+class TestGame:
+    """ゲームクラスのテスト"""
+
+    @pytest.fixture
+    def game(self):
+        """各テストで使用するゲームインスタンス"""
+        return Game()
+
+    def test_ゲームを初期化すると_必要なコンポーネントが作成される(self, game: Game):
+        """ゲームを初期化すると、必要なコンポーネントが作成される"""
+        game.initialize()
+
+        assert isinstance(game.config, Config)
+        assert isinstance(game.puyo_image, PuyoImage)
+        assert isinstance(game.stage, Stage)
+        assert isinstance(game.player, Player)
+        assert isinstance(game.score, Score)
+
+    def test_ゲームを初期化すると_ゲームモードがstartになる(self, game: Game):
+        """ゲームを初期化すると、ゲームモードがstartになる"""
+        game.initialize()
+
+        assert game.mode == "start"
+```
+
+このテストでは、`Game`クラスの`initialize`メソッドが正しく動作することを確認しています。具体的には、必要なコンポーネント(Config, PuyoImage, Stage, Player, Score)が作成され、ゲームモードが'start'に設定されることを検証しています。
+
+**TypeScript版との違い**:
+- `beforeEach` → pytest の `@pytest.fixture` に置き換え
+- `describe` → Python のクラスベーステストに置き換え
+- `it` → `test_` プレフィックスを持つメソッドに置き換え
+- `expect(...).toBeInstanceOf(...)` → `isinstance(...)` 関数と `assert` に置き換え
+- DOM操作 → PyxelにはDOM概念がないため削除
+- キャメルケース → スネークケースに統一
+
+### 実装: ゲームの初期化
+
+テストを書いたら、次に実行してみましょう。どうなるでしょうか？
+
+```bash
+uv run pytest
+```
+
+```
+ModuleNotFoundError: No module named 'lib.game'
+```
+
+おっと！まだ`Game`クラスを実装していないので、当然エラーになりますね。これがテスト駆動開発の「Red(赤)」の状態です。テストが失敗することを確認できました。
+
+> アサートファースト
+>
+> ではテストはどこから書き始めるべきだろうか。それはテストの終わりにパスすべきアサーションを書くところからだ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+では、テストが通るように最小限のコードを実装していきましょう。「最小限」というのがポイントです。この段階では、テストが通ることだけを目指して、必要最低限のコードを書きます。
+
+```python
+# lib/game.py
+"""ゲームメインクラス"""
+from typing import Literal
+
+from lib.config import Config
+from lib.puyoimage import PuyoImage
+from lib.stage import Stage
+from lib.player import Player
+from lib.score import Score
+
+GameMode = Literal["start", "checkFall", "fall", "checkErase", "erasing", "newPuyo", "playing", "gameOver"]
+
+
+class Game:
+    """ぷよぷよゲームのメインクラス"""
+
+    def __init__(self) -> None:
+        """ゲームの初期化"""
+        self.mode: GameMode = "start"
+        self.frame: int = 0
+        self.combination_count: int = 0
+
+    def initialize(self) -> None:
+        """各コンポーネントの初期化"""
+        # 各コンポーネントの初期化
+        self.config = Config()
+        self.puyo_image = PuyoImage(self.config)
+        self.stage = Stage(self.config, self.puyo_image)
+        self.player = Player(self.config, self.stage, self.puyo_image)
+        self.score = Score()
+
+        # ゲームモードを設定
+        self.mode = "start"
+```
+
+**TypeScript版からの主な変更**:
+- 型アノテーション: `GameMode` は `Literal` 型を使用
+- プライベート変数: Python には真のプライベート変数がないため、`_` プレフィックスは使わず、パブリック属性として扱う
+- コンストラクタ: `constructor()` → `__init__()`
+- 型ヒント: すべての属性とメソッドに型ヒントを追加
+- docstring: クラスとメソッドに説明を追加
+
+### 解説: ゲームの初期化
+
+テストが通りましたね！おめでとうございます。これがテスト駆動開発の「Green(緑)」の状態です。
+
+実装したゲームの初期化処理について、少し解説しておきましょう。この処理では、主に以下のことを行っています：
+
+1. 各コンポーネント(Config, PuyoImage, Stage, Player, Score)のインスタンスを作成
+2. ゲームモードを'start'に設定
+
+これにより、ゲームを開始するための準備が整います。各コンポーネントの役割を理解しておくと、今後の実装がスムーズになりますよ：
+
+- **Config**: ゲームの設定値を管理します(画面サイズ、ぷよの大きさなど)
+- **PuyoImage**: ぷよの画像を管理します(各色のぷよの描画を担当)
+- **Stage**: ゲームのステージ(盤面)を管理します(ぷよの配置状態、消去判定など)
+- **Player**: プレイヤーの入力と操作を管理します(キーボード入力の処理、ぷよの移動など)
+- **Score**: スコアの計算と表示を管理します(連鎖数に応じたスコア計算など)
+
+このように、責任を明確に分けることで、コードの保守性が高まります。これはオブジェクト指向設計の基本原則の一つ、「単一責任の原則」に従っています。
+
+> 単一責任の原則(SRP)：クラスを変更する理由は1つだけであるべき。
+>
+> — Robert C. Martin 『Clean Architecture』
+
+### テスト: ゲームループの開始
+
+次に、ゲームループを開始するテストを書きます。Pyxelでは`pyxel.run()`メソッドがゲームループを管理しますが、この呼び出しを直接テストすると無限ループに入ってしまうため、モックを使用してテストします。
+
+```python
+# test/test_game.py (続き)
+from unittest.mock import patch, MagicMock
+
+
+class TestGame:
+    # ... 既存のテストメソッド ...
+
+    def test_ゲームループを開始すると_pyxel_runが呼ばれる(self, game: Game):
+        """ゲームループを開始すると、pyxel.runが呼ばれる"""
+        with patch("pyxel.run") as mock_run:
+            game.run()
+
+            # pyxel.runが呼び出されたことを確認
+            mock_run.assert_called_once()
+            # updateとdrawメソッドが引数として渡されたことを確認
+            args = mock_run.call_args[0]
+            assert callable(args[0])  # update method
+            assert callable(args[1])  # draw method
+```
+
+このテストでは、`Game`クラスの`run`メソッドが`pyxel.run()`を正しく呼び出すことを確認しています。
+
+**TypeScript版との違い**:
+- `requestAnimationFrame`のモック → `pyxel.run()`のモック
+- `window.requestAnimationFrame` → `pyxel.run()`
+- モック実装: `vi.fn()` → `unittest.mock.patch()`
+
+### 実装: ゲームループの開始
+
+テストが失敗することを確認したら、テストが通るように最小限のコードを実装します。
+
+```python
+# lib/game.py (続き)
+import pyxel
+
+
+class Game:
+    # ... 既存のコード ...
+
+    def run(self) -> None:
+        """ゲームループを開始"""
+        pyxel.run(self.update, self.draw)
+
+    def update(self) -> None:
+        """ゲーム状態の更新(60FPSで呼ばれる)"""
+        # 現時点では空実装
+        pass
+
+    def draw(self) -> None:
+        """画面描画(60FPSで呼ばれる)"""
+        # 現時点では空実装
+        pass
+```
+
+**TypeScript版からの主な変更**:
+- `loop()` メソッド → `run()` メソッド
+- `requestAnimationFrame(this.loop.bind(this))` → `pyxel.run(self.update, self.draw)`
+- `bind(this)` 不要: Pythonでは`self`は自動的にメソッドにバインドされる
+- 更新と描画を分離: Pyxelは`update`と`draw`を分けて管理
+
+### 解説: ゲームループの開始
+
+さて、今回実装した「ゲームループ」について少し詳しく解説しましょう。「ゲームループって何？」と思われるかもしれませんね。
+
+ゲームループは、その名の通り、ゲームの状態を更新し、画面を描画するための繰り返し処理なんです。心臓がずっと鼓動を続けるように、このループが継続的に実行されることで、ゲームが生き生きと動き続けるんですよ。
+
+ここで使っている`pyxel.run()`というメソッド、これがとても賢いんです！Pyxelは自動的に60FPSでゲームループを実行し、`update`メソッドと`draw`メソッドを順番に呼び出してくれます。
+
+**Pyxelのゲームループの仕組み**:
+
+```
+┌─────────────────────────────────────┐
+│  pyxel.run(update, draw)            │
+│                                     │
+│  ┌─────────────────────────────┐   │
+│  │ 1. update() を実行          │   │
+│  │    - ゲーム状態を更新       │   │
+│  │    - 入力処理               │   │
+│  │    - 物理演算など           │   │
+│  └─────────────────────────────┘   │
+│           ↓                         │
+│  ┌─────────────────────────────┐   │
+│  │ 2. draw() を実行            │   │
+│  │    - 画面クリア             │   │
+│  │    - すべての描画           │   │
+│  │    - 画面更新               │   │
+│  └─────────────────────────────┘   │
+│           ↓                         │
+│  (60FPS で繰り返し)                │
+└─────────────────────────────────────┘
+```
+
+TypeScript版の`requestAnimationFrame`とは異なり、Pyxelでは：
+
+1. **更新と描画の分離**: `update`と`draw`を明確に分けることで、ロジックと描画を整理できます
+2. **自動的な60FPS**: フレームレート管理を気にする必要がありません
+3. **シンプルなAPI**: `bind(this)`のような複雑な仕組みは不要です
+
+このゲームループが基盤となって、これから様々な機能を追加していきますよ！
+
+### 実装: エントリーポイント
+
+最後に、ゲームを起動するエントリーポイント `main.py` を実装します。
+
+```python
+# main.py
+"""ぷよぷよゲームのエントリーポイント"""
+import pyxel
+from lib.game import Game
+
+
+def main() -> None:
+    """メイン関数"""
+    # Pyxelウィンドウの初期化
+    pyxel.init(160, 120, title="ぷよぷよ TDD")
+
+    # ゲームのインスタンスを作成
+    game = Game()
+
+    # ゲームを初期化
+    game.initialize()
+
+    # ゲームループを開始
+    game.run()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+このコードでは、以下の手順でゲームを開始します：
+
+1. `pyxel.init()` でPyxelウィンドウを初期化(160x120ピクセル)
+2. `Game` クラスのインスタンスを作成
+3. `initialize()` メソッドで各コンポーネントを初期化
+4. `run()` メソッドでゲームループを開始
+
+**TypeScript版との違い**:
+- `main.ts` → `main.py`
+- モジュールインポート: ES6 import → Python import
+- エントリーポイント: 即時実行 → `if __name__ == "__main__":` パターン
+- Pyxel初期化: TypeScript版にはないPyxel固有の初期化処理
+
+### 依存クラスの実装
+
+必要な依存クラス(Config, PuyoImage, Stage, Player, Score)も最小限の実装を作成します。
+
+```python
+# lib/config.py
+"""ゲーム設定クラス"""
+
+
+class Config:
+    """ゲームの設定値を管理するクラス"""
+
+    def __init__(self) -> None:
+        """設定値の初期化"""
+        # 最小限の実装
+        pass
+```
+
+```python
+# lib/puyoimage.py
+"""ぷよ画像管理クラス"""
+from lib.config import Config
+
+
+class PuyoImage:
+    """ぷよの画像を管理するクラス"""
+
+    def __init__(self, config: Config) -> None:
+        """
+        画像管理の初期化
+
+        Args:
+            config: ゲーム設定
+        """
+        # 最小限の実装
+        pass
+```
+
+```python
+# lib/stage.py
+"""ゲームステージクラス"""
+from lib.config import Config
+from lib.puyoimage import PuyoImage
+
+
+class Stage:
+    """ゲームステージ(盤面)を管理するクラス"""
+
+    def __init__(self, config: Config, puyo_image: PuyoImage) -> None:
+        """
+        ステージの初期化
+
+        Args:
+            config: ゲーム設定
+            puyo_image: ぷよ画像管理
+        """
+        # 最小限の実装
+        pass
+```
+
+```python
+# lib/player.py
+"""プレイヤークラス"""
+from lib.config import Config
+from lib.stage import Stage
+from lib.puyoimage import PuyoImage
+
+
+class Player:
+    """プレイヤーの入力と操作を管理するクラス"""
+
+    def __init__(self, config: Config, stage: Stage, puyo_image: PuyoImage) -> None:
+        """
+        プレイヤーの初期化
+
+        Args:
+            config: ゲーム設定
+            stage: ゲームステージ
+            puyo_image: ぷよ画像管理
+        """
+        # 最小限の実装
+        pass
+```
+
+```python
+# lib/score.py
+"""スコア管理クラス"""
+
+
+class Score:
+    """スコアの計算と管理を行うクラス"""
+
+    def __init__(self) -> None:
+        """スコアの初期化"""
+        # 最小限の実装
+        pass
+```
+
+これらのクラスは現時点では空の実装ですが、後続のイテレーションで徐々に機能を追加していきます。
+
+**TypeScript版との違い**:
+- 型アノテーション: すべてのメソッドに型ヒントを追加
+- docstring: 各クラスとメソッドに説明を追加
+- 未使用引数: TypeScriptの `_config` → Pythonでは通常の引数名を使用(Ruffが未使用を検出)
+
+### Ruff設定の調整
+
+未使用の引数に関するRuffエラーを回避するため、`.ruff.toml`に以下の設定を追加します：
+
+```toml
+# .ruff.toml
+[lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = ["ARG002"]  # 未使用のメソッド引数を許可
+
+[lint.mccabe]
+max-complexity = 7
+```
+
+この設定により、コンストラクタなどで将来使う予定の引数が未使用でもエラーにならなくなります。
+
+**TypeScript版との違い**:
+- ESLint設定 → Ruff設定
+- `argsIgnorePattern: '^_'` → `ignore = ["ARG002"]`
+
+### テストの確認
+
+すべての実装が完了したら、テストを実行して確認しましょう：
+
+```bash
+uv run tox -e test
+```
+
+以下の結果が表示されれば成功です：
+
+```
+================================ test session starts ================================
+collected 3 items
+
+test/test_game.py::TestGame::test_ゲームを初期化すると_必要なコンポーネントが作成される PASSED
+test/test_game.py::TestGame::test_ゲームを初期化すると_ゲームモードがstartになる PASSED
+test/test_game.py::TestGame::test_ゲームループを開始すると_pyxel_runが呼ばれる PASSED
+
+================================ 3 passed in 0.12s ==================================
+```
+
+すべての品質チェックを実行：
+
+```bash
+uv run tox
+```
+
+### 画面の確認
+
+ではここで実際に動作する画面を確認しましょう。
+
+```bash
+uv run python main.py
+```
+
+Pyxelウィンドウが開き、160x120ピクセルのゲーム画面が表示されます。現時点では空の黒い画面ですが、これがゲームの土台となります。
+
+おめでとうございます！リリースに向けて最初の第一歩を踏み出すことができました。これから機能を追加するごとにどんどん実際のゲームの完成に近づく事が確認できます、楽しみですね。
+
+「機能は別々に作りこんで最後に画面と統合するんじゃないの？」と思うもしれません。そういうアプローチもありますが画面イメージが最後まで確認できないともし間違っていたら手戻りが大変です。それに動作するプログラムがどんどん成長するのを見るのは楽しいですからね。
+
+> トップダウンでもボトムアップでもなく、エンドツーエンドで構築していく
+>
+>    エンドツーエンドで小さな機能を構築し、そこから作業を進めながら問題について学習していく。
+>
+> — 達人プログラマー 熟達に向けたあなたの旅(第2版)
+
+### イテレーション1のまとめ
+
+このイテレーションで実装した内容：
+
+1. **Game クラスの初期化**
+   - 必要なコンポーネント(Config, PuyoImage, Stage, Player, Score)の作成
+   - ゲームモードの設定
+
+2. **ゲームループの実装**
+   - `pyxel.run()` を使用した60FPSゲームループ
+   - `update()` と `draw()` メソッドの分離
+
+3. **エントリーポイントの実装**
+   - `main.py` でPyxel初期化とゲーム起動
+   - Pyxelウィンドウでの動作確認が可能に
+
+4. **テストの作成**
+   - ゲーム初期化のテスト(2テスト)
+   - ゲームループのテスト(1テスト)
+   - すべてのテストが成功
+
+**TypeScript版からの主な変更点**:
+- Vitest → pytest
+- requestAnimationFrame → pyxel.run()
+- DOM操作 → Pyxel描画API(今後実装)
+- ESLint → Ruff
+- npm → uv
+- class構文 → Pythonのclass構文(型ヒント付き)
+
+次のイテレーションでは、ぷよの移動機能を実装していきます。
+
+---
+
+**注意**: イテレーション2以降の内容は、TypeScript版からPython+Pyxel版への移植作業中です。続きは順次追加していきます。
+
+## イテレーション2以降（準備中）
+
+現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
+
 - イテレーション2: ぷよの移動の実装
 - イテレーション3: ぷよの回転の実装
 - イテレーション4: ぷよの自由落下の実装
@@ -833,7 +1364,7 @@ git commit -m 'chore: プロジェクト初期化とPyxel環境セットアッ�
 - イテレーション7: 連鎖反応の実装
 - イテレーション8: 全消しボーナスの実装
 - イテレーション9: ゲームオーバーの実装
-- イテレーション10: UI の改善
+- イテレーション10: UIの改善
 
 ## 参考資料
 
