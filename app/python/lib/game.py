@@ -114,9 +114,7 @@ class Game:
 
                 # スコアを計算（全消しフラグは後で判定）
                 self.score.calculate_score(
-                    erase_info["erase_puyo_count"],
-                    self.combination_count,
-                    False
+                    erase_info["erase_puyo_count"], self.combination_count, False
                 )
 
                 self.mode = "erasing"
