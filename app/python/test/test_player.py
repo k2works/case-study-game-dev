@@ -521,9 +521,6 @@ class TestPlayer:
         player.puyo_y = config.stage_rows - 1  # 最下段
         player.rotation = 0  # 上向き
 
-        # 初期回転状態を記録
-        initial_rotation = player.rotation
-
         # 右回転を2回試みる（0→1→2 下向きになる）
         player.rotate_right()  # 0→1（右向き）は成功するはず
         player.rotate_right()  # 1→2（下向き）は失敗するはず

@@ -208,21 +208,95 @@ class Game:
 
     def draw_title(self) -> None:
         """タイトル画面を描画する"""
-        # タイトルテキスト
-        title = "PUYO PUYO TDD"
-        title_x = (pyxel.width - len(title) * 4) // 2
-        title_y = pyxel.height // 3
+        # 5x7 ビットマップフォントパターン
+        font_patterns = {
+            "P": [
+                [1, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 0],
+                [1, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0],
+            ],
+            "U": [
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 1, 1, 0],
+            ],
+            "Y": [
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 0, 1, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+            ],
+            "O": [
+                [0, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 1, 1, 0],
+            ],
+            "T": [
+                [1, 1, 1, 1, 1],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 1, 0, 0],
+            ],
+            "D": [
+                [1, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 0],
+            ],
+            " ": [[0, 0, 0, 0, 0] for _ in range(7)],
+        }
 
-        # タイトルを大きく表示（2倍）
-        for dy in range(2):
-            for dx in range(2):
-                pyxel.text(title_x + dx, title_y + dy, title, 10)
+        # タイトル "PUYO PUYO"
+        title = "PUYO PUYO"
+        scale = 3
+        char_width = 6 * scale
+        total_width = len(title) * char_width
+        start_x = (pyxel.width - total_width) // 2
+        start_y = pyxel.height // 3 - 20
+
+        # 各文字を描画
+        for i, char in enumerate(title):
+            if char in font_patterns:
+                pattern = font_patterns[char]
+                base_x = start_x + i * char_width
+
+                for y, row in enumerate(pattern):
+                    for x, pixel in enumerate(row):
+                        if pixel:
+                            pyxel.rect(
+                                base_x + x * scale,
+                                start_y + y * scale,
+                                scale,
+                                scale,
+                                10,  # 黄色
+                            )
 
         # スタートメッセージを点滅表示
         if (self.frame // 30) % 2 == 0:
             start_msg = "PRESS SPACE TO START"
             msg_x = (pyxel.width - len(start_msg) * 4) // 2
-            msg_y = pyxel.height // 2 + 20
+            msg_y = pyxel.height // 2 + 40
             pyxel.text(msg_x, msg_y, start_msg, 7)
 
     def draw_game_over(self) -> None:
