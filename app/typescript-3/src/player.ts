@@ -69,22 +69,39 @@ export class Player {
   }
 
   moveLeft(): void {
-    // 左端でなければ左に移動
-    if (this.puyoX > 0) {
+    // 2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][this.rotation]
+    const nextX = this.puyoX + offsetX
+
+    // 軸ぷよと2つ目のぷよの両方が左端でなければ左に移動
+    if (this.puyoX > 0 && nextX > 0) {
       this.puyoX--
     }
   }
 
   moveRight(): void {
-    // 右端でなければ右に移動
-    if (this.puyoX < this.config.stageCols - 1) {
+    // 2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][this.rotation]
+    const nextX = this.puyoX + offsetX
+
+    // 軸ぷよと2つ目のぷよの両方が右端でなければ右に移動
+    if (this.puyoX < this.config.stageCols - 1 && nextX < this.config.stageCols - 1) {
       this.puyoX++
     }
   }
 
   draw(): void {
-    // 現在のぷよを描画
+    // 現在のぷよ（軸ぷよ）を描画
     this.stage.drawPuyo(this.puyoX, this.puyoY, this.puyoType)
+
+    // 2つ目のぷよの位置を回転状態に応じて計算
+    const offsetX = [0, 1, 0, -1][this.rotation] // 回転状態ごとのX方向オフセット
+    const offsetY = [-1, 0, 1, 0][this.rotation] // 回転状態ごとのY方向オフセット
+    const nextX = this.puyoX + offsetX
+    const nextY = this.puyoY + offsetY
+
+    // 2つ目のぷよを描画
+    this.stage.drawPuyo(nextX, nextY, this.nextPuyoType)
   }
 
   update(): void {
@@ -97,5 +114,41 @@ export class Player {
       this.moveRight()
       this.inputKeyRight = false // 移動後フラグをクリア
     }
+    if (this.inputKeyUp) {
+      this.rotateRight()
+      this.inputKeyUp = false // 回転後フラグをクリア
+    }
+  }
+
+  rotateRight(): void {
+    // 時計回りに回転（0→1→2→3→0）
+    const newRotation = (this.rotation + 1) % 4
+    this.performRotation(newRotation)
+  }
+
+  rotateLeft(): void {
+    // 反時計回りに回転（0→3→2→1→0）
+    const newRotation = (this.rotation + 3) % 4
+    this.performRotation(newRotation)
+  }
+
+  private performRotation(newRotation: number): void {
+    // 回転後の2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][newRotation]
+    const offsetY = [-1, 0, 1, 0][newRotation]
+    const nextX = this.puyoX + offsetX
+    const nextY = this.puyoY + offsetY
+
+    // 壁キック処理
+    if (nextX < 0) {
+      // 左壁に当たる場合、右にキック
+      this.puyoX++
+    } else if (nextX >= this.config.stageCols) {
+      // 右壁に当たる場合、左にキック
+      this.puyoX--
+    }
+
+    // 回転を確定
+    this.rotation = newRotation
   }
 }
