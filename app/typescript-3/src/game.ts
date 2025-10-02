@@ -37,11 +37,41 @@ export class Game {
     this.score = new Score()
 
     // ゲームモードを設定
-    this.mode = 'start'
+    this.mode = 'newPuyo'
   }
 
   loop(): void {
     // ゲームループの処理
+    this.update()
+    this.draw()
     requestAnimationFrame(this.loop.bind(this))
+  }
+
+  private update(): void {
+    this.frame++
+
+    // モードに応じた処理
+    switch (this.mode) {
+      case 'newPuyo':
+        // 新しいぷよを作成
+        this.player.createNewPuyo()
+        this.mode = 'playing'
+        break
+
+      case 'playing':
+        // プレイ中の処理（キー入力に応じた移動）
+        this.player.update()
+        break
+    }
+  }
+
+  private draw(): void {
+    // ステージを描画
+    this.stage.draw()
+
+    // プレイヤーのぷよを描画
+    if (this.mode === 'playing') {
+      this.player.draw()
+    }
   }
 }
