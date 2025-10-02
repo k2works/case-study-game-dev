@@ -79,11 +79,27 @@ class Game:
                 # ぷよが落下した場合、fallモードへ
                 self.mode = "fall"
             else:
-                # 落下するぷよがない場合、次のぷよを出す
-                self.mode = "newPuyo"
+                # 落下するぷよがない場合、消去チェックへ
+                self.mode = "checkErase"
 
         elif self.mode == "fall":
             # 落下アニメーション用（一定フレーム待機）
+            # 簡略化のため、すぐにcheckFallに戻る
+            self.mode = "checkFall"
+
+        elif self.mode == "checkErase":
+            # 消去判定
+            erase_info = self.stage.check_erase()
+            if erase_info["erase_puyo_count"] > 0:
+                # 消去対象がある場合、消去処理へ
+                self.stage.erase_boards(erase_info["erase_info"])
+                self.mode = "erasing"
+            else:
+                # 消去対象がない場合、次のぷよを出す
+                self.mode = "newPuyo"
+
+        elif self.mode == "erasing":
+            # 消去アニメーション用（一定フレーム待機）
             # 簡略化のため、すぐにcheckFallに戻る
             self.mode = "checkFall"
 

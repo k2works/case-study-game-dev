@@ -1,7 +1,24 @@
 """ステージ管理クラス"""
 
+from typing import TypedDict
+
 from lib.config import Config
 from lib.puyoimage import PuyoImage
+
+
+class ErasePosition(TypedDict):
+    """消去位置情報"""
+
+    x: int
+    y: int
+    type: int
+
+
+class EraseInfo(TypedDict):
+    """消去情報"""
+
+    erase_puyo_count: int
+    erase_info: list[ErasePosition]
 
 
 class Stage:
@@ -118,3 +135,92 @@ class Stage:
                     has_fallen = True
 
         return has_fallen
+
+    def check_erase(self) -> EraseInfo:
+        """消去判定を行う
+
+        Returns:
+            EraseInfo: 消去情報
+        """
+        # 消去情報
+        erase_info: EraseInfo = {"erase_puyo_count": 0, "erase_info": []}
+
+        # 一時的なチェック用ボード
+        checked: list[list[bool]] = [
+            [False for _ in range(self.config.stage_cols)]
+            for _ in range(self.config.stage_rows)
+        ]
+
+        # 全マスをチェック
+        for y in range(self.config.stage_rows):
+            for x in range(self.config.stage_cols):
+                # ぷよがあり、まだチェックしていない場合
+                if self.field[y][x] != 0 and not checked[y][x]:
+                    # 接続しているぷよを探索
+                    puyo_type = self.field[y][x]
+                    connected: list[tuple[int, int]] = []
+                    self._search_connected_puyo(x, y, puyo_type, checked, connected)
+
+                    # 4つ以上つながっている場合は消去対象
+                    if len(connected) >= 4:
+                        for puyo_x, puyo_y in connected:
+                            erase_info["erase_info"].append(
+                                {"x": puyo_x, "y": puyo_y, "type": puyo_type}
+                            )
+                        erase_info["erase_puyo_count"] += len(connected)
+
+        return erase_info
+
+    def _search_connected_puyo(
+        self,
+        start_x: int,
+        start_y: int,
+        puyo_type: int,
+        checked: list[list[bool]],
+        connected: list[tuple[int, int]],
+    ) -> None:
+        """接続しているぷよを探索（深さ優先探索）
+
+        Args:
+            start_x: 探索開始X座標
+            start_y: 探索開始Y座標
+            puyo_type: 探索するぷよの種類
+            checked: チェック済みフラグの2次元配列
+            connected: 接続しているぷよの座標リスト
+        """
+        # 探索済みにする
+        checked[start_y][start_x] = True
+        connected.append((start_x, start_y))
+
+        # 4方向を探索
+        directions = [
+            (1, 0),  # 右
+            (-1, 0),  # 左
+            (0, 1),  # 下
+            (0, -1),  # 上
+        ]
+
+        for dx, dy in directions:
+            next_x = start_x + dx
+            next_y = start_y + dy
+
+            # 範囲内かつ未チェックかつ同じ種類のぷよの場合、再帰的に探索
+            if (
+                0 <= next_x < self.config.stage_cols
+                and 0 <= next_y < self.config.stage_rows
+                and not checked[next_y][next_x]
+                and self.field[next_y][next_x] == puyo_type
+            ):
+                self._search_connected_puyo(
+                    next_x, next_y, puyo_type, checked, connected
+                )
+
+    def erase_boards(self, erase_info: list[ErasePosition]) -> None:
+        """消去対象のぷよを消去
+
+        Args:
+            erase_info: 消去するぷよの位置情報リスト
+        """
+        # 消去対象のぷよを消去
+        for info in erase_info:
+            self.field[info["y"]][info["x"]] = 0
