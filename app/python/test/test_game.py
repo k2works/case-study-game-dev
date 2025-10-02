@@ -1,4 +1,5 @@
 """ゲームクラスのテスト"""
+
 from unittest.mock import patch
 
 import pytest
@@ -19,7 +20,9 @@ class TestGame:
         """各テストで使用するゲームインスタンス"""
         return Game()
 
-    def test_ゲームを初期化すると_必要なコンポーネントが作成される(self, game: Game) -> None:
+    def test_ゲームを初期化すると_必要なコンポーネントが作成される(
+        self, game: Game
+    ) -> None:
         """ゲームを初期化すると、必要なコンポーネントが作成される"""
         game.initialize()
 

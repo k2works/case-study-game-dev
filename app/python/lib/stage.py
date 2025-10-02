@@ -1,4 +1,5 @@
 """ステージ管理クラス"""
+
 from lib.config import Config
 from lib.puyoimage import PuyoImage
 

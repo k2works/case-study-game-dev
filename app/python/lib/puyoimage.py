@@ -1,4 +1,5 @@
 """ぷよ画像管理クラス"""
+
 from lib.config import Config
 
 

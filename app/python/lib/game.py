@@ -1,4 +1,5 @@
 """ゲームメインクラス"""
+
 from typing import Literal
 
 import pyxel
