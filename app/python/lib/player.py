@@ -175,8 +175,8 @@ class Player:
         if self.landed:
             return
 
-        # 落下タイマーを更新
-        self.drop_timer += delta_time
+        # 落下タイマーを更新（高速落下の速度を反映）
+        self.drop_timer += delta_time * self.get_drop_speed()
 
         # 落下間隔を超えたら落下処理
         if self.drop_timer >= self.drop_interval:
@@ -258,3 +258,22 @@ class Player:
             着地している場合は True
         """
         return self.landed
+
+    def get_drop_speed(self) -> float:
+        """落下速度を取得
+
+        Returns:
+            下キーが押されていれば10.0、そうでなければ1.0
+        """
+        return 10.0 if self.input_key_down else 1.0
+
+    def move_down(self) -> bool:
+        """下に移動
+
+        Returns:
+            移動できた場合は True、できなかった場合は False
+        """
+        if self._can_move_down():
+            self.puyo_y += 1
+            return True
+        return False

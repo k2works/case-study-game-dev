@@ -285,3 +285,61 @@ class TestPlayer:
         assert player.puyo_y == config.stage_rows - 1
         # 着地フラグが立っていることを確認
         assert player.has_landed() is True
+
+    def test_下キーが押されていると_落下速度が上がる(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """下キーが押されていると、落下速度が上がる"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 通常の落下速度
+        normal_speed = player.get_drop_speed()
+        assert normal_speed == 1.0
+
+        # 下キーを押す
+        player.input_key_down = True
+
+        # 高速落下の速度を取得
+        fast_speed = player.get_drop_speed()
+        assert fast_speed == 10.0
+
+    def test_下に移動できる場合_下に移動する(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """下に移動できる場合、下に移動する"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 初期位置を記録
+        initial_y = player.puyo_y
+
+        # 下に移動
+        result = player.move_down()
+
+        # 移動できたことを確認
+        assert result is True
+        assert player.puyo_y == initial_y + 1
+
+    def test_下に障害物がある場合_下に移動できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """下に障害物がある場合、下に移動できない"""
+        config, _, stage, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 下端に移動
+        player.puyo_y = config.stage_rows - 1
+
+        # 下に移動を試みる
+        result = player.move_down()
+
+        # 移動できなかったことを確認
+        assert result is False
+        assert player.puyo_y == config.stage_rows - 1
