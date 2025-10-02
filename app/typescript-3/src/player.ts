@@ -149,25 +149,34 @@ export class Player {
   }
 
   private canMoveDown(): boolean {
-    // 下端チェック
-    if (this.puyoY >= this.config.stageRows - 1) {
-      return false
-    }
-
     // 2つ目のぷよの位置を計算
     const offsetX = [0, 1, 0, -1][this.rotation]
     const offsetY = [-1, 0, 1, 0][this.rotation]
     const nextX = this.puyoX + offsetX
     const nextY = this.puyoY + offsetY
 
-    // 軸ぷよの下にぷよがあるかチェック
-    if (this.stage.getPuyo(this.puyoX, this.puyoY + 1) > 0) {
-      return false
-    }
+    // 2つ目のぷよが下にある場合（rotation=2）
+    if (offsetY === 1) {
+      // 2つ目のぷよが下端を超えないかチェック
+      if (nextY >= this.config.stageRows - 1) {
+        return false
+      }
+      // 2つ目のぷよの下にぷよがあるかチェック
+      if (this.stage.getPuyo(nextX, nextY + 1) > 0) {
+        return false
+      }
+    } else {
+      // 2つ目のぷよが下以外にある場合
+      // 軸ぷよの下端チェック
+      if (this.puyoY >= this.config.stageRows - 1) {
+        return false
+      }
+      // 軸ぷよの下にぷよがあるかチェック
+      if (this.stage.getPuyo(this.puyoX, this.puyoY + 1) > 0) {
+        return false
+      }
 
-    // 2つ目のぷよの下にぷよがあるかチェック（2つ目のぷよが下にある場合は不要）
-    if (offsetY !== 1) {
-      // 2つ目のぷよが下端を超えていないかチェック
+      // 2つ目のぷよが下端を超えないかチェック
       if (nextY >= this.config.stageRows - 1) {
         return false
       }

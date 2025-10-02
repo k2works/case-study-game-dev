@@ -321,6 +321,51 @@ describe('プレイヤー', () => {
     })
   })
 
+  describe('下向き回転時の着地', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('下向き（rotation=2）の状態で下端に着地したとき、下のぷよが下端を超えない', () => {
+      // 下向きに回転
+      player.rotateRight() // 0 → 1
+      player.rotateRight() // 1 → 2 (下向き)
+
+      // 下端の1つ上に配置
+      player['puyoY'] = config.stageRows - 2
+
+      // 落下処理を実行（下端に到達）
+      player.updateWithDelta(player['dropInterval'])
+
+      // 着地している
+      expect(player.hasLanded()).toBe(true)
+
+      // 軸ぷよの位置を確認（下端の1つ上）
+      expect(stage.getPuyo(player['puyoX'], config.stageRows - 2)).toBeGreaterThan(
+        0
+      )
+
+      // 2つ目のぷよ（下）の位置を確認（下端）
+      expect(stage.getPuyo(player['puyoX'], config.stageRows - 1)).toBeGreaterThan(
+        0
+      )
+    })
+
+    it('下向き（rotation=2）の状態で下のぷよがステージの下端にあるとき、着地する', () => {
+      // 下向きに回転
+      player.rotateRight() // 0 → 1
+      player.rotateRight() // 1 → 2 (下向き)
+
+      // 下のぷよがちょうど下端になる位置に配置
+      player['puyoY'] = config.stageRows - 2
+
+      // 下に移動できないことを確認
+      const canMove = player['canMoveDown']()
+      expect(canMove).toBe(false)
+    })
+  })
+
   describe('高速落下', () => {
     beforeEach(() => {
       // 新しいぷよを作成
