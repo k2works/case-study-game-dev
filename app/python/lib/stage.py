@@ -30,6 +30,30 @@ class Stage:
 
     def draw(self) -> None:
         """ステージとフィールドのぷよを描画"""
+        import pyxel
+
+        # グリッド線を描画
+        size = self.config.puyo_size
+        for y in range(self.config.stage_rows + 1):
+            # 横線
+            pyxel.line(
+                0,
+                y * size,
+                self.config.stage_cols * size,
+                y * size,
+                self.config.stage_border_color,
+            )
+
+        for x in range(self.config.stage_cols + 1):
+            # 縦線
+            pyxel.line(
+                x * size,
+                0,
+                x * size,
+                self.config.stage_rows * size,
+                self.config.stage_border_color,
+            )
+
         # フィールドのぷよを描画
         for y in range(self.config.stage_rows):
             for x in range(self.config.stage_cols):
