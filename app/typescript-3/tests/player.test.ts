@@ -276,9 +276,9 @@ describe('プレイヤー', () => {
       player.updateWithDelta(player['dropInterval'])
 
       // ステージにぷよが固定されていることを確認
-      expect(stage.getPuyo(player['puyoX'], config.stageRows - 1)).toBeGreaterThan(
-        0
-      )
+      expect(
+        stage.getPuyo(player['puyoX'], config.stageRows - 1)
+      ).toBeGreaterThan(0)
     })
 
     it('ぷよが他のぷよの上に着地したら固定される', () => {
@@ -342,14 +342,14 @@ describe('プレイヤー', () => {
       expect(player.hasLanded()).toBe(true)
 
       // 軸ぷよの位置を確認（下端の1つ上）
-      expect(stage.getPuyo(player['puyoX'], config.stageRows - 2)).toBeGreaterThan(
-        0
-      )
+      expect(
+        stage.getPuyo(player['puyoX'], config.stageRows - 2)
+      ).toBeGreaterThan(0)
 
       // 2つ目のぷよ（下）の位置を確認（下端）
-      expect(stage.getPuyo(player['puyoX'], config.stageRows - 1)).toBeGreaterThan(
-        0
-      )
+      expect(
+        stage.getPuyo(player['puyoX'], config.stageRows - 1)
+      ).toBeGreaterThan(0)
     })
 
     it('下向き（rotation=2）の状態で下のぷよがステージの下端にあるとき、着地する', () => {

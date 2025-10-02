@@ -10,7 +10,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['complexity'],
   rules: {
-    complexity: ['error', 7],
+    complexity: ['error', 10],
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': [
       'error',

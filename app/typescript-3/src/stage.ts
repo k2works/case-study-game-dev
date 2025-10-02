@@ -136,7 +136,7 @@ export class Stage {
     // 消去情報
     const eraseInfo: EraseInfo = {
       erasePuyoCount: 0,
-      eraseInfo: []
+      eraseInfo: [],
     }
 
     // 一時的なチェック用ボード
@@ -164,7 +164,7 @@ export class Stage {
               eraseInfo.eraseInfo.push({
                 x: puyo.x,
                 y: puyo.y,
-                type: puyoType
+                type: puyoType,
               })
             }
             eraseInfo.erasePuyoCount += connected.length
@@ -192,7 +192,7 @@ export class Stage {
       { dx: 1, dy: 0 }, // 右
       { dx: -1, dy: 0 }, // 左
       { dx: 0, dy: 1 }, // 下
-      { dx: 0, dy: -1 } // 上
+      { dx: 0, dy: -1 }, // 上
     ]
 
     for (const direction of directions) {
