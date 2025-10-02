@@ -233,7 +233,7 @@ describe('ゲーム', () => {
 
       // スコアが増加していることを確認
       expect(score.getScore()).toBeGreaterThan(initialScore)
-      expect(score.getScore()).toBe(3600) // 全消しボーナスのみ
+      expect(score.getScore()).toBe(3920) // 消去スコア(320) + 全消しボーナス(3600)
     })
   })
 

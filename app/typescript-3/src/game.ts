@@ -71,7 +71,19 @@ export class Game {
   }
 
   start(): void {
-    if (this.isRunning) return
+    // 実行中の場合は一旦停止してリセット
+    if (this.isRunning) {
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId)
+      }
+    }
+
+    // ゲーム状態をリセット
+    this.stage.clear()
+    this.score.reset()
+    this.combinationCount = 0
+    this.maxChainCount = 0
+    this.updateChainDisplay()
 
     // ゲームオーバー表示を非表示
     const gameOverElement = document.getElementById('gameOver')
@@ -79,9 +91,25 @@ export class Game {
       gameOverElement.style.display = 'none'
     }
 
+    // 次のぷよ表示をクリア
+    const nextElement = document.getElementById('next')
+    if (nextElement) {
+      const canvas = nextElement.querySelector('canvas')
+      if (canvas) {
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+      }
+    }
+
+    // ステージを再描画（空の状態）
+    this.stage.draw()
+
     // ゲーム開始
     this.mode = 'newPuyo'
     this.isRunning = true
+    this.frame = 0
     this.lastTime = performance.now()
     this.loop()
   }
@@ -154,6 +182,17 @@ export class Game {
       }
       this.updateChainDisplay()
 
+      // 消去した色の種類を計算
+      const erasedColors = new Set(eraseInfo.eraseInfo.map((info) => info.type))
+        .size
+
+      // スコアを加算
+      this.score.addScore(
+        eraseInfo.erasePuyoCount,
+        this.combinationCount,
+        erasedColors
+      )
+
       // 消去対象がある場合、消去処理へ
       this.stage.eraseBoards(eraseInfo.eraseInfo)
       this.mode = 'erasing'
@@ -179,7 +218,6 @@ export class Game {
     // ゲームオーバー判定
     if (this.player.checkGameOver()) {
       this.mode = 'gameOver'
-      this.isRunning = false // ゲームループを停止
     } else {
       this.mode = 'playing'
     }
@@ -249,6 +287,8 @@ export class Game {
       case 'gameOver':
         // ゲームオーバー演出
         this.drawGameOver()
+        // ゲームループを停止
+        this.isRunning = false
         break
     }
   }
