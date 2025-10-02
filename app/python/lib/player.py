@@ -304,6 +304,11 @@ class Player:
         Returns:
             下に移動できる場合は True
         """
+        # rotation=2（下向き）の場合、2つ目のぷよは軸ぷよの下にある
+        # 軸ぷよが下端の1つ上以上なら移動できない
+        if self.rotation == 2 and self.puyo_y >= self.config.stage_rows - 2:
+            return False
+
         # 下端チェック
         if self.puyo_y >= self.config.stage_rows - 1:
             return False

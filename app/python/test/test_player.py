@@ -530,3 +530,23 @@ class TestPlayer:
 
         # 回転状態が1（右向き）で止まっていることを確認
         assert player.rotation == 1
+
+    def test_下向きで下端の1つ上にいる場合_下に移動できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """下向き（rotation=2）で下端の1つ上にいる場合、下に移動できない"""
+        config, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 下端の1つ上に配置し、下向きにする
+        player.puyo_x = 2
+        player.puyo_y = config.stage_rows - 2  # 下端の1つ上
+        player.rotation = 2  # 下向き（2つ目のぷよが軸ぷよの下）
+
+        # 下に移動できるかチェック
+        can_move = player._can_move_down()
+
+        # 下に移動できないことを確認
+        assert can_move is False
