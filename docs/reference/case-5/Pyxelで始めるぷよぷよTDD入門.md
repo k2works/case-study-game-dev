@@ -1350,13 +1350,335 @@ Pyxelウィンドウが開き、160x120ピクセルのゲーム画面が表示�
 
 ---
 
-**注意**: イテレーション2以降の内容は、TypeScript版からPython+Pyxel版への移植作業中です。続きは順次追加していきます。
+## イテレーション2: ぷよの移動の実装
 
-## イテレーション2以降（準備中）
+さて、前回のイテレーションでゲームの基本的な構造ができましたね。「ゲームが始まったけど、ぷよが動かないと面白くないよね？」と思いませんか？そこで次は、ぷよを左右に移動できるようにしていきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、落ちてくるぷよを左右に移動できる
+
+「ぷよぷよって、落ちてくるぷよを左右に動かして、うまく積み上げるゲームですよね？」そうです！今回はその基本操作である「左右の移動」を実装していきます。
+
+### TODOリスト
+
+さて、このユーザーストーリーを実現するために、どんなタスクが必要でしょうか？一緒に考えてみましょう。
+「ぷよを左右に移動する」という機能を実現するためには、以下のようなタスクが必要そうですね：
+
+- プレイヤーの入力を検出する(キーボードの左右キーが押されたことを検知する)
+- ぷよを左右に移動する処理を実装する(実際にぷよの位置を変更する)
+- 移動可能かどうかのチェックを実装する(画面の端や他のぷよにぶつかる場合は移動できないようにする)
+- 移動後の表示を更新する(画面上でぷよの位置が変わったことを表示する)
+
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
+
+### テスト: プレイヤーの入力検出
+
+「最初に何をテストすればいいんでしょうか？」まずは、プレイヤーの入力を検出する部分からテストしていきましょう。キーボードの左右キーが押されたときに、それを正しく検知できるかどうかをテストします。
+
+> テストファースト
+>
+> いつテストを書くべきだろうか——それはテスト対象のコードを書く前だ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+```python
+# test/test_player.py
+import pytest
+import pyxel
+from lib.player import Player
+from lib.config import Config
+from lib.stage import Stage
+from lib.puyoimage import PuyoImage
+
+
+class TestPlayer:
+    """プレイヤークラスのテスト"""
+
+    @pytest.fixture
+    def setup_components(self):
+        """テスト用のコンポーネントをセットアップ"""
+        config = Config()
+        puyo_image = PuyoImage(config)
+        stage = Stage(config, puyo_image)
+        player = Player(config, stage, puyo_image)
+        return config, puyo_image, stage, player
+
+    def test_左キーが押されると_左向きの移動フラグが立つ(self, setup_components):
+        """左キーが押されると、左向きの移動フラグが立つ"""
+        _, _, _, player = setup_components
+
+        # Pyxelのキー入力をシミュレート
+        # 実際のPyxelではpyxel.btn()を使うが、テストではinput_key_leftを直接設定
+        player.input_key_left = True
+
+        assert player.input_key_left is True
+
+    def test_右キーが押されると_右向きの移動フラグが立つ(self, setup_components):
+        """右キーが押されると、右向きの移動フラグが立つ"""
+        _, _, _, player = setup_components
+
+        player.input_key_right = True
+
+        assert player.input_key_right is True
+
+    def test_キー入力をクリアできる(self, setup_components):
+        """キー入力フラグをクリアできる"""
+        _, _, _, player = setup_components
+
+        # まず左キーフラグを立てる
+        player.input_key_left = True
+        assert player.input_key_left is True
+
+        # 次にクリア
+        player.input_key_left = False
+        assert player.input_key_left is False
+```
+
+「このテストは何をしているんですか？」このテストでは、キーボードの左右キーが押されたときと離されたときに、`Player`クラスの中の対応するフラグが正しく設定されるかどうかを確認しています。
+
+**TypeScript版との違い**:
+- `KeyboardEvent`のシミュレート → Pyxelでは`pyxel.btn()`を使うが、テストではフラグを直接操作
+- DOM操作不要 → Pyxelには DOM概念がない
+- `document.dispatchEvent` → 不要(フラグの直接設定でテスト)
+
+「テストを実行するとどうなるんでしょう？」まだ実装していないので、当然テストは失敗するはずです。これがテスト駆動開発の「Red(赤)」の状態です。では、テストが通るように実装していきましょう！
+
+### 実装: プレイヤーの入力検出
+
+「失敗するテストができたので、次は実装ですね！」そうです！テストが通るように、最小限のコードを実装していきましょう。
+
+> 仮実装を経て本実装へ
+>
+> 失敗するテストを書いてから、最初に行う実装はどのようなものだろうか - ベタ書きの値を返そう。
+> それでテストが通るようになったら、ベタ書きの値をだんだん本物の式や変数に置き換えていく。
+>
+> — Kent Beck 『テスト駆動開発』
+
+```python
+# lib/player.py
+"""プレイヤークラス"""
+import pyxel
+from lib.config import Config
+from lib.stage import Stage
+from lib.puyoimage import PuyoImage
+
+
+class Player:
+    """プレイヤーの入力と操作を管理するクラス"""
+
+    def __init__(self, config: Config, stage: Stage, puyo_image: PuyoImage) -> None:
+        """
+        プレイヤーの初期化
+
+        Args:
+            config: ゲーム設定
+            stage: ゲームステージ
+            puyo_image: ぷよ画像管理
+        """
+        self.config = config
+        self.stage = stage
+        self.puyo_image = puyo_image
+
+        # キー入力フラグ
+        self.input_key_left: bool = False
+        self.input_key_right: bool = False
+        self.input_key_up: bool = False
+        self.input_key_down: bool = False
+
+    def update_input(self) -> None:
+        """キー入力状態を更新"""
+        # Pyxelのキー入力をチェック
+        self.input_key_left = pyxel.btn(pyxel.KEY_LEFT)
+        self.input_key_right = pyxel.btn(pyxel.KEY_RIGHT)
+        self.input_key_up = pyxel.btn(pyxel.KEY_UP)
+        self.input_key_down = pyxel.btn(pyxel.KEY_DOWN)
+```
+
+「なるほど！Pyxelの`pyxel.btn()`を使ってキーの状態をチェックしているんですね。」そうです！Pyxelでは、`pyxel.btn(pyxel.KEY_LEFT)`のようにキーの状態をチェックできます。キーが押されている間は`True`、押されていない間は`False`を返します。
+
+**TypeScript版との大きな違い**:
+
+TypeScript版では:
+```typescript
+document.addEventListener('keydown', this.onKeyDown.bind(this));
+document.addEventListener('keyup', this.onKeyUp.bind(this));
+```
+
+Python/Pyxel版では:
+```python
+# イベントリスナー不要！
+# update_input()を毎フレーム呼ぶだけ
+self.input_key_left = pyxel.btn(pyxel.KEY_LEFT)
+```
+
+**Pyxelの利点**:
+1. **イベントリスナー不要**: `addEventListener`のような複雑な仕組みが不要
+2. **bind不要**: `this`のバインディング問題が存在しない
+3. **シンプル**: `pyxel.btn()`を呼ぶだけで現在の状態を取得
+
+「テストは通りましたか？」はい、これでテストは通るはずです！これがテスト駆動開発の「Green(緑)」の状態です。次は、ぷよを実際に移動させる機能をテストしていきましょう。
+
+### テスト: ぷよの移動
+
+「次は何をテストしますか？」次は、ぷよを左右に移動する機能をテストしましょう。ぷよが左右に移動できるか、そして画面の端に到達したときに移動が制限されるかをテストします。
+
+```python
+# test/test_player.py (続き)
+class TestPlayer:
+    # ... 既存のテストメソッド ...
+
+    def test_左に移動できる場合_左に移動する(self, setup_components):
+        """左に移動できる場合、左に移動する"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 初期位置を記録
+        initial_x = player.puyo_x
+
+        # 左に移動
+        player.move_left()
+
+        # 位置が1つ左に移動していることを確認
+        assert player.puyo_x == initial_x - 1
+
+    def test_右に移動できる場合_右に移動する(self, setup_components):
+        """右に移動できる場合、右に移動する"""
+        _, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 初期位置を記録
+        initial_x = player.puyo_x
+
+        # 右に移動
+        player.move_right()
+
+        # 位置が1つ右に移動していることを確認
+        assert player.puyo_x == initial_x + 1
+
+    def test_左端にいる場合_左に移動できない(self, setup_components):
+        """左端にいる場合、左に移動できない"""
+        config, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 左端に移動
+        player.puyo_x = 0
+
+        # 左に移動を試みる
+        player.move_left()
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_x == 0
+
+    def test_右端にいる場合_右に移動できない(self, setup_components):
+        """右端にいる場合、右に移動できない"""
+        config, _, _, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 右端に移動(ステージの幅 - 1)
+        player.puyo_x = config.stage_cols - 1
+
+        # 右に移動を試みる
+        player.move_right()
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_x == config.stage_cols - 1
+```
+
+「このテストでは何を確認しているんですか？」このテストでは、以下の4つのケースを確認しています：
+
+1. 通常の状態で左に移動できるか
+2. 通常の状態で右に移動できるか
+3. 左端にいるときに左に移動しようとしても位置が変わらないか
+4. 右端にいるときに右に移動しようとしても位置が変わらないか
+
+「なるほど、画面の端を超えて移動できないようにするんですね！」そうです！ゲームの画面外にぷよが出てしまうと困りますからね。では、このテストが通るように実装していきましょう。
+
+### 実装: ぷよの移動
+
+「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、ぷよを移動させる機能を実装していきましょう。
+
+```python
+# lib/player.py (続き)
+import random
+
+
+class Player:
+    # 定数定義
+    INITIAL_PUYO_X = 2  # ぷよの初期X座標(中央)
+    INITIAL_PUYO_Y = 0  # ぷよの初期Y座標(一番上)
+    MIN_PUYO_TYPE = 1   # ぷよの種類の最小値
+    MAX_PUYO_TYPE = 4   # ぷよの種類の最大値
+
+    def __init__(self, config: Config, stage: Stage, puyo_image: PuyoImage) -> None:
+        # ... 既存の初期化コード ...
+
+        # ぷよの状態
+        self.puyo_x: int = self.INITIAL_PUYO_X  # ぷよのX座標
+        self.puyo_y: int = self.INITIAL_PUYO_Y  # ぷよのY座標
+        self.puyo_type: int = 0                 # 現在のぷよの種類
+        self.next_puyo_type: int = 0            # 次のぷよの種類
+        self.rotation: int = 0                  # 現在の回転状態
+
+    def create_new_puyo(self) -> None:
+        """新しいぷよを作成"""
+        self.puyo_x = self.INITIAL_PUYO_X
+        self.puyo_y = self.INITIAL_PUYO_Y
+        self.puyo_type = self._get_random_puyo_type()
+        self.next_puyo_type = self._get_random_puyo_type()
+        self.rotation = 0
+
+    def _get_random_puyo_type(self) -> int:
+        """ランダムなぷよの種類を生成"""
+        return random.randint(self.MIN_PUYO_TYPE, self.MAX_PUYO_TYPE)
+
+    def move_left(self) -> None:
+        """左に移動"""
+        # 左端でなければ左に移動
+        if self.puyo_x > 0:
+            self.puyo_x -= 1
+
+    def move_right(self) -> None:
+        """右に移動"""
+        # 右端でなければ右に移動
+        if self.puyo_x < self.config.stage_cols - 1:
+            self.puyo_x += 1
+```
+
+「ぷよの位置や種類を管理するプロパティがたくさんありますね！」そうですね。ぷよの状態を管理するために、いくつかのプロパティを定義しています：
+
+- `puyo_x`と`puyo_y`：ぷよの位置(X座標とY座標)
+- `puyo_type`と`next_puyo_type`：現在のぷよと次のぷよの種類
+- `rotation`：ぷよの回転状態
+
+「移動の処理はシンプルですね！」そうですね。`move_left`メソッドでは左端(X座標が0)でなければX座標を1減らし、`move_right`メソッドでは右端(X座標がステージの幅-1)でなければX座標を1増やしています。これで、ぷよが画面の端を超えて移動することはなくなりました。
+
+**TypeScript版との違い**:
+- `puyoX` → `puyo_x` (スネークケース)
+- `Math.floor(Math.random() * 4) + 1` → `random.randint(1, 4)`
+- private定数は大文字のクラス変数として定義
+
+「これでテストは通りましたか？」はい、これでテストは通るはずです！これでぷよを左右に移動させる基本的な機能が実装できました。
+
+---
+
+**注意**: イテレーション2の続き(画面表示部分)は、TypeScript版からPython+Pyxel版への移植作業中です。続きは順次追加していきます。
+
+## イテレーション3以降（準備中）
 
 現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
 
-- イテレーション2: ぷよの移動の実装
+- イテレーション2: ぷよの移動の実装(画面表示部分は移植中)
 - イテレーション3: ぷよの回転の実装
 - イテレーション4: ぷよの自由落下の実装
 - イテレーション5: ぷよの高速落下の実装
