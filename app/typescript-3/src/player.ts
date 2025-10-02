@@ -15,12 +15,14 @@ export class Player {
 
   private puyoX: number = Player.INITIAL_PUYO_X // ぷよのX座標
   private puyoY: number = Player.INITIAL_PUYO_Y // ぷよのY座標
-  private puyoType: number = 0 // 現在のぷよの種類
-  private nextPuyoType: number = 0 // 次のぷよの種類
+  private puyoType: number = 0 // 現在のぷよの種類（軸ぷよ）
+  private nextPuyoType: number = 0 // 現在のぷよの種類（連結ぷよ）
   private rotation: number = 0 // 現在の回転状態
   private dropTimer: number = 0 // 落下タイマー
   private dropInterval: number = 1000 // 落下間隔（ミリ秒）
   private landed: boolean = false // 着地フラグ
+  private nextPuyoAxisType: number = 0 // 次のぷよの種類（軸ぷよ）
+  private nextPuyoSubType: number = 0 // 次のぷよの種類（連結ぷよ）
 
   constructor(
     private config: Config,
@@ -61,8 +63,20 @@ export class Player {
     // 新しいぷよを作成
     this.puyoX = Player.INITIAL_PUYO_X
     this.puyoY = Player.INITIAL_PUYO_Y
-    this.puyoType = this.getRandomPuyoType()
-    this.nextPuyoType = this.getRandomPuyoType()
+
+    // 次のぷよが設定されていればそれを使用、なければランダム生成
+    if (this.nextPuyoAxisType !== 0) {
+      this.puyoType = this.nextPuyoAxisType
+      this.nextPuyoType = this.nextPuyoSubType
+    } else {
+      this.puyoType = this.getRandomPuyoType()
+      this.nextPuyoType = this.getRandomPuyoType()
+    }
+
+    // 次のぷよを生成
+    this.nextPuyoAxisType = this.getRandomPuyoType()
+    this.nextPuyoSubType = this.getRandomPuyoType()
+
     this.rotation = 0
     this.landed = false // 着地フラグをリセット
   }
@@ -70,6 +84,18 @@ export class Player {
   private getRandomPuyoType(): number {
     const range = Player.MAX_PUYO_TYPE - Player.MIN_PUYO_TYPE + 1
     return Math.floor(Math.random() * range) + Player.MIN_PUYO_TYPE
+  }
+
+  getNextPuyoPair(): { axis: number; sub: number } {
+    return {
+      axis: this.nextPuyoAxisType,
+      sub: this.nextPuyoSubType,
+    }
+  }
+
+  // 後方互換性のために残す（廃止予定）
+  getNextPuyoType(): number {
+    return this.nextPuyoAxisType
   }
 
   moveLeft(): void {
@@ -255,5 +281,14 @@ export class Player {
 
     // 回転を確定
     this.rotation = newRotation
+  }
+
+  checkGameOver(): boolean {
+    // 新しいぷよの配置位置（中央上部）
+    const x = Player.INITIAL_PUYO_X
+    const y = Player.INITIAL_PUYO_Y
+
+    // 配置位置にすでにぷよがある場合はゲームオーバー
+    return this.stage.getPuyo(x, y) !== 0 || this.stage.getPuyo(x + 1, y) !== 0
   }
 }

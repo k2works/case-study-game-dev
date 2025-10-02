@@ -9,6 +9,9 @@ export class Score {
       throw new Error('Score element not found')
     }
     this.scoreElement = element
+
+    // 初期表示
+    this.draw()
   }
 
   addZenkeshiBonus(): void {
@@ -31,6 +34,6 @@ export class Score {
 
   draw(): void {
     // スコアを表示
-    this.scoreElement.textContent = this.score.toString()
+    this.scoreElement.textContent = `スコア: ${this.score}`
   }
 }

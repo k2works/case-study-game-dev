@@ -21,15 +21,49 @@
         font-size: 18px;
         font-weight: bold;
       }
+      .button {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: #4caf50;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .button:hover {
+        background-color: #45a049;
+      }
+      .button:active {
+        background-color: #3d8b40;
+      }
+      .button.reset {
+        background-color: #f44336;
+      }
+      .button.reset:hover {
+        background-color: #da190b;
+      }
+      .button.reset:active {
+        background-color: #c41408;
+      }
     </style>
   </head>
   <body>
     <div style="display: flex; gap: 20px; padding: 20px">
-      <div id="stage" style="position: relative"></div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div id="stage" style="position: relative"></div>
+        <div style="color: white; font-size: 14px; text-align: center">
+          <div style="margin-bottom: 5px; font-weight: bold">キー操作</div>
+          <div>← → : 移動 | ↑ : 回転 | ↓ : 高速落下</div>
+        </div>
+      </div>
       <div style="display: flex; flex-direction: column; gap: 10px">
         <div id="score"></div>
         <div id="chain"></div>
         <div id="next"></div>
+        <button id="startButton" class="button">スタート</button>
+        <button id="resetButton" class="button reset">リセット</button>
         <div id="next2"></div>
       </div>
     </div>

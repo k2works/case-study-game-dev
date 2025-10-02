@@ -232,4 +232,9 @@ export class Stage {
     }
     return true
   }
+
+  clear(): void {
+    // フィールドをクリア
+    this.initializeField()
+  }
 }
