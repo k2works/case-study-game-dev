@@ -376,3 +376,133 @@ class TestPlayer:
 
         # ゲームオーバーになっていないことを確認
         assert is_game_over is False
+
+    def test_左にぷよがある場合_左に移動できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """左にぷよがある場合、左に移動できない"""
+        _, _, stage, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 軸ぷよの位置を設定
+        player.puyo_x = 3
+        player.puyo_y = 10
+        player.rotation = 0  # 上向き
+
+        # 左隣にぷよを配置
+        stage.set_puyo(2, 10, 1)
+
+        # 初期位置を記録
+        initial_x = player.puyo_x
+
+        # 左に移動を試みる
+        player.move_left()
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_x == initial_x
+
+    def test_右にぷよがある場合_右に移動できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """右にぷよがある場合、右に移動できない"""
+        _, _, stage, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 軸ぷよの位置を設定
+        player.puyo_x = 2
+        player.puyo_y = 10
+        player.rotation = 0  # 上向き
+
+        # 右隣にぷよを配置
+        stage.set_puyo(3, 10, 1)
+
+        # 初期位置を記録
+        initial_x = player.puyo_x
+
+        # 右に移動を試みる
+        player.move_right()
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_x == initial_x
+
+    def test_2つ目のぷよの移動先にぷよがある場合_左に移動できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """2つ目のぷよの移動先にぷよがある場合、左に移動できない"""
+        _, _, stage, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 軸ぷよの位置を設定
+        player.puyo_x = 3
+        player.puyo_y = 10
+        player.rotation = 1  # 右向き（2つ目のぷよが右側）
+
+        # 2つ目のぷよの左隣にぷよを配置
+        stage.set_puyo(3, 10, 1)
+
+        # 初期位置を記録
+        initial_x = player.puyo_x
+
+        # 左に移動を試みる
+        player.move_left()
+
+        # 位置が変わっていないことを確認
+        assert player.puyo_x == initial_x
+
+    def test_回転先にぷよがある場合_右回転できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """回転先にぷよがある場合、右回転できない"""
+        _, _, stage, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 軸ぷよの位置を設定
+        player.puyo_x = 2
+        player.puyo_y = 10
+        player.rotation = 0  # 上向き
+
+        # 右側にぷよを配置（右回転すると2つ目のぷよがこの位置に来る）
+        stage.set_puyo(3, 10, 1)
+
+        # 初期回転状態を記録
+        initial_rotation = player.rotation
+
+        # 右回転を試みる
+        player.rotate_right()
+
+        # 回転状態が変わっていないことを確認
+        assert player.rotation == initial_rotation
+
+    def test_回転先にぷよがある場合_左回転できない(
+        self, setup_components: tuple[Config, PuyoImage, Stage, Player]
+    ) -> None:
+        """回転先にぷよがある場合、左回転できない"""
+        _, _, stage, player = setup_components
+
+        # 新しいぷよを作成
+        player.create_new_puyo()
+
+        # 軸ぷよの位置を設定
+        player.puyo_x = 2
+        player.puyo_y = 10
+        player.rotation = 0  # 上向き
+
+        # 左側にぷよを配置（左回転すると2つ目のぷよがこの位置に来る）
+        stage.set_puyo(1, 10, 1)
+
+        # 初期回転状態を記録
+        initial_rotation = player.rotation
+
+        # 左回転を試みる
+        player.rotate_left()
+
+        # 回転状態が変わっていないことを確認
+        assert player.rotation == initial_rotation

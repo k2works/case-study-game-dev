@@ -78,22 +78,98 @@ class Player:
         """ランダムなぷよの種類を生成"""
         return random.randint(self.MIN_PUYO_TYPE, self.MAX_PUYO_TYPE)
 
+    def _can_move_to(self, new_x: int, new_y: int) -> bool:
+        """指定位置に移動できるかチェック
+
+        Args:
+            new_x: 移動先のX座標
+            new_y: 移動先のY座標
+
+        Returns:
+            移動できる場合は True
+        """
+        # 軸ぷよが移動できるかチェック
+        puyo_at_new_pos = self.stage.get_puyo(new_x, new_y)
+        # -1は範囲外、0は空、1以上はぷよがある
+        if puyo_at_new_pos > 0:
+            return False
+
+        # 2つ目のぷよの位置を計算
+        second_x = new_x
+        second_y = new_y
+
+        if self.rotation == 0:  # 上
+            second_y = new_y - 1
+        elif self.rotation == 1:  # 右
+            second_x = new_x + 1
+        elif self.rotation == 2:  # 下
+            second_y = new_y + 1
+        elif self.rotation == 3:  # 左
+            second_x = new_x - 1
+
+        # 2つ目のぷよが移動できるかチェック
+        # 盤面外(-1)は有効として扱う
+        puyo_at_second_pos = self.stage.get_puyo(second_x, second_y)
+        if puyo_at_second_pos > 0:
+            return False
+
+        return True
+
+    def _can_rotate_to(self, new_rotation: int) -> bool:
+        """指定回転状態に回転できるかチェック
+
+        Args:
+            new_rotation: 回転後の回転状態
+
+        Returns:
+            回転できる場合は True
+        """
+        # 回転後の2つ目のぷよの位置を計算
+        second_x = self.puyo_x
+        second_y = self.puyo_y
+
+        if new_rotation == 0:  # 上
+            second_y = self.puyo_y - 1
+        elif new_rotation == 1:  # 右
+            second_x = self.puyo_x + 1
+        elif new_rotation == 2:  # 下
+            second_y = self.puyo_y + 1
+        elif new_rotation == 3:  # 左
+            second_x = self.puyo_x - 1
+
+        # 2つ目のぷよが回転先に配置できるかチェック
+        # 盤面外(-1)は有効として扱う
+        puyo_at_second_pos = self.stage.get_puyo(second_x, second_y)
+        if puyo_at_second_pos > 0:
+            return False
+
+        return True
+
     def move_left(self) -> None:
         """左に移動"""
-        # 左端でなければ左に移動
-        if self.puyo_x > 0:
+        # 左端でなければ、かつ移動先に障害物がなければ左に移動
+        if self.puyo_x > 0 and self._can_move_to(self.puyo_x - 1, self.puyo_y):
             self.puyo_x -= 1
 
     def move_right(self) -> None:
         """右に移動"""
-        # 右端でなければ右に移動
-        if self.puyo_x < self.config.stage_cols - 1:
+        # 右端でなければ、かつ移動先に障害物がなければ右に移動
+        if self.puyo_x < self.config.stage_cols - 1 and self._can_move_to(
+            self.puyo_x + 1, self.puyo_y
+        ):
             self.puyo_x += 1
 
     def rotate_right(self) -> None:
         """時計回りに回転(0→1→2→3→0)"""
-        # 回転状態を1増やす
-        self.rotation = (self.rotation + 1) % 4
+        # 新しい回転状態を計算
+        new_rotation = (self.rotation + 1) % 4
+
+        # 回転できるかチェック
+        if not self._can_rotate_to(new_rotation):
+            return
+
+        # 回転状態を更新
+        self.rotation = new_rotation
 
         # 壁キック: 右端で右回転（rotation=1）すると左に移動
         if self.rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
@@ -105,8 +181,15 @@ class Player:
 
     def rotate_left(self) -> None:
         """反時計回りに回転(0→3→2→1→0)"""
-        # 回転状態を1減らす（+3は-1と同じ mod 4）
-        self.rotation = (self.rotation + 3) % 4
+        # 新しい回転状態を計算（+3は-1と同じ mod 4）
+        new_rotation = (self.rotation + 3) % 4
+
+        # 回転できるかチェック
+        if not self._can_rotate_to(new_rotation):
+            return
+
+        # 回転状態を更新
+        self.rotation = new_rotation
 
         # 壁キック: 右端で右回転（rotation=1）すると左に移動
         if self.rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
