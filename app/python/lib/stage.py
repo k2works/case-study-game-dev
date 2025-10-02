@@ -224,3 +224,19 @@ class Stage:
         # 消去対象のぷよを消去
         for info in erase_info:
             self.field[info["y"]][info["x"]] = 0
+
+    def check_zenkeshi(self) -> bool:
+        """全消し判定を行う
+
+        Returns:
+            盤面上にぷよが一つも残っていない場合は True
+        """
+        # フィールド内のすべてのマスをチェック
+        for y in range(self.config.stage_rows):
+            for x in range(self.config.stage_cols):
+                # ぷよがあれば全消しではない
+                if self.field[y][x] != 0:
+                    return False
+
+        # すべてのマスが空なら全消し
+        return True

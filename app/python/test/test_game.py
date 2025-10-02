@@ -102,3 +102,38 @@ class TestGame:
 
         # 連鎖が発生していることを確認（青ぷよが4つつながっている）
         assert chain_erase_info["erase_puyo_count"] >= 4
+
+    def test_盤面上のぷよがすべて消えると_全消しフラグが立つ(self, game: Game) -> None:
+        """盤面上のぷよがすべて消えると、全消しフラグが立つ"""
+        game.initialize()
+
+        # ステージにぷよを配置（4つの赤ぷよ）
+        game.stage.set_puyo(1, 10, 1)
+        game.stage.set_puyo(2, 10, 1)
+        game.stage.set_puyo(1, 11, 1)
+        game.stage.set_puyo(2, 11, 1)
+
+        # checkErase モードに設定
+        game.mode = "checkErase"
+
+        # 消去判定と消去実行
+        game.update()  # checkErase → erasing
+        assert game.mode == "erasing"
+
+        # 消去後の重力チェック
+        game.update()  # erasing → checkFall
+        assert game.mode == "checkFall"
+
+        # 重力適用と落下アニメーションを繰り返す
+        iterations = 0
+        while game.mode != "checkErase" and iterations < 20:
+            game.update()
+            iterations += 1
+
+        # checkErase に到達
+        assert game.mode == "checkErase"
+
+        # 消去対象がないので newPuyo に遷移し、全消しフラグが立つ
+        game.update()  # checkErase → newPuyo
+        assert game.mode == "newPuyo"
+        assert game.is_zenkeshi is True

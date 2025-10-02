@@ -30,6 +30,7 @@ class Game:
         self.mode: GameMode = "start"
         self.frame: int = 0
         self.combination_count: int = 0
+        self.is_zenkeshi: bool = False
 
     def initialize(self) -> None:
         """各コンポーネントの初期化"""
@@ -95,7 +96,9 @@ class Game:
                 self.stage.erase_boards(erase_info["erase_info"])
                 self.mode = "erasing"
             else:
-                # 消去対象がない場合、次のぷよを出す
+                # 消去対象がない場合、全消し判定を行う
+                self.is_zenkeshi = self.stage.check_zenkeshi()
+                # 次のぷよを出す
                 self.mode = "newPuyo"
 
         elif self.mode == "erasing":

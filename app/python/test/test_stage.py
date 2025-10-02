@@ -127,3 +127,48 @@ class TestStageErase:
         assert stage.get_puyo(2, 9) == 0  # 元の位置は空
         assert stage.get_puyo(2, 10) == 2  # 落下後の位置
         assert stage.get_puyo(2, 11) == 2  # 落下後の位置
+
+    def test_盤面上のぷよがすべて消えると_全消しになる(
+        self, setup_components: tuple[Config, PuyoImage, Stage]
+    ) -> None:
+        """盤面上のぷよがすべて消えると全消しになる"""
+        _, _, stage = setup_components
+
+        # ステージにぷよを配置
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 1)
+        stage.set_puyo(1, 11, 1)
+        stage.set_puyo(2, 11, 1)
+
+        # 消去判定と実行
+        erase_info = stage.check_erase()
+        stage.erase_boards(erase_info["erase_info"])
+
+        # 全消し判定
+        is_zenkeshi = stage.check_zenkeshi()
+
+        # 全消しになっていることを確認
+        assert is_zenkeshi is True
+
+    def test_盤面上にぷよが残っていると_全消しにならない(
+        self, setup_components: tuple[Config, PuyoImage, Stage]
+    ) -> None:
+        """盤面上にぷよが残っていると全消しにならない"""
+        _, _, stage = setup_components
+
+        # ステージにぷよを配置
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 1)
+        stage.set_puyo(1, 11, 1)
+        stage.set_puyo(2, 11, 1)
+        stage.set_puyo(3, 11, 2)  # 消えないぷよ
+
+        # 消去判定と実行
+        erase_info = stage.check_erase()
+        stage.erase_boards(erase_info["erase_info"])
+
+        # 全消し判定
+        is_zenkeshi = stage.check_zenkeshi()
+
+        # 全消しになっていないことを確認
+        assert is_zenkeshi is False
