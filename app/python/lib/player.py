@@ -45,11 +45,11 @@ class Player:
 
     def update_input(self) -> None:
         """キー入力状態を更新"""
-        # Pyxelのキー入力をチェック
-        self.input_key_left = pyxel.btn(pyxel.KEY_LEFT)
-        self.input_key_right = pyxel.btn(pyxel.KEY_RIGHT)
-        self.input_key_up = pyxel.btn(pyxel.KEY_UP)
-        self.input_key_down = pyxel.btn(pyxel.KEY_DOWN)
+        # Pyxelのキー入力をチェック（btnp = ボタンが押された瞬間のみTrue）
+        self.input_key_left = pyxel.btnp(pyxel.KEY_LEFT)
+        self.input_key_right = pyxel.btnp(pyxel.KEY_RIGHT)
+        self.input_key_up = pyxel.btnp(pyxel.KEY_UP)
+        self.input_key_down = pyxel.btnp(pyxel.KEY_DOWN)
 
     def create_new_puyo(self) -> None:
         """新しいぷよを作成"""
