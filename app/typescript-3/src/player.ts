@@ -89,7 +89,10 @@ export class Player {
     const nextX = this.puyoX + offsetX
 
     // 軸ぷよと2つ目のぷよの両方が右端でなければ右に移動
-    if (this.puyoX < this.config.stageCols - 1 && nextX < this.config.stageCols - 1) {
+    if (
+      this.puyoX < this.config.stageCols - 1 &&
+      nextX < this.config.stageCols - 1
+    ) {
       this.puyoX++
     }
   }
@@ -239,9 +242,7 @@ export class Player {
   private performRotation(newRotation: number): void {
     // 回転後の2つ目のぷよの位置を計算
     const offsetX = [0, 1, 0, -1][newRotation]
-    const offsetY = [-1, 0, 1, 0][newRotation]
     const nextX = this.puyoX + offsetX
-    const nextY = this.puyoY + offsetY
 
     // 壁キック処理
     if (nextX < 0) {
