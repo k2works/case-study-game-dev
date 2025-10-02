@@ -75,12 +75,55 @@ class Player:
         if self.puyo_x < self.config.stage_cols - 1:
             self.puyo_x += 1
 
+    def rotate_right(self) -> None:
+        """時計回りに回転(0→1→2→3→0)"""
+        # 回転状態を1増やす
+        self.rotation = (self.rotation + 1) % 4
+
+        # 壁キック: 右端で右回転（rotation=1）すると左に移動
+        if self.rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
+            self.puyo_x -= 1
+
+        # 壁キック: 左端で下回転（rotation=3）すると右に移動
+        if self.rotation == 3 and self.puyo_x == 0:
+            self.puyo_x += 1
+
+    def rotate_left(self) -> None:
+        """反時計回りに回転(0→3→2→1→0)"""
+        # 回転状態を1減らす（+3は-1と同じ mod 4）
+        self.rotation = (self.rotation + 3) % 4
+
+        # 壁キック: 右端で右回転（rotation=1）すると左に移動
+        if self.rotation == 1 and self.puyo_x == self.config.stage_cols - 1:
+            self.puyo_x -= 1
+
+        # 壁キック: 左端で下回転（rotation=3）すると右に移動
+        if self.rotation == 3 and self.puyo_x == 0:
+            self.puyo_x += 1
+
     def draw(self) -> None:
-        """現在のぷよを描画"""
+        """現在のぷよを描画（1つ目と2つ目）"""
+        # 1つ目のぷよを描画
         self.stage.draw_puyo(self.puyo_x, self.puyo_y, self.puyo_type)
 
+        # 回転状態に応じて2つ目のぷよの位置を計算
+        second_x = self.puyo_x
+        second_y = self.puyo_y
+
+        if self.rotation == 0:  # 上
+            second_y = self.puyo_y - 1
+        elif self.rotation == 1:  # 右
+            second_x = self.puyo_x + 1
+        elif self.rotation == 2:  # 下
+            second_y = self.puyo_y + 1
+        elif self.rotation == 3:  # 左
+            second_x = self.puyo_x - 1
+
+        # 2つ目のぷよを描画
+        self.stage.draw_puyo(second_x, second_y, self.next_puyo_type)
+
     def update(self) -> None:
-        """キー入力に応じて移動"""
+        """キー入力に応じて移動と回転"""
         # キー入力状態を更新
         self.update_input()
 
@@ -92,3 +135,12 @@ class Player:
         if self.input_key_right:
             self.move_right()
             self.input_key_right = False  # 移動後フラグをクリア
+
+        # キー入力に応じて回転
+        if self.input_key_up:
+            self.rotate_right()
+            self.input_key_up = False  # 回転後フラグをクリア
+
+        # Z キーで左回転
+        if pyxel.btnp(pyxel.KEY_Z):
+            self.rotate_left()
