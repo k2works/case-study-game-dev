@@ -94,4 +94,32 @@ export class Stage {
     }
     return this.field[y][x]
   }
+
+  applyGravity(): boolean {
+    // ステージ上のぷよに重力を適用（1マスずつ落とす）
+    // 戻り値: 落下したぷよがあれば true
+
+    // フィールドのコピーを作成（移動前の状態を保存）
+    const originalField: number[][] = this.field.map((row) => [...row])
+
+    let hasFallen = false
+
+    // 下から上に向かって各列をスキャン（列ごとに処理）
+    for (let x = 0; x < this.config.stageCols; x++) {
+      for (let y = this.config.stageRows - 2; y >= 0; y--) {
+        const color = originalField[y][x]
+        if (color > 0) {
+          // 元のフィールドで下に空きがあるかチェック
+          if (originalField[y + 1][x] === 0) {
+            // 1マス下に移動
+            this.field[y + 1][x] = color
+            this.field[y][x] = 0
+            hasFallen = true
+          }
+        }
+      }
+    }
+
+    return hasFallen
+  }
 }
