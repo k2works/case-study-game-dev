@@ -1670,9 +1670,413 @@ class Player:
 
 「これでテストは通りましたか？」はい、これでテストは通るはずです！これでぷよを左右に移動させる基本的な機能が実装できました。
 
----
+「でも、まだ実際にキー入力に応じて移動する処理が実装されていませんよね？」鋭い指摘ですね！確かに、キーが押されたことを検知するフラグと、ぷよを移動させるメソッドはできましたが、それらを連携させる部分はまだ実装していません。これは画面表示と合わせて実装していきますね。
 
-**注意**: イテレーション2の続き(画面表示部分)は、TypeScript版からPython+Pyxel版への移植作業中です。続きは順次追加していきます。
+「なるほど、少しずつ機能を追加していくんですね！」そうです！テスト駆動開発では、小さな機能を一つずつ確実に実装していくことで、複雑なシステムを構築していきます。
+
+### 実装: ぷよの画面表示
+
+「テストは通ったけど、実際にぷよが動いているところを見たいですね！」そうですね！それでは、ぷよを画面に表示して、実際にキーボードで操作できるようにしましょう。
+
+#### Config クラスの拡張
+
+まず、画面表示に必要な設定を Config クラスに追加します：
+
+```python
+# lib/config.py
+"""ゲーム設定クラス"""
+
+
+class Config:
+    """ゲームの設定値を管理するクラス"""
+
+    def __init__(self) -> None:
+        """設定値の初期化"""
+        self.stage_cols: int = 6        # ステージの列数
+        self.stage_rows: int = 12       # ステージの行数
+        self.puyo_size: int = 32        # ぷよのサイズ(ピクセル)
+        self.stage_bg_color: int = 1    # ステージの背景色(Pyxel色番号)
+        self.stage_border_color: int = 5  # ステージの枠線色
+```
+
+**TypeScript版との違い**:
+- Canvas用のカラーコード(`'#2a2a2a'`) → Pyxelの16色パレット番号(`1`)
+- `stageCols` → `stage_cols` (スネークケース)
+
+#### PuyoImage クラスの実装
+
+次に、ぷよを描画するための PuyoImage クラスを実装します：
+
+```python
+# lib/puyoimage.py
+"""ぷよ画像管理クラス"""
+import pyxel
+from lib.config import Config
+
+
+class PuyoImage:
+    """ぷよの画像を管理するクラス"""
+
+    # Pyxel 16色パレットを使用
+    COLORS = [
+        1,   # 0: 空 (ダークブルー)
+        8,   # 1: 赤
+        11,  # 2: 緑
+        12,  # 3: 青
+        10,  # 4: 黄色
+    ]
+
+    def __init__(self, config: Config) -> None:
+        """
+        画像管理の初期化
+
+        Args:
+            config: ゲーム設定
+        """
+        self.config = config
+
+    def draw(self, x: int, y: int, puyo_type: int) -> None:
+        """
+        ぷよを描画
+
+        Args:
+            x: X座標(グリッド単位)
+            y: Y座標(グリッド単位)
+            puyo_type: ぷよの種類(0-4)
+        """
+        size = self.config.puyo_size
+        color = self.COLORS[puyo_type] if 0 <= puyo_type < len(self.COLORS) else self.COLORS[0]
+
+        # 円の中心座標と半径を計算
+        center_x = x * size + size // 2
+        center_y = y * size + size // 2
+        radius = size // 2 - 2  # 少し小さめにして余白を作る
+
+        # ぷよを円形で描画
+        pyxel.circ(center_x, center_y, radius, color)
+
+        # 枠線を描画(黒)
+        pyxel.circb(center_x, center_y, radius, 0)
+```
+
+「ぷよを円形で描画しているんですね！」そうです！Pyxelの`pyxel.circ()`メソッドを使って、ぷよを円形で描画しています。
+
+**TypeScript版との違い**:
+- `ctx.arc()` → `pyxel.circ()` (塗りつぶし円)
+- `ctx.stroke()` → `pyxel.circb()` (円の枠線)
+- RGB文字列(`'#ff0000'`) → Pyxelの16色パレット番号(`8`=赤)
+- Canvas APIの複雑な描画コード → シンプルな1行の関数呼び出し
+
+**Pyxelの描画の利点**:
+1. **シンプル**: `circ(x, y, r, col)` 一発で円を描画
+2. **軽量**: Canvasのコンテキスト管理が不要
+3. **直感的**: パレット番号で色を指定
+
+#### Stage クラスの実装
+
+続いて、ゲームのステージを管理する Stage クラスを実装します：
+
+```python
+# lib/stage.py
+"""ゲームステージクラス"""
+import pyxel
+from lib.config import Config
+from lib.puyoimage import PuyoImage
+
+
+class Stage:
+    """ゲームステージ(盤面)を管理するクラス"""
+
+    def __init__(self, config: Config, puyo_image: PuyoImage) -> None:
+        """
+        ステージの初期化
+
+        Args:
+            config: ゲーム設定
+            puyo_image: ぷよ画像管理
+        """
+        self.config = config
+        self.puyo_image = puyo_image
+        self.field: list[list[int]] = []
+        self._initialize_field()
+
+    def _initialize_field(self) -> None:
+        """フィールドを初期化(全て0=空)"""
+        self.field = []
+        for y in range(self.config.stage_rows):
+            row = []
+            for x in range(self.config.stage_cols):
+                row.append(0)
+            self.field.append(row)
+
+    def draw(self) -> None:
+        """ステージとフィールドのぷよを描画"""
+        # フィールドのぷよを描画
+        for y in range(self.config.stage_rows):
+            for x in range(self.config.stage_cols):
+                puyo_type = self.field[y][x]
+                if puyo_type > 0:
+                    self.puyo_image.draw(x, y, puyo_type)
+
+    def draw_puyo(self, x: int, y: int, puyo_type: int) -> None:
+        """
+        指定位置にぷよを描画
+
+        Args:
+            x: X座標
+            y: Y座標
+            puyo_type: ぷよの種類
+        """
+        self.puyo_image.draw(x, y, puyo_type)
+
+    def set_puyo(self, x: int, y: int, puyo_type: int) -> None:
+        """
+        フィールドにぷよを配置
+
+        Args:
+            x: X座標
+            y: Y座標
+            puyo_type: ぷよの種類
+        """
+        if 0 <= y < self.config.stage_rows and 0 <= x < self.config.stage_cols:
+            self.field[y][x] = puyo_type
+
+    def get_puyo(self, x: int, y: int) -> int:
+        """
+        フィールドからぷよの種類を取得
+
+        Args:
+            x: X座標
+            y: Y座標
+
+        Returns:
+            ぷよの種類(-1: 範囲外, 0: 空, 1-4: ぷよ)
+        """
+        if y < 0 or y >= self.config.stage_rows or x < 0 or x >= self.config.stage_cols:
+            return -1  # 範囲外
+        return self.field[y][x]
+```
+
+「PyxelにはCanvasがないんですね！」そうです！Pyxelでは、`pyxel.init()`で初期化したウィンドウに直接描画します。Canvas要素の生成やDOM操作は一切不要です。
+
+**TypeScript版との大きな違い**:
+
+TypeScript版:
+```typescript
+// Canvas要素を作成
+this.canvas = document.createElement('canvas')
+this.canvas.width = ...
+this.canvas.style.border = ...
+document.getElementById('stage')?.appendChild(this.canvas)
+this.ctx = this.canvas.getContext('2d')
+```
+
+Python/Pyxel版:
+```python
+# Canvas不要！pyxel.init()で既に画面が用意されている
+# 直接 pyxel.circ() などで描画するだけ
+```
+
+**Pyxelの利点**:
+1. **Canvas管理不要**: DOM操作やCanvas生成が不要
+2. **ctxチェック不要**: テスト環境でのnullチェックが不要
+3. **シンプル**: Pyxelが画面管理を全て担当
+
+#### Player クラスの拡張
+
+Player クラスに描画と更新のメソッドを追加します：
+
+```python
+# lib/player.py (追加部分)
+class Player:
+    # ... 既存のコード ...
+
+    def draw(self) -> None:
+        """現在のぷよを描画"""
+        self.stage.draw_puyo(self.puyo_x, self.puyo_y, self.puyo_type)
+
+    def update(self) -> None:
+        """キー入力に応じて移動"""
+        # キー入力状態を更新
+        self.update_input()
+
+        # キー入力に応じて移動
+        if self.input_key_left:
+            self.move_left()
+            self.input_key_left = False  # 移動後フラグをクリア
+
+        if self.input_key_right:
+            self.move_right()
+            self.input_key_right = False  # 移動後フラグをクリア
+```
+
+**TypeScript版との違い**:
+- `update()`内で`update_input()`を呼ぶ(Pyxelでは毎フレームキー状態を更新)
+- フラグのクリアは同じ(連続移動を防ぐため)
+
+#### Game クラスの更新
+
+最後に、Game クラスのゲームループで描画と更新を行うようにします：
+
+```python
+# lib/game.py (更新部分)
+class Game:
+    # ... 既存のコード ...
+
+    def initialize(self) -> None:
+        """各コンポーネントの初期化"""
+        # 各コンポーネントの初期化
+        self.config = Config()
+        self.puyo_image = PuyoImage(self.config)
+        self.stage = Stage(self.config, self.puyo_image)
+        self.player = Player(self.config, self.stage, self.puyo_image)
+        self.score = Score()
+
+        # ゲームモードを設定
+        self.mode = "newPuyo"  # 'start' → 'newPuyo' に変更
+
+    def update(self) -> None:
+        """ゲーム状態の更新(60FPSで呼ばれる)"""
+        self.frame += 1
+
+        # モードに応じた処理
+        if self.mode == "newPuyo":
+            # 新しいぷよを作成
+            self.player.create_new_puyo()
+            self.mode = "playing"
+
+        elif self.mode == "playing":
+            # プレイ中の処理(キー入力に応じた移動)
+            self.player.update()
+
+    def draw(self) -> None:
+        """画面描画(60FPSで呼ばれる)"""
+        # 画面クリア(背景色)
+        pyxel.cls(self.config.stage_bg_color)
+
+        # ステージを描画
+        self.stage.draw()
+
+        # プレイヤーのぷよを描画
+        if self.mode == "playing":
+            self.player.draw()
+```
+
+**TypeScript版との違い**:
+- `ctx.clearRect()` → `pyxel.cls(color)` (画面全体をクリア)
+- Canvas操作 → Pyxel描画関数の直接呼び出し
+- `requestAnimationFrame` → `pyxel.run(update, draw)` (イテレーション1で実装済み)
+
+#### 動作確認
+
+「これで実際に動かせますね！」はい！Pyxelを起動して、ブラウザならぬPyxelウィンドウで確認してみましょう：
+
+```bash
+uv run python main.py
+```
+
+Pyxelウィンドウが開き、ステージが表示され、円形のぷよが表示されます。左右の矢印キーを押すと、ぷよが左右に移動します！
+
+「動きました！」素晴らしい！これで、テストだけでなく実際の動作も確認できるようになりましたね。
+
+**TypeScript版との体験の違い**:
+- ブラウザを開く → Pyxelウィンドウが直接起動
+- `http://localhost:3000/` → ネイティブアプリケーション
+- ブラウザの開発者ツール → Pyxel固有のデバッグ方法
+
+#### テスト環境への対応
+
+「PyxelでもテストとI実行環境の違いに対応が必要ですか？」良い質問ですね。Pyxelの場合、`pyxel.init()`を呼ばなければ描画機能は使えませんが、テストではそれを避けたいです。
+
+幸い、今回の実装では：
+
+1. **Stage.draw()**: フィールドの配列を走査して描画するだけ。`pyxel.init()`がなくても`pyxel.circ()`は呼べる(何も描画されないだけ)
+2. **Player.update()**: キー入力の更新と移動ロジック。描画は含まない
+3. **テストの分離**: テストでは描画メソッドを呼ばず、ロジックだけをテスト
+
+TypeScript版のような`ctx`のnullチェックは不要です！
+
+**TypeScript版での対応**:
+```typescript
+if (!this.ctx) return // テスト環境対応
+```
+
+**Python/Pyxel版**:
+```python
+# 不要！pyxel.circ()はいつでも呼べる
+# (pyxel.init()がなければ何も起きないだけ)
+```
+
+### イテレーション2のまとめ
+
+このイテレーションで実装した内容：
+
+1. **Player クラスのキー入力検出機能**
+   - 4方向のキー入力フラグ(input_key_left, input_key_right, input_key_up, input_key_down)の実装
+   - update_input()メソッド: pyxel.btn()によるキー状態取得
+   - テスト: キー入力フラグの設定とクリア(3テスト)
+
+2. **Player クラスのぷよ移動機能**
+   - ぷよの状態管理(puyo_x, puyo_y, puyo_type, next_puyo_type, rotation)
+   - create_new_puyo()メソッド: 新しいぷよを生成
+   - move_left/move_right()メソッド: ぷよを左右に移動(境界チェック付き)
+   - _get_random_puyo_type()メソッド: ランダムなぷよの種類を生成
+   - マジックナンバーの定数化(INITIAL_PUYO_X, INITIAL_PUYO_Y, MIN_PUYO_TYPE, MAX_PUYO_TYPE)
+   - テスト: ぷよの移動と境界チェック(4テスト)
+
+3. **Config クラスの拡張**
+   - stage_cols: ステージの列数(6)
+   - stage_rows: ステージの行数(12)
+   - puyo_size: ぷよのサイズ(32ピクセル)
+   - stage_bg_color: ステージの背景色(Pyxel色番号)
+   - stage_border_color: ステージの枠線色
+
+4. **PuyoImage クラスの実装**
+   - COLORS配列: ぷよの種類ごとの色定義(Pyxel 16色パレット)
+   - draw()メソッド: pyxel.circ()/pyxel.circb()を使用した円形ぷよの描画
+   - Canvas API不要のシンプルな実装
+
+5. **Stage クラスの実装**
+   - field配列: ステージ上のぷよ配置情報を管理
+   - _initialize_field(): 初期化処理
+   - draw()/draw_puyo(): ステージとぷよの描画
+   - set_puyo()/get_puyo(): フィールドへのぷよの配置と取得
+   - Canvas要素の生成・DOM操作が一切不要
+
+6. **Player クラスの拡張**
+   - draw()メソッド: プレイヤーが操作中のぷよを描画
+   - update()メソッド: キー入力に応じてぷよを移動
+
+7. **Game クラスの拡張**
+   - update()メソッド: ゲーム状態の更新(newPuyo → playing の状態遷移)
+   - draw()メソッド: pyxel.cls()で画面クリア、ステージとプレイヤーのぷよを描画
+   - ゲームモードを'start'から'newPuyo'に変更
+
+8. **テストの作成**
+   - キー入力検出のテスト(3テスト)
+   - ぷよの移動テスト(4テスト)
+   - 合計7テストすべて成功
+
+9. **TDDサイクルの実践**
+   - Red: 失敗するテストを先に作成
+   - Green: テストを通す最小限の実装
+   - Refactor: マジックナンバーの定数化、ランダム生成ロジックの抽出
+
+10. **TypeScript版からの主な変更点**
+    - **キー入力**: `addEventListener`/`bind(this)` → シンプルな`pyxel.btn()`
+    - **描画**: Canvas API(`ctx.arc()`, `ctx.fill()`) → Pyxel描画関数(`pyxel.circ()`)
+    - **画面管理**: Canvas要素の生成・DOM操作 → `pyxel.init()`のみ
+    - **色指定**: RGB文字列(`'#ff0000'`) → Pyxelの16色パレット番号(`8`)
+    - **テスト環境対応**: ctxのnullチェック → 不要(pyxel描画関数はいつでも呼べる)
+    - **命名規則**: キャメルケース → スネークケース
+
+11. **Pyxelの利点を実感**
+    - イベントリスナー不要でシンプルなキー入力処理
+    - Canvas管理不要で直感的な描画
+    - DOM操作完全不要でWebの複雑さから解放
+    - テスト環境と実行環境の違いが小さい
+
+次のイテレーションでは、ぷよの回転機能を実装していきます。
 
 ## イテレーション3以降（準備中）
 
