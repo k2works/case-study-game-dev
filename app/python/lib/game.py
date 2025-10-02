@@ -49,10 +49,23 @@ class Game:
 
     def update(self) -> None:
         """ゲーム状態の更新(60FPSで呼ばれる)"""
-        # 現時点では空実装
-        pass
+        if self.mode == "start":
+            # ゲーム開始時に新しいぷよを作成
+            self.player.create_new_puyo()
+            self.mode = "playing"
+
+        if self.mode == "playing":
+            # プレイヤーの入力と移動を処理
+            self.player.update()
 
     def draw(self) -> None:
         """画面描画(60FPSで呼ばれる)"""
-        # 現時点では空実装
-        pass
+        # 画面をクリア
+        pyxel.cls(0)
+
+        # ステージを描画
+        self.stage.draw()
+
+        # プレイヤーのぷよを描画
+        if self.mode == "playing":
+            self.player.draw()
