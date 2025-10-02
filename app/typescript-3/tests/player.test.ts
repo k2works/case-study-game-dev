@@ -98,5 +98,115 @@ describe('プレイヤー', () => {
       // 位置が変わっていないことを確認
       expect(player['puyoX']).toBe(config.stageCols - 1)
     })
+
+    it('横向き（右）の状態で右端にいる場合、右に移動できない', () => {
+      // 右向き（rotation=1）にして、軸ぷよを右端の1つ左に配置
+      player['puyoX'] = config.stageCols - 2
+      player['rotation'] = 1 // 2つ目のぷよが右にある状態
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認（2つ目のぷよが壁に当たるため）
+      expect(player['puyoX']).toBe(config.stageCols - 2)
+    })
+
+    it('横向き（左）の状態で左端にいる場合、左に移動できない', () => {
+      // 左向き（rotation=3）にして、軸ぷよを左端の1つ右に配置
+      player['puyoX'] = 1
+      player['rotation'] = 3 // 2つ目のぷよが左にある状態
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認（2つ目のぷよが壁に当たるため）
+      expect(player['puyoX']).toBe(1)
+    })
+  })
+
+  describe('ぷよの回転', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo()
+    })
+
+    it('時計回りに回転すると、回転状態が1増える', () => {
+      // 初期回転状態を記録
+      const initialRotation = player['rotation']
+
+      // 時計回りに回転
+      player.rotateRight()
+
+      // 回転状態が1増えていることを確認
+      expect(player['rotation']).toBe((initialRotation + 1) % 4)
+    })
+
+    it('反時計回りに回転すると、回転状態が1減る', () => {
+      // 初期回転状態を記録
+      const initialRotation = player['rotation']
+
+      // 反時計回りに回転
+      player.rotateLeft()
+
+      // 回転状態が1減っていることを確認（負の値にならないように調整）
+      expect(player['rotation']).toBe((initialRotation + 3) % 4)
+    })
+
+    it('回転状態が4になると0に戻る', () => {
+      // 回転状態を3に設定
+      player['rotation'] = 3
+
+      // 時計回りに回転
+      player.rotateRight()
+
+      // 回転状態が0になっていることを確認
+      expect(player['rotation']).toBe(0)
+    })
+
+    it('左壁際で回転すると右にキックする', () => {
+      // 左端に配置して横向き（rotation=3）にする
+      player['puyoX'] = 0
+      player['rotation'] = 3 // 2つ目のぷよが左にある状態
+
+      // 時計回りに回転（2つ目のぷよが上に来る）
+      player.rotateRight()
+
+      // 回転成功し、位置は変わらない（壁キック不要）
+      expect(player['rotation']).toBe(0)
+      expect(player['puyoX']).toBe(0)
+
+      // さらに回転（2つ目のぷよが右に来る）
+      player.rotateRight()
+
+      // 回転成功し、位置は変わらない
+      expect(player['rotation']).toBe(1)
+      expect(player['puyoX']).toBe(0)
+    })
+
+    it('右壁際で右向き回転時に左にキックする', () => {
+      // 右端に配置して横向き（rotation=1）にする
+      player['puyoX'] = config.stageCols - 1
+      player['rotation'] = 1 // 2つ目のぷよが右にある状態
+
+      // 時計回りに回転（2つ目のぷよが下に来る）
+      player.rotateRight()
+
+      // 回転成功
+      expect(player['rotation']).toBe(2)
+      expect(player['puyoX']).toBe(config.stageCols - 1)
+    })
+
+    it('左壁際で左向き状態から回転すると右にキックする', () => {
+      // 左端に配置
+      player['puyoX'] = 0
+      player['rotation'] = 0
+
+      // 回転して2つ目のぷよが左に来る状態にする
+      player.rotateLeft() // rotation = 3（左）
+
+      // この時、2つ目のぷよが壁外に出るので右にキックされる
+      expect(player['rotation']).toBe(3)
+      expect(player['puyoX']).toBe(1) // 右に1マスキック
+    })
   })
 })
