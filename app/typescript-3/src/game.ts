@@ -39,4 +39,9 @@ export class Game {
     // ゲームモードを設定
     this.mode = 'start'
   }
+
+  loop(): void {
+    // ゲームループの処理
+    requestAnimationFrame(this.loop.bind(this))
+  }
 }

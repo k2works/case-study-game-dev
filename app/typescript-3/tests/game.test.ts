@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { Game } from '../src/game'
 import { Config } from '../src/config'
 import { Stage } from '../src/stage'
@@ -35,6 +35,27 @@ describe('ゲーム', () => {
       game.initialize()
 
       expect(game['mode']).toEqual('start')
+    })
+  })
+
+  describe('ゲームループ', () => {
+    it('ゲームループを開始すると、requestAnimationFrameが呼ばれる', () => {
+      // requestAnimationFrameのモック
+      const originalRequestAnimationFrame = window.requestAnimationFrame
+      const mockRequestAnimationFrame = vi.fn()
+      window.requestAnimationFrame = mockRequestAnimationFrame
+
+      try {
+        game.loop()
+
+        expect(mockRequestAnimationFrame).toHaveBeenCalledTimes(1)
+        expect(mockRequestAnimationFrame).toHaveBeenCalledWith(
+          expect.any(Function)
+        )
+      } finally {
+        // モックを元に戻す
+        window.requestAnimationFrame = originalRequestAnimationFrame
+      }
     })
   })
 })
