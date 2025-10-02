@@ -53,11 +53,13 @@ class Player:
     def update_input(self) -> None:
         """キー入力状態を更新"""
         try:
-            # Pyxelのキー入力をチェック（btnp = ボタンが押された瞬間のみTrue）
+            # Pyxelのキー入力をチェック
+            # 左右上: btnp（押された瞬間のみTrue）
             self.input_key_left = pyxel.btnp(pyxel.KEY_LEFT)
             self.input_key_right = pyxel.btnp(pyxel.KEY_RIGHT)
             self.input_key_up = pyxel.btnp(pyxel.KEY_UP)
-            self.input_key_down = pyxel.btnp(pyxel.KEY_DOWN)
+            # 下: btn（押し続けている間ずっとTrue）高速落下用
+            self.input_key_down = pyxel.btn(pyxel.KEY_DOWN)
         except:  # noqa: E722
             # Pyxelが初期化されていない場合（テスト環境など）はスキップ
             pass
