@@ -22,7 +22,6 @@ testpaths = ["test"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--cov=lib --cov-report=html --cov-report=term-missing"
 
 [tool.coverage.run]
 source = ["lib"]
