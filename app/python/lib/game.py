@@ -133,20 +133,96 @@ class Game:
 
     def draw_game_over(self) -> None:
         """ゲームオーバー画面を描画する"""
-        # 画面中央に「GAME OVER」を表示
+        # 5x5 ビットマップフォントパターン（1=ピクセルあり、0=なし）
+        font_patterns = {
+            "G": [
+                [0, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0],
+                [1, 0, 1, 1, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 1, 1, 0],
+            ],
+            "A": [
+                [0, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+            ],
+            "M": [
+                [1, 0, 0, 0, 1],
+                [1, 1, 0, 1, 1],
+                [1, 0, 1, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+            ],
+            "E": [
+                [1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0],
+                [1, 1, 1, 1, 0],
+                [1, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0],
+                [1, 1, 1, 1, 1],
+            ],
+            "O": [
+                [0, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 1, 1, 0],
+            ],
+            "V": [
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 0, 1, 0],
+                [0, 1, 0, 1, 0],
+                [0, 0, 1, 0, 0],
+            ],
+            "R": [
+                [1, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 0],
+                [1, 0, 1, 0, 0],
+                [1, 0, 0, 1, 0],
+                [1, 0, 0, 0, 1],
+            ],
+            " ": [[0, 0, 0, 0, 0] for _ in range(7)],
+        }
+
         text = "GAME OVER"
-        text_width = len(text) * pyxel.FONT_WIDTH
-        x = (pyxel.width - text_width) // 2
-        y = pyxel.height // 2
+        scale = 3  # 3倍に拡大
+        char_width = 6 * scale  # 文字幅（5 + 1スペース）× スケール
+        total_width = len(text) * char_width
+        start_x = (pyxel.width - total_width) // 2
+        start_y = pyxel.height // 2 - 10
 
-        # 太字効果を作るために、テキストを複数回描画する
-        # 黒い輪郭（周囲8方向 + 追加の太字効果）
-        for dx in [-2, -1, 0, 1, 2]:
-            for dy in [-2, -1, 0, 1, 2]:
-                if dx != 0 or dy != 0:
-                    pyxel.text(x + dx, y + dy, text, 0)
+        # 各文字を描画
+        for i, char in enumerate(text):
+            if char in font_patterns:
+                pattern = font_patterns[char]
+                base_x = start_x + i * char_width
 
-        # テキスト本体（赤）を複数回描画して太くする
-        for dx in [-1, 0, 1]:
-            for dy in [-1, 0, 1]:
-                pyxel.text(x + dx, y + dy, text, 8)
+                # パターンを拡大して描画
+                for y, row in enumerate(pattern):
+                    for x, pixel in enumerate(row):
+                        if pixel:
+                            # スケール倍のサイズで矩形を描画
+                            pyxel.rect(
+                                base_x + x * scale,
+                                start_y + y * scale,
+                                scale,
+                                scale,
+                                8,  # 赤色
+                            )
