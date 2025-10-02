@@ -3223,13 +3223,351 @@ class TestStageErase:
 2. 異なる色のぷよが隣接している場合、それらは消去対象にならないか
 3. 3つ以下のぷよは消去対象にならないか
 
+「ステージにぷよを配置しているのはわかりますが、視覚的に確認できますか？」良い質問ですね！最初のテストでは2×2の正方形に赤ぷよを配置し、2つ目のテストでは市松模様に赤と青のぷよを配置しています。では、このテストが通るように実装していきましょう。
+
+### 実装: 型定義と接続判定
+
+「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、まず型定義とぷよの接続判定を実装していきましょう。
+
+```python
+# lib/stage.py（続き）
+from typing import TypedDict
+
+class ErasePosition(TypedDict):
+    """消去位置情報"""
+    x: int
+    y: int
+    type: int
+
+class EraseInfo(TypedDict):
+    """消去情報"""
+    erase_puyo_count: int
+    erase_info: list[ErasePosition]
+
+class Stage:
+    # ... 既存のコード ...
+
+    def check_erase(self) -> EraseInfo:
+        """消去判定を行う
+
+        Returns:
+            EraseInfo: 消去情報
+        """
+        # 消去情報
+        erase_info: EraseInfo = {
+            "erase_puyo_count": 0,
+            "erase_info": []
+        }
+
+        # 一時的なチェック用ボード
+        checked: list[list[bool]] = [
+            [False for _ in range(self.config.stage_cols)]
+            for _ in range(self.config.stage_rows)
+        ]
+
+        # 全マスをチェック
+        for y in range(self.config.stage_rows):
+            for x in range(self.config.stage_cols):
+                # ぷよがあり、まだチェックしていない場合
+                if self.field[y][x] != 0 and not checked[y][x]:
+                    # 接続しているぷよを探索
+                    puyo_type = self.field[y][x]
+                    connected: list[tuple[int, int]] = []
+                    self._search_connected_puyo(
+                        x, y, puyo_type, checked, connected
+                    )
+
+                    # 4つ以上つながっている場合は消去対象
+                    if len(connected) >= 4:
+                        for puyo_x, puyo_y in connected:
+                            erase_info["erase_info"].append({
+                                "x": puyo_x,
+                                "y": puyo_y,
+                                "type": puyo_type
+                            })
+                        erase_info["erase_puyo_count"] += len(connected)
+
+        return erase_info
+
+    def _search_connected_puyo(
+        self,
+        start_x: int,
+        start_y: int,
+        puyo_type: int,
+        checked: list[list[bool]],
+        connected: list[tuple[int, int]]
+    ) -> None:
+        """接続しているぷよを探索（深さ優先探索）
+
+        Args:
+            start_x: 探索開始X座標
+            start_y: 探索開始Y座標
+            puyo_type: 探索するぷよの種類
+            checked: チェック済みフラグの2次元配列
+            connected: 接続しているぷよの座標リスト
+        """
+        # 探索済みにする
+        checked[start_y][start_x] = True
+        connected.append((start_x, start_y))
+
+        # 4方向を探索
+        directions = [
+            (1, 0),   # 右
+            (-1, 0),  # 左
+            (0, 1),   # 下
+            (0, -1)   # 上
+        ]
+
+        for dx, dy in directions:
+            next_x = start_x + dx
+            next_y = start_y + dy
+
+            # ボード内かつ同じ色のぷよがあり、まだチェックしていない場合
+            if (
+                0 <= next_x < self.config.stage_cols and
+                0 <= next_y < self.config.stage_rows and
+                self.field[next_y][next_x] == puyo_type and
+                not checked[next_y][next_x]
+            ):
+                # 再帰的に探索
+                self._search_connected_puyo(
+                    next_x, next_y, puyo_type, checked, connected
+                )
+```
+
+### 解説: ぷよの接続判定
+
+ぷよの接続判定では、以下のことを行っています。
+
+1. ボード上の全マスを順番にチェック
+2. まだチェックしていないぷよがある場合、そのぷよと同じ色で接続しているぷよを探索
+3. 接続しているぷよが4つ以上ある場合、それらを消去対象として記録
+
+接続しているぷよの探索には[深さ優先探索（DFS）アルゴリズム](https://ja.wikipedia.org/wiki/%E6%B7%B1%E3%81%95%E5%84%AA%E5%85%88%E6%8E%A2%E7%B4%A2)を使用しています。このアルゴリズムでは、あるぷよから始めて、上下左右に隣接する同じ色のぷよを再帰的に探索していきます。探索済みのぷよは `checked` 配列でマークし、重複してカウントしないようにしています。
+
+「Pythonの再帰は大丈夫ですか？」良い質問ですね！Pythonのデフォルトの再帰制限は1000ですが、通常のぷよぷよのフィールドサイズ（6列×12行=72マス）では全く問題ありません。
+
+### テスト: ぷよの消去
+
+次に、ぷよの消去処理をテストします。
+
+```python
+# tests/test_stage.py（続き）
+class TestStageEraseAndFall:
+    """ぷよの消去と落下のテスト"""
+
+    @pytest.fixture
+    def stage(self, config: Config, puyo_image: PuyoImage) -> Stage:
+        """Stageインスタンスを返す"""
+        return Stage(config, puyo_image)
+
+    def test_erase_target_puyos(self, stage: Stage) -> None:
+        """消去対象のぷよを消去する"""
+        # ステージにぷよを配置
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 1)
+        stage.set_puyo(1, 11, 1)
+        stage.set_puyo(2, 11, 1)
+
+        # 消去判定
+        erase_info = stage.check_erase()
+
+        # 消去実行
+        stage.erase_boards(erase_info["erase_info"])
+
+        # ぷよが消去されていることを確認
+        assert stage.get_puyo(1, 10) == 0
+        assert stage.get_puyo(2, 10) == 0
+        assert stage.get_puyo(1, 11) == 0
+        assert stage.get_puyo(2, 11) == 0
+
+    def test_puyos_fall_after_erase(
+        self,
+        stage: Stage,
+        config: Config
+    ) -> None:
+        """消去後、上にあるぷよが落下する"""
+        # ステージにぷよを配置
+        # 下に赤ぷよ4つ（消去される）、その上に青ぷよ2つ
+        stage.set_puyo(1, 10, 1)
+        stage.set_puyo(2, 10, 1)
+        stage.set_puyo(1, 11, 1)
+        stage.set_puyo(2, 11, 1)
+        stage.set_puyo(2, 8, 2)
+        stage.set_puyo(2, 9, 2)
+
+        # 消去判定と実行
+        erase_info = stage.check_erase()
+        stage.erase_boards(erase_info["erase_info"])
+
+        # 青ぷよが消去前の位置にないことを確認
+        assert stage.get_puyo(2, 8) == 0
+        assert stage.get_puyo(2, 9) == 0
+
+        # 重力を適用（落下するまで繰り返す）
+        while stage.apply_gravity():
+            pass
+
+        # 上にあった青ぷよが落下していることを確認
+        assert stage.get_puyo(2, 10) == 2
+        assert stage.get_puyo(2, 11) == 2
+```
+
+このテストでは、消去対象のぷよが正しく消去されることと、消去後に上にあるぷよが落下することをテストしています。
+
+### 実装: ぷよの消去
+
+テストが失敗することを確認したら、テストが通るように最小限のコードを実装します。
+
+```python
+# lib/stage.py（続き）
+class Stage:
+    def erase_boards(self, erase_info: list[ErasePosition]) -> None:
+        """消去対象のぷよを消去
+
+        Args:
+            erase_info: 消去するぷよの位置情報リスト
+        """
+        # 消去対象のぷよを消去
+        for info in erase_info:
+            self.field[info["y"]][info["x"]] = 0
+```
+
+「シンプルですね！」そうです！消去処理自体はとてもシンプルです。消去対象の座標リストを受け取り、それらの位置のぷよを0（空）にするだけです。
+
+「落下処理はイテレーション4で実装した `apply_gravity()` を使えばいいんですね！」その通りです！既存のメソッドを再利用することで、コードの重複を避けられます。
+
+### 実装: ゲームループとの統合
+
+ゲームループに消去処理を統合します。Gameクラスの `update()` メソッドを修正して、消去判定と消去処理を組み込みます。
+
+```python
+# lib/game.py（update メソッドの一部）
+class Game:
+    def update(self) -> None:
+        """Pyxelの更新関数（60FPS）"""
+        # 経過時間を計算（ミリ秒）
+        delta_time = 1000.0 / 60.0
+
+        self.frame += 1
+
+        # モードに応じた処理
+        if self.mode == "newPuyo":
+            # 新しいぷよを作成
+            self.player.create_new_puyo()
+            self.mode = "playing"
+
+        elif self.mode == "playing":
+            # プレイ中の処理（キー入力と自由落下）
+            self.player.update_with_delta(delta_time)
+
+            # 着地したら重力チェックに移行
+            if self.player.has_landed():
+                self.mode = "checkFall"
+
+        elif self.mode == "checkFall":
+            # 重力を適用
+            has_fallen = self.stage.apply_gravity()
+            if has_fallen:
+                # ぷよが落下した場合、fallingモードへ
+                self.mode = "falling"
+            else:
+                # 落下するぷよがない場合、消去チェックへ
+                self.mode = "checkErase"
+
+        elif self.mode == "falling":
+            # 落下アニメーション用（一定フレーム待機）
+            # 簡略化のため、すぐにcheckFallに戻る
+            self.mode = "checkFall"
+
+        elif self.mode == "checkErase":
+            # 消去判定
+            erase_info = self.stage.check_erase()
+            if erase_info["erase_puyo_count"] > 0:
+                # 消去対象がある場合、消去処理へ
+                self.stage.erase_boards(erase_info["erase_info"])
+                self.mode = "erasing"
+            else:
+                # 消去対象がない場合、次のぷよを出す
+                self.mode = "newPuyo"
+
+        elif self.mode == "erasing":
+            # 消去アニメーション用（一定フレーム待機）
+            # 簡略化のため、すぐにcheckFallに戻る（消去後の重力適用）
+            self.mode = "checkFall"
+```
+
+「ゲームの流れがどう変わったんですか？」良い質問ですね！ゲームフローは以下のように拡張されました：
+
+**新しいゲームフロー**:
+```
+newPuyo → playing → (着地) → checkFall → (重力適用) →
+  ├─ 落下した → falling → checkFall
+  └─ 落下なし → checkErase →
+      ├─ 消去あり → erasing → checkFall（消去後の重力適用）
+      └─ 消去なし → newPuyo
+```
+
+このフローにより、以下が実現されます：
+
+1. **着地後の重力適用**: ぷよが着地したら、まず重力を適用して浮いているぷよを落とす
+2. **消去判定**: 重力適用後、落下するぷよがなくなったら消去判定
+3. **消去処理**: 4つ以上つながったぷよがあれば消去
+4. **消去後の重力適用**: 消去後、再び重力を適用（これが連鎖の基礎になる）
+
+### イテレーション6のまとめ
+
+このイテレーションでは、ぷよの消去機能を実装しました。以下がイテレーション6で実施した内容のまとめです：
+
+1. **型定義**
+   - `ErasePosition`: 消去位置情報を表すTypedDict
+   - `EraseInfo`: 消去情報全体を表すTypedDict
+   - TypeScript版の `interface` を Python の `TypedDict` で実装
+
+2. **接続判定機能**
+   - `check_erase()` メソッド：4つ以上つながったぷよを検出
+   - `_search_connected_puyo()` メソッド：深さ優先探索で接続ぷよを探索
+   - 再帰的な探索でつながったぷよをすべて発見
+
+3. **消去処理機能**
+   - `erase_boards()` メソッド：消去対象のぷよを削除
+   - シンプルに座標リストを受け取って0で上書き
+
+4. **ゲームループとの統合**
+   - `checkErase` モード：消去判定を実行
+   - `erasing` モード：消去アニメーション後、重力チェックへ
+   - ゲームフローの拡張：着地 → 重力 → 消去 → 重力 → 次のぷよ
+
+5. **テストの作成**
+   - ぷよの接続判定(3テスト)
+     - 同じ色のぷよが4つつながっていると、消去対象になる
+     - 異なる色のぷよは消去対象にならない
+     - 3つ以下のつながりは消去対象にならない
+   - ぷよの消去処理(2テスト)
+     - 消去対象のぷよを消去する
+     - 消去後、上にあるぷよが落下する
+   - 合計 30 テスト(既存25 + 新規5)すべて成功
+
+6. **学んだ重要な概念**
+   - 深さ優先探索（DFS）アルゴリズム
+   - 再帰的な探索処理
+   - ゲームモードによる状態管理
+   - 消去と重力の連携処理
+
+7. **TypeScript版からの主な変更点**
+   - `interface` → `TypedDict`（型定義）
+   - `const directions = [{dx, dy}, ...]` → `directions = [(dx, dy), ...]`（タプルのリスト）
+   - `for (const direction of directions)` → `for dx, dy in directions:`
+   - `connected: {x, y}[]` → `connected: list[tuple[int, int]]`（座標リストの表現）
+
+このイテレーションにより、同じ色のぷよを4つ以上つなげると消去できるようになり、ぷよぷよの基本的なゲームルールが実装できました。次のイテレーションでは、連鎖反応を実装していきます！
+
 ---
 
-## イテレーション6以降（準備中）
+## イテレーション7以降（準備中）
 
 現在、TypeScript版の内容をPython+Pyxelに適応する作業を進めています。以下のイテレーションが順次追加されます：
 
-- イテレーション6: ぷよの消去の実装
 - イテレーション7: 連鎖反応の実装
 - イテレーション8: 全消しボーナスの実装
 - イテレーション9: ゲームオーバーの実装
