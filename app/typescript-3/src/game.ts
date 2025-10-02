@@ -52,6 +52,24 @@ export class Game {
     requestAnimationFrame(this.loop.bind(this))
   }
 
+  private handleCheckErase(): void {
+    // 消去判定
+    const eraseInfo = this.stage.checkErase()
+    if (eraseInfo.erasePuyoCount > 0) {
+      // 消去対象がある場合、消去処理へ
+      this.stage.eraseBoards(eraseInfo.eraseInfo)
+      this.mode = 'erasing'
+    } else {
+      // 消去対象がない場合、全消し判定
+      if (this.stage.checkZenkeshi()) {
+        // 全消しボーナスを加算
+        this.score.addZenkeshiBonus()
+      }
+      // 次のぷよを出す
+      this.mode = 'newPuyo'
+    }
+  }
+
   private update(deltaTime: number): void {
     this.frame++
 
@@ -73,7 +91,7 @@ export class Game {
         }
         break
 
-      case 'checkFall':
+      case 'checkFall': {
         // 重力を適用
         const hasFallen = this.stage.applyGravity()
         if (hasFallen) {
@@ -84,6 +102,7 @@ export class Game {
           this.mode = 'checkErase'
         }
         break
+      }
 
       case 'falling':
         // 落下アニメーション用（一定フレーム待機）
@@ -92,21 +111,7 @@ export class Game {
         break
 
       case 'checkErase':
-        // 消去判定
-        const eraseInfo = this.stage.checkErase()
-        if (eraseInfo.erasePuyoCount > 0) {
-          // 消去対象がある場合、消去処理へ
-          this.stage.eraseBoards(eraseInfo.eraseInfo)
-          this.mode = 'erasing'
-        } else {
-          // 消去対象がない場合、全消し判定
-          if (this.stage.checkZenkeshi()) {
-            // 全消しボーナスを加算
-            this.score.addZenkeshiBonus()
-          }
-          // 次のぷよを出す
-          this.mode = 'newPuyo'
-        }
+        this.handleCheckErase()
         break
 
       case 'erasing':
