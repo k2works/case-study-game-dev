@@ -53,6 +53,8 @@ describe('プレイヤー', () => {
     beforeEach(() => {
       // 新しいぷよを作成
       player.createNewPuyo()
+      // 移動可能な位置に配置（上に回転できる位置）
+      player['puyoY'] = 5
     })
 
     it('左に移動できる場合、左に移動する', () => {
@@ -122,6 +124,54 @@ describe('プレイヤー', () => {
       // 位置が変わっていないことを確認（2つ目のぷよが壁に当たるため）
       expect(player['puyoX']).toBe(1)
     })
+
+    it('既存のぷよがある位置には左に移動できない', () => {
+      // プレイヤーを配置
+      player['puyoX'] = 3
+      player['puyoY'] = 5
+      player['rotation'] = 0 // 上向き
+
+      // 左側にぷよを配置
+      stage.setPuyo(2, 5, 1)
+
+      // 左に移動を試みる
+      player.moveLeft()
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoX']).toBe(3)
+    })
+
+    it('既存のぷよがある位置には右に移動できない', () => {
+      // プレイヤーを配置
+      player['puyoX'] = 2
+      player['puyoY'] = 5
+      player['rotation'] = 0 // 上向き
+
+      // 右側にぷよを配置
+      stage.setPuyo(3, 5, 1)
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoX']).toBe(2)
+    })
+
+    it('2つ目のぷよの位置に障害物がある場合も移動できない', () => {
+      // プレイヤーを横向き（右）に配置
+      player['puyoX'] = 2
+      player['puyoY'] = 5
+      player['rotation'] = 1 // 右向き
+
+      // 2つ目のぷよの右側にぷよを配置
+      stage.setPuyo(4, 5, 1)
+
+      // 右に移動を試みる
+      player.moveRight()
+
+      // 位置が変わっていないことを確認
+      expect(player['puyoX']).toBe(2)
+    })
   })
 
   describe('ぷよの回転', () => {
@@ -153,6 +203,8 @@ describe('プレイヤー', () => {
     })
 
     it('回転状態が4になると0に戻る', () => {
+      // プレイヤーをY=5に配置（上に回転できる位置）
+      player['puyoY'] = 5
       // 回転状態を3に設定
       player['rotation'] = 3
 
@@ -166,6 +218,7 @@ describe('プレイヤー', () => {
     it('左壁際で回転すると右にキックする', () => {
       // 左端に配置して横向き（rotation=3）にする
       player['puyoX'] = 0
+      player['puyoY'] = 5 // 上に回転できる位置
       player['rotation'] = 3 // 2つ目のぷよが左にある状態
 
       // 時計回りに回転（2つ目のぷよが上に来る）
@@ -207,6 +260,38 @@ describe('プレイヤー', () => {
       // この時、2つ目のぷよが壁外に出るので右にキックされる
       expect(player['rotation']).toBe(3)
       expect(player['puyoX']).toBe(1) // 右に1マスキック
+    })
+
+    it('既存のぷよがある位置には回転できない', () => {
+      // プレイヤーを配置
+      player['puyoX'] = 2
+      player['puyoY'] = 5
+      player['rotation'] = 0 // 上向き
+
+      // 右側にぷよを配置
+      stage.setPuyo(3, 5, 1)
+
+      // 現在の回転状態を記録
+      const beforeRotation = player['rotation']
+
+      // 右向きに回転を試みる（2つ目のぷよが右に来る）
+      player.rotateRight()
+
+      // 右側にぷよがあるため回転できない
+      expect(player['rotation']).toBe(beforeRotation)
+    })
+
+    it('回転後の位置が空いていれば回転できる', () => {
+      // プレイヤーを配置
+      player['puyoX'] = 2
+      player['puyoY'] = 5
+      player['rotation'] = 0 // 上向き
+
+      // 回転を試みる
+      player.rotateRight()
+
+      // 回転成功
+      expect(player['rotation']).toBe(1)
     })
   })
 
