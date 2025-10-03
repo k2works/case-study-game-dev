@@ -422,7 +422,9 @@ puyo-puyo-cljs/
 {:paths ["src" "test"]
  :deps {org.clojure/clojure       {:mvn/version "1.12.0"}
         org.clojure/clojurescript {:mvn/version "1.11.60"}
-        thheller/shadow-cljs      {:mvn/version "2.28.20"}}
+        thheller/shadow-cljs      {:mvn/version "2.28.20"}
+        org.clojure/spec.alpha    {:mvn/version "0.3.218"}
+        org.clojure/test.check    {:mvn/version "1.1.1"}}
 
  :aliases
  {:dev {:extra-deps {binaryage/devtools {:mvn/version "1.0.7"}}}
@@ -450,6 +452,10 @@ puyo-puyo-cljs/
              :exec-args ["ClojureScript カバレッジ測定は shadow-cljs の :coverage ビルドを使用してください"
                         "実行コマンド: npx shadow-cljs compile coverage && node public/js/coverage.js"]}}}
 ```
+
+> **clojure.spec の追加**
+>
+> `org.clojure/spec.alpha` と `org.clojure/test.check` を依存関係に追加しました。これらは、データの仕様定義と生成的テストに使用します。このチュートリアルでは、各イテレーションで段階的に spec を導入していきます。
 
 ##### public/index.html
 
@@ -1203,6 +1209,86 @@ $ npm run dev
    - ゲームループのテスト（1テスト、1アサーション）
    - すべてのテストが成功
 
+### clojure.spec: 基本データ構造の定義
+
+イテレーション1では、ゲーム状態の基本的なデータ構造を定義しました。ここで clojure.spec を使って、これらのデータ構造の仕様を定義しましょう。
+
+#### specs 名前空間の作成
+
+```clojure
+;; src/puyo/specs.cljs
+(ns puyo.specs
+  (:require [cljs.spec.alpha :as s]))
+
+;; ゲームモードの定義
+(s/def ::mode #{:start :new-puyo :playing :check-erase :apply-gravity :game-over})
+
+;; フレーム数
+(s/def ::frame nat-int?)
+
+;; 組み合わせカウント
+(s/def ::combination-count nat-int?)
+
+;; ゲーム状態の基本構造
+(s/def ::game-state-basic
+  (s/keys :req-un [::mode ::frame ::combination-count]))
+```
+
+「なぜこの段階で spec を定義するんですか？」良い質問ですね！TDD では、テストファーストでコードを書きますが、spec は「データの形状に対するテスト」と考えることができます。各イテレーションで新しいデータ構造を追加するたびに、その仕様も一緒に定義していくことで、データの整合性を保証できます。
+
+#### テストでの spec 検証
+
+```clojure
+;; test/puyo/core_test.cljs（spec検証を追加）
+(ns puyo.core-test
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [cljs.spec.alpha :as s]
+            [puyo.core :as core]
+            [puyo.specs :as specs]))
+
+(deftest ゲーム初期化テスト
+  (testing "ゲームが正しく初期化される"
+    (let [game-state (core/initialize)]
+      ;; 既存のテスト
+      (is (= :start (:mode game-state)))
+      (is (= 0 (:frame game-state)))
+      (is (= 0 (:combination-count game-state)))
+
+      ;; spec による検証を追加
+      (is (s/valid? ::specs/game-state-basic game-state)
+          "ゲーム状態が spec を満たす")
+
+      ;; spec 違反時のエラーメッセージを確認（開発時のデバッグ用）
+      (when-not (s/valid? ::specs/game-state-basic game-state)
+        (println (s/explain-str ::specs/game-state-basic game-state))))))
+```
+
+「テストに spec を追加することで何が変わるんですか？」テストが通っても、データの形状が正しくない場合があります。例えば、`:mode` に不正な値が入っていても、そのキーが存在するかどうかしかチェックしていなければ見逃してしまいます。spec を使うことで、データの**値の妥当性**まで検証できるんです。
+
+#### REPL での開発時検証
+
+```clojure
+;; REPL での使用例
+(require '[puyo.core :as core])
+(require '[puyo.specs :as specs])
+(require '[cljs.spec.alpha :as s])
+
+;; ゲーム状態を初期化して検証
+(def game (core/initialize))
+(s/valid? ::specs/game-state-basic game)
+;; => true
+
+;; 不正なゲーム状態を検証
+(s/valid? ::specs/game-state-basic {:mode :invalid :frame 0})
+;; => false
+
+;; エラー詳細を表示
+(s/explain ::specs/game-state-basic {:mode :invalid :frame 0})
+;; => val: :invalid fails spec: :puyo.specs/mode at: [:mode] predicate: #{:start :new-puyo :playing ...}
+```
+
+「REPL で即座に検証できるのは便利ですね！」そうです！ClojureScript の REPL 駆動開発と spec の相性は抜群です。コードを書きながら、データの形状が正しいかを即座に確認できます。
+
 次のイテレーションでは、ぷよの移動機能を実装していきます。
 
 ## イテレーション2: ぷよの基本動作
@@ -1695,6 +1781,99 @@ $ npm run dev
    - `swap!`による状態の更新
    - `case`による状態マシンの実装
 
+### clojure.spec: ぷよデータ構造とフィールドの定義
+
+イテレーション2では、ぷよの状態とフィールドのデータ構造を実装しました。これらの仕様を spec で定義しましょう。
+
+```clojure
+;; src/puyo/specs.cljs（追加）
+(ns puyo.specs
+  (:require [cljs.spec.alpha :as s]
+            [puyo.config :as config]))
+
+;; 座標の定義
+(s/def ::x (s/and int? #(>= % 0) #(< % config/stage-cols)))
+(s/def ::y (s/and int? #(>= % 0) #(< % config/stage-rows)))
+
+;; ぷよタイプ（1-4の色）
+(s/def ::type (s/int-in 1 5))
+
+;; 回転状態（0-3）
+(s/def ::rotation (s/int-in 0 4))
+
+;; ぷよの状態
+(s/def ::puyo-state
+  (s/keys :req-un [::x ::y ::type ::rotation]))
+
+;; フィールドの1セル（0=空、1-4=ぷよの色）
+(s/def ::cell (s/int-in 0 5))
+
+;; フィールドの1行
+(s/def ::row (s/coll-of ::cell :kind vector? :count config/stage-cols))
+
+;; フィールド全体
+(s/def ::field (s/coll-of ::row :kind vector? :count config/stage-rows))
+```
+
+#### 移動関数の spec 定義
+
+```clojure
+;; src/puyo/player.cljs（spec を追加）
+(ns puyo.player
+  (:require [cljs.spec.alpha :as s]
+            [puyo.specs :as specs]))
+
+;; move-left の仕様
+(s/fdef move-left
+  :args (s/cat :puyo-state ::specs/puyo-state
+               :config map?)
+  :ret ::specs/puyo-state
+  :fn (fn [{:keys [args ret]}]
+        (let [orig-x (-> args :puyo-state :x)
+              new-x (:x ret)]
+          ;; X座標は減少するか、そのまま（左端の場合）
+          (or (= new-x (dec orig-x))
+              (= new-x orig-x)))))
+
+;; move-right の仕様
+(s/fdef move-right
+  :args (s/cat :puyo-state ::specs/puyo-state
+               :config map?)
+  :ret ::specs/puyo-state
+  :fn (fn [{:keys [args ret]}]
+        (let [orig-x (-> args :puyo-state :x)
+              new-x (:x ret)]
+          ;; X座標は増加するか、そのまま（右端の場合）
+          (or (= new-x (inc orig-x))
+              (= new-x orig-x)))))
+```
+
+「`:fn` で何を定義しているんですか？」`:fn` は、引数と戻り値の**関係性**を定義します。例えば `move-left` では、「X座標が1減るか、変わらない（左端の場合）」という不変条件を表現しています。
+
+#### 生成的テストの追加
+
+```clojure
+;; test/puyo/player_test.cljs（生成的テストを追加）
+(ns puyo.player-test
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [cljs.spec.alpha :as s]
+            [cljs.spec.test.alpha :as stest]
+            [puyo.player :as player]
+            [puyo.specs :as specs]))
+
+(deftest 移動関数の生成的テスト
+  (testing "move-left と move-right が仕様を満たす"
+    (let [results (stest/check `[player/move-left
+                                 player/move-right]
+                                {:clojure.spec.test.check/opts
+                                 {:num-tests 100}})]
+      (doseq [result results]
+        (is (nil? (-> result :clojure.spec.test.check/ret :result))
+            (str "生成的テスト失敗: " (-> result :sym)))))))
+```
+
+「100回もテストするんですか？」そうです！spec が自動的にランダムなぷよの状態と設定を生成し、移動関数が常に仕様を満たすか検証します。これにより、境界条件などのエッジケースを自動的にテストできます。
+
 次のイテレーションでは、ぷよの回転機能を実装していきます。
 
 ## イテレーション3: ぷよの回転と高速落下
@@ -1961,6 +2140,68 @@ $ npm run dev
    - 壁キック処理のテスト（2テスト）
    - すべてのテストが成功
 
+### clojure.spec: 回転関数の仕様
+
+イテレーション3では、回転機能を実装しました。回転関数の仕様を spec で定義しましょう。
+
+```clojure
+;; src/puyo/player.cljs（回転関数の spec を追加）
+
+;; rotate-right の仕様
+(s/fdef rotate-right
+  :args (s/cat :puyo-state ::specs/puyo-state)
+  :ret ::specs/puyo-state
+  :fn (fn [{:keys [args ret]}]
+        (let [orig-rot (-> args :puyo-state :rotation)
+              new-rot (:rotation ret)]
+          ;; 回転状態が +1 されている（mod 4）
+          (= new-rot (mod (inc orig-rot) 4)))))
+
+;; rotate-left の仕様
+(s/fdef rotate-left
+  :args (s/cat :puyo-state ::specs/puyo-state)
+  :ret ::specs/puyo-state
+  :fn (fn [{:keys [args ret]}]
+        (let [orig-rot (-> args :puyo-state :rotation)
+              new-rot (:rotation ret)]
+          ;; 回転状態が -1 されている（mod 4）
+          (= new-rot (mod (+ orig-rot 3) 4)))))
+
+;; perform-rotation の仕様
+(s/fdef perform-rotation
+  :args (s/cat :puyo-state ::specs/puyo-state
+               :config map?
+               :rotate-fn (s/fspec :args (s/cat :puyo-state ::specs/puyo-state)
+                                   :ret ::specs/puyo-state))
+  :ret ::specs/puyo-state
+  :fn (fn [{:keys [args ret]}]
+        ;; 回転後のX座標がフィールド内に収まっている
+        (let [x (:x ret)
+              config (:config args)]
+          (and (>= x 0)
+               (< x (:stage-cols config))))))
+```
+
+「`s/fspec` って何ですか？」`s/fspec` は、関数自体の仕様を定義する spec です。`perform-rotation` は関数を引数として受け取る高階関数なので、その引数の関数の仕様も定義しています。
+
+#### 生成的テストの追加
+
+```clojure
+;; test/puyo/player_test.cljs（回転関数の生成的テストを追加）
+(deftest 回転関数の生成的テスト
+  (testing "rotate-right, rotate-left, perform-rotation が仕様を満たす"
+    (let [results (stest/check `[player/rotate-right
+                                 player/rotate-left
+                                 player/perform-rotation]
+                                {:clojure.spec.test.check/opts
+                                 {:num-tests 100}})]
+      (doseq [result results]
+        (is (nil? (-> result :clojure.spec.test.check/ret :result))
+            (str "生成的テスト失敗: " (-> result :sym)))))))
+```
+
+「高階関数のテストも自動生成できるんですか？」そうです！spec は関数を引数として受け取る高階関数の仕様も定義でき、生成的テストで検証できます。
+
 次のイテレーションでは、ぷよの自動落下機能を実装していきます。
 
 ## イテレーション4: ぷよの消去
@@ -2181,6 +2422,123 @@ ClojureScriptの再帰と不変データ構造を活かした実装：
    - :check-erase → :apply-gravity → :check-erase のループ
    - case 式による状態遷移の明確化
 
+### clojure.spec: 消去関数とフィールド操作の仕様
+
+イテレーション4では、深さ優先探索による消去処理を実装しました。これらの関数の仕様を定義しましょう。
+
+```clojure
+;; src/puyo/specs.cljs（追加）
+
+;; 座標のペア
+(s/def ::position (s/tuple ::y ::x))
+
+;; 座標のセット（connected component）
+(s/def ::connected-group (s/coll-of ::position :kind set? :min-count 1))
+
+;; 消去可能なグループのコレクション
+(s/def ::erasable-groups (s/coll-of ::connected-group :kind vector?))
+```
+
+```clojure
+;; src/puyo/erase.cljs（spec を追加）
+(ns puyo.erase
+  (:require [cljs.spec.alpha :as s]
+            [puyo.specs :as specs]))
+
+;; find-connected の仕様
+(s/fdef find-connected
+  :args (s/alt :simple (s/cat :field ::specs/field
+                              :y ::specs/y
+                              :x ::specs/x)
+               :full (s/cat :field ::specs/field
+                            :y ::specs/y
+                            :x ::specs/x
+                            :target-color ::specs/cell
+                            :visited ::specs/connected-group))
+  :ret ::specs/connected-group
+  :fn (fn [{:keys [ret]}]
+        ;; 返り値は空でないセット
+        (pos? (count ret))))
+
+;; find-erasable-groups の仕様
+(s/fdef find-erasable-groups
+  :args (s/cat :field ::specs/field)
+  :ret ::specs/erasable-groups
+  :fn (fn [{:keys [ret]}]
+        ;; すべてのグループが4個以上
+        (every? #(>= (count %) 4) ret)))
+
+;; erase-puyos の仕様
+(s/fdef erase-puyos
+  :args (s/cat :field ::specs/field
+               :groups ::specs/erasable-groups)
+  :ret ::specs/field)
+
+;; apply-gravity の仕様
+(s/fdef apply-gravity
+  :args (s/cat :field ::specs/field)
+  :ret ::specs/field
+  :fn (fn [{:keys [args ret]}]
+        ;; フィールドの総ぷよ数は変わらない
+        (let [count-puyos (fn [field]
+                           (count (filter pos? (flatten field))))]
+          (= (count-puyos (:field args))
+             (count-puyos ret)))))
+```
+
+「`:fn` で重力処理の性質を定義しているんですね！」そうです！`apply-gravity` は「ぷよの総数を変えず、位置だけを変える」という不変条件を持っています。これを spec で表現することで、実装のバグを早期発見できます。
+
+#### カスタムジェネレータ
+
+消去可能なフィールドを生成するカスタムジェネレータを定義します：
+
+```clojure
+;; src/puyo/specs.cljs（カスタムジェネレータを追加）
+(ns puyo.specs
+  (:require [cljs.spec.alpha :as s]
+            [cljs.spec.gen.alpha :as gen]
+            [puyo.config :as config]))
+
+(defn gen-erasable-field
+  "4個以上連結したぷよを含むフィールドを生成"
+  []
+  (gen/fmap
+   (fn [_]
+     (let [color (inc (rand-int 4))
+           ;; 4個のぷよを連結配置
+           positions [[0 0] [0 1] [1 0] [1 1]]
+           base-field (vec (repeat config/stage-rows
+                                   (vec (repeat config/stage-cols 0))))]
+       (reduce
+        (fn [field [y x]]
+          (assoc-in field [y x] color))
+        base-field
+        positions)))
+   (gen/return nil)))
+
+(s/def ::erasable-field
+  (s/with-gen ::field gen-erasable-field))
+```
+
+#### 生成的テスト
+
+```clojure
+;; test/puyo/erase_test.cljs（生成的テストを追加）
+(deftest 消去関数の生成的テスト
+  (testing "erase関数が仕様を満たす"
+    (let [results (stest/check `[erase/find-connected
+                                 erase/find-erasable-groups
+                                 erase/erase-puyos
+                                 erase/apply-gravity]
+                                {:clojure.spec.test.check/opts
+                                 {:num-tests 50}})]
+      (doseq [result results]
+        (is (nil? (-> result :clojure.spec.test.check/ret :result))
+            (str "生成的テスト失敗: " (-> result :sym)))))))
+```
+
+「カスタムジェネレータを使うことで、現実的なテストケースを生成できるんですね！」そうです！ランダムなフィールドではなく、実際に消去可能な状態のフィールドを生成することで、より意味のあるテストができます。
+
 ## イテレーション5: 連鎖反応
 
 「ぷよが消えるようになったけど、連鎖がないとぷよぷよじゃないですよね！」そうですね！連鎖は、ぷよを消した後に上から落ちてきたぷよが新たなグループを作って消える現象です。これがぷよぷよの最大の魅力ですね。
@@ -2240,6 +2598,80 @@ ClojureScriptの再帰と不変データ構造を活かした実装：
 1. **連鎖カウント**: 連続して消えた回数を追跡
 2. **ボーナス計算**: 連鎖数に応じた指数的なスコア増加
 3. **状態リセット**: 連鎖が途切れたらカウントをリセット
+
+### clojure.spec: スコア計算の仕様
+
+イテレーション5では、スコア計算機能を実装しました。スコア関連の仕様を定義しましょう。
+
+```clojure
+;; src/puyo/specs.cljs（追加）
+
+;; スコア
+(s/def ::score nat-int?)
+
+;; 連鎖数
+(s/def ::chain-count nat-int?)
+
+;; 消去ぷよ数
+(s/def ::erased-count pos-int?)
+```
+
+```clojure
+;; src/puyo/score.cljs（spec を追加）
+(ns puyo.score
+  (:require [cljs.spec.alpha :as s]
+            [puyo.specs :as specs]))
+
+;; calculate-score の仕様
+(s/fdef calculate-score
+  :args (s/cat :erased-count ::specs/erased-count
+               :chain-count ::specs/chain-count)
+  :ret ::specs/score
+  :fn (fn [{:keys [args ret]}]
+        ;; スコアは消去数に比例する
+        (>= ret (* (:erased-count args) 10))))
+
+;; all-cleared? の仕様
+(s/fdef all-cleared?
+  :args (s/cat :field ::specs/field)
+  :ret boolean?)
+```
+
+「スコア計算の不変条件を定義しているんですね！」そうです！`calculate-score` は「スコアは少なくとも消去数×10以上」という性質を持っています。これを spec で表現することで、スコア計算のバグを防げます。
+
+#### 生成的テスト
+
+```clojure
+;; test/puyo/score_test.cljs（生成的テストを追加）
+(ns puyo.score-test
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [cljs.spec.alpha :as s]
+            [cljs.spec.test.alpha :as stest]
+            [puyo.score :as score]
+            [puyo.specs :as specs]))
+
+(deftest スコア計算の生成的テスト
+  (testing "calculate-score が仕様を満たす"
+    (let [results (stest/check `[score/calculate-score
+                                 score/all-cleared?]
+                                {:clojure.spec.test.check/opts
+                                 {:num-tests 100}})]
+      (doseq [result results]
+        (is (nil? (-> result :clojure.spec.test.check/ret :result))
+            (str "生成的テスト失敗: " (-> result :sym)))))))
+
+(deftest スコア計算の性質テスト
+  (testing "連鎖数が増えるとスコアが指数的に増加する"
+    (let [base-score (score/calculate-score 4 1)
+          chain2-score (score/calculate-score 4 2)
+          chain3-score (score/calculate-score 4 3)]
+      (is (> chain2-score (* base-score 1.5))
+          "2連鎖は1連鎖の1.5倍以上")
+      (is (> chain3-score (* chain2-score 1.5))
+          "3連鎖は2連鎖の1.5倍以上"))))
+```
+
+「性質ベースのテストも書いているんですね！」そうです！生成的テストに加えて、「連鎖数が増えるとスコアが指数的に増加する」という性質を明示的にテストしています。これにより、スコア計算の意図が明確になります。
 
 ## イテレーション6: 特殊機能
 
