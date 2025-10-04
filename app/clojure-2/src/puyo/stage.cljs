@@ -44,3 +44,15 @@
       (drawing/draw-puyo ctx (:type puyo-state) (:x puyo-state) (:y puyo-state))
       ;; 子ぷよを描画（軸ぷよと同じ色）
       (drawing/draw-puyo ctx (:type puyo-state) child-x child-y))))
+
+(defn draw-score
+  "スコアと連鎖数を描画する"
+  [{:keys [ctx]} score chain-count]
+  (when ctx
+    (set! (.-fillStyle ctx) "#333")
+    (set! (.-font ctx) "20px monospace")
+    (.fillText ctx (str "SCORE: " score) 250 30)
+    (when (> chain-count 0)
+      (set! (.-fillStyle ctx) "#ff0000")
+      (set! (.-font ctx) "24px monospace")
+      (.fillText ctx (str chain-count " CHAIN!") 250 60))))
