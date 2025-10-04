@@ -15,6 +15,12 @@
          :score 0
          :chain-count 0}))
 
+(defn is-game-over?
+  "ゲームオーバー判定（出現位置にぷよがあるか）"
+  [field]
+  (or (> (get-in field [0 2]) 0)
+      (> (get-in field [0 3]) 0)))
+
 (defn initialize
   "ゲームを初期化する"
   []
@@ -39,9 +45,12 @@
 
   (case (:mode @game-state)
     :new-puyo
-    (do
-      (swap! game-state assoc :puyo (player/create-puyo))
-      (swap! game-state assoc :mode :playing))
+    (let [field (:field @game-state)]
+      (if (is-game-over? field)
+        (swap! game-state assoc :mode :game-over)
+        (do
+          (swap! game-state assoc :puyo (player/create-puyo))
+          (swap! game-state assoc :mode :playing))))
 
     :playing
     (let [config (config/get-config)
@@ -67,9 +76,13 @@
       (if (seq groups)
         (let [erased-count (reduce + (map count groups))
               chain-count (inc (:chain-count @game-state))
-              points (score/calculate-score erased-count chain-count)]
-          (swap! game-state update :field erase/erase-puyos groups)
-          (swap! game-state update :score + points)
+              points (score/calculate-score erased-count chain-count)
+              field-after-erase (erase/erase-puyos (:field @game-state) groups)
+              all-clear-bonus (if (score/all-cleared? field-after-erase)
+                                score/zenkeshi-bonus
+                                0)]
+          (swap! game-state update :field (fn [_] field-after-erase))
+          (swap! game-state update :score + points all-clear-bonus)
           (swap! game-state assoc :chain-count chain-count)
           (swap! game-state assoc :mode :apply-gravity))
         (do
@@ -81,6 +94,9 @@
       (swap! game-state update :field erase/apply-gravity)
       (swap! game-state assoc :mode :check-erase))
 
+    :game-over
+    nil
+
     nil))
 
 (defn draw-game
@@ -91,7 +107,9 @@
     (stage/draw-field canvas-ctx field)
     (when (= mode :playing)
       (stage/draw-current-puyo canvas-ctx puyo))
-    (stage/draw-score canvas-ctx score chain-count)))
+    (stage/draw-score canvas-ctx score chain-count)
+    (when (= mode :game-over)
+      (stage/draw-game-over canvas-ctx))))
 
 (defn game-loop
   "ゲームループ"

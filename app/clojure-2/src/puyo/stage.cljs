@@ -56,3 +56,11 @@
       (set! (.-fillStyle ctx) "#ff0000")
       (set! (.-font ctx) "24px monospace")
       (.fillText ctx (str chain-count " CHAIN!") 250 60))))
+
+(defn draw-game-over
+  "ゲームオーバーを描画する"
+  [{:keys [ctx]}]
+  (when ctx
+    (set! (.-fillStyle ctx) "#ff0000")
+    (set! (.-font ctx) "48px monospace")
+    (.fillText ctx "GAME OVER" 50 200)))
