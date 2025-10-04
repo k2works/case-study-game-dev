@@ -51,3 +51,34 @@
           config {:stage-cols 6}
           new-state (player/move-right puyo-state config)]
       (is (= 5 (:x new-state)) "X座標が変わらない"))))
+
+(deftest ぷよ回転テスト
+  (testing "時計回りに回転すると、回転状態が1増える"
+    (let [puyo-state {:x 2 :y 0 :type 1 :rotation 0}
+          new-state (player/rotate-right puyo-state)]
+      (is (= 1 (:rotation new-state)) "回転状態が1になる")))
+
+  (testing "反時計回りに回転すると、回転状態が1減る"
+    (let [puyo-state {:x 2 :y 0 :type 1 :rotation 1}
+          new-state (player/rotate-left puyo-state)]
+      (is (= 0 (:rotation new-state)) "回転状態が0になる")))
+
+  (testing "回転状態が4になると0に戻る"
+    (let [puyo-state {:x 2 :y 0 :type 1 :rotation 3}
+          new-state (player/rotate-right puyo-state)]
+      (is (= 0 (:rotation new-state)) "回転状態が0に戻る"))))
+
+(deftest 壁キック処理テスト
+  (testing "右端で右回転すると、左に移動して回転する（壁キック）"
+    (let [config {:stage-cols 6}
+          puyo-state {:x 5 :y 0 :type 1 :rotation 0}
+          new-state (player/perform-rotation puyo-state config player/rotate-right)]
+      (is (= 4 (:x new-state)) "X座標が4になる（左に移動）")
+      (is (= 1 (:rotation new-state)) "回転状態が1になる")))
+
+  (testing "左端で左回転すると、右に移動して回転する（壁キック）"
+    (let [config {:stage-cols 6}
+          puyo-state {:x 0 :y 0 :type 1 :rotation 0}
+          new-state (player/perform-rotation puyo-state config player/rotate-left)]
+      (is (= 1 (:x new-state)) "X座標が1になる（右に移動）")
+      (is (= 3 (:rotation new-state)) "回転状態が3になる"))))

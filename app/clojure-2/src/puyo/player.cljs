@@ -58,6 +58,45 @@
     (update puyo-state :x inc)
     puyo-state))
 
+(defn rotate-right
+  "時計回りに回転する"
+  [puyo-state]
+  (update puyo-state :rotation #(mod (inc %) 4)))
+
+(defn rotate-left
+  "反時計回りに回転する"
+  [puyo-state]
+  (update puyo-state :rotation #(mod (+ % 3) 4)))
+
+(defn get-child-offset
+  "回転状態に応じた子ぷよのオフセットを取得"
+  [rotation]
+  (case rotation
+    0 {:x 0 :y -1}  ; 上
+    1 {:x 1 :y 0}   ; 右
+    2 {:x 0 :y 1}   ; 下
+    3 {:x -1 :y 0}  ; 左
+    {:x 0 :y -1}))  ; デフォルト
+
+(defn perform-rotation
+  "回転を実行し、必要に応じて壁キックを行う"
+  [puyo-state config rotate-fn]
+  (let [rotated (rotate-fn puyo-state)
+        offset (get-child-offset (:rotation rotated))
+        child-x (+ (:x rotated) (:x offset))]
+    (cond
+      ;; 右壁にめり込む場合、左に移動
+      (>= child-x (:stage-cols config))
+      (update rotated :x dec)
+
+      ;; 左壁にめり込む場合、右に移動
+      (< child-x 0)
+      (update rotated :x inc)
+
+      ;; 壁にめり込まない場合、そのまま
+      :else
+      rotated)))
+
 (defn update-puyo
   "入力に応じてぷよを更新する"
   [puyo-state input-state config]
@@ -71,6 +110,11 @@
     (do
       (reset! (:right input-state) false)
       (move-right puyo-state config))
+
+    @(:up input-state)
+    (do
+      (reset! (:up input-state) false)
+      (perform-rotation puyo-state config rotate-right))
 
     :else
     puyo-state))

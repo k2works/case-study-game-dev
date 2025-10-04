@@ -1,6 +1,7 @@
 (ns puyo.stage
   (:require [puyo.config :as config]
-            [puyo.drawing :as drawing]))
+            [puyo.drawing :as drawing]
+            [puyo.player :as player]))
 
 (defn create-field
   "フィールドを作成する（全て0で初期化）"
@@ -33,7 +34,13 @@
           (drawing/draw-puyo ctx puyo-type x y))))))
 
 (defn draw-current-puyo
-  "現在のぷよを描画する"
+  "現在のぷよを描画する（軸ぷよと子ぷよ）"
   [{:keys [ctx]} puyo-state]
   (when ctx
-    (drawing/draw-puyo ctx (:type puyo-state) (:x puyo-state) (:y puyo-state))))
+    (let [offset (player/get-child-offset (:rotation puyo-state))
+          child-x (+ (:x puyo-state) (:x offset))
+          child-y (+ (:y puyo-state) (:y offset))]
+      ;; 軸ぷよを描画
+      (drawing/draw-puyo ctx (:type puyo-state) (:x puyo-state) (:y puyo-state))
+      ;; 子ぷよを描画（軸ぷよと同じ色）
+      (drawing/draw-puyo ctx (:type puyo-state) child-x child-y))))
