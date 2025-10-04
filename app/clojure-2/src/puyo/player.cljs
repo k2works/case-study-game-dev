@@ -44,18 +44,43 @@
    :type (inc (rand-int 4)) ; 1-4のランダムな値
    :rotation 0})
 
+(defn get-child-offset
+  "回転状態に応じた子ぷよのオフセットを取得"
+  [rotation]
+  (case rotation
+    0 {:x 0 :y -1}  ; 上
+    1 {:x 1 :y 0}   ; 右
+    2 {:x 0 :y 1}   ; 下
+    3 {:x -1 :y 0}  ; 左
+    {:x 0 :y -1}))  ; デフォルト
+
+(defn collides?
+  "ぷよがフィールドのぷよと衝突するかを判定する"
+  [puyo-state field]
+  (let [offset (get-child-offset (:rotation puyo-state))
+        child-x (+ (:x puyo-state) (:x offset))
+        child-y (+ (:y puyo-state) (:y offset))]
+    (or (pos? (get-in field [(:y puyo-state) (:x puyo-state)] 0))
+        (pos? (get-in field [child-y child-x] 0)))))
+
 (defn move-left
   "ぷよを左に移動する"
-  [puyo-state _config]
+  [puyo-state field _config]
   (if (> (:x puyo-state) 0)
-    (update puyo-state :x dec)
+    (let [moved (update puyo-state :x dec)]
+      (if (collides? moved field)
+        puyo-state
+        moved))
     puyo-state))
 
 (defn move-right
   "ぷよを右に移動する"
-  [puyo-state config]
+  [puyo-state field config]
   (if (< (:x puyo-state) (dec (:stage-cols config)))
-    (update puyo-state :x inc)
+    (let [moved (update puyo-state :x inc)]
+      (if (collides? moved field)
+        puyo-state
+        moved))
     puyo-state))
 
 (defn rotate-right
@@ -68,53 +93,82 @@
   [puyo-state]
   (update puyo-state :rotation #(mod (+ % 3) 4)))
 
-(defn get-child-offset
-  "回転状態に応じた子ぷよのオフセットを取得"
-  [rotation]
-  (case rotation
-    0 {:x 0 :y -1}  ; 上
-    1 {:x 1 :y 0}   ; 右
-    2 {:x 0 :y 1}   ; 下
-    3 {:x -1 :y 0}  ; 左
-    {:x 0 :y -1}))  ; デフォルト
-
 (defn perform-rotation
   "回転を実行し、必要に応じて壁キックを行う"
-  [puyo-state config rotate-fn]
+  [puyo-state field config rotate-fn]
   (let [rotated (rotate-fn puyo-state)
         offset (get-child-offset (:rotation rotated))
-        child-x (+ (:x rotated) (:x offset))]
-    (cond
-      ;; 右壁にめり込む場合、左に移動
-      (>= child-x (:stage-cols config))
-      (update rotated :x dec)
+        child-x (+ (:x rotated) (:x offset))
+        kicked (cond
+                 ;; 右壁にめり込む場合、左に移動
+                 (>= child-x (:stage-cols config))
+                 (update rotated :x dec)
 
-      ;; 左壁にめり込む場合、右に移動
-      (< child-x 0)
-      (update rotated :x inc)
+                 ;; 左壁にめり込む場合、右に移動
+                 (< child-x 0)
+                 (update rotated :x inc)
 
-      ;; 壁にめり込まない場合、そのまま
-      :else
-      rotated)))
+                 ;; 壁にめり込まない場合、そのまま
+                 :else
+                 rotated)]
+    ;; 衝突判定
+    (if (collides? kicked field)
+      puyo-state
+      kicked)))
+
+(defn apply-gravity
+  "重力を適用してぷよを落下させる"
+  [puyo-state field config]
+  (let [offset (get-child-offset (:rotation puyo-state))
+        child-y (+ (:y puyo-state) (:y offset))
+        max-y (dec (:stage-rows config))
+        moved (update puyo-state :y inc)]
+    (if (and (< (:y puyo-state) max-y)
+             (< child-y max-y)
+             (not (collides? moved field)))
+      moved
+      puyo-state)))
+
+(defn should-land?
+  "ぷよが設置すべきかを判定する"
+  [puyo-state field config]
+  (let [offset (get-child-offset (:rotation puyo-state))
+        child-y (+ (:y puyo-state) (:y offset))
+        max-y (dec (:stage-rows config))
+        ;; 1マス下に移動したときの状態
+        下移動 (update puyo-state :y inc)]
+    (or (>= (:y puyo-state) max-y)
+        (>= child-y max-y)
+        (collides? 下移動 field))))
+
+(defn land-puyo
+  "ぷよをフィールドに固定する"
+  [field puyo-state]
+  (let [offset (get-child-offset (:rotation puyo-state))
+        child-x (+ (:x puyo-state) (:x offset))
+        child-y (+ (:y puyo-state) (:y offset))]
+    (-> field
+        (assoc-in [(:y puyo-state) (:x puyo-state)] (:type puyo-state))
+        (assoc-in [child-y child-x] (:type puyo-state)))))
 
 (defn update-puyo
   "入力に応じてぷよを更新する"
-  [puyo-state input-state config]
+  [puyo-state input-state field config]
   (cond
     @(:left input-state)
     (do
       (reset! (:left input-state) false)
-      (move-left puyo-state config))
+      (move-left puyo-state field config))
 
     @(:right input-state)
     (do
       (reset! (:right input-state) false)
-      (move-right puyo-state config))
+      (move-right puyo-state field config))
 
     @(:up input-state)
     (do
       (reset! (:up input-state) false)
-      (perform-rotation puyo-state config rotate-right))
+      (perform-rotation puyo-state field config rotate-right))
 
     :else
     puyo-state))
