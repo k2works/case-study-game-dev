@@ -26,3 +26,5 @@ resources/public/js/
 
 # Coverage
 .cov/
+
+clojure-tools
