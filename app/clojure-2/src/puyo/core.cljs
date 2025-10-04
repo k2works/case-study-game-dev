@@ -2,7 +2,8 @@
   (:require [puyo.config :as config]
             [puyo.player :as player]
             [puyo.stage :as stage]
-            [puyo.erase :as erase]))
+            [puyo.erase :as erase]
+            [puyo.score :as score]))
 
 (defonce game-state
   (atom {:mode :new-puyo
@@ -10,7 +11,9 @@
          :field (stage/create-field)
          :puyo nil
          :input-state (player/create-input-state)
-         :canvas-ctx nil}))
+         :canvas-ctx nil
+         :score 0
+         :chain-count 0}))
 
 (defn initialize
   "ゲームを初期化する"
@@ -22,7 +25,9 @@
              :field (stage/create-field)
              :puyo nil
              :input-state (player/create-input-state)
-             :canvas-ctx canvas-ctx}))
+             :canvas-ctx canvas-ctx
+             :score 0
+             :chain-count 0}))
 
   ;; キーボードイベントをセットアップ
   (player/setup-keyboard-events (:input-state @game-state)))
@@ -60,10 +65,16 @@
     :check-erase
     (let [groups (erase/find-erasable-groups (:field @game-state))]
       (if (seq groups)
-        (do
+        (let [erased-count (reduce + (map count groups))
+              chain-count (inc (:chain-count @game-state))
+              points (score/calculate-score erased-count chain-count)]
           (swap! game-state update :field erase/erase-puyos groups)
+          (swap! game-state update :score + points)
+          (swap! game-state assoc :chain-count chain-count)
           (swap! game-state assoc :mode :apply-gravity))
-        (swap! game-state assoc :mode :new-puyo)))
+        (do
+          (swap! game-state assoc :chain-count 0)
+          (swap! game-state assoc :mode :new-puyo))))
 
     :apply-gravity
     (do
@@ -75,11 +86,12 @@
 (defn draw-game
   "ゲームを描画する"
   []
-  (let [{:keys [canvas-ctx field puyo mode]} @game-state]
+  (let [{:keys [canvas-ctx field puyo mode score chain-count]} @game-state]
     (stage/clear-canvas canvas-ctx)
     (stage/draw-field canvas-ctx field)
     (when (= mode :playing)
-      (stage/draw-current-puyo canvas-ctx puyo))))
+      (stage/draw-current-puyo canvas-ctx puyo))
+    (stage/draw-score canvas-ctx score chain-count)))
 
 (defn game-loop
   "ゲームループ"
