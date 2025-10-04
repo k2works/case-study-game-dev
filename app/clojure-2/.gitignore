@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+
+# Shadow-cljs
+.shadow-cljs/
+public/js/
+
+# Clojure
+.cpcache/
+.nrepl-port
+.rebel_readline_history
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+target/
+out/
+resources/public/js/
+
+# Coverage
+.cov/
