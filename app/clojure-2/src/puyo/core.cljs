@@ -36,7 +36,9 @@
              :chain-count 0}))
 
   ;; キーボードイベントをセットアップ
-  (player/setup-keyboard-events (:input-state @game-state)))
+  (player/setup-keyboard-events (:input-state @game-state))
+  ;; タッチイベントをセットアップ
+  (player/setup-touch-events (:input-state @game-state)))
 
 (defn update-game
   "ゲームを更新する"

@@ -5,7 +5,9 @@
 (deftest ゲームの初期化テスト
   (testing "ゲームを初期化すると、ゲーム状態がatomに設定される"
     ;; DOM要素とイベントリスナーをモック
-    (set! js/document (js-obj "getElementById" (fn [_] (js-obj "getContext" (fn [_] nil)))
+    (set! js/document (js-obj "getElementById" (fn [_]
+                                                  (js-obj "getContext" (fn [_] nil)
+                                                          "addEventListener" (fn [_ _])))
                               "addEventListener" (fn [_ _])))
 
     (game/initialize)

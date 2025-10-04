@@ -1,4 +1,5 @@
-(ns puyo.player)
+(ns puyo.player
+  (:require [puyo.config :as config]))
 
 (defn create-input-state
   "入力状態を作成する"
@@ -55,13 +56,29 @@
     {:x 0 :y -1}))  ; デフォルト
 
 (defn collides?
-  "ぷよがフィールドのぷよと衝突するかを判定する"
+  "ぷよがフィールドのぷよと衝突するか、画面外に出るかを判定する"
   [puyo-state field]
   (let [offset (get-child-offset (:rotation puyo-state))
         child-x (+ (:x puyo-state) (:x offset))
-        child-y (+ (:y puyo-state) (:y offset))]
-    (or (pos? (get-in field [(:y puyo-state) (:x puyo-state)] 0))
-        (pos? (get-in field [child-y child-x] 0)))))
+        child-y (+ (:y puyo-state) (:y offset))
+        axis-x (:x puyo-state)
+        axis-y (:y puyo-state)]
+    (or
+     ;; 軸ぷよが左右または下方向に画面外（上方向は許容）
+     (< axis-x 0)
+     (>= axis-x config/stage-cols)
+     (>= axis-y config/stage-rows)
+     ;; 子ぷよが左右または下方向に画面外（上方向は許容）
+     (< child-x 0)
+     (>= child-x config/stage-cols)
+     (>= child-y config/stage-rows)
+     ;; フィールドのぷよと衝突（範囲内のみチェック）
+     (and (>= axis-y 0) (>= axis-x 0)
+          (< axis-y config/stage-rows) (< axis-x config/stage-cols)
+          (pos? (get-in field [axis-y axis-x] 0)))
+     (and (>= child-y 0) (>= child-x 0)
+          (< child-y config/stage-rows) (< child-x config/stage-cols)
+          (pos? (get-in field [child-y child-x] 0))))))
 
 (defn move-left
   "ぷよを左に移動する"
@@ -172,3 +189,37 @@
 
     :else
     puyo-state))
+
+(defn handle-touch-input
+  "タッチ入力を処理する（テスト用）"
+  [input-state x canvas-width]
+  (cond
+    (< x (/ canvas-width 3))
+    (reset! (:left input-state) true)
+
+    (> x (* 2 (/ canvas-width 3)))
+    (reset! (:right input-state) true)
+
+    :else
+    (reset! (:up input-state) true)))
+
+(defn setup-touch-events
+  "タッチイベントをセットアップする"
+  [input-state]
+  (when-let [canvas (.getElementById js/document "stage")]
+    (.addEventListener canvas "touchstart"
+                       (fn [e]
+                         (.preventDefault e)
+                         (let [touch (aget (.-touches e) 0)
+                               x (.-clientX touch)
+                               rect (.getBoundingClientRect canvas)
+                               relative-x (- x (.-left rect))
+                               canvas-width (.-width canvas)]
+                           (handle-touch-input input-state relative-x canvas-width))))
+
+    (.addEventListener canvas "touchend"
+                       (fn [e]
+                         (.preventDefault e)
+                         (reset! (:left input-state) false)
+                         (reset! (:right input-state) false)
+                         (reset! (:up input-state) false)))))

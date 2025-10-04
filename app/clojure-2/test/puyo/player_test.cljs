@@ -87,7 +87,24 @@
           puyo-state {:x 0 :y 0 :type 1 :rotation 0}
           new-state (player/perform-rotation puyo-state field config player/rotate-left)]
       (is (= 1 (:x new-state)) "X座標が1になる（右に移動）")
-      (is (= 3 (:rotation new-state)) "回転状態が3になる"))))
+      (is (= 3 (:rotation new-state)) "回転状態が3になる")))
+
+  (testing "x=0の位置で3回右回転すると壁キックが働く"
+    (let [config {:stage-cols 6}
+          field (vec (repeat 12 (vec (repeat 6 0))))
+          puyo-state {:x 0 :y 0 :type 1 :rotation 0}
+          ;; 1回目の回転: rotation 0 -> 1 (右向き)
+          state1 (player/perform-rotation puyo-state field config player/rotate-right)
+          ;; 2回目の回転: rotation 1 -> 2 (下向き)
+          state2 (player/perform-rotation state1 field config player/rotate-right)
+          ;; 3回目の回転: rotation 2 -> 3 (左向き、子ぷよがx=-1になるので壁キック)
+          state3 (player/perform-rotation state2 field config player/rotate-right)]
+      (is (>= (:x state3) 1) "壁キックでX座標が1以上になる")
+      (is (= 3 (:rotation state3)) "回転状態が3になる")
+      ;; 子ぷよの位置を確認
+      (let [offset (player/get-child-offset (:rotation state3))
+            child-x (+ (:x state3) (:x offset))]
+        (is (>= child-x 0) "子ぷよのX座標が0以上になる")))))
 
 (deftest 自由落下テスト
   (testing "ぷよが自由落下する"
@@ -169,3 +186,28 @@
           field (-> (vec (repeat 12 (vec (repeat 6 0))))
                     (assoc-in [5 3] 1))]  ; 子ぷよの位置
       (is (true? (player/collides? puyo-state field)) "衝突判定がtrueになる"))))
+
+(deftest タッチイベント処理テスト
+  (testing "タッチイベントが入力状態を更新する"
+    (let [input-state (player/create-input-state)]
+      ;; 左タッチをシミュレート
+      (player/handle-touch-input input-state 50 300)
+      (is (true? @(:left input-state)) "画面左側のタッチで左フラグがtrueになる")
+
+      ;; 入力状態をリセット
+      (reset! (:left input-state) false)
+      (reset! (:right input-state) false)
+      (reset! (:up input-state) false)
+
+      ;; 右タッチをシミュレート
+      (player/handle-touch-input input-state 250 300)
+      (is (true? @(:right input-state)) "画面右側のタッチで右フラグがtrueになる")
+
+      ;; 入力状態をリセット
+      (reset! (:left input-state) false)
+      (reset! (:right input-state) false)
+      (reset! (:up input-state) false)
+
+      ;; 中央タッチをシミュレート
+      (player/handle-touch-input input-state 150 300)
+      (is (true? @(:up input-state)) "画面中央のタッチで上フラグがtrueになる"))))
