@@ -77,7 +77,7 @@ let render () =
         for col in 0 .. gameState.Stage.Cols - 1 do
             let color = gameState.Stage.Cells.[row].[col]
             if color <> Types.PuyoColor.Empty then
-                let puyo = { Color = color; Position = { X = col; Y = row } }
+                let puyo: Types.Puyo = { Color = color; Position = { X = col; Y = row } }
                 drawPuyo puyo
 
     // 現在のぷよペアを描画
@@ -111,7 +111,7 @@ let gameLoop () =
 document.addEventListener("keydown", handleKeyDown)
 
 // ゲームループを開始（1秒ごとに落下）
-let fallInterval = 1000.0 // ミリ秒
+let fallInterval = 1000 // ミリ秒
 Browser.Dom.window.setInterval(gameLoop, fallInterval) |> ignore
 
 // 初期描画

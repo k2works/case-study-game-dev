@@ -7,6 +7,7 @@ let allTests =
     testList "すべてのテスト" [
         PuyoPuyo.Tests.GameTests.tests
         PuyoPuyo.Tests.PlayerTests.tests
+        PuyoPuyo.Tests.StageTests.tests
     ]
 
 [<EntryPoint>]

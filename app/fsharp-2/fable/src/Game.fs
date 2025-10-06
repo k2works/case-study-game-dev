@@ -57,9 +57,10 @@ let autoFall (state: GameState) : GameState =
             let movedPair = Player.moveDown pair state.Stage.Rows
             { state with CurrentPuyo = Some movedPair }
         else
-            // 下に移動できない場合はステージに固定して新しいぷよペアを生成
-            let updatedStage = Player.fixToStage pair state.Stage
+            // 下に移動できない場合はステージに固定して重力を適用してから新しいぷよペアを生成
+            let stageWithPuyo = Player.fixToStage pair state.Stage
+            let stageAfterGravity = Stage.applyGravity stageWithPuyo
             { state with
-                Stage = updatedStage
+                Stage = stageAfterGravity
                 CurrentPuyo = Some (Player.createNewPuyoPair()) }
     | None -> state
