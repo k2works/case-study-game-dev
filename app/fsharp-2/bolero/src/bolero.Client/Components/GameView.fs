@@ -12,6 +12,14 @@ module GameView =
         | "ArrowLeft" -> dispatch MoveLeft
         | "ArrowRight" -> dispatch MoveRight
         | "ArrowUp" -> dispatch Rotate
+        | "ArrowDown" ->
+            dispatch MoveDown
+            dispatch StartFastFall
+        | _ -> ()
+
+    let private handleKeyUp (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
+        match e.Key with
+        | "ArrowDown" -> dispatch StopFastFall
         | _ -> ()
 
     /// セルを描画
@@ -62,6 +70,7 @@ module GameView =
             attr.``class`` "game-container"
             attr.tabindex 0  // キーボードフォーカスを受け取れるようにする
             on.keydown (handleKeyDown dispatch)
+            on.keyup (handleKeyUp dispatch)
             h1 { "ぷよぷよゲーム" }
 
             viewBoard model.Board model.CurrentPiece
@@ -79,6 +88,7 @@ module GameView =
                     div {
                         p { "← →: 左右移動" }
                         p { "↑: 回転" }
+                        p { "↓: 高速落下" }
                         button {
                             on.click (fun _ -> dispatch ResetGame)
                             "リセット"

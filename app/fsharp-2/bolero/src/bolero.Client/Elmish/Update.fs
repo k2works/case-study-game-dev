@@ -12,6 +12,8 @@ type Message =
     | MoveDown
     | Rotate
     | Tick
+    | StartFastFall
+    | StopFastFall
     | HardDrop
     | GameStep
     | TimeStep
@@ -21,6 +23,26 @@ type Message =
     | CheckGameOver
 
 module Update =
+    /// ぷよを下に移動させる（共通処理）
+    let private dropPuyo (model: Model) : Model * Cmd<Message> =
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryMovePuyoPair model.Board piece Down with
+            | Some movedPiece ->
+                // 移動成功
+                { model with CurrentPiece = Some movedPiece }, Cmd.none
+            | None ->
+                // 移動できない（着地）
+                let newBoard = Board.fixPuyoPair model.Board piece
+                let nextPiece = PuyoPair.createRandom 2 1 0
+                {
+                    model with
+                        Board = newBoard
+                        CurrentPiece = Some nextPiece
+                }, Cmd.none
+        | None ->
+            model, Cmd.none
+
     /// Update 関数
     let update (message: Message) (model: Model) : Model * Cmd<Message> =
         match message with
@@ -75,24 +97,16 @@ module Update =
                 model, Cmd.none
 
         | Tick when model.Status = Playing ->
-            match model.CurrentPiece with
-            | Some piece ->
-                // 下に移動を試みる
-                match GameLogic.tryMovePuyoPair model.Board piece Down with
-                | Some movedPiece ->
-                    // 移動成功
-                    { model with CurrentPiece = Some movedPiece }, Cmd.none
-                | None ->
-                    // 移動できない（着地）
-                    let newBoard = Board.fixPuyoPair model.Board piece
-                    let nextPiece = PuyoPair.createRandom 2 1 0
-                    {
-                        model with
-                            Board = newBoard
-                            CurrentPiece = Some nextPiece
-                    }, Cmd.none
-            | None ->
-                model, Cmd.none
+            dropPuyo model
+
+        | MoveDown when model.Status = Playing ->
+            dropPuyo model
+
+        | StartFastFall when model.Status = Playing ->
+            { model with IsFastFalling = true }, Cmd.none
+
+        | StopFastFall when model.Status = Playing ->
+            { model with IsFastFalling = false }, Cmd.none
 
         | _ ->
             model, Cmd.none
