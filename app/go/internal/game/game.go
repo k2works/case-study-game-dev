@@ -17,7 +17,7 @@ const (
 	ScreenHeight = 360
 	CellSize     = 30
 	BoardOffsetX = 30
-	BoardOffsetY = 30
+	BoardOffsetY = 0   // ボード12行×30px=360pxが画面内に収まるように0に設定
 	FallInterval = 0.5 // 0.5秒ごとに落下
 )
 
@@ -61,7 +61,9 @@ func (g *Game) spawnNewPair() {
 	axisColor := colors[rand.Intn(len(colors))]
 	childColor := colors[rand.Intn(len(colors))]
 
-	g.CurrentPair = pair.New(2, 0, axisColor, childColor)
+	g.CurrentPair = pair.New(2, 1, axisColor, childColor)
+	g.Mode = ModePlaying
+	g.FallTimer = 0
 }
 
 // Update はゲームの状態を更新する（1フレームごとに呼ばれる）
@@ -81,7 +83,6 @@ func (g *Game) Update() error {
 	case ModeChecking:
 		// 消去チェック（次のイテレーションで実装）
 		g.spawnNewPair()
-		g.Mode = ModePlaying
 	}
 
 	return nil
