@@ -67,6 +67,10 @@ impl Game {
         self.chain_count = 0;
     }
 
+    pub fn add_all_clear_bonus(&mut self) {
+        self.score += 5000;
+    }
+
     pub fn board(&self) -> Option<&Board> {
         self.board.as_ref()
     }
@@ -160,6 +164,11 @@ impl Game {
                         // 消去対象がある場合、消去してFallingモードへ
                         if let Some(ref mut board) = self.board {
                             board.erase_puyos(&erase_positions);
+
+                            // 全消しチェック
+                            if board.is_all_clear() {
+                                self.add_all_clear_bonus();
+                            }
                         }
                         self.mode = GameMode::Falling;
                     } else {
@@ -351,6 +360,19 @@ impl Game {
             );
         }
 
+        // 全消し表示
+        if let Some(ref board) = self.board {
+            if board.is_all_clear() && self.mode != GameMode::Start {
+                draw_text(
+                    "ALL CLEAR!",
+                    80.0,
+                    200.0,
+                    40.0,
+                    GOLD,
+                );
+            }
+        }
+
         // ゲームオーバー表示
         if self.mode == GameMode::GameOver {
             draw_text(
@@ -482,5 +504,17 @@ mod tests {
         // ゲームは継続
         assert_ne!(game.mode(), GameMode::GameOver);
         assert!(game.current_pair().is_some());
+    }
+
+    #[test]
+    fn test_add_all_clear_bonus() {
+        let mut game = Game::new();
+        game.score = 1000;
+
+        // 全消しボーナスを追加
+        game.add_all_clear_bonus();
+
+        // 5000点のボーナスが加算される
+        assert_eq!(game.score(), 6000); // 1000 + 5000
     }
 }

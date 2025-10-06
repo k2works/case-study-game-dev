@@ -172,6 +172,17 @@ impl Board {
 
         has_fallen
     }
+
+    pub fn is_all_clear(&self) -> bool {
+        for x in 0..self.cols {
+            for y in 0..self.rows {
+                if self.cells[x][y] != Cell::Empty {
+                    return false;
+                }
+            }
+        }
+        true
+    }
 }
 
 #[cfg(test)]
@@ -390,5 +401,20 @@ mod tests {
         // (3,9)は下が空いているので(3,11)まで落ちる
         assert_eq!(board.get_cell(3, 9), Some(Cell::Empty));
         assert_eq!(board.get_cell(3, 11), Some(Cell::Filled(PuyoColor::Blue)));
+    }
+
+    #[test]
+    fn test_is_all_clear_empty_board() {
+        let board = Board::new(6, 12);
+        // 空のボードは全消し状態
+        assert!(board.is_all_clear());
+    }
+
+    #[test]
+    fn test_is_all_clear_with_puyos() {
+        let mut board = Board::new(6, 12);
+        // 1つでもぷよがあれば全消し状態ではない
+        board.set_cell(0, 11, Cell::Filled(PuyoColor::Red));
+        assert!(!board.is_all_clear());
     }
 }
