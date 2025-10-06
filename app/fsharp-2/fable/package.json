@@ -1,0 +1,23 @@
+{
+  "name": "puyo-puyo-fable",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "install-deps": "dotnet tool restore && dotnet restore",
+    "dev": "dotnet fable watch src -o dist/src --run vite",
+    "build": "dotnet fable src -o dist/src && vite build",
+    "preview": "vite preview",
+    "test": "dotnet fable tests -o dist/tests --run mocha dist/tests",
+    "test:watch": "dotnet fable watch tests -o dist/tests --run mocha dist/tests",
+    "clean": "rm -rf dist",
+    "setup": "npm install && npm run install-deps",
+    "format": "dotnet fantomas src tests",
+    "format:check": "dotnet fantomas src tests --check",
+    "lint": "dotnet fsharplint lint ."
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "mocha": "^10.2.0"
+  }
+}

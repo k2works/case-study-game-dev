@@ -1,0 +1,46 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.swp
+*.swo
+*.log
+*.tmp
+
+## Rider
+.idea/
+
+## Visual Studio
+.vs/
+*.csproj.user
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Test results
+TestResults/
+coverage.xml
+coverage.json
+*.trx
+
+## Cake
+tools/
+.dotnet/
