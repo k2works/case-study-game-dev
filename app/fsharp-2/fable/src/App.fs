@@ -51,13 +51,22 @@ let render () =
     | Some puyo ->
         let x = offsetX + float puyo.Position.X * cellSize
         let y = offsetY + float puyo.Position.Y * cellSize
+        let centerX = x + cellSize / 2.0
+        let centerY = y + cellSize / 2.0
+        let radius = (cellSize - 4.0) / 2.0
 
+        // 塗りつぶし
         ctx.fillStyle <- !!(getPuyoColor puyo.Color)
-        ctx.fillRect(x + 2.0, y + 2.0, cellSize - 4.0, cellSize - 4.0)
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, radius, 0.0, 2.0 * System.Math.PI)
+        ctx.fill()
 
+        // 枠線
         ctx.strokeStyle <- !!("#000")
         ctx.lineWidth <- 1.0
-        ctx.strokeRect(x + 2.0, y + 2.0, cellSize - 4.0, cellSize - 4.0)
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, radius, 0.0, 2.0 * System.Math.PI)
+        ctx.stroke()
     | None -> ()
 
 // 初期描画
