@@ -42,7 +42,7 @@ module Update =
                 let boardAfterGravity = Board.applyGravity boardWithPuyo
 
                 // 連鎖処理（消去と重力を繰り返し適用）
-                let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardAfterGravity
+                let boardAfterChain, chainCount = Board.clearAndApplyGravityRepeatedly boardAfterGravity
 
                 // 全消し判定とボーナス加算
                 let isZenkeshi = Board.checkZenkeshi boardAfterChain
@@ -63,13 +63,15 @@ module Update =
                         Board = boardAfterChain
                         CurrentPiece = None
                         Score = newScore
+                        LastChainCount = chainCount
                         Status = GameOver },
                     Cmd.none
                 else
                     { model with
                         Board = boardAfterChain
                         CurrentPiece = Some nextPiece
-                        Score = newScore },
+                        Score = newScore
+                        LastChainCount = chainCount },
                     Cmd.none
         | None -> model, Cmd.none
 

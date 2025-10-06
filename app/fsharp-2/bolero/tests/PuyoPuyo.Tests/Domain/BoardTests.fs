@@ -265,11 +265,13 @@ module BoardTests =
             |> Board.setCell 0 11 (Filled Red)
             |> Board.setCell 1 11 (Filled Blue)
 
-        let result = Board.clearAndApplyGravityRepeatedly board
+        let result, chainCount = Board.clearAndApplyGravityRepeatedly board
 
         // 消去対象がないため、盤面は変わらない
         Board.getCell result 0 11 |> should equal (Filled Red)
         Board.getCell result 1 11 |> should equal (Filled Blue)
+        // 連鎖は発生しない
+        chainCount |> should equal 0
 
     [<Fact>]
     let ``連鎖処理で2連鎖が正しく動作する`` () =
@@ -285,40 +287,46 @@ module BoardTests =
             |> Board.setCell 2 8 (Filled Blue)
             |> Board.setCell 2 9 (Filled Blue)
 
-        let result = Board.clearAndApplyGravityRepeatedly board
+        let result, chainCount = Board.clearAndApplyGravityRepeatedly board
 
         // すべてのぷよが消えている（2連鎖が発生）
         for y in 0..11 do
             for x in 0..5 do
                 Board.getCell result x y |> should equal Empty
 
+        // 2連鎖が発生していることを確認
+        chainCount |> should equal 2
+
     [<Fact>]
     let ``連鎖処理で3連鎖が正しく動作する`` () =
         // 3連鎖が発生するパターン
         let board =
             Board.create 6 12
-            // 1連鎖目: 赤ぷよ（下部）
-            |> Board.setCell 0 10 (Filled Red)
+            // 1連鎖目: 赤ぷよ（x=1,2のy=10-11）
             |> Board.setCell 1 10 (Filled Red)
-            |> Board.setCell 0 11 (Filled Red)
+            |> Board.setCell 2 10 (Filled Red)
             |> Board.setCell 1 11 (Filled Red)
-            // 2連鎖目: 青ぷよ（中部）
-            |> Board.setCell 0 6 (Filled Blue)
-            |> Board.setCell 0 7 (Filled Blue)
-            |> Board.setCell 0 8 (Filled Blue)
-            |> Board.setCell 1 8 (Filled Blue)
-            // 3連鎖目: 緑ぷよ（上部）
-            |> Board.setCell 0 2 (Filled Green)
-            |> Board.setCell 0 3 (Filled Green)
-            |> Board.setCell 0 4 (Filled Green)
-            |> Board.setCell 1 4 (Filled Green)
+            |> Board.setCell 2 11 (Filled Red)
+            // 2連鎖目用の青ぷよ（赤が消えると落ちて4つつながる）
+            |> Board.setCell 2 7 (Filled Blue)
+            |> Board.setCell 2 8 (Filled Blue)
+            |> Board.setCell 2 9 (Filled Blue)
+            |> Board.setCell 3 10 (Filled Blue)
+            // 3連鎖目用の緑ぷよ（青が消えると落ちて4つつながる）
+            |> Board.setCell 2 3 (Filled Green)
+            |> Board.setCell 2 4 (Filled Green)
+            |> Board.setCell 2 5 (Filled Green)
+            |> Board.setCell 3 7 (Filled Green)
 
-        let result = Board.clearAndApplyGravityRepeatedly board
+        let result, chainCount = Board.clearAndApplyGravityRepeatedly board
 
         // すべてのぷよが消えている（3連鎖が発生）
         for y in 0..11 do
             for x in 0..5 do
                 Board.getCell result x y |> should equal Empty
+
+        // 3連鎖が発生していることを確認
+        chainCount |> should equal 3
 
     [<Fact>]
     let ``盤面上のぷよがすべて消えると全消しになる`` () =

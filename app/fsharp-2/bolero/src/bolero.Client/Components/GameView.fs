@@ -79,6 +79,12 @@ module GameView =
             viewBoard model.Board model.CurrentPiece
 
             div {
+                attr.``class`` "game-info"
+                p { $"スコア: {model.Score}" }
+                p { $"連鎖: {model.LastChainCount}" }
+            }
+
+            div {
                 attr.``class`` "game-controls"
 
                 match model.Status with
