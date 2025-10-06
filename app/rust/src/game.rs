@@ -20,6 +20,7 @@ pub struct Game {
     current_pair: Option<PuyoPair>,
     fall_timer: f32,
     fall_interval: f32,
+    all_clear_achieved: bool,
 }
 
 impl Game {
@@ -32,6 +33,7 @@ impl Game {
             current_pair: None,
             fall_timer: 0.0,
             fall_interval: 1.0, // 1秒ごとに落下
+            all_clear_achieved: false,
         }
     }
 
@@ -117,10 +119,12 @@ impl Game {
             let child_y = pair.child_y() as usize;
 
             // 軸ぷよまたは子ぷよの位置にすでにぷよがある場合はゲームオーバー
-            let axis_blocked = board.get_cell(axis_x, axis_y)
+            let axis_blocked = board
+                .get_cell(axis_x, axis_y)
                 .map(|cell| cell != Cell::Empty)
                 .unwrap_or(false);
-            let child_blocked = board.get_cell(child_x, child_y)
+            let child_blocked = board
+                .get_cell(child_x, child_y)
                 .map(|cell| cell != Cell::Empty)
                 .unwrap_or(false);
 
@@ -133,6 +137,7 @@ impl Game {
         }
 
         self.current_pair = Some(pair);
+        self.all_clear_achieved = false;
     }
 
     pub fn update(&mut self, delta_time: f32) {
@@ -168,6 +173,7 @@ impl Game {
                             // 全消しチェック
                             if board.is_all_clear() {
                                 self.add_all_clear_bonus();
+                                self.all_clear_achieved = true;
                             }
                         }
                         self.mode = GameMode::Falling;
@@ -341,13 +347,7 @@ impl Game {
         }
 
         // スコアの表示
-        draw_text(
-            &format!("Score: {}", self.score),
-            10.0,
-            30.0,
-            20.0,
-            WHITE,
-        );
+        draw_text(&format!("Score: {}", self.score), 10.0, 30.0, 20.0, WHITE);
 
         // 連鎖数の表示（連鎖中のみ）
         if self.chain_count > 0 {
@@ -361,34 +361,14 @@ impl Game {
         }
 
         // 全消し表示
-        if let Some(ref board) = self.board {
-            if board.is_all_clear() && self.mode != GameMode::Start {
-                draw_text(
-                    "ALL CLEAR!",
-                    80.0,
-                    200.0,
-                    40.0,
-                    GOLD,
-                );
-            }
+        if self.all_clear_achieved {
+            draw_text("ALL CLEAR!", 80.0, 200.0, 40.0, GOLD);
         }
 
         // ゲームオーバー表示
         if self.mode == GameMode::GameOver {
-            draw_text(
-                "GAME OVER",
-                80.0,
-                250.0,
-                50.0,
-                RED,
-            );
-            draw_text(
-                "Press R to Restart",
-                70.0,
-                300.0,
-                20.0,
-                WHITE,
-            );
+            draw_text("GAME OVER", 80.0, 250.0, 50.0, RED);
+            draw_text("Press R to Restart", 70.0, 300.0, 20.0, WHITE);
         }
     }
 }
