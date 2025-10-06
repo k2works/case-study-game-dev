@@ -50,6 +50,85 @@ command = "cargo"
 args = ["watch", "-x", "test", "-x", "clippy", "-x", "fmt"]
 install_crate = "cargo-watch"
 
+# クリーンタスク
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+# リリースビルドタスク
+[tasks.release-build]
+command = "cargo"
+args = ["build", "--release"]
+
+# リリース前のチェック
+[tasks.pre-release]
+dependencies = ["format-check", "lint", "test"]
+
+# リリースタスク（全チェック + リリースビルド）
+[tasks.release]
+dependencies = ["clean", "pre-release", "release-build"]
+
+[tasks.release.windows]
+script = '''
+echo =========================================
+echo リリースビルドが完了しました
+echo =========================================
+echo バイナリ: target\release\puyo_puyo_game.exe
+dir target\release\puyo_puyo_game.exe
+echo =========================================
+'''
+
+[tasks.release.linux]
+script = '''
+echo "========================================="
+echo "リリースビルドが完了しました"
+echo "========================================="
+echo "バイナリ: target/release/puyo_puyo_game"
+ls -lh target/release/puyo_puyo_game
+echo "========================================="
+'''
+
+[tasks.release.mac]
+script = '''
+echo "========================================="
+echo "リリースビルドが完了しました"
+echo "========================================="
+echo "バイナリ: target/release/puyo_puyo_game"
+ls -lh target/release/puyo_puyo_game
+echo "========================================="
+'''
+
+# 全テスト実行（ユニット + 統合）
+[tasks.test-all]
+command = "cargo"
+args = ["test", "--all"]
+
+# ベンチマークタスク
+[tasks.bench]
+command = "cargo"
+args = ["bench"]
+
+# ドキュメント生成タスク
+[tasks.doc]
+command = "cargo"
+args = ["doc", "--no-deps", "--open"]
+
+# 依存関係の更新チェック
+[tasks.outdated]
+command = "cargo"
+args = ["outdated"]
+install_crate = "cargo-outdated"
+
+# セキュリティ監査
+[tasks.audit]
+command = "cargo"
+args = ["audit"]
+install_crate = "cargo-audit"
+
+# CI/CD用タスク（すべての検証を実行）
+[tasks.ci]
+dependencies = ["format-check", "lint", "test-all", "release-build"]
+
 # デフォルトタスク
 [tasks.default]
 alias = "test"
