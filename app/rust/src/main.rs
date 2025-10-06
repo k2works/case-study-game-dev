@@ -12,16 +12,25 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut _game = Game::new();
+    let mut game = Game::new();
 
     loop {
         clear_background(BLACK);
 
+        // スペースキーでゲーム開始
+        if is_key_pressed(KeyCode::Space) && game.mode() == puyo_puyo_game::game::GameMode::Start {
+            game.start();
+        }
+
         // ゲームの更新処理（次のイテレーションで実装）
 
-        // ゲームの描画処理（次のイテレーションで実装）
-        draw_text("Puyo Puyo Game", 120.0, 40.0, 30.0, WHITE);
-        draw_text("Press Space to Start", 90.0, 300.0, 20.0, GRAY);
+        // ゲームの描画処理
+        if game.mode() == puyo_puyo_game::game::GameMode::Start {
+            draw_text("Puyo Puyo Game", 120.0, 40.0, 30.0, WHITE);
+            draw_text("Press Space to Start", 90.0, 300.0, 20.0, GRAY);
+        } else {
+            game.draw();
+        }
 
         next_frame().await
     }

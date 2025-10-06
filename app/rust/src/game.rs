@@ -1,4 +1,5 @@
-use crate::board::Board;
+use crate::board::{Board, Cell, PuyoColor};
+use crate::puyo_pair::PuyoPair;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GameMode {
@@ -15,6 +16,7 @@ pub struct Game {
     score: i32,
     chain_count: i32,
     board: Option<Board>,
+    current_pair: Option<PuyoPair>,
 }
 
 impl Game {
@@ -24,6 +26,7 @@ impl Game {
             score: 0,
             chain_count: 0,
             board: Some(Board::new(6, 12)),
+            current_pair: None,
         }
     }
 
@@ -41,6 +44,121 @@ impl Game {
 
     pub fn board(&self) -> Option<&Board> {
         self.board.as_ref()
+    }
+
+    pub fn current_pair(&self) -> Option<&PuyoPair> {
+        self.current_pair.as_ref()
+    }
+
+    pub fn start(&mut self) {
+        self.mode = GameMode::Playing;
+        self.spawn_new_pair();
+    }
+
+    fn spawn_new_pair(&mut self) {
+        use rand::Rng;
+        let mut rng = rand::rng();
+
+        let axis_color = match rng.random_range(0..4) {
+            0 => PuyoColor::Red,
+            1 => PuyoColor::Blue,
+            2 => PuyoColor::Green,
+            _ => PuyoColor::Yellow,
+        };
+
+        let child_color = match rng.random_range(0..4) {
+            0 => PuyoColor::Red,
+            1 => PuyoColor::Blue,
+            2 => PuyoColor::Green,
+            _ => PuyoColor::Yellow,
+        };
+
+        let pair = PuyoPair::new(2, 1, axis_color, child_color);
+        self.current_pair = Some(pair);
+    }
+
+    pub fn draw(&self) {
+        use macroquad::prelude::*;
+
+        const CELL_SIZE: f32 = 40.0;
+        const BOARD_OFFSET_X: f32 = 50.0;
+        const BOARD_OFFSET_Y: f32 = 80.0;
+
+        // ボードを描画
+        if let Some(ref board) = self.board {
+            for y in 0..board.rows() {
+                for x in 0..board.cols() {
+                    let px = BOARD_OFFSET_X + x as f32 * CELL_SIZE;
+                    let py = BOARD_OFFSET_Y + y as f32 * CELL_SIZE;
+
+                    // セルの枠を描画
+                    draw_rectangle_lines(px, py, CELL_SIZE, CELL_SIZE, 1.0, GRAY);
+
+                    // セルにぷよがあれば描画
+                    if let Some(Cell::Filled(color)) = board.get_cell(x, y) {
+                        let puyo_color = match color {
+                            PuyoColor::Red => RED,
+                            PuyoColor::Blue => BLUE,
+                            PuyoColor::Green => GREEN,
+                            PuyoColor::Yellow => YELLOW,
+                        };
+
+                        draw_circle(
+                            px + CELL_SIZE / 2.0,
+                            py + CELL_SIZE / 2.0,
+                            CELL_SIZE / 2.0 - 4.0,
+                            puyo_color,
+                        );
+                    }
+                }
+            }
+        }
+
+        // 現在のぷよペアを描画
+        if let Some(ref pair) = self.current_pair {
+            // 軸ぷよを描画
+            let axis_x = BOARD_OFFSET_X + pair.axis_x() as f32 * CELL_SIZE;
+            let axis_y = BOARD_OFFSET_Y + pair.axis_y() as f32 * CELL_SIZE;
+            let axis_color = match pair.axis_color() {
+                PuyoColor::Red => RED,
+                PuyoColor::Blue => BLUE,
+                PuyoColor::Green => GREEN,
+                PuyoColor::Yellow => YELLOW,
+            };
+
+            draw_circle(
+                axis_x + CELL_SIZE / 2.0,
+                axis_y + CELL_SIZE / 2.0,
+                CELL_SIZE / 2.0 - 4.0,
+                axis_color,
+            );
+
+            // 子ぷよを描画
+            let child_x = BOARD_OFFSET_X + pair.child_x() as f32 * CELL_SIZE;
+            let child_y = BOARD_OFFSET_Y + pair.child_y() as f32 * CELL_SIZE;
+            let child_color = match pair.child_color() {
+                PuyoColor::Red => RED,
+                PuyoColor::Blue => BLUE,
+                PuyoColor::Green => GREEN,
+                PuyoColor::Yellow => YELLOW,
+            };
+
+            draw_circle(
+                child_x + CELL_SIZE / 2.0,
+                child_y + CELL_SIZE / 2.0,
+                CELL_SIZE / 2.0 - 4.0,
+                child_color,
+            );
+        }
+
+        // スコアの表示
+        draw_text(
+            &format!("Score: {}", self.score),
+            10.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
     }
 }
 
