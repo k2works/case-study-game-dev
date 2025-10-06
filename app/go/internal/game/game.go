@@ -9,6 +9,7 @@ import (
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/puyo"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 const (
@@ -67,6 +68,11 @@ func (g *Game) Update() error {
 		if g.CurrentPair.CanMoveRight(g.Board) {
 			g.CurrentPair.MoveRight()
 		}
+	}
+
+	// Zキーで回転
+	if inpututil.IsKeyJustPressed(ebiten.KeyZ) {
+		g.CurrentPair.Rotate(g.Board)
 	}
 
 	return nil

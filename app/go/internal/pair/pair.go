@@ -5,6 +5,16 @@ import (
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/puyo"
 )
 
+// Direction はぷよペアの向きを表す
+type Direction int
+
+const (
+	DirUp Direction = iota
+	DirRight
+	DirDown
+	DirLeft
+)
+
 // PuyoPair は落下中のぷよペアを表す
 type PuyoPair struct {
 	AxisX      int
@@ -13,6 +23,7 @@ type PuyoPair struct {
 	ChildX     int
 	ChildY     int
 	ChildColor puyo.Color
+	Direction  Direction
 }
 
 // New は新しいぷよペアを作成する
@@ -25,6 +36,7 @@ func New(axisX, axisY int, axisColor, childColor puyo.Color) *PuyoPair {
 		ChildX:     axisX,
 		ChildY:     axisY - 1,
 		ChildColor: childColor,
+		Direction:  DirUp,
 	}
 }
 
@@ -83,4 +95,54 @@ func (p *PuyoPair) CanMoveLeft(b *board.Board) bool {
 // CanMoveRight は右に移動できるかチェックする
 func (p *PuyoPair) CanMoveRight(b *board.Board) bool {
 	return !p.IsCollision(b, p.AxisX+1, p.AxisY, p.ChildX+1, p.ChildY)
+}
+
+// calcChildPosition は方向から子ぷよの位置を計算する
+func (p *PuyoPair) calcChildPosition(axisX, axisY int, dir Direction) (int, int) {
+	switch dir {
+	case DirUp:
+		return axisX, axisY - 1
+	case DirRight:
+		return axisX + 1, axisY
+	case DirDown:
+		return axisX, axisY + 1
+	case DirLeft:
+		return axisX - 1, axisY
+	default:
+		return axisX, axisY - 1
+	}
+}
+
+// Rotate は右回転する（壁キック付き）
+func (p *PuyoPair) Rotate(b *board.Board) bool {
+	newDir := (p.Direction + 1) % 4
+	newChildX, newChildY := p.calcChildPosition(p.AxisX, p.AxisY, newDir)
+
+	// 回転可能かチェック
+	if !p.IsCollision(b, p.AxisX, p.AxisY, newChildX, newChildY) {
+		p.Direction = newDir
+		p.ChildX = newChildX
+		p.ChildY = newChildY
+		return true
+	}
+
+	// 壁キック: 左にずらして回転
+	if !p.IsCollision(b, p.AxisX-1, p.AxisY, newChildX-1, newChildY) {
+		p.AxisX--
+		p.ChildX = newChildX - 1
+		p.ChildY = newChildY
+		p.Direction = newDir
+		return true
+	}
+
+	// 壁キック: 右にずらして回転
+	if !p.IsCollision(b, p.AxisX+1, p.AxisY, newChildX+1, newChildY) {
+		p.AxisX++
+		p.ChildX = newChildX + 1
+		p.ChildY = newChildY
+		p.Direction = newDir
+		return true
+	}
+
+	return false
 }
