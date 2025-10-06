@@ -81,8 +81,13 @@ func (g *Game) Update() error {
 			g.Mode = ModeChecking
 		}
 	case ModeChecking:
-		// 消去チェック（次のイテレーションで実装）
-		g.spawnNewPair()
+		positions := g.Board.CheckErase()
+		if len(positions) > 0 {
+			g.Board.Erase(positions)
+			g.Mode = ModeFalling
+		} else {
+			g.spawnNewPair()
+		}
 	}
 
 	return nil
