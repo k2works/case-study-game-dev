@@ -8,8 +8,8 @@ import (
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/pair"
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/puyo"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 const (
@@ -22,8 +22,9 @@ const (
 
 // Game はゲームの状態を管理する
 type Game struct {
-	Board       *board.Board
-	CurrentPair *pair.PuyoPair
+	Board          *board.Board
+	CurrentPair    *pair.PuyoPair
+	moveDelayTimer int
 }
 
 // New は新しいゲームを作成する
@@ -56,22 +57,47 @@ func (g *Game) Update() error {
 		return nil
 	}
 
-	// 左キー
+	// 移動ディレイタイマーを減らす
+	if g.moveDelayTimer > 0 {
+		g.moveDelayTimer--
+	}
+
+	// 左キー（最初の入力または遅延後）
 	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
-		if g.CurrentPair.CanMoveLeft(g.Board) {
-			g.CurrentPair.MoveLeft()
+		if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+			// 最初の入力は即座に反応
+			if g.CurrentPair.CanMoveLeft(g.Board) {
+				g.CurrentPair.MoveLeft()
+				g.moveDelayTimer = 8 // 約0.13秒の遅延
+			}
+		} else if g.moveDelayTimer == 0 {
+			// 長押し時は遅延後に移動
+			if g.CurrentPair.CanMoveLeft(g.Board) {
+				g.CurrentPair.MoveLeft()
+				g.moveDelayTimer = 4 // 連続移動時は少し早く
+			}
 		}
 	}
 
-	// 右キー
+	// 右キー（最初の入力または遅延後）
 	if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
-		if g.CurrentPair.CanMoveRight(g.Board) {
-			g.CurrentPair.MoveRight()
+		if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+			// 最初の入力は即座に反応
+			if g.CurrentPair.CanMoveRight(g.Board) {
+				g.CurrentPair.MoveRight()
+				g.moveDelayTimer = 8
+			}
+		} else if g.moveDelayTimer == 0 {
+			// 長押し時は遅延後に移動
+			if g.CurrentPair.CanMoveRight(g.Board) {
+				g.CurrentPair.MoveRight()
+				g.moveDelayTimer = 4
+			}
 		}
 	}
 
-	// Zキーで回転
-	if inpututil.IsKeyJustPressed(ebiten.KeyZ) {
+	// Zキーまたは上キーで回転
+	if inpututil.IsKeyJustPressed(ebiten.KeyZ) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		g.CurrentPair.Rotate(g.Board)
 	}
 
@@ -135,8 +161,10 @@ func (g *Game) drawPuyo(screen *ebiten.Image, x, y float64, puyoColor puyo.Color
 	}
 
 	// ぷよを円として描画
-	ebitenutil.DrawRect(screen, x+2, y+2, float64(CellSize-4), float64(CellSize-4),
-		color.RGBA{r, gr, b, 255})
+	centerX := float32(x + float64(CellSize)/2)
+	centerY := float32(y + float64(CellSize)/2)
+	radius := float32(CellSize)/2 - 2
+	vector.DrawFilledCircle(screen, centerX, centerY, radius, color.RGBA{r, gr, b, 255}, true)
 }
 
 // Layout は画面のレイアウトを決定する
