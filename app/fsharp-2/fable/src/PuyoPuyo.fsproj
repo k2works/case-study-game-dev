@@ -5,6 +5,7 @@
   <ItemGroup>
     <Compile Include="Types.fs" />
     <Compile Include="Stage.fs" />
+    <Compile Include="Player.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>

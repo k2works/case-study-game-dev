@@ -6,6 +6,7 @@ open Fable.Mocha
 let allTests =
     testList "すべてのテスト" [
         PuyoPuyo.Tests.GameTests.tests
+        PuyoPuyo.Tests.PlayerTests.tests
     ]
 
 [<EntryPoint>]
