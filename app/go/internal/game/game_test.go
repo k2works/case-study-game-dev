@@ -5,6 +5,7 @@ import (
 
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/board"
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/puyo"
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -203,5 +204,185 @@ func TestGameAllClearBonus(t *testing.T) {
 		// 基本スコアのみ: 4 * 10 = 40
 		assert.Equal(t, 40, g.Score.Total)
 		assert.False(t, g.Board.IsAllClear())
+	})
+}
+
+func TestGameFalling(t *testing.T) {
+	t.Run("時間経過でぷよペアが自動落下する", func(t *testing.T) {
+		g := New()
+		initialY := g.CurrentPair.AxisY
+
+		// FallInterval に達するまで時間を進める
+		g.FallTimer = FallInterval
+		g.Update()
+
+		// 下に移動していることを確認
+		assert.True(t, g.CurrentPair.AxisY > initialY)
+	})
+
+	t.Run("着地後はボードに固定される", func(t *testing.T) {
+		g := New()
+		axisColor := g.CurrentPair.AxisColor
+		childColor := g.CurrentPair.ChildColor
+
+		// ボードの底まで落とす
+		for g.CurrentPair != nil && g.Mode == ModePlaying {
+			g.FallTimer = FallInterval
+			g.Update()
+		}
+
+		// ModeFalling または ModeChecking になっているはず
+		assert.True(t, g.Mode == ModeFalling || g.Mode == ModeChecking)
+
+		// ボードにぷよが配置されていることを確認
+		hasAxisColor := false
+		hasChildColor := false
+		for row := 0; row < board.Rows; row++ {
+			for col := 0; col < board.Cols; col++ {
+				if g.Board.Get(row, col) == axisColor {
+					hasAxisColor = true
+				}
+				if g.Board.Get(row, col) == childColor {
+					hasChildColor = true
+				}
+			}
+		}
+		assert.True(t, hasAxisColor)
+		assert.True(t, hasChildColor)
+	})
+}
+
+func TestGameRestart(t *testing.T) {
+	t.Run("リスタートするとゲーム状態がリセットされる", func(t *testing.T) {
+		g := New()
+
+		// ゲーム状態を変更
+		g.Board.Set(11, 0, puyo.ColorRed)
+		g.Score.Total = 1000
+		g.Score.Chain = 5
+		g.Mode = ModeGameOver
+
+		// リスタート
+		g.restart()
+
+		// ボードが空になっていることを確認
+		isEmpty := true
+		for row := 0; row < board.Rows; row++ {
+			for col := 0; col < board.Cols; col++ {
+				if g.Board.Get(row, col) != puyo.ColorNone {
+					isEmpty = false
+				}
+			}
+		}
+		assert.True(t, isEmpty)
+
+		// スコアがリセットされていることを確認
+		assert.Equal(t, 0, g.Score.Total)
+		assert.Equal(t, 0, g.Score.Chain)
+
+		// モードがプレイモードに戻っていることを確認
+		assert.Equal(t, ModePlaying, g.Mode)
+
+		// 新しいぷよペアが生成されていることを確認
+		assert.NotNil(t, g.CurrentPair)
+	})
+}
+
+func TestGameMovement(t *testing.T) {
+	t.Run("左に移動できる", func(t *testing.T) {
+		g := New()
+		initialX := g.CurrentPair.AxisX
+
+		// 左に移動
+		g.tryMove(true)
+
+		// 位置が変わったことを確認
+		assert.Equal(t, initialX-1, g.CurrentPair.AxisX)
+	})
+
+	t.Run("右に移動できる", func(t *testing.T) {
+		g := New()
+		initialX := g.CurrentPair.AxisX
+
+		// 右に移動
+		g.tryMove(false)
+
+		// 位置が変わったことを確認
+		assert.Equal(t, initialX+1, g.CurrentPair.AxisX)
+	})
+
+	t.Run("壁があると移動できない", func(t *testing.T) {
+		g := New()
+
+		// 左端まで移動
+		for g.CurrentPair.CanMoveLeft(g.Board) {
+			g.CurrentPair.MoveLeft()
+		}
+		leftX := g.CurrentPair.AxisX
+
+		// さらに左に移動しようとしても移動しない
+		g.tryMove(true)
+		assert.Equal(t, leftX, g.CurrentPair.AxisX)
+	})
+}
+
+func TestGameLockPair(t *testing.T) {
+	t.Run("子ぷよが画面外の場合でも軸ぷよは配置される", func(t *testing.T) {
+		g := New()
+
+		// 子ぷよを画面外に配置（Y < 0）
+		g.CurrentPair.ChildY = -1
+		axisColor := g.CurrentPair.AxisColor
+		axisX := g.CurrentPair.AxisX
+		axisY := g.CurrentPair.AxisY
+
+		// lockPair を実行
+		g.lockPair()
+
+		// 軸ぷよがボードに配置されていることを確認
+		assert.Equal(t, axisColor, g.Board.Get(axisY, axisX))
+
+		// CurrentPair が nil になっていることを確認
+		assert.Nil(t, g.CurrentPair)
+	})
+}
+
+func TestGameDraw(t *testing.T) {
+	t.Run("ゲームオーバー時の描画", func(t *testing.T) {
+		g := New()
+		g.Mode = ModeGameOver
+		g.CurrentPair = nil
+
+		// 描画メソッドを呼び出してもパニックしないことを確認
+		// 実際の画面への描画はスキップするが、メソッドの実行パスをテスト
+		img := ebiten.NewImage(ScreenWidth, ScreenHeight)
+		assert.NotPanics(t, func() {
+			g.Draw(img)
+		})
+	})
+
+	t.Run("プレイ中の描画", func(t *testing.T) {
+		g := New()
+
+		// ボードにぷよを配置
+		g.Board.Set(11, 0, puyo.ColorRed)
+		g.Board.Set(11, 1, puyo.ColorBlue)
+
+		// 描画メソッドを呼び出してもパニックしないことを確認
+		img := ebiten.NewImage(ScreenWidth, ScreenHeight)
+		assert.NotPanics(t, func() {
+			g.Draw(img)
+		})
+	})
+
+	t.Run("CurrentPairがnilの場合の描画", func(t *testing.T) {
+		g := New()
+		g.CurrentPair = nil
+
+		// CurrentPair が nil でもパニックしないことを確認
+		img := ebiten.NewImage(ScreenWidth, ScreenHeight)
+		assert.NotPanics(t, func() {
+			g.Draw(img)
+		})
 	})
 }
