@@ -22,6 +22,11 @@ async fn main() {
             game.start();
         }
 
+        // Rキーでリスタート（ゲームオーバー時）
+        if is_key_pressed(KeyCode::R) && game.mode() == puyo_puyo_game::game::GameMode::GameOver {
+            game.restart();
+        }
+
         // ゲームの更新処理
         let delta_time = get_frame_time();
         game.update(delta_time);

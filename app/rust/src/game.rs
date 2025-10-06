@@ -80,6 +80,11 @@ impl Game {
         self.spawn_new_pair();
     }
 
+    pub fn restart(&mut self) {
+        *self = Game::new();
+        self.start();
+    }
+
     fn spawn_new_pair(&mut self) {
         use rand::Rng;
         let mut rng = rand::rng();
@@ -99,6 +104,30 @@ impl Game {
         };
 
         let pair = PuyoPair::new(2, 1, axis_color, child_color);
+
+        // ゲームオーバー判定: 新しいぷよが配置できるかチェック
+        if let Some(ref board) = self.board {
+            let axis_x = pair.axis_x() as usize;
+            let axis_y = pair.axis_y() as usize;
+            let child_x = pair.child_x() as usize;
+            let child_y = pair.child_y() as usize;
+
+            // 軸ぷよまたは子ぷよの位置にすでにぷよがある場合はゲームオーバー
+            let axis_blocked = board.get_cell(axis_x, axis_y)
+                .map(|cell| cell != Cell::Empty)
+                .unwrap_or(false);
+            let child_blocked = board.get_cell(child_x, child_y)
+                .map(|cell| cell != Cell::Empty)
+                .unwrap_or(false);
+
+            if axis_blocked || child_blocked {
+                // 出現位置にぷよがあるためゲームオーバー
+                self.mode = GameMode::GameOver;
+                self.current_pair = None;
+                return;
+            }
+        }
+
         self.current_pair = Some(pair);
     }
 
@@ -318,6 +347,24 @@ impl Game {
                 YELLOW,
             );
         }
+
+        // ゲームオーバー表示
+        if self.mode == GameMode::GameOver {
+            draw_text(
+                "GAME OVER",
+                80.0,
+                250.0,
+                50.0,
+                RED,
+            );
+            draw_text(
+                "Press R to Restart",
+                70.0,
+                300.0,
+                20.0,
+                WHITE,
+            );
+        }
     }
 }
 
@@ -397,5 +444,40 @@ mod tests {
 
         game.reset_chain();
         assert_eq!(game.chain_count(), 0);
+    }
+
+    #[test]
+    fn test_game_over_when_spawn_position_blocked() {
+        let mut game = Game::new();
+        game.start();
+
+        // 出現位置 (2, 1) と (2, 0) にぷよを配置してブロック
+        if let Some(ref mut board) = game.board {
+            board.set_cell(2, 1, Cell::Filled(PuyoColor::Red));
+            board.set_cell(2, 0, Cell::Filled(PuyoColor::Blue));
+        }
+
+        // 新しいぷよを出現させようとする
+        game.current_pair = None;
+        game.mode = GameMode::Playing;
+
+        // spawn_new_pairを手動で呼ぶ（通常はChecking->Playingで呼ばれる）
+        game.spawn_new_pair();
+
+        // ゲームオーバーになっているはず
+        assert_eq!(game.mode(), GameMode::GameOver);
+        assert!(game.current_pair().is_none());
+    }
+
+    #[test]
+    fn test_game_continues_when_spawn_position_free() {
+        let mut game = Game::new();
+
+        // 出現位置が空いている状態で新しいぷよを出現
+        game.spawn_new_pair();
+
+        // ゲームは継続
+        assert_ne!(game.mode(), GameMode::GameOver);
+        assert!(game.current_pair().is_some());
     }
 }
