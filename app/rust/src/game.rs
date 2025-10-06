@@ -93,6 +93,14 @@ impl Game {
                 if is_key_pressed(KeyCode::Right) && pair.can_move_right(board) {
                     pair.move_right();
                 }
+                // 上矢印キーまたはXキーが押されたら右回転
+                if is_key_pressed(KeyCode::Up) || is_key_pressed(KeyCode::X) {
+                    pair.rotate_right_with_wall_kick(board);
+                }
+                // Zキーが押されたら左回転
+                if is_key_pressed(KeyCode::Z) {
+                    pair.rotate_left_with_wall_kick(board);
+                }
             }
         }
     }
