@@ -651,17 +651,24 @@ git commit -m 'chore: プロジェクトの初期セットアップ'
 
 では、ゲームの初期化処理をテストするコードを書いてみましょう。何をテストすべきでしょうか？ゲームが初期化されたとき、必要なコンポーネントが正しく作成され、ゲームの状態が適切に設定されていることを確認する必要がありますね。
 
+Rustでは、ユニットテストは各ソースファイルの末尾に `#[cfg(test)]` モジュールとして配置するのが作法です。まず、モジュール構成を定義します：
+
 ```rust
 // src/lib.rs
 pub mod game;
 pub mod board;
 pub mod puyo;
+```
 
-// tests/game_test.rs
+次に、`src/game.rs` の末尾にテストを追加します：
+
+```rust
+// src/game.rs
+// （実装部分は後述）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::game::Game;
-    use puyo_puyo_game::game::GameMode;
+    use super::*;
 
     #[test]
     fn test_game_initialization() {
@@ -682,6 +689,11 @@ mod tests {
 ```
 
 このテストでは、`Game`構造体の`new`メソッドが正しく動作することを確認しています。具体的には、ゲームモードが`Start`に設定され、スコアと連鎖カウントが0で初期化されることを検証しています。
+
+**Rustのテスト配置作法**：
+- **ユニットテスト**: 各ソースファイル（`src/game.rs`など）の末尾に `#[cfg(test)]` モジュールとして配置
+- **統合テスト**: `tests/` ディレクトリにファイルを作成（モジュール間の連携をテスト）
+- `use super::*;` で親モジュールの要素をインポート
 
 ### 実装: ゲームの初期化
 
@@ -977,11 +989,15 @@ git commit -m 'feat: ゲーム初期化とウィンドウ表示を実装'
 >
 > — Kent Beck 『テスト駆動開発』
 
+Rustの作法に従い、`src/board.rs` の末尾にユニットテストを配置します：
+
 ```rust
-// tests/board_test.rs
+// src/board.rs
+// （実装部分は後述）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::board::{Board, Cell, PuyoColor};
+    use super::*;
 
     #[test]
     fn test_create_board() {
@@ -1143,12 +1159,16 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 「次は何をテストしますか？」次は、ぷよペアの構造をテストしましょう。ぷよペアは軸ぷよ（axis）と子ぷよ（child）の2つのぷよから構成されます。
 
+`src/puyo_pair.rs` の末尾にテストを配置します：
+
 ```rust
-// tests/puyo_pair_test.rs
+// src/puyo_pair.rs
+// （実装部分は後述）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::puyo_pair::PuyoPair;
-    use puyo_puyo_game::board::PuyoColor;
+    use super::*;
+    use crate::board::PuyoColor;
 
     #[test]
     fn test_create_puyo_pair() {
@@ -1627,12 +1647,18 @@ git commit -m 'feat: ぷよペアの表示機能を実装'
 >
 > — Kent Beck 『テスト駆動開発』
 
+`src/puyo_pair.rs` のテストモジュールに以下のテストを追加します：
+
 ```rust
-// tests/puyo_pair_test.rs（拡張）
+// src/puyo_pair.rs
+// （既存の実装とテストの続き）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::puyo_pair::PuyoPair;
-    use puyo_puyo_game::board::{Board, PuyoColor};
+    use super::*;
+    use crate::board::{Board, PuyoColor};
+
+    // ... 既存のテスト ...
 
     #[test]
     fn test_can_move_left_when_space_is_available() {
