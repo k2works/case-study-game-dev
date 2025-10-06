@@ -39,7 +39,7 @@ module Update =
                 let groups = Board.findConnectedGroups boardWithPuyo
                 let boardAfterClear =
                     if List.isEmpty groups then
-                        boardWithPuyo
+                        Board.applyGravity boardWithPuyo
                     else
                         let positions = groups |> List.concat
                         boardWithPuyo

@@ -285,3 +285,30 @@ module UpdateTests =
 
         // 緑のぷよは重力で落ちて下端に残っている
         Board.getCell newModel.Board 3 12 |> should equal (Filled Green)
+
+    [<Fact>]
+    let ``着地時に消去されなくても重力が適用される`` () =
+        // Arrange
+        let model = Model.init ()
+        // 縦向きのぷよペアを配置（下端）
+        let board =
+            model.Board
+            |> Board.setCell 3 12 (Filled Red)   // 軸ぷよ
+            |> Board.setCell 3 11 (Filled Green) // 子ぷよ
+
+        // 横向きのぷよペアを重ねる（rotation=3で左向き、軸ぷよが右）
+        let pair = PuyoPair.create 3 10 Blue Yellow 3
+        let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
+
+        // Act
+        let (newModel, _) = Update.update Tick model  // 着地
+
+        // Assert
+        // 軸ぷよ（Blue）は縦ぷよの上に着地
+        Board.getCell newModel.Board 3 10 |> should equal (Filled Blue)
+
+        // 子ぷよ（Yellow）は重力で(2,12)に落ちる
+        Board.getCell newModel.Board 2 12 |> should equal (Filled Yellow)
+
+        // (2,10)は空になっている
+        Board.getCell newModel.Board 2 10 |> should equal Empty
