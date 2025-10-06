@@ -11,6 +11,7 @@ module GameView =
         match e.Key with
         | "ArrowLeft" -> dispatch MoveLeft
         | "ArrowRight" -> dispatch MoveRight
+        | "ArrowUp" -> dispatch Rotate
         | _ -> ()
 
     /// セルを描画
@@ -76,7 +77,8 @@ module GameView =
 
                 | Playing ->
                     div {
-                        p { "矢印キー: 左右移動" }
+                        p { "← →: 左右移動" }
+                        p { "↑: 回転" }
                         button {
                             on.click (fun _ -> dispatch ResetGame)
                             "リセット"
