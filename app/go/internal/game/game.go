@@ -16,12 +16,13 @@ import (
 )
 
 const (
-	ScreenWidth  = 240
-	ScreenHeight = 360
-	CellSize     = 30
-	BoardOffsetX = 30
-	BoardOffsetY = 0   // ボード12行×30px=360pxが画面内に収まるように0に設定
-	FallInterval = 0.5 // 0.5秒ごとに落下
+	ScreenWidth      = 240
+	ScreenHeight     = 360
+	CellSize         = 30
+	BoardOffsetX     = 30
+	BoardOffsetY     = 0    // ボード12行×30px=360pxが画面内に収まるように0に設定
+	FallInterval     = 0.5  // 0.5秒ごとに落下
+	FastFallInterval = 0.05 // 0.05秒ごとに落下（高速落下）
 )
 
 // GameMode はゲームの状態を表す
@@ -195,7 +196,13 @@ func (g *Game) updateFall(dt float64) {
 
 	g.FallTimer += dt
 
-	if g.FallTimer >= FallInterval {
+	// 下キーが押されている場合は高速落下
+	interval := FallInterval
+	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) {
+		interval = FastFallInterval
+	}
+
+	if g.FallTimer >= interval {
 		g.FallTimer = 0
 
 		// 下に移動できるかチェック
