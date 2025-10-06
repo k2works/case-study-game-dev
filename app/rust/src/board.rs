@@ -144,16 +144,24 @@ impl Board {
     pub fn apply_gravity(&mut self) -> bool {
         let mut has_fallen = false;
 
-        // 下から2行目から上に向かってスキャン
-        for y in (0..self.rows - 1).rev() {
-            for x in 0..self.cols {
-                if let Cell::Filled(color) = self.cells[x][y] {
-                    // 下が空いているかチェック
-                    if self.cells[x][y + 1] == Cell::Empty {
-                        // 1マス下に移動
-                        self.cells[x][y + 1] = Cell::Filled(color);
-                        self.cells[x][y] = Cell::Empty;
+        // 各列ごとに処理
+        for x in 0..self.cols {
+            // 下から詰めていく
+            let mut write_y = self.rows - 1; // 書き込み位置（下から）
+
+            // 下から上にスキャンして、ぷよを収集
+            for read_y in (0..self.rows).rev() {
+                if let Cell::Filled(color) = self.cells[x][read_y] {
+                    // ぷよがある場合
+                    if read_y != write_y {
+                        // 位置が異なる場合は移動
+                        self.cells[x][write_y] = Cell::Filled(color);
+                        self.cells[x][read_y] = Cell::Empty;
                         has_fallen = true;
+                    }
+                    // 次の書き込み位置を1つ上に
+                    if write_y > 0 {
+                        write_y -= 1;
                     }
                 }
             }
@@ -321,10 +329,42 @@ mod tests {
 
         board.apply_gravity();
 
-        // 赤ぷよが1マス落下
+        // 赤ぷよが最終位置まで落下
         assert_eq!(board.get_cell(2, 5), Some(Cell::Empty));
-        assert_eq!(board.get_cell(2, 6), Some(Cell::Filled(PuyoColor::Red)));
+        assert_eq!(board.get_cell(2, 10), Some(Cell::Filled(PuyoColor::Red)));
         // 青ぷよは動かない
         assert_eq!(board.get_cell(2, 11), Some(Cell::Filled(PuyoColor::Blue)));
+    }
+
+    #[test]
+    fn test_apply_gravity_multiple_puyos() {
+        let mut board = Board::new(6, 12);
+        // 横に並んだぷよが同時に落ちる
+        board.set_cell(1, 5, Cell::Filled(PuyoColor::Red));
+        board.set_cell(2, 5, Cell::Filled(PuyoColor::Blue));
+        board.set_cell(3, 5, Cell::Filled(PuyoColor::Green));
+
+        board.apply_gravity();
+
+        // すべて最下段に落下
+        assert_eq!(board.get_cell(1, 11), Some(Cell::Filled(PuyoColor::Red)));
+        assert_eq!(board.get_cell(2, 11), Some(Cell::Filled(PuyoColor::Blue)));
+        assert_eq!(board.get_cell(3, 11), Some(Cell::Filled(PuyoColor::Green)));
+    }
+
+    #[test]
+    fn test_apply_gravity_stacked_puyos() {
+        let mut board = Board::new(6, 12);
+        // 縦に積まれたぷよ
+        board.set_cell(2, 5, Cell::Filled(PuyoColor::Red));
+        board.set_cell(2, 6, Cell::Filled(PuyoColor::Blue));
+        board.set_cell(2, 7, Cell::Filled(PuyoColor::Green));
+
+        board.apply_gravity();
+
+        // 下から順に配置される
+        assert_eq!(board.get_cell(2, 9), Some(Cell::Filled(PuyoColor::Red)));
+        assert_eq!(board.get_cell(2, 10), Some(Cell::Filled(PuyoColor::Blue)));
+        assert_eq!(board.get_cell(2, 11), Some(Cell::Filled(PuyoColor::Green)));
     }
 }
