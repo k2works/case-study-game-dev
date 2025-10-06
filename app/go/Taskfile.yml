@@ -25,17 +25,16 @@ tasks:
     desc: Format code
     cmds:
       - gofmt -s -w .
-      - goimports -w .
 
   build:
     desc: Build application
     cmds:
-      - go build -o puyo-puyo-go .
+      - go build -o puyo-puyo-go{{if eq OS "windows"}}.exe{{end}} ./cmd/puyo
 
   run:
     desc: Run application
     cmds:
-      - go run .
+      - go run ./cmd/puyo
 
   check:
     desc: Run all checks
@@ -47,4 +46,59 @@ tasks:
   clean:
     desc: Clean build artifacts
     cmds:
-      - rm -f puyo-puyo-go coverage.out coverage.html
+      - rm -f puyo-puyo-go puyo-puyo-go.exe coverage.out coverage.html
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  mod-tidy:
+    desc: Tidy go modules
+    cmds:
+      - go mod tidy
+
+  build-release:
+    desc: Build optimized release binary
+    cmds:
+      - go build -ldflags="-s -w" -o puyo-puyo-go{{if eq OS "windows"}}.exe{{end}} ./cmd/puyo
+
+  pre-release:
+    desc: Pre-release checks
+    cmds:
+      - task: fmt
+      - task: vet
+      - task: lint
+      - task: test
+
+  release:
+    desc: Complete release process (clean → checks → release build)
+    cmds:
+      - task: clean
+      - task: pre-release
+      - task: build-release
+      - echo "========================================="
+      - echo "リリースビルドが完了しました"
+      - echo "========================================="
+      - |
+        {{if eq OS "windows"}}
+        echo バイナリ: puyo-puyo-go.exe
+        dir puyo-puyo-go.exe
+        {{else}}
+        echo "バイナリ: puyo-puyo-go"
+        ls -lh puyo-puyo-go
+        {{end}}
+      - echo "========================================="
+
+  bench:
+    desc: Run benchmarks
+    cmds:
+      - go test -bench=. -benchmem ./...
+
+  ci:
+    desc: CI/CD validation (all checks + release build)
+    cmds:
+      - task: vet
+      - task: lint
+      - task: test-cover
+      - task: build-release
