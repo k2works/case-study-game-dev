@@ -94,3 +94,17 @@ func (b *Board) Erase(positions []Position) {
 		b.Cells[pos.Row][pos.Col] = puyo.ColorNone
 	}
 }
+
+// IsAllClear は盤面上のぷよが全て消えているかチェックする
+func (b *Board) IsAllClear() bool {
+	for row := 0; row < Rows; row++ {
+		for col := 0; col < Cols; col++ {
+			if b.Cells[row][col] != puyo.ColorNone {
+				// ぷよが1つでもあればfalse
+				return false
+			}
+		}
+	}
+	// すべてのセルが空ならtrue
+	return true
+}

@@ -60,3 +60,22 @@ func TestChainCounter(t *testing.T) {
 		assert.Equal(t, 0, s.Chain)
 	})
 }
+
+func TestAllClearBonus(t *testing.T) {
+	t.Run("全消しボーナスは5000点", func(t *testing.T) {
+		s := New()
+
+		s.AddAllClearBonus()
+
+		assert.Equal(t, 5000, s.Total)
+	})
+
+	t.Run("既存のスコアに全消しボーナスが加算される", func(t *testing.T) {
+		s := New()
+		s.Total = 1000
+
+		s.AddAllClearBonus()
+
+		assert.Equal(t, 6000, s.Total)
+	})
+}

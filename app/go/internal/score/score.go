@@ -1,5 +1,10 @@
 package score
 
+const (
+	// AllClearBonus は全消しボーナスの点数
+	AllClearBonus = 5000
+)
+
 // Score はゲームのスコアと連鎖数を管理する
 type Score struct {
 	Total int
@@ -39,4 +44,9 @@ func (s *Score) IncrementChain() {
 // ResetChain は連鎖数を0にリセットする
 func (s *Score) ResetChain() {
 	s.Chain = 0
+}
+
+// AddAllClearBonus は全消しボーナスを加算する
+func (s *Score) AddAllClearBonus() {
+	s.Total += AllClearBonus
 }

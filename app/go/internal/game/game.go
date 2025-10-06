@@ -119,6 +119,11 @@ func (g *Game) Update() error {
 			// ぷよを消去
 			g.Board.Erase(positions)
 
+			// 全消しチェック
+			if g.Board.IsAllClear() {
+				g.Score.AddAllClearBonus()
+			}
+
 			// 重力適用モードへ
 			g.Mode = ModeFalling
 		} else {

@@ -44,6 +44,9 @@ func TestGameScore(t *testing.T) {
 		g.Board.Set(10, 1, puyo.ColorRed)
 		g.Board.Set(10, 2, puyo.ColorRed)
 
+		// 残るぷよを配置（全消しにならないように）
+		g.Board.Set(11, 4, puyo.ColorBlue)
+
 		// 消去判定モードに設定
 		g.Mode = ModeChecking
 		g.Update()
@@ -69,6 +72,9 @@ func TestGameScore(t *testing.T) {
 		g.Board.Set(8, 1, puyo.ColorBlue)
 		// 青4つ目は別の列に配置（落下後に揃う）
 		g.Board.Set(7, 2, puyo.ColorBlue)
+
+		// 残るぷよを配置（全消しにならないように）
+		g.Board.Set(11, 4, puyo.ColorGreen)
 
 		// 1回目の消去判定
 		g.Mode = ModeChecking
@@ -154,5 +160,48 @@ func TestGameOverInput(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, ModeGameOver, g.Mode)
 		assert.Nil(t, g.CurrentPair)
+	})
+}
+
+func TestGameAllClearBonus(t *testing.T) {
+	t.Run("全消しすると5000点のボーナスが加算される", func(t *testing.T) {
+		g := New()
+
+		// ボードに4つの赤ぷよを配置（消去可能な状態）
+		g.Board.Set(11, 1, puyo.ColorRed)
+		g.Board.Set(11, 2, puyo.ColorRed)
+		g.Board.Set(10, 1, puyo.ColorRed)
+		g.Board.Set(10, 2, puyo.ColorRed)
+
+		// 消去判定モードに設定
+		g.Mode = ModeChecking
+		g.Update()
+
+		// 基本スコア: 4 * 10 = 40
+		// 全消しボーナス: 5000
+		// 合計: 5040
+		assert.Equal(t, 5040, g.Score.Total)
+		assert.True(t, g.Board.IsAllClear())
+	})
+
+	t.Run("全消しでない場合はボーナスが加算されない", func(t *testing.T) {
+		g := New()
+
+		// ボードに消去可能な4つの赤ぷよを配置
+		g.Board.Set(11, 1, puyo.ColorRed)
+		g.Board.Set(11, 2, puyo.ColorRed)
+		g.Board.Set(10, 1, puyo.ColorRed)
+		g.Board.Set(10, 2, puyo.ColorRed)
+
+		// 残るぷよを配置（消去されない）
+		g.Board.Set(11, 4, puyo.ColorBlue)
+
+		// 消去判定モードに設定
+		g.Mode = ModeChecking
+		g.Update()
+
+		// 基本スコアのみ: 4 * 10 = 40
+		assert.Equal(t, 40, g.Score.Total)
+		assert.False(t, g.Board.IsAllClear())
 	})
 }

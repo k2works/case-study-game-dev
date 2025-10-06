@@ -134,3 +134,37 @@ func TestErase(t *testing.T) {
 		assert.Equal(t, puyo.ColorNone, b.Get(11, 3))
 	})
 }
+
+func TestIsAllClear(t *testing.T) {
+	t.Run("空のボードは全消しと判定される", func(t *testing.T) {
+		b := New()
+
+		isAllClear := b.IsAllClear()
+
+		assert.True(t, isAllClear)
+	})
+
+	t.Run("ぷよが1つでもあると全消しでないと判定される", func(t *testing.T) {
+		b := New()
+
+		// 1つだけぷよを配置
+		b.Set(11, 0, puyo.ColorRed)
+
+		isAllClear := b.IsAllClear()
+
+		assert.False(t, isAllClear)
+	})
+
+	t.Run("複数のぷよがある場合も全消しでないと判定される", func(t *testing.T) {
+		b := New()
+
+		// 複数のぷよを配置
+		b.Set(11, 0, puyo.ColorRed)
+		b.Set(11, 1, puyo.ColorBlue)
+		b.Set(10, 2, puyo.ColorGreen)
+
+		isAllClear := b.IsAllClear()
+
+		assert.False(t, isAllClear)
+	})
+}
