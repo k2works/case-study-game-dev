@@ -1,2 +1,5 @@
 // Puyo Puyo Game Library
-// モジュールはイテレーション1以降で追加
+
+pub mod game;
+pub mod board;
+pub mod puyo;
