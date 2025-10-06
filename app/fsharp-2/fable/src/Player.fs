@@ -119,3 +119,23 @@ let fixToStage (pair: PuyoPair) (stage: Stage.StageState) : Stage.StageState =
     stage
     |> Stage.setPuyo pair.Axis.Position.X pair.Axis.Position.Y pair.Axis.Color
     |> Stage.setPuyo pair.Child.Position.X pair.Child.Position.Y pair.Child.Color
+
+/// ぷよペアを左に移動する
+let movePairLeft (pair: PuyoPair) (stageCols: int) : PuyoPair =
+    // 軸ぷよと子ぷよの両方が左に移動できるかチェック
+    let minX = min pair.Axis.Position.X pair.Child.Position.X
+    if minX > 0 then
+        { Axis = { pair.Axis with Position = { pair.Axis.Position with X = pair.Axis.Position.X - 1 } }
+          Child = { pair.Child with Position = { pair.Child.Position with X = pair.Child.Position.X - 1 } } }
+    else
+        pair
+
+/// ぷよペアを右に移動する
+let movePairRight (pair: PuyoPair) (stageCols: int) : PuyoPair =
+    // 軸ぷよと子ぷよの両方が右に移動できるかチェック
+    let maxX = max pair.Axis.Position.X pair.Child.Position.X
+    if maxX < stageCols - 1 then
+        { Axis = { pair.Axis with Position = { pair.Axis.Position with X = pair.Axis.Position.X + 1 } }
+          Child = { pair.Child with Position = { pair.Child.Position with X = pair.Child.Position.X + 1 } } }
+    else
+        pair

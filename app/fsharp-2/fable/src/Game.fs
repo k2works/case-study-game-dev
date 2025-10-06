@@ -24,20 +24,16 @@ let init () : GameState =
 let movePuyoLeft (state: GameState) : GameState =
     match state.CurrentPuyo with
     | Some pair ->
-        let movedAxis = Player.moveLeft pair.Axis state.Stage.Cols
-        let dx = movedAxis.Position.X - pair.Axis.Position.X
-        let movedChild = { pair.Child with Position = { pair.Child.Position with X = pair.Child.Position.X + dx } }
-        { state with CurrentPuyo = Some { Axis = movedAxis; Child = movedChild } }
+        let movedPair = Player.movePairLeft pair state.Stage.Cols
+        { state with CurrentPuyo = Some movedPair }
     | None -> state
 
 /// ぷよペアを右に移動する
 let movePuyoRight (state: GameState) : GameState =
     match state.CurrentPuyo with
     | Some pair ->
-        let movedAxis = Player.moveRight pair.Axis state.Stage.Cols
-        let dx = movedAxis.Position.X - pair.Axis.Position.X
-        let movedChild = { pair.Child with Position = { pair.Child.Position with X = pair.Child.Position.X + dx } }
-        { state with CurrentPuyo = Some { Axis = movedAxis; Child = movedChild } }
+        let movedPair = Player.movePairRight pair state.Stage.Cols
+        { state with CurrentPuyo = Some movedPair }
     | None -> state
 
 /// ぷよペアを回転する

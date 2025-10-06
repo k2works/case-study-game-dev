@@ -186,6 +186,59 @@ let freeFallTests =
             Expect.isFalse canMove "子ぷよが下端では移動できない"
     ]
 
+let puyoPairMoveTests =
+    testList "ぷよペアの移動" [
+        testCase "ぷよペアが左に移動できる" <| fun _ ->
+            let pair = Player.createNewPuyoPair()
+
+            let movedPair = Player.movePairLeft pair 6
+
+            Expect.equal movedPair.Axis.Position.X 1 "軸ぷよが左に移動"
+            Expect.equal movedPair.Child.Position.X 1 "子ぷよが左に移動"
+
+        testCase "ぷよペアが右に移動できる" <| fun _ ->
+            let pair = Player.createNewPuyoPair()
+
+            let movedPair = Player.movePairRight pair 6
+
+            Expect.equal movedPair.Axis.Position.X 3 "軸ぷよが右に移動"
+            Expect.equal movedPair.Child.Position.X 3 "子ぷよが右に移動"
+
+        testCase "右回転後に右端まで移動しても壁を越えない" <| fun _ ->
+            let pair = Player.createNewPuyoPair()
+
+            // 右回転（子ぷよが右に）
+            let rotatedPair = Player.rotateRight pair 6
+
+            // 右に3回移動（軸が5、子が6になろうとする）
+            let movedPair =
+                rotatedPair
+                |> fun p -> Player.movePairRight p 6
+                |> fun p -> Player.movePairRight p 6
+                |> fun p -> Player.movePairRight p 6
+
+            // 子ぷよが壁を越えないことを確認
+            Expect.isTrue (movedPair.Axis.Position.X <= 5) "軸ぷよが壁内"
+            Expect.isTrue (movedPair.Child.Position.X <= 5) "子ぷよが壁内"
+
+        testCase "左回転後に左端まで移動しても壁を越えない" <| fun _ ->
+            let pair = Player.createNewPuyoPair()
+
+            // 左回転（3回右回転）
+            let rotatedPair = Player.rotateRight (Player.rotateRight (Player.rotateRight pair 6) 6) 6
+
+            // 左に3回移動
+            let movedPair =
+                rotatedPair
+                |> fun p -> Player.movePairLeft p 6
+                |> fun p -> Player.movePairLeft p 6
+                |> fun p -> Player.movePairLeft p 6
+
+            // 子ぷよが壁を越えないことを確認
+            Expect.isTrue (movedPair.Axis.Position.X >= 0) "軸ぷよが壁内"
+            Expect.isTrue (movedPair.Child.Position.X >= 0) "子ぷよが壁内"
+    ]
+
 let landingTests =
     testList "着地処理" [
         testCase "着地したぷよはステージに固定される" <| fun _ ->
@@ -241,6 +294,7 @@ let tests =
         puyoPairTests
         puyoPairRotationTests
         wallKickTests
+        puyoPairMoveTests
         freeFallTests
         landingTests
     ]
