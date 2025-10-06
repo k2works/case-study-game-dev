@@ -1,13 +1,16 @@
 package game
 
 import (
+	"fmt"
 	"image/color"
 	"math/rand"
 
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/board"
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/pair"
 	"github.com/case-study-game-dev/puyo-puyo-go/internal/puyo"
+	"github.com/case-study-game-dev/puyo-puyo-go/internal/score"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
@@ -37,6 +40,7 @@ type Game struct {
 	Mode           GameMode
 	FallTimer      float64
 	moveDelayTimer int
+	Score          *score.Score
 }
 
 // New は新しいゲームを作成する
@@ -44,6 +48,7 @@ func New() *Game {
 	g := &Game{
 		Board: board.New(),
 		Mode:  ModePlaying,
+		Score: score.New(),
 	}
 	g.spawnNewPair()
 	return g
@@ -83,9 +88,22 @@ func (g *Game) Update() error {
 	case ModeChecking:
 		positions := g.Board.CheckErase()
 		if len(positions) > 0 {
+			// 連鎖数を増やす
+			g.Score.IncrementChain()
+
+			// スコアを加算
+			g.Score.Add(len(positions), g.Score.Chain)
+
+			// ぷよを消去
 			g.Board.Erase(positions)
+
+			// 重力適用モードへ
 			g.Mode = ModeFalling
 		} else {
+			// 消去するぷよがない場合は連鎖終了
+			g.Score.ResetChain()
+
+			// 新しいぷよペアを生成
 			g.spawnNewPair()
 		}
 	}
@@ -219,6 +237,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// 現在のぷよペアを描画
 	if g.CurrentPair != nil {
 		g.drawPuyoPair(screen)
+	}
+
+	// スコアを表示
+	scoreText := fmt.Sprintf("Score: %d", g.Score.Total)
+	ebitenutil.DebugPrintAt(screen, scoreText, 10, 10)
+
+	// 連鎖数を表示（連鎖中のみ）
+	if g.Score.Chain > 0 {
+		chainText := fmt.Sprintf("Chain: %d", g.Score.Chain)
+		ebitenutil.DebugPrintAt(screen, chainText, 10, 30)
 	}
 }
 
