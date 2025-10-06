@@ -283,11 +283,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	scoreText := fmt.Sprintf("Score: %d", g.Score.Total)
 	ebitenutil.DebugPrintAt(screen, scoreText, 10, 10)
 
-	// 連鎖数を表示（連鎖中のみ）
-	if g.Score.Chain > 0 {
-		chainText := fmt.Sprintf("Chain: %d", g.Score.Chain)
-		ebitenutil.DebugPrintAt(screen, chainText, 10, 30)
-	}
+	// 連鎖数を表示（常に表示）
+	chainText := fmt.Sprintf("Chain: %d", g.Score.Chain)
+	ebitenutil.DebugPrintAt(screen, chainText, 10, 30)
 
 	// ゲームオーバー表示
 	if g.Mode == ModeGameOver {
