@@ -3434,16 +3434,24 @@ impl Board {
     pub fn apply_gravity(&mut self) -> bool {
         let mut has_fallen = false;
 
-        // 下から2行目から上に向かってスキャン
-        for y in (0..BOARD_HEIGHT - 1).rev() {
-            for x in 0..BOARD_WIDTH {
-                if let Cell::Filled(color) = self.cells[y][x] {
-                    // 下が空いているかチェック
-                    if self.cells[y + 1][x] == Cell::Empty {
-                        // 1マス下に移動
-                        self.cells[y + 1][x] = Cell::Filled(color);
-                        self.cells[y][x] = Cell::Empty;
+        // 各列ごとに処理
+        for x in 0..self.cols {
+            // 下から詰めていく
+            let mut write_y = self.rows - 1; // 書き込み位置（下から）
+
+            // 下から上にスキャンして、ぷよを収集
+            for read_y in (0..self.rows).rev() {
+                if let Cell::Filled(color) = self.cells[x][read_y] {
+                    // ぷよがある場合
+                    if read_y != write_y {
+                        // 位置が異なる場合は移動
+                        self.cells[x][write_y] = Cell::Filled(color);
+                        self.cells[x][read_y] = Cell::Empty;
                         has_fallen = true;
+                    }
+                    // 次の書き込み位置を1つ上に
+                    if write_y > 0 {
+                        write_y -= 1;
                     }
                 }
             }
@@ -3455,6 +3463,8 @@ impl Board {
 ```
 
 「`has_fallen` を返すのはなぜですか？」良い質問ですね！重力処理は、ぷよが安定するまで繰り返し実行する必要があります。`has_fallen` が `true` の場合、まだ落下中のぷよがあるので、もう一度重力処理を実行します。
+
+この実装では、各列ごとに下から詰めていく方式を採用しています。これにより、一度の `apply_gravity` 呼び出しで、すべてのぷよが最終的な位置まで落下します。
 
 ### ゲームループとの統合
 
@@ -3514,8 +3524,32 @@ impl Game {
             } else {
                 // 着地処理
                 self.land_pair();
-                self.mode = GameMode::Checking;
             }
+        }
+    }
+
+    fn land_pair(&mut self) {
+        if let (Some(pair), Some(ref mut board)) = (self.current_pair.take(), &mut self.board) {
+            // 軸ぷよをボードに配置
+            if pair.axis_y >= 0 && pair.axis_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.axis_x as usize,
+                    pair.axis_y as usize,
+                    Cell::Filled(pair.axis_color),
+                );
+            }
+
+            // 子ぷよをボードに配置
+            if pair.child_y >= 0 && pair.child_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.child_x as usize,
+                    pair.child_y as usize,
+                    Cell::Filled(pair.child_color),
+                );
+            }
+
+            // 重力処理モードへ移行
+            self.mode = GameMode::Falling;
         }
     }
 }
@@ -3524,12 +3558,157 @@ impl Game {
 「ゲームモードの遷移が複雑になりましたね！」そうですね。整理すると：
 
 1. **Playing**: ぷよが落下中
-2. **Checking**: 着地後、消去判定を実行
-3. **Erasing**: ぷよを消去（即座に Falling へ）
-4. **Falling**: 重力を適用、落下が終わったら Checking へ
-5. **Checking**: 消去対象がなければ Playing（新しいぷよ）
+2. **着地**: `land_pair()` でぷよをボードに配置し、Falling モードへ
+3. **Falling**: 重力を適用、落下が終わったら Checking へ
+4. **Checking**: 消去判定を実行、消去対象があれば Erasing へ
+5. **Erasing**: ぷよを消去（即座に Falling へ）
+6. **Falling**: 重力を適用、落下が終わったら Checking へ
+7. **Checking**: 消去対象がなければ Playing（新しいぷよ）
 
 「連鎖も自動的に起きるんですね！」その通りです！Checking → Erasing → Falling → Checking のループで、連鎖が自動的に発生します。
+
+### バグ対応: 着地後の重力処理
+
+「実際にゲームを動かしてみたら、バグを見つけました！」どのようなバグでしたか？
+
+「縦になったぷよペアを着地させた後、横向きのぷよペアを重ねたとき、重なっていない方のぷよが浮いたままになってしまいます。」
+
+なるほど！具体的には、こんな状態ですね：
+
+```
+    2列  3列
+9行  [ ]  [ ]
+10行 [赤] [ ]
+11行 [赤] [ ]
+```
+
+この状態で、横向きペア（青・青）を (2, 9)-(3, 9) に着地させると：
+
+```
+    2列  3列
+9行  [青] [青]  ← この右側の青が浮いたまま
+10行 [赤] [ ]
+11行 [赤] [ ]
+```
+
+「そうです！3列の青ぷよが落ちるべきなのに、落ちないんです。」
+
+#### バグの原因
+
+問題は、最初の実装で `land_pair()` が `Checking` モードに直接遷移していたことです：
+
+```rust
+fn land_pair(&mut self) {
+    // ... ぷよをボードに配置 ...
+    self.mode = GameMode::Checking;  // ← これが問題
+}
+```
+
+このため、着地直後に消去判定が実行され、重力処理がスキップされていました。
+
+#### テスト: L 字型配置での重力処理
+
+まず、この問題を再現するテストを追加しましょう：
+
+```rust
+#[test]
+fn test_apply_gravity_l_shape() {
+    let mut board = Board::new(6, 12);
+    // L字型の配置（縦向きペア + 横向きペアを重ねた状態を模擬）
+    // 縦向きペア: (2,10), (2,11)
+    board.set_cell(2, 10, Cell::Filled(PuyoColor::Red));
+    board.set_cell(2, 11, Cell::Filled(PuyoColor::Red));
+
+    // 横向きペア: (2,9), (3,9) - 着地直後の状態
+    board.set_cell(2, 9, Cell::Filled(PuyoColor::Blue));
+    board.set_cell(3, 9, Cell::Filled(PuyoColor::Blue));
+
+    board.apply_gravity();
+
+    // (2,9)は(2,10)の上なので動かない
+    assert_eq!(board.get_cell(2, 9), Some(Cell::Filled(PuyoColor::Blue)));
+    // (3,9)は下が空いているので(3,11)まで落ちる
+    assert_eq!(board.get_cell(3, 9), Some(Cell::Empty));
+    assert_eq!(board.get_cell(3, 11), Some(Cell::Filled(PuyoColor::Blue)));
+}
+```
+
+「このテストは通りますか？」まず `apply_gravity` の実装は正しいので、このテストは通ります。
+
+```bash
+cargo test test_apply_gravity_l_shape
+```
+
+```
+test board::tests::test_apply_gravity_l_shape ... ok
+```
+
+「では、何が問題だったんですか？」問題は、ゲームフロー内で `land_pair` 後に重力処理をスキップしていたことです。
+
+#### 修正: 着地後は Falling モードへ
+
+解決策は、`land_pair()` 後に `Falling` モードに遷移させることです：
+
+```rust
+fn land_pair(&mut self) {
+    if let (Some(pair), Some(ref mut board)) = (self.current_pair.take(), &mut self.board) {
+        // 軸ぷよをボードに配置
+        if pair.axis_y >= 0 && pair.axis_y < board.rows() as i32 {
+            board.set_cell(
+                pair.axis_x as usize,
+                pair.axis_y as usize,
+                Cell::Filled(pair.axis_color),
+            );
+        }
+
+        // 子ぷよをボードに配置
+        if pair.child_y >= 0 && pair.child_y < board.rows() as i32 {
+            board.set_cell(
+                pair.child_x as usize,
+                pair.child_y as usize,
+                Cell::Filled(pair.child_color),
+            );
+        }
+
+        // 重力処理モードへ移行（修正後）
+        self.mode = GameMode::Falling;  // ← Checking から Falling に変更
+    }
+}
+```
+
+「これで正しい流れになりましたね！」そうです！修正後のゲームフローは：
+
+1. **着地**: `land_pair()` でぷよをボードに配置
+2. **Falling**: 重力を適用（浮いたぷよが落ちる）
+3. **Checking**: 消去判定を実行
+4. **Erasing**: 必要に応じて消去
+5. **Falling**: 消去後の重力処理（連鎖）
+
+テストを実行して、すべてが通ることを確認しましょう：
+
+```bash
+cargo test
+```
+
+```
+running 38 tests
+...
+test board::tests::test_apply_gravity_l_shape ... ok
+...
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+「バグが修正されました！」素晴らしい！実際にゲームを動かしてみて、バグを見つけて修正するというプロセスは、ソフトウェア開発において非常に重要です。
+
+#### 学んだこと
+
+このバグ対応から学んだこと：
+
+1. **テストだけでは不十分**: 個々のメソッドが正しくても、統合時にバグが発生することがある
+2. **ゲームフローの重要性**: 状態遷移の順序が重要
+3. **バグ再現テストの価値**: バグを再現するテストを書くことで、同じバグの再発を防げる
+4. **段階的なデバッグ**: 問題を切り分けて、原因を特定する
 
 ### イテレーション6のまとめ
 
@@ -3549,36 +3728,49 @@ impl Game {
    - `erase_puyos` メソッド: 指定された位置のぷよを `Cell::Empty` に設定
 
 4. **重力処理の実装**
-   - `apply_gravity` メソッド: 浮いているぷよを1マス下に落とす
+   - `apply_gravity` メソッド: 各列ごとに下から詰める方式で、すべてのぷよを最終位置まで一気に落とす
    - 戻り値で落下の有無を返す
-   - 下から2行目から上に向かってスキャン
+   - 列ごとに処理することで効率的に実装
 
 5. **ゲームモードの追加**
    - `Checking`: 消去判定
    - `Erasing`: 消去中
    - `Falling`: 落下中
-   - モード遷移: Playing → Checking → Erasing → Falling → Checking → ...
+   - モード遷移: Playing → 着地 → Falling → Checking → Erasing → Falling → Checking → ...
 
 6. **連鎖の自動発生**
    - Checking-Falling ループで自動的に連鎖が発生
    - 消去対象がなくなるまで繰り返し
 
-7. **テストの作成（合計34テスト）**
+7. **バグ対応: 着地後の重力処理**
+   - 問題: `land_pair()` が `Checking` モードに直接遷移していた
+   - 影響: 着地後に重力処理がスキップされ、浮いたぷよが落ちない
+   - 修正: `land_pair()` 後に `Falling` モードに遷移するように変更
+   - テスト追加: `test_apply_gravity_l_shape` で L 字型配置の重力処理を検証
+
+8. **テストの作成（合計38テスト）**
    - 接続判定のテスト（3テスト）
    - 消去判定のテスト（3テスト）
    - 消去処理のテスト（1テスト）
-   - 重力処理のテスト（1テスト）
+   - 重力処理のテスト（4テスト）
+     - 基本的な重力処理
+     - 複数ぷよの同時落下
+     - 積み重ねられたぷよの落下
+     - L 字型配置での重力処理（バグ再現テスト）
 
-8. **TDDサイクルの実践**
+9. **TDDサイクルの実践**
    - Red: 各機能のテストを先に作成
    - Green: 実装してテストを通過
    - Refactor: DFS アルゴリズムの分離
+   - バグ発見 → テスト追加 → 修正のサイクル
 
-9. **学んだ重要な概念**
-   - 深さ優先探索（DFS）: グラフ探索の基本アルゴリズム
-   - `HashSet`: 重複のない集合の管理
-   - 再帰: 自分自身を呼び出すメソッド
-   - ゲーム状態管理: モード遷移による複雑な処理の分離
+10. **学んだ重要な概念**
+    - 深さ優先探索（DFS）: グラフ探索の基本アルゴリズム
+    - `HashSet`: 重複のない集合の管理
+    - 再帰: 自分自身を呼び出すメソッド
+    - ゲーム状態管理: モード遷移による複雑な処理の分離
+    - 統合バグの重要性: 個々のメソッドが正しくても、統合時にバグが発生することがある
+    - バグ再現テストの価値: バグを再現するテストを書くことで、同じバグの再発を防げる
 
 **次のステップ**: 現在、ぷよは消えて連鎖も発生しますが、スコア計算がありません。次のイテレーションでは、スコアと連鎖数の表示を実装していきます。
 
