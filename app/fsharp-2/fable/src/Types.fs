@@ -21,3 +21,9 @@ type Puyo = {
     Color: PuyoColor
     Position: Position
 }
+
+/// ぷよペア（軸ぷよと子ぷよ）
+type PuyoPair = {
+    Axis: Puyo    // 軸ぷよ（回転の中心）
+    Child: Puyo   // 子ぷよ（回転する）
+}
