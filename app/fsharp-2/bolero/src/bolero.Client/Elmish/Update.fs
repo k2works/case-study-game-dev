@@ -61,7 +61,7 @@ module Update =
                 if isGameOver then
                     { model with
                         Board = boardAfterChain
-                        CurrentPiece = Some nextPiece
+                        CurrentPiece = None
                         Score = newScore
                         Status = GameOver },
                     Cmd.none

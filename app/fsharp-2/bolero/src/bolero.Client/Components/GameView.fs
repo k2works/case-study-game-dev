@@ -15,6 +15,7 @@ module GameView =
         | "ArrowDown" ->
             dispatch MoveDown
             dispatch StartFastFall
+        | "r" | "R" -> dispatch Restart
         | _ -> ()
 
     let private handleKeyUp (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
