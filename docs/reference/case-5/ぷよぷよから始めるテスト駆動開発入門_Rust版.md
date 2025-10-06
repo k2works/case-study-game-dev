@@ -3912,6 +3912,180 @@ fn test_all_clear_bonus() {
    - ゲームオーバー判定
    - リスタート機能
 
+### 統合テスト
+
+ここまで、各モジュールのユニットテストを各ソースファイルの末尾に配置してきました。これはRustの標準的な作法です。しかし、プロジェクトが成長するにつれて、複数のモジュールを組み合わせた実際のゲームシナリオをテストする必要が出てきます。
+
+Rustでは、このような統合テストを `tests/` ディレクトリに配置します。統合テストは外部のクレートと同じようにライブラリを使用するため、公開API（`pub`で宣言された要素）のみにアクセスできます。
+
+#### 統合テストの作成
+
+`tests/integration_test.rs` を作成して、実際のゲームシナリオをテストしましょう：
+
+```rust
+// tests/integration_test.rs
+use puyo_puyo_game::game::Game;
+use puyo_puyo_game::board::PuyoColor;
+
+#[test]
+fn test_complete_game_scenario() {
+    let mut game = Game::new();
+
+    // ゲームが正しく初期化されている
+    assert_eq!(game.score(), 0);
+    assert_eq!(game.chain_count(), 0);
+
+    // ゲームを開始
+    game.start();
+
+    // ぷよペアが生成されている
+    assert!(game.current_pair().is_some());
+}
+
+#[test]
+fn test_puyo_erasure_and_scoring() {
+    let mut game = Game::new();
+    game.start();
+
+    // 消去可能な配置を作成（4つの赤ぷよ）
+    game.board_mut().set_cell(11, 1, PuyoColor::Red);
+    game.board_mut().set_cell(11, 2, PuyoColor::Red);
+    game.board_mut().set_cell(10, 1, PuyoColor::Red);
+    game.board_mut().set_cell(10, 2, PuyoColor::Red);
+
+    // 残るぷよを配置（全消しを防ぐ）
+    game.board_mut().set_cell(11, 4, PuyoColor::Blue);
+
+    // 消去判定を実行
+    game.check_and_erase();
+
+    // スコアが加算されている
+    assert_eq!(game.score(), 40); // 4 * 10 = 40
+    assert_eq!(game.chain_count(), 1);
+}
+
+#[test]
+fn test_chain_reaction() {
+    let mut game = Game::new();
+    game.start();
+
+    // 1連鎖目の配置（赤4つ）
+    game.board_mut().set_cell(11, 1, PuyoColor::Red);
+    game.board_mut().set_cell(11, 2, PuyoColor::Red);
+    game.board_mut().set_cell(10, 1, PuyoColor::Red);
+    game.board_mut().set_cell(10, 2, PuyoColor::Red);
+
+    // 2連鎖目の配置（青3つ、赤の上）
+    game.board_mut().set_cell(9, 1, PuyoColor::Blue);
+    game.board_mut().set_cell(9, 2, PuyoColor::Blue);
+    game.board_mut().set_cell(8, 1, PuyoColor::Blue);
+    game.board_mut().set_cell(7, 2, PuyoColor::Blue);
+
+    // 残るぷよを配置
+    game.board_mut().set_cell(11, 4, PuyoColor::Green);
+
+    // 1回目の消去判定
+    game.check_and_erase();
+    let first_score = game.score();
+    assert_eq!(first_score, 40); // 4 * 10 * 1
+    assert_eq!(game.chain_count(), 1);
+
+    // 重力を適用
+    game.apply_gravity();
+
+    // 2回目の消去判定（青が落ちて4つ揃う）
+    game.check_and_erase();
+
+    // 2連鎖ボーナスが付いている
+    assert_eq!(game.score(), 120); // 40 + (4 * 10 * 2)
+    assert_eq!(game.chain_count(), 2);
+}
+
+#[test]
+fn test_all_clear_bonus() {
+    let mut game = Game::new();
+    game.start();
+
+    // 消去可能な4つの赤ぷよのみ配置
+    game.board_mut().set_cell(11, 1, PuyoColor::Red);
+    game.board_mut().set_cell(11, 2, PuyoColor::Red);
+    game.board_mut().set_cell(10, 1, PuyoColor::Red);
+    game.board_mut().set_cell(10, 2, PuyoColor::Red);
+
+    // 消去判定を実行
+    game.check_and_erase();
+
+    // 基本スコア + 全消しボーナス
+    assert_eq!(game.score(), 5040); // 40 + 5000
+    assert!(game.board().is_all_clear());
+}
+
+#[test]
+fn test_game_over_when_spawn_position_blocked() {
+    let mut game = Game::new();
+    game.start();
+
+    // 出現位置(2, 1)にぷよを配置
+    game.board_mut().set_cell(1, 2, PuyoColor::Red);
+
+    // 新しいぷよペアを生成しようとする
+    game.spawn_new_pair();
+
+    // ゲームオーバーになる
+    assert!(game.is_game_over());
+}
+
+#[test]
+fn test_restart_resets_game_state() {
+    let mut game = Game::new();
+    game.start();
+
+    // ゲーム状態を変更
+    game.board_mut().set_cell(11, 0, PuyoColor::Red);
+    game.add_score(1000);
+
+    // リスタート
+    game.restart();
+
+    // すべてがリセットされている
+    assert_eq!(game.score(), 0);
+    assert_eq!(game.chain_count(), 0);
+    assert!(game.board().is_all_clear());
+    assert!(game.current_pair().is_some());
+}
+```
+
+#### 統合テストの実行
+
+統合テストは通常のテストと同じように実行できます：
+
+```bash
+# すべてのテスト（ユニット + 統合）を実行
+cargo test
+
+# 統合テストのみ実行
+cargo test --test integration_test
+
+# 特定のテストを実行
+cargo test test_chain_reaction
+```
+
+#### ユニットテストと統合テストの使い分け
+
+**ユニットテスト（`src/` 内の `#[cfg(test)]` モジュール）**：
+- 個別の関数やメソッドの動作を検証
+- 内部実装の詳細をテスト可能
+- 高速で実行できる
+- 各モジュールの責務を明確化
+
+**統合テスト（`tests/` ディレクトリ）**：
+- 複数のモジュールを組み合わせた動作を検証
+- 公開APIのみを使用（実際の利用シーンに近い）
+- エンドツーエンドのシナリオをテスト
+- ライブラリ全体の動作を保証
+
+このように、ユニットテストと統合テストを組み合わせることで、個々のコンポーネントから全体のシステムまで、包括的にテストできます。
+
 ### TDDで学んだこと
 
 1. **Red-Green-Refactor サイクル**
