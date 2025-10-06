@@ -52,6 +52,12 @@ func (p *PuyoPair) MoveRight() {
 	p.ChildX++
 }
 
+// MoveDown は軸ぷよと子ぷよを下に移動する
+func (p *PuyoPair) MoveDown() {
+	p.AxisY++
+	p.ChildY++
+}
+
 // IsCollision は指定した位置に衝突があるかチェックする
 func (p *PuyoPair) IsCollision(b *board.Board, axisX, axisY, childX, childY int) bool {
 	// 軸ぷよの衝突判定
@@ -95,6 +101,11 @@ func (p *PuyoPair) CanMoveLeft(b *board.Board) bool {
 // CanMoveRight は右に移動できるかチェックする
 func (p *PuyoPair) CanMoveRight(b *board.Board) bool {
 	return !p.IsCollision(b, p.AxisX+1, p.AxisY, p.ChildX+1, p.ChildY)
+}
+
+// CanMoveDown は下に移動できるかチェックする
+func (p *PuyoPair) CanMoveDown(b *board.Board) bool {
+	return !p.IsCollision(b, p.AxisX, p.AxisY+1, p.ChildX, p.ChildY+1)
 }
 
 // calcChildPosition は方向から子ぷよの位置を計算する

@@ -18,12 +18,24 @@ const (
 	CellSize     = 30
 	BoardOffsetX = 30
 	BoardOffsetY = 30
+	FallInterval = 0.5 // 0.5秒ごとに落下
+)
+
+// GameMode はゲームの状態を表す
+type GameMode int
+
+const (
+	ModePlaying GameMode = iota
+	ModeFalling
+	ModeChecking
 )
 
 // Game はゲームの状態を管理する
 type Game struct {
 	Board          *board.Board
 	CurrentPair    *pair.PuyoPair
+	Mode           GameMode
+	FallTimer      float64
 	moveDelayTimer int
 }
 
@@ -31,6 +43,7 @@ type Game struct {
 func New() *Game {
 	g := &Game{
 		Board: board.New(),
+		Mode:  ModePlaying,
 	}
 	g.spawnNewPair()
 	return g
@@ -53,8 +66,30 @@ func (g *Game) spawnNewPair() {
 
 // Update はゲームの状態を更新する（1フレームごとに呼ばれる）
 func (g *Game) Update() error {
+	dt := 1.0 / 60.0 // 60FPS
+
+	switch g.Mode {
+	case ModePlaying:
+		g.handleInput()
+		g.updateFall(dt)
+	case ModeFalling:
+		// 落下中のぷよを処理
+		g.applyGravity()
+		if !g.hasFloatingPuyo() {
+			g.Mode = ModeChecking
+		}
+	case ModeChecking:
+		// 消去チェック（次のイテレーションで実装）
+		g.spawnNewPair()
+		g.Mode = ModePlaying
+	}
+
+	return nil
+}
+
+func (g *Game) handleInput() {
 	if g.CurrentPair == nil {
-		return nil
+		return
 	}
 
 	// 移動ディレイタイマーを減らす
@@ -100,8 +135,74 @@ func (g *Game) Update() error {
 	if inpututil.IsKeyJustPressed(ebiten.KeyZ) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		g.CurrentPair.Rotate(g.Board)
 	}
+}
 
-	return nil
+func (g *Game) updateFall(dt float64) {
+	if g.CurrentPair == nil {
+		return
+	}
+
+	g.FallTimer += dt
+
+	if g.FallTimer >= FallInterval {
+		g.FallTimer = 0
+
+		// 下に移動できるかチェック
+		if g.CurrentPair.CanMoveDown(g.Board) {
+			g.CurrentPair.MoveDown()
+		} else {
+			// 着地
+			g.lockPair()
+			g.Mode = ModeFalling
+		}
+	}
+}
+
+func (g *Game) lockPair() {
+	if g.CurrentPair == nil {
+		return
+	}
+
+	// 軸ぷよをボードに配置
+	g.Board.Set(g.CurrentPair.AxisY, g.CurrentPair.AxisX, g.CurrentPair.AxisColor)
+
+	// 子ぷよをボードに配置（画面内の場合のみ）
+	if g.CurrentPair.ChildY >= 0 {
+		g.Board.Set(g.CurrentPair.ChildY, g.CurrentPair.ChildX, g.CurrentPair.ChildColor)
+	}
+
+	g.CurrentPair = nil
+}
+
+func (g *Game) applyGravity() {
+	// ボードの下から上に向かって処理
+	for col := 0; col < board.Cols; col++ {
+		for row := board.Rows - 2; row >= 0; row-- {
+			if g.Board.Get(row, col) != puyo.ColorNone {
+				// 下に空きがあれば落とす
+				newRow := row
+				for newRow+1 < board.Rows && g.Board.Get(newRow+1, col) == puyo.ColorNone {
+					newRow++
+				}
+				if newRow != row {
+					g.Board.Set(newRow, col, g.Board.Get(row, col))
+					g.Board.Set(row, col, puyo.ColorNone)
+				}
+			}
+		}
+	}
+}
+
+func (g *Game) hasFloatingPuyo() bool {
+	// 各列について、空きの上にぷよがあるかチェック
+	for col := 0; col < board.Cols; col++ {
+		for row := board.Rows - 1; row > 0; row-- {
+			if g.Board.Get(row, col) == puyo.ColorNone && g.Board.Get(row-1, col) != puyo.ColorNone {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Draw は画面を描画する

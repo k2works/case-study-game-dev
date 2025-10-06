@@ -143,3 +143,36 @@ func TestPuyoPairRotate(t *testing.T) {
 		assert.Equal(t, DirUp, p.Direction)
 	})
 }
+
+func TestPuyoPairMoveDown(t *testing.T) {
+	t.Run("下に移動すると位置が1増える", func(t *testing.T) {
+		p := New(2, 5, puyo.ColorRed, puyo.ColorBlue)
+
+		p.MoveDown()
+
+		assert.Equal(t, 6, p.AxisY)
+		assert.Equal(t, 5, p.ChildY)
+	})
+
+	t.Run("空いている位置は下に移動できる", func(t *testing.T) {
+		p := New(2, 5, puyo.ColorRed, puyo.ColorBlue)
+		b := board.New()
+
+		assert.True(t, p.CanMoveDown(b))
+	})
+
+	t.Run("ボード下端では移動できない", func(t *testing.T) {
+		p := New(2, 11, puyo.ColorRed, puyo.ColorBlue)
+		b := board.New()
+
+		assert.False(t, p.CanMoveDown(b))
+	})
+
+	t.Run("ぷよがある位置には移動できない", func(t *testing.T) {
+		p := New(2, 5, puyo.ColorRed, puyo.ColorBlue)
+		b := board.New()
+		b.Set(6, 2, puyo.ColorGreen) // 軸ぷよの下
+
+		assert.False(t, p.CanMoveDown(b))
+	})
+}
