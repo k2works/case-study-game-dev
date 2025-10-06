@@ -287,6 +287,19 @@ let landingTests =
             Expect.isFalse canMove "ぷよの上には移動できない"
     ]
 
+let fastDropTests =
+    testList "高速落下" [
+        testCase "通常の落下速度は1倍" <| fun _ ->
+            let speed = Player.getDropSpeed false
+
+            Expect.equal speed 1.0 "通常速度は1.0"
+
+        testCase "下キーが押されていると落下速度が10倍になる" <| fun _ ->
+            let speed = Player.getDropSpeed true
+
+            Expect.equal speed 10.0 "高速落下速度は10.0"
+    ]
+
 let tests =
     testList "プレイヤー機能" [
         playerTests
@@ -297,4 +310,5 @@ let tests =
         puyoPairMoveTests
         freeFallTests
         landingTests
+        fastDropTests
     ]

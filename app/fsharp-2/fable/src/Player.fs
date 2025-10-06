@@ -139,3 +139,10 @@ let movePairRight (pair: PuyoPair) (stageCols: int) : PuyoPair =
           Child = { pair.Child with Position = { pair.Child.Position with X = pair.Child.Position.X + 1 } } }
     else
         pair
+
+/// 落下速度を取得する
+let getDropSpeed (isDownKeyPressed: bool) : float =
+    if isDownKeyPressed then
+        10.0  // 高速落下
+    else
+        1.0   // 通常速度

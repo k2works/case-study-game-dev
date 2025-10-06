@@ -13,6 +13,9 @@ let ctx = canvas.getContext_2d()
 // ゲームの初期化
 let mutable gameState = Game.init()
 
+// キー入力の状態
+let mutable isDownKeyPressed = false
+
 // 定数
 let cellSize = 32.0
 let offsetX = 10.0
@@ -70,7 +73,7 @@ let render () =
     // 操作方法を表示
     ctx.fillStyle <- !!("#666")
     ctx.font <- "14px Arial"
-    ctx.fillText("←→: 移動  ↑: 回転", 10.0, float gameState.Stage.Rows * cellSize + offsetY + 30.0)
+    ctx.fillText("←→: 移動  ↑: 回転  ↓: 高速落下", 10.0, float gameState.Stage.Rows * cellSize + offsetY + 30.0)
 
     // ステージ上のぷよを描画
     for row in 0 .. gameState.Stage.Rows - 1 do
@@ -100,19 +103,38 @@ let handleKeyDown (e: Event) =
     | "ArrowUp" ->
         gameState <- Game.rotatePuyo gameState
         render()
+    | "ArrowDown" ->
+        isDownKeyPressed <- true
+    | _ -> ()
+
+let handleKeyUp (e: Event) =
+    let ke = e :?> KeyboardEvent
+    match ke.key with
+    | "ArrowDown" ->
+        isDownKeyPressed <- false
     | _ -> ()
 
 // ゲームループ
-let gameLoop () =
-    gameState <- Game.autoFall gameState
-    render()
+let mutable lastFallTime = 0.0
+let baseFallInterval = 1000.0 // 基本落下間隔（ミリ秒）
+
+let rec update (currentTime: float) =
+    let speed = Player.getDropSpeed isDownKeyPressed
+    let fallInterval = baseFallInterval / speed
+
+    if currentTime - lastFallTime >= fallInterval then
+        gameState <- Game.autoFall gameState
+        lastFallTime <- currentTime
+        render()
+
+    Browser.Dom.window.requestAnimationFrame(update) |> ignore
 
 // イベントリスナーを追加
 document.addEventListener("keydown", handleKeyDown)
+document.addEventListener("keyup", handleKeyUp)
 
-// ゲームループを開始（1秒ごとに落下）
-let fallInterval = 1000 // ミリ秒
-Browser.Dom.window.setInterval(gameLoop, fallInterval) |> ignore
+// ゲームループを開始
+Browser.Dom.window.requestAnimationFrame(update) |> ignore
 
 // 初期描画
 render()
