@@ -144,25 +144,28 @@ impl Board {
     pub fn apply_gravity(&mut self) -> bool {
         let mut has_fallen = false;
 
-        // 各列ごとに処理
         for x in 0..self.cols {
-            // 下から詰めていく
-            let mut write_y = self.rows - 1; // 書き込み位置（下から）
+            if self.apply_gravity_to_column(x) {
+                has_fallen = true;
+            }
+        }
 
-            // 下から上にスキャンして、ぷよを収集
-            for read_y in (0..self.rows).rev() {
-                if let Cell::Filled(color) = self.cells[x][read_y] {
-                    // ぷよがある場合
-                    if read_y != write_y {
-                        // 位置が異なる場合は移動
-                        self.cells[x][write_y] = Cell::Filled(color);
-                        self.cells[x][read_y] = Cell::Empty;
-                        has_fallen = true;
-                    }
-                    // 次の書き込み位置を1つ上に
-                    if write_y > 0 {
-                        write_y -= 1;
-                    }
+        has_fallen
+    }
+
+    fn apply_gravity_to_column(&mut self, x: usize) -> bool {
+        let mut has_fallen = false;
+        let mut write_y = self.rows - 1;
+
+        for read_y in (0..self.rows).rev() {
+            if let Cell::Filled(color) = self.cells[x][read_y] {
+                if read_y != write_y {
+                    self.cells[x][write_y] = Cell::Filled(color);
+                    self.cells[x][read_y] = Cell::Empty;
+                    has_fallen = true;
+                }
+                if write_y > 0 {
+                    write_y -= 1;
                 }
             }
         }
