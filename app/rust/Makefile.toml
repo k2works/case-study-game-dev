@@ -1,0 +1,55 @@
+[config]
+default_to_workspace = false
+
+# テストタスク
+[tasks.test]
+command = "cargo"
+args = ["test"]
+
+# テストカバレッジタスク
+[tasks.coverage]
+command = "cargo"
+args = ["tarpaulin", "--out", "Html"]
+
+# 静的コード解析タスク
+[tasks.lint]
+command = "cargo"
+args = ["clippy", "--", "-D", "warnings"]
+
+# コードフォーマットタスク
+[tasks.format]
+command = "cargo"
+args = ["fmt"]
+
+# フォーマットチェックタスク
+[tasks.format-check]
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
+# ビルドタスク
+[tasks.build]
+command = "cargo"
+args = ["build"]
+
+# 実行タスク
+[tasks.run]
+command = "cargo"
+args = ["run"]
+
+# 全体チェックタスク（自動修正付き）
+[tasks.check-all]
+dependencies = ["format", "lint", "test"]
+
+# 全体チェックタスク（自動修正なし）
+[tasks.verify]
+dependencies = ["format-check", "lint", "test"]
+
+# ウォッチタスク（ファイル変更を監視して自動実行）
+[tasks.watch]
+command = "cargo"
+args = ["watch", "-x", "test", "-x", "clippy", "-x", "fmt"]
+install_crate = "cargo-watch"
+
+# デフォルトタスク
+[tasks.default]
+alias = "test"
