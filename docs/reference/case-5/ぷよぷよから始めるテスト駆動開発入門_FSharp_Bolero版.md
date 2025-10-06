@@ -1263,7 +1263,7 @@ module Board =
             Empty
 
     /// セルの設定（イミュータブル）
-    let setCell (board: Board) (x: int) (y: int) (cell: Cell) : Board =
+    let setCell (x: int) (y: int) (cell: Cell) (board: Board) : Board =
         if y >= 0 && y < board.Rows && x >= 0 && x < board.Cols then
             let newCells =
                 board.Cells
@@ -1279,6 +1279,8 @@ module Board =
 ```
 
 「`Array.mapi`を使って新しい配列を作成しているんですね！」そうです！F#では元のデータを変更せず、新しいデータを作成して返すのが基本です。`mapi`は`map`にインデックスが追加されたバージョンで、各要素の位置を確認しながら変換できます。
+
+> **💡 ポイント**: `setCell` の引数順序を `(x: int) (y: int) (cell: Cell) (board: Board)` にすることで、F# のパイプライン演算子 `|>` との相性が良くなります。`board |> setCell 2 10 (Filled Red)` のように自然に記述できます。
 
 テストを実行して、すべて通ることを確認しましょう：
 
@@ -3536,7 +3538,7 @@ let ``指定した位置のぷよを消去できる`` () =
 
     // Act
     let positions = [(0, 12); (1, 12); (2, 12); (3, 12)]
-    let newBoard = Board.clearPuyos board positions
+    let newBoard = board |> Board.clearPuyos positions
 
     // Assert
     Board.getCell newBoard 0 12 |> should equal Empty
@@ -3554,12 +3556,12 @@ module Board =
     // ... 既存のコード ...
 
     /// 指定位置のぷよを消去
-    let clearPuyos (board: Board) (positions: (int * int) list) : Board =
+    let clearPuyos (positions: (int * int) list) (board: Board) : Board =
         positions
-        |> List.fold (fun b (x, y) -> setCell b x y Empty) board
+        |> List.fold (fun b (x, y) -> setCell x y Empty b) board
 ```
 
-「`List.fold`を使って連鎖的に消去しているんですね！」そうです！関数型プログラミングの典型的なパターンです。
+「`List.fold`を使って連鎖的に消去しているんですね！」そうです！関数型プログラミングの典型的なパターンです。また、`setCell` の引数順序を変更したことで、パイプライン演算子と組み合わせて使いやすくなりました。
 
 ### テスト: 重力による落下
 
@@ -3655,11 +3657,12 @@ module Board =
                 let groups = Board.findConnectedGroups boardWithPuyo
                 let boardAfterClear =
                     if List.isEmpty groups then
-                        boardWithPuyo
+                        Board.applyGravity boardWithPuyo
                     else
                         let positions = groups |> List.concat
-                        let clearedBoard = Board.clearPuyos boardWithPuyo positions
-                        Board.applyGravity clearedBoard
+                        boardWithPuyo
+                        |> Board.clearPuyos positions
+                        |> Board.applyGravity
 
                 let nextPiece = PuyoPair.createRandom 2 1 0
                 {
@@ -3676,8 +3679,10 @@ module Board =
 1. ぷよをボードに固定
 2. つながっているぷよを検出
 3. 4つ以上のグループがあれば消去
-4. 重力を適用して浮いているぷよを落とす
+4. **重力を常に適用して浮いているぷよを落とす**（消去がない場合も適用）
 5. 新しいぷよを生成
+
+> **🔧 重要な修正点**: 初期の実装では、消去がない場合は重力を適用していませんでした。しかし、これではぷよペアの片方が空中に浮いたままになる問題が発生します。そのため、消去の有無にかかわらず、着地後は常に `Board.applyGravity` を適用するよう修正しました。
 
 ### テスト: Update関数の統合テスト
 
@@ -3697,8 +3702,8 @@ let ``着地時に4つ以上つながったぷよが消える`` () =
         |> Board.setCell 1 12 (Filled Red)
         |> Board.setCell 2 12 (Filled Red)
 
-    // 4つ目のぷよを落とす
-    let pair = PuyoPair.create 3 11 Red Green 0
+    // 4つ目のぷよを落とす（1回のTickで着地する位置に配置）
+    let pair = PuyoPair.create 3 12 Red Green 0
     let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
 
     // Act
@@ -3709,11 +3714,39 @@ let ``着地時に4つ以上つながったぷよが消える`` () =
     Board.getCell newModel.Board 0 12 |> should equal Empty
     Board.getCell newModel.Board 1 12 |> should equal Empty
     Board.getCell newModel.Board 2 12 |> should equal Empty
-    Board.getCell newModel.Board 3 12 |> should equal Empty
 
-    // 緑のぷよは残っている
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
+    // 緑のぷよは重力で落ちて下端に残っている
+    Board.getCell newModel.Board 3 12 |> should equal (Filled Green)
+
+[<Fact>]
+let ``着地時に消去されなくても重力が適用される`` () =
+    // Arrange
+    let model = Model.init ()
+    // 縦向きのぷよペアを配置（下端）
+    let board =
+        model.Board
+        |> Board.setCell 3 12 (Filled Red)   // 軸ぷよ
+        |> Board.setCell 3 11 (Filled Green) // 子ぷよ
+
+    // 横向きのぷよペアを重ねる（rotation=3で左向き、軸ぷよが右）
+    let pair = PuyoPair.create 3 10 Blue Yellow 3
+    let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
+
+    // Act
+    let (newModel, _) = Update.update Tick model  // 着地
+
+    // Assert
+    // 軸ぷよ（Blue）は縦ぷよの上に着地
+    Board.getCell newModel.Board 3 10 |> should equal (Filled Blue)
+
+    // 子ぷよ（Yellow）は重力で(2,12)に落ちる
+    Board.getCell newModel.Board 2 12 |> should equal (Filled Yellow)
+
+    // (2,10)は空になっている
+    Board.getCell newModel.Board 2 10 |> should equal Empty
 ```
+
+「浮遊ぷよのテストを追加したんですね！」そうです！横向きのぷよペアの片方が縦向きのぷよに重なり、もう片方が空中に浮く状況を再現しています。着地後は常に重力が適用されるため、浮いているぷよは正しく落下します。
 
 ### 動作確認
 
@@ -3761,7 +3794,8 @@ git commit -m "feat: implement puyo clearing and gravity
    - 列ごとの再配置：重力処理
 
 3. **Elmish層**
-   - `dropPuyo`の拡張：着地→消去→重力の流れ
+   - `dropPuyo`の拡張：着地→消去→**常に重力を適用**
+   - 消去の有無にかかわらず重力を適用することで浮遊ぷよを防止
 
 4. **テスト**
    - つながったぷよの検出テスト（4テスト）
@@ -3771,7 +3805,9 @@ git commit -m "feat: implement puyo clearing and gravity
      - 3つ以下は検出されない
    - 消去処理のテスト（1テスト）
    - 重力処理のテスト（2テスト）
-   - 統合テスト（1テスト）
+   - 統合テスト（2テスト）
+     - 着地時の消去処理
+     - **浮遊ぷよの重力適用**（重要なエッジケース）
 
 5. **学んだ重要な概念**
    - BFS（幅優先探索）アルゴリズム
@@ -3780,10 +3816,13 @@ git commit -m "feat: implement puyo clearing and gravity
    - `List.fold`による連鎖的な更新
    - ミュータブルな配列の局所的な使用（重力処理）
    - 列ごとのフィルタと再配置
+   - **パイプライン対応の関数設計**（引数順序の工夫）
 
 6. **F#らしい実装**
    - 再帰関数によるBFS
    - パターンマッチングによる分岐
+   - パイプライン演算子 `|>` を活用した可読性の高いコード
+   - データを最後の引数に配置する関数設計
    - イミュータブルな設計（Set、List）
    - パイプライン演算子による連鎖
    - `List.fold`による集約
