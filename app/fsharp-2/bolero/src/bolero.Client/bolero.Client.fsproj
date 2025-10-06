@@ -10,6 +10,7 @@
     <Compile Include="Domain\PuyoPair.fs" />
     <Compile Include="Domain\Board.fs" />
     <Compile Include="Domain\GameLogic.fs" />
+    <Compile Include="Domain\Score.fs" />
     <Compile Include="Elmish\Model.fs" />
     <Compile Include="Elmish\Update.fs" />
     <Compile Include="Elmish\Subscription.fs" />

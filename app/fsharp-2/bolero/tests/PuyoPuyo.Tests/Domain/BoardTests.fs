@@ -319,3 +319,44 @@ module BoardTests =
         for y in 0..11 do
             for x in 0..5 do
                 Board.getCell result x y |> should equal Empty
+
+    [<Fact>]
+    let ``盤面上のぷよがすべて消えると全消しになる`` () =
+        let board =
+            Board.create 6 12
+            |> Board.setCell 1 10 (Filled Red)
+            |> Board.setCell 2 10 (Filled Red)
+            |> Board.setCell 1 11 (Filled Red)
+            |> Board.setCell 2 11 (Filled Red)
+
+        // 消去判定と実行
+        let groups = Board.findConnectedGroups board
+        let positions = groups |> List.concat
+        let clearedBoard = Board.clearPuyos positions board
+
+        // 全消し判定
+        let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+        // 全消しになっていることを確認
+        isZenkeshi |> should equal true
+
+    [<Fact>]
+    let ``盤面上にぷよが残っていると全消しにならない`` () =
+        let board =
+            Board.create 6 12
+            |> Board.setCell 1 10 (Filled Red)
+            |> Board.setCell 2 10 (Filled Red)
+            |> Board.setCell 1 11 (Filled Red)
+            |> Board.setCell 2 11 (Filled Red)
+            |> Board.setCell 3 11 (Filled Blue) // 消えないぷよ
+
+        // 消去判定と実行
+        let groups = Board.findConnectedGroups board
+        let positions = groups |> List.concat
+        let clearedBoard = Board.clearPuyos positions board
+
+        // 全消し判定
+        let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+        // 全消しになっていないことを確認
+        isZenkeshi |> should equal false

@@ -144,3 +144,8 @@ module Board =
 
             // 再帰的に消去判定を繰り返す
             clearAndApplyGravityRepeatedly boardAfterGravity
+
+    /// 全消し判定（盤面上にぷよがあるかチェック）
+    let checkZenkeshi (board: Board) : bool =
+        board.Cells
+        |> Array.forall (fun row -> row |> Array.forall (fun cell -> cell = Empty))
