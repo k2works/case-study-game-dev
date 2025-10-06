@@ -20,3 +20,15 @@ let create () : StageState =
         Rows = rows
         Cols = cols
     }
+
+/// ステージにぷよを設定する
+let setPuyo (x: int) (y: int) (color: PuyoColor) (stage: StageState) : StageState =
+    let newCells = Array.init stage.Rows (fun row ->
+        if row = y then
+            Array.init stage.Cols (fun col ->
+                if col = x then color else stage.Cells.[row].[col]
+            )
+        else
+            Array.copy stage.Cells.[row]
+    )
+    { stage with Cells = newCells }
