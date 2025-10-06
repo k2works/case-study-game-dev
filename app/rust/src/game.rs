@@ -83,20 +83,50 @@ impl Game {
     }
 
     pub fn update(&mut self, delta_time: f32) {
-        if self.mode != GameMode::Playing {
-            return;
-        }
+        match self.mode {
+            GameMode::Playing => {
+                // 入力処理
+                self.handle_input();
 
-        // 入力処理
-        self.handle_input();
+                // 落下タイマーを更新
+                self.fall_timer += delta_time;
 
-        // 落下タイマーを更新
-        self.fall_timer += delta_time;
-
-        // 一定時間経過したら自動落下
-        if self.fall_timer >= self.fall_interval {
-            self.auto_fall();
-            self.fall_timer = 0.0;
+                // 一定時間経過したら自動落下
+                if self.fall_timer >= self.fall_interval {
+                    self.auto_fall();
+                    self.fall_timer = 0.0;
+                }
+            }
+            GameMode::Checking => {
+                // 消去判定
+                if let Some(ref board) = self.board {
+                    let erase_positions = board.check_erase();
+                    if !erase_positions.is_empty() {
+                        // 消去対象がある場合、消去してFallingモードへ
+                        if let Some(ref mut board) = self.board {
+                            board.erase_puyos(&erase_positions);
+                        }
+                        self.mode = GameMode::Falling;
+                    } else {
+                        // 消去対象がない場合、新しいぷよを生成してPlayingモードに戻る
+                        if self.current_pair.is_none() {
+                            self.spawn_new_pair();
+                        }
+                        self.mode = GameMode::Playing;
+                    }
+                }
+            }
+            GameMode::Falling => {
+                // 重力処理
+                if let Some(ref mut board) = self.board {
+                    let has_fallen = board.apply_gravity();
+                    if !has_fallen {
+                        // すべて落ちきったら、再度消去判定へ
+                        self.mode = GameMode::Checking;
+                    }
+                }
+            }
+            _ => {}
         }
     }
 
@@ -161,8 +191,8 @@ impl Game {
                 );
             }
 
-            // 次のぷよを生成
-            self.spawn_new_pair();
+            // 消去判定モードへ移行
+            self.mode = GameMode::Checking;
         }
     }
 
