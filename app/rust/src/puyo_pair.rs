@@ -211,6 +211,19 @@ impl PuyoPair {
         self.axis_x = original_axis_x;
         self.child_x = original_child_x;
     }
+
+    pub fn can_move_down(&self, board: &Board) -> bool {
+        let new_axis_y = self.axis_y + 1;
+        let new_child_y = self.child_y + 1;
+
+        // 範囲チェックと衝突判定
+        !self.is_collision(board, self.axis_x, new_axis_y, self.child_x, new_child_y)
+    }
+
+    pub fn move_down(&mut self) {
+        self.axis_y += 1;
+        self.child_y += 1;
+    }
 }
 
 #[cfg(test)]
@@ -397,5 +410,45 @@ mod tests {
         assert_eq!(pair.axis_x, 1);
         assert_eq!(pair.child_x, 0);
         assert_eq!(pair.child_y, 1);
+    }
+
+    #[test]
+    fn test_can_move_down() {
+        let board = Board::new(6, 12);
+        // 初期位置: 軸(2,1), 子(2,0)
+        let pair = PuyoPair::new(2, 1, PuyoColor::Red, PuyoColor::Blue);
+        assert!(pair.can_move_down(&board));
+    }
+
+    #[test]
+    fn test_cannot_move_down_at_bottom() {
+        let board = Board::new(6, 12);
+        // 下端: 軸(2,11), 子(2,10)
+        let mut pair = PuyoPair::new(2, 11, PuyoColor::Red, PuyoColor::Blue);
+        pair.child_y = 10;
+        assert!(!pair.can_move_down(&board));
+    }
+
+    #[test]
+    fn test_cannot_move_down_when_blocked() {
+        let mut board = Board::new(6, 12);
+        // ボードの(2,2)に既にぷよが配置されている
+        board.set_cell(2, 2, Cell::Filled(PuyoColor::Yellow));
+
+        // 軸(2,1), 子(2,0)のペアは下に移動できない
+        let pair = PuyoPair::new(2, 1, PuyoColor::Red, PuyoColor::Blue);
+        assert!(!pair.can_move_down(&board));
+    }
+
+    #[test]
+    fn test_move_down_changes_position() {
+        let mut pair = PuyoPair::new(2, 1, PuyoColor::Red, PuyoColor::Blue);
+        let initial_axis_y = pair.axis_y;
+        let initial_child_y = pair.child_y;
+
+        pair.move_down();
+
+        assert_eq!(pair.axis_y, initial_axis_y + 1);
+        assert_eq!(pair.child_y, initial_child_y + 1);
     }
 }

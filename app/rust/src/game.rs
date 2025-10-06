@@ -18,6 +18,8 @@ pub struct Game {
     chain_count: i32,
     board: Option<Board>,
     current_pair: Option<PuyoPair>,
+    fall_timer: f32,
+    fall_interval: f32,
 }
 
 impl Game {
@@ -28,6 +30,8 @@ impl Game {
             chain_count: 0,
             board: Some(Board::new(6, 12)),
             current_pair: None,
+            fall_timer: 0.0,
+            fall_interval: 1.0, // 1秒ごとに落下
         }
     }
 
@@ -78,11 +82,25 @@ impl Game {
         self.current_pair = Some(pair);
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, delta_time: f32) {
         if self.mode != GameMode::Playing {
             return;
         }
 
+        // 入力処理
+        self.handle_input();
+
+        // 落下タイマーを更新
+        self.fall_timer += delta_time;
+
+        // 一定時間経過したら自動落下
+        if self.fall_timer >= self.fall_interval {
+            self.auto_fall();
+            self.fall_timer = 0.0;
+        }
+    }
+
+    fn handle_input(&mut self) {
         if let Some(ref mut pair) = self.current_pair {
             if let Some(ref board) = self.board {
                 // 左矢印キーが押されたら左に移動
@@ -101,7 +119,50 @@ impl Game {
                 if is_key_pressed(KeyCode::Z) {
                     pair.rotate_left_with_wall_kick(board);
                 }
+                // 下矢印キーが押されたら高速落下
+                if is_key_pressed(KeyCode::Down) && pair.can_move_down(board) {
+                    pair.move_down();
+                    self.fall_timer = 0.0; // タイマーをリセット
+                }
             }
+        }
+    }
+
+    fn auto_fall(&mut self) {
+        if let Some(ref mut pair) = self.current_pair {
+            if let Some(ref board) = self.board {
+                if pair.can_move_down(board) {
+                    pair.move_down();
+                } else {
+                    // 着地処理
+                    self.land_pair();
+                }
+            }
+        }
+    }
+
+    fn land_pair(&mut self) {
+        if let (Some(pair), Some(ref mut board)) = (self.current_pair.take(), &mut self.board) {
+            // 軸ぷよをボードに配置
+            if pair.axis_y >= 0 && pair.axis_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.axis_x as usize,
+                    pair.axis_y as usize,
+                    Cell::Filled(pair.axis_color),
+                );
+            }
+
+            // 子ぷよをボードに配置
+            if pair.child_y >= 0 && pair.child_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.child_x as usize,
+                    pair.child_y as usize,
+                    Cell::Filled(pair.child_color),
+                );
+            }
+
+            // 次のぷよを生成
+            self.spawn_new_pair();
         }
     }
 

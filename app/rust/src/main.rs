@@ -23,7 +23,8 @@ async fn main() {
         }
 
         // ゲームの更新処理
-        game.update();
+        let delta_time = get_frame_time();
+        game.update(delta_time);
 
         // ゲームの描画処理
         if game.mode() == puyo_puyo_game::game::GameMode::Start {
