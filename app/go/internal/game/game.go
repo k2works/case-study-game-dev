@@ -31,6 +31,7 @@ const (
 	ModePlaying GameMode = iota
 	ModeFalling
 	ModeChecking
+	ModeGameOver
 )
 
 // Game はゲームの状態を管理する
@@ -66,13 +67,34 @@ func (g *Game) spawnNewPair() {
 	axisColor := colors[rand.Intn(len(colors))]
 	childColor := colors[rand.Intn(len(colors))]
 
-	g.CurrentPair = pair.New(2, 1, axisColor, childColor)
+	newPair := pair.New(2, 1, axisColor, childColor)
+
+	// ゲームオーバー判定：新しいぷよペアが配置できるかチェック
+	if newPair.IsCollision(g.Board, newPair.AxisX, newPair.AxisY,
+		newPair.ChildX, newPair.ChildY) {
+		// 配置できない場合はゲームオーバー
+		g.Mode = ModeGameOver
+		g.CurrentPair = nil
+		return
+	}
+
+	// 配置できる場合は通常通りセット
+	g.CurrentPair = newPair
 	g.Mode = ModePlaying
 	g.FallTimer = 0
 }
 
 // Update はゲームの状態を更新する（1フレームごとに呼ばれる）
 func (g *Game) Update() error {
+	// ゲームオーバー中の処理
+	if g.Mode == ModeGameOver {
+		// Rキーでリスタート
+		if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+			g.restart()
+		}
+		return nil
+	}
+
 	dt := 1.0 / 60.0 // 60FPS
 
 	switch g.Mode {
@@ -229,6 +251,24 @@ func (g *Game) hasFloatingPuyo() bool {
 	return false
 }
 
+// restart はゲームを初期状態に戻す
+func (g *Game) restart() {
+	// ボードをクリア
+	g.Board = board.New()
+
+	// スコアをリセット
+	g.Score = score.New()
+
+	// モードをプレイモードに
+	g.Mode = ModePlaying
+
+	// 新しいぷよペアを生成
+	g.spawnNewPair()
+
+	// タイマーをリセット
+	g.FallTimer = 0
+}
+
 // Draw は画面を描画する
 func (g *Game) Draw(screen *ebiten.Image) {
 	// ボードを描画
@@ -247,6 +287,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.Score.Chain > 0 {
 		chainText := fmt.Sprintf("Chain: %d", g.Score.Chain)
 		ebitenutil.DebugPrintAt(screen, chainText, 10, 30)
+	}
+
+	// ゲームオーバー表示
+	if g.Mode == ModeGameOver {
+		gameOverText := "GAME OVER"
+		ebitenutil.DebugPrintAt(screen, gameOverText, 60, 160)
+		restartText := "Press R to Restart"
+		ebitenutil.DebugPrintAt(screen, restartText, 40, 180)
 	}
 }
 

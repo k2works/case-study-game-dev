@@ -109,3 +109,50 @@ func TestGameScore(t *testing.T) {
 		assert.Equal(t, 0, g.Score.Chain)
 	})
 }
+
+func TestGameOver(t *testing.T) {
+	t.Run("出現位置が埋まっているとゲームオーバーになる", func(t *testing.T) {
+		g := New()
+
+		// 出現位置(2, 1)にぷよを配置
+		g.Board.Set(1, 2, puyo.ColorRed)
+
+		// 新しいぷよペアを生成しようとする
+		g.spawnNewPair()
+
+		// ゲームオーバーモードになっていることを確認
+		assert.Equal(t, ModeGameOver, g.Mode)
+		// 現在のぷよペアがnilになっていることを確認
+		assert.Nil(t, g.CurrentPair)
+	})
+
+	t.Run("出現位置が空いているとゲームオーバーにならない", func(t *testing.T) {
+		g := New()
+
+		// 出現位置を空けておく
+		// （何も配置しない）
+
+		// 新しいぷよペアを生成
+		g.spawnNewPair()
+
+		// プレイモードのままであることを確認
+		assert.NotEqual(t, ModeGameOver, g.Mode)
+		// ぷよペアが生成されていることを確認
+		assert.NotNil(t, g.CurrentPair)
+	})
+}
+
+func TestGameOverInput(t *testing.T) {
+	t.Run("ゲームオーバー中は通常の入力を受け付けない", func(t *testing.T) {
+		g := New()
+		g.Mode = ModeGameOver
+		g.CurrentPair = nil
+
+		// Updateを呼んでも何も起こらない
+		err := g.Update()
+
+		assert.NoError(t, err)
+		assert.Equal(t, ModeGameOver, g.Mode)
+		assert.Nil(t, g.CurrentPair)
+	})
+}
