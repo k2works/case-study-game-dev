@@ -37,20 +37,16 @@ module Update =
                 // 移動できない（着地）
                 let boardWithPuyo = Board.fixPuyoPair model.Board piece
 
-                // 消去処理
-                let groups = Board.findConnectedGroups boardWithPuyo
+                // 最初に重力を適用
+                let boardAfterGravity = Board.applyGravity boardWithPuyo
 
-                let boardAfterClear =
-                    if List.isEmpty groups then
-                        Board.applyGravity boardWithPuyo
-                    else
-                        let positions = groups |> List.concat
-                        boardWithPuyo |> Board.clearPuyos positions |> Board.applyGravity
+                // 連鎖処理（消去と重力を繰り返し適用）
+                let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardAfterGravity
 
                 let nextPiece = PuyoPair.createRandom 2 1 0
 
                 { model with
-                    Board = boardAfterClear
+                    Board = boardAfterChain
                     CurrentPiece = Some nextPiece },
                 Cmd.none
         | None -> model, Cmd.none

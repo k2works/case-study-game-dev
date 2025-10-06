@@ -214,3 +214,108 @@ module BoardTests =
         Board.getCell newBoard 1 10 |> should equal (Filled Blue)
         Board.getCell newBoard 1 11 |> should equal (Filled Yellow)
         Board.getCell newBoard 1 12 |> should equal (Filled Red)
+
+    [<Fact>]
+    let ``ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する`` () =
+        // ゲームの盤面にぷよを配置
+        // 0 0 0 0 0 0
+        // 0 0 0 0 0 0
+        // 0 0 0 0 0 0
+        // 0 0 0 0 0 0
+        // 0 0 0 0 0 0
+        // 0 0 0 0 0 0
+        // 0 0 0 0 0 0
+        // 0 0 2 0 0 0
+        // 0 0 2 0 0 0
+        // 0 0 2 0 0 0
+        // 0 1 1 2 0 0
+        // 0 1 1 0 0 0
+        let board =
+            Board.create 6 12
+            |> Board.setCell 1 10 (Filled Red)
+            |> Board.setCell 2 10 (Filled Red)
+            |> Board.setCell 1 11 (Filled Red)
+            |> Board.setCell 2 11 (Filled Red)
+            |> Board.setCell 3 10 (Filled Blue)
+            |> Board.setCell 2 7 (Filled Blue)
+            |> Board.setCell 2 8 (Filled Blue)
+            |> Board.setCell 2 9 (Filled Blue)
+
+        // 最初の消去判定
+        let groups1 = Board.findConnectedGroups board
+        groups1 |> should not' (be Empty)
+
+        // 消去実行
+        let positions1 = groups1 |> List.concat
+        let boardAfterClear1 = Board.clearPuyos positions1 board
+
+        // 落下処理
+        let boardAfterGravity = Board.applyGravity boardAfterClear1
+
+        // 連鎖判定（2回目の消去判定）
+        let groups2 = Board.findConnectedGroups boardAfterGravity
+
+        // 連鎖が発生していることを確認（青ぷよが4つつながっている）
+        groups2 |> should not' (be Empty)
+
+    [<Fact>]
+    let ``連鎖処理で消去対象がない場合は盤面がそのまま返される`` () =
+        let board =
+            Board.create 6 12
+            |> Board.setCell 0 11 (Filled Red)
+            |> Board.setCell 1 11 (Filled Blue)
+
+        let result = Board.clearAndApplyGravityRepeatedly board
+
+        // 消去対象がないため、盤面は変わらない
+        Board.getCell result 0 11 |> should equal (Filled Red)
+        Board.getCell result 1 11 |> should equal (Filled Blue)
+
+    [<Fact>]
+    let ``連鎖処理で2連鎖が正しく動作する`` () =
+        // 1連鎖目で赤が消え、2連鎖目で青が消えるパターン
+        let board =
+            Board.create 6 12
+            |> Board.setCell 1 10 (Filled Red)
+            |> Board.setCell 2 10 (Filled Red)
+            |> Board.setCell 1 11 (Filled Red)
+            |> Board.setCell 2 11 (Filled Red)
+            |> Board.setCell 3 10 (Filled Blue)
+            |> Board.setCell 2 7 (Filled Blue)
+            |> Board.setCell 2 8 (Filled Blue)
+            |> Board.setCell 2 9 (Filled Blue)
+
+        let result = Board.clearAndApplyGravityRepeatedly board
+
+        // すべてのぷよが消えている（2連鎖が発生）
+        for y in 0..11 do
+            for x in 0..5 do
+                Board.getCell result x y |> should equal Empty
+
+    [<Fact>]
+    let ``連鎖処理で3連鎖が正しく動作する`` () =
+        // 3連鎖が発生するパターン
+        let board =
+            Board.create 6 12
+            // 1連鎖目: 赤ぷよ（下部）
+            |> Board.setCell 0 10 (Filled Red)
+            |> Board.setCell 1 10 (Filled Red)
+            |> Board.setCell 0 11 (Filled Red)
+            |> Board.setCell 1 11 (Filled Red)
+            // 2連鎖目: 青ぷよ（中部）
+            |> Board.setCell 0 6 (Filled Blue)
+            |> Board.setCell 0 7 (Filled Blue)
+            |> Board.setCell 0 8 (Filled Blue)
+            |> Board.setCell 1 8 (Filled Blue)
+            // 3連鎖目: 緑ぷよ（上部）
+            |> Board.setCell 0 2 (Filled Green)
+            |> Board.setCell 0 3 (Filled Green)
+            |> Board.setCell 0 4 (Filled Green)
+            |> Board.setCell 1 4 (Filled Green)
+
+        let result = Board.clearAndApplyGravityRepeatedly board
+
+        // すべてのぷよが消えている（3連鎖が発生）
+        for y in 0..11 do
+            for x in 0..5 do
+                Board.getCell result x y |> should equal Empty

@@ -128,3 +128,19 @@ module Board =
                 newCells.[startY + i].[x] <- column.[i]
 
         { board with Cells = newCells }
+
+    /// 消去と重力を繰り返し適用（連鎖処理）
+    let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
+        let groups = findConnectedGroups board
+
+        if List.isEmpty groups then
+            // 消去対象がない場合は終了
+            board
+        else
+            // 消去して重力を適用
+            let positions = groups |> List.concat
+            let clearedBoard = clearPuyos positions board
+            let boardAfterGravity = applyGravity clearedBoard
+
+            // 再帰的に消去判定を繰り返す
+            clearAndApplyGravityRepeatedly boardAfterGravity
