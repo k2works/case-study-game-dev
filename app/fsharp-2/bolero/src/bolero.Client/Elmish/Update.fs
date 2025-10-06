@@ -7,6 +7,7 @@ open PuyoPuyo.Domain
 type Message =
     | StartGame
     | ResetGame
+    | Restart
     | MoveLeft
     | MoveRight
     | MoveDown
@@ -54,11 +55,22 @@ module Update =
 
                 let nextPiece = PuyoPair.createRandom 2 1 0
 
-                { model with
-                    Board = boardAfterChain
-                    CurrentPiece = Some nextPiece
-                    Score = newScore },
-                Cmd.none
+                // ゲームオーバー判定
+                let isGameOver = GameLogic.checkGameOver boardAfterChain nextPiece
+
+                if isGameOver then
+                    { model with
+                        Board = boardAfterChain
+                        CurrentPiece = Some nextPiece
+                        Score = newScore
+                        Status = GameOver },
+                    Cmd.none
+                else
+                    { model with
+                        Board = boardAfterChain
+                        CurrentPiece = Some nextPiece
+                        Score = newScore },
+                    Cmd.none
         | None -> model, Cmd.none
 
     /// Update 関数
@@ -78,6 +90,8 @@ module Update =
             Cmd.none
 
         | ResetGame -> Model.init (), Cmd.none
+
+        | Restart -> Model.init (), Cmd.none
 
         | MoveLeft when model.Status = Playing ->
             match model.CurrentPiece with
@@ -114,10 +128,17 @@ module Update =
 
         | Tick when model.Status = Playing -> dropPuyo model
 
+        | Tick when model.Status = GameOver -> model, Cmd.none
+
         | MoveDown when model.Status = Playing -> dropPuyo model
 
         | StartFastFall when model.Status = Playing -> { model with IsFastFalling = true }, Cmd.none
 
         | StopFastFall when model.Status = Playing -> { model with IsFastFalling = false }, Cmd.none
+
+        | MoveLeft when model.Status = GameOver -> model, Cmd.none
+        | MoveRight when model.Status = GameOver -> model, Cmd.none
+        | MoveDown when model.Status = GameOver -> model, Cmd.none
+        | Rotate when model.Status = GameOver -> model, Cmd.none
 
         | _ -> model, Cmd.none

@@ -62,3 +62,8 @@ module GameLogic =
                 else
                     // 回転できない
                     None
+
+    /// ゲームオーバー判定（新しいぷよを配置できるかチェック）
+    let checkGameOver (board: Board) (newPiece: PuyoPair) : bool =
+        // 新しいぷよが配置できない場合はゲームオーバー
+        not (canPlacePuyoPair board newPiece)
