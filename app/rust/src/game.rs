@@ -191,8 +191,8 @@ impl Game {
                 );
             }
 
-            // 消去判定モードへ移行
-            self.mode = GameMode::Checking;
+            // 重力処理モードへ移行
+            self.mode = GameMode::Falling;
         }
     }
 

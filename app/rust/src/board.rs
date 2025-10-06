@@ -367,4 +367,25 @@ mod tests {
         assert_eq!(board.get_cell(2, 10), Some(Cell::Filled(PuyoColor::Blue)));
         assert_eq!(board.get_cell(2, 11), Some(Cell::Filled(PuyoColor::Green)));
     }
+
+    #[test]
+    fn test_apply_gravity_l_shape() {
+        let mut board = Board::new(6, 12);
+        // L字型の配置（縦向きペア + 横向きペアを重ねた状態を模擬）
+        // 縦向きペア: (2,10), (2,11)
+        board.set_cell(2, 10, Cell::Filled(PuyoColor::Red));
+        board.set_cell(2, 11, Cell::Filled(PuyoColor::Red));
+
+        // 横向きペア: (2,9), (3,9) - 着地直後の状態
+        board.set_cell(2, 9, Cell::Filled(PuyoColor::Blue));
+        board.set_cell(3, 9, Cell::Filled(PuyoColor::Blue));
+
+        board.apply_gravity();
+
+        // (2,9)は(2,10)の上なので動かない
+        assert_eq!(board.get_cell(2, 9), Some(Cell::Filled(PuyoColor::Blue)));
+        // (3,9)は下が空いているので(3,11)まで落ちる
+        assert_eq!(board.get_cell(3, 9), Some(Cell::Empty));
+        assert_eq!(board.get_cell(3, 11), Some(Cell::Filled(PuyoColor::Blue)));
+    }
 }
