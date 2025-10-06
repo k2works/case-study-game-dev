@@ -651,17 +651,24 @@ git commit -m 'chore: プロジェクトの初期セットアップ'
 
 では、ゲームの初期化処理をテストするコードを書いてみましょう。何をテストすべきでしょうか？ゲームが初期化されたとき、必要なコンポーネントが正しく作成され、ゲームの状態が適切に設定されていることを確認する必要がありますね。
 
+Rustでは、ユニットテストは各ソースファイルの末尾に `#[cfg(test)]` モジュールとして配置するのが作法です。まず、モジュール構成を定義します：
+
 ```rust
 // src/lib.rs
 pub mod game;
 pub mod board;
 pub mod puyo;
+```
 
-// tests/game_test.rs
+次に、`src/game.rs` の末尾にテストを追加します：
+
+```rust
+// src/game.rs
+// （実装部分は後述）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::game::Game;
-    use puyo_puyo_game::game::GameMode;
+    use super::*;
 
     #[test]
     fn test_game_initialization() {
@@ -682,6 +689,11 @@ mod tests {
 ```
 
 このテストでは、`Game`構造体の`new`メソッドが正しく動作することを確認しています。具体的には、ゲームモードが`Start`に設定され、スコアと連鎖カウントが0で初期化されることを検証しています。
+
+**Rustのテスト配置作法**：
+- **ユニットテスト**: 各ソースファイル（`src/game.rs`など）の末尾に `#[cfg(test)]` モジュールとして配置
+- **統合テスト**: `tests/` ディレクトリにファイルを作成（モジュール間の連携をテスト）
+- `use super::*;` で親モジュールの要素をインポート
 
 ### 実装: ゲームの初期化
 
@@ -977,11 +989,15 @@ git commit -m 'feat: ゲーム初期化とウィンドウ表示を実装'
 >
 > — Kent Beck 『テスト駆動開発』
 
+Rustの作法に従い、`src/board.rs` の末尾にユニットテストを配置します：
+
 ```rust
-// tests/board_test.rs
+// src/board.rs
+// （実装部分は後述）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::board::{Board, Cell, PuyoColor};
+    use super::*;
 
     #[test]
     fn test_create_board() {
@@ -1143,12 +1159,16 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 「次は何をテストしますか？」次は、ぷよペアの構造をテストしましょう。ぷよペアは軸ぷよ（axis）と子ぷよ（child）の2つのぷよから構成されます。
 
+`src/puyo_pair.rs` の末尾にテストを配置します：
+
 ```rust
-// tests/puyo_pair_test.rs
+// src/puyo_pair.rs
+// （実装部分は後述）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::puyo_pair::PuyoPair;
-    use puyo_puyo_game::board::PuyoColor;
+    use super::*;
+    use crate::board::PuyoColor;
 
     #[test]
     fn test_create_puyo_pair() {
@@ -1627,12 +1647,18 @@ git commit -m 'feat: ぷよペアの表示機能を実装'
 >
 > — Kent Beck 『テスト駆動開発』
 
+`src/puyo_pair.rs` のテストモジュールに以下のテストを追加します：
+
 ```rust
-// tests/puyo_pair_test.rs（拡張）
+// src/puyo_pair.rs
+// （既存の実装とテストの続き）
+
 #[cfg(test)]
 mod tests {
-    use puyo_puyo_game::puyo_pair::PuyoPair;
-    use puyo_puyo_game::board::{Board, PuyoColor};
+    use super::*;
+    use crate::board::{Board, PuyoColor};
+
+    // ... 既存のテスト ...
 
     #[test]
     fn test_can_move_left_when_space_is_available() {
@@ -3408,16 +3434,24 @@ impl Board {
     pub fn apply_gravity(&mut self) -> bool {
         let mut has_fallen = false;
 
-        // 下から2行目から上に向かってスキャン
-        for y in (0..BOARD_HEIGHT - 1).rev() {
-            for x in 0..BOARD_WIDTH {
-                if let Cell::Filled(color) = self.cells[y][x] {
-                    // 下が空いているかチェック
-                    if self.cells[y + 1][x] == Cell::Empty {
-                        // 1マス下に移動
-                        self.cells[y + 1][x] = Cell::Filled(color);
-                        self.cells[y][x] = Cell::Empty;
+        // 各列ごとに処理
+        for x in 0..self.cols {
+            // 下から詰めていく
+            let mut write_y = self.rows - 1; // 書き込み位置（下から）
+
+            // 下から上にスキャンして、ぷよを収集
+            for read_y in (0..self.rows).rev() {
+                if let Cell::Filled(color) = self.cells[x][read_y] {
+                    // ぷよがある場合
+                    if read_y != write_y {
+                        // 位置が異なる場合は移動
+                        self.cells[x][write_y] = Cell::Filled(color);
+                        self.cells[x][read_y] = Cell::Empty;
                         has_fallen = true;
+                    }
+                    // 次の書き込み位置を1つ上に
+                    if write_y > 0 {
+                        write_y -= 1;
                     }
                 }
             }
@@ -3429,6 +3463,8 @@ impl Board {
 ```
 
 「`has_fallen` を返すのはなぜですか？」良い質問ですね！重力処理は、ぷよが安定するまで繰り返し実行する必要があります。`has_fallen` が `true` の場合、まだ落下中のぷよがあるので、もう一度重力処理を実行します。
+
+この実装では、各列ごとに下から詰めていく方式を採用しています。これにより、一度の `apply_gravity` 呼び出しで、すべてのぷよが最終的な位置まで落下します。
 
 ### ゲームループとの統合
 
@@ -3488,8 +3524,32 @@ impl Game {
             } else {
                 // 着地処理
                 self.land_pair();
-                self.mode = GameMode::Checking;
             }
+        }
+    }
+
+    fn land_pair(&mut self) {
+        if let (Some(pair), Some(ref mut board)) = (self.current_pair.take(), &mut self.board) {
+            // 軸ぷよをボードに配置
+            if pair.axis_y >= 0 && pair.axis_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.axis_x as usize,
+                    pair.axis_y as usize,
+                    Cell::Filled(pair.axis_color),
+                );
+            }
+
+            // 子ぷよをボードに配置
+            if pair.child_y >= 0 && pair.child_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.child_x as usize,
+                    pair.child_y as usize,
+                    Cell::Filled(pair.child_color),
+                );
+            }
+
+            // 重力処理モードへ移行
+            self.mode = GameMode::Falling;
         }
     }
 }
@@ -3498,12 +3558,157 @@ impl Game {
 「ゲームモードの遷移が複雑になりましたね！」そうですね。整理すると：
 
 1. **Playing**: ぷよが落下中
-2. **Checking**: 着地後、消去判定を実行
-3. **Erasing**: ぷよを消去（即座に Falling へ）
-4. **Falling**: 重力を適用、落下が終わったら Checking へ
-5. **Checking**: 消去対象がなければ Playing（新しいぷよ）
+2. **着地**: `land_pair()` でぷよをボードに配置し、Falling モードへ
+3. **Falling**: 重力を適用、落下が終わったら Checking へ
+4. **Checking**: 消去判定を実行、消去対象があれば Erasing へ
+5. **Erasing**: ぷよを消去（即座に Falling へ）
+6. **Falling**: 重力を適用、落下が終わったら Checking へ
+7. **Checking**: 消去対象がなければ Playing（新しいぷよ）
 
 「連鎖も自動的に起きるんですね！」その通りです！Checking → Erasing → Falling → Checking のループで、連鎖が自動的に発生します。
+
+### バグ対応: 着地後の重力処理
+
+「実際にゲームを動かしてみたら、バグを見つけました！」どのようなバグでしたか？
+
+「縦になったぷよペアを着地させた後、横向きのぷよペアを重ねたとき、重なっていない方のぷよが浮いたままになってしまいます。」
+
+なるほど！具体的には、こんな状態ですね：
+
+```
+    2列  3列
+9行  [ ]  [ ]
+10行 [赤] [ ]
+11行 [赤] [ ]
+```
+
+この状態で、横向きペア（青・青）を (2, 9)-(3, 9) に着地させると：
+
+```
+    2列  3列
+9行  [青] [青]  ← この右側の青が浮いたまま
+10行 [赤] [ ]
+11行 [赤] [ ]
+```
+
+「そうです！3列の青ぷよが落ちるべきなのに、落ちないんです。」
+
+#### バグの原因
+
+問題は、最初の実装で `land_pair()` が `Checking` モードに直接遷移していたことです：
+
+```rust
+fn land_pair(&mut self) {
+    // ... ぷよをボードに配置 ...
+    self.mode = GameMode::Checking;  // ← これが問題
+}
+```
+
+このため、着地直後に消去判定が実行され、重力処理がスキップされていました。
+
+#### テスト: L 字型配置での重力処理
+
+まず、この問題を再現するテストを追加しましょう：
+
+```rust
+#[test]
+fn test_apply_gravity_l_shape() {
+    let mut board = Board::new(6, 12);
+    // L字型の配置（縦向きペア + 横向きペアを重ねた状態を模擬）
+    // 縦向きペア: (2,10), (2,11)
+    board.set_cell(2, 10, Cell::Filled(PuyoColor::Red));
+    board.set_cell(2, 11, Cell::Filled(PuyoColor::Red));
+
+    // 横向きペア: (2,9), (3,9) - 着地直後の状態
+    board.set_cell(2, 9, Cell::Filled(PuyoColor::Blue));
+    board.set_cell(3, 9, Cell::Filled(PuyoColor::Blue));
+
+    board.apply_gravity();
+
+    // (2,9)は(2,10)の上なので動かない
+    assert_eq!(board.get_cell(2, 9), Some(Cell::Filled(PuyoColor::Blue)));
+    // (3,9)は下が空いているので(3,11)まで落ちる
+    assert_eq!(board.get_cell(3, 9), Some(Cell::Empty));
+    assert_eq!(board.get_cell(3, 11), Some(Cell::Filled(PuyoColor::Blue)));
+}
+```
+
+「このテストは通りますか？」まず `apply_gravity` の実装は正しいので、このテストは通ります。
+
+```bash
+cargo test test_apply_gravity_l_shape
+```
+
+```
+test board::tests::test_apply_gravity_l_shape ... ok
+```
+
+「では、何が問題だったんですか？」問題は、ゲームフロー内で `land_pair` 後に重力処理をスキップしていたことです。
+
+#### 修正: 着地後は Falling モードへ
+
+解決策は、`land_pair()` 後に `Falling` モードに遷移させることです：
+
+```rust
+fn land_pair(&mut self) {
+    if let (Some(pair), Some(ref mut board)) = (self.current_pair.take(), &mut self.board) {
+        // 軸ぷよをボードに配置
+        if pair.axis_y >= 0 && pair.axis_y < board.rows() as i32 {
+            board.set_cell(
+                pair.axis_x as usize,
+                pair.axis_y as usize,
+                Cell::Filled(pair.axis_color),
+            );
+        }
+
+        // 子ぷよをボードに配置
+        if pair.child_y >= 0 && pair.child_y < board.rows() as i32 {
+            board.set_cell(
+                pair.child_x as usize,
+                pair.child_y as usize,
+                Cell::Filled(pair.child_color),
+            );
+        }
+
+        // 重力処理モードへ移行（修正後）
+        self.mode = GameMode::Falling;  // ← Checking から Falling に変更
+    }
+}
+```
+
+「これで正しい流れになりましたね！」そうです！修正後のゲームフローは：
+
+1. **着地**: `land_pair()` でぷよをボードに配置
+2. **Falling**: 重力を適用（浮いたぷよが落ちる）
+3. **Checking**: 消去判定を実行
+4. **Erasing**: 必要に応じて消去
+5. **Falling**: 消去後の重力処理（連鎖）
+
+テストを実行して、すべてが通ることを確認しましょう：
+
+```bash
+cargo test
+```
+
+```
+running 38 tests
+...
+test board::tests::test_apply_gravity_l_shape ... ok
+...
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+「バグが修正されました！」素晴らしい！実際にゲームを動かしてみて、バグを見つけて修正するというプロセスは、ソフトウェア開発において非常に重要です。
+
+#### 学んだこと
+
+このバグ対応から学んだこと：
+
+1. **テストだけでは不十分**: 個々のメソッドが正しくても、統合時にバグが発生することがある
+2. **ゲームフローの重要性**: 状態遷移の順序が重要
+3. **バグ再現テストの価値**: バグを再現するテストを書くことで、同じバグの再発を防げる
+4. **段階的なデバッグ**: 問題を切り分けて、原因を特定する
 
 ### イテレーション6のまとめ
 
@@ -3523,36 +3728,49 @@ impl Game {
    - `erase_puyos` メソッド: 指定された位置のぷよを `Cell::Empty` に設定
 
 4. **重力処理の実装**
-   - `apply_gravity` メソッド: 浮いているぷよを1マス下に落とす
+   - `apply_gravity` メソッド: 各列ごとに下から詰める方式で、すべてのぷよを最終位置まで一気に落とす
    - 戻り値で落下の有無を返す
-   - 下から2行目から上に向かってスキャン
+   - 列ごとに処理することで効率的に実装
 
 5. **ゲームモードの追加**
    - `Checking`: 消去判定
    - `Erasing`: 消去中
    - `Falling`: 落下中
-   - モード遷移: Playing → Checking → Erasing → Falling → Checking → ...
+   - モード遷移: Playing → 着地 → Falling → Checking → Erasing → Falling → Checking → ...
 
 6. **連鎖の自動発生**
    - Checking-Falling ループで自動的に連鎖が発生
    - 消去対象がなくなるまで繰り返し
 
-7. **テストの作成（合計34テスト）**
+7. **バグ対応: 着地後の重力処理**
+   - 問題: `land_pair()` が `Checking` モードに直接遷移していた
+   - 影響: 着地後に重力処理がスキップされ、浮いたぷよが落ちない
+   - 修正: `land_pair()` 後に `Falling` モードに遷移するように変更
+   - テスト追加: `test_apply_gravity_l_shape` で L 字型配置の重力処理を検証
+
+8. **テストの作成（合計38テスト）**
    - 接続判定のテスト（3テスト）
    - 消去判定のテスト（3テスト）
    - 消去処理のテスト（1テスト）
-   - 重力処理のテスト（1テスト）
+   - 重力処理のテスト（4テスト）
+     - 基本的な重力処理
+     - 複数ぷよの同時落下
+     - 積み重ねられたぷよの落下
+     - L 字型配置での重力処理（バグ再現テスト）
 
-8. **TDDサイクルの実践**
+9. **TDDサイクルの実践**
    - Red: 各機能のテストを先に作成
    - Green: 実装してテストを通過
    - Refactor: DFS アルゴリズムの分離
+   - バグ発見 → テスト追加 → 修正のサイクル
 
-9. **学んだ重要な概念**
-   - 深さ優先探索（DFS）: グラフ探索の基本アルゴリズム
-   - `HashSet`: 重複のない集合の管理
-   - 再帰: 自分自身を呼び出すメソッド
-   - ゲーム状態管理: モード遷移による複雑な処理の分離
+10. **学んだ重要な概念**
+    - 深さ優先探索（DFS）: グラフ探索の基本アルゴリズム
+    - `HashSet`: 重複のない集合の管理
+    - 再帰: 自分自身を呼び出すメソッド
+    - ゲーム状態管理: モード遷移による複雑な処理の分離
+    - 統合バグの重要性: 個々のメソッドが正しくても、統合時にバグが発生することがある
+    - バグ再現テストの価値: バグを再現するテストを書くことで、同じバグの再発を防げる
 
 **次のステップ**: 現在、ぷよは消えて連鎖も発生しますが、スコア計算がありません。次のイテレーションでは、スコアと連鎖数の表示を実装していきます。
 
@@ -3885,6 +4103,180 @@ fn test_all_clear_bonus() {
 4. **ゲーム管理**
    - ゲームオーバー判定
    - リスタート機能
+
+### 統合テスト
+
+ここまで、各モジュールのユニットテストを各ソースファイルの末尾に配置してきました。これはRustの標準的な作法です。しかし、プロジェクトが成長するにつれて、複数のモジュールを組み合わせた実際のゲームシナリオをテストする必要が出てきます。
+
+Rustでは、このような統合テストを `tests/` ディレクトリに配置します。統合テストは外部のクレートと同じようにライブラリを使用するため、公開API（`pub`で宣言された要素）のみにアクセスできます。
+
+#### 統合テストの作成
+
+`tests/integration_test.rs` を作成して、実際のゲームシナリオをテストしましょう：
+
+```rust
+// tests/integration_test.rs
+use puyo_puyo_game::game::Game;
+use puyo_puyo_game::board::PuyoColor;
+
+#[test]
+fn test_complete_game_scenario() {
+    let mut game = Game::new();
+
+    // ゲームが正しく初期化されている
+    assert_eq!(game.score(), 0);
+    assert_eq!(game.chain_count(), 0);
+
+    // ゲームを開始
+    game.start();
+
+    // ぷよペアが生成されている
+    assert!(game.current_pair().is_some());
+}
+
+#[test]
+fn test_puyo_erasure_and_scoring() {
+    let mut game = Game::new();
+    game.start();
+
+    // 消去可能な配置を作成（4つの赤ぷよ）
+    game.board_mut().set_cell(11, 1, PuyoColor::Red);
+    game.board_mut().set_cell(11, 2, PuyoColor::Red);
+    game.board_mut().set_cell(10, 1, PuyoColor::Red);
+    game.board_mut().set_cell(10, 2, PuyoColor::Red);
+
+    // 残るぷよを配置（全消しを防ぐ）
+    game.board_mut().set_cell(11, 4, PuyoColor::Blue);
+
+    // 消去判定を実行
+    game.check_and_erase();
+
+    // スコアが加算されている
+    assert_eq!(game.score(), 40); // 4 * 10 = 40
+    assert_eq!(game.chain_count(), 1);
+}
+
+#[test]
+fn test_chain_reaction() {
+    let mut game = Game::new();
+    game.start();
+
+    // 1連鎖目の配置（赤4つ）
+    game.board_mut().set_cell(11, 1, PuyoColor::Red);
+    game.board_mut().set_cell(11, 2, PuyoColor::Red);
+    game.board_mut().set_cell(10, 1, PuyoColor::Red);
+    game.board_mut().set_cell(10, 2, PuyoColor::Red);
+
+    // 2連鎖目の配置（青3つ、赤の上）
+    game.board_mut().set_cell(9, 1, PuyoColor::Blue);
+    game.board_mut().set_cell(9, 2, PuyoColor::Blue);
+    game.board_mut().set_cell(8, 1, PuyoColor::Blue);
+    game.board_mut().set_cell(7, 2, PuyoColor::Blue);
+
+    // 残るぷよを配置
+    game.board_mut().set_cell(11, 4, PuyoColor::Green);
+
+    // 1回目の消去判定
+    game.check_and_erase();
+    let first_score = game.score();
+    assert_eq!(first_score, 40); // 4 * 10 * 1
+    assert_eq!(game.chain_count(), 1);
+
+    // 重力を適用
+    game.apply_gravity();
+
+    // 2回目の消去判定（青が落ちて4つ揃う）
+    game.check_and_erase();
+
+    // 2連鎖ボーナスが付いている
+    assert_eq!(game.score(), 120); // 40 + (4 * 10 * 2)
+    assert_eq!(game.chain_count(), 2);
+}
+
+#[test]
+fn test_all_clear_bonus() {
+    let mut game = Game::new();
+    game.start();
+
+    // 消去可能な4つの赤ぷよのみ配置
+    game.board_mut().set_cell(11, 1, PuyoColor::Red);
+    game.board_mut().set_cell(11, 2, PuyoColor::Red);
+    game.board_mut().set_cell(10, 1, PuyoColor::Red);
+    game.board_mut().set_cell(10, 2, PuyoColor::Red);
+
+    // 消去判定を実行
+    game.check_and_erase();
+
+    // 基本スコア + 全消しボーナス
+    assert_eq!(game.score(), 5040); // 40 + 5000
+    assert!(game.board().is_all_clear());
+}
+
+#[test]
+fn test_game_over_when_spawn_position_blocked() {
+    let mut game = Game::new();
+    game.start();
+
+    // 出現位置(2, 1)にぷよを配置
+    game.board_mut().set_cell(1, 2, PuyoColor::Red);
+
+    // 新しいぷよペアを生成しようとする
+    game.spawn_new_pair();
+
+    // ゲームオーバーになる
+    assert!(game.is_game_over());
+}
+
+#[test]
+fn test_restart_resets_game_state() {
+    let mut game = Game::new();
+    game.start();
+
+    // ゲーム状態を変更
+    game.board_mut().set_cell(11, 0, PuyoColor::Red);
+    game.add_score(1000);
+
+    // リスタート
+    game.restart();
+
+    // すべてがリセットされている
+    assert_eq!(game.score(), 0);
+    assert_eq!(game.chain_count(), 0);
+    assert!(game.board().is_all_clear());
+    assert!(game.current_pair().is_some());
+}
+```
+
+#### 統合テストの実行
+
+統合テストは通常のテストと同じように実行できます：
+
+```bash
+# すべてのテスト（ユニット + 統合）を実行
+cargo test
+
+# 統合テストのみ実行
+cargo test --test integration_test
+
+# 特定のテストを実行
+cargo test test_chain_reaction
+```
+
+#### ユニットテストと統合テストの使い分け
+
+**ユニットテスト（`src/` 内の `#[cfg(test)]` モジュール）**：
+- 個別の関数やメソッドの動作を検証
+- 内部実装の詳細をテスト可能
+- 高速で実行できる
+- 各モジュールの責務を明確化
+
+**統合テスト（`tests/` ディレクトリ）**：
+- 複数のモジュールを組み合わせた動作を検証
+- 公開APIのみを使用（実際の利用シーンに近い）
+- エンドツーエンドのシナリオをテスト
+- ライブラリ全体の動作を保証
+
+このように、ユニットテストと統合テストを組み合わせることで、個々のコンポーネントから全体のシステムまで、包括的にテストできます。
 
 ### TDDで学んだこと
 

@@ -1,0 +1,508 @@
+use crate::board::{Board, Cell, PuyoColor};
+use crate::puyo_pair::PuyoPair;
+use macroquad::prelude::{is_key_pressed, KeyCode};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GameMode {
+    Start,
+    Playing,
+    Checking,
+    Erasing,
+    Falling,
+    GameOver,
+}
+
+pub struct Game {
+    mode: GameMode,
+    score: i32,
+    chain_count: i32,
+    board: Option<Board>,
+    current_pair: Option<PuyoPair>,
+    fall_timer: f32,
+    fall_interval: f32,
+    all_clear_achieved: bool,
+}
+
+impl Game {
+    pub fn new() -> Self {
+        Self {
+            mode: GameMode::Start,
+            score: 0,
+            chain_count: 0,
+            board: Some(Board::new(6, 12)),
+            current_pair: None,
+            fall_timer: 0.0,
+            fall_interval: 1.0, // 1秒ごとに落下
+            all_clear_achieved: false,
+        }
+    }
+
+    pub fn mode(&self) -> GameMode {
+        self.mode
+    }
+
+    pub fn score(&self) -> i32 {
+        self.score
+    }
+
+    pub fn chain_count(&self) -> i32 {
+        self.chain_count
+    }
+
+    pub fn add_score(&mut self, erased_count: usize, chain: i32) {
+        // 基本スコア: 消したぷよの数 × 10
+        // 連鎖ボーナス: 2^(chain-1)
+        let chain_bonus = if chain > 0 {
+            2_i32.pow((chain - 1) as u32)
+        } else {
+            1
+        };
+        let points = (erased_count as i32) * 10 * chain_bonus;
+        self.score += points;
+    }
+
+    pub fn increment_chain(&mut self) {
+        self.chain_count += 1;
+    }
+
+    pub fn reset_chain(&mut self) {
+        self.chain_count = 0;
+    }
+
+    pub fn add_all_clear_bonus(&mut self) {
+        self.score += 5000;
+    }
+
+    pub fn board(&self) -> Option<&Board> {
+        self.board.as_ref()
+    }
+
+    pub fn board_mut(&mut self) -> Option<&mut Board> {
+        self.board.as_mut()
+    }
+
+    pub fn current_pair(&self) -> Option<&PuyoPair> {
+        self.current_pair.as_ref()
+    }
+
+    pub fn is_game_over(&self) -> bool {
+        self.mode == GameMode::GameOver
+    }
+
+    pub fn start(&mut self) {
+        self.mode = GameMode::Playing;
+        self.spawn_new_pair();
+    }
+
+    pub fn restart(&mut self) {
+        *self = Game::new();
+        self.start();
+    }
+
+    fn spawn_new_pair(&mut self) {
+        use rand::Rng;
+        let mut rng = rand::rng();
+
+        let axis_color = match rng.random_range(0..4) {
+            0 => PuyoColor::Red,
+            1 => PuyoColor::Blue,
+            2 => PuyoColor::Green,
+            _ => PuyoColor::Yellow,
+        };
+
+        let child_color = match rng.random_range(0..4) {
+            0 => PuyoColor::Red,
+            1 => PuyoColor::Blue,
+            2 => PuyoColor::Green,
+            _ => PuyoColor::Yellow,
+        };
+
+        let pair = PuyoPair::new(2, 1, axis_color, child_color);
+
+        // ゲームオーバー判定: 新しいぷよが配置できるかチェック
+        if let Some(ref board) = self.board {
+            let axis_x = pair.axis_x() as usize;
+            let axis_y = pair.axis_y() as usize;
+            let child_x = pair.child_x() as usize;
+            let child_y = pair.child_y() as usize;
+
+            // 軸ぷよまたは子ぷよの位置にすでにぷよがある場合はゲームオーバー
+            let axis_blocked = board
+                .get_cell(axis_x, axis_y)
+                .map(|cell| cell != Cell::Empty)
+                .unwrap_or(false);
+            let child_blocked = board
+                .get_cell(child_x, child_y)
+                .map(|cell| cell != Cell::Empty)
+                .unwrap_or(false);
+
+            if axis_blocked || child_blocked {
+                // 出現位置にぷよがあるためゲームオーバー
+                self.mode = GameMode::GameOver;
+                self.current_pair = None;
+                return;
+            }
+        }
+
+        self.current_pair = Some(pair);
+        self.all_clear_achieved = false;
+    }
+
+    pub fn update(&mut self, delta_time: f32) {
+        match self.mode {
+            GameMode::Playing => {
+                // 入力処理
+                self.handle_input();
+
+                // 落下タイマーを更新
+                self.fall_timer += delta_time;
+
+                // 一定時間経過したら自動落下
+                if self.fall_timer >= self.fall_interval {
+                    self.auto_fall();
+                    self.fall_timer = 0.0;
+                }
+            }
+            GameMode::Checking => {
+                // 消去判定
+                if let Some(ref board) = self.board {
+                    let erase_positions = board.check_erase();
+                    if !erase_positions.is_empty() {
+                        // 連鎖数を増加
+                        self.increment_chain();
+
+                        // スコアを加算
+                        self.add_score(erase_positions.len(), self.chain_count);
+
+                        // 消去対象がある場合、消去してFallingモードへ
+                        if let Some(ref mut board) = self.board {
+                            board.erase_puyos(&erase_positions);
+
+                            // 全消しチェック
+                            if board.is_all_clear() {
+                                self.add_all_clear_bonus();
+                                self.all_clear_achieved = true;
+                            }
+                        }
+                        self.mode = GameMode::Falling;
+                    } else {
+                        // 連鎖終了
+                        self.reset_chain();
+
+                        // 消去対象がない場合、新しいぷよを生成してPlayingモードに戻る
+                        if self.current_pair.is_none() {
+                            self.spawn_new_pair();
+                        }
+                        // spawn_new_pair()でGameOverになっていない場合のみPlayingへ
+                        if self.mode != GameMode::GameOver {
+                            self.mode = GameMode::Playing;
+                        }
+                    }
+                }
+            }
+            GameMode::Falling => {
+                // 重力処理
+                if let Some(ref mut board) = self.board {
+                    let has_fallen = board.apply_gravity();
+                    if !has_fallen {
+                        // すべて落ちきったら、再度消去判定へ
+                        self.mode = GameMode::Checking;
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn handle_input(&mut self) {
+        if let Some(ref mut pair) = self.current_pair {
+            if let Some(ref board) = self.board {
+                // 左矢印キーが押されたら左に移動
+                if is_key_pressed(KeyCode::Left) && pair.can_move_left(board) {
+                    pair.move_left();
+                }
+                // 右矢印キーが押されたら右に移動
+                if is_key_pressed(KeyCode::Right) && pair.can_move_right(board) {
+                    pair.move_right();
+                }
+                // 上矢印キーまたはXキーが押されたら右回転
+                if is_key_pressed(KeyCode::Up) || is_key_pressed(KeyCode::X) {
+                    pair.rotate_right_with_wall_kick(board);
+                }
+                // Zキーが押されたら左回転
+                if is_key_pressed(KeyCode::Z) {
+                    pair.rotate_left_with_wall_kick(board);
+                }
+                // 下矢印キーが押されたら高速落下
+                if is_key_pressed(KeyCode::Down) && pair.can_move_down(board) {
+                    pair.move_down();
+                    self.fall_timer = 0.0; // タイマーをリセット
+                }
+            }
+        }
+    }
+
+    fn auto_fall(&mut self) {
+        if let Some(ref mut pair) = self.current_pair {
+            if let Some(ref board) = self.board {
+                if pair.can_move_down(board) {
+                    pair.move_down();
+                } else {
+                    // 着地処理
+                    self.land_pair();
+                }
+            }
+        }
+    }
+
+    fn land_pair(&mut self) {
+        if let (Some(pair), Some(ref mut board)) = (self.current_pair.take(), &mut self.board) {
+            // 軸ぷよをボードに配置
+            if pair.axis_y >= 0 && pair.axis_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.axis_x as usize,
+                    pair.axis_y as usize,
+                    Cell::Filled(pair.axis_color),
+                );
+            }
+
+            // 子ぷよをボードに配置
+            if pair.child_y >= 0 && pair.child_y < board.rows() as i32 {
+                board.set_cell(
+                    pair.child_x as usize,
+                    pair.child_y as usize,
+                    Cell::Filled(pair.child_color),
+                );
+            }
+
+            // 重力処理モードへ移行
+            self.mode = GameMode::Falling;
+        }
+    }
+
+    pub fn draw(&self) {
+        use macroquad::prelude::*;
+
+        const CELL_SIZE: f32 = 40.0;
+        const BOARD_OFFSET_X: f32 = 50.0;
+        const BOARD_OFFSET_Y: f32 = 80.0;
+
+        // ボードを描画
+        if let Some(ref board) = self.board {
+            for y in 0..board.rows() {
+                for x in 0..board.cols() {
+                    let px = BOARD_OFFSET_X + x as f32 * CELL_SIZE;
+                    let py = BOARD_OFFSET_Y + y as f32 * CELL_SIZE;
+
+                    // セルの枠を描画
+                    draw_rectangle_lines(px, py, CELL_SIZE, CELL_SIZE, 1.0, GRAY);
+
+                    // セルにぷよがあれば描画
+                    if let Some(Cell::Filled(color)) = board.get_cell(x, y) {
+                        let puyo_color = match color {
+                            PuyoColor::Red => RED,
+                            PuyoColor::Blue => BLUE,
+                            PuyoColor::Green => GREEN,
+                            PuyoColor::Yellow => YELLOW,
+                        };
+
+                        draw_circle(
+                            px + CELL_SIZE / 2.0,
+                            py + CELL_SIZE / 2.0,
+                            CELL_SIZE / 2.0 - 4.0,
+                            puyo_color,
+                        );
+                    }
+                }
+            }
+        }
+
+        // 現在のぷよペアを描画
+        if let Some(ref pair) = self.current_pair {
+            // 軸ぷよを描画
+            let axis_x = BOARD_OFFSET_X + pair.axis_x() as f32 * CELL_SIZE;
+            let axis_y = BOARD_OFFSET_Y + pair.axis_y() as f32 * CELL_SIZE;
+            let axis_color = match pair.axis_color() {
+                PuyoColor::Red => RED,
+                PuyoColor::Blue => BLUE,
+                PuyoColor::Green => GREEN,
+                PuyoColor::Yellow => YELLOW,
+            };
+
+            draw_circle(
+                axis_x + CELL_SIZE / 2.0,
+                axis_y + CELL_SIZE / 2.0,
+                CELL_SIZE / 2.0 - 4.0,
+                axis_color,
+            );
+
+            // 子ぷよを描画
+            let child_x = BOARD_OFFSET_X + pair.child_x() as f32 * CELL_SIZE;
+            let child_y = BOARD_OFFSET_Y + pair.child_y() as f32 * CELL_SIZE;
+            let child_color = match pair.child_color() {
+                PuyoColor::Red => RED,
+                PuyoColor::Blue => BLUE,
+                PuyoColor::Green => GREEN,
+                PuyoColor::Yellow => YELLOW,
+            };
+
+            draw_circle(
+                child_x + CELL_SIZE / 2.0,
+                child_y + CELL_SIZE / 2.0,
+                CELL_SIZE / 2.0 - 4.0,
+                child_color,
+            );
+        }
+
+        // スコアの表示
+        draw_text(&format!("Score: {}", self.score), 10.0, 30.0, 20.0, WHITE);
+
+        // 連鎖数の表示（連鎖中のみ）
+        if self.chain_count > 0 {
+            draw_text(
+                &format!("Chain: {}", self.chain_count),
+                10.0,
+                50.0,
+                20.0,
+                YELLOW,
+            );
+        }
+
+        // 全消し表示
+        if self.all_clear_achieved {
+            draw_text("ALL CLEAR!", 80.0, 200.0, 40.0, GOLD);
+        }
+
+        // ゲームオーバー表示
+        if self.mode == GameMode::GameOver {
+            draw_text("GAME OVER", 80.0, 250.0, 50.0, RED);
+            draw_text("Press R to Restart", 70.0, 300.0, 20.0, WHITE);
+        }
+    }
+}
+
+impl Default for Game {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_game_initialization() {
+        let game = Game::new();
+
+        assert_eq!(game.mode(), GameMode::Start);
+        assert_eq!(game.score(), 0);
+        assert_eq!(game.chain_count(), 0);
+    }
+
+    #[test]
+    fn test_game_has_board() {
+        let game = Game::new();
+
+        assert!(game.board().is_some());
+    }
+
+    #[test]
+    fn test_score_calculation_single_erase() {
+        let mut game = Game::new();
+
+        // 1連鎖で4つ消去した場合
+        game.add_score(4, 1);
+
+        assert_eq!(game.score(), 40); // 4 * 10 * 1
+    }
+
+    #[test]
+    fn test_score_calculation_chain() {
+        let mut game = Game::new();
+
+        // 1連鎖: 4つ消去
+        game.add_score(4, 1);
+        assert_eq!(game.score(), 40); // 4 * 10 * 1
+
+        // 2連鎖: 4つ消去
+        game.add_score(4, 2);
+        assert_eq!(game.score(), 120); // 40 + (4 * 10 * 2)
+
+        // 3連鎖: 5つ消去
+        game.add_score(5, 3);
+        assert_eq!(game.score(), 320); // 120 + (5 * 10 * 4)
+    }
+
+    #[test]
+    fn test_chain_count_increment() {
+        let mut game = Game::new();
+
+        assert_eq!(game.chain_count(), 0);
+
+        game.increment_chain();
+        assert_eq!(game.chain_count(), 1);
+
+        game.increment_chain();
+        assert_eq!(game.chain_count(), 2);
+    }
+
+    #[test]
+    fn test_chain_count_reset() {
+        let mut game = Game::new();
+
+        game.increment_chain();
+        game.increment_chain();
+        assert_eq!(game.chain_count(), 2);
+
+        game.reset_chain();
+        assert_eq!(game.chain_count(), 0);
+    }
+
+    #[test]
+    fn test_game_over_when_spawn_position_blocked() {
+        let mut game = Game::new();
+        game.start();
+
+        // 出現位置 (2, 1) と (2, 0) にぷよを配置してブロック
+        if let Some(ref mut board) = game.board {
+            board.set_cell(2, 1, Cell::Filled(PuyoColor::Red));
+            board.set_cell(2, 0, Cell::Filled(PuyoColor::Blue));
+        }
+
+        // 新しいぷよを出現させようとする
+        game.current_pair = None;
+        game.mode = GameMode::Playing;
+
+        // spawn_new_pairを手動で呼ぶ（通常はChecking->Playingで呼ばれる）
+        game.spawn_new_pair();
+
+        // ゲームオーバーになっているはず
+        assert_eq!(game.mode(), GameMode::GameOver);
+        assert!(game.current_pair().is_none());
+    }
+
+    #[test]
+    fn test_game_continues_when_spawn_position_free() {
+        let mut game = Game::new();
+
+        // 出現位置が空いている状態で新しいぷよを出現
+        game.spawn_new_pair();
+
+        // ゲームは継続
+        assert_ne!(game.mode(), GameMode::GameOver);
+        assert!(game.current_pair().is_some());
+    }
+
+    #[test]
+    fn test_add_all_clear_bonus() {
+        let mut game = Game::new();
+        game.score = 1000;
+
+        // 全消しボーナスを追加
+        game.add_all_clear_bonus();
+
+        // 5000点のボーナスが加算される
+        assert_eq!(game.score(), 6000); // 1000 + 5000
+    }
+}

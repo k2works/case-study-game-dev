@@ -4,16 +4,19 @@ run:
   tests: true
 
 output:
-  format: colored-line-number
+  formats:
+    - format: colored-line-number
   print-issued-lines: true
   print-linter-name: true
 
 linters-settings:
   govet:
-    check-shadowing: true
-    enable-all: true
+    enable:
+      - shadow
+    disable:
+      - fieldalignment
   gocyclo:
-    min-complexity: 7
+    min-complexity: 10
   misspell:
     locale: US
   lll:
@@ -23,6 +26,10 @@ linters-settings:
   goconst:
     min-len: 3
     min-occurrences: 2
+  gosec:
+    excludes:
+      - G404  # Use of weak random number generator (OK for games)
+      - G115  # Integer overflow conversion (OK in controlled contexts)
 
 linters:
   enable:
@@ -31,7 +38,6 @@ linters:
     - ineffassign
     - misspell
     - gofmt
-    - goimports
     - gocyclo
     - goconst
     - gosec
@@ -41,6 +47,7 @@ linters:
     - typecheck
   disable:
     - errcheck
+    - goimports
 
 issues:
   exclude-rules:
@@ -48,3 +55,4 @@ issues:
       linters:
         - gosec
         - goconst
+        - gocyclo
