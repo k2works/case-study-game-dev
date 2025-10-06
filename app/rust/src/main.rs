@@ -22,7 +22,8 @@ async fn main() {
             game.start();
         }
 
-        // ゲームの更新処理（次のイテレーションで実装）
+        // ゲームの更新処理
+        game.update();
 
         // ゲームの描画処理
         if game.mode() == puyo_puyo_game::game::GameMode::Start {

@@ -1,5 +1,6 @@
 use crate::board::{Board, Cell, PuyoColor};
 use crate::puyo_pair::PuyoPair;
+use macroquad::prelude::{is_key_pressed, KeyCode};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GameMode {
@@ -75,6 +76,25 @@ impl Game {
 
         let pair = PuyoPair::new(2, 1, axis_color, child_color);
         self.current_pair = Some(pair);
+    }
+
+    pub fn update(&mut self) {
+        if self.mode != GameMode::Playing {
+            return;
+        }
+
+        if let Some(ref mut pair) = self.current_pair {
+            if let Some(ref board) = self.board {
+                // 左矢印キーが押されたら左に移動
+                if is_key_pressed(KeyCode::Left) && pair.can_move_left(board) {
+                    pair.move_left();
+                }
+                // 右矢印キーが押されたら右に移動
+                if is_key_pressed(KeyCode::Right) && pair.can_move_right(board) {
+                    pair.move_right();
+                }
+            }
+        }
     }
 
     pub fn draw(&self) {
