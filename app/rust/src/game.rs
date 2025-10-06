@@ -170,7 +170,10 @@ impl Game {
                         if self.current_pair.is_none() {
                             self.spawn_new_pair();
                         }
-                        self.mode = GameMode::Playing;
+                        // spawn_new_pair()でGameOverになっていない場合のみPlayingへ
+                        if self.mode != GameMode::GameOver {
+                            self.mode = GameMode::Playing;
+                        }
                     }
                 }
             }
