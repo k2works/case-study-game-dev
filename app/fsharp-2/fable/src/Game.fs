@@ -53,10 +53,28 @@ let autoFall (state: GameState) : GameState =
             let movedPair = Player.moveDown pair state.Stage.Rows
             { state with CurrentPuyo = Some movedPair }
         else
-            // 下に移動できない場合はステージに固定して重力を適用してから新しいぷよペアを生成
+            // 下に移動できない場合はステージに固定
             let stageWithPuyo = Player.fixToStage pair state.Stage
+
+            // 重力を適用
             let stageAfterGravity = Stage.applyGravity stageWithPuyo
+
+            // 消去判定
+            let eraseInfo = Stage.checkErase stageAfterGravity
+
+            // 消去があれば消去実行と重力適用を繰り返す
+            let rec processErase (currentStage: Stage.StageState) : Stage.StageState =
+                let info = Stage.checkErase currentStage
+                if info.ErasePuyoCount > 0 then
+                    let erasedStage = Stage.eraseBlocks info.ErasePositions currentStage
+                    let fallenStage = Stage.applyGravity erasedStage
+                    processErase fallenStage
+                else
+                    currentStage
+
+            let finalStage = processErase stageAfterGravity
+
             { state with
-                Stage = stageAfterGravity
+                Stage = finalStage
                 CurrentPuyo = Some (Player.createNewPuyoPair()) }
     | None -> state

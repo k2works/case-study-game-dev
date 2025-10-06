@@ -27,3 +27,9 @@ type PuyoPair = {
     Axis: Puyo    // 軸ぷよ（回転の中心）
     Child: Puyo   // 子ぷよ（回転する）
 }
+
+/// 消去情報
+type EraseInfo = {
+    ErasePuyoCount: int
+    ErasePositions: (int * int * PuyoColor) list
+}
