@@ -6,6 +6,13 @@ open PuyoPuyo.Elmish
 open PuyoPuyo.Domain
 
 module GameView =
+    /// キーボードイベントハンドラ
+    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
+        match e.Key with
+        | "ArrowLeft" -> dispatch MoveLeft
+        | "ArrowRight" -> dispatch MoveRight
+        | _ -> ()
+
     /// セルを描画
     let private viewCell (cell: Cell) =
         let color =
@@ -52,6 +59,8 @@ module GameView =
     let view (model: Model) (dispatch: Message -> unit) =
         div {
             attr.``class`` "game-container"
+            attr.tabindex 0  // キーボードフォーカスを受け取れるようにする
+            on.keydown (handleKeyDown dispatch)
             h1 { "ぷよぷよゲーム" }
 
             viewBoard model.Board model.CurrentPiece
@@ -66,9 +75,12 @@ module GameView =
                     }
 
                 | Playing ->
-                    button {
-                        on.click (fun _ -> dispatch ResetGame)
-                        "リセット"
+                    div {
+                        p { "矢印キー: 左右移動" }
+                        button {
+                            on.click (fun _ -> dispatch ResetGame)
+                            "リセット"
+                        }
                     }
 
                 | GameOver ->

@@ -40,5 +40,27 @@ module Update =
         | ResetGame ->
             Model.init (), Cmd.none
 
+        | MoveLeft when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryMovePuyoPair model.Board piece Left with
+                | Some movedPiece ->
+                    { model with CurrentPiece = Some movedPiece }, Cmd.none
+                | None ->
+                    model, Cmd.none
+            | None ->
+                model, Cmd.none
+
+        | MoveRight when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryMovePuyoPair model.Board piece Right with
+                | Some movedPiece ->
+                    { model with CurrentPiece = Some movedPiece }, Cmd.none
+                | None ->
+                    model, Cmd.none
+            | None ->
+                model, Cmd.none
+
         | _ ->
             model, Cmd.none
