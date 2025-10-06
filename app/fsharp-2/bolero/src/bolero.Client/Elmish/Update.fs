@@ -30,30 +30,30 @@ module Update =
             match GameLogic.tryMovePuyoPair model.Board piece Down with
             | Some movedPiece ->
                 // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
+                { model with
+                    CurrentPiece = Some movedPiece },
+                Cmd.none
             | None ->
                 // 移動できない（着地）
                 let boardWithPuyo = Board.fixPuyoPair model.Board piece
 
                 // 消去処理
                 let groups = Board.findConnectedGroups boardWithPuyo
+
                 let boardAfterClear =
                     if List.isEmpty groups then
                         Board.applyGravity boardWithPuyo
                     else
                         let positions = groups |> List.concat
-                        boardWithPuyo
-                        |> Board.clearPuyos positions
-                        |> Board.applyGravity
+                        boardWithPuyo |> Board.clearPuyos positions |> Board.applyGravity
 
                 let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = boardAfterClear
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
-        | None ->
-            model, Cmd.none
+
+                { model with
+                    Board = boardAfterClear
+                    CurrentPiece = Some nextPiece },
+                Cmd.none
+        | None -> model, Cmd.none
 
     /// Update 関数
     let update (message: Message) (model: Model) : Model * Cmd<Message> =
@@ -62,63 +62,56 @@ module Update =
             let firstPiece = PuyoPair.createRandom 2 1 0
             let nextPiece = PuyoPair.createRandom 2 1 0
 
-            {
-                model with
-                    Board = Board.create 6 13
-                    CurrentPiece = Some firstPiece
-                    NextPiece = Some nextPiece
-                    Score = 0
-                    GameTime = 0
-                    Status = Playing
-            }, Cmd.none
+            { model with
+                Board = Board.create 6 13
+                CurrentPiece = Some firstPiece
+                NextPiece = Some nextPiece
+                Score = 0
+                GameTime = 0
+                Status = Playing },
+            Cmd.none
 
-        | ResetGame ->
-            Model.init (), Cmd.none
+        | ResetGame -> Model.init (), Cmd.none
 
         | MoveLeft when model.Status = Playing ->
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Left with
                 | Some movedPiece ->
-                    { model with CurrentPiece = Some movedPiece }, Cmd.none
-                | None ->
-                    model, Cmd.none
-            | None ->
-                model, Cmd.none
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
+                | None -> model, Cmd.none
+            | None -> model, Cmd.none
 
         | MoveRight when model.Status = Playing ->
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Right with
                 | Some movedPiece ->
-                    { model with CurrentPiece = Some movedPiece }, Cmd.none
-                | None ->
-                    model, Cmd.none
-            | None ->
-                model, Cmd.none
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
+                | None -> model, Cmd.none
+            | None -> model, Cmd.none
 
         | Rotate when model.Status = Playing ->
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryRotatePuyoPair model.Board piece with
                 | Some rotatedPiece ->
-                    { model with CurrentPiece = Some rotatedPiece }, Cmd.none
-                | None ->
-                    model, Cmd.none
-            | None ->
-                model, Cmd.none
+                    { model with
+                        CurrentPiece = Some rotatedPiece },
+                    Cmd.none
+                | None -> model, Cmd.none
+            | None -> model, Cmd.none
 
-        | Tick when model.Status = Playing ->
-            dropPuyo model
+        | Tick when model.Status = Playing -> dropPuyo model
 
-        | MoveDown when model.Status = Playing ->
-            dropPuyo model
+        | MoveDown when model.Status = Playing -> dropPuyo model
 
-        | StartFastFall when model.Status = Playing ->
-            { model with IsFastFalling = true }, Cmd.none
+        | StartFastFall when model.Status = Playing -> { model with IsFastFalling = true }, Cmd.none
 
-        | StopFastFall when model.Status = Playing ->
-            { model with IsFastFalling = false }, Cmd.none
+        | StopFastFall when model.Status = Playing -> { model with IsFastFalling = false }, Cmd.none
 
-        | _ ->
-            model, Cmd.none
+        | _ -> model, Cmd.none

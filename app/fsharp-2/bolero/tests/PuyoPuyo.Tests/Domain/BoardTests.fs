@@ -76,13 +76,14 @@ module BoardTests =
         // Assert
         let (pos1, pos2) = PuyoPair.getPositions pair
         let (x1, y1) = pos1
-        Board.getCell board x1 y1 |> should equal Empty  // 元のボードは空のまま
-        Board.getCell newBoard x1 y1 |> should equal (Filled Red)  // 新しいボードには固定
+        Board.getCell board x1 y1 |> should equal Empty // 元のボードは空のまま
+        Board.getCell newBoard x1 y1 |> should equal (Filled Red) // 新しいボードには固定
 
     [<Fact>]
     let ``横に4つ並んだぷよを検出できる`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
             |> Board.setCell 0 12 (Filled Red)
@@ -101,6 +102,7 @@ module BoardTests =
     let ``縦に4つ並んだぷよを検出できる`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
             |> Board.setCell 2 9 (Filled Green)
@@ -119,6 +121,7 @@ module BoardTests =
     let ``L字型につながった5つのぷよを検出できる`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
             |> Board.setCell 1 10 (Filled Blue)
@@ -138,6 +141,7 @@ module BoardTests =
     let ``3つ以下のぷよは検出されない`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
             |> Board.setCell 0 12 (Filled Yellow)
@@ -154,6 +158,7 @@ module BoardTests =
     let ``指定した位置のぷよを消去できる`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
             |> Board.setCell 0 12 (Filled Red)
@@ -162,7 +167,7 @@ module BoardTests =
             |> Board.setCell 3 12 (Filled Red)
 
         // Act
-        let positions = [(0, 12); (1, 12); (2, 12); (3, 12)]
+        let positions = [ (0, 12); (1, 12); (2, 12); (3, 12) ]
         let newBoard = board |> Board.clearPuyos positions
 
         // Assert
@@ -175,23 +180,25 @@ module BoardTests =
     let ``重力を適用すると浮いているぷよが落ちる`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
-            |> Board.setCell 2 8 (Filled Green)   // 浮いているぷよ
-            |> Board.setCell 2 12 (Filled Red)    // 下にあるぷよ
+            |> Board.setCell 2 8 (Filled Green) // 浮いているぷよ
+            |> Board.setCell 2 12 (Filled Red) // 下にあるぷよ
 
         // Act
         let newBoard = Board.applyGravity board
 
         // Assert
         Board.getCell newBoard 2 8 |> should equal Empty
-        Board.getCell newBoard 2 11 |> should equal (Filled Green)  // 落ちた
+        Board.getCell newBoard 2 11 |> should equal (Filled Green) // 落ちた
         Board.getCell newBoard 2 12 |> should equal (Filled Red)
 
     [<Fact>]
     let ``重力を適用すると複数のぷよが落ちる`` () =
         // Arrange
         let board = Board.create 6 13
+
         let board =
             board
             |> Board.setCell 1 5 (Filled Blue)

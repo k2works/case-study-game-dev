@@ -27,8 +27,8 @@ module PuyoPairTests =
         let (pos1, pos2) = PuyoPair.getPositions pair
 
         // Assert
-        pos1 |> should equal (2, 5)  // 軸ぷよ
-        pos2 |> should equal (2, 4)  // 2つ目のぷよは上
+        pos1 |> should equal (2, 5) // 軸ぷよ
+        pos2 |> should equal (2, 4) // 2つ目のぷよは上
 
     [<Fact>]
     let ``回転状態1のとき2つ目のぷよは右にある`` () =
@@ -39,8 +39,8 @@ module PuyoPairTests =
         let (pos1, pos2) = PuyoPair.getPositions pair
 
         // Assert
-        pos1 |> should equal (2, 5)  // 軸ぷよ
-        pos2 |> should equal (3, 5)  // 2つ目のぷよは右
+        pos1 |> should equal (2, 5) // 軸ぷよ
+        pos2 |> should equal (3, 5) // 2つ目のぷよは右
 
     [<Fact>]
     let ``回転状態2のとき2つ目のぷよは下にある`` () =
@@ -51,8 +51,8 @@ module PuyoPairTests =
         let (pos1, pos2) = PuyoPair.getPositions pair
 
         // Assert
-        pos1 |> should equal (2, 5)  // 軸ぷよ
-        pos2 |> should equal (2, 6)  // 2つ目のぷよは下
+        pos1 |> should equal (2, 5) // 軸ぷよ
+        pos2 |> should equal (2, 6) // 2つ目のぷよは下
 
     [<Fact>]
     let ``回転状態3のとき2つ目のぷよは左にある`` () =
@@ -63,8 +63,8 @@ module PuyoPairTests =
         let (pos1, pos2) = PuyoPair.getPositions pair
 
         // Assert
-        pos1 |> should equal (2, 5)  // 軸ぷよ
-        pos2 |> should equal (1, 5)  // 2つ目のぷよは左
+        pos1 |> should equal (2, 5) // 軸ぷよ
+        pos2 |> should equal (1, 5) // 2つ目のぷよは左
 
     [<Fact>]
     let ``時計回りに回転すると回転状態が1増える`` () =
@@ -91,12 +91,12 @@ module PuyoPairTests =
     [<Fact>]
     let ``回転すると2つ目のぷよの位置が変わる`` () =
         // Arrange
-        let pair = PuyoPair.create 3 5 Red Green 0  // 回転状態0（上）
+        let pair = PuyoPair.create 3 5 Red Green 0 // 回転状態0（上）
 
         // Act
-        let rotated = PuyoPair.rotateClockwise pair  // 回転状態1（右）
+        let rotated = PuyoPair.rotateClockwise pair // 回転状態1（右）
         let (pos1, pos2) = PuyoPair.getPositions rotated
 
         // Assert
-        pos1 |> should equal (3, 5)  // 軸ぷよは変わらない
-        pos2 |> should equal (4, 5)  // 2つ目のぷよは右に
+        pos1 |> should equal (3, 5) // 軸ぷよは変わらない
+        pos2 |> should equal (4, 5) // 2つ目のぷよは右に

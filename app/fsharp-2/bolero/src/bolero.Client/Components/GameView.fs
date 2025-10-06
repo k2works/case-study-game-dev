@@ -38,9 +38,7 @@ module GameView =
     let private viewBoard (board: Board) (currentPiece: PuyoPair option) =
         // ボードのコピーを作成
         let displayBoard =
-            Array.init board.Rows (fun y ->
-                Array.init board.Cols (fun x ->
-                    Board.getCell board x y))
+            Array.init board.Rows (fun y -> Array.init board.Cols (fun x -> Board.getCell board x y))
 
         // 現在のぷよを重ねて表示
         match currentPiece with
@@ -48,17 +46,21 @@ module GameView =
             let (pos1, pos2) = PuyoPair.getPositions piece
             let (x1, y1) = pos1
             let (x2, y2) = pos2
+
             if y1 >= 0 && y1 < board.Rows && x1 >= 0 && x1 < board.Cols then
                 displayBoard.[y1].[x1] <- Filled piece.Puyo1Color
+
             if y2 >= 0 && y2 < board.Rows && x2 >= 0 && x2 < board.Cols then
                 displayBoard.[y2].[x2] <- Filled piece.Puyo2Color
         | None -> ()
 
         div {
             attr.``class`` "board"
+
             for row in displayBoard do
                 div {
                     attr.``class`` "board-row"
+
                     for cell in row do
                         viewCell cell
                 }
@@ -68,7 +70,7 @@ module GameView =
     let view (model: Model) (dispatch: Message -> unit) =
         div {
             attr.``class`` "game-container"
-            attr.tabindex 0  // キーボードフォーカスを受け取れるようにする
+            attr.tabindex 0 // キーボードフォーカスを受け取れるようにする
             on.keydown (handleKeyDown dispatch)
             on.keyup (handleKeyUp dispatch)
             h1 { "ぷよぷよゲーム" }
@@ -77,6 +79,7 @@ module GameView =
 
             div {
                 attr.``class`` "game-controls"
+
                 match model.Status with
                 | NotStarted ->
                     button {
@@ -89,6 +92,7 @@ module GameView =
                         p { "← →: 左右移動" }
                         p { "↑: 回転" }
                         p { "↓: 高速落下" }
+
                         button {
                             on.click (fun _ -> dispatch ResetGame)
                             "リセット"
@@ -98,6 +102,7 @@ module GameView =
                 | GameOver ->
                     div {
                         h2 { "ゲームオーバー" }
+
                         button {
                             on.click (fun _ -> dispatch ResetGame)
                             "もう一度プレイ"

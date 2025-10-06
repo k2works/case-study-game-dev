@@ -12,92 +12,106 @@ module UpdateTests =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 3 1 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update MoveLeft model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.X |> should equal 2
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.X |> should equal 2
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``MoveRightメッセージでぷよが右に移動する`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 2 1 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update MoveRight model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.X |> should equal 3
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.X |> should equal 3
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``左端では左に移動できない`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 0 1 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update MoveLeft model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.X |> should equal 0  // 位置が変わらない
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.X |> should equal 0 // 位置が変わらない
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``ゲーム中でない場合は移動できない`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 2 1 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = NotStarted }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = NotStarted }
 
         // Act
         let (newModel, _) = Update.update MoveLeft model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.X |> should equal 2  // 位置が変わらない
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.X |> should equal 2 // 位置が変わらない
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``Rotateメッセージでぷよが回転する`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 3 5 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update Rotate model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.Rotation |> should equal 1
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.Rotation |> should equal 1
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``回転時に壁キックが発生する`` () =
         // Arrange
         let model = Model.init ()
-        let pair = PuyoPair.create 5 5 Red Green 0  // 右端
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+        let pair = PuyoPair.create 5 5 Red Green 0 // 右端
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update Rotate model
@@ -106,9 +120,8 @@ module UpdateTests =
         match newModel.CurrentPiece with
         | Some newPair ->
             newPair.Rotation |> should equal 1
-            newPair.X |> should equal 4  // 左にキック
-        | None ->
-            failwith "ぷよが存在するはずです"
+            newPair.X |> should equal 4 // 左にキック
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``回転できない場合は状態が変わらない`` () =
@@ -116,7 +129,12 @@ module UpdateTests =
         let model = Model.init ()
         let board = model.Board |> Board.setCell 4 5 (Filled Blue)
         let pair = PuyoPair.create 5 5 Red Green 0
-        let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                Board = board
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update Rotate model
@@ -124,34 +142,39 @@ module UpdateTests =
         // Assert
         match newModel.CurrentPiece with
         | Some newPair ->
-            newPair.Rotation |> should equal 0  // 回転していない
-            newPair.X |> should equal 5  // 位置も変わらない
-        | None ->
-            failwith "ぷよが存在するはずです"
+            newPair.Rotation |> should equal 0 // 回転していない
+            newPair.X |> should equal 5 // 位置も変わらない
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``Tickメッセージでぷよが下に移動する`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 3 5 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update Tick model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.Y |> should equal 6
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.Y |> should equal 6
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``着地したぷよはボードに固定され新しいぷよが生成される`` () =
         // Arrange
         let model = Model.init ()
-        let pair = PuyoPair.create 3 12 Red Green 0  // 下端（y=12）
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+        let pair = PuyoPair.create 3 12 Red Green 0 // 下端（y=12）
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update Tick model
@@ -166,49 +189,56 @@ module UpdateTests =
         | Some newPair ->
             newPair.X |> should equal 2
             newPair.Y |> should equal 1
-        | None ->
-            failwith "新しいぷよが生成されるはずです"
+        | None -> failwith "新しいぷよが生成されるはずです"
 
     [<Fact>]
     let ``ゲーム中でない場合は落下しない`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 3 5 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = NotStarted }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = NotStarted }
 
         // Act
         let (newModel, _) = Update.update Tick model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.Y |> should equal 5  // 位置が変わらない
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.Y |> should equal 5 // 位置が変わらない
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``MoveDownメッセージでぷよが下に移動する`` () =
         // Arrange
         let model = Model.init ()
         let pair = PuyoPair.create 3 5 Red Green 0
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update MoveDown model
 
         // Assert
         match newModel.CurrentPiece with
-        | Some newPair ->
-            newPair.Y |> should equal 6
-        | None ->
-            failwith "ぷよが存在するはずです"
+        | Some newPair -> newPair.Y |> should equal 6
+        | None -> failwith "ぷよが存在するはずです"
 
     [<Fact>]
     let ``下端に到達した場合は着地する`` () =
         // Arrange
         let model = Model.init ()
-        let pair = PuyoPair.create 3 12 Red Green 0  // 下端
-        let model = { model with CurrentPiece = Some pair; Status = Playing }
+        let pair = PuyoPair.create 3 12 Red Green 0 // 下端
+
+        let model =
+            { model with
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
         let (newModel, _) = Update.update MoveDown model
@@ -227,7 +257,11 @@ module UpdateTests =
     let ``StartFastFallメッセージで高速落下モードになる`` () =
         // Arrange
         let model = Model.init ()
-        let model = { model with Status = Playing; IsFastFalling = false }
+
+        let model =
+            { model with
+                Status = Playing
+                IsFastFalling = false }
 
         // Act
         let (newModel, _) = Update.update StartFastFall model
@@ -239,7 +273,11 @@ module UpdateTests =
     let ``StopFastFallメッセージで高速落下モードが解除される`` () =
         // Arrange
         let model = Model.init ()
-        let model = { model with Status = Playing; IsFastFalling = true }
+
+        let model =
+            { model with
+                Status = Playing
+                IsFastFalling = true }
 
         // Act
         let (newModel, _) = Update.update StopFastFall model
@@ -251,7 +289,11 @@ module UpdateTests =
     let ``ゲーム中でない場合は高速落下モードにならない`` () =
         // Arrange
         let model = Model.init ()
-        let model = { model with Status = NotStarted; IsFastFalling = false }
+
+        let model =
+            { model with
+                Status = NotStarted
+                IsFastFalling = false }
 
         // Act
         let (newModel, _) = Update.update StartFastFall model
@@ -272,10 +314,15 @@ module UpdateTests =
 
         // 4つ目のぷよを落とす（1回のTickで着地する位置に配置）
         let pair = PuyoPair.create 3 12 Red Green 0
-        let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                Board = board
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
-        let (newModel, _) = Update.update Tick model  // 着地
+        let (newModel, _) = Update.update Tick model // 着地
 
         // Assert
         // 4つつながったので消えている
@@ -293,15 +340,20 @@ module UpdateTests =
         // 縦向きのぷよペアを配置（下端）
         let board =
             model.Board
-            |> Board.setCell 3 12 (Filled Red)   // 軸ぷよ
+            |> Board.setCell 3 12 (Filled Red) // 軸ぷよ
             |> Board.setCell 3 11 (Filled Green) // 子ぷよ
 
         // 横向きのぷよペアを重ねる（rotation=3で左向き、軸ぷよが右）
         let pair = PuyoPair.create 3 10 Blue Yellow 3
-        let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
+
+        let model =
+            { model with
+                Board = board
+                CurrentPiece = Some pair
+                Status = Playing }
 
         // Act
-        let (newModel, _) = Update.update Tick model  // 着地
+        let (newModel, _) = Update.update Tick model // 着地
 
         // Assert
         // 軸ぷよ（Blue）は縦ぷよの上に着地
