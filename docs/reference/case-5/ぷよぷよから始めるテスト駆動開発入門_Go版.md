@@ -171,11 +171,20 @@ go get github.com/stretchr/testify
 
 #### 静的コード解析: golangci-lint
 
-Go用の静的コード解析ツール **golangci-lint** を使います：
+Go用の静的コード解析ツール **golangci-lint** を使います。まずインストールします：
 
 ```bash
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 ```
+
+**重要**: インストール後、ツールが正しくインストールされたか確認しましょう：
+
+```bash
+golangci-lint --version
+# 出力例: golangci-lint has version 1.xx.x built with go1.xx from ...
+```
+
+もし「command not found」と表示される場合は、`$HOME/go/bin`（またはWindowsの場合`%USERPROFILE%\go\bin`）がPATHに追加されていることを確認してください。
 
 設定ファイル `.golangci.yml` を作成します：
 
@@ -274,6 +283,31 @@ go tool cover -html=coverage.out
 
 ```bash
 go install github.com/go-task/task/v3/cmd/task@latest
+```
+
+**重要**: インストール後、ツールが正しくインストールされたか確認しましょう：
+
+```bash
+task --version
+# 出力例: Task version: v3.xx.x
+```
+
+もし「command not found」と表示される場合は、以下を確認してください：
+
+**Linux/macOS の場合**:
+```bash
+# PATHに追加されているか確認
+echo $PATH | grep go/bin
+
+# 追加されていない場合は~/.bashrcや~/.zshrcに追加
+export PATH=$PATH:$HOME/go/bin
+```
+
+**Windows (PowerShell) の場合**:
+```powershell
+# PATHに追加
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\go\bin", "User")
+# 新しいターミナルを開いて確認
 ```
 
 `Taskfile.yml` を作成します：
@@ -376,15 +410,72 @@ puyo-puyo-go/
 
 ### セットアップの確認
 
-環境構築が完了したら、すべてが正しく動作するか確認しましょう：
+環境構築が完了したら、すべてが正しく動作するか確認しましょう。
+
+#### ステップ1: ツールのインストール確認
+
+まず、各ツールが正しくインストールされているか確認します：
+
+```bash
+# Goのバージョン確認
+go version
+
+# golangci-lintの確認
+golangci-lint --version
+
+# taskの確認
+task --version
+```
+
+すべてのコマンドでバージョン情報が表示されればOKです。もし「command not found」エラーが出る場合は、該当ツールの再インストールとPATH設定を確認してください。
+
+#### ステップ2: 利用可能なタスクの確認
+
+taskコマンドで利用可能なタスク一覧を表示します：
+
+```bash
+task --list
+# または
+task -l
+```
+
+以下のようなタスク一覧が表示されれば成功です：
+
+```
+task: Available tasks for this project:
+* build:         Build application
+* check:         Run all checks
+* clean:         Clean build artifacts
+* fmt:           Format code
+* lint:          Run linters
+* run:           Run application
+* test:          Run tests
+* test-cover:    Run tests with coverage
+```
+
+#### ステップ3: 品質チェックの実行
+
+実際に品質チェックを実行してみましょう：
 
 ```bash
 task check
 ```
 
-このコマンドが成功すれば、環境構築は完了です！
+このコマンドは以下を順次実行します：
+1. `task fmt` - コードフォーマット
+2. `task lint` - 静的解析（サイクロマティック複雑度チェック含む）
+3. `task test` - テスト実行
 
-セットアップが完了したので、ここでコミットしておきましょう：
+**期待される結果**:
+- すべてのチェックがエラーなく完了すること
+- テストが全て通過すること
+- lintエラーが0件であること
+
+もしエラーが発生した場合は、該当するツールが正しくインストールされているか、設定ファイルが正しく配置されているかを確認してください。
+
+#### ステップ4: コミット
+
+セットアップが完了し、すべての確認が成功したら、ここでコミットしておきましょう：
 
 ```bash
 git add .
@@ -427,6 +518,39 @@ git commit -m 'chore: プロジェクトの環境構築を完了
 - **タスク自動化**: 反復的な作業を自動化してミスを減らす
 - **品質維持**: 静的解析とフォーマットでコードの品質を保つ
 - **複雑度管理**: サイクロマティック複雑度を7に制限することで、テスタブルで保守しやすいコードを維持
+
+### 重要な注意点
+
+**設定ファイルの作成だけでは不十分です！**
+
+環境構築では以下の3ステップをすべて完了させることが重要です：
+
+1. **ツール本体のインストール** - `go install`コマンドの実行
+2. **設定ファイルの作成** - `.golangci.yml`、`Taskfile.yml`など
+3. **動作確認の実行** - 各ツールのバージョン確認と`task check`の実行
+
+特に、以下のような失敗例に注意してください：
+
+❌ **よくある失敗**: 設定ファイルだけ作成して、ツール本体をインストールし忘れる
+- `Taskfile.yml`は作成したが、`task`コマンドがインストールされていない
+- `.golangci.yml`は作成したが、`golangci-lint`がインストールされていない
+
+✅ **正しい手順**: インストール → 確認 → 設定 → 動作確認
+```bash
+# 1. インストール
+go install github.com/go-task/task/v3/cmd/task@latest
+
+# 2. インストール確認
+task --version
+
+# 3. 設定ファイル作成
+# Taskfile.ymlを作成
+
+# 4. 動作確認
+task check
+```
+
+この3ステップの確認を徹底することで、後のイテレーションで「なぜツールが動かないの？」という問題を防げます。
 
 「準備完了！これから本格的にぷよぷよゲームを作っていきますよ！」
 
