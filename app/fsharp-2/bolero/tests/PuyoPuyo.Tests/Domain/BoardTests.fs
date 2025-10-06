@@ -47,3 +47,34 @@ module BoardTests =
         // Assert
         Board.getCell board 2 10 |> should equal Empty
         Board.getCell newBoard 2 10 |> should equal (Filled Red)
+
+    [<Fact>]
+    let ``ぷよペアをボードに固定できる`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair = PuyoPair.create 3 10 Red Green 0
+
+        // Act
+        let newBoard = Board.fixPuyoPair board pair
+
+        // Assert
+        let (pos1, pos2) = PuyoPair.getPositions pair
+        let (x1, y1) = pos1
+        let (x2, y2) = pos2
+        Board.getCell newBoard x1 y1 |> should equal (Filled Red)
+        Board.getCell newBoard x2 y2 |> should equal (Filled Green)
+
+    [<Fact>]
+    let ``ぷよペアを固定しても元のボードは変更されない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair = PuyoPair.create 3 10 Red Green 0
+
+        // Act
+        let newBoard = Board.fixPuyoPair board pair
+
+        // Assert
+        let (pos1, pos2) = PuyoPair.getPositions pair
+        let (x1, y1) = pos1
+        Board.getCell board x1 y1 |> should equal Empty  // 元のボードは空のまま
+        Board.getCell newBoard x1 y1 |> should equal (Filled Red)  // 新しいボードには固定

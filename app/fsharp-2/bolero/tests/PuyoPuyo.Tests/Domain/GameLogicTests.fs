@@ -111,3 +111,44 @@ module GameLogicTests =
 
         // Assert
         result |> should equal None
+
+    [<Fact>]
+    let ``ぷよペアを下に移動できる`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair = PuyoPair.create 3 5 Red Green 0
+
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Down
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.Y |> should equal 6
+        | None ->
+            failwith "下に移動できるはずです"
+
+    [<Fact>]
+    let ``下端では下に移動できない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair = PuyoPair.create 3 12 Red Green 0  // 回転状態0（上）、軸ぷよが y=12（下端）
+
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Down
+
+        // Assert
+        result |> should equal None
+
+    [<Fact>]
+    let ``下にぷよがある場合は移動できない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let board = Board.setCell board 3 6 (Filled Blue)  // 軸ぷよの下に障害物
+        let pair = PuyoPair.create 3 5 Red Green 0
+
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Down
+
+        // Assert
+        result |> should equal None
