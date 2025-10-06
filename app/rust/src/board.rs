@@ -65,7 +65,13 @@ impl Board {
         connected
     }
 
-    fn dfs(&self, x: usize, y: usize, target_color: PuyoColor, visited: &mut HashSet<(usize, usize)>) {
+    fn dfs(
+        &self,
+        x: usize,
+        y: usize,
+        target_color: PuyoColor,
+        visited: &mut HashSet<(usize, usize)>,
+    ) {
         // 範囲チェック
         if x >= self.cols || y >= self.rows {
             return;
@@ -164,9 +170,7 @@ impl Board {
                     self.cells[x][read_y] = Cell::Empty;
                     has_fallen = true;
                 }
-                if write_y > 0 {
-                    write_y -= 1;
-                }
+                write_y = write_y.saturating_sub(1);
             }
         }
 
