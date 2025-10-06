@@ -1,9 +1,19 @@
 package main
 
 import (
-	"fmt"
+	"log"
+
+	"github.com/case-study-game-dev/puyo-puyo-go/internal/game"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func main() {
-	fmt.Println("Puyo Puyo Game")
+	g := game.New()
+
+	ebiten.SetWindowSize(480, 720)
+	ebiten.SetWindowTitle("ぷよぷよ")
+
+	if err := ebiten.RunGame(g); err != nil {
+		log.Fatal(err)
+	}
 }
