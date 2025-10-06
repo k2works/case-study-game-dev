@@ -935,6 +935,237 @@ make ci
 5. **可読性**：複雑なビルドロジックも構造化して書ける
 6. **クロスプラットフォーム**：Windows、macOS、Linuxで同じスクリプトが動く
 
+### 自動化: コード品質の自動管理
+
+良いコードを書き続けるためには、コードの品質を自動的にチェックし、維持していく仕組みが必要です。F#エコシステムのツールを活用しましょう。
+
+#### コードフォーマッタ: Fantomas
+
+F#のコードフォーマットを統一するために **Fantomas** を使います。
+
+> 優れたソースコードは「目に優しい」ものでなければいけない。
+>
+> —  リーダブルコード
+
+Fantomasのインストール：
+
+```bash
+dotnet tool install fantomas
+```
+
+`build.cake`にフォーマット用のタスクを追加します：
+
+```csharp
+// build.cake に追加
+
+Task("Format")
+    .Description("コードを自動フォーマット")
+    .Does(() =>
+{
+    StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fantomas src tests"
+    });
+});
+
+Task("Format-Check")
+    .Description("コードフォーマットをチェック")
+    .Does(() =>
+{
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fantomas src tests --check"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("コードフォーマットエラーが検出されました。dotnet cake --target=Format で修正してください。");
+    }
+});
+```
+
+フォーマットの実行：
+
+```bash
+dotnet cake --target=Format-Check  # チェックのみ
+dotnet cake --target=Format        # 自動修正
+```
+
+Makefileにも追加できます：
+
+```makefile
+# Makefile に追加
+
+# コードフォーマットチェック
+format-check:
+	dotnet cake --target=Format-Check
+
+# コードを自動フォーマット
+format:
+	dotnet cake --target=Format
+```
+
+#### 静的コード解析: FSharpLint
+
+静的コード解析ツールとして **FSharpLint** を使います。
+
+```bash
+dotnet tool install dotnet-fsharplint
+```
+
+プロジェクトルートに`fsharplint.json`を作成して、ルールをカスタマイズします：
+
+```json
+{
+  "ignoreFiles": [
+    "**/obj/**/*.fs",
+    "**/bin/**/*.fs"
+  ],
+  "hints": {
+    "add": []
+  },
+  "formatting": {
+    "typedItemSpacing": {
+      "enabled": true
+    },
+    "typePrefixing": {
+      "enabled": true
+    }
+  },
+  "conventions": {
+    "naming": {
+      "enabled": true
+    },
+    "nestedStatements": {
+      "enabled": true,
+      "depth": 5
+    },
+    "cyclomaticComplexity": {
+      "enabled": true,
+      "maxComplexity": 7
+    }
+  }
+}
+```
+
+`build.cake`にlint用のタスクを追加：
+
+```csharp
+// build.cake に追加
+
+Task("Lint")
+    .Description("静的コード解析を実行")
+    .Does(() =>
+{
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fsharplint lint PuyoPuyo.sln"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("静的コード解析でエラーが検出されました。");
+    }
+});
+```
+
+静的解析の実行：
+
+```bash
+dotnet cake --target=Lint
+```
+
+Makefileにも追加：
+
+```makefile
+# Makefile に追加
+
+# 静的コード解析
+lint:
+	dotnet cake --target=Lint
+```
+
+#### テストカバレッジ
+
+F#でのコードカバレッジ測定には、.NETエコシステムの **coverlet** や **altcover** を使用します。
+
+coverletのインストール：
+
+```bash
+# coverletをテストプロジェクトに追加
+dotnet add tests/PuyoPuyo.Tests package coverlet.msbuild
+```
+
+`build.cake`にカバレッジタスクを追加：
+
+```csharp
+// build.cake に追加
+
+Task("Coverage")
+    .Description("テストカバレッジを測定")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    DotNetTest("./PuyoPuyo.sln", new DotNetTestSettings
+    {
+        Configuration = configuration,
+        NoBuild = true,
+        NoRestore = true,
+        ArgumentCustomization = args => args
+            .Append("/p:CollectCoverage=true")
+            .Append("/p:CoverletOutputFormat=opencover")
+            .Append("/p:CoverletOutput=./coverage/")
+    });
+
+    Information("カバレッジレポート: ./tests/PuyoPuyo.Tests/coverage/coverage.opencover.xml");
+});
+```
+
+カバレッジの実行：
+
+```bash
+dotnet cake --target=Coverage
+```
+
+Makefileにも追加：
+
+```makefile
+# Makefile に追加
+
+# テストカバレッジ
+coverage:
+	dotnet cake --target=Coverage
+```
+
+#### CI環境での品質チェック
+
+CI環境では、すべての品質チェックを自動実行します。`build.cake`のCIタスクを拡張：
+
+```csharp
+// build.cake の CI タスクを更新
+
+Task("CI")
+    .Description("CI環境での完全なビルドとテスト")
+    .IsDependentOn("Clean")
+    .IsDependentOn("Format-Check")
+    .IsDependentOn("Lint")
+    .IsDependentOn("Test")
+    .IsDependentOn("Coverage");
+```
+
+これにより、CI環境では以下が自動実行されます：
+
+1. クリーンビルド
+2. フォーマットチェック
+3. 静的コード解析
+4. テスト実行
+5. カバレッジ測定
+
+```bash
+# CI環境での実行
+dotnet cake --target=CI
+```
+
 ### Git の設定
 
 プロジェクトのバージョン管理を開始しましょう。
@@ -1039,6 +1270,10 @@ git commit -m "feat: initialize F# Bolero Puyo Puyo project with test setup"
    - タスク依存関係の管理
    - クロスプラットフォーム対応（build.ps1 / build.sh）
    - Makefileとの併用
+   - Fantomasによるコードフォーマット自動化
+   - FSharpLintによる静的コード解析
+   - coverletによるテストカバレッジ測定
+   - CI環境での品質チェック自動化
 
 4. **Boleroの理解**
    - Elmishアーキテクチャの基本
