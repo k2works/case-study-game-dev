@@ -77,8 +77,16 @@ impl Game {
         self.board.as_ref()
     }
 
+    pub fn board_mut(&mut self) -> Option<&mut Board> {
+        self.board.as_mut()
+    }
+
     pub fn current_pair(&self) -> Option<&PuyoPair> {
         self.current_pair.as_ref()
+    }
+
+    pub fn is_game_over(&self) -> bool {
+        self.mode == GameMode::GameOver
     }
 
     pub fn start(&mut self) {
