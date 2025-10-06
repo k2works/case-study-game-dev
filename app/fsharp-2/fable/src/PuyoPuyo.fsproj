@@ -6,6 +6,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Stage.fs" />
     <Compile Include="Game.fs" />
+    <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Core" Version="4.3.0" />
