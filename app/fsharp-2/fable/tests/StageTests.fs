@@ -160,9 +160,56 @@ let eraseExecutionTests =
             Expect.equal fallenStage.Cells.[stage.Rows - 1].[2] PuyoColor.Blue "青ぷよ2が落下"
     ]
 
+let zenkeshiTests =
+    testList "全消し判定" [
+        testCase "盤面上のぷよがすべて消えると全消しになる" <| fun _ ->
+            let stage = Stage.create()
+
+            // ステージにぷよを配置
+            let stageWithPuyo =
+                stage
+                |> Stage.setPuyo 1 (stage.Rows - 2) PuyoColor.Red
+                |> Stage.setPuyo 2 (stage.Rows - 2) PuyoColor.Red
+                |> Stage.setPuyo 1 (stage.Rows - 1) PuyoColor.Red
+                |> Stage.setPuyo 2 (stage.Rows - 1) PuyoColor.Red
+
+            // 消去判定と実行
+            let eraseInfo = Stage.checkErase stageWithPuyo
+            let erasedStage = Stage.eraseBlocks eraseInfo.ErasePositions stageWithPuyo
+
+            // 全消し判定
+            let isZenkeshi = Stage.checkZenkeshi erasedStage
+
+            // 全消しになっている
+            Expect.isTrue isZenkeshi "全消しになる"
+
+        testCase "盤面上にぷよが残っていると全消しにならない" <| fun _ ->
+            let stage = Stage.create()
+
+            // ステージにぷよを配置
+            let stageWithPuyo =
+                stage
+                |> Stage.setPuyo 1 (stage.Rows - 2) PuyoColor.Red
+                |> Stage.setPuyo 2 (stage.Rows - 2) PuyoColor.Red
+                |> Stage.setPuyo 1 (stage.Rows - 1) PuyoColor.Red
+                |> Stage.setPuyo 2 (stage.Rows - 1) PuyoColor.Red
+                |> Stage.setPuyo 3 (stage.Rows - 1) PuyoColor.Blue  // 消えないぷよ
+
+            // 消去判定と実行
+            let eraseInfo = Stage.checkErase stageWithPuyo
+            let erasedStage = Stage.eraseBlocks eraseInfo.ErasePositions stageWithPuyo
+
+            // 全消し判定
+            let isZenkeshi = Stage.checkZenkeshi erasedStage
+
+            // 全消しになっていない
+            Expect.isFalse isZenkeshi "全消しにならない"
+    ]
+
 let tests =
     testList "ステージ機能" [
         gravityTests
         eraseTests
         eraseExecutionTests
+        zenkeshiTests
     ]

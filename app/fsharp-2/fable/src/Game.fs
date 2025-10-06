@@ -10,6 +10,7 @@ type GameState = {
     Stage: StageState
     Score: int
     CurrentPuyo: PuyoPair option
+    IsGameOver: bool
 }
 
 /// ゲームを初期化する
@@ -18,6 +19,7 @@ let init () : GameState =
         Stage = Stage.create()
         Score = 0
         CurrentPuyo = Some (Player.createNewPuyoPair())
+        IsGameOver = false
     }
 
 /// ぷよペアを左に移動する
@@ -59,22 +61,44 @@ let autoFall (state: GameState) : GameState =
             // 重力を適用
             let stageAfterGravity = Stage.applyGravity stageWithPuyo
 
-            // 消去判定
-            let eraseInfo = Stage.checkErase stageAfterGravity
-
-            // 消去があれば消去実行と重力適用を繰り返す
-            let rec processErase (currentStage: Stage.StageState) : Stage.StageState =
+            // 消去があれば消去実行と重力適用を繰り返し、スコアを計算
+            let rec processErase (currentStage: Stage.StageState) (chain: int) (accScore: int) : Stage.StageState * int =
                 let info = Stage.checkErase currentStage
                 if info.ErasePuyoCount > 0 then
                     let erasedStage = Stage.eraseBlocks info.ErasePositions currentStage
                     let fallenStage = Stage.applyGravity erasedStage
-                    processErase fallenStage
+
+                    // 連鎖カウントを増加
+                    let newChain = chain + 1
+
+                    // スコアを計算
+                    let chainScore = Score.calculateScore info.ErasePuyoCount newChain
+                    let newScore = accScore + chainScore
+
+                    processErase fallenStage newChain newScore
                 else
-                    currentStage
+                    (currentStage, accScore)
 
-            let finalStage = processErase stageAfterGravity
+            let (finalStage, earnedScore) = processErase stageAfterGravity 0 0
 
-            { state with
-                Stage = finalStage
-                CurrentPuyo = Some (Player.createNewPuyoPair()) }
+            // 全消し判定
+            let bonusScore =
+                if Stage.checkZenkeshi finalStage then
+                    Score.zenkeshiBonus
+                else
+                    0
+
+            // ゲームオーバー判定
+            if Player.checkGameOver finalStage then
+                { state with
+                    Stage = finalStage
+                    Score = state.Score + earnedScore + bonusScore
+                    CurrentPuyo = None
+                    IsGameOver = true }
+            else
+                { state with
+                    Stage = finalStage
+                    Score = state.Score + earnedScore + bonusScore
+                    CurrentPuyo = Some (Player.createNewPuyoPair())
+                    IsGameOver = false }
     | None -> state

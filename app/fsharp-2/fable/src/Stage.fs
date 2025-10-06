@@ -130,3 +130,14 @@ let eraseBlocks (positions: (int * int * Types.PuyoColor) list) (stage: StageSta
                 if shouldErase then Types.PuyoColor.Empty else cell))
 
     { stage with Cells = newCells }
+
+/// 全消し判定（盤面上にぷよがあるかチェック）
+let checkZenkeshi (stage: StageState) : bool =
+    // すべてのセルをチェック
+    let hasPuyo =
+        stage.Cells
+        |> Array.exists (fun row ->
+            row |> Array.exists (fun cell -> cell <> Types.PuyoColor.Empty))
+
+    // ぷよが存在しなければ全消し
+    not hasPuyo

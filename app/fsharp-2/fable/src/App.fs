@@ -90,22 +90,57 @@ let render () =
         drawPuyo pair.Child
     | None -> ()
 
+    // ゲームオーバー表示
+    if gameState.IsGameOver then
+        // 半透明の黒背景
+        ctx.fillStyle <- !!"rgba(0, 0, 0, 0.7)"
+        ctx.fillRect(offsetX, offsetY, float gameState.Stage.Cols * cellSize, float gameState.Stage.Rows * cellSize)
+
+        // ゲームオーバーテキスト
+        ctx.fillStyle <- !!("#ff0000")
+        ctx.font <- "bold 48px Arial"
+        ctx.textAlign <- "center"
+        ctx.fillText("GAME OVER", offsetX + float gameState.Stage.Cols * cellSize / 2.0, offsetY + float gameState.Stage.Rows * cellSize / 2.0)
+
+        // 最終スコア
+        ctx.fillStyle <- !!("#ffffff")
+        ctx.font <- "24px Arial"
+        ctx.fillText(sprintf "Score: %d" gameState.Score, offsetX + float gameState.Stage.Cols * cellSize / 2.0, offsetY + float gameState.Stage.Rows * cellSize / 2.0 + 50.0)
+
+        // リスタートメッセージ
+        ctx.font <- "18px Arial"
+        ctx.fillText("Press R to Restart", offsetX + float gameState.Stage.Cols * cellSize / 2.0, offsetY + float gameState.Stage.Rows * cellSize / 2.0 + 90.0)
+
+        // textAlignを戻す
+        ctx.textAlign <- "left"
+
 // キーボードイベントハンドラー
 let handleKeyDown (e: Event) =
     let ke = e :?> KeyboardEvent
-    match ke.key with
-    | "ArrowLeft" ->
-        gameState <- Game.movePuyoLeft gameState
-        render()
-    | "ArrowRight" ->
-        gameState <- Game.movePuyoRight gameState
-        render()
-    | "ArrowUp" ->
-        gameState <- Game.rotatePuyo gameState
-        render()
-    | "ArrowDown" ->
-        isDownKeyPressed <- true
-    | _ -> ()
+
+    // ゲームオーバー時はRキーのみ受け付ける
+    if gameState.IsGameOver then
+        match ke.key with
+        | "r" | "R" ->
+            // ゲームをリセット
+            gameState <- Game.init()
+            isDownKeyPressed <- false
+            render()
+        | _ -> ()
+    else
+        match ke.key with
+        | "ArrowLeft" ->
+            gameState <- Game.movePuyoLeft gameState
+            render()
+        | "ArrowRight" ->
+            gameState <- Game.movePuyoRight gameState
+            render()
+        | "ArrowUp" ->
+            gameState <- Game.rotatePuyo gameState
+            render()
+        | "ArrowDown" ->
+            isDownKeyPressed <- true
+        | _ -> ()
 
 let handleKeyUp (e: Event) =
     let ke = e :?> KeyboardEvent
@@ -119,14 +154,17 @@ let mutable lastFallTime = 0.0
 let baseFallInterval = 1000.0 // 基本落下間隔（ミリ秒）
 
 let rec update (currentTime: float) =
-    let speed = Player.getDropSpeed isDownKeyPressed
-    let fallInterval = baseFallInterval / speed
+    // ゲームオーバー時以外はゲームを更新
+    if not gameState.IsGameOver then
+        let speed = Player.getDropSpeed isDownKeyPressed
+        let fallInterval = baseFallInterval / speed
 
-    if currentTime - lastFallTime >= fallInterval then
-        gameState <- Game.autoFall gameState
-        lastFallTime <- currentTime
-        render()
+        if currentTime - lastFallTime >= fallInterval then
+            gameState <- Game.autoFall gameState
+            lastFallTime <- currentTime
+            render()
 
+    // ゲームオーバー時でもループは継続（リスタート時に再開するため）
     Browser.Dom.window.requestAnimationFrame(update) |> ignore
 
 // イベントリスナーを追加

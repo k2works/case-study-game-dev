@@ -146,3 +146,12 @@ let getDropSpeed (isDownKeyPressed: bool) : float =
         10.0  // 高速落下
     else
         1.0   // 通常速度
+
+/// ゲームオーバー判定（新しいぷよを配置できるか）
+let checkGameOver (stage: Stage.StageState) : bool =
+    // 新しいぷよの配置位置（軸ぷよの位置）
+    let x = 2
+    let y = 0
+
+    // 配置位置にすでにぷよがある場合はゲームオーバー
+    stage.Cells.[y].[x] <> Types.PuyoColor.Empty

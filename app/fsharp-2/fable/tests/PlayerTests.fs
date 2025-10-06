@@ -300,6 +300,39 @@ let fastDropTests =
             Expect.equal speed 10.0 "高速落下速度は10.0"
     ]
 
+let gameOverTests =
+    testList "ゲームオーバー判定" [
+        testCase "新しいぷよを配置できない場合、ゲームオーバーになる" <| fun _ ->
+            let stage = Stage.create()
+
+            // ステージの上部（軸ぷよの位置）にぷよを配置
+            let stageWithPuyo = Stage.setPuyo 2 0 PuyoColor.Red stage
+
+            // ゲームオーバー判定
+            let isGameOver = Player.checkGameOver stageWithPuyo
+
+            Expect.isTrue isGameOver "配置位置にぷよがある場合はゲームオーバー"
+
+        testCase "新しいぷよを配置できる場合、ゲームオーバーにならない" <| fun _ ->
+            let stage = Stage.create()
+
+            // ゲームオーバー判定
+            let isGameOver = Player.checkGameOver stage
+
+            Expect.isFalse isGameOver "配置位置が空の場合はゲームオーバーにならない"
+
+        testCase "子ぷよの位置（Y=-1）は範囲外なのでチェックしない" <| fun _ ->
+            let stage = Stage.create()
+
+            // ステージの上部（軸ぷよの位置）は空
+            // 子ぷよはY=-1で範囲外なのでチェック不要
+
+            // ゲームオーバー判定
+            let isGameOver = Player.checkGameOver stage
+
+            Expect.isFalse isGameOver "軸ぷよの位置が空ならゲームオーバーにならない"
+    ]
+
 let tests =
     testList "プレイヤー機能" [
         playerTests
@@ -311,4 +344,5 @@ let tests =
         freeFallTests
         landingTests
         fastDropTests
+        gameOverTests
     ]
