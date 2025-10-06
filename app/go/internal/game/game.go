@@ -98,43 +98,43 @@ func (g *Game) handleInput() {
 		g.moveDelayTimer--
 	}
 
-	// 左キー（最初の入力または遅延後）
-	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
-		if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-			// 最初の入力は即座に反応
-			if g.CurrentPair.CanMoveLeft(g.Board) {
-				g.CurrentPair.MoveLeft()
-				g.moveDelayTimer = 8 // 約0.13秒の遅延
-			}
-		} else if g.moveDelayTimer == 0 {
-			// 長押し時は遅延後に移動
-			if g.CurrentPair.CanMoveLeft(g.Board) {
-				g.CurrentPair.MoveLeft()
-				g.moveDelayTimer = 4 // 連続移動時は少し早く
-			}
-		}
-	}
+	// 左右移動
+	g.handleHorizontalMove(ebiten.KeyArrowLeft, true)
+	g.handleHorizontalMove(ebiten.KeyArrowRight, false)
 
-	// 右キー（最初の入力または遅延後）
-	if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
-		if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-			// 最初の入力は即座に反応
-			if g.CurrentPair.CanMoveRight(g.Board) {
-				g.CurrentPair.MoveRight()
-				g.moveDelayTimer = 8
-			}
-		} else if g.moveDelayTimer == 0 {
-			// 長押し時は遅延後に移動
-			if g.CurrentPair.CanMoveRight(g.Board) {
-				g.CurrentPair.MoveRight()
-				g.moveDelayTimer = 4
-			}
-		}
-	}
-
-	// Zキーまたは上キーで回転
+	// 回転
 	if inpututil.IsKeyJustPressed(ebiten.KeyZ) || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		g.CurrentPair.Rotate(g.Board)
+	}
+}
+
+func (g *Game) handleHorizontalMove(key ebiten.Key, isLeft bool) {
+	if !ebiten.IsKeyPressed(key) {
+		return
+	}
+
+	if inpututil.IsKeyJustPressed(key) {
+		// 最初の入力は即座に反応
+		g.tryMove(isLeft)
+		if g.moveDelayTimer == 0 {
+			g.moveDelayTimer = 8 // 約0.13秒の遅延
+		}
+	} else if g.moveDelayTimer == 0 {
+		// 長押し時は遅延後に移動
+		g.tryMove(isLeft)
+		g.moveDelayTimer = 4 // 連続移動時は少し早く
+	}
+}
+
+func (g *Game) tryMove(isLeft bool) {
+	if isLeft {
+		if g.CurrentPair.CanMoveLeft(g.Board) {
+			g.CurrentPair.MoveLeft()
+		}
+	} else {
+		if g.CurrentPair.CanMoveRight(g.Board) {
+			g.CurrentPair.MoveRight()
+		}
 	}
 }
 
