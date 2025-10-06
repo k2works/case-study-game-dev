@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "install-deps": "dotnet tool restore && dotnet restore",
-    "dev": "vite",
+    "dev": "dotnet fable watch src -o dist/src --run vite",
     "build": "dotnet fable src -o dist/src && vite build",
     "preview": "vite preview",
     "test": "dotnet fable tests -o dist/tests --run mocha dist/tests",
