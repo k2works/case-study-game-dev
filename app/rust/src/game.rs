@@ -47,6 +47,26 @@ impl Game {
         self.chain_count
     }
 
+    pub fn add_score(&mut self, erased_count: usize, chain: i32) {
+        // 基本スコア: 消したぷよの数 × 10
+        // 連鎖ボーナス: 2^(chain-1)
+        let chain_bonus = if chain > 0 {
+            2_i32.pow((chain - 1) as u32)
+        } else {
+            1
+        };
+        let points = (erased_count as i32) * 10 * chain_bonus;
+        self.score += points;
+    }
+
+    pub fn increment_chain(&mut self) {
+        self.chain_count += 1;
+    }
+
+    pub fn reset_chain(&mut self) {
+        self.chain_count = 0;
+    }
+
     pub fn board(&self) -> Option<&Board> {
         self.board.as_ref()
     }
@@ -102,12 +122,21 @@ impl Game {
                 if let Some(ref board) = self.board {
                     let erase_positions = board.check_erase();
                     if !erase_positions.is_empty() {
+                        // 連鎖数を増加
+                        self.increment_chain();
+
+                        // スコアを加算
+                        self.add_score(erase_positions.len(), self.chain_count);
+
                         // 消去対象がある場合、消去してFallingモードへ
                         if let Some(ref mut board) = self.board {
                             board.erase_puyos(&erase_positions);
                         }
                         self.mode = GameMode::Falling;
                     } else {
+                        // 連鎖終了
+                        self.reset_chain();
+
                         // 消去対象がない場合、新しいぷよを生成してPlayingモードに戻る
                         if self.current_pair.is_none() {
                             self.spawn_new_pair();
@@ -278,6 +307,17 @@ impl Game {
             20.0,
             WHITE,
         );
+
+        // 連鎖数の表示（連鎖中のみ）
+        if self.chain_count > 0 {
+            draw_text(
+                &format!("Chain: {}", self.chain_count),
+                10.0,
+                50.0,
+                20.0,
+                YELLOW,
+            );
+        }
     }
 }
 
@@ -305,5 +345,57 @@ mod tests {
         let game = Game::new();
 
         assert!(game.board().is_some());
+    }
+
+    #[test]
+    fn test_score_calculation_single_erase() {
+        let mut game = Game::new();
+
+        // 1連鎖で4つ消去した場合
+        game.add_score(4, 1);
+
+        assert_eq!(game.score(), 40); // 4 * 10 * 1
+    }
+
+    #[test]
+    fn test_score_calculation_chain() {
+        let mut game = Game::new();
+
+        // 1連鎖: 4つ消去
+        game.add_score(4, 1);
+        assert_eq!(game.score(), 40); // 4 * 10 * 1
+
+        // 2連鎖: 4つ消去
+        game.add_score(4, 2);
+        assert_eq!(game.score(), 120); // 40 + (4 * 10 * 2)
+
+        // 3連鎖: 5つ消去
+        game.add_score(5, 3);
+        assert_eq!(game.score(), 320); // 120 + (5 * 10 * 4)
+    }
+
+    #[test]
+    fn test_chain_count_increment() {
+        let mut game = Game::new();
+
+        assert_eq!(game.chain_count(), 0);
+
+        game.increment_chain();
+        assert_eq!(game.chain_count(), 1);
+
+        game.increment_chain();
+        assert_eq!(game.chain_count(), 2);
+    }
+
+    #[test]
+    fn test_chain_count_reset() {
+        let mut game = Game::new();
+
+        game.increment_chain();
+        game.increment_chain();
+        assert_eq!(game.chain_count(), 2);
+
+        game.reset_chain();
+        assert_eq!(game.chain_count(), 0);
     }
 }
