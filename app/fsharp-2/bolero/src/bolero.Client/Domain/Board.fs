@@ -9,7 +9,7 @@ type Cell =
 type Board =
     { Cols: int
       Rows: int
-      Cells: Cell array array }
+      Cells: Cell[][] }
 
 module Board =
     /// 空のボードを作成
