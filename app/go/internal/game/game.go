@@ -299,6 +299,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	chainText := fmt.Sprintf("Chain: %d", g.Score.Chain)
 	ebitenutil.DebugPrintAt(screen, chainText, 10, 30)
 
+	// キー操作説明を表示
+	ebitenutil.DebugPrintAt(screen, "Controls:", 10, 50)
+	ebitenutil.DebugPrintAt(screen, "  </> : Move", 10, 65)
+	ebitenutil.DebugPrintAt(screen, "  ^/Z : Rotate", 10, 80)
+	ebitenutil.DebugPrintAt(screen, "  v   : Fast Fall", 10, 95)
+
 	// ゲームオーバー表示
 	if g.Mode == ModeGameOver {
 		gameOverText := "GAME OVER"
