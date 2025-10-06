@@ -114,7 +114,7 @@ module UpdateTests =
     let ``回転できない場合は状態が変わらない`` () =
         // Arrange
         let model = Model.init ()
-        let board = Board.setCell model.Board 4 5 (Filled Blue)
+        let board = model.Board |> Board.setCell 4 5 (Filled Blue)
         let pair = PuyoPair.create 5 5 Red Green 0
         let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
 
@@ -258,3 +258,30 @@ module UpdateTests =
 
         // Assert
         newModel.IsFastFalling |> should equal false
+
+    [<Fact>]
+    let ``着地時に4つ以上つながったぷよが消える`` () =
+        // Arrange
+        let model = Model.init ()
+        // 下に3つ並べておく
+        let board =
+            model.Board
+            |> Board.setCell 0 12 (Filled Red)
+            |> Board.setCell 1 12 (Filled Red)
+            |> Board.setCell 2 12 (Filled Red)
+
+        // 4つ目のぷよを落とす（1回のTickで着地する位置に配置）
+        let pair = PuyoPair.create 3 12 Red Green 0
+        let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
+
+        // Act
+        let (newModel, _) = Update.update Tick model  // 着地
+
+        // Assert
+        // 4つつながったので消えている
+        Board.getCell newModel.Board 0 12 |> should equal Empty
+        Board.getCell newModel.Board 1 12 |> should equal Empty
+        Board.getCell newModel.Board 2 12 |> should equal Empty
+
+        // 緑のぷよは重力で落ちて下端に残っている
+        Board.getCell newModel.Board 3 12 |> should equal (Filled Green)

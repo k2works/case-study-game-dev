@@ -103,7 +103,7 @@ module GameLogicTests =
         // Arrange
         let board = Board.create 6 13
         // 右端にぷよを配置（壁キックできない状況を作る）
-        let board = Board.setCell board 4 5 (Filled Blue)
+        let board = board |> Board.setCell 4 5 (Filled Blue)
         let pair = PuyoPair.create 5 5 Red Green 0
 
         // Act
@@ -144,7 +144,7 @@ module GameLogicTests =
     let ``下にぷよがある場合は移動できない`` () =
         // Arrange
         let board = Board.create 6 13
-        let board = Board.setCell board 3 6 (Filled Blue)  // 軸ぷよの下に障害物
+        let board = board |> Board.setCell 3 6 (Filled Blue)  // 軸ぷよの下に障害物
         let pair = PuyoPair.create 3 5 Red Green 0
 
         // Act

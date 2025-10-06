@@ -33,11 +33,23 @@ module Update =
                 { model with CurrentPiece = Some movedPiece }, Cmd.none
             | None ->
                 // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
+                let boardWithPuyo = Board.fixPuyoPair model.Board piece
+
+                // 消去処理
+                let groups = Board.findConnectedGroups boardWithPuyo
+                let boardAfterClear =
+                    if List.isEmpty groups then
+                        boardWithPuyo
+                    else
+                        let positions = groups |> List.concat
+                        boardWithPuyo
+                        |> Board.clearPuyos positions
+                        |> Board.applyGravity
+
                 let nextPiece = PuyoPair.createRandom 2 1 0
                 {
                     model with
-                        Board = newBoard
+                        Board = boardAfterClear
                         CurrentPiece = Some nextPiece
                 }, Cmd.none
         | None ->
