@@ -88,30 +88,78 @@ export class Player {
     this.rotation = 0;
   }
 
-  moveLeft(): void {
-    // 左に移動できるかチェック（軸ぷよと2つ目のぷよ両方）
-    const nextPos = this.getNextPuyoPosition();
-    const newPuyoX = this.puyoX - 1;
-    const newNextX = nextPos.x - 1;
+  private canMoveTo(
+    axisX: number,
+    axisY: number,
+    nextX: number,
+    nextY: number
+  ): boolean {
+    if (!this.stage) return false;
 
-    // 両方のぷよが範囲内にある場合のみ移動
-    if (newPuyoX >= 0 && newNextX >= 0) {
-      this.puyoX = newPuyoX;
+    // 軸ぷよの範囲チェック
+    if (
+      axisX < 0 ||
+      axisX >= this.config.stageCols ||
+      axisY < 0 ||
+      axisY >= this.config.stageRows
+    ) {
+      return false;
+    }
+
+    // 2つ目のぷよが画面外（y < 0）の場合は範囲チェックをスキップ
+    if (nextY >= 0) {
+      // 2つ目のぷよの範囲チェック
+      if (
+        nextX < 0 ||
+        nextX >= this.config.stageCols ||
+        nextY >= this.config.stageRows
+      ) {
+        return false;
+      }
+
+      // 2つ目のぷよの衝突チェック
+      if (this.stage.getPuyo(nextX, nextY) > 0) {
+        return false;
+      }
+    }
+
+    // 軸ぷよの衝突チェック
+    if (this.stage.getPuyo(axisX, axisY) > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  moveLeft(): void {
+    // 移動後の位置を計算
+    const newAxisX = this.puyoX - 1;
+
+    // 2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][this.rotation];
+    const offsetY = [-1, 0, 1, 0][this.rotation];
+    const newNextX = newAxisX + offsetX;
+    const newNextY = this.puyoY + offsetY;
+
+    // 移動可能かチェック
+    if (this.canMoveTo(newAxisX, this.puyoY, newNextX, newNextY)) {
+      this.puyoX--;
     }
   }
 
   moveRight(): void {
-    // 右に移動できるかチェック（軸ぷよと2つ目のぷよ両方）
-    const nextPos = this.getNextPuyoPosition();
-    const newPuyoX = this.puyoX + 1;
-    const newNextX = nextPos.x + 1;
+    // 移動後の位置を計算
+    const newAxisX = this.puyoX + 1;
 
-    // 両方のぷよが範囲内にある場合のみ移動
-    if (
-      newPuyoX < this.config.stageCols &&
-      newNextX < this.config.stageCols
-    ) {
-      this.puyoX = newPuyoX;
+    // 2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][this.rotation];
+    const offsetY = [-1, 0, 1, 0][this.rotation];
+    const newNextX = newAxisX + offsetX;
+    const newNextY = this.puyoY + offsetY;
+
+    // 移動可能かチェック
+    if (this.canMoveTo(newAxisX, this.puyoY, newNextX, newNextY)) {
+      this.puyoX++;
     }
   }
 
@@ -130,34 +178,71 @@ export class Player {
     }
   }
 
-  rotateRight(): void {
-    // 時計回りに回転
-    this.rotation = (this.rotation + 1) % 4;
+  private canRotateTo(nextX: number, nextY: number): boolean {
+    if (!this.stage) return false;
+
+    // 2つ目のぷよが画面外（y < 0）の場合は範囲チェックをスキップ
+    if (nextY < 0) {
+      return true;
+    }
+
+    // 範囲外チェック
+    if (
+      nextX < 0 ||
+      nextX >= this.config.stageCols ||
+      nextY >= this.config.stageRows
+    ) {
+      return false;
+    }
+
+    // 既存のぷよとの衝突チェック
+    if (this.stage.getPuyo(nextX, nextY) > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private performRotation(newRotation: number): void {
+    // 回転後の2つ目のぷよの位置を計算
+    const offsetX = [0, 1, 0, -1][newRotation];
+    const offsetY = [-1, 0, 1, 0][newRotation];
+    let newX = this.puyoX;
+    const nextX = newX + offsetX;
+    const nextY = this.puyoY + offsetY;
 
     // 壁キック処理
-    this.performWallKick();
+    if (nextX < 0) {
+      newX++;
+    } else if (nextX >= this.config.stageCols) {
+      newX--;
+    }
+
+    // 回転後の位置を再計算
+    const finalNextX = newX + offsetX;
+    const finalNextY = this.puyoY + offsetY;
+
+    // 回転後の位置が有効かチェック
+    if (!this.canRotateTo(finalNextX, finalNextY)) {
+      // 回転できない場合は何もしない
+      return;
+    }
+
+    // 回転を確定
+    this.puyoX = newX;
+    this.rotation = newRotation;
+  }
+
+  rotateRight(): void {
+    // 時計回りに回転
+    const newRotation = (this.rotation + 1) % 4;
+    this.performRotation(newRotation);
   }
 
   rotateLeft(): void {
     // 反時計回りに回転
-    this.rotation = (this.rotation + 3) % 4;
-
-    // 壁キック処理
-    this.performWallKick();
-  }
-
-  private performWallKick(): void {
-    // 右端で右回転した場合（2つ目のぷよが右にくる場合）
-    if (this.rotation === 1 && this.puyoX === this.config.stageCols - 1) {
-      // 左に移動（壁キック）
-      this.puyoX--;
-    }
-
-    // 左端で左回転した場合（2つ目のぷよが左にくる場合）
-    if (this.rotation === 3 && this.puyoX === 0) {
-      // 右に移動（壁キック）
-      this.puyoX++;
-    }
+    const newRotation = (this.rotation + 3) % 4;
+    this.performRotation(newRotation);
   }
 
   private canMoveDown(): boolean {

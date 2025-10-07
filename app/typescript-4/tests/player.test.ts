@@ -21,6 +21,7 @@ describe('プレイヤー', () => {
     puyoImage = new PuyoImage(config);
     stage = new Stage(config, puyoImage);
     player = new Player(config);
+    player.setStage(stage);
   });
 
   describe('キー入力', () => {
@@ -196,6 +197,88 @@ describe('プレイヤー', () => {
       // 壁キックにより右に移動していることを確認
       expect(player['puyoX']).toBe(1);
       expect(player['rotation']).toBe(3);
+    });
+  });
+
+  describe('衝突判定', () => {
+    it('既存のぷよがある位置には左に移動できない', () => {
+      // 軸ぷよを (3, 5) に配置（上向き rotation=0）
+      player['puyoX'] = 3;
+      player['puyoY'] = 5;
+      player['rotation'] = 0;
+
+      // 左側に障害物を配置
+      stage.setPuyo(2, 5, 1);
+
+      // 左に移動を試みる
+      player.moveLeft();
+
+      // 移動していないことを確認
+      expect(player['puyoX']).toBe(3);
+    });
+
+    it('既存のぷよがある位置には右に移動できない', () => {
+      // 軸ぷよを (2, 5) に配置（上向き rotation=0）
+      player['puyoX'] = 2;
+      player['puyoY'] = 5;
+      player['rotation'] = 0;
+
+      // 右側に障害物を配置
+      stage.setPuyo(3, 5, 1);
+
+      // 右に移動を試みる
+      player.moveRight();
+
+      // 移動していないことを確認
+      expect(player['puyoX']).toBe(2);
+    });
+
+    it('2つ目のぷよの位置に障害物がある場合も移動できない', () => {
+      // 軸ぷよを (2, 5) に配置、右向き (rotation=1)
+      player['puyoX'] = 2;
+      player['puyoY'] = 5;
+      player['rotation'] = 1;
+
+      // 2つ目のぷよの右側（3, 5 の右 = 4, 5）に障害物を配置
+      stage.setPuyo(4, 5, 1);
+
+      // 右に移動を試みる
+      player.moveRight();
+
+      // 移動していないことを確認
+      expect(player['puyoX']).toBe(2);
+    });
+
+    it('既存のぷよがある位置には回転できない', () => {
+      // 軸ぷよを (2, 5) に配置（上向き rotation=0）
+      player['puyoX'] = 2;
+      player['puyoY'] = 5;
+      player['rotation'] = 0;
+
+      // 右側（回転先）に障害物を配置
+      stage.setPuyo(3, 5, 1);
+
+      // 現在の回転状態を記録
+      const beforeRotation = player['rotation'];
+
+      // 右回転を試みる（0 → 1 で右向きになる）
+      player.rotateRight();
+
+      // 回転していないことを確認
+      expect(player['rotation']).toBe(beforeRotation);
+    });
+
+    it('回転後の位置が空いていれば回転できる', () => {
+      // 軸ぷよを (2, 5) に配置（上向き rotation=0）
+      player['puyoX'] = 2;
+      player['puyoY'] = 5;
+      player['rotation'] = 0;
+
+      // 右回転を試みる（0 → 1）
+      player.rotateRight();
+
+      // 回転していることを確認
+      expect(player['rotation']).toBe(1);
     });
   });
 });
