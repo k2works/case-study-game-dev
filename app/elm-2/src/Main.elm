@@ -25,6 +25,8 @@ type alias Model =
     { board : Board
     , currentPair : Maybe PuyoPair
     , mode : GameMode
+    , dropTimer : Float
+    , dropInterval : Float
     }
 
 
@@ -33,6 +35,8 @@ init _ =
     ( { board = Board.create 6 12
       , currentPair = Nothing
       , mode = Start
+      , dropTimer = 0
+      , dropInterval = 1000
       }
     , Cmd.none
     )
@@ -44,7 +48,7 @@ init _ =
 type Msg
     = StartGame
     | KeyPressed String
-    | Tick
+    | Tick Float
     | NoOp
 
 
@@ -55,6 +59,7 @@ update msg model =
             ( { model
                 | mode = Playing
                 , currentPair = Just (PuyoPair.create 2 1 Red Blue)
+                , dropTimer = 0
               }
             , Cmd.none
             )
@@ -103,9 +108,46 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Tick ->
-            -- 後で実装
-            ( model, Cmd.none )
+        Tick deltaTime ->
+            case ( model.mode, model.currentPair ) of
+                ( Playing, Just pair ) ->
+                    let
+                        newTimer =
+                            model.dropTimer + deltaTime
+                    in
+                    if newTimer >= model.dropInterval then
+                        -- 落下タイマーが間隔を超えたら落下処理
+                        if PuyoPair.canMoveDown pair model.board then
+                            -- 下に移動可能
+                            ( { model
+                                | currentPair = Just (PuyoPair.moveDown pair)
+                                , dropTimer = 0
+                              }
+                            , Cmd.none
+                            )
+
+                        else
+                            -- 着地した：ボードに固定して新しいぷよを生成
+                            let
+                                newBoard =
+                                    model.board
+                                        |> Board.setCell pair.axis.x pair.axis.y (Filled pair.axisColor)
+                                        |> Board.setCell pair.child.x pair.child.y (Filled pair.childColor)
+                            in
+                            ( { model
+                                | board = newBoard
+                                , currentPair = Just (PuyoPair.create 2 1 Red Blue)
+                                , dropTimer = 0
+                              }
+                            , Cmd.none
+                            )
+
+                    else
+                        -- まだ落下タイマーが間隔に達していない
+                        ( { model | dropTimer = newTimer }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -118,7 +160,10 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.mode of
         Playing ->
-            Browser.Events.onKeyDown (Decode.map KeyPressed keyDecoder)
+            Sub.batch
+                [ Browser.Events.onKeyDown (Decode.map KeyPressed keyDecoder)
+                , Browser.Events.onAnimationFrame Tick
+                ]
 
         _ ->
             Sub.none

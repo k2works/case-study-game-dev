@@ -2,8 +2,10 @@ module PuyoPair exposing
     ( PuyoPair
     , Position
     , canMove
+    , canMoveDown
     , create
     , getPositions
+    , moveDown
     , moveLeft
     , moveRight
     , rotate
@@ -142,6 +144,59 @@ tryWallKick pair board =
             |> (\p -> { p | child = getChildPosition p.axis p.rotation })
         , False
         )
+
+
+-- 下に移動する
+moveDown : PuyoPair -> PuyoPair
+moveDown pair =
+    { pair
+        | axis = { x = pair.axis.x, y = pair.axis.y + 1 }
+        , child = { x = pair.child.x, y = pair.child.y + 1 }
+    }
+
+
+-- 下に移動可能かチェックする
+canMoveDown : PuyoPair -> Board -> Bool
+canMoveDown pair board =
+    let
+        nextAxisY =
+            pair.axis.y + 1
+
+        nextChildY =
+            pair.child.y + 1
+
+        -- ボードの高さ
+        boardRows =
+            board.rows
+
+        -- 下端チェック
+        isAxisOutOfBounds =
+            nextAxisY >= boardRows
+
+        isChildOutOfBounds =
+            nextChildY >= boardRows
+
+        -- 移動先のセルチェック
+        axisCell =
+            if isAxisOutOfBounds then
+                Nothing
+
+            else
+                Board.getCell pair.axis.x nextAxisY board
+
+        childCell =
+            if isChildOutOfBounds then
+                Nothing
+
+            else
+                Board.getCell pair.child.x nextChildY board
+    in
+    case ( axisCell, childCell ) of
+        ( Just Empty, Just Empty ) ->
+            True
+
+        _ ->
+            False
 
 
 -- 移動可能かチェックする

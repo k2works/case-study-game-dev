@@ -168,4 +168,75 @@ suite =
                         ]
                         ()
             ]
+        , describe "moveDown"
+            [ test "下に移動できる" <|
+                \_ ->
+                    let
+                        pair =
+                            PuyoPair.create 2 5 Red Blue
+
+                        movedPair =
+                            PuyoPair.moveDown pair
+                    in
+                    Expect.all
+                        [ \p -> Expect.equal 2 p.axis.x
+                        , \p -> Expect.equal 6 p.axis.y
+                        , \p -> Expect.equal 2 p.child.x
+                        , \p -> Expect.equal 5 p.child.y
+                        ]
+                        movedPair
+            ]
+        , describe "canMoveDown"
+            [ test "下にスペースがあれば移動可能" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+
+                        pair =
+                            PuyoPair.create 2 5 Red Blue
+                    in
+                    PuyoPair.canMoveDown pair board
+                        |> Expect.equal True
+            , test "軸ぷよが下端なら移動不可" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+
+                        pair =
+                            PuyoPair.create 2 11 Red Blue
+                    in
+                    PuyoPair.canMoveDown pair board
+                        |> Expect.equal False
+            , test "子ぷよが下端なら移動不可" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+
+                        -- rotation = 2（子ぷよが下）の状態
+                        pair =
+                            { axis = { x = 2, y = 10 }
+                            , child = { x = 2, y = 11 }
+                            , axisColor = Red
+                            , childColor = Blue
+                            , rotation = 2
+                            }
+                    in
+                    PuyoPair.canMoveDown pair board
+                        |> Expect.equal False
+            , test "下にぷよがあれば移動不可" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+                                |> Board.setCell 2 6 (Filled Red)
+
+                        pair =
+                            PuyoPair.create 2 5 Red Blue
+                    in
+                    PuyoPair.canMoveDown pair board
+                        |> Expect.equal False
+            ]
         ]
