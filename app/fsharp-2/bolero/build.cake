@@ -129,6 +129,21 @@ Task("Coverage")
     Information("カバレッジレポート: ./tests/PuyoPuyo.Tests/coverage/coverage.opencover.xml");
 });
 
+Task("Publish")
+    .Description("本番用ビルドを生成")
+    .IsDependentOn("Test")
+    .Does(() =>
+{
+    DotNetPublish("./src/bolero.Client/bolero.Client.fsproj", new DotNetPublishSettings
+    {
+        Configuration = "Release",
+        OutputDirectory = "./publish",
+        NoRestore = false
+    });
+
+    Information("本番ビルド完了: ./publish");
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,6 +158,14 @@ Task("CI")
     .IsDependentOn("Lint")
     .IsDependentOn("Test")
     .IsDependentOn("Coverage");
+
+Task("Release")
+    .Description("リリース用の完全なビルド")
+    .IsDependentOn("Clean")
+    .IsDependentOn("Format-Check")
+    .IsDependentOn("Lint")
+    .IsDependentOn("Test")
+    .IsDependentOn("Publish");
 
 ///////////////////////////////////////////////////////////////////////////////
 // 実行
