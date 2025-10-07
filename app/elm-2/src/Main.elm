@@ -413,13 +413,9 @@ checkAndErasePuyos board =
             not (Set.isEmpty toErase)
 
         erasedBoard =
-            if hasErased then
-                board
-                    |> GameLogic.erasePuyos toErase
-                    |> GameLogic.applyGravity
-
-            else
-                board
+            board
+                |> GameLogic.erasePuyos toErase
+                |> GameLogic.applyGravity
     in
     ( erasedBoard, hasErased )
 
