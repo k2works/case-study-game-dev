@@ -16,20 +16,20 @@ let ``空のボードを作成できる`` () =
 [<Fact>]
 let ``作成直後のボードはすべて空である`` () =
     // Arrange & Act
-    let board = 盤面.作成 6 13
+    let _盤面 = 盤面.作成 6 13
 
     // Assert
-    for y in 0 .. board.行数 - 1 do
-        for x in 0 .. board.列数 - 1 do
-            盤面.セル取得 board x y |> should equal 空
+    for y in 0 .. _盤面.行数 - 1 do
+        for x in 0 .. _盤面.列数 - 1 do
+            盤面.セル取得 _盤面 x y |> should equal 空
 
 [<Fact>]
 let ``ボードにぷよを配置できる`` () =
     // Arrange
-    let board = 盤面.作成 6 13
+    let _盤面 = 盤面.作成 6 13
 
     // Act
-    let 新しい盤面 = 盤面.セル設定 board 2 10 (埋まっている 赤)
+    let 新しい盤面 = 盤面.セル設定 _盤面 2 10 (埋まっている 赤)
 
     // Assert
     盤面.セル取得 新しい盤面 2 10 |> should equal (埋まっている 赤)
@@ -37,11 +37,11 @@ let ``ボードにぷよを配置できる`` () =
 [<Fact>]
 let ``ボードにぷよを配置しても元のボードは変更されない`` () =
     // Arrange
-    let board = 盤面.作成 6 13
+    let _盤面 = 盤面.作成 6 13
 
     // Act
-    let 新しい盤面 = 盤面.セル設定 board 2 10 (埋まっている 赤)
+    let 新しい盤面 = 盤面.セル設定 _盤面 2 10 (埋まっている 赤)
 
     // Assert
-    盤面.セル取得 board 2 10 |> should equal 空
+    盤面.セル取得 _盤面 2 10 |> should equal 空
     盤面.セル取得 新しい盤面 2 10 |> should equal (埋まっている 赤)
