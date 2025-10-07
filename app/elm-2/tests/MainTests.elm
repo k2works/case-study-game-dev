@@ -1,10 +1,13 @@
 module MainTests exposing (suite)
 
 import Board
+import Cell exposing (Cell(..))
 import Expect
+import GameLogic
 import Main exposing (..)
 import PuyoColor exposing (PuyoColor(..))
 import PuyoPair
+import Set
 import Test exposing (..)
 import Time
 
@@ -24,6 +27,8 @@ suite =
                             , dropInterval = 1000
                             , lastFrameTime = Nothing
                             , fastDropActive = False
+                            , chainCount = 0
+                            , score = 0
                             }
 
                         ( newModel, _ ) =
@@ -42,6 +47,8 @@ suite =
                             , dropInterval = 1000
                             , lastFrameTime = Nothing
                             , fastDropActive = False
+                            , chainCount = 0
+                            , score = 0
                             }
 
                         ( newModel, _ ) =
@@ -60,6 +67,8 @@ suite =
                             , dropInterval = 1000
                             , lastFrameTime = Nothing
                             , fastDropActive = True
+                            , chainCount = 0
+                            , score = 0
                             }
 
                         effectiveInterval =
@@ -71,5 +80,41 @@ suite =
                     in
                     effectiveInterval
                         |> Expect.equal 50
+            ]
+        , describe "連鎖反応"
+            [ test "ぷよ消去後、上のぷよが落ちて再び4つつながれば連鎖する" <|
+                \_ ->
+                    let
+                        -- 初期配置:
+                        -- 赤ぷよ4つ（2×2）の上に青ぷよが縦に3つ、横に1つ
+                        board =
+                            Board.create 6 12
+                                |> Board.setCell 1 10 (Filled Red)
+                                |> Board.setCell 2 10 (Filled Red)
+                                |> Board.setCell 1 11 (Filled Red)
+                                |> Board.setCell 2 11 (Filled Red)
+                                |> Board.setCell 3 10 (Filled Blue)
+                                |> Board.setCell 2 7 (Filled Blue)
+                                |> Board.setCell 2 8 (Filled Blue)
+                                |> Board.setCell 2 9 (Filled Blue)
+
+                        -- 1. 赤ぷよを探索
+                        redConnected =
+                            GameLogic.findConnectedPuyos 1 10 Red board
+
+                        -- 2. 赤ぷよを消去
+                        boardAfterErase =
+                            GameLogic.erasePuyos redConnected board
+
+                        -- 3. 重力を適用
+                        boardAfterGravity =
+                            GameLogic.applyGravity boardAfterErase
+
+                        -- 4. 青ぷよの連鎖判定
+                        blueConnected =
+                            GameLogic.findConnectedPuyos 2 10 Blue boardAfterGravity
+                    in
+                    Set.size blueConnected
+                        |> Expect.equal 4
             ]
         ]

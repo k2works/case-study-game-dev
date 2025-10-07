@@ -21,6 +21,9 @@ import Time
 type GameMode
     = Start
     | Playing
+    | Checking
+    | Erasing
+    | Falling
     | GameOver
 
 
@@ -32,6 +35,8 @@ type alias Model =
     , dropInterval : Float
     , lastFrameTime : Maybe Time.Posix
     , fastDropActive : Bool
+    , chainCount : Int
+    , score : Int
     }
 
 
@@ -44,6 +49,8 @@ init _ =
       , dropInterval = 1000
       , lastFrameTime = Nothing
       , fastDropActive = False
+      , chainCount = 0
+      , score = 0
       }
     , Cmd.none
     )
@@ -69,6 +76,8 @@ update msg model =
                 , dropTimer = 0
                 , lastFrameTime = Nothing
                 , fastDropActive = False
+                , chainCount = 0
+                , score = 0
               }
             , Cmd.none
             )
@@ -125,69 +134,155 @@ update msg model =
                             ( model, Cmd.none )
 
         Tick currentTime ->
-            case ( model.mode, model.currentPair, model.lastFrameTime ) of
-                ( Playing, Just pair, Just lastTime ) ->
-                    let
-                        deltaTime =
-                            toFloat (Time.posixToMillis currentTime - Time.posixToMillis lastTime)
+            case model.mode of
+                Playing ->
+                    -- プレイ中の自動落下処理
+                    case ( model.currentPair, model.lastFrameTime ) of
+                        ( Just pair, Just lastTime ) ->
+                            let
+                                deltaTime =
+                                    toFloat (Time.posixToMillis currentTime - Time.posixToMillis lastTime)
 
-                        -- 高速落下時は落下間隔を短くする
-                        effectiveInterval =
-                            if model.fastDropActive then
-                                50
+                                effectiveInterval =
+                                    if model.fastDropActive then
+                                        50
+
+                                    else
+                                        model.dropInterval
+
+                                newTimer =
+                                    model.dropTimer + deltaTime
+                            in
+                            if newTimer >= effectiveInterval then
+                                if PuyoPair.canMoveDown pair model.board then
+                                    ( { model
+                                        | currentPair = Just (PuyoPair.moveDown pair)
+                                        , dropTimer = 0
+                                        , lastFrameTime = Just currentTime
+                                      }
+                                    , Cmd.none
+                                    )
+
+                                else
+                                    -- 着地！ボードに固定して消去判定モードへ
+                                    let
+                                        newBoard =
+                                            model.board
+                                                |> Board.setCell pair.axis.x pair.axis.y (Filled pair.axisColor)
+                                                |> Board.setCell pair.child.x pair.child.y (Filled pair.childColor)
+                                                |> GameLogic.applyGravity
+                                    in
+                                    ( { model
+                                        | board = newBoard
+                                        , currentPair = Nothing
+                                        , mode = Checking
+                                        , dropTimer = 0
+                                        , lastFrameTime = Just currentTime
+                                        , fastDropActive = False
+                                        , chainCount = 0
+                                      }
+                                    , Cmd.none
+                                    )
 
                             else
-                                model.dropInterval
+                                ( { model
+                                    | dropTimer = newTimer
+                                    , lastFrameTime = Just currentTime
+                                  }
+                                , Cmd.none
+                                )
 
-                        newTimer =
-                            model.dropTimer + deltaTime
+                        ( Just pair, Nothing ) ->
+                            -- 最初のフレーム：タイムスタンプを記録するだけ
+                            ( { model | lastFrameTime = Just currentTime }
+                            , Cmd.none
+                            )
+
+                        _ ->
+                            ( model, Cmd.none )
+
+                Checking ->
+                    -- 消去判定モード
+                    let
+                        erasableGroups =
+                            findAllErasableGroups model.board
                     in
-                    if newTimer >= effectiveInterval then
-                        -- 落下タイマーが間隔を超えたら落下処理
-                        if PuyoPair.canMoveDown pair model.board then
-                            -- 下に移動可能
-                            ( { model
-                                | currentPair = Just (PuyoPair.moveDown pair)
-                                , dropTimer = 0
-                                , lastFrameTime = Just currentTime
-                              }
-                            , Cmd.none
-                            )
-
-                        else
-                            -- 着地した：ボードに固定して消去判定
-                            let
-                                boardWithPuyos =
-                                    model.board
-                                        |> Board.setCell pair.axis.x pair.axis.y (Filled pair.axisColor)
-                                        |> Board.setCell pair.child.x pair.child.y (Filled pair.childColor)
-
-                                -- 消去可能なぷよを検出
-                                ( erasedBoard, hasErased ) =
-                                    checkAndErasePuyos boardWithPuyos
-                            in
-                            ( { model
-                                | board = erasedBoard
-                                , currentPair = Just (PuyoPair.create 2 1 Red Blue)
-                                , dropTimer = 0
-                                , lastFrameTime = Just currentTime
-                                , fastDropActive = False
-                              }
-                            , Cmd.none
-                            )
-
-                    else
-                        -- まだ落下タイマーが間隔に達していない
+                    if List.isEmpty erasableGroups then
+                        -- 消去なし → 次のぷよを出す
                         ( { model
-                            | dropTimer = newTimer
-                            , lastFrameTime = Just currentTime
+                            | mode = Playing
+                            , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                           }
                         , Cmd.none
                         )
 
-                ( Playing, Just pair, Nothing ) ->
-                    -- 最初のフレーム：タイムスタンプを記録するだけ
-                    ( { model | lastFrameTime = Just currentTime }
+                    else
+                        -- 消去あり → 消去モードへ
+                        let
+                            newChainCount =
+                                model.chainCount + 1
+
+                            -- 消去するぷよの数
+                            erasedCount =
+                                List.sum (List.map Set.size erasableGroups)
+
+                            -- スコア計算: 消去数 × 連鎖ボーナス
+                            chainBonus =
+                                case newChainCount of
+                                    1 ->
+                                        1
+
+                                    2 ->
+                                        8
+
+                                    3 ->
+                                        16
+
+                                    4 ->
+                                        32
+
+                                    5 ->
+                                        64
+
+                                    6 ->
+                                        96
+
+                                    7 ->
+                                        128
+
+                                    _ ->
+                                        160
+
+                            points =
+                                erasedCount * chainBonus
+
+                            -- すべてのグループを消去
+                            newBoard =
+                                List.foldl GameLogic.erasePuyos model.board erasableGroups
+                        in
+                        ( { model
+                            | mode = Erasing
+                            , chainCount = newChainCount
+                            , score = model.score + points
+                            , board = newBoard
+                          }
+                        , Cmd.none
+                        )
+
+                Erasing ->
+                    -- 消去アニメーション（簡略化のためすぐに落下モードへ）
+                    ( { model | mode = Falling }, Cmd.none )
+
+                Falling ->
+                    -- 重力適用後、再度消去判定へ
+                    let
+                        newBoard =
+                            GameLogic.applyGravity model.board
+                    in
+                    ( { model
+                        | board = newBoard
+                        , mode = Checking
+                      }
                     , Cmd.none
                     )
 
@@ -229,6 +324,11 @@ view model =
         , style "font-family" "Arial, sans-serif"
         ]
         [ h1 [] [ text "ぷよぷよ - Elm 版" ]
+        , div []
+            [ text ("スコア: " ++ String.fromInt model.score)
+            , text " | "
+            , text ("連鎖数: " ++ String.fromInt model.chainCount)
+            ]
         , div [] [ text ("ゲームモード: " ++ gameModeToString model.mode) ]
         , viewGameControls model
         , viewBoard model.board model.currentPair
@@ -253,6 +353,15 @@ gameModeToString mode =
 
         Playing ->
             "プレイ中"
+
+        Checking ->
+            "消去判定中"
+
+        Erasing ->
+            "消去中"
+
+        Falling ->
+            "落下中"
 
         GameOver ->
             "ゲームオーバー"
@@ -350,10 +459,10 @@ puyoColorToString color =
 -- GAME LOGIC HELPERS
 
 
-{-| ボード上のぷよを消去判定して消去する
+{-| ボード全体から消去可能なグループを探す
 -}
-checkAndErasePuyos : Board -> ( Board, Bool )
-checkAndErasePuyos board =
+findAllErasableGroups : Board -> List (Set ( Int, Int ))
+findAllErasableGroups board =
     let
         cols =
             Board.getCols board
@@ -361,63 +470,43 @@ checkAndErasePuyos board =
         rows =
             Board.getRows board
 
-        -- すべてのセルをチェックして、4つ以上つながったぷよを探す
-        checkAllCells : Set ( Int, Int ) -> Int -> Int -> Set ( Int, Int )
-        checkAllCells checked x y =
-            if y >= rows then
-                checked
+        -- すべてのセルをチェック
+        allPositions =
+            List.concatMap
+                (\y -> List.map (\x -> ( x, y )) (List.range 0 (cols - 1)))
+                (List.range 0 (rows - 1))
 
-            else if x >= cols then
-                checkAllCells checked 0 (y + 1)
+        -- 訪問済み位置を管理
+        findGroups : List ( Int, Int ) -> Set ( Int, Int ) -> List (Set ( Int, Int )) -> List (Set ( Int, Int ))
+        findGroups positions visited groups =
+            case positions of
+                [] ->
+                    groups
 
-            else if Set.member ( x, y ) checked then
-                checkAllCells checked (x + 1) y
+                ( x, y ) :: rest ->
+                    if Set.member ( x, y ) visited then
+                        findGroups rest visited groups
 
-            else
-                case Board.getCell x y board of
-                    Just (Filled color) ->
-                        let
-                            connected =
-                                GameLogic.findConnectedPuyos x y color board
-
-                            newChecked =
-                                Set.union checked connected
-                        in
-                        if Set.size connected >= 4 then
-                            -- 4つ以上つながっている場合は消去対象に追加
-                            checkAllCells newChecked (x + 1) y
-
-                        else
-                            checkAllCells newChecked (x + 1) y
-
-                    _ ->
-                        checkAllCells checked (x + 1) y
-
-        toErase =
-            checkAllCells Set.empty 0 0
-                |> Set.filter
-                    (\( x, y ) ->
+                    else
                         case Board.getCell x y board of
                             Just (Filled color) ->
                                 let
                                     connected =
                                         GameLogic.findConnectedPuyos x y color board
+
+                                    newVisited =
+                                        Set.union visited connected
                                 in
-                                Set.size connected >= 4
+                                if Set.size connected >= 4 then
+                                    findGroups rest newVisited (connected :: groups)
+
+                                else
+                                    findGroups rest newVisited groups
 
                             _ ->
-                                False
-                    )
-
-        hasErased =
-            not (Set.isEmpty toErase)
-
-        erasedBoard =
-            board
-                |> GameLogic.erasePuyos toErase
-                |> GameLogic.applyGravity
+                                findGroups rest visited groups
     in
-    ( erasedBoard, hasErased )
+    findGroups allPositions Set.empty []
 
 
 -- MAIN
