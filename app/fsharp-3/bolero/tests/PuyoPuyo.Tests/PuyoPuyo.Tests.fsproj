@@ -16,7 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Tests.fs" />
+    <Compile Include="Domain\ぷよテスト.fs" />
+    <Compile Include="Domain\盤面テスト.fs" />
+    <Compile Include="Domain\ぷよペアテスト.fs" />
   </ItemGroup>
 
   <ItemGroup>

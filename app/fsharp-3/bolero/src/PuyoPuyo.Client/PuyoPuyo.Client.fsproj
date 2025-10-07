@@ -6,6 +6,10 @@
     <RootNamespace>PuyoPuyo</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Domain\ぷよ.fs" />
+    <Compile Include="Domain\盤面.fs" />
+    <Compile Include="Domain\ぷよペア.fs" />
+    <Compile Include="Elmish\モデル.fs" />
     <Compile Include="Main.fs" />
     <Compile Include="Startup.fs" />
   </ItemGroup>
