@@ -8,7 +8,8 @@ tests/VerifyExamples/
 node_modules/
 
 # ビルド成果物
-dist/
+dist/*.js
+dist/*.js.map
 
 # エディタ
 .vscode/

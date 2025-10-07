@@ -69,8 +69,16 @@ npm run build:dev
 # 本番用ビルド（最適化あり）
 npm run build
 
+# リリースビルドの実行（テスト→ビルド）
+npm run release
+
+# ビルドしたアプリをブラウザで実行
+npm run serve
+# ブラウザが自動的に開き、http://localhost:8080 でアプリが起動します
+
 # ビルド成果物の確認
 ls dist/main.js
+ls dist/index.html
 ```
 
 **[⬆ back to top](#構成)**
@@ -92,7 +100,7 @@ npm test
 # テストの監視モード
 npm run watch
 
-# 開発サーバーの起動
+# 開発サーバーの起動（elm reactor）
 npm run dev
 
 # 開発用ビルド
@@ -106,6 +114,9 @@ npm run clean
 
 # リリースタスク（テスト→ビルド）
 npm run release
+
+# ビルドしたアプリをブラウザで実行
+npm run serve
 ```
 
 #### ディレクトリ構造

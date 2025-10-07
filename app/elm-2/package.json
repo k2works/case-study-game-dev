@@ -9,7 +9,8 @@
     "build:dev": "elm make src/Main.elm --output=dist/main.js",
     "watch": "elm-test --watch",
     "clean": "rimraf dist elm-stuff",
-    "release": "npm test && npm run build && echo Release build completed successfully!"
+    "release": "npm test && npm run build && echo Release build completed successfully!",
+    "serve": "npx http-server dist -p 8080 -o"
   },
   "devDependencies": {
     "elm": "^0.19.1-5",
