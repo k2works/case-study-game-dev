@@ -562,36 +562,136 @@ else
 fi
 ```
 
-#### Makefile の作成（オプション）
+#### Cake によるビルド自動化
 
-よく使うコマンドを簡単に実行できるように `Makefile` を作成することもできます：
+「ビルド自動化ツールは何を使えばいいですか？」.NET エコシステムでは Cake がよく使われます。Cake は C# で書けるクロスプラットフォームなビルド自動化ツールです。
 
-```makefile
-.PHONY: test build format check watch help
+##### Cakeとは
 
-help:
-	@echo "利用可能なコマンド:"
-	@echo "  make test    - テストを実行"
-	@echo "  make build   - ビルドを実行"
-	@echo "  make format  - コードフォーマット"
-	@echo "  make check   - すべてのチェックを実行"
-	@echo "  make watch   - ファイル監視モード"
+Cake（C# Make）は、.NET 開発者向けのビルド自動化システムです：
 
-test:
-	@./scripts/test.sh
+**特徴**
+- C# で書けるビルドスクリプト（型安全、IntelliSense 対応）
+- クロスプラットフォーム（Windows、macOS、Linux）
+- 豊富なアドインとヘルパー
+- .NET ツールとの統合
 
-build:
-	@./scripts/build.sh
+##### Cakeのセットアップ
 
-format:
-	@./scripts/format.sh
+まず、Cake をローカルツールとしてインストールします：
 
-check:
-	@./scripts/check.sh
+```bash
+# .NET ローカルツールマニフェストを作成
+dotnet new tool-manifest
 
-watch:
-	@./scripts/watch.sh
+# Cake をインストール
+dotnet tool install Cake.Tool
 ```
+
+次に、ビルドスクリプト `build.cake` をプロジェクトルートに作成します：
+
+```csharp
+// build.cake
+
+///////////////////////////////////////////////////////////////////////////////
+// 引数
+///////////////////////////////////////////////////////////////////////////////
+
+var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Release");
+
+///////////////////////////////////////////////////////////////////////////////
+// タスク定義
+///////////////////////////////////////////////////////////////////////////////
+
+Task("Test")
+    .Description("Unity テストを実行")
+    .Does(() =>
+{
+    var exitCode = StartProcess("./scripts/test.sh");
+    if (exitCode != 0)
+    {
+        throw new Exception("テストが失敗しました");
+    }
+});
+
+Task("Build")
+    .Description("Unity プロジェクトをビルド")
+    .Does(() =>
+{
+    var exitCode = StartProcess("./scripts/build.sh");
+    if (exitCode != 0)
+    {
+        throw new Exception("ビルドが失敗しました");
+    }
+});
+
+Task("Format")
+    .Description("コードを自動フォーマット")
+    .Does(() =>
+{
+    StartProcess("./scripts/format.sh");
+});
+
+Task("Check")
+    .Description("すべての品質チェックを実行")
+    .IsDependentOn("Format")
+    .IsDependentOn("Test");
+
+Task("Watch")
+    .Description("ファイル監視モードで自動テスト実行")
+    .Does(() =>
+{
+    StartProcess("./scripts/watch.sh");
+});
+
+///////////////////////////////////////////////////////////////////////////////
+// ターゲット
+///////////////////////////////////////////////////////////////////////////////
+
+Task("Default")
+    .IsDependentOn("Check");
+
+Task("CI")
+    .Description("CI環境での完全なビルドとテスト")
+    .IsDependentOn("Check")
+    .IsDependentOn("Build");
+
+///////////////////////////////////////////////////////////////////////////////
+// 実行
+///////////////////////////////////////////////////////////////////////////////
+
+RunTarget(target);
+```
+
+##### Cakeの実行
+
+Cake スクリプトを実行するには、以下のコマンドを使用します：
+
+```bash
+# デフォルトタスク（Check）を実行
+dotnet cake
+
+# 特定のタスクを実行
+dotnet cake --target=Test
+dotnet cake --target=Build
+dotnet cake --target=Format
+dotnet cake --target=Watch
+
+# CI環境でのビルド
+dotnet cake --target=CI
+```
+
+##### Cakeの利点
+
+「なぜ Cake を使うのですか？」Cake を使う利点は以下の通りです：
+
+1. **型安全性**：C# で書くのでコンパイル時に型チェックされる
+2. **IntelliSense**：Visual Studio Code や Rider で補完が効く
+3. **再利用性**：NuGet パッケージとしてビルドロジックを共有できる
+4. **統合性**：.NET ツールとシームレスに統合
+5. **可読性**：複雑なビルドロジックも構造化して書ける
+6. **クロスプラットフォーム**：Windows、macOS、Linux で同じスクリプトが動く
 
 #### スクリプトの実行権限付与
 
@@ -608,21 +708,21 @@ chmod +x scripts/*.sh
 
 ```bash
 # テスト実行
-make test
-# または
+dotnet cake --target=Test
+# または直接スクリプトを実行
 ./scripts/test.sh
 
 # ビルド
-make build
+dotnet cake --target=Build
 
 # コードフォーマット
-make format
+dotnet cake --target=Format
 
 # すべてのチェック
-make check
+dotnet cake --target=Check
 
 # ファイル監視モード（開発中はこれを起動）
-make watch
+dotnet cake --target=Watch
 ```
 
 「すごい！Unity がコマンドラインで使えるようになった！」そうです。これで VS Code やターミナルだけで開発できるようになりました。
@@ -638,7 +738,7 @@ git commit -m 'chore: コマンドライン開発環境の整備'
 
 1. **バージョン管理**: Git リポジトリを初期化し、`.gitignore` を設定
 2. **テスティング**: Unity Test Framework をセットアップし、最初のテストを実行
-3. **自動化**: ファイル監視スクリプトで自動テスト実行を実現
+3. **自動化**: Cake によるビルド自動化とファイル監視スクリプトで自動テスト実行を実現
 
 「ソフトウェア開発の三種の神器」がすべて揃いましたね！これで次のイテレーションから、安心してテスト駆動開発を進めることができます。
 
@@ -1161,7 +1261,7 @@ namespace PuyoPuyo.Core
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -1550,7 +1650,7 @@ public void 右端では右に移動できない()
 テストを書いたら、次に実装しましょう。どうなるでしょうか？
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -1602,7 +1702,7 @@ public void MoveRight(Board board)
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -1714,7 +1814,7 @@ public bool CanMoveDown(Board board)
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -1840,7 +1940,7 @@ public class Board
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -1898,7 +1998,7 @@ private void ApplyWallKick()
 テストを実行して、リファクタリングが正しく行われたか確認しましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2063,7 +2163,7 @@ namespace PuyoPuyo.Core
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2143,7 +2243,7 @@ public class Game
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2231,7 +2331,7 @@ private void FixPairToBoard()
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2350,7 +2450,7 @@ public bool ApplyGravity()
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2629,7 +2729,7 @@ public void L字型につながった4つのぷよも消去対象になる()
 テストを書いたら、次に実装しましょう。どうなるでしょうか？
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2728,7 +2828,7 @@ public class Board
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -2790,7 +2890,7 @@ public void Erase(List<(int row, int col)> positions)
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3090,7 +3190,7 @@ namespace PuyoPuyo.Core
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3207,7 +3307,7 @@ public void ぷよの消去と落下後に新たな消去パターンがあれ�
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3350,7 +3450,7 @@ public void 出現位置が空いているとゲームオーバーにならな�
 テストを書いたら、次に実装しましょう。どうなるでしょうか？
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3405,7 +3505,7 @@ private void SpawnNewPair()
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3473,7 +3573,7 @@ public void Restart()
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3637,7 +3737,7 @@ public bool IsAllClear()
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3682,7 +3782,7 @@ public void AddAllClearBonus()
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -3770,7 +3870,7 @@ public void すべてのぷよを消したときに全消しボーナスが加�
 テストを実行してみましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ```
@@ -4146,17 +4246,17 @@ public class Game
 すべての実装が完了したら、テストを実行しましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 すべてのテストがパスすることを確認してください。もしテストが失敗する場合は、エラーメッセージを確認して修正しましょう。
 
 ```bash
 # コードフォーマットも確認
-make format
+dotnet cake --target=Format
 
 # ビルドも確認
-make build
+dotnet cake --target=Build
 ```
 
 「全部通りました！」素晴らしい！これでぷよぷよゲームの実装が完成しました！
@@ -4462,27 +4562,27 @@ public class Completion : MonoBehaviour
 
 ```bash
 # テストの実行
-make test
+dotnet cake --target=Test
 # または
 ./scripts/test.sh
 
 # コードフォーマット
-make format
+dotnet cake --target=Format
 # または
 ./scripts/format.sh
 
 # コードチェック（フォーマット確認のみ）
-make check
+dotnet cake --target=Check
 # または
 ./scripts/check.sh
 
 # ファイル監視と自動テスト
-make watch
+dotnet cake --target=Watch
 # または
 ./scripts/watch.sh
 
 # ビルド
-make build
+dotnet cake --target=Build
 # または
 ./scripts/build.sh
 ```
@@ -4557,7 +4657,9 @@ puyo-puyo-unity/
 │   ├── check.sh                  # チェックスクリプト
 │   └── watch.sh                  # ファイル監視スクリプト
 ├── unity-config.sh               # Unity パス設定
-├── Makefile                      # タスク自動化
+├── build.cake                    # Cake ビルド自動化スクリプト
+├── .config/
+│   └── dotnet-tools.json         # .NET ローカルツール設定
 ├── .editorconfig                 # エディタ設定
 └── .gitignore                    # Git除外設定
 ```

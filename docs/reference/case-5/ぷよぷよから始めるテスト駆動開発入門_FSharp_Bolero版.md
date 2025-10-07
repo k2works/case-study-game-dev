@@ -637,7 +637,7 @@ dotnet watch test --project tests/PuyoPuyo.Tests
 
 #### Cake によるビルド自動化
 
-「Makefileも便利ですが、.NETエコシステムではCakeがよく使われます！」そうですね。CakeはC#で書けるクロスプラットフォームなビルド自動化ツールです。
+「ビルド自動化ツールは何を使えばいいですか？」.NETエコシステムでは Cake がよく使われます。CakeはC#で書けるクロスプラットフォームなビルド自動化ツールです。
 
 ##### Cakeとは
 
@@ -877,53 +877,6 @@ chmod +x build.sh
 ./build.sh Test
 ```
 
-##### Makefileとの併用
-
-「Makefileも使いたい場合はどうすれば？」Cakeを呼び出すシンプルなMakefileを作ることもできます：
-
-```makefile
-# Makefile
-
-.PHONY: build test run watch clean ci
-
-# ビルド
-build:
-	dotnet cake --target=Build
-
-# テスト実行
-test:
-	dotnet cake --target=Test
-
-# テストを監視モードで実行
-test-watch:
-	dotnet cake --target=Watch-Test
-
-# 開発サーバー起動
-run:
-	dotnet cake --target=Watch
-
-# クリーンアップ
-clean:
-	dotnet cake --target=Clean
-
-# CI環境でのビルド
-ci:
-	dotnet cake --target=CI
-```
-
-これで、以下のようにシンプルなコマンドでタスクを実行できます：
-
-```bash
-# テストを実行
-make test
-
-# 開発サーバーを起動
-make run
-
-# CI環境でのビルド
-make ci
-```
-
 ##### Cakeの利点
 
 「なぜCakeを使うのですか？」Cakeを使う利点は以下の通りです：
@@ -989,20 +942,6 @@ Task("Format-Check")
 ```bash
 dotnet cake --target=Format-Check  # チェックのみ
 dotnet cake --target=Format        # 自動修正
-```
-
-Makefileにも追加できます：
-
-```makefile
-# Makefile に追加
-
-# コードフォーマットチェック
-format-check:
-	dotnet cake --target=Format-Check
-
-# コードを自動フォーマット
-format:
-	dotnet cake --target=Format
 ```
 
 #### 静的コード解析: FSharpLint
@@ -1075,16 +1014,6 @@ Task("Lint")
 dotnet cake --target=Lint
 ```
 
-Makefileにも追加：
-
-```makefile
-# Makefile に追加
-
-# 静的コード解析
-lint:
-	dotnet cake --target=Lint
-```
-
 #### テストカバレッジ
 
 F#でのコードカバレッジ測定には、.NETエコシステムの **coverlet** や **altcover** を使用します。
@@ -1125,16 +1054,6 @@ Task("Coverage")
 
 ```bash
 dotnet cake --target=Coverage
-```
-
-Makefileにも追加：
-
-```makefile
-# Makefile に追加
-
-# テストカバレッジ
-coverage:
-	dotnet cake --target=Coverage
 ```
 
 #### CI環境での品質チェック
@@ -1269,7 +1188,6 @@ git commit -m "feat: initialize F# Bolero Puyo Puyo project with test setup"
    - Cakeによるビルド自動化（型安全なC#スクリプト）
    - タスク依存関係の管理
    - クロスプラットフォーム対応（build.ps1 / build.sh）
-   - Makefileとの併用
    - Fantomasによるコードフォーマット自動化
    - FSharpLintによる静的コード解析
    - coverletによるテストカバレッジ測定
@@ -1367,7 +1285,7 @@ let ``緑色のぷよが作成できる`` () =
 「テストが失敗することを確認したら、実装に進みましょう！」そうですね。まずはテストを実行してみてください：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 テストが失敗することを確認したら、実装を進めます。
@@ -1398,7 +1316,7 @@ module Puyo =
 テストを実行して、すべて通ることを確認しましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ### テスト: ゲームボードの作成
@@ -1520,7 +1438,7 @@ module Board =
 テストを実行して、すべて通ることを確認しましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ### テスト: ぷよペアの定義
@@ -1653,7 +1571,7 @@ module PuyoPair =
 テストを実行して、すべて通ることを確認しましょう：
 
 ```bash
-make test
+dotnet cake --target=Test
 ```
 
 ### Elmish Model の定義
@@ -1898,7 +1816,7 @@ module GameView =
 「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
 
 ```bash
-make run
+dotnet cake --target=Watch
 ```
 
 ブラウザで `http://localhost:5000/` にアクセスすると、「ゲーム開始」ボタンが表示され、クリックするとボードとぷよが表示されるはずです！
