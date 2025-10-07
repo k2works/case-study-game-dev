@@ -130,4 +130,43 @@ describe('ステージ', () => {
       expect(stage.getPuyo(2, 11)).toBe(2);
     });
   });
+
+  describe('全消し判定', () => {
+    it('盤面上のぷよがすべて消えると全消しになる', () => {
+      // ステージにぷよを配置
+      stage.setPuyo(1, 10, 1);
+      stage.setPuyo(2, 10, 1);
+      stage.setPuyo(1, 11, 1);
+      stage.setPuyo(2, 11, 1);
+
+      // 消去判定と実行
+      const eraseInfo = stage.checkErase();
+      stage.eraseBoards(eraseInfo.eraseInfo);
+
+      // 全消し判定
+      const isZenkeshi = stage.checkZenkeshi();
+
+      // 全消しになっていることを確認
+      expect(isZenkeshi).toBe(true);
+    });
+
+    it('盤面上にぷよが残っていると全消しにならない', () => {
+      // ステージにぷよを配置
+      stage.setPuyo(1, 10, 1);
+      stage.setPuyo(2, 10, 1);
+      stage.setPuyo(1, 11, 1);
+      stage.setPuyo(2, 11, 1);
+      stage.setPuyo(3, 11, 2); // 消えないぷよ
+
+      // 消去判定と実行
+      const eraseInfo = stage.checkErase();
+      stage.eraseBoards(eraseInfo.eraseInfo);
+
+      // 全消し判定
+      const isZenkeshi = stage.checkZenkeshi();
+
+      // 全消しになっていないことを確認
+      expect(isZenkeshi).toBe(false);
+    });
+  });
 });

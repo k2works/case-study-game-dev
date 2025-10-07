@@ -237,4 +237,16 @@ export class Stage {
       }
     }
   }
+
+  checkZenkeshi(): boolean {
+    // 盤面上にぷよがあるかチェック
+    for (let y = 0; y < this.config.stageRows; y++) {
+      for (let x = 0; x < this.config.stageCols; x++) {
+        if (this.field[y][x] !== 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }

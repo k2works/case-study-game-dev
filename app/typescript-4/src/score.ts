@@ -9,6 +9,12 @@ export class Score {
     this.score += points;
   }
 
+  addZenkeshiBonus(): void {
+    // 全消しボーナス（固定値）
+    const zenkeshiBonus = 3600;
+    this.score += zenkeshiBonus;
+  }
+
   reset(): void {
     this.score = 0;
   }

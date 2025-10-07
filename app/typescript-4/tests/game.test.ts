@@ -102,4 +102,43 @@ describe('ゲーム', () => {
       expect(chainEraseInfo.erasePuyoCount).toBeGreaterThan(0);
     });
   });
+
+  describe('全消しボーナス', () => {
+    beforeEach(() => {
+      game.initialize();
+    });
+
+    it('盤面上のぷよをすべて消すと全消しボーナスが加算される', () => {
+      const stage = game['stage'];
+      const score = game['score'];
+
+      // 初期スコア確認
+      const initialScore = score.getScore();
+
+      // 盤面に4つのぷよを配置（すべて消去される）
+      stage.setPuyo(1, 10, 1);
+      stage.setPuyo(2, 10, 1);
+      stage.setPuyo(1, 11, 1);
+      stage.setPuyo(2, 11, 1);
+
+      // checkErase モードに設定
+      game['mode'] = 'checkErase';
+
+      // 消去判定と処理
+      game['update'](0); // checkErase → erasing（消去実行）
+
+      // 消去後の重力チェック
+      game['update'](0); // erasing → checkFall
+
+      // 重力適用（落下なし）
+      game['update'](0); // checkFall → checkErase
+
+      // 2回目の消去判定（全消し判定が実行される）
+      game['update'](0); // checkErase → newPuyo（全消しボーナス加算）
+
+      // スコアが増加していることを確認
+      expect(score.getScore()).toBeGreaterThan(initialScore);
+      expect(score.getScore()).toBe(3600); // 全消しボーナスのみ
+    });
+  });
 });
