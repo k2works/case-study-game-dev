@@ -14,10 +14,15 @@ export class Player {
   private inputKeyDown: boolean = false;
 
   private stage?: Stage; // Stageへの参照
+  private onLandedCallback?: () => void; // 着地時のコールバック
 
   // 回転状態に応じた2つ目のぷよのオフセット [x, y]
   private readonly offsetX: number[] = [0, 1, 0, -1]; // rotation 0:上, 1:右, 2:下, 3:左
   private readonly offsetY: number[] = [-1, 0, 1, 0];
+
+  // 落下タイマー
+  private dropTimer: number = 0;
+  private readonly dropInterval: number = 1000; // 1秒ごとに落下
 
   constructor(private config: Config) {
     // キーボードイベントの登録
@@ -27,6 +32,10 @@ export class Player {
 
   setStage(stage: Stage): void {
     this.stage = stage;
+  }
+
+  setOnLandedCallback(callback: () => void): void {
+    this.onLandedCallback = callback;
   }
 
   private getNextPuyoPosition(): { x: number; y: number } {
@@ -151,7 +160,73 @@ export class Player {
     }
   }
 
-  update(): void {
+  private canMoveDown(): boolean {
+    if (!this.stage) return false;
+
+    // 2つ目のぷよの位置を取得
+    const nextPos = this.getNextPuyoPosition();
+
+    // 軸ぷよの下の位置
+    const nextY = this.puyoY + 1;
+    // 2つ目のぷよの下の位置
+    const childNextY = nextPos.y + 1;
+
+    // 範囲外チェック
+    if (nextY >= this.config.stageRows || childNextY >= this.config.stageRows) {
+      return false;
+    }
+
+    // フィールドとの衝突チェック
+    if (this.stage.getPuyo(this.puyoX, nextY) !== 0) {
+      return false;
+    }
+
+    if (this.stage.getPuyo(nextPos.x, childNextY) !== 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private applyGravity(): void {
+    if (this.canMoveDown()) {
+      this.puyoY++;
+    } else {
+      // 着地処理
+      this.onLanded();
+    }
+  }
+
+  private onLanded(): void {
+    if (!this.stage) return;
+
+    // 軸ぷよをフィールドに配置
+    this.stage.setPuyo(this.puyoX, this.puyoY, this.puyoType);
+
+    // 2つ目のぷよをフィールドに配置
+    const nextPos = this.getNextPuyoPosition();
+    this.stage.setPuyo(nextPos.x, nextPos.y, this.nextPuyoType);
+
+    // 着地コールバックを呼び出す
+    if (this.onLandedCallback) {
+      this.onLandedCallback();
+    }
+
+    // 次のぷよを生成
+    this.createNewPuyo();
+    this.dropTimer = 0;
+  }
+
+  update(deltaTime: number = 0): void {
+    // 落下タイマーを進める
+    this.dropTimer += deltaTime;
+
+    // 落下間隔を超えたら落下処理を実行
+    if (this.dropTimer >= this.dropInterval) {
+      this.applyGravity();
+      this.dropTimer = 0;
+    }
+
     // キー入力に応じて移動
     if (this.inputKeyLeft) {
       this.moveLeft();
