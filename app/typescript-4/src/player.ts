@@ -1,24 +1,103 @@
 import { Config } from './config';
+import { Stage } from './stage';
 
 export class Player {
-  x: number = 2; // 軸ぷよのx座標
-  y: number = 0; // 軸ぷよのy座標
-  type: number = 0; // 軸ぷよの種類
-  childX: number = 2; // 子ぷよのx座標
-  childY: number = -1; // 子ぷよのy座標
-  childType: number = 0; // 子ぷよの種類
+  private puyoX: number = 2; // ぷよのX座標（中央に配置）
+  private puyoY: number = 0; // ぷよのY座標（一番上）
+  private puyoType: number = 0; // 現在のぷよの種類
+  private nextPuyoType: number = 0; // 次のぷよの種類
+  private rotation: number = 0; // 現在の回転状態
 
-  constructor(private config: Config) {}
+  private inputKeyLeft: boolean = false;
+  private inputKeyRight: boolean = false;
+  private inputKeyUp: boolean = false;
+  private inputKeyDown: boolean = false;
 
-  newPuyo(): void {
-    // 新しいぷよペアを生成
-    this.x = 2;
-    this.y = 0;
-    this.childX = 2;
-    this.childY = -1;
+  private stage?: Stage; // Stageへの参照
 
-    // ぷよの種類をランダムに決定（1-4）
-    this.type = Math.floor(Math.random() * 4) + 1;
-    this.childType = Math.floor(Math.random() * 4) + 1;
+  constructor(private config: Config) {
+    // キーボードイベントの登録
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+    document.addEventListener('keyup', this.onKeyUp.bind(this));
+  }
+
+  setStage(stage: Stage): void {
+    this.stage = stage;
+  }
+
+  private onKeyDown(e: KeyboardEvent): void {
+    switch (e.key) {
+      case 'ArrowLeft':
+        this.inputKeyLeft = true;
+        break;
+      case 'ArrowRight':
+        this.inputKeyRight = true;
+        break;
+      case 'ArrowUp':
+        this.inputKeyUp = true;
+        break;
+      case 'ArrowDown':
+        this.inputKeyDown = true;
+        break;
+    }
+  }
+
+  private onKeyUp(e: KeyboardEvent): void {
+    switch (e.key) {
+      case 'ArrowLeft':
+        this.inputKeyLeft = false;
+        break;
+      case 'ArrowRight':
+        this.inputKeyRight = false;
+        break;
+      case 'ArrowUp':
+        this.inputKeyUp = false;
+        break;
+      case 'ArrowDown':
+        this.inputKeyDown = false;
+        break;
+    }
+  }
+
+  createNewPuyo(): void {
+    // 新しいぷよを作成（ここでは簡略化）
+    this.puyoX = 2;
+    this.puyoY = 0;
+    this.puyoType = Math.floor(Math.random() * 4) + 1; // 1～4のランダムな値
+    this.nextPuyoType = Math.floor(Math.random() * 4) + 1;
+    this.rotation = 0;
+  }
+
+  moveLeft(): void {
+    // 左端でなければ左に移動
+    if (this.puyoX > 0) {
+      this.puyoX--;
+    }
+  }
+
+  moveRight(): void {
+    // 右端でなければ右に移動
+    if (this.puyoX < this.config.stageCols - 1) {
+      this.puyoX++;
+    }
+  }
+
+  draw(): void {
+    // 現在のぷよを描画
+    if (this.stage) {
+      this.stage.drawPuyo(this.puyoX, this.puyoY, this.puyoType);
+    }
+  }
+
+  update(): void {
+    // キー入力に応じて移動
+    if (this.inputKeyLeft) {
+      this.moveLeft();
+      this.inputKeyLeft = false; // 移動後フラグをクリア
+    }
+    if (this.inputKeyRight) {
+      this.moveRight();
+      this.inputKeyRight = false; // 移動後フラグをクリア
+    }
   }
 }

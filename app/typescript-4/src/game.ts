@@ -12,6 +12,7 @@ export class Game {
   private score!: Score;
   private mode: 'newPuyo' | 'playing' = 'newPuyo';
   private animationId: number = 0;
+  private frame: number = 0;
 
   initialize(): void {
     // コンポーネントの初期化
@@ -21,34 +22,38 @@ export class Game {
     this.player = new Player(this.config);
     this.score = new Score();
 
+    // PlayerにStageへの参照を設定
+    this.player.setStage(this.stage);
+
     // ゲームモードを初期化
     this.mode = 'newPuyo';
   }
 
-  update(): void {
-    if (this.mode === 'newPuyo') {
-      // 新しいぷよを生成
-      this.player.newPuyo();
-      this.mode = 'playing';
+  private update(): void {
+    this.frame++;
+
+    // モードに応じた処理
+    switch (this.mode) {
+      case 'newPuyo':
+        // 新しいぷよを作成
+        this.player.createNewPuyo();
+        this.mode = 'playing';
+        break;
+
+      case 'playing':
+        // プレイ中の処理（キー入力に応じた移動）
+        this.player.update();
+        break;
     }
   }
 
-  draw(): void {
+  private draw(): void {
     // ステージを描画
     this.stage.draw();
 
     // プレイヤーのぷよを描画
     if (this.mode === 'playing') {
-      // 軸ぷよを描画
-      this.stage.drawPuyo(this.player.x, this.player.y, this.player.type);
-      // 子ぷよを描画（y座標が0以上の場合のみ）
-      if (this.player.childY >= 0) {
-        this.stage.drawPuyo(
-          this.player.childX,
-          this.player.childY,
-          this.player.childType
-        );
-      }
+      this.player.draw();
     }
   }
 
