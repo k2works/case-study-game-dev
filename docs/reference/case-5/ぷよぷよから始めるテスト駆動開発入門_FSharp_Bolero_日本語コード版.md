@@ -1254,7 +1254,7 @@ let ``ぷよの色は4種類定義されている`` () =
     let 色リスト = [ 赤; 緑; 青; 黄 ]
 
     // Assert
-    色リスト.長さ |> should equal 4
+    色リスト.Length |> should equal 4
 
 [<Fact>]
 let ``赤色のぷよが作成できる`` () =
@@ -1349,7 +1349,7 @@ let ``作成直後のボードはすべて空である`` () =
     // Assert
     for y in 0 .. 盤面.行数 - 1 do
         for x in 0 .. 盤面.列数 - 1 do
-            盤面.セル取得 盤面 x y座標 |> should equal 空
+            盤面.セル取得 盤面 x y |> should equal 空
 
 [<Fact>]
 let ``ボードにぷよを配置できる`` () =
@@ -1393,47 +1393,41 @@ type セル =
     | 埋まっている of ぷよの色
 
 /// ゲームボード
-type 盤面 = {
-    列数: int
-    行数: int
-    セル配列: セル array array
-}
+type 盤面 = { 列数: int; 行数: int; セル配列: セル[][] }
 
 module 盤面 =
     /// 空のボードを作成
     let 作成 (列数: int) (行数: int) : 盤面 =
-        {
-            Cols = 列数
-            Rows = 行数
-            Cells = Array.init 行数(fun _ -> Array.create 列数 空)
-        }
+        { 列数 = 列数
+          行数 = 行数
+          セル配列 = Array.init 行数 (fun _ -> Array.create 列数 空) }
 
     /// セルの取得
-    let セル取得 (盤面: 盤面) (x: int) (y: int) : セル =
-        if y >= 0 && y < 盤面.行数 && x >= 0 && x < 盤面.列数 then
-            盤面.セル配列.[y座標].[x座標]
+    let セル取得 (盤面: 盤面) (列インデックス: int) (行インデックス: int) : セル =
+        if 行インデックス >= 0 && 行インデックス < 盤面.行数 && 列インデックス >= 0 && 列インデックス < 盤面.列数 then
+            盤面.セル配列.[行インデックス].[列インデックス]
         else
             空
 
     /// セルの設定（イミュータブル）
-    let セル設定 (x: int) (y: int) (セル: セル) (盤面: 盤面) : 盤面 =
-        if y >= 0 && y < 盤面.行数 && x >= 0 && x < 盤面.列数 then
+    let セル設定 (盤面: 盤面) (列インデックス: int) (行インデックス: int) (セル: セル) : 盤面 =
+        if 行インデックス >= 0 && 行インデックス < 盤面.行数 && 列インデックス >= 0 && 列インデックス < 盤面.列数 then
             let 新しいセル配列 =
                 盤面.セル配列
-                |> Array.mapi (fun rowIndex row ->
-                    if rowIndex = y then
-                        row |> Array.mapi (fun 列インデックス c ->
-                            if 列インデックス = x then セル else c)
+                |> Array.mapi (fun y 行 ->
+                    if y = 行インデックス then
+                        行 |> Array.mapi (fun x c -> if x = 列インデックス then セル else c)
                     else
-                        row)
-            { 盤面 with セル配列 = newCells }
+                        行)
+
+            { 盤面 with セル配列 = 新しいセル配列 }
         else
             盤面
 ```
 
 「`Array.mapi`を使って新しい配列を作成しているんですね！」そうです！F#では元のデータを変更せず、新しいデータを作成して返すのが基本です。`mapi`は`map`にインデックスが追加されたバージョンで、各要素の位置を確認しながら変換できます。
 
-> **💡 ポイント**: `セル設定` の引数順序を `(x: int) (y: int) (セル: セル) (盤面: 盤面)` にすることで、F# のパイプライン演算子 `|>` との相性が良くなります。`盤面 |> セル設定 2 10 (埋まっている 赤)` のように自然に記述できます。
+注意: パラメータ名を `列インデックス` と `行インデックス` にすることで、x/y 座標との混同を避け、可読性を向上させています。
 
 テストを実行して、すべて通ることを確認しましょう：
 
@@ -1538,17 +1532,16 @@ module ぷよペア =
     /// ぷよペアを作成
     let 作成 (x: int) (y: int) (色1: ぷよの色) (色2: ぷよの色) (回転: int) : ぷよペア =
         { X座標 = x
-            Y = y
-            Puyo1Color = 色1
-            Puyo2Color = 色2
-            Rotation = 回転
-        }
+          Y座標 = y
+          ぷよ1の色 = 色1
+          ぷよ2の色 = 色2
+          回転状態 = 回転 }
 
     /// ぷよペアの各ぷよの位置を取得
     let 位置取得 (ぷよペア: ぷよペア) : (int * int) * (int * int) =
         let 位置1 = (ぷよペア.X座標, ぷよペア.Y座標)
         let 位置2 =
-            match ぷよペア.回転 with
+            match ぷよペア.回転状態 with
             | 0 -> (ぷよペア.X座標, ぷよペア.Y座標 - 1)      // 上
             | 1 -> (ぷよペア.X座標 + 1, ぷよペア.Y座標)      // 右
             | 2 -> (ぷよペア.X座標, ぷよペア.Y座標 + 1)      // 下
@@ -1560,8 +1553,8 @@ module ぷよペア =
     let ランダム作成 (x: int) (y: int) (回転: int) : ぷよペア =
         let random = System.Random()
         let 色リスト = [| 赤; 緑; 青; 黄 |]
-        let 色1 = 色リスト.[random.Next(色リスト.長さ)]
-        let 色2 = 色リスト.[random.Next(色リスト.長さ)]
+        let 色1 = 色リスト.[random.Next(色リスト.Length)]
+        let 色2 = 色リスト.[random.Next(色リスト.Length)]
         作成 x y 色1 色2 回転
 ```
 
@@ -1581,8 +1574,7 @@ dotnet cake --target=Test
 // src/PuyoPuyo.Client/Elmish/モデル.fs
 namespace PuyoPuyo.Elmish
 
-open PuyoPuyo.Domain.盤面
-open PuyoPuyo.Domain.ぷよペア
+open PuyoPuyo.Domain
 
 /// ゲームの状態
 type ゲーム状態 =
@@ -1591,30 +1583,27 @@ type ゲーム状態 =
     | ゲームオーバー
 
 /// ゲームのModel
-type モデル = {
-    盤面: 盤面
-    現在のぷよ: ぷよペア option
-    次のぷよ: ぷよペア option
-    スコア: int
-    レベル: int
-    ゲーム時間: int
-    最後の連鎖数: int
-    状態: ゲーム状態
-}
+type モデル =
+    { 盤面: 盤面
+      現在のぷよ: ぷよペア option
+      次のぷよ: ぷよペア option
+      スコア: int
+      レベル: int
+      ゲーム時間: int
+      最後の連鎖数: int
+      状態: ゲーム状態 }
 
 module モデル =
     /// 初期状態
     let 初期化 () : モデル =
-        {
-            盤面 = 盤面.作成 6 13
-            現在のピース = None
-            NextPiece = None
-            スコア = 0
-            Level = 1
-            GameTime = 0
-            LastChainCount = 0
-            Status = 未開始
-        }
+        { 盤面 = 盤面.作成 6 13
+          現在のぷよ = None
+          次のぷよ = None
+          スコア = 0
+          レベル = 1
+          ゲーム時間 = 0
+          最後の連鎖数 = 0
+          状態 = 未開始 }
 ```
 
 「`option`型を使っているのはなぜですか？」良い質問ですね！`option`型は「値があるかもしれないし、ないかもしれない」を表現する型です。ゲーム開始前や、ぷよが固定された直後は`現在のピース`が`None`になり、ぷよが落下中は`Some puyoPair`になります。これにより、nullチェックが不要になり、安全にコードが書けます。
@@ -1627,6 +1616,9 @@ module モデル =
 // src/PuyoPuyo.Client/Elmish/更新.fs
 namespace PuyoPuyo.Elmish
 
+open Elmish
+open PuyoPuyo.Domain
+
 /// ゲームのメッセージ
 type メッセージ =
     | ゲーム開始
@@ -1635,13 +1627,13 @@ type メッセージ =
     | 右移動
     | 下移動
     | 回転
-    | HardDrop
-    | GameStep
-    | TimeStep
-    | SpawnNewPiece
-    | FixPiece
-    | ProcessChain
-    | CheckGameOver
+    | 高速落下
+    | ゲームステップ
+    | 時間ステップ
+    | 新しいぷよ生成
+    | ぷよ固定
+    | 連鎖処理
+    | ゲームオーバー確認
 ```
 
 「たくさんのメッセージがありますね！」そうですね。それぞれのメッセージが特定のイベントや操作を表しています。今回のイテレーションでは、まず`ゲーム開始`だけを実装していきます。
@@ -1653,30 +1645,25 @@ type メッセージ =
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（続き）
 module 更新 =
-    open Elmish
-    open PuyoPuyo.Domain.ぷよペア
-
     /// Update 関数
-    let 更新 (メッセージ: メッセージ) (モデル: モデル) : モデル * Cmd<Message> =
+    let 更新 (メッセージ: メッセージ) (モデル: モデル) : モデル * Cmd<メッセージ> =
         match メッセージ with
         | ゲーム開始 ->
-            let firstPiece = ぷよペア.作成Random 2 1 0
-            let nextPiece = ぷよペア.作成Random 2 1 0
+            let firstPiece = ぷよペア.ランダム作成 2 1 0
+            let nextPiece = ぷよペア.ランダム作成 2 1 0
 
-            {
-                モデル with 盤面 = 盤面.作成 6 13
-                    現在のピース = Some firstPiece
-                    NextPiece = Some nextPiece
-                    スコア = 0
-                    GameTime = 0
-                    Status = プレイ中
-            }, Cmd.none
+            { モデル with
+                盤面 = 盤面.作成 6 13
+                現在のぷよ = Some firstPiece
+                次のぷよ = Some nextPiece
+                スコア = 0
+                ゲーム時間 = 0
+                状態 = プレイ中 },
+            Cmd.none
 
-        | ゲームリセット ->
-            モデル.初期化 (), Cmd.none
+        | ゲームリセット -> PuyoPuyo.Elmish.モデル.初期化 (), Cmd.none
 
-        | _ ->
-            モデル, Cmd.none
+        | _ -> モデル, Cmd.none
 ```
 
 「`with`キーワードを使っているのはなぜですか？」F#のレコード型には「レコードコピー式」という機能があり、`{ モデル with スコア = 0 }`のように書くことで、一部のフィールドだけを変更した新しいレコードを作成できます。元の`モデル`は変更されません。
@@ -1692,8 +1679,7 @@ namespace PuyoPuyo.Components
 open Bolero
 open Bolero.Html
 open PuyoPuyo.Elmish
-open PuyoPuyo.Domain.盤面
-open PuyoPuyo.Domain.ぷよ
+open PuyoPuyo.Domain
 
 module ゲーム画面 =
     /// セルを描画
@@ -1703,18 +1689,16 @@ module ゲーム画面 =
             | 空 -> "#CCCCCC"
             | 埋まっている 色 -> ぷよ.HEX変換 色
 
-        div [
-            attr.classes ["セル"]
-            attr.style $"background-色: {色}"
-        ] []
+        div {
+            attr.``class`` "cell"
+            attr.style $"background-color: {色}"
+        }
 
     /// ボードを描画
     let private viewBoard (盤面: 盤面) (currentPiece: ぷよペア option) =
         // ボードのコピーを作成
         let displayBoard =
-            Array.init 盤面.行数 (fun y座標 ->
-                Array.init 盤面.列数 (fun x座標 ->
-                    盤面.セル取得 盤面 x y座標))
+            Array.init 盤面.行数 (fun y -> Array.init 盤面.列数 (fun x -> PuyoPuyo.Domain.盤面.セル取得 盤面 x y))
 
         // 現在のぷよを重ねて表示
         match currentPiece with
@@ -1722,50 +1706,64 @@ module ゲーム画面 =
             let (位置1, 位置2) = ぷよペア.位置取得 ピース
             let (x1, y1) = 位置1
             let (x2, y2) = 位置2
+
             if y1 >= 0 && y1 < 盤面.行数 && x1 >= 0 && x1 < 盤面.列数 then
                 displayBoard.[y1].[x1] <- 埋まっている ピース.ぷよ1の色
+
             if y2 >= 0 && y2 < 盤面.行数 && x2 >= 0 && x2 < 盤面.列数 then
                 displayBoard.[y2].[x2] <- 埋まっている ピース.ぷよ2の色
         | None -> ()
 
-        div [attr.classes ["盤面"]] [
-            forEach displayBoard <| fun row ->
-                div [attr.classes ["盤面-row"]] [
-                    forEach row viewCell
-                ]
-        ]
+        div {
+            attr.``class`` "board"
+
+            for row in displayBoard do
+                div {
+                    attr.``class`` "board-row"
+
+                    for cell in row do
+                        viewCell cell
+                }
+        }
 
     /// メインView
     let ビュー (モデル: モデル) (ディスパッチ: メッセージ -> unit) =
-        div [attr.classes ["game-container"]] [
-            h1 [] [text "ぷよぷよゲーム"]
+        div {
+            attr.``class`` "game-container"
+            h1 { "ぷよぷよゲーム" }
 
-            viewBoard モデル.盤面 モデル.現在のピース
+            viewBoard モデル.盤面 モデル.現在のぷよ
 
-            div [attr.classes ["game-controls"]] [
-                match モデル.ステータス with
+            div {
+                attr.``class`` "game-controls"
+
+                match モデル.状態 with
                 | 未開始 ->
-                    button [
+                    button {
                         on.click (fun _ -> ディスパッチ ゲーム開始)
-                    ] [text "ゲーム開始"]
+                        "ゲーム開始"
+                    }
 
                 | プレイ中 ->
-                    button [
+                    button {
                         on.click (fun _ -> ディスパッチ ゲームリセット)
-                    ] [text "リセット"]
+                        "リセット"
+                    }
 
                 | ゲームオーバー ->
-                    div [] [
-                        h2 [] [text "ゲームオーバー"]
-                        button [
+                    div {
+                        h2 { "ゲームオーバー" }
+
+                        button {
                             on.click (fun _ -> ディスパッチ ゲームリセット)
-                        ] [text "もう一度プレイ"]
-                    ]
-            ]
-        ]
+                            "もう一度プレイ"
+                        }
+                    }
+            }
+        }
 ```
 
-「`forEach`を使っているのはなぜですか？」Boleroでは、配列やリストの要素を描画するときに`forEach`関数を使います。これは、各要素に対して指定した関数を適用してHTML要素のリストを作成します。
+「Computation Expression構文で`for`ループを使っているんですね！」そうです。Boleroでは、配列やリストの要素を描画するときに、Computation Expression内で`for`ループを使うことができます。これにより、より自然な構文でコレクションを描画できます。
 
 ### CSS スタイルの追加
 
@@ -1773,6 +1771,13 @@ module ゲーム画面 =
 
 ```css
 /* wwwroot/css/main.css */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
 .game-container {
     max-width: 800px;
     margin: 0 auto;
@@ -1780,22 +1785,27 @@ module ゲーム画面 =
     font-family: Arial, sans-serif;
 }
 
-.盤面 {
+h1 {
+    color: #333;
+}
+
+.board {
     border: 2px solid #333;
-    background-色: #f0f0f0;
+    background-color: #f0f0f0;
     display: inline-block;
     margin: 20px 0;
 }
 
-.盤面-row {
+.board-row {
     display: flex;
 }
 
-.セル {
+.cell {
     width: 30px;
     height: 30px;
     border: 1px solid #ddd;
     box-sizing: border-box;
+    border-radius: 50%;
 }
 
 .game-controls {
@@ -1806,6 +1816,14 @@ module ゲーム画面 =
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.game-controls button:hover {
+    background-color: #45a049;
 }
 ```
 
