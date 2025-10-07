@@ -1,0 +1,16 @@
+# Elm
+elm-stuff/
+
+# elm-test
+tests/VerifyExamples/
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
