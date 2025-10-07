@@ -10,6 +10,7 @@ import Html.Events exposing (onClick)
 import Json.Decode as Decode
 import PuyoColor exposing (PuyoColor(..))
 import PuyoPair exposing (PuyoPair)
+import Time
 
 
 -- MODEL
@@ -27,6 +28,7 @@ type alias Model =
     , mode : GameMode
     , dropTimer : Float
     , dropInterval : Float
+    , lastFrameTime : Maybe Time.Posix
     }
 
 
@@ -37,6 +39,7 @@ init _ =
       , mode = Start
       , dropTimer = 0
       , dropInterval = 1000
+      , lastFrameTime = Nothing
       }
     , Cmd.none
     )
@@ -48,7 +51,7 @@ init _ =
 type Msg
     = StartGame
     | KeyPressed String
-    | Tick Float
+    | Tick Time.Posix
     | NoOp
 
 
@@ -60,6 +63,7 @@ update msg model =
                 | mode = Playing
                 , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                 , dropTimer = 0
+                , lastFrameTime = Nothing
               }
             , Cmd.none
             )
@@ -108,10 +112,13 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Tick deltaTime ->
-            case ( model.mode, model.currentPair ) of
-                ( Playing, Just pair ) ->
+        Tick currentTime ->
+            case ( model.mode, model.currentPair, model.lastFrameTime ) of
+                ( Playing, Just pair, Just lastTime ) ->
                     let
+                        deltaTime =
+                            toFloat (Time.posixToMillis currentTime - Time.posixToMillis lastTime)
+
                         newTimer =
                             model.dropTimer + deltaTime
                     in
@@ -122,6 +129,7 @@ update msg model =
                             ( { model
                                 | currentPair = Just (PuyoPair.moveDown pair)
                                 , dropTimer = 0
+                                , lastFrameTime = Just currentTime
                               }
                             , Cmd.none
                             )
@@ -138,13 +146,25 @@ update msg model =
                                 | board = newBoard
                                 , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                                 , dropTimer = 0
+                                , lastFrameTime = Just currentTime
                               }
                             , Cmd.none
                             )
 
                     else
                         -- まだ落下タイマーが間隔に達していない
-                        ( { model | dropTimer = newTimer }, Cmd.none )
+                        ( { model
+                            | dropTimer = newTimer
+                            , lastFrameTime = Just currentTime
+                          }
+                        , Cmd.none
+                        )
+
+                ( Playing, Just pair, Nothing ) ->
+                    -- 最初のフレーム：タイムスタンプを記録するだけ
+                    ( { model | lastFrameTime = Just currentTime }
+                    , Cmd.none
+                    )
 
                 _ ->
                     ( model, Cmd.none )
