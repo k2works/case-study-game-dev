@@ -130,24 +130,25 @@ module Board =
         { board with Cells = newCells }
 
     /// 消去と重力を繰り返し適用（連鎖処理）
-    /// 戻り値: (最終ボード状態, 連鎖数)
-    let clearAndApplyGravityRepeatedly (board: Board) : Board * int =
-        let rec loop (currentBoard: Board) (chainCount: int) : Board * int =
+    /// 戻り値: (最終ボード状態, 連鎖数, 消去したぷよの総数)
+    let clearAndApplyGravityRepeatedly (board: Board) : Board * int * int =
+        let rec loop (currentBoard: Board) (chainCount: int) (totalCleared: int) : Board * int * int =
             let groups = findConnectedGroups currentBoard
 
             if List.isEmpty groups then
                 // 消去対象がない場合は終了
-                currentBoard, chainCount
+                currentBoard, chainCount, totalCleared
             else
                 // 消去して重力を適用
                 let positions = groups |> List.concat
+                let clearedCount = List.length positions
                 let clearedBoard = clearPuyos positions currentBoard
                 let boardAfterGravity = applyGravity clearedBoard
 
-                // 再帰的に消去判定を繰り返す（連鎖数をインクリメント）
-                loop boardAfterGravity (chainCount + 1)
+                // 再帰的に消去判定を繰り返す（連鎖数とクリア数をインクリメント）
+                loop boardAfterGravity (chainCount + 1) (totalCleared + clearedCount)
 
-        loop board 0
+        loop board 0 0
 
     /// 全消し判定（盤面上にぷよがあるかチェック）
     let checkZenkeshi (board: Board) : bool =

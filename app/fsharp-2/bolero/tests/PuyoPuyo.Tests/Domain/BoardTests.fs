@@ -265,13 +265,14 @@ module BoardTests =
             |> Board.setCell 0 11 (Filled Red)
             |> Board.setCell 1 11 (Filled Blue)
 
-        let result, chainCount = Board.clearAndApplyGravityRepeatedly board
+        let result, chainCount, clearedCount = Board.clearAndApplyGravityRepeatedly board
 
         // 消去対象がないため、盤面は変わらない
         Board.getCell result 0 11 |> should equal (Filled Red)
         Board.getCell result 1 11 |> should equal (Filled Blue)
         // 連鎖は発生しない
         chainCount |> should equal 0
+        clearedCount |> should equal 0
 
     [<Fact>]
     let ``連鎖処理で2連鎖が正しく動作する`` () =
@@ -287,7 +288,7 @@ module BoardTests =
             |> Board.setCell 2 8 (Filled Blue)
             |> Board.setCell 2 9 (Filled Blue)
 
-        let result, chainCount = Board.clearAndApplyGravityRepeatedly board
+        let result, chainCount, clearedCount = Board.clearAndApplyGravityRepeatedly board
 
         // すべてのぷよが消えている（2連鎖が発生）
         for y in 0..11 do
@@ -296,6 +297,8 @@ module BoardTests =
 
         // 2連鎖が発生していることを確認
         chainCount |> should equal 2
+        // 赤4個 + 青4個 = 8個消去
+        clearedCount |> should equal 8
 
     [<Fact>]
     let ``連鎖処理で3連鎖が正しく動作する`` () =
@@ -318,7 +321,7 @@ module BoardTests =
             |> Board.setCell 2 5 (Filled Green)
             |> Board.setCell 3 7 (Filled Green)
 
-        let result, chainCount = Board.clearAndApplyGravityRepeatedly board
+        let result, chainCount, clearedCount = Board.clearAndApplyGravityRepeatedly board
 
         // すべてのぷよが消えている（3連鎖が発生）
         for y in 0..11 do
@@ -327,6 +330,8 @@ module BoardTests =
 
         // 3連鎖が発生していることを確認
         chainCount |> should equal 3
+        // 赤4個 + 青4個 + 緑4個 = 12個消去
+        clearedCount |> should equal 12
 
     [<Fact>]
     let ``盤面上のぷよがすべて消えると全消しになる`` () =
