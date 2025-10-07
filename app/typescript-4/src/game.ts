@@ -16,7 +16,8 @@ export class Game {
     | 'checkFall'
     | 'falling'
     | 'checkErase'
-    | 'erasing' = 'newPuyo';
+    | 'erasing'
+    | 'gameOver' = 'newPuyo';
   private animationId: number = 0;
   private frame: number = 0;
   private lastTime: number = 0;
@@ -49,7 +50,13 @@ export class Game {
       case 'newPuyo':
         // 新しいぷよを作成
         this.player.createNewPuyo();
-        this.mode = 'playing';
+
+        // ゲームオーバー判定
+        if (this.player.checkGameOver()) {
+          this.mode = 'gameOver';
+        } else {
+          this.mode = 'playing';
+        }
         break;
 
       case 'playing':
@@ -98,6 +105,10 @@ export class Game {
         // 簡略化のため、すぐに checkFall に戻る（消去後の重力適用）
         this.mode = 'checkFall';
         break;
+
+      case 'gameOver':
+        // ゲームオーバー時は何もしない
+        break;
     }
   }
 
@@ -105,7 +116,7 @@ export class Game {
     // ステージを描画
     this.stage.draw();
 
-    // プレイヤーのぷよを描画
+    // プレイヤーのぷよを描画（playingモード時のみ）
     if (this.mode === 'playing') {
       this.player.draw();
     }

@@ -222,6 +222,20 @@ export class Player {
     return this.inputKeyDown ? 10 : 1;
   }
 
+  checkGameOver(): boolean {
+    if (!this.stage) return false;
+
+    // 新しいぷよの配置位置にすでにぷよがあるかチェック
+    const nextPos = this.getNextPuyoPosition();
+
+    // 軸ぷよまたは2つ目のぷよの位置にぷよがあればゲームオーバー
+    // getPuyo() は範囲外の場合 -1 を返すので、> 0 でチェック
+    return (
+      this.stage.getPuyo(this.puyoX, this.puyoY) > 0 ||
+      this.stage.getPuyo(nextPos.x, nextPos.y) > 0
+    );
+  }
+
   update(deltaTime: number = 0): void {
     // 落下タイマーを進める（高速落下の速度を反映）
     this.dropTimer += deltaTime * this.getDropSpeed();

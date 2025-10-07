@@ -141,4 +141,41 @@ describe('ゲーム', () => {
       expect(score.getScore()).toBe(3600); // 全消しボーナスのみ
     });
   });
+
+  describe('ゲームオーバー', () => {
+    beforeEach(() => {
+      game.initialize();
+    });
+
+    it('新しいぷよを配置できない場合、ゲームオーバーになる', () => {
+      // ステージの上部にぷよを配置
+      const stage = game['stage'];
+      stage.setPuyo(2, 0, 1);
+      stage.setPuyo(2, 1, 1);
+
+      // 新しいぷよの生成（通常は中央上部に配置される）
+      game['player'].createNewPuyo();
+
+      // ゲームオーバー判定
+      const isGameOver = game['player'].checkGameOver();
+
+      // ゲームオーバーになっていることを確認
+      expect(isGameOver).toBe(true);
+    });
+
+    it('ゲームオーバーになると、ゲームモードがgameOverに変わる', () => {
+      // ステージの上部にぷよを配置
+      const stage = game['stage'];
+      stage.setPuyo(2, 0, 1);
+
+      // ゲームモードを設定
+      game['mode'] = 'newPuyo';
+
+      // ゲームループを実行
+      game['update'](0);
+
+      // ゲームモードがgameOverになっていることを確認
+      expect(game['mode']).toBe('gameOver');
+    });
+  });
 });
