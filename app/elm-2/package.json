@@ -7,7 +7,9 @@
     "dev": "elm reactor",
     "build": "elm make src/Main.elm --output=dist/main.js --optimize",
     "build:dev": "elm make src/Main.elm --output=dist/main.js",
-    "watch": "elm-test --watch"
+    "watch": "elm-test --watch",
+    "clean": "rimraf dist elm-stuff",
+    "release": "npm test && npm run build && echo Release build completed successfully!"
   },
   "devDependencies": {
     "elm": "^0.19.1-5",
