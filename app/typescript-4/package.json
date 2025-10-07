@@ -1,0 +1,40 @@
+{
+  "name": "puyo-puyo-game",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "gulp": "gulp",
+    "watch": "gulp watch",
+    "guard": "gulp guard",
+    "check": "gulp checkAndFix",
+    "commit": "git add . && git commit",
+    "setup": "npm install && npm run check"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@vitest/coverage-v8": "^1.0.4",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-complexity": "^1.0.2",
+    "gulp": "^4.0.2",
+    "gulp-eslint-new": "^2.1.0",
+    "jsdom": "^27.0.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.7",
+    "vitest": "^1.0.4"
+  }
+}
