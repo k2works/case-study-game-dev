@@ -115,4 +115,23 @@ suite =
                     Board.getCell 2 11 newBoard
                         |> Expect.equal (Just (Filled Blue))
             ]
+        , describe "isEmpty"
+            [ test "盤面がすべて空なら True を返す" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+                    in
+                    GameLogic.isEmpty board
+                        |> Expect.equal True
+            , test "盤面にぷよがあれば False を返す" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+                                |> Board.setCell 2 10 (Filled Red)
+                    in
+                    GameLogic.isEmpty board
+                        |> Expect.equal False
+            ]
         ]

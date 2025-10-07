@@ -37,6 +37,7 @@ type alias Model =
     , fastDropActive : Bool
     , chainCount : Int
     , score : Int
+    , message : String
     }
 
 
@@ -51,6 +52,7 @@ init _ =
       , fastDropActive = False
       , chainCount = 0
       , score = 0
+      , message = ""
       }
     , Cmd.none
     )
@@ -78,6 +80,7 @@ update msg model =
                 , fastDropActive = False
                 , chainCount = 0
                 , score = 0
+                , message = ""
               }
             , Cmd.none
             )
@@ -208,10 +211,31 @@ update msg model =
                             findAllErasableGroups model.board
                     in
                     if List.isEmpty erasableGroups then
-                        -- 消去なし → 次のぷよを出す
+                        -- 消去なし → 全消しチェック
+                        let
+                            isAllClear =
+                                GameLogic.isEmpty model.board
+
+                            zenkeshiBonus =
+                                if isAllClear then
+                                    3600
+
+                                else
+                                    0
+
+                            message =
+                                if isAllClear then
+                                    "全消し！+3600"
+
+                                else
+                                    ""
+                        in
+                        -- 次のぷよを出す
                         ( { model
                             | mode = Playing
                             , currentPair = Just (PuyoPair.create 2 1 Red Blue)
+                            , score = model.score + zenkeshiBonus
+                            , message = message
                           }
                         , Cmd.none
                         )
@@ -329,6 +353,17 @@ view model =
             , text " | "
             , text ("連鎖数: " ++ String.fromInt model.chainCount)
             ]
+        , if String.isEmpty model.message then
+            text ""
+
+          else
+            div
+                [ style "color" "gold"
+                , style "font-weight" "bold"
+                , style "font-size" "24px"
+                , style "margin" "10px 0"
+                ]
+                [ text model.message ]
         , div [] [ text ("ゲームモード: " ++ gameModeToString model.mode) ]
         , viewGameControls model
         , viewBoard model.board model.currentPair

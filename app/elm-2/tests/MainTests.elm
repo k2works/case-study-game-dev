@@ -29,6 +29,7 @@ suite =
                             , fastDropActive = False
                             , chainCount = 0
                             , score = 0
+                            , message = ""
                             }
 
                         ( newModel, _ ) =
@@ -49,6 +50,7 @@ suite =
                             , fastDropActive = False
                             , chainCount = 0
                             , score = 0
+                            , message = ""
                             }
 
                         ( newModel, _ ) =
@@ -69,6 +71,7 @@ suite =
                             , fastDropActive = True
                             , chainCount = 0
                             , score = 0
+                            , message = ""
                             }
 
                         effectiveInterval =

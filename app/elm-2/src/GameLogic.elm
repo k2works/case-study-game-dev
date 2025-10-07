@@ -1,4 +1,4 @@
-module GameLogic exposing (applyGravity, erasePuyos, findConnectedPuyos)
+module GameLogic exposing (applyGravity, erasePuyos, findConnectedPuyos, isEmpty)
 
 import Board exposing (Board)
 import Cell exposing (Cell(..))
@@ -121,3 +121,36 @@ applyGravity board =
                         row
     in
     List.foldl applyGravityToColumn board (List.range 0 (cols - 1))
+
+
+{-| 盤面がすべて空かどうかを判定する（全消し判定）
+-}
+isEmpty : Board -> Bool
+isEmpty board =
+    let
+        cols =
+            Board.getCols board
+
+        rows =
+            Board.getRows board
+
+        -- すべてのセルをチェック
+        allPositions =
+            List.concatMap
+                (\y -> List.map (\x -> ( x, y )) (List.range 0 (cols - 1)))
+                (List.range 0 (rows - 1))
+
+        -- 1つでもFilled があれば False
+        hasAnyPuyo =
+            List.any
+                (\( x, y ) ->
+                    case Board.getCell x y board of
+                        Just (Filled _) ->
+                            True
+
+                        _ ->
+                            False
+                )
+                allPositions
+    in
+    not hasAnyPuyo
