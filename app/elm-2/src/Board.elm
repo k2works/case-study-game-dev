@@ -4,6 +4,8 @@ module Board exposing
     , Rows
     , create
     , getCell
+    , getCols
+    , getRows
     , setCell
     )
 
@@ -63,3 +65,15 @@ setCell x y cell board =
 
     else
         board
+
+
+-- 列数を取得する
+getCols : Board -> Int
+getCols board =
+    board.cols
+
+
+-- 行数を取得する
+getRows : Board -> Int
+getRows board =
+    board.rows

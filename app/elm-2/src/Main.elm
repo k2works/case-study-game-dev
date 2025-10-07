@@ -4,11 +4,13 @@ import Board exposing (Board)
 import Browser
 import Browser.Events
 import Cell exposing (Cell(..))
+import GameLogic
 import Html exposing (Html, button, div, h1, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Json.Decode as Decode
 import PuyoColor exposing (PuyoColor(..))
+import Set exposing (Set)
 import PuyoPair exposing (PuyoPair)
 import Time
 
@@ -153,15 +155,19 @@ update msg model =
                             )
 
                         else
-                            -- 着地した：ボードに固定して新しいぷよを生成
+                            -- 着地した：ボードに固定して消去判定
                             let
-                                newBoard =
+                                boardWithPuyos =
                                     model.board
                                         |> Board.setCell pair.axis.x pair.axis.y (Filled pair.axisColor)
                                         |> Board.setCell pair.child.x pair.child.y (Filled pair.childColor)
+
+                                -- 消去可能なぷよを検出
+                                ( erasedBoard, hasErased ) =
+                                    checkAndErasePuyos boardWithPuyos
                             in
                             ( { model
-                                | board = newBoard
+                                | board = erasedBoard
                                 , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                                 , dropTimer = 0
                                 , lastFrameTime = Just currentTime
@@ -339,6 +345,83 @@ puyoColorToString color =
 
         Yellow ->
             "#ffff00"
+
+
+-- GAME LOGIC HELPERS
+
+
+{-| ボード上のぷよを消去判定して消去する
+-}
+checkAndErasePuyos : Board -> ( Board, Bool )
+checkAndErasePuyos board =
+    let
+        cols =
+            Board.getCols board
+
+        rows =
+            Board.getRows board
+
+        -- すべてのセルをチェックして、4つ以上つながったぷよを探す
+        checkAllCells : Set ( Int, Int ) -> Int -> Int -> Set ( Int, Int )
+        checkAllCells checked x y =
+            if y >= rows then
+                checked
+
+            else if x >= cols then
+                checkAllCells checked 0 (y + 1)
+
+            else if Set.member ( x, y ) checked then
+                checkAllCells checked (x + 1) y
+
+            else
+                case Board.getCell x y board of
+                    Just (Filled color) ->
+                        let
+                            connected =
+                                GameLogic.findConnectedPuyos x y color board
+
+                            newChecked =
+                                Set.union checked connected
+                        in
+                        if Set.size connected >= 4 then
+                            -- 4つ以上つながっている場合は消去対象に追加
+                            checkAllCells newChecked (x + 1) y
+
+                        else
+                            checkAllCells newChecked (x + 1) y
+
+                    _ ->
+                        checkAllCells checked (x + 1) y
+
+        toErase =
+            checkAllCells Set.empty 0 0
+                |> Set.filter
+                    (\( x, y ) ->
+                        case Board.getCell x y board of
+                            Just (Filled color) ->
+                                let
+                                    connected =
+                                        GameLogic.findConnectedPuyos x y color board
+                                in
+                                Set.size connected >= 4
+
+                            _ ->
+                                False
+                    )
+
+        hasErased =
+            not (Set.isEmpty toErase)
+
+        erasedBoard =
+            if hasErased then
+                board
+                    |> GameLogic.erasePuyos toErase
+                    |> GameLogic.applyGravity
+
+            else
+                board
+    in
+    ( erasedBoard, hasErased )
 
 
 -- MAIN
