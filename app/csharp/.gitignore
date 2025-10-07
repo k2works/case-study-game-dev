@@ -41,5 +41,5 @@ tools/**
 !tools/packages.config
 
 # Test results
-TestResults.xml
+TestResults*.xml
 *.log

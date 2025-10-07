@@ -27,16 +27,18 @@ namespace PuyoPuyo.Core
             UpdateChildPosition();
         }
 
-        public void RotateRight()
+        public void RotateRight(Board board)
         {
             rotation = (rotation + 1) % 4;
             UpdateChildPosition();
+            ApplyWallKick();
         }
 
-        public void RotateLeft()
+        public void RotateLeft(Board board)
         {
             rotation = (rotation + 3) % 4; // -1 と同じ（モジュロ演算）
             UpdateChildPosition();
+            ApplyWallKick();
         }
 
         public bool IsCollision(Board board, int axisX, int axisY, int childX, int childY)
@@ -66,6 +68,70 @@ namespace PuyoPuyo.Core
             }
 
             return false; // 衝突なし
+        }
+
+        public void MoveLeft(Board board)
+        {
+            // 左に移動できるかチェック
+            int newAxisX = AxisX - 1;
+            int newChildX = ChildX - 1;
+
+            if (!IsCollision(board, newAxisX, AxisY, newChildX, ChildY))
+            {
+                AxisX = newAxisX;
+                UpdateChildPosition();
+            }
+        }
+
+        public void MoveRight(Board board)
+        {
+            // 右に移動できるかチェック
+            int newAxisX = AxisX + 1;
+            int newChildX = ChildX + 1;
+
+            if (!IsCollision(board, newAxisX, AxisY, newChildX, ChildY))
+            {
+                AxisX = newAxisX;
+                UpdateChildPosition();
+            }
+        }
+
+        public void MoveDown(Board board)
+        {
+            // 下に移動できるかチェック
+            int newAxisY = AxisY + 1;
+            int newChildY = ChildY + 1;
+
+            if (!IsCollision(board, AxisX, newAxisY, ChildX, newChildY))
+            {
+                AxisY = newAxisY;
+                UpdateChildPosition();
+            }
+        }
+
+        public bool CanMoveDown(Board board)
+        {
+            // 下に移動できるかチェック
+            int newAxisY = AxisY + 1;
+            int newChildY = ChildY + 1;
+
+            return !IsCollision(board, AxisX, newAxisY, ChildX, newChildY);
+        }
+
+        private void ApplyWallKick()
+        {
+            // 壁キックのチェック
+            // 回転後、子ぷよが画面外に出る場合は軸ぷよを調整
+            if (ChildX < 0)
+            {
+                AxisX -= ChildX; // 右に移動
+                UpdateChildPosition();
+            }
+            else if (ChildX >= Board.COLS)
+            {
+                AxisX -= (ChildX - Board.COLS + 1); // 左に移動
+                UpdateChildPosition();
+            }
         }
 
         private void UpdateChildPosition()

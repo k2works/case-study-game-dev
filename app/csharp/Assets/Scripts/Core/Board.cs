@@ -2,8 +2,8 @@ namespace PuyoPuyo.Core
 {
     public class Board
     {
-        private const int COLS = 6;
-        private const int ROWS = 12;
+        public const int COLS = 6;
+        public const int ROWS = 12;
 
         private PuyoColor[,] cells;
 
