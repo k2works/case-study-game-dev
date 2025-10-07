@@ -100,5 +100,102 @@ describe('プレイヤー', () => {
       // 位置が変わっていないことを確認
       expect(player['puyoX']).toBe(config.stageCols - 1);
     });
+
+    it('横向き（右）の状態で右端にいる場合、右に移動できない', () => {
+      // 右向きに回転（2つ目のぷよが右にくる）
+      player['rotation'] = 1;
+      player['puyoX'] = config.stageCols - 2;
+
+      // 右に移動を試みる
+      player.moveRight();
+
+      // 2つ目のぷよが範囲外になるため移動できない
+      expect(player['puyoX']).toBe(config.stageCols - 2);
+    });
+
+    it('横向き（左）の状態で左端にいる場合、左に移動できない', () => {
+      // 左向きに回転（2つ目のぷよが左にくる）
+      player['rotation'] = 3;
+      player['puyoX'] = 1;
+
+      // 左に移動を試みる
+      player.moveLeft();
+
+      // 2つ目のぷよが範囲外になるため移動できない
+      expect(player['puyoX']).toBe(1);
+    });
+  });
+
+  describe('ぷよの回転', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo();
+    });
+
+    it('時計回りに回転すると、回転状態が1増える', () => {
+      // 初期回転状態を記録
+      const initialRotation = player['rotation'];
+
+      // 時計回りに回転
+      player.rotateRight();
+
+      // 回転状態が1増えていることを確認
+      expect(player['rotation']).toBe((initialRotation + 1) % 4);
+    });
+
+    it('反時計回りに回転すると、回転状態が1減る', () => {
+      // 初期回転状態を記録
+      const initialRotation = player['rotation'];
+
+      // 反時計回りに回転
+      player.rotateLeft();
+
+      // 回転状態が1減っていることを確認（負の値にならないように調整）
+      expect(player['rotation']).toBe((initialRotation + 3) % 4);
+    });
+
+    it('回転状態が4になると0に戻る', () => {
+      // 回転状態を3に設定
+      player['rotation'] = 3;
+
+      // 時計回りに回転
+      player.rotateRight();
+
+      // 回転状態が0になっていることを確認
+      expect(player['rotation']).toBe(0);
+    });
+  });
+
+  describe('壁キック処理', () => {
+    beforeEach(() => {
+      // 新しいぷよを作成
+      player.createNewPuyo();
+    });
+
+    it('右端で右回転すると、左に移動して回転する（壁キック）', () => {
+      // 右端に移動
+      player['puyoX'] = config.stageCols - 1;
+      player['rotation'] = 0; // 上向き
+
+      // 右回転（2つ目のぷよが右にくる）
+      player.rotateRight();
+
+      // 壁キックにより左に移動していることを確認
+      expect(player['puyoX']).toBe(config.stageCols - 2);
+      expect(player['rotation']).toBe(1);
+    });
+
+    it('左端で左回転すると、右に移動して回転する（壁キック）', () => {
+      // 左端に移動
+      player['puyoX'] = 0;
+      player['rotation'] = 0; // 上向き
+
+      // 左回転（2つ目のぷよが左にくる）
+      player.rotateLeft();
+
+      // 壁キックにより右に移動していることを確認
+      expect(player['puyoX']).toBe(1);
+      expect(player['rotation']).toBe(3);
+    });
   });
 });

@@ -15,6 +15,10 @@ export class Player {
 
   private stage?: Stage; // Stageへの参照
 
+  // 回転状態に応じた2つ目のぷよのオフセット [x, y]
+  private readonly offsetX: number[] = [0, 1, 0, -1]; // rotation 0:上, 1:右, 2:下, 3:左
+  private readonly offsetY: number[] = [-1, 0, 1, 0];
+
   constructor(private config: Config) {
     // キーボードイベントの登録
     document.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -23,6 +27,13 @@ export class Player {
 
   setStage(stage: Stage): void {
     this.stage = stage;
+  }
+
+  private getNextPuyoPosition(): { x: number; y: number } {
+    return {
+      x: this.puyoX + this.offsetX[this.rotation],
+      y: this.puyoY + this.offsetY[this.rotation],
+    };
   }
 
   private onKeyDown(e: KeyboardEvent): void {
@@ -69,23 +80,74 @@ export class Player {
   }
 
   moveLeft(): void {
-    // 左端でなければ左に移動
-    if (this.puyoX > 0) {
-      this.puyoX--;
+    // 左に移動できるかチェック（軸ぷよと2つ目のぷよ両方）
+    const nextPos = this.getNextPuyoPosition();
+    const newPuyoX = this.puyoX - 1;
+    const newNextX = nextPos.x - 1;
+
+    // 両方のぷよが範囲内にある場合のみ移動
+    if (newPuyoX >= 0 && newNextX >= 0) {
+      this.puyoX = newPuyoX;
     }
   }
 
   moveRight(): void {
-    // 右端でなければ右に移動
-    if (this.puyoX < this.config.stageCols - 1) {
-      this.puyoX++;
+    // 右に移動できるかチェック（軸ぷよと2つ目のぷよ両方）
+    const nextPos = this.getNextPuyoPosition();
+    const newPuyoX = this.puyoX + 1;
+    const newNextX = nextPos.x + 1;
+
+    // 両方のぷよが範囲内にある場合のみ移動
+    if (
+      newPuyoX < this.config.stageCols &&
+      newNextX < this.config.stageCols
+    ) {
+      this.puyoX = newPuyoX;
     }
   }
 
   draw(): void {
     // 現在のぷよを描画
     if (this.stage) {
+      // 軸ぷよを描画
       this.stage.drawPuyo(this.puyoX, this.puyoY, this.puyoType);
+
+      // 2つ目のぷよを描画
+      const nextPos = this.getNextPuyoPosition();
+      // 画面内にある場合のみ描画
+      if (nextPos.y >= 0) {
+        this.stage.drawPuyo(nextPos.x, nextPos.y, this.nextPuyoType);
+      }
+    }
+  }
+
+  rotateRight(): void {
+    // 時計回りに回転
+    this.rotation = (this.rotation + 1) % 4;
+
+    // 壁キック処理
+    this.performWallKick();
+  }
+
+  rotateLeft(): void {
+    // 反時計回りに回転
+    this.rotation = (this.rotation + 3) % 4;
+
+    // 壁キック処理
+    this.performWallKick();
+  }
+
+  private performWallKick(): void {
+    // 右端で右回転した場合（2つ目のぷよが右にくる場合）
+    if (this.rotation === 1 && this.puyoX === this.config.stageCols - 1) {
+      // 左に移動（壁キック）
+      this.puyoX--;
+    }
+
+    // 左端で左回転した場合（2つ目のぷよが左にくる場合）
+    if (this.rotation === 3 && this.puyoX === 0) {
+      // 右に移動（壁キック）
+      this.puyoX++;
     }
   }
 
@@ -98,6 +160,10 @@ export class Player {
     if (this.inputKeyRight) {
       this.moveRight();
       this.inputKeyRight = false; // 移動後フラグをクリア
+    }
+    if (this.inputKeyUp) {
+      this.rotateRight();
+      this.inputKeyUp = false; // 移動後フラグをクリア
     }
   }
 }
