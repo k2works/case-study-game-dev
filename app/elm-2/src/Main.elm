@@ -354,17 +354,26 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.mode of
+        Start ->
+            Sub.none
+
         Playing ->
             Sub.batch
                 [ Browser.Events.onKeyDown (Decode.map KeyPressed keyDecoder)
                 , Browser.Events.onAnimationFrame Tick
                 ]
 
+        Checking ->
+            Browser.Events.onAnimationFrame Tick
+
+        Erasing ->
+            Browser.Events.onAnimationFrame Tick
+
+        Falling ->
+            Browser.Events.onAnimationFrame Tick
+
         GameOver ->
             Browser.Events.onKeyDown restartKeyDecoder
-
-        _ ->
-            Sub.none
 
 
 keyDecoder : Decode.Decoder String
