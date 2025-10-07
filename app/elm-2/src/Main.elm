@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (GameMode(..), Model, Msg(..), main, update)
 
 import Board exposing (Board)
 import Browser
@@ -29,6 +29,7 @@ type alias Model =
     , dropTimer : Float
     , dropInterval : Float
     , lastFrameTime : Maybe Time.Posix
+    , fastDropActive : Bool
     }
 
 
@@ -40,6 +41,7 @@ init _ =
       , dropTimer = 0
       , dropInterval = 1000
       , lastFrameTime = Nothing
+      , fastDropActive = False
       }
     , Cmd.none
     )
@@ -64,53 +66,61 @@ update msg model =
                 , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                 , dropTimer = 0
                 , lastFrameTime = Nothing
+                , fastDropActive = False
               }
             , Cmd.none
             )
 
         KeyPressed key ->
-            case ( model.mode, model.currentPair ) of
-                ( Playing, Just pair ) ->
-                    let
-                        newPair =
-                            case key of
-                                "ArrowLeft" ->
-                                    let
-                                        movedPair =
-                                            PuyoPair.moveLeft pair
-                                    in
-                                    if PuyoPair.canMove movedPair model.board then
-                                        movedPair
-
-                                    else
-                                        pair
-
-                                "ArrowRight" ->
-                                    let
-                                        movedPair =
-                                            PuyoPair.moveRight pair
-                                    in
-                                    if PuyoPair.canMove movedPair model.board then
-                                        movedPair
-
-                                    else
-                                        pair
-
-                                "ArrowUp" ->
-                                    -- 回転（壁キック付き）
-                                    let
-                                        ( rotatedPair, _ ) =
-                                            PuyoPair.rotateWithKick pair model.board
-                                    in
-                                    rotatedPair
-
-                                _ ->
-                                    pair
-                    in
-                    ( { model | currentPair = Just newPair }, Cmd.none )
+            case key of
+                "ArrowDown" ->
+                    -- 高速落下フラグを立てる
+                    ( { model | fastDropActive = True }, Cmd.none )
 
                 _ ->
-                    ( model, Cmd.none )
+                    -- その他のキー処理
+                    case ( model.mode, model.currentPair ) of
+                        ( Playing, Just pair ) ->
+                            let
+                                newPair =
+                                    case key of
+                                        "ArrowLeft" ->
+                                            let
+                                                movedPair =
+                                                    PuyoPair.moveLeft pair
+                                            in
+                                            if PuyoPair.canMove movedPair model.board then
+                                                movedPair
+
+                                            else
+                                                pair
+
+                                        "ArrowRight" ->
+                                            let
+                                                movedPair =
+                                                    PuyoPair.moveRight pair
+                                            in
+                                            if PuyoPair.canMove movedPair model.board then
+                                                movedPair
+
+                                            else
+                                                pair
+
+                                        "ArrowUp" ->
+                                            -- 回転（壁キック付き）
+                                            let
+                                                ( rotatedPair, _ ) =
+                                                    PuyoPair.rotateWithKick pair model.board
+                                            in
+                                            rotatedPair
+
+                                        _ ->
+                                            pair
+                            in
+                            ( { model | currentPair = Just newPair }, Cmd.none )
+
+                        _ ->
+                            ( model, Cmd.none )
 
         Tick currentTime ->
             case ( model.mode, model.currentPair, model.lastFrameTime ) of
@@ -119,10 +129,18 @@ update msg model =
                         deltaTime =
                             toFloat (Time.posixToMillis currentTime - Time.posixToMillis lastTime)
 
+                        -- 高速落下時は落下間隔を短くする
+                        effectiveInterval =
+                            if model.fastDropActive then
+                                50
+
+                            else
+                                model.dropInterval
+
                         newTimer =
                             model.dropTimer + deltaTime
                     in
-                    if newTimer >= model.dropInterval then
+                    if newTimer >= effectiveInterval then
                         -- 落下タイマーが間隔を超えたら落下処理
                         if PuyoPair.canMoveDown pair model.board then
                             -- 下に移動可能
@@ -147,6 +165,7 @@ update msg model =
                                 , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                                 , dropTimer = 0
                                 , lastFrameTime = Just currentTime
+                                , fastDropActive = False
                               }
                             , Cmd.none
                             )
