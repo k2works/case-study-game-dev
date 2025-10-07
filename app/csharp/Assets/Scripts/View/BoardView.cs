@@ -45,6 +45,7 @@ namespace PuyoPuyo.View
 
                     // Image コンポーネントを追加
                     Image image = cell.AddComponent<Image>();
+                    image.sprite = SpriteUtility.GetCircleSprite(); // 円形スプライトを設定
                     image.color = Color.gray; // デフォルトは灰色
 
                     cellImages[row, col] = image;

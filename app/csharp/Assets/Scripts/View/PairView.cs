@@ -32,6 +32,7 @@ namespace PuyoPuyo.View
             RectTransform axisRect = axisObj.AddComponent<RectTransform>();
             axisRect.sizeDelta = new Vector2(cellSize, cellSize);
             axisImage = axisObj.AddComponent<Image>();
+            axisImage.sprite = SpriteUtility.GetCircleSprite(); // 円形スプライトを設定
 
             // 子ぷよ
             GameObject childObj = new GameObject("ChildPuyo");
@@ -39,6 +40,7 @@ namespace PuyoPuyo.View
             RectTransform childRect = childObj.AddComponent<RectTransform>();
             childRect.sizeDelta = new Vector2(cellSize, cellSize);
             childImage = childObj.AddComponent<Image>();
+            childImage.sprite = SpriteUtility.GetCircleSprite(); // 円形スプライトを設定
         }
 
         private void Update()
