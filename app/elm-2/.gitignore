@@ -1,0 +1,23 @@
+# Elm
+elm-stuff/
+
+# elm-test
+tests/VerifyExamples/
+
+# npm
+node_modules/
+
+# ビルド成果物
+dist/*.js
+dist/*.js.map
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

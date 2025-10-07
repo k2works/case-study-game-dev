@@ -8,8 +8,11 @@ args = ["test"]
 
 # テストカバレッジタスク
 [tasks.coverage]
+clear = true
+description = "Generate test coverage report using cargo-tarpaulin"
+install_crate = { crate_name = "cargo-tarpaulin", binary = "cargo", test_arg = ["tarpaulin", "--help"] }
 command = "cargo"
-args = ["tarpaulin", "--out", "Html"]
+args = ["tarpaulin", "--out", "Html", "--output-dir", "coverage"]
 
 # 静的コード解析タスク
 [tasks.lint]
