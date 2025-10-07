@@ -1,6 +1,15 @@
 import { Config } from './config';
 import { PuyoImage } from './puyoimage';
 
+export interface EraseInfo {
+  erasePuyoCount: number;
+  eraseInfo: {
+    x: number;
+    y: number;
+    type: number;
+  }[];
+}
+
 export class Stage {
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
@@ -118,5 +127,114 @@ export class Stage {
     }
 
     return hasFallen;
+  }
+
+  checkErase(): EraseInfo {
+    // 消去情報
+    const eraseInfo: EraseInfo = {
+      erasePuyoCount: 0,
+      eraseInfo: [],
+    };
+
+    // 一時的なチェック用ボード
+    const checked: boolean[][] = [];
+    for (let y = 0; y < this.config.stageRows; y++) {
+      checked[y] = [];
+      for (let x = 0; x < this.config.stageCols; x++) {
+        checked[y][x] = false;
+      }
+    }
+
+    // 全マスをチェック
+    for (let y = 0; y < this.config.stageRows; y++) {
+      for (let x = 0; x < this.config.stageCols; x++) {
+        // ぷよがあり、まだチェックしていない場合
+        if (this.field[y][x] !== 0 && !checked[y][x]) {
+          // 接続しているぷよを探索
+          const puyoType = this.field[y][x];
+          const connected: { x: number; y: number }[] = [];
+          this.searchConnectedPuyo(x, y, puyoType, checked, connected);
+
+          // 4つ以上つながっている場合は消去対象
+          if (connected.length >= 4) {
+            for (const puyo of connected) {
+              eraseInfo.eraseInfo.push({
+                x: puyo.x,
+                y: puyo.y,
+                type: puyoType,
+              });
+            }
+            eraseInfo.erasePuyoCount += connected.length;
+          }
+        }
+      }
+    }
+
+    return eraseInfo;
+  }
+
+  private searchConnectedPuyo(
+    startX: number,
+    startY: number,
+    puyoType: number,
+    checked: boolean[][],
+    connected: { x: number; y: number }[]
+  ): void {
+    // 探索済みにする
+    checked[startY][startX] = true;
+    connected.push({ x: startX, y: startY });
+
+    // 4方向を探索
+    const directions = [
+      { dx: 1, dy: 0 }, // 右
+      { dx: -1, dy: 0 }, // 左
+      { dx: 0, dy: 1 }, // 下
+      { dx: 0, dy: -1 }, // 上
+    ];
+
+    for (const direction of directions) {
+      const nextX = startX + direction.dx;
+      const nextY = startY + direction.dy;
+
+      // ボード内かつ同じ色のぷよがあり、まだチェックしていない場合
+      if (
+        nextX >= 0 &&
+        nextX < this.config.stageCols &&
+        nextY >= 0 &&
+        nextY < this.config.stageRows &&
+        this.field[nextY][nextX] === puyoType &&
+        !checked[nextY][nextX]
+      ) {
+        // 再帰的に探索
+        this.searchConnectedPuyo(nextX, nextY, puyoType, checked, connected);
+      }
+    }
+  }
+
+  eraseBoards(eraseInfo: { x: number; y: number; type: number }[]): void {
+    // 消去対象のぷよを消去
+    for (const info of eraseInfo) {
+      this.field[info.y][info.x] = 0;
+    }
+  }
+
+  fall(): void {
+    // 下から上に向かって処理
+    for (let y = this.config.stageRows - 2; y >= 0; y--) {
+      for (let x = 0; x < this.config.stageCols; x++) {
+        if (this.field[y][x] !== 0) {
+          // 現在のぷよの下が空いている場合、落下させる
+          let fallY = y;
+          while (
+            fallY + 1 < this.config.stageRows &&
+            this.field[fallY + 1][x] === 0
+          ) {
+            this.field[fallY + 1][x] = this.field[fallY][x];
+            this.field[fallY][x] = 0;
+            fallY++;
+          }
+        }
+      }
+    }
   }
 }
