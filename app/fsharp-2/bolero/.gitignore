@@ -44,3 +44,6 @@ coverage.json
 ## Cake
 tools/
 .dotnet/
+
+## Publish
+publish/
