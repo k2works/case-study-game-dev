@@ -1,0 +1,30 @@
+{
+  "ignoreFiles": [
+    "**/obj/**/*.fs",
+    "**/bin/**/*.fs"
+  ],
+  "hints": {
+    "add": []
+  },
+  "formatting": {
+    "typedItemSpacing": {
+      "enabled": true
+    },
+    "typePrefixing": {
+      "enabled": true
+    }
+  },
+  "conventions": {
+    "naming": {
+      "enabled": true
+    },
+    "nestedStatements": {
+      "enabled": true,
+      "depth": 5
+    },
+    "cyclomaticComplexity": {
+      "enabled": true,
+      "maxComplexity": 7
+    }
+  }
+}
