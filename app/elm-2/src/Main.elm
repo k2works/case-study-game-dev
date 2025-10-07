@@ -65,6 +65,7 @@ type Msg
     = StartGame
     | KeyPressed String
     | Tick Time.Posix
+    | Restart
     | NoOp
 
 
@@ -229,16 +230,31 @@ update msg model =
 
                                 else
                                     ""
+
+                            -- 次のぷよを生成
+                            newPair =
+                                PuyoPair.create 2 1 Red Blue
                         in
-                        -- 次のぷよを出す
-                        ( { model
-                            | mode = Playing
-                            , currentPair = Just (PuyoPair.create 2 1 Red Blue)
-                            , score = model.score + zenkeshiBonus
-                            , message = message
-                          }
-                        , Cmd.none
-                        )
+                        -- 次のぷよが配置可能かチェック
+                        if PuyoPair.canMove newPair model.board then
+                            -- 配置可能 → ゲーム続行
+                            ( { model
+                                | mode = Playing
+                                , currentPair = Just newPair
+                                , score = model.score + zenkeshiBonus
+                                , message = message
+                              }
+                            , Cmd.none
+                            )
+
+                        else
+                            -- 配置不可 → ゲームオーバー
+                            ( { model
+                                | mode = GameOver
+                                , score = model.score + zenkeshiBonus
+                              }
+                            , Cmd.none
+                            )
 
                     else
                         -- 消去あり → 消去モードへ
@@ -313,6 +329,21 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        Restart ->
+            ( { board = Board.create 6 12
+              , currentPair = Nothing
+              , mode = Start
+              , dropTimer = 0
+              , dropInterval = 1000
+              , lastFrameTime = Nothing
+              , fastDropActive = False
+              , chainCount = 0
+              , score = 0
+              , message = ""
+              }
+            , Cmd.none
+            )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -329,6 +360,9 @@ subscriptions model =
                 , Browser.Events.onAnimationFrame Tick
                 ]
 
+        GameOver ->
+            Browser.Events.onKeyDown restartKeyDecoder
+
         _ ->
             Sub.none
 
@@ -336,6 +370,19 @@ subscriptions model =
 keyDecoder : Decode.Decoder String
 keyDecoder =
     Decode.field "key" Decode.string
+
+
+restartKeyDecoder : Decode.Decoder Msg
+restartKeyDecoder =
+    Decode.field "key" Decode.string
+        |> Decode.andThen
+            (\key ->
+                if key == "r" || key == "R" then
+                    Decode.succeed Restart
+
+                else
+                    Decode.fail "Not R key"
+            )
 
 
 -- VIEW
@@ -375,6 +422,26 @@ viewGameControls model =
     case model.mode of
         Start ->
             button [ onClick StartGame ] [ text "ゲーム開始" ]
+
+        GameOver ->
+            div []
+                [ div
+                    [ style "color" "red"
+                    , style "font-size" "32px"
+                    , style "font-weight" "bold"
+                    , style "margin" "20px 0"
+                    ]
+                    [ text "ゲームオーバー" ]
+                , div
+                    [ style "font-size" "24px"
+                    , style "margin" "10px 0"
+                    ]
+                    [ text ("最終スコア: " ++ String.fromInt model.score) ]
+                , div
+                    [ style "margin" "20px 0"
+                    ]
+                    [ text "Rキーを押して再スタート" ]
+                ]
 
         _ ->
             div [] []

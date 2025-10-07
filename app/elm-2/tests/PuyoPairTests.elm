@@ -239,4 +239,41 @@ suite =
                     PuyoPair.canMoveDown pair board
                         |> Expect.equal False
             ]
+        , describe "canSpawn"
+            [ test "配置位置が空なら生成可能" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+
+                        pair =
+                            PuyoPair.create 2 1 Red Blue
+                    in
+                    PuyoPair.canMove pair board
+                        |> Expect.equal True
+            , test "軸ぷよの位置が埋まっていたら生成不可" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+                                |> Board.setCell 2 1 (Filled Green)
+
+                        pair =
+                            PuyoPair.create 2 1 Red Blue
+                    in
+                    PuyoPair.canMove pair board
+                        |> Expect.equal False
+            , test "子ぷよの位置が埋まっていたら生成不可" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+                                |> Board.setCell 2 0 (Filled Yellow)
+
+                        pair =
+                            PuyoPair.create 2 1 Red Blue
+                    in
+                    PuyoPair.canMove pair board
+                        |> Expect.equal False
+            ]
         ]
