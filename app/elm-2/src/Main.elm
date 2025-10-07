@@ -10,6 +10,7 @@ import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Json.Decode as Decode
 import PuyoColor exposing (PuyoColor(..))
+import Random
 import Set exposing (Set)
 import PuyoPair exposing (PuyoPair)
 import Time
@@ -63,10 +64,25 @@ init _ =
 
 type Msg
     = StartGame
+    | SpawnNewPair PuyoColor PuyoColor Int String
     | KeyPressed String
     | Tick Time.Posix
     | Restart
     | NoOp
+
+
+{-| ランダムな色を生成するジェネレーター
+-}
+colorGenerator : Random.Generator PuyoColor
+colorGenerator =
+    Random.uniform Red [ Green, Blue, Yellow ]
+
+
+{-| 2つのランダムな色を生成するジェネレーター
+-}
+pairColorGenerator : Random.Generator ( PuyoColor, PuyoColor )
+pairColorGenerator =
+    Random.pair colorGenerator colorGenerator
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -75,7 +91,6 @@ update msg model =
         StartGame ->
             ( { model
                 | mode = Playing
-                , currentPair = Just (PuyoPair.create 2 1 Red Blue)
                 , dropTimer = 0
                 , lastFrameTime = Nothing
                 , fastDropActive = False
@@ -83,8 +98,34 @@ update msg model =
                 , score = 0
                 , message = ""
               }
-            , Cmd.none
+            , Random.generate (\( color1, color2 ) -> SpawnNewPair color1 color2 0 "") pairColorGenerator
             )
+
+        SpawnNewPair axisColor childColor bonusScore bonusMessage ->
+            let
+                newPair =
+                    PuyoPair.create 2 1 axisColor childColor
+            in
+            -- 次のぷよが配置可能かチェック
+            if PuyoPair.canMove newPair model.board then
+                -- 配置可能 → ゲーム続行
+                ( { model
+                    | mode = Playing
+                    , currentPair = Just newPair
+                    , score = model.score + bonusScore
+                    , message = bonusMessage
+                  }
+                , Cmd.none
+                )
+
+            else
+                -- 配置不可 → ゲームオーバー
+                ( { model
+                    | mode = GameOver
+                    , score = model.score + bonusScore
+                  }
+                , Cmd.none
+                )
 
         KeyPressed key ->
             case key of
@@ -212,7 +253,7 @@ update msg model =
                             findAllErasableGroups model.board
                     in
                     if List.isEmpty erasableGroups then
-                        -- 消去なし → 全消しチェック
+                        -- 消去なし → 全消しチェック → 次のぷよを生成
                         let
                             isAllClear =
                                 GameLogic.isEmpty model.board
@@ -230,31 +271,11 @@ update msg model =
 
                                 else
                                     ""
-
-                            -- 次のぷよを生成
-                            newPair =
-                                PuyoPair.create 2 1 Red Blue
                         in
-                        -- 次のぷよが配置可能かチェック
-                        if PuyoPair.canMove newPair model.board then
-                            -- 配置可能 → ゲーム続行
-                            ( { model
-                                | mode = Playing
-                                , currentPair = Just newPair
-                                , score = model.score + zenkeshiBonus
-                                , message = message
-                              }
-                            , Cmd.none
-                            )
-
-                        else
-                            -- 配置不可 → ゲームオーバー
-                            ( { model
-                                | mode = GameOver
-                                , score = model.score + zenkeshiBonus
-                              }
-                            , Cmd.none
-                            )
+                        -- ランダムな色で次のぷよを生成
+                        ( model
+                        , Random.generate (\( color1, color2 ) -> SpawnNewPair color1 color2 zenkeshiBonus message) pairColorGenerator
+                        )
 
                     else
                         -- 消去あり → 消去モードへ
