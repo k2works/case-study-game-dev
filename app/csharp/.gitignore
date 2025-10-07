@@ -43,3 +43,7 @@ tools/**
 # Test results
 TestResults*.xml
 *.log
+
+# Scenes (auto-generated)
+Assets/Scenes/*.unity
+Assets/Scenes/*.unity.meta

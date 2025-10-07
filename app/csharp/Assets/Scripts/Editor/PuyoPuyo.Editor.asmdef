@@ -1,0 +1,19 @@
+{
+    "name": "PuyoPuyo.Editor",
+    "rootNamespace": "PuyoPuyo.Editor",
+    "references": [
+        "PuyoPuyo.Core",
+        "PuyoPuyo.View"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

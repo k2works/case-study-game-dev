@@ -78,6 +78,49 @@ Task("Watch")
     StartProcess("./scripts/watch.sh");
 });
 
+Task("Setup")
+    .Description("ゲームシーンを自動セットアップ")
+    .Does(() =>
+{
+    Information("🎮 ゲームシーンをセットアップ中...");
+
+    var exitCode = StartProcess(unityPath, new ProcessSettings {
+        Arguments = new ProcessArgumentBuilder()
+            .Append("-batchmode")
+            .Append("-nographics")
+            .AppendQuoted("-projectPath", projectPath)
+            .Append("-executeMethod PuyoPuyo.Editor.SceneSetup.CreateGameSceneFromCommandLine")
+            .AppendQuoted("-logFile", $"{projectPath}/setup.log"),
+        WorkingDirectory = projectPath
+    });
+
+    if (exitCode == 0)
+    {
+        Information("✅ ゲームシーンのセットアップが完了しました");
+        Information("   シーン: Assets/Scenes/GameScene.unity");
+    }
+    else
+    {
+        Error("❌ セットアップが失敗しました");
+        Error($"詳細: {projectPath}/setup.log を確認してください");
+        throw new Exception("セットアップが失敗しました");
+    }
+});
+
+Task("Play")
+    .Description("Unity でゲームを実行")
+    .Does(() =>
+{
+    Information("▶️  Unity Editor でゲームを起動中...");
+
+    StartProcess(unityPath, new ProcessSettings {
+        Arguments = new ProcessArgumentBuilder()
+            .AppendQuoted("-projectPath", projectPath)
+            .Append("-executeMethod UnityEditor.EditorApplication.EnterPlaymode"),
+        WorkingDirectory = projectPath
+    });
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット
 ///////////////////////////////////////////////////////////////////////////////
