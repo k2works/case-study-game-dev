@@ -217,9 +217,14 @@ export class Player {
     this.dropTimer = 0;
   }
 
+  private getDropSpeed(): number {
+    // 下キーが押されていれば高速落下（10倍速）
+    return this.inputKeyDown ? 10 : 1;
+  }
+
   update(deltaTime: number = 0): void {
-    // 落下タイマーを進める
-    this.dropTimer += deltaTime;
+    // 落下タイマーを進める（高速落下の速度を反映）
+    this.dropTimer += deltaTime * this.getDropSpeed();
 
     // 落下間隔を超えたら落下処理を実行
     if (this.dropTimer >= this.dropInterval) {
