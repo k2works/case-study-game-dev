@@ -74,6 +74,8 @@ dotnet cake --target=Watch
 - ✅ 再帰関数による連鎖反応の実装
 - ✅ 全消し判定とボーナススコアシステム
 - ✅ ゲームオーバー判定とリスタート機能
+- ✅ 連鎖ボーナステーブルによるスコア計算システム
+- ✅ リアルタイムスコア・連鎖数表示
 
 **[⬆ back to top](#構成)**
 
@@ -99,7 +101,8 @@ app/fsharp-2/bolero/
 │       │   ├── Types.fs            # 基本型定義
 │       │   ├── Board.fs            # ボード操作
 │       │   ├── PuyoPair.fs         # ぷよペア
-│       │   └── GameLogic.fs        # ゲームロジック
+│       │   ├── GameLogic.fs        # ゲームロジック
+│       │   └── Score.fs            # スコア計算
 │       ├── Elmish/                 # Elmish層
 │       │   ├── Model.fs            # モデル定義
 │       │   ├── Update.fs           # 更新ロジック
@@ -144,10 +147,21 @@ dotnet watch run --project src/bolero.Client/bolero.Client.fsproj
 #### 本番ビルド
 
 ```bash
-# 本番用ビルド
-dotnet cake --target=Build --configuration=Release
+# リリース用の完全なビルド（Clean + Format-Check + Lint + Test + Publish）
+dotnet cake --target=Release
 
-# ビルド成果物は src/bolero.Client/bin/Release に出力
+# ビルド成果物は ./publish/wwwroot に出力
+```
+
+本番ビルドの配信方法：
+
+```bash
+# publishディレクトリを静的Webサーバーで配信
+cd publish/wwwroot
+python -m http.server 8080
+
+# または dotnet serve を使用
+dotnet serve -p 8080
 ```
 
 **[⬆ back to top](#構成)**
@@ -181,8 +195,11 @@ dotnet cake --target=Watch
 # テストのウォッチモード
 dotnet cake --target=Watch-Test
 
-# CI環境用（クリーン + テスト）
+# CI環境用（Clean + Format-Check + Lint + Test + Coverage）
 dotnet cake --target=CI
+
+# リリースビルド（Clean + Format-Check + Lint + Test + Publish）
+dotnet cake --target=Release
 ```
 
 #### ゲームの操作方法
@@ -204,8 +221,9 @@ dotnet cake --target=CI
 - [x] 連鎖反応
 - [x] 全消しボーナス
 - [x] ゲームオーバー判定
-- [x] リスタート機能
-- [ ] スコア計算（連鎖ボーナス）
+- [x] リスタート機能（Rキー）
+- [x] スコア計算（連鎖ボーナス）
+- [x] スコア・連鎖数の表示
 
 #### 開発の進め方
 
@@ -271,9 +289,10 @@ dotnet cake --target=Watch-Test
 ゲームのコアロジックを実装：
 
 - **Types.fs**: 基本型定義（PuyoColor, Cell, Direction, GameStatus）
-- **Board.fs**: ボード操作（生成、取得、設定、消去、重力）
+- **Board.fs**: ボード操作（生成、取得、設定、消去、重力、連鎖処理）
 - **PuyoPair.fs**: ぷよペア操作（生成、回転、位置計算）
-- **GameLogic.fs**: ゲームルール（移動判定、回転、壁キック）
+- **GameLogic.fs**: ゲームルール（移動判定、回転、壁キック、ゲームオーバー）
+- **Score.fs**: スコア計算（連鎖ボーナス、全消しボーナス）
 
 ### Elmish層（アプリケーションロジック）
 
