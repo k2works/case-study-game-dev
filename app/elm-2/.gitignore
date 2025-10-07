@@ -4,6 +4,12 @@ elm-stuff/
 # elm-test
 tests/VerifyExamples/
 
+# npm
+node_modules/
+
+# ビルド成果物
+dist/
+
 # エディタ
 .vscode/
 .idea/

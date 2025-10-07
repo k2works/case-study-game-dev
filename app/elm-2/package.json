@@ -1,0 +1,16 @@
+{
+  "name": "elm-2",
+  "version": "1.0.0",
+  "description": "Elm version of Puyo Puyo TDD tutorial",
+  "scripts": {
+    "test": "elm-test",
+    "dev": "elm reactor",
+    "build": "elm make src/Main.elm --output=dist/main.js --optimize",
+    "build:dev": "elm make src/Main.elm --output=dist/main.js",
+    "watch": "elm-test --watch"
+  },
+  "devDependencies": {
+    "elm": "^0.19.1-5",
+    "elm-test": "^0.19.1-revision12"
+  }
+}
