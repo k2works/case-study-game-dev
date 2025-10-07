@@ -27,18 +27,15 @@ module 更新 =
             let firstPiece = ぷよペア.ランダム作成 2 1 0
             let nextPiece = ぷよペア.ランダム作成 2 1 0
 
-            {
-                モデル with
-                    盤面 = 盤面.作成 6 13
-                    現在のぷよ = Some firstPiece
-                    次のぷよ = Some nextPiece
-                    スコア = 0
-                    ゲーム時間 = 0
-                    状態 = プレイ中
-            }, Cmd.none
+            { モデル with
+                盤面 = 盤面.作成 6 13
+                現在のぷよ = Some firstPiece
+                次のぷよ = Some nextPiece
+                スコア = 0
+                ゲーム時間 = 0
+                状態 = プレイ中 },
+            Cmd.none
 
-        | ゲームリセット ->
-            PuyoPuyo.Elmish.モデル.初期化 (), Cmd.none
+        | ゲームリセット -> PuyoPuyo.Elmish.モデル.初期化 (), Cmd.none
 
-        | _ ->
-            モデル, Cmd.none
+        | _ -> モデル, Cmd.none
