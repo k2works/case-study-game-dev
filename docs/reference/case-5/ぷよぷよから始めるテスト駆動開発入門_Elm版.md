@@ -156,11 +156,137 @@ elm install elm/random
 elm-test install elm-explorations/test
 ```
 
+### タスクランナーの設定
+
+プロジェクトの管理を簡単にするため、npm scripts をタスクランナーとして使用します。
+
+#### package.json の作成
+
+```bash
+# package.json を作成
+npm init -y
+```
+
+`package.json` を以下のように編集します：
+
+```json
+{
+  "name": "puyo-puyo-elm",
+  "version": "1.0.0",
+  "description": "Elm version of Puyo Puyo TDD tutorial",
+  "scripts": {
+    "test": "elm-test",
+    "dev": "elm reactor",
+    "build": "elm make src/Main.elm --output=dist/main.js --optimize",
+    "build:dev": "elm make src/Main.elm --output=dist/main.js",
+    "watch": "elm-test --watch",
+    "clean": "rimraf dist elm-stuff",
+    "release": "npm test && npm run build && echo Release build completed successfully!",
+    "serve": "npx http-server dist -p 8080 -o"
+  },
+  "devDependencies": {
+    "elm": "^0.19.1-5",
+    "elm-test": "^0.19.1-revision12"
+  }
+}
+```
+
+#### npm scripts の説明
+
+各スクリプトの役割は以下の通りです：
+
+- **`npm test`**: すべてのテストを実行
+- **`npm run dev`**: elm reactor で開発サーバーを起動（http://localhost:8000）
+- **`npm run build`**: 本番用ビルド（最適化あり）
+- **`npm run build:dev`**: 開発用ビルド（デバッグ用）
+- **`npm run watch`**: テストの監視モード（ファイル変更時に自動実行）
+- **`npm run clean`**: ビルド成果物とキャッシュを削除
+- **`npm run release`**: リリースタスク（テスト→本番ビルド）
+- **`npm run serve`**: ビルドしたアプリをブラウザで実行（http://localhost:8080）
+
+#### リリース用 HTML ファイルの準備
+
+ビルドしたアプリケーションを実行するための HTML ファイルを用意します：
+
+```html
+<!-- dist/index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ぷよぷよ - Elm 版</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #app {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="main.js"></script>
+    <script>
+        var app = Elm.Main.init({
+            node: document.getElementById('app')
+        });
+    </script>
+</body>
+</html>
+```
+
+#### .gitignore の更新
+
+npm 関連のファイルとビルド成果物を除外します：
+
+```gitignore
+# Elm
+elm-stuff/
+
+# elm-test
+tests/VerifyExamples/
+
+# npm
+node_modules/
+
+# ビルド成果物
+dist/*.js
+dist/*.js.map
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+```
+
+**注意**: `dist/index.html` は配布物として必要なため、git の管理対象に含めます。
+
 ### プロジェクト構成
 
 ```
 puyo-puyo-elm/
-├── elm.json              # プロジェクト設定
+├── elm.json              # Elm プロジェクト設定
+├── package.json          # npm scripts 定義
+├── package-lock.json     # npm 依存関係ロック
 ├── src/                  # ソースコード
 │   ├── Main.elm          # エントリーポイント
 │   ├── Board.elm         # ボード管理
@@ -171,8 +297,14 @@ puyo-puyo-elm/
 ├── tests/                # テストコード
 │   ├── BoardTests.elm
 │   ├── PuyoPairTests.elm
-│   └── GameLogicTests.elm
-└── README.md
+│   ├── GameLogicTests.elm
+│   └── MainTests.elm
+├── dist/                 # ビルド成果物
+│   ├── index.html        # エントリーHTML（配布用）
+│   ├── main.js           # ビルドされた JavaScript（.gitignore）
+│   └── main.js.map       # ソースマップ（.gitignore）
+├── .gitignore            # Git 除外設定
+└── README.md             # プロジェクト説明
 ```
 
 ### The Elm Architecture の基本
@@ -280,44 +412,40 @@ main =
 
 ### アプリケーションの実行
 
+npm scripts を使って開発サーバーを起動します：
+
 ```bash
 # 開発サーバーを起動
-elm reactor
+npm run dev
 ```
 
 ブラウザで http://localhost:8000 を開き、`src/Main.elm` をクリックすると、アプリケーションが表示されます。
 
 ### テストの実行
 
-サンプルテストを実行してみましょう：
+npm scripts を使ってテストを実行します：
 
 ```bash
 # すべてのテストを実行
-elm-test
+npm test
+
+# または、ファイル変更時に自動実行（監視モード）
+npm run watch
 ```
 
-### .gitignore の作成
+### リリースビルドとアプリケーションの実行
 
-不要なファイルをコミットしないように、`.gitignore` を作成します：
+開発が進んだら、最適化されたビルドを作成して実行できます：
 
-```gitignore
-# Elm
-elm-stuff/
+```bash
+# リリースビルド（テスト→最適化ビルド）
+npm run release
 
-# elm-test
-tests/VerifyExamples/
-
-# エディタ
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
+# ビルドしたアプリケーションをブラウザで実行
+npm run serve
 ```
+
+これにより、http://localhost:8080 でアプリケーションが起動します。
 
 ### 最初のコミット
 
@@ -332,8 +460,10 @@ chore: initialize Elm project
 - Create elm.json with basic dependencies
 - Set up project structure (src/ and tests/)
 - Add minimal Main.elm application
-- Add .gitignore for Elm projects
-- Verify elm reactor and elm-test work
+- Add package.json with npm scripts (test, dev, build, release, serve)
+- Add dist/index.html for running built application
+- Add .gitignore for Elm and npm projects
+- Verify npm test and npm run dev work
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -486,11 +616,18 @@ result =
 このイテレーションでは、以下を学びました：
 
 1. **Elm のインストール**: elm と elm-test のセットアップ
-2. **プロジェクト構成**: src/ と tests/ の構造
-3. **The Elm Architecture**: Model-Update-View パターン
-4. **型システムの基本**: カスタム型、Maybe 型、レコード型
-5. **関数型プログラミング**: 不変性、パターンマッチング、パイプライン演算子
-6. **開発ツール**: elm reactor と elm-test の使い方
+2. **プロジェクト構成**: src/ と tests/ の構造、package.json と dist/ の配置
+3. **タスクランナー**: npm scripts を使った開発ワークフロー（test, dev, build, release, serve）
+4. **The Elm Architecture**: Model-Update-View パターン
+5. **型システムの基本**: カスタム型、Maybe 型、レコード型
+6. **関数型プログラミング**: 不変性、パターンマッチング、パイプライン演算子
+7. **開発ツール**: npm run dev（elm reactor）と npm test（elm-test）の使い方
+8. **リリースビルド**: 最適化ビルドとブラウザでの実行方法
+
+**開発ワークフロー**：
+- 開発時: `npm run dev` で elm reactor を起動
+- テスト: `npm test` でテスト実行、`npm run watch` で監視モード
+- リリース: `npm run release` でテスト→ビルド、`npm run serve` でアプリ起動
 
 次のイテレーションでは、実際にぷよぷよゲームのドメインモデルを作成していきます！
 
