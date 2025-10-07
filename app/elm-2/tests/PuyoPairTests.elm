@@ -92,4 +92,80 @@ suite =
                     PuyoPair.canMove pair board
                         |> Expect.equal False
             ]
+        , describe "rotate"
+            [ test "時計回りに回転すると、子ぷよが軸ぷよの右に移動する" <|
+                \_ ->
+                    let
+                        -- 子ぷよが上にある状態（rotation = 0）
+                        pair =
+                            PuyoPair.create 2 5 Red Blue
+
+                        rotatedPair =
+                            PuyoPair.rotate pair
+                    in
+                    Expect.all
+                        [ \p -> Expect.equal 2 p.axis.x
+                        , \p -> Expect.equal 5 p.axis.y
+                        , \p -> Expect.equal 3 p.child.x
+                        , \p -> Expect.equal 5 p.child.y
+                        ]
+                        rotatedPair
+            , test "4回回転すると元の位置に戻る" <|
+                \_ ->
+                    let
+                        pair =
+                            PuyoPair.create 2 5 Red Blue
+
+                        rotatedPair =
+                            pair
+                                |> PuyoPair.rotate
+                                |> PuyoPair.rotate
+                                |> PuyoPair.rotate
+                                |> PuyoPair.rotate
+                    in
+                    Expect.all
+                        [ \p -> Expect.equal pair.axis p.axis
+                        , \p -> Expect.equal pair.child p.child
+                        ]
+                        rotatedPair
+            ]
+        , describe "rotateWithKick"
+            [ test "壁際で回転時、壁キックが発生する" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+
+                        -- 右端に配置（x = 5）
+                        pair =
+                            PuyoPair.create 5 5 Red Blue
+
+                        -- 回転すると子ぷよが壁外（x = 6）になるので壁キック
+                        ( movedPair, kicked ) =
+                            PuyoPair.rotateWithKick pair board
+                    in
+                    Expect.all
+                        [ \_ -> Expect.equal True kicked
+                        , \_ -> Expect.equal 4 movedPair.axis.x
+                        ]
+                        ()
+            , test "壁キックが不要な場合、位置は変わらない" <|
+                \_ ->
+                    let
+                        board =
+                            Board.create 6 12
+
+                        -- 中央に配置
+                        pair =
+                            PuyoPair.create 2 5 Red Blue
+
+                        ( rotatedPair, kicked ) =
+                            PuyoPair.rotateWithKick pair board
+                    in
+                    Expect.all
+                        [ \_ -> Expect.equal False kicked
+                        , \_ -> Expect.equal 2 rotatedPair.axis.x
+                        ]
+                        ()
+            ]
         ]

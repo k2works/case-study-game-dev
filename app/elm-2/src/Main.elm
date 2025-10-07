@@ -87,6 +87,14 @@ update msg model =
                                     else
                                         pair
 
+                                "ArrowUp" ->
+                                    -- 回転（壁キック付き）
+                                    let
+                                        ( rotatedPair, _ ) =
+                                            PuyoPair.rotateWithKick pair model.board
+                                    in
+                                    rotatedPair
+
                                 _ ->
                                     pair
                     in

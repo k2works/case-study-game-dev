@@ -6,6 +6,8 @@ module PuyoPair exposing
     , getPositions
     , moveLeft
     , moveRight
+    , rotate
+    , rotateWithKick
     )
 
 import Board exposing (Board)
@@ -22,6 +24,7 @@ type alias PuyoPair =
     , child : Position
     , axisColor : PuyoColor
     , childColor : PuyoColor
+    , rotation : Int
     }
 
 
@@ -32,6 +35,7 @@ create x y axisColor childColor =
     , child = { x = x, y = y - 1 }
     , axisColor = axisColor
     , childColor = childColor
+    , rotation = 0
     }
 
 
@@ -57,6 +61,87 @@ moveRight pair =
         | axis = { x = pair.axis.x + 1, y = pair.axis.y }
         , child = { x = pair.child.x + 1, y = pair.child.y }
     }
+
+
+-- 時計回りに回転する（90度）
+rotate : PuyoPair -> PuyoPair
+rotate pair =
+    let
+        newRotation =
+            modBy 4 (pair.rotation + 1)
+
+        childPos =
+            getChildPosition pair.axis newRotation
+    in
+    { pair
+        | rotation = newRotation
+        , child = childPos
+    }
+
+
+-- 回転状態に応じた子ぷよの位置を計算
+getChildPosition : Position -> Int -> Position
+getChildPosition axis rotation =
+    case rotation of
+        0 ->
+            -- 上
+            { x = axis.x, y = axis.y - 1 }
+
+        1 ->
+            -- 右
+            { x = axis.x + 1, y = axis.y }
+
+        2 ->
+            -- 下
+            { x = axis.x, y = axis.y + 1 }
+
+        _ ->
+            -- 左（3）
+            { x = axis.x - 1, y = axis.y }
+
+
+-- 壁キック付き回転
+rotateWithKick : PuyoPair -> Board -> ( PuyoPair, Bool )
+rotateWithKick pair board =
+    let
+        rotatedPair =
+            rotate pair
+    in
+    if canMove rotatedPair board then
+        -- 回転可能、壁キック不要
+        ( rotatedPair, False )
+
+    else
+        -- 壁キックを試みる
+        tryWallKick rotatedPair board
+
+
+-- 壁キックを試みる
+tryWallKick : PuyoPair -> Board -> ( PuyoPair, Bool )
+tryWallKick pair board =
+    let
+        -- 左に1マス移動
+        leftKick =
+            { pair | axis = { x = pair.axis.x - 1, y = pair.axis.y } }
+                |> (\p -> { p | child = getChildPosition p.axis p.rotation })
+
+        -- 右に1マス移動
+        rightKick =
+            { pair | axis = { x = pair.axis.x + 1, y = pair.axis.y } }
+                |> (\p -> { p | child = getChildPosition p.axis p.rotation })
+    in
+    if canMove leftKick board then
+        ( leftKick, True )
+
+    else if canMove rightKick board then
+        ( rightKick, True )
+
+    else
+        -- 壁キックも失敗、回転前の状態に戻す
+        ( { pair | rotation = modBy 4 (pair.rotation - 1) }
+            |> (\p -> { p | child = getChildPosition p.axis p.rotation })
+        , False
+        )
 
 
 -- 移動可能かチェックする
