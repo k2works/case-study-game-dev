@@ -19,6 +19,8 @@
     <Compile Include="Domain\ぷよテスト.fs" />
     <Compile Include="Domain\盤面テスト.fs" />
     <Compile Include="Domain\ぷよペアテスト.fs" />
+    <Compile Include="Elmish\モデルテスト.fs" />
+    <Compile Include="Elmish\更新テスト.fs" />
   </ItemGroup>
 
   <ItemGroup>

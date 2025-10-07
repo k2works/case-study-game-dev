@@ -5,11 +5,40 @@ body {
     background-color: #f0f0f0;
 }
 
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
 h1 {
     color: #333;
 }
 
-button {
+.board {
+    border: 2px solid #333;
+    background-color: #f0f0f0;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.board-row {
+    display: flex;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.game-controls {
+    margin-top: 20px;
+}
+
+.game-controls button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -19,6 +48,6 @@ button {
     border-radius: 4px;
 }
 
-button:hover {
+.game-controls button:hover {
     background-color: #45a049;
 }
