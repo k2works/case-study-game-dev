@@ -19,9 +19,9 @@ let ``作成直後のボードはすべて空である`` () =
     let _盤面 = 盤面.作成 6 13
 
     // Assert
-    for y in 0 .. _盤面.行数 - 1 do
-        for x in 0 .. _盤面.列数 - 1 do
-            盤面.セル取得 _盤面 x y |> should equal 空
+    for 行 in 0 .. _盤面.行数 - 1 do
+        for 列 in 0 .. _盤面.列数 - 1 do
+            盤面.セル取得 _盤面 列 行 |> should equal 空
 
 [<Fact>]
 let ``ボードにぷよを配置できる`` () =
