@@ -1300,136 +1300,167 @@ git commit -m "feat: initialize F# Elmish.WPF Puyo Puyo project with test setup"
 
 環境構築の最後に、Elmish.WPF が正しく動作することを確認するための最小限のアプリケーションを作成します。
 
-**重要**: このチュートリアルではコード重視のアプローチを採用し、XAML ファイルは使用しません。すべての UI を F# コードで定義します。
+このセットアップでは、Elmish.WPF の公式 Getting Started ガイドに従い、F# と C# の混合プロジェクト構成を採用します。F# でビジネスロジックを、C# で WPF の UI とエントリーポイントを管理します。
 
-#### Domain.fs の作成
+#### プロジェクト構成の概要
 
-Elmish の基本構造を `src/PuyoPuyo.WPF/Domain.fs` に作成します:
+- **F# Class Library** (`src/PuyoPuyo.WPF`): Elmish のロジック（Model、Update、Bindings）を定義
+- **C# WPF App** (`src/PuyoPuyo.App`): XAML による UI 定義とアプリケーションのエントリーポイント
 
-```fsharp
-namespace PuyoPuyo
+#### ステップ 1: F# プロジェクトの設定
 
-open Elmish
+F# Class Library プロジェクトファイル (`src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj`) を以下のように設定します:
 
-/// <summary>
-/// Domain module
-/// </summary>
-module Domain =
-    /// <summary>
-    /// Model
-    /// </summary>
-    type Model = { Message: string }
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWpf>true</UseWpf>
+  </PropertyGroup>
 
-    /// <summary>
-    /// Message
-    /// </summary>
-    type Message = unit
-
-    /// <summary>
-    /// Initialize the model
-    /// </summary>
-    let init () = { Message = "ぷよぷよゲーム" }
-
-    /// <summary>
-    /// Update the model
-    /// </summary>
-    let update msg model = model
+  <ItemGroup>
+    <PackageReference Include="Elmish.WPF" Version="3.5.8" />
+  </ItemGroup>
+</Project>
 ```
 
-#### Program.fs の作成
+#### ステップ 2: Model と Message の定義
 
-アプリケーションのエントリーポイントを `src/PuyoPuyo.WPF/Program.fs` に作成します:
+`src/PuyoPuyo.WPF/Counter.fs` にカウンターの例を実装します:
 
 ```fsharp
-namespace PuyoPuyo
+module Counter
 
-open System
-open System.Windows
-open System.Windows.Controls
-open Elmish
+type Model =
+  { Count: int
+    StepSize: int }
+
+type Msg =
+  | Increment
+  | Decrement
+  | SetStepSize of int
+
+let init () =
+  { Count = 0
+    StepSize = 1 }
+
+let update msg m =
+  match msg with
+  | Increment -> { m with Count = m.Count + m.StepSize }
+  | Decrement -> { m with Count = m.Count - m.StepSize }
+  | SetStepSize x -> { m with StepSize = x }
+```
+
+#### ステップ 3: Bindings の定義
+
+同じファイルに bindings 関数を追加します:
+
+```fsharp
 open Elmish.WPF
 
-/// <summary>
-/// Program module
-/// </summary>
-module Program =
-
-    /// <summary>
-    /// Bindings for Elmish.WPF
-    /// </summary>
-    let bindings () : Binding<Domain.Model, Domain.Message> list =
-        [ "Message" |> Binding.oneWay (fun m -> m.Message) ]
-
-    /// <summary>
-    /// Main entry point
-    /// </summary>
-    [<EntryPoint; STAThread>]
-    let main argv =
-        // TextBlockをコードで作成
-        let textBlock =
-            TextBlock(
-                FontSize = 24.0,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            )
-
-        textBlock.SetBinding(TextBlock.TextProperty, "Message") |> ignore
-
-        // Windowをコードで作成
-        let window = Window(Title = "PuyoPuyo", Width = 800.0, Height = 600.0, Content = textBlock)
-
-        Program.mkSimpleWpf Domain.init Domain.update bindings
-        |> Program.withConsoleTrace
-        |> Program.runWindowWithConfig
-            { ElmConfig.Default with
-                LogConsole = true
-                Measure = true }
-            window
-
-        0
+let bindings () =
+  [
+    "CounterValue" |> Binding.oneWay (fun m -> m.Count)
+    "Increment" |> Binding.cmd (fun m -> Increment)
+    "Decrement" |> Binding.cmd (fun m -> Decrement)
+    "StepSize" |> Binding.twoWay(
+      (fun m -> float m.StepSize),
+      (fun newVal m -> int newVal |> SetStepSize))
+  ]
 ```
 
-**ポイント**:
-- XAML を使用せず、すべて F# コードで UI を構築
-- `TextBlock` を `Window.Content` に直接設定
-- データバインディングは `SetBinding` メソッドで設定
-- Elmish.WPF の `bindings` で Model のプロパティを公開
+#### ステップ 4: Program.main の作成
 
-#### 動作確認とデバッグ
+`src/PuyoPuyo.WPF/Program.fs` に Elmish ループを起動する関数を定義します:
 
-WPF アプリケーションを実行するには:
+```fsharp
+module Program
 
-```bash
-# 開発中の実行
-dotnet cake --target=Run
+open Elmish.WPF
 
-# または watch モードで実行（ファイル変更を自動検出）
-dotnet cake --target=Watch
-
-# 直接実行する場合
-cd src/PuyoPuyo.WPF
-dotnet run
+let main window =
+  Program.mkSimple Counter.init Counter.update Counter.bindings
+  |> Program.runElmishLoop window
 ```
 
-アプリケーションが起動し、ウィンドウの中央に「ぷよぷよゲーム」と表示されれば成功です。
+#### ステップ 5: C# WPF プロジェクトの作成
 
-#### ビルドと品質チェック
+Visual Studio テンプレート「WPF App (.NET)」を使用して C# プロジェクトを作成します。
 
-すべてのタスクが正しく動作することを確認します:
+プロジェクトファイル (`src/PuyoPuyo.App/PuyoPuyo.App.csproj`) を以下のように設定:
 
-```bash
-# コードフォーマット
-dotnet cake --target=Format
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>  <!-- コンソールログを表示したい場合 -->
+    <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
 
-# CI パイプライン（フォーマット、Lint、テスト、カバレッジ）
-dotnet cake --target=CI
+  <ItemGroup>
+    <ProjectReference Include="..\PuyoPuyo.WPF\PuyoPuyo.WPF.fsproj" />
+  </ItemGroup>
+</Project>
 ```
 
-すべてのチェックがパスすることを確認してください。
+#### ステップ 6: App.xaml.cs の変更
 
-[注: 以降のイテレーションでは、ドメインロジック部分は Bolero 版と同じですが、
-View 部分を WPF のコード（または必要に応じて XAML）に、
-イベント処理を WPF の Command バインディングに変換します]
+`App.xaml.cs` を編集して、アプリケーション起動時に Elmish を初期化します:
+
+```csharp
+using System;
+using System.Windows;
+
+namespace PuyoPuyo.App
+{
+    public partial class App : Application
+    {
+        public App()
+        {
+            this.Activated += StartElmish;
+        }
+
+        private void StartElmish(object sender, EventArgs e)
+        {
+            this.Activated -= StartElmish;
+            Program.main(MainWindow);
+        }
+    }
+}
+```
+
+#### ステップ 7: MainWindow.xaml の作成
+
+XAML でバインディングを定義します:
+
+```xml
+<Window
+    x:Class="PuyoPuyo.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Counter Sample" Height="200" Width="400">
+  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <TextBlock Text="{Binding CounterValue}" FontSize="24" Margin="10"/>
+    <Button Command="{Binding Decrement}" Content="-" Width="40" Height="40" Margin="5"/>
+    <Button Command="{Binding Increment}" Content="+" Width="40" Height="40" Margin="5"/>
+    <TextBlock Text="{Binding StepSize}" FontSize="18" Margin="10"/>
+    <Slider Value="{Binding StepSize}" TickFrequency="1" Minimum="1" Maximum="10" Width="150"/>
+  </StackPanel>
+</Window>
+```
+
+#### 動作確認
+
+C# WPF プロジェクトを実行すると、カウンターアプリケーションが起動します:
+
+- カウンター値が表示される
+- `+` / `-` ボタンでカウントが増減する
+- スライダーでステップサイズを変更できる
+
+この構成により、F# でロジックを、XAML で UI を管理する明確な分離が実現します。
+
+[注: 以降のイテレーションでは、このアーキテクチャを踏襲し、ドメインロジックは F# で、UI は XAML で実装します]
 
 ## イテレーション1: ゲーム開始の実装
 
