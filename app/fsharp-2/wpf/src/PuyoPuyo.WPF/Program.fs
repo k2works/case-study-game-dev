@@ -11,10 +11,13 @@ open Elmish.WPF
 /// </summary>
 module Program =
 
+    type Model = { Message: string }
+    type Message = unit
+
     /// <summary>
     /// Bindings for Elmish.WPF
     /// </summary>
-    let bindings () : Binding<Domain.Model, Domain.Message> list =
+    let bindings () : Binding<Model, Message> list =
         [ "Message" |> Binding.oneWay (fun m -> m.Message) ]
 
     /// <summary>
@@ -35,7 +38,10 @@ module Program =
         // Windowをコードで作成
         let window = Window(Title = "PuyoPuyo", Width = 800.0, Height = 600.0, Content = textBlock)
 
-        Program.mkSimpleWpf Domain.init Domain.update bindings
+        let init () = { Message = "ぷよぷよゲーム" }
+        let update msg model = model
+
+        Program.mkSimpleWpf init update bindings
         |> Program.withConsoleTrace
         |> Program.runWindowWithConfig
             { ElmConfig.Default with
