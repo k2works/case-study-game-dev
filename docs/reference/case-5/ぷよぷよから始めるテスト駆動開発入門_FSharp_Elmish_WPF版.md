@@ -1319,6 +1319,11 @@ F# Class Library プロジェクトファイル (`src/PuyoPuyo.WPF/PuyoPuyo.WPF.
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Counter.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Elmish.WPF" Version="3.5.8" />
   </ItemGroup>
 </Project>
@@ -1331,24 +1336,22 @@ F# Class Library プロジェクトファイル (`src/PuyoPuyo.WPF/PuyoPuyo.WPF.
 ```fsharp
 module Counter
 
-type Model =
-  { Count: int
-    StepSize: int }
+open Elmish.WPF
+
+type Model = { Count: int; StepSize: int }
 
 type Msg =
-  | Increment
-  | Decrement
-  | SetStepSize of int
+    | Increment
+    | Decrement
+    | SetStepSize of int
 
-let init () =
-  { Count = 0
-    StepSize = 1 }
+let init () = { Count = 0; StepSize = 1 }
 
 let update msg m =
-  match msg with
-  | Increment -> { m with Count = m.Count + m.StepSize }
-  | Decrement -> { m with Count = m.Count - m.StepSize }
-  | SetStepSize x -> { m with StepSize = x }
+    match msg with
+    | Increment -> { m with Count = m.Count + m.StepSize }
+    | Decrement -> { m with Count = m.Count - m.StepSize }
+    | SetStepSize x -> { m with StepSize = x }
 ```
 
 #### ステップ 3: Bindings の定義
@@ -1356,17 +1359,12 @@ let update msg m =
 同じファイルに bindings 関数を追加します:
 
 ```fsharp
-open Elmish.WPF
-
 let bindings () =
-  [
-    "CounterValue" |> Binding.oneWay (fun m -> m.Count)
-    "Increment" |> Binding.cmd (fun m -> Increment)
-    "Decrement" |> Binding.cmd (fun m -> Decrement)
-    "StepSize" |> Binding.twoWay(
-      (fun m -> float m.StepSize),
-      (fun newVal m -> int newVal |> SetStepSize))
-  ]
+    [ "CounterValue" |> Binding.oneWay (fun m -> m.Count)
+      "Increment" |> Binding.cmd (fun m -> Increment)
+      "Decrement" |> Binding.cmd (fun m -> Decrement)
+      "StepSize"
+      |> Binding.twoWay ((fun m -> float m.StepSize), (fun newVal m -> int newVal |> SetStepSize)) ]
 ```
 
 #### ステップ 4: Program.main の作成
@@ -1376,12 +1374,20 @@ let bindings () =
 ```fsharp
 module Program
 
+open Elmish
 open Elmish.WPF
 
 let main window =
-  Program.mkSimple Counter.init Counter.update Counter.bindings
-  |> Program.runElmishLoop window
+    let config = ElmConfig.Default
+    Program.mkProgram
+        (fun () -> Counter.init (), Cmd.none)
+        (fun msg model -> Counter.update msg model, Cmd.none)
+        (fun _ _ -> Counter.bindings ())
+    |> Program.withConsoleTrace
+    |> Program.startElmishLoop config window
 ```
+
+**重要**: Elmish.WPF 3.5.8 では `runElmishLoop` 関数は存在しません。代わりに `startElmishLoop` を使用します。この関数は既存の WPF Application の Dispatcher を使用し、非ブロッキングで Elmish ループを開始します。
 
 #### ステップ 5: C# WPF プロジェクトの作成
 
@@ -1404,7 +1410,22 @@ Visual Studio テンプレート「WPF App (.NET)」を使用して C# プロジ
 </Project>
 ```
 
-#### ステップ 6: App.xaml.cs の変更
+#### ステップ 6: App.xaml の設定
+
+`App.xaml` に StartupUri を設定します:
+
+```xml
+<Application x:Class="PuyoPuyo.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+    </Application.Resources>
+</Application>
+```
+
+#### ステップ 7: App.xaml.cs の変更
 
 `App.xaml.cs` を編集して、アプリケーション起動時に Elmish を初期化します:
 
@@ -1430,7 +1451,7 @@ namespace PuyoPuyo.App
 }
 ```
 
-#### ステップ 7: MainWindow.xaml の作成
+#### ステップ 8: MainWindow.xaml の作成
 
 XAML でバインディングを定義します:
 
@@ -1452,11 +1473,18 @@ XAML でバインディングを定義します:
 
 #### 動作確認
 
-C# WPF プロジェクトを実行すると、カウンターアプリケーションが起動します:
+Cake タスクでアプリケーションを実行します:
+
+```bash
+dotnet cake --target=run
+```
+
+カウンターアプリケーションが起動し、以下の機能が動作することを確認できます:
 
 - カウンター値が表示される
 - `+` / `-` ボタンでカウントが増減する
 - スライダーでステップサイズを変更できる
+- コンソールに状態遷移のログが表示される（`Program.withConsoleTrace` による）
 
 この構成により、F# でロジックを、XAML で UI を管理する明確な分離が実現します。
 

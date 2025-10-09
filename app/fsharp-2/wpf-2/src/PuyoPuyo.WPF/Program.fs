@@ -5,6 +5,7 @@ open Elmish.WPF
 
 let main window =
     let config = ElmConfig.Default
+
     Program.mkProgram
         (fun () -> Counter.init (), Cmd.none)
         (fun msg model -> Counter.update msg model, Cmd.none)
