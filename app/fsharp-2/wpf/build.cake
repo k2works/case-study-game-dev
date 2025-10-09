@@ -134,6 +134,49 @@ Task("Coverage")
     Information("カバレッジレポート: ./tests/PuyoPuyo.Tests/coverage/coverage.opencover.xml");
 });
 
+Task("Publish")
+    .Description("アプリケーションを公開")
+    .IsDependentOn("Test")
+    .Does(() =>
+{
+    var publishDir = "./publish";
+
+    // 公開ディレクトリをクリーン
+    CleanDirectory(publishDir);
+
+    // Windows x64向けに公開
+    DotNetPublish("./src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj", new DotNetPublishSettings
+    {
+        Configuration = configuration,
+        Runtime = "win-x64",
+        SelfContained = true,
+        PublishSingleFile = true,
+        PublishTrimmed = false,
+        OutputDirectory = $"{publishDir}/win-x64"
+    });
+
+    Information($"公開完了: {publishDir}/win-x64");
+});
+
+Task("Package")
+    .Description("リリースパッケージを作成")
+    .IsDependentOn("Publish")
+    .Does(() =>
+{
+    var version = "1.0.0";
+    var publishDir = "./publish";
+    var packageDir = "./packages";
+
+    // パッケージディレクトリを作成
+    EnsureDirectoryExists(packageDir);
+
+    // ZIPファイルを作成
+    var zipFile = $"{packageDir}/PuyoPuyo-{version}-win-x64.zip";
+    Zip($"{publishDir}/win-x64", zipFile);
+
+    Information($"パッケージ作成完了: {zipFile}");
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット
 ///////////////////////////////////////////////////////////////////////////////
@@ -148,6 +191,11 @@ Task("CI")
     .IsDependentOn("Lint")
     .IsDependentOn("Test")
     .IsDependentOn("Coverage");
+
+Task("Release")
+    .Description("リリースビルドとパッケージング")
+    .IsDependentOn("CI")
+    .IsDependentOn("Package");
 
 ///////////////////////////////////////////////////////////////////////////////
 // 実行
