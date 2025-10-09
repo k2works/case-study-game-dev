@@ -6,20 +6,17 @@ type Cell =
     | Filled of PuyoColor
 
 /// ゲームボード
-type Board = {
-    Cols: int
-    Rows: int
-    Cells: Cell array array
-}
+type Board =
+    { Cols: int
+      Rows: int
+      Cells: Cell array array }
 
 module Board =
     /// 空のボードを作成
     let create (cols: int) (rows: int) : Board =
-        {
-            Cols = cols
-            Rows = rows
-            Cells = Array.init rows (fun _ -> Array.create cols Empty)
-        }
+        { Cols = cols
+          Rows = rows
+          Cells = Array.init rows (fun _ -> Array.create cols Empty) }
 
     /// セルの取得
     let getCell (board: Board) (x: int) (y: int) : Cell =
@@ -35,10 +32,10 @@ module Board =
                 board.Cells
                 |> Array.mapi (fun rowIndex row ->
                     if rowIndex = y then
-                        row |> Array.mapi (fun colIndex c ->
-                            if colIndex = x then cell else c)
+                        row |> Array.mapi (fun colIndex c -> if colIndex = x then cell else c)
                     else
                         row)
+
             { board with Cells = newCells }
         else
             board

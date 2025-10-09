@@ -27,18 +27,15 @@ module Update =
             let firstPiece = PuyoPair.createRandom 2 1 0
             let nextPiece = PuyoPair.createRandom 2 1 0
 
-            {
-                model with
-                    Board = Board.create 6 13
-                    CurrentPiece = Some firstPiece
-                    NextPiece = Some nextPiece
-                    Score = 0
-                    GameTime = 0
-                    Status = Playing
-            }, Cmd.none
+            { model with
+                Board = Board.create 6 13
+                CurrentPiece = Some firstPiece
+                NextPiece = Some nextPiece
+                Score = 0
+                GameTime = 0
+                Status = Playing },
+            Cmd.none
 
-        | ResetGame ->
-            Model.init (), Cmd.none
+        | ResetGame -> Model.init (), Cmd.none
 
-        | _ ->
-            model, Cmd.none
+        | _ -> model, Cmd.none
