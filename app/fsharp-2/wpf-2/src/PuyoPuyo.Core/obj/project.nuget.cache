@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "UrZKAa1CTD8=",
+  "dgSpecHash": "W2+bpObFrbI=",
   "success": true,
   "projectFilePath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj",
   "expectedPackageFiles": [
-    "C:\\Users\\PC202411-1\\.nuget\\packages\\fsharp.core\\10.0.100-preview7.25451.107\\fsharp.core.10.0.100-preview7.25451.107.nupkg.sha512"
+    "C:\\Users\\PC202411-1\\.nuget\\packages\\elmish\\3.0.3\\elmish.3.0.3.nupkg.sha512",
+    "C:\\Users\\PC202411-1\\.nuget\\packages\\elmish.wpf\\3.5.8\\elmish.wpf.3.5.8.nupkg.sha512",
+    "C:\\Users\\PC202411-1\\.nuget\\packages\\fsharp.core\\9.0.303\\fsharp.core.9.0.303.nupkg.sha512"
   ],
   "logs": []
 }

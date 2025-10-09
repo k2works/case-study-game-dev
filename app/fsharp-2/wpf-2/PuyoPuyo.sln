@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PuyoPuyo.Core", "src\PuyoPuyo.Core\PuyoPuyo.Core.fsproj", "{E9FB732B-C2F2-40EC-8276-4AF8338EB406}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PuyoPuyo.App", "src\PuyoPuyo.App\PuyoPuyo.App.fsproj", "{0ACC16DE-DDBA-4FE7-90E2-C15214CEFF7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PuyoPuyo.App", "src\PuyoPuyo.App\PuyoPuyo.App.csproj", "{0ACC16DE-DDBA-4FE7-90E2-C15214CEFF7D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
