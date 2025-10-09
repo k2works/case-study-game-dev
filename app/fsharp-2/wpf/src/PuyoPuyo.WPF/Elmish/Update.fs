@@ -38,20 +38,14 @@ module Update =
                 // 1. ぷよを固定
                 let boardWithPiece = GameLogic.fixPuyoPair model.Board piece
 
-                // 2. つながっているぷよを検出して消去
-                let groups = Board.findConnectedGroups boardWithPiece
+                // 2. 連鎖処理（消去と重力を繰り返し適用）
+                let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardWithPiece
 
-                let boardAfterClear =
-                    groups |> List.fold (fun b group -> Board.clearPuyos group b) boardWithPiece
-
-                // 3. 常に重力を適用（消去の有無にかかわらず）
-                let boardAfterGravity = Board.applyGravity boardAfterClear
-
-                // 4. 次のぷよを生成
+                // 3. 次のぷよを生成
                 let nextPiece = PuyoPair.createRandom 2 1 0
 
                 { model with
-                    Board = boardAfterGravity
+                    Board = boardAfterChain
                     CurrentPiece = Some nextPiece },
                 Cmd.none
         | None -> model, Cmd.none

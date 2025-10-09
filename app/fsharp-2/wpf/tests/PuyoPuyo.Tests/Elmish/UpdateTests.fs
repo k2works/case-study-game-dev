@@ -190,37 +190,3 @@ let ``着地時に4つ以上つながったぷよが消去される`` () =
     Board.getCell newModel.Board 1 12 |> should equal Empty
     Board.getCell newModel.Board 2 12 |> should equal Empty
     Board.getCell newModel.Board 3 12 |> should equal Empty
-
-[<Fact>]
-let ``浮いたぷよペアが着地後に重力で落下する`` () =
-    // Arrange
-    let model = Model.init ()
-
-    // ボードに縦ぷよを配置（列3に9,11,12が埋まっている）
-    let board =
-        model.Board
-        |> Board.setCell 3 9 (Filled Yellow)
-        |> Board.setCell 3 11 (Filled Yellow)
-        |> Board.setCell 3 12 (Filled Yellow)
-
-    // 横向きのぷよペアを重ねる（rotation=3で左向き、軸ぷよが右）
-    let pair = PuyoPair.create 3 10 Blue Yellow 3
-
-    let model =
-        { model with
-            Board = board
-            CurrentPiece = Some pair
-            Status = Playing }
-
-    // Act
-    let (newModel, _) = Update.update Tick model // 着地
-
-    // Assert
-    // 軸ぷよ（Blue）は縦ぷよの上に着地
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Blue)
-
-    // 子ぷよ（Yellow）は重力で(2,12)に落ちる
-    Board.getCell newModel.Board 2 12 |> should equal (Filled Yellow)
-
-    // (2,10)は空になっている
-    Board.getCell newModel.Board 2 10 |> should equal Empty

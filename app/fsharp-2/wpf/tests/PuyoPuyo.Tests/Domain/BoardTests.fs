@@ -215,3 +215,43 @@ let ``複数列で独立して重力が適用される`` () =
     Board.getCell newBoard 3 9 |> should equal Empty
     Board.getCell newBoard 3 11 |> should equal (Filled Blue)
     Board.getCell newBoard 3 12 |> should equal (Filled Yellow)
+
+[<Fact>]
+let ``ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する`` () =
+    // Arrange
+    // 盤面配置:
+    // 0 0 2 0 0 0  (y=7)
+    // 0 0 2 0 0 0  (y=8)
+    // 0 0 2 0 0 0  (y=9)
+    // 0 1 1 2 0 0  (y=10)
+    // 0 1 1 0 0 0  (y=11)
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+        |> Board.setCell 3 10 (Filled Blue)
+        |> Board.setCell 2 7 (Filled Blue)
+        |> Board.setCell 2 8 (Filled Blue)
+        |> Board.setCell 2 9 (Filled Blue)
+
+    // Act & Assert
+    // 最初の消去判定（赤ぷよが4つ）
+    let groups1 = Board.findConnectedGroups board
+    groups1 |> should not' (be Empty)
+
+    // 消去実行
+    let positions1 = groups1 |> List.concat
+    let boardAfterClear1 = Board.clearPuyos positions1 board
+
+    // 落下処理
+    let boardAfterGravity = Board.applyGravity boardAfterClear1
+
+    // 連鎖判定（2回目の消去判定：青ぷよが4つつながる）
+    let groups2 = Board.findConnectedGroups boardAfterGravity
+
+    // 連鎖が発生していることを確認
+    groups2 |> should not' (be Empty)
