@@ -258,3 +258,88 @@ let ``消去が発生しない着地でも重力が適用される`` () =
 
     Board.getCell newModel.Board 4 10 |> should equal Empty
     Board.getCell newModel.Board 4 12 |> should equal (Filled Yellow)
+
+[<Fact>]
+let ``新しいぷよを配置できない場合はゲームオーバーになる`` () =
+    // Arrange
+    let model = Model.init ()
+
+    // ボードの上部（新しいぷよが配置される位置(2,1)とその周辺）に異なる色のぷよを配置
+    // 落下しないように最下段から積み上げる
+    let board =
+        model.Board
+        // 土台（最下段）
+        |> Board.setCell 1 12 (Filled Blue)
+        |> Board.setCell 2 12 (Filled Blue)
+        |> Board.setCell 3 12 (Filled Blue)
+        // 新しいぷよの配置位置をブロック
+        |> Board.setCell 2 0 (Filled Red) // 回転状態0の2つ目のぷよ位置
+        |> Board.setCell 2 1 (Filled Blue) // 軸ぷよ位置
+        |> Board.setCell 2 2 (Filled Green) // 回転状態2の2つ目のぷよ位置
+        |> Board.setCell 2 3 (Filled Yellow)
+        |> Board.setCell 2 4 (Filled Red)
+        |> Board.setCell 2 5 (Filled Green)
+        |> Board.setCell 2 6 (Filled Yellow)
+        |> Board.setCell 2 7 (Filled Red)
+        |> Board.setCell 2 8 (Filled Green)
+        |> Board.setCell 2 9 (Filled Yellow)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 2 11 (Filled Green)
+        |> Board.setCell 1 1 (Filled Yellow) // 回転状態3の2つ目のぷよ位置
+        |> Board.setCell 1 2 (Filled Red)
+        |> Board.setCell 1 3 (Filled Green)
+        |> Board.setCell 1 4 (Filled Yellow)
+        |> Board.setCell 1 5 (Filled Red)
+        |> Board.setCell 1 6 (Filled Green)
+        |> Board.setCell 1 7 (Filled Yellow)
+        |> Board.setCell 1 8 (Filled Red)
+        |> Board.setCell 1 9 (Filled Green)
+        |> Board.setCell 1 10 (Filled Yellow)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 3 1 (Filled Red) // 回転状態1の2つ目のぷよ位置
+        |> Board.setCell 3 2 (Filled Green)
+        |> Board.setCell 3 3 (Filled Yellow)
+        |> Board.setCell 3 4 (Filled Red)
+        |> Board.setCell 3 5 (Filled Green)
+        |> Board.setCell 3 6 (Filled Yellow)
+        |> Board.setCell 3 7 (Filled Red)
+        |> Board.setCell 3 8 (Filled Green)
+        |> Board.setCell 3 9 (Filled Yellow)
+        |> Board.setCell 3 10 (Filled Red)
+        |> Board.setCell 3 11 (Filled Green)
+
+    // 現在のぷよを最下端に配置（着地後に新しいぷよが生成される）
+    let pair = PuyoPair.create 0 12 Blue Blue 0
+
+    let model =
+        { model with
+            Board = board
+            CurrentPiece = Some pair
+            Status = Playing }
+
+    // Act
+    let (newModel, _) = Update.update Tick model
+
+    // Assert
+    // ゲームオーバーになっている
+    newModel.Status |> should equal GameOver
+    // CurrentPiece は None
+    newModel.CurrentPiece |> should equal None
+
+[<Fact>]
+let ``ゲームオーバー時はTickメッセージを受け付けない`` () =
+    // Arrange
+    let model = Model.init ()
+
+    let model =
+        { model with
+            CurrentPiece = None
+            Status = GameOver }
+
+    // Act
+    let (newModel, _) = Update.update Tick model
+
+    // Assert
+    // 状態が変わらない
+    newModel.Status |> should equal GameOver
+    newModel.CurrentPiece |> should equal None

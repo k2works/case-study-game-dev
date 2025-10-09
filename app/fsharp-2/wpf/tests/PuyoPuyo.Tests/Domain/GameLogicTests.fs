@@ -174,3 +174,42 @@ module GameLogicTests =
 
         // Assert
         result |> should equal None
+
+    [<Fact>]
+    let ``新しいぷよを配置できない場合、ゲームオーバーになる`` () =
+        // Arrange
+        // ボードの上部（新しいぷよが配置される位置）にぷよを配置
+        let board = Board.create 6 13
+
+        let board =
+            board
+            |> Board.setCell 2 1 (Filled Red)
+            |> Board.setCell 2 0 (Filled Red)
+
+        // 新しいぷよペア（通常は x=2, y=1 と x=2, y=0 に配置される）
+        let newPiece = PuyoPair.create 2 1 Blue Green 0
+
+        // Act
+        // ゲームオーバー判定
+        let isGameOver = GameLogic.checkGameOver board newPiece
+
+        // Assert
+        // ゲームオーバーになっていることを確認
+        isGameOver |> should equal true
+
+    [<Fact>]
+    let ``新しいぷよを配置できる場合、ゲームオーバーにならない`` () =
+        // Arrange
+        // 空のボード
+        let board = Board.create 6 13
+
+        // 新しいぷよペア
+        let newPiece = PuyoPair.create 2 1 Blue Green 0
+
+        // Act
+        // ゲームオーバー判定
+        let isGameOver = GameLogic.checkGameOver board newPiece
+
+        // Assert
+        // ゲームオーバーにならないことを確認
+        isGameOver |> should equal false
