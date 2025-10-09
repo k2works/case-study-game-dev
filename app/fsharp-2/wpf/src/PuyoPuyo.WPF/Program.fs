@@ -3,6 +3,7 @@ namespace PuyoPuyo
 open System
 open System.Windows
 open System.Windows.Controls
+open System.Windows.Input
 open Elmish
 open Elmish.WPF
 open PuyoPuyo.Game
@@ -37,6 +38,25 @@ module Program =
             | Some container -> container.Child <- GameView.createBoardPanel currentModel
             | None -> ()
 
+        // キーボードイベントハンドラ
+        let handleKeyDown (e: KeyEventArgs) =
+            match e.Key with
+            | Key.Left ->
+                let (newModel, _) = Update.update MoveLeft currentModel
+                currentModel <- newModel
+
+                match boardContainerRef with
+                | Some container -> container.Child <- GameView.createBoardPanel currentModel
+                | None -> ()
+            | Key.Right ->
+                let (newModel, _) = Update.update MoveRight currentModel
+                currentModel <- newModel
+
+                match boardContainerRef with
+                | Some container -> container.Child <- GameView.createBoardPanel currentModel
+                | None -> ()
+            | _ -> ()
+
         // メインパネルとボードコンテナを作成
         let (mainPanel, boardContainer) = GameView.createMainPanel (ref currentModel) onStartGame
         boardContainerRef <- Some boardContainer
@@ -44,6 +64,9 @@ module Program =
         // Windowをコードで作成
         let window =
             Window(Title = "PuyoPuyo", Width = 400.0, Height = 600.0, Content = mainPanel)
+
+        // キーボードイベントを設定
+        window.KeyDown.Add(handleKeyDown)
 
         Elmish.Program.mkProgram (fun () -> Model.init (), Cmd.none) Update.update bindings
         |> Program.withConsoleTrace
