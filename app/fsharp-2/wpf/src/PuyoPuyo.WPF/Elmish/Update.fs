@@ -74,6 +74,7 @@ module Update =
                         NextPiece = Some newNextPiece
                         Score = newScore
                         LastChainCount = chainCount
+                        IsFastFalling = false
                         Status = GameOver },
                     Cmd.none
                 else
@@ -100,6 +101,7 @@ module Update =
                 NextPiece = Some nextPiece
                 Score = Score.create ()
                 GameTime = 0
+                IsFastFalling = false
                 Status = Playing },
             Cmd.none
 
