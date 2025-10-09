@@ -8,7 +8,9 @@ module Score =
     let create () : Score = { Value = 0 }
 
     /// スコアを加算
-    let addScore (points: int) (score: Score) : Score = { score with Value = score.Value + points }
+    let addScore (points: int) (score: Score) : Score =
+        { score with
+            Value = score.Value + points }
 
     /// 連鎖によるスコアを計算
     /// chainCount: 連鎖数、clearedCount: 消去したぷよの数

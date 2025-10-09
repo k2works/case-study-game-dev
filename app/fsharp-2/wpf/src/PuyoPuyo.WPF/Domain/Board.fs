@@ -130,7 +130,11 @@ module Board =
     /// 消去と重力を繰り返し適用（連鎖処理）の内部実装
     /// 戻り値: (最終ボード, 連鎖数, 消去したぷよの総数)
     [<TailCall>]
-    let rec private clearAndApplyGravityRepeatedlyImpl (board: Board) (chainCount: int) (totalCleared: int) : Board * int * int =
+    let rec private clearAndApplyGravityRepeatedlyImpl
+        (board: Board)
+        (chainCount: int)
+        (totalCleared: int)
+        : Board * int * int =
         let groups = findConnectedGroups board
 
         if List.isEmpty groups then
@@ -149,6 +153,8 @@ module Board =
     /// 消去と重力を繰り返し適用し、最終状態と全消しフラグと連鎖情報を返す
     /// 戻り値: (最終ボード, 全消しフラグ, 連鎖数, 消去したぷよの総数)
     let clearAndApplyGravityRepeatedly (board: Board) : Board * bool * int * int =
-        let (finalBoard, chainCount, totalCleared) = clearAndApplyGravityRepeatedlyImpl board 0 0
+        let (finalBoard, chainCount, totalCleared) =
+            clearAndApplyGravityRepeatedlyImpl board 0 0
+
         let isZenkeshi = checkZenkeshi finalBoard
         (finalBoard, isZenkeshi, chainCount, totalCleared)

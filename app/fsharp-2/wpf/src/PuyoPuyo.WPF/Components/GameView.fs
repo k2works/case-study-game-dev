@@ -129,12 +129,9 @@ module GameView =
 
                     // 回転状態0の場合、(0,0)に軸ぷよ、(0,1)に2つ目のぷよ
                     let cell =
-                        if x = 0 && y = 0 then
-                            Filled piece.Puyo1Color
-                        elif x = 0 && y = 1 then
-                            Filled piece.Puyo2Color
-                        else
-                            Empty
+                        if x = 0 && y = 0 then Filled piece.Puyo1Color
+                        elif x = 0 && y = 1 then Filled piece.Puyo2Color
+                        else Empty
 
                     match cell with
                     | Empty -> border.Background <- Brushes.Transparent
@@ -201,7 +198,8 @@ module GameView =
         mainPanel.Children.Add(title) |> ignore
 
         // ゲームエリア（ボードと情報パネルを横に並べる）
-        let gameArea = StackPanel(Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center)
+        let gameArea =
+            StackPanel(Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center)
 
         // ボードパネル（後で更新）
         let boardContainer =

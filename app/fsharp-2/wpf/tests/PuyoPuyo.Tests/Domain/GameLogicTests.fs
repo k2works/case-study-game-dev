@@ -182,9 +182,7 @@ module GameLogicTests =
         let board = Board.create 6 12
 
         let board =
-            board
-            |> Board.setCell 2 1 (Filled Red)
-            |> Board.setCell 2 0 (Filled Red)
+            board |> Board.setCell 2 1 (Filled Red) |> Board.setCell 2 0 (Filled Red)
 
         // 新しいぷよペア（通常は x=2, y=1 と x=2, y=0 に配置される）
         let newPiece = PuyoPair.create 2 1 Blue Green 0
