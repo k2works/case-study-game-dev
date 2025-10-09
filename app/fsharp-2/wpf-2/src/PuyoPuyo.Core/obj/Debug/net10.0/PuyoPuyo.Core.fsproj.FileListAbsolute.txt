@@ -1,0 +1,14 @@
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\bin\Debug\net10.0\PuyoPuyo.Core.deps.json
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\bin\Debug\net10.0\PuyoPuyo.Core.dll
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\bin\Debug\net10.0\PuyoPuyo.Core.pdb
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\bin\Debug\net10.0\PuyoPuyo.Core.xml
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.fsproj.AssemblyReference.cache
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.AssemblyInfoInputs.cache
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.AssemblyInfo.fs
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.fsproj.CoreCompileInputs.cache
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.sourcelink.json
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.dll
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\refint\PuyoPuyo.Core.dll
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.xml
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\PuyoPuyo.Core.pdb
+C:\Users\PC202411-1\IdeaProjects\case-study-game-dev\app\fsharp-2\wpf-2\src\PuyoPuyo.Core\obj\Debug\net10.0\ref\PuyoPuyo.Core.dll
