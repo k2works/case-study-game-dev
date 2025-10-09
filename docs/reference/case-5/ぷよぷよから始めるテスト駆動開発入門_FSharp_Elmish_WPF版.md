@@ -490,14 +490,15 @@ let bindings () : Binding<Model, Message> list = [
 
 ```bash
 # プロジェクトディレクトリの作成
-mkdir puyo-puyo-wpf
-cd puyo-puyo-wpf
+mkdir -p app/fsharp-2/wpf
+cd app/fsharp-2/wpf
 
 # ソリューションの作成
 dotnet new sln -n PuyoPuyo
 
 # WPFプロジェクトの作成
-dotnet new wpf -lang F# -o src/PuyoPuyo.WPF
+# 注: F#のWPFテンプレートが存在しないため、classlibから作成して後で設定変更
+dotnet new classlib -lang F# -o src/PuyoPuyo.WPF
 
 # テストプロジェクトの作成
 dotnet new xunit -lang F# -o tests/PuyoPuyo.Tests
@@ -507,9 +508,46 @@ dotnet sln add src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj
 dotnet sln add tests/PuyoPuyo.Tests/PuyoPuyo.Tests.fsproj
 
 # テストプロジェクトからWPFプロジェクトを参照
-cd tests/PuyoPuyo.Tests
-dotnet add reference ../../src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj
-cd ../..
+dotnet add tests/PuyoPuyo.Tests reference src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj
+```
+
+WPFプロジェクトの設定を変更します（`src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj`）:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Domain.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Elmish.WPF" Version="3.5.8" />
+  </ItemGroup>
+
+</Project>
+```
+
+**重要**: .NET 9 を使用します。.NET 10 は FSharpLint との互換性に問題があるため、`global.json` で SDK バージョンを固定します:
+
+```bash
+# global.jsonの作成
+cat > global.json << 'EOF'
+{
+  "sdk": {
+    "version": "9.0.305",
+    "rollForward": "latestPatch"
+  }
+}
+EOF
 ```
 
 #### Elmish.WPFとFsUnitのセットアップ
@@ -517,15 +555,48 @@ cd ../..
 必要なパッケージをインストールします:
 
 ```bash
-# WPFプロジェクトへElmish.WPFを追加
-cd src/PuyoPuyo.WPF
-dotnet add package Elmish.WPF
-cd ../..
+# WPFプロジェクトへElmish.WPFを追加（既に.fsprojに含まれている場合はスキップ）
+dotnet add src/PuyoPuyo.WPF package Elmish.WPF
 
 # テストプロジェクトへFsUnitを追加
-cd tests/PuyoPuyo.Tests
-dotnet add package FsUnit.xUnit
-cd ../..
+dotnet add tests/PuyoPuyo.Tests package FsUnit.xUnit
+```
+
+テストプロジェクトの設定も .NET 9 に変更します（`tests/PuyoPuyo.Tests/PuyoPuyo.Tests.fsproj`）:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Tests.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FsUnit.xUnit" Version="7.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit.v3" Version="3.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PuyoPuyo.WPF\PuyoPuyo.WPF.fsproj" />
+  </ItemGroup>
+
+</Project>
 ```
 
 ### 自動化: ビルドとタスク管理
@@ -587,6 +658,12 @@ dotnet new tool-manifest
 
 # Cakeをインストール
 dotnet tool install Cake.Tool
+
+# Fantomasをインストール（コードフォーマッタ）
+dotnet tool install fantomas
+
+# FSharpLintをインストール（静的解析）
+dotnet tool install dotnet-fsharplint
 ```
 
 次に、ビルドスクリプト `build.cake` をプロジェクトルートに作成します：
@@ -669,6 +746,65 @@ Task("Watch-Test")
     });
 });
 
+Task("Format")
+    .Description("コードを自動フォーマット")
+    .Does(() =>
+{
+    StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fantomas src tests"
+    });
+});
+
+Task("Format-Check")
+    .Description("コードフォーマットをチェック")
+    .Does(() =>
+{
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fantomas src tests --check"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("コードフォーマットエラーが検出されました。dotnet cake --target=Format で修正してください。");
+    }
+});
+
+Task("Lint")
+    .Description("静的コード解析を実行")
+    .Does(() =>
+{
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fsharplint lint PuyoPuyo.sln"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("静的コード解析でエラーが検出されました。");
+    }
+});
+
+Task("Coverage")
+    .Description("テストカバレッジを測定")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    DotNetTest("./PuyoPuyo.sln", new DotNetTestSettings
+    {
+        Configuration = configuration,
+        NoBuild = true,
+        NoRestore = true,
+        ArgumentCustomization = args => args
+            .Append("/p:CollectCoverage=true")
+            .Append("/p:CoverletOutputFormat=opencover")
+            .Append("/p:CoverletOutput=./coverage/")
+    });
+
+    Information("カバレッジレポート: ./tests/PuyoPuyo.Tests/coverage/coverage.opencover.xml");
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット
 ///////////////////////////////////////////////////////////////////////////////
@@ -677,8 +813,12 @@ Task("Default")
     .IsDependentOn("Test");
 
 Task("CI")
+    .Description("CI環境での完全なビルドとテスト")
     .IsDependentOn("Clean")
-    .IsDependentOn("Test");
+    .IsDependentOn("Format-Check")
+    .IsDependentOn("Lint")
+    .IsDependentOn("Test")
+    .IsDependentOn("Coverage");
 
 ///////////////////////////////////////////////////////////////////////////////
 // 実行
@@ -1093,53 +1233,203 @@ git commit -m "feat: initialize F# Elmish.WPF Puyo Puyo project with test setup"
 このイテレーションで準備した環境：
 
 1. **バージョン管理**
-   - Gitリポジトリの初期化
-   - .gitignoreの設定
+   - 既存の Git リポジトリを使用（case-study-game-dev）
+   - .gitignoreの設定（.NET / F# 対応）
    - Conventional Commitsの規約
 
-2. **テスティング**
-   - xUnitのセットアップ
-   - FsUnitの導入
-   - テストプロジェクトの作成
+2. **プロジェクト構造**
+   ```
+   app/fsharp-2/wpf/
+   ├── .config/
+   │   └── dotnet-tools.json       # ローカルツール設定
+   ├── global.json                 # .NET SDK バージョン固定 (9.0.305)
+   ├── PuyoPuyo.sln                # ソリューションファイル
+   ├── build.cake                  # Cake ビルドスクリプト
+   ├── build.ps1 / build.sh        # ビルドスクリプトラッパー
+   ├── fsharplint.json             # FSharpLint 設定
+   ├── src/
+   │   └── PuyoPuyo.WPF/
+   │       ├── PuyoPuyo.WPF.fsproj # WPF プロジェクト (.NET 9)
+   │       ├── Domain.fs           # Elmish ドメインロジック
+   │       └── Program.fs          # アプリケーションエントリーポイント
+   └── tests/
+       └── PuyoPuyo.Tests/
+           ├── PuyoPuyo.Tests.fsproj # テストプロジェクト (.NET 9)
+           └── Tests.fs              # テストファイル
+   ```
 
-3. **自動化**
+3. **テスティング**
+   - xUnit v3 のセットアップ
+   - FsUnit.xUnit 7.1.1 の導入
+   - coverlet.msbuild 6.0.4 によるカバレッジ測定
+   - テストプロジェクトから WPF プロジェクトへの参照
+
+4. **自動化**
    - dotnet watch によるホットリロード
-   - Cakeによるビルド自動化（型安全なC#スクリプト）
+   - Cake によるビルド自動化（型安全な C# スクリプト）
    - タスク依存関係の管理
    - クロスプラットフォーム対応（build.ps1 / build.sh）
-   - Fantomasによるコードフォーマット自動化
-   - FSharpLintによる静的コード解析
-   - coverletによるテストカバレッジ測定
-   - CI環境での品質チェック自動化
+   - Fantomas によるコードフォーマット自動化
+   - FSharpLint による静的コード解析
+   - coverlet によるテストカバレッジ測定
+   - CI 環境での品質チェック自動化（`dotnet cake --target=CI`）
 
-4. **Elmish.WPFの理解**
-   - Elmishアーキテクチャの基本
-   - Model-View-Updateパターン
+5. **Elmish.WPF の理解**
+   - Elmish.WPF 3.5.8 のセットアップ
+   - Elmish アーキテクチャの基本（Model-View-Update）
    - 型安全な状態管理
+   - コードベースの UI 構築（XAML を使用しない）
+   - データバインディングの実装
 
-5. **プロジェクト構造**
-   - ドメインロジックの分離
-   - Elmish層の分離
-   - UIコンポーネントの分離
+6. **技術的な決定事項**
+   - .NET 9 の使用（.NET 10 は FSharpLint 非互換のため）
+   - global.json による SDK バージョン固定（9.0.305）
+   - コード重視のアプローチ（XAML ファイルを使用しない）
+   - 最小限の Elmish.WPF セットアップ（Model、Message、init、update、bindings）
+
+7. **動作確認**
+   - `dotnet cake --target=Run` でアプリケーションが起動
+   - ウィンドウに「ぷよぷよゲーム」が表示されることを確認
+   - `dotnet cake --target=CI` ですべての品質チェックがパス
 
 「環境構築って面倒だな...」と思われたかもしれませんが、ここで準備したツールがこれからの開発を助けてくれます。テスト駆動開発では、テストを頻繁に実行し、小さな変更を積み重ねていきます。そのため、自動化されたテスト環境とバージョン管理が不可欠なのです。
 
 次のイテレーションから、実際にぷよぷよゲームの実装を始めていきます。Elmishアーキテクチャの力を使って、予測可能で保守性の高いコードを書いていきましょう！
 
-### 動作確認とデバッグ
+### Elmish.WPF 最小セットアップ
+
+環境構築の最後に、Elmish.WPF が正しく動作することを確認するための最小限のアプリケーションを作成します。
+
+**重要**: このチュートリアルではコード重視のアプローチを採用し、XAML ファイルは使用しません。すべての UI を F# コードで定義します。
+
+#### Domain.fs の作成
+
+Elmish の基本構造を `src/PuyoPuyo.WPF/Domain.fs` に作成します:
+
+```fsharp
+namespace PuyoPuyo
+
+open Elmish
+
+/// <summary>
+/// Domain module
+/// </summary>
+module Domain =
+    /// <summary>
+    /// Model
+    /// </summary>
+    type Model = { Message: string }
+
+    /// <summary>
+    /// Message
+    /// </summary>
+    type Message = unit
+
+    /// <summary>
+    /// Initialize the model
+    /// </summary>
+    let init () = { Message = "ぷよぷよゲーム" }
+
+    /// <summary>
+    /// Update the model
+    /// </summary>
+    let update msg model = model
+```
+
+#### Program.fs の作成
+
+アプリケーションのエントリーポイントを `src/PuyoPuyo.WPF/Program.fs` に作成します:
+
+```fsharp
+namespace PuyoPuyo
+
+open System
+open System.Windows
+open System.Windows.Controls
+open Elmish
+open Elmish.WPF
+
+/// <summary>
+/// Program module
+/// </summary>
+module Program =
+
+    /// <summary>
+    /// Bindings for Elmish.WPF
+    /// </summary>
+    let bindings () : Binding<Domain.Model, Domain.Message> list =
+        [ "Message" |> Binding.oneWay (fun m -> m.Message) ]
+
+    /// <summary>
+    /// Main entry point
+    /// </summary>
+    [<EntryPoint; STAThread>]
+    let main argv =
+        // TextBlockをコードで作成
+        let textBlock =
+            TextBlock(
+                FontSize = 24.0,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            )
+
+        textBlock.SetBinding(TextBlock.TextProperty, "Message") |> ignore
+
+        // Windowをコードで作成
+        let window = Window(Title = "PuyoPuyo", Width = 800.0, Height = 600.0, Content = textBlock)
+
+        Program.mkSimpleWpf Domain.init Domain.update bindings
+        |> Program.withConsoleTrace
+        |> Program.runWindowWithConfig
+            { ElmConfig.Default with
+                LogConsole = true
+                Measure = true }
+            window
+
+        0
+```
+
+**ポイント**:
+- XAML を使用せず、すべて F# コードで UI を構築
+- `TextBlock` を `Window.Content` に直接設定
+- データバインディングは `SetBinding` メソッドで設定
+- Elmish.WPF の `bindings` で Model のプロパティを公開
+
+#### 動作確認とデバッグ
 
 WPF アプリケーションを実行するには:
 
 ```bash
 # 開発中の実行
+dotnet cake --target=Run
+
+# または watch モードで実行（ファイル変更を自動検出）
+dotnet cake --target=Watch
+
+# 直接実行する場合
 cd src/PuyoPuyo.WPF
 dotnet run
-
-# または、Visual Studio / Rider で F5 キーで実行
 ```
 
+アプリケーションが起動し、ウィンドウの中央に「ぷよぷよゲーム」と表示されれば成功です。
+
+#### ビルドと品質チェック
+
+すべてのタスクが正しく動作することを確認します:
+
+```bash
+# コードフォーマット
+dotnet cake --target=Format
+
+# CI パイプライン（フォーマット、Lint、テスト、カバレッジ）
+dotnet cake --target=CI
+```
+
+すべてのチェックがパスすることを確認してください。
+
 [注: 以降のイテレーションでは、ドメインロジック部分は Bolero 版と同じですが、
-View 部分を XAML に、イベント処理を WPF の Command バインディングに変換します]
+View 部分を WPF のコード（または必要に応じて XAML）に、
+イベント処理を WPF の Command バインディングに変換します]
 
 ## イテレーション1: ゲーム開始の実装
 
