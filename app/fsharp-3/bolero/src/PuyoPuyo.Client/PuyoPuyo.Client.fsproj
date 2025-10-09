@@ -9,6 +9,7 @@
     <Compile Include="Domain\ぷよ.fs" />
     <Compile Include="Domain\盤面.fs" />
     <Compile Include="Domain\ぷよペア.fs" />
+    <Compile Include="Domain\ゲームロジック.fs" />
     <Compile Include="Elmish\モデル.fs" />
     <Compile Include="Elmish\更新.fs" />
     <Compile Include="Components\ゲーム表示.fs" />
