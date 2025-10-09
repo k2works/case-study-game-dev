@@ -5,11 +5,15 @@ namespace PuyoPuyo.App
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        public App()
         {
-            base.OnStartup(e);
-            var window = new MainWindow();
-            Program.main(window);
+            this.Activated += StartElmish;
+        }
+
+        private void StartElmish(object sender, EventArgs e)
+        {
+            this.Activated -= StartElmish;
+            Program.main(MainWindow);
         }
     }
 }
