@@ -35,8 +35,8 @@ module ぷよペア =
 
     /// ランダムなぷよペアを生成
     let ランダム作成 (列: int) (行: int) (回転: int) : ぷよペア =
-        let random = System.Random()
+        let 乱数 = System.Random()
         let 色リスト = [| 赤; 緑; 青; 黄 |]
-        let 色1 = 色リスト.[random.Next(色リスト.Length)]
-        let 色2 = 色リスト.[random.Next(色リスト.Length)]
+        let 色1 = 色リスト.[乱数.Next(色リスト.Length)]
+        let 色2 = 色リスト.[乱数.Next(色リスト.Length)]
         作成 列 行 色1 色2 回転
