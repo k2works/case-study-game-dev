@@ -1,6 +1,7 @@
 namespace PuyoPuyo.Components
 
 open Bolero.Html
+open Microsoft.AspNetCore.Components.Web
 open PuyoPuyo.Elmish
 open PuyoPuyo.Domain
 
@@ -46,10 +47,19 @@ module ゲーム画面 =
                 }
         }
 
+    /// キーボードイベントハンドラー
+    let private キー入力処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
+        match e.Key with
+        | "ArrowLeft" -> ディスパッチ 左移動
+        | "ArrowRight" -> ディスパッチ 右移動
+        | _ -> ()
+
     /// メインView
     let ビュー (モデル: モデル) (ディスパッチ: メッセージ -> unit) =
         div {
             attr.``class`` "game-container"
+            attr.tabindex 0
+            on.keydown (キー入力処理 ディスパッチ)
             h1 { "ぷよぷよゲーム" }
 
             ボードを描画 モデル.盤面 モデル.現在のぷよ
@@ -68,6 +78,10 @@ module ゲーム画面 =
                     button {
                         on.click (fun _ -> ディスパッチ ゲームリセット)
                         "リセット"
+                    }
+                    div {
+                        attr.``class`` "instructions"
+                        p { "← → : 移動" }
                     }
 
                 | ゲームオーバー ->
