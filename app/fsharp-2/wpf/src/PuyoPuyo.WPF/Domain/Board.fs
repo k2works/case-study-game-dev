@@ -128,24 +128,27 @@ module Board =
         |> Array.forall (fun row -> row |> Array.forall (fun cell -> cell = Empty))
 
     /// 消去と重力を繰り返し適用（連鎖処理）の内部実装
+    /// 戻り値: (最終ボード, 連鎖数, 消去したぷよの総数)
     [<TailCall>]
-    let rec private clearAndApplyGravityRepeatedlyImpl (board: Board) : Board =
+    let rec private clearAndApplyGravityRepeatedlyImpl (board: Board) (chainCount: int) (totalCleared: int) : Board * int * int =
         let groups = findConnectedGroups board
 
         if List.isEmpty groups then
             // 消去対象がない場合は終了
-            board
+            (board, chainCount, totalCleared)
         else
             // 消去して重力を適用
             let positions = groups |> List.concat
+            let clearedCount = List.length positions
             let clearedBoard = clearPuyos positions board
             let boardAfterGravity = applyGravity clearedBoard
 
-            // 再帰的に消去判定を繰り返す
-            clearAndApplyGravityRepeatedlyImpl boardAfterGravity
+            // 再帰的に消去判定を繰り返す（連鎖数をインクリメント）
+            clearAndApplyGravityRepeatedlyImpl boardAfterGravity (chainCount + 1) (totalCleared + clearedCount)
 
-    /// 消去と重力を繰り返し適用し、最終状態と全消しフラグを返す
-    let clearAndApplyGravityRepeatedly (board: Board) : Board * bool =
-        let finalBoard = clearAndApplyGravityRepeatedlyImpl board
+    /// 消去と重力を繰り返し適用し、最終状態と全消しフラグと連鎖情報を返す
+    /// 戻り値: (最終ボード, 全消しフラグ, 連鎖数, 消去したぷよの総数)
+    let clearAndApplyGravityRepeatedly (board: Board) : Board * bool * int * int =
+        let (finalBoard, chainCount, totalCleared) = clearAndApplyGravityRepeatedlyImpl board 0 0
         let isZenkeshi = checkZenkeshi finalBoard
-        (finalBoard, isZenkeshi)
+        (finalBoard, isZenkeshi, chainCount, totalCleared)
