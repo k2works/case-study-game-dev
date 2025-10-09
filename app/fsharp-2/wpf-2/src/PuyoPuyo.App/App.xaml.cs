@@ -10,7 +10,6 @@ namespace PuyoPuyo.App
             base.OnStartup(e);
             var window = new MainWindow();
             Program.main(window);
-            window.Show();
         }
     }
 }
