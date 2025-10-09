@@ -57,6 +57,14 @@ module Program =
             | Key.Left -> updateModelAndUI MoveLeft
             | Key.Right -> updateModelAndUI MoveRight
             | Key.Up -> updateModelAndUI Rotate
+            | Key.Down ->
+                updateModelAndUI MoveDown
+                updateModelAndUI StartFastFall
+            | _ -> ()
+
+        let handleKeyUp (e: KeyEventArgs) =
+            match e.Key with
+            | Key.Down -> updateModelAndUI StopFastFall
             | _ -> ()
 
         // メインパネルとボードコンテナを作成
@@ -71,6 +79,7 @@ module Program =
 
         // キーボードイベントを設定
         window.KeyDown.Add(handleKeyDown)
+        window.KeyUp.Add(handleKeyUp)
 
         Elmish.Program.mkProgram (fun () -> Model.init (), Cmd.none) Update.update bindings
         |> Program.withConsoleTrace

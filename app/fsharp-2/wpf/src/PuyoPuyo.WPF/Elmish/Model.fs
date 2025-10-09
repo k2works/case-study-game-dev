@@ -17,7 +17,8 @@ type Model =
       Level: int
       GameTime: int
       LastChainCount: int
-      Status: GameStatus }
+      Status: GameStatus
+      IsFastFalling: bool }
 
 module Model =
     /// 初期状態
@@ -29,4 +30,5 @@ module Model =
           Level = 1
           GameTime = 0
           LastChainCount = 0
-          Status = NotStarted }
+          Status = NotStarted
+          IsFastFalling = false }
