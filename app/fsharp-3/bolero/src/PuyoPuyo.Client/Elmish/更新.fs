@@ -38,4 +38,20 @@ module 更新 =
 
         | ゲームリセット -> PuyoPuyo.Elmish.モデル.初期化 (), Cmd.none
 
+        | 左移動 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ぷよペア 左 with
+                | Some 移動後のぷよペア -> { モデル with 現在のぷよ = Some 移動後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | 右移動 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ぷよペア 右 with
+                | Some 移動後のぷよペア -> { モデル with 現在のぷよ = Some 移動後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
         | _ -> モデル, Cmd.none
