@@ -4,7 +4,6 @@ open System
 open System.Windows
 open System.Windows.Controls
 open System.Windows.Input
-open System.Windows.Threading
 open Elmish
 open Elmish.WPF
 open PuyoPuyo.Game
@@ -29,10 +28,7 @@ module Program =
     let main argv =
         let mutable currentModel = Model.init ()
         let mutable boardContainerRef: Border option = None
-
-        // ゲームタイマー（1秒ごとに Tick メッセージを dispatch）
-        let gameTimer = new DispatcherTimer()
-        gameTimer.Interval <- TimeSpan.FromSeconds(1.0)
+        let mutable gameTimerRef: System.Windows.Threading.DispatcherTimer option = None
 
         // モデル更新とUI反映のヘルパー関数
         let updateModelAndUI (message: Message) =
@@ -43,15 +39,14 @@ module Program =
             | Some container -> container.Child <- GameView.createBoardPanel currentModel
             | None -> ()
 
-            // ゲーム状態に応じてタイマーを制御
-            if currentModel.Status = Playing then
-                if not gameTimer.IsEnabled then
-                    gameTimer.Start()
-            else if gameTimer.IsEnabled then
-                gameTimer.Stop()
+            // タイマー制御
+            match gameTimerRef with
+            | Some timer -> Subscription.controlTimer timer currentModel
+            | None -> ()
 
-        // タイマーイベントハンドラ
-        gameTimer.Tick.Add(fun _ -> updateModelAndUI Tick)
+        // ゲームタイマーを作成
+        let gameTimer = Subscription.createGameTimer updateModelAndUI
+        gameTimerRef <- Some gameTimer
 
         // ゲーム開始時の処理
         let onStartGame () = updateModelAndUI StartGame
