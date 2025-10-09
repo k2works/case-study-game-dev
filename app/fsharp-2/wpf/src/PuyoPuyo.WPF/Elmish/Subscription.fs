@@ -6,7 +6,7 @@ open System.Windows.Threading
 module Subscription =
     /// ゲームタイマーを作成（Tick メッセージを dispatch）
     let createGameTimer (dispatch: Message -> unit) : DispatcherTimer =
-        let timer = new DispatcherTimer()
+        let timer = DispatcherTimer()
         timer.Interval <- TimeSpan.FromSeconds(1.0)
         timer.Tick.Add(fun _ -> dispatch Tick)
         timer

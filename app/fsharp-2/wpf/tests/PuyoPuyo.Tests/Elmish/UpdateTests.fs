@@ -22,7 +22,7 @@ let ``Tickメッセージでぷよが下に移動する`` () =
     // Assert
     match newModel.CurrentPiece with
     | Some newPair -> newPair.Y |> should equal 6
-    | None -> failwith "ぷよが存在するはずです"
+    | None -> failwith "Tickメッセージ: ぷよが存在するはずです"
 
 [<Fact>]
 let ``着地したぷよはボードに固定され新しいぷよが生成される`` () =
@@ -48,7 +48,7 @@ let ``着地したぷよはボードに固定され新しいぷよが生成さ�
     | Some newPair ->
         newPair.X |> should equal 2
         newPair.Y |> should equal 1
-    | None -> failwith "新しいぷよが生成されるはずです"
+    | None -> failwith "着地したぷよ: 新しいぷよが生成されるはずです"
 
 [<Fact>]
 let ``ゲーム中でない場合は落下しない`` () =
@@ -67,7 +67,7 @@ let ``ゲーム中でない場合は落下しない`` () =
     // Assert
     match newModel.CurrentPiece with
     | Some newPair -> newPair.Y |> should equal 5 // 位置が変わらない
-    | None -> failwith "ぷよが存在するはずです"
+    | None -> failwith "ゲーム中でない場合: ぷよが存在するはずです"
 
 [<Fact>]
 let ``MoveDownメッセージでぷよが下に移動する`` () =
@@ -86,7 +86,7 @@ let ``MoveDownメッセージでぷよが下に移動する`` () =
     // Assert
     match newModel.CurrentPiece with
     | Some newPair -> newPair.Y |> should equal 6
-    | None -> failwith "ぷよが存在するはずです"
+    | None -> failwith "MoveDownメッセージ: ぷよが存在するはずです"
 
 [<Fact>]
 let ``MoveDownで下端に到達した場合は着地する`` () =
@@ -110,7 +110,7 @@ let ``MoveDownで下端に到達した場合は着地する`` () =
     // 新しいぷよが生成
     match newModel.CurrentPiece with
     | Some _ -> ()
-    | None -> failwith "新しいぷよが生成されるはずです"
+    | None -> failwith "MoveDown着地: 新しいぷよが生成されるはずです"
 
 [<Fact>]
 let ``StartFastFallメッセージで高速落下モードになる`` () =

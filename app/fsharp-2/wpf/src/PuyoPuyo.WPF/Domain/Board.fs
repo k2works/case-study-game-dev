@@ -123,6 +123,7 @@ module Board =
         { board with Cells = newCells }
 
     /// 消去と重力を繰り返し適用（連鎖処理）
+    [<TailCall>]
     let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
         let groups = findConnectedGroups board
 
