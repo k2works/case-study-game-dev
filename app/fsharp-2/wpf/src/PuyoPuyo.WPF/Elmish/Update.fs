@@ -39,14 +39,22 @@ module Update =
                 let boardWithPiece = GameLogic.fixPuyoPair model.Board piece
 
                 // 2. 連鎖処理（消去と重力を繰り返し適用）
-                let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardWithPiece
+                let (boardAfterChain, isZenkeshi) = Board.clearAndApplyGravityRepeatedly boardWithPiece
 
-                // 3. 次のぷよを生成
+                // 3. 全消しの場合はボーナス加算
+                let newScore =
+                    if isZenkeshi then
+                        Score.addZenkeshiBonus model.Score
+                    else
+                        model.Score
+
+                // 4. 次のぷよを生成
                 let nextPiece = PuyoPair.createRandom 2 1 0
 
                 { model with
                     Board = boardAfterChain
-                    CurrentPiece = Some nextPiece },
+                    CurrentPiece = Some nextPiece
+                    Score = newScore },
                 Cmd.none
         | None -> model, Cmd.none
 
@@ -61,7 +69,7 @@ module Update =
                 Board = Board.create 6 13
                 CurrentPiece = Some firstPiece
                 NextPiece = Some nextPiece
-                Score = 0
+                Score = Score.create ()
                 GameTime = 0
                 Status = Playing },
             Cmd.none

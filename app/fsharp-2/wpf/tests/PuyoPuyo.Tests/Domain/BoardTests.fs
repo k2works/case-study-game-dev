@@ -255,3 +255,54 @@ let ``ぷよの消去と落下後、新たな消去パターンがあれば連�
 
     // 連鎖が発生していることを確認
     groups2 |> should not' (be Empty)
+
+[<Fact>]
+let ``盤面上のぷよがすべて消えると全消しになる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+
+    // Act
+    // 消去判定と実行
+    let groups = Board.findConnectedGroups board
+    let positions = groups |> List.concat
+    let clearedBoard = Board.clearPuyos positions board
+
+    // 全消し判定
+    let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+    // Assert
+    // 全消しになっていることを確認
+    isZenkeshi |> should equal true
+
+[<Fact>]
+let ``盤面上にぷよが残っていると全消しにならない`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+        |> Board.setCell 3 11 (Filled Blue) // 消えないぷよ
+
+    // Act
+    // 消去判定と実行
+    let groups = Board.findConnectedGroups board
+    let positions = groups |> List.concat
+    let clearedBoard = Board.clearPuyos positions board
+
+    // 全消し判定
+    let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+    // Assert
+    // 全消しになっていないことを確認
+    isZenkeshi |> should equal false

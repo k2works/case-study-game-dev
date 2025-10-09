@@ -13,7 +13,7 @@ type Model =
     { Board: Board
       CurrentPiece: PuyoPair option
       NextPiece: PuyoPair option
-      Score: int
+      Score: Score
       Level: int
       GameTime: int
       LastChainCount: int
@@ -26,7 +26,7 @@ module Model =
         { Board = Board.create 6 13
           CurrentPiece = None
           NextPiece = None
-          Score = 0
+          Score = Score.create ()
           Level = 1
           GameTime = 0
           LastChainCount = 0

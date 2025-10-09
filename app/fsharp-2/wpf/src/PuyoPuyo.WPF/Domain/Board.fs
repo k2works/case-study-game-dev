@@ -122,9 +122,14 @@ module Board =
 
         { board with Cells = newCells }
 
-    /// 消去と重力を繰り返し適用（連鎖処理）
+    /// 全消し判定（盤面上にぷよがあるかチェック）
+    let checkZenkeshi (board: Board) : bool =
+        board.Cells
+        |> Array.forall (fun row -> row |> Array.forall (fun cell -> cell = Empty))
+
+    /// 消去と重力を繰り返し適用（連鎖処理）の内部実装
     [<TailCall>]
-    let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
+    let rec private clearAndApplyGravityRepeatedlyImpl (board: Board) : Board =
         let groups = findConnectedGroups board
 
         if List.isEmpty groups then
@@ -137,4 +142,10 @@ module Board =
             let boardAfterGravity = applyGravity clearedBoard
 
             // 再帰的に消去判定を繰り返す
-            clearAndApplyGravityRepeatedly boardAfterGravity
+            clearAndApplyGravityRepeatedlyImpl boardAfterGravity
+
+    /// 消去と重力を繰り返し適用し、最終状態と全消しフラグを返す
+    let clearAndApplyGravityRepeatedly (board: Board) : Board * bool =
+        let finalBoard = clearAndApplyGravityRepeatedlyImpl board
+        let isZenkeshi = checkZenkeshi finalBoard
+        (finalBoard, isZenkeshi)
