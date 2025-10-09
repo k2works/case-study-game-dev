@@ -17,21 +17,23 @@ module Program =
 
     /// セルを描画
     let createCellBorder (cell: Cell) : Border =
-        let color =
-            match cell with
-            | Empty -> Brushes.White
-            | Filled PuyoColor.Red -> Brushes.Red
-            | Filled PuyoColor.Green -> Brushes.Green
-            | Filled PuyoColor.Blue -> Brushes.Blue
-            | Filled PuyoColor.Yellow -> Brushes.Yellow
+        let border = Border(Width = 30.0, Height = 30.0, BorderBrush = Brushes.Gray, BorderThickness = Thickness(1.0))
 
-        Border(
-            Width = 30.0,
-            Height = 30.0,
-            BorderBrush = Brushes.Gray,
-            BorderThickness = Thickness(1.0),
-            Background = color
-        )
+        match cell with
+        | Empty -> border.Background <- Brushes.White
+        | Filled color ->
+            let ellipse = Ellipse(Width = 26.0, Height = 26.0, Margin = Thickness(2.0))
+
+            ellipse.Fill <-
+                match color with
+                | PuyoColor.Red -> Brushes.Red
+                | PuyoColor.Green -> Brushes.Green
+                | PuyoColor.Blue -> Brushes.Blue
+                | PuyoColor.Yellow -> Brushes.Yellow
+
+            border.Child <- ellipse
+
+        border
 
     /// ボードを描画
     let createBoardPanel (model: Model) : Panel =
