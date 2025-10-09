@@ -54,7 +54,7 @@ Task("Test")
 Task("Run")
     .Does(() =>
 {
-    DotNetRun("./src/PuyoPuyo.App/PuyoPuyo.App.fsproj");
+    DotNetRun("./src/PuyoPuyo.App/PuyoPuyo.App.csproj");
 });
 
 Task("Watch")
@@ -62,7 +62,7 @@ Task("Watch")
 {
     StartProcess("dotnet", new ProcessSettings
     {
-        Arguments = "watch run --project ./src/PuyoPuyo.App/PuyoPuyo.App.fsproj"
+        Arguments = "watch run --project ./src/PuyoPuyo.App/PuyoPuyo.App.csproj"
     });
 });
 
