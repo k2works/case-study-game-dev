@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <Compile Include="Domain\Puyo.fs" />
+    <Compile Include="Domain\Board.fs" />
+    <Compile Include="Domain\PuyoPair.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
