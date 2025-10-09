@@ -79,6 +79,7 @@ module ゲーム画面 =
                         on.click (fun _ -> ディスパッチ ゲームリセット)
                         "リセット"
                     }
+
                     div {
                         attr.``class`` "instructions"
                         p { "← → : 移動" }
