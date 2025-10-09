@@ -4,6 +4,7 @@ open System
 open System.Windows
 open System.Windows.Controls
 open System.Windows.Input
+open System.Windows.Threading
 open Elmish
 open Elmish.WPF
 open PuyoPuyo.Game
@@ -29,39 +30,38 @@ module Program =
         let mutable currentModel = Model.init ()
         let mutable boardContainerRef: Border option = None
 
-        // ゲーム開始時の処理
-        let onStartGame () =
-            let (newModel, _) = Update.update StartGame currentModel
+        // ゲームタイマー（1秒ごとに Tick メッセージを dispatch）
+        let gameTimer = new DispatcherTimer()
+        gameTimer.Interval <- TimeSpan.FromSeconds(1.0)
+
+        // モデル更新とUI反映のヘルパー関数
+        let updateModelAndUI (message: Message) =
+            let (newModel, _) = Update.update message currentModel
             currentModel <- newModel
 
             match boardContainerRef with
             | Some container -> container.Child <- GameView.createBoardPanel currentModel
             | None -> ()
 
+            // ゲーム状態に応じてタイマーを制御
+            if currentModel.Status = Playing then
+                if not gameTimer.IsEnabled then
+                    gameTimer.Start()
+            else if gameTimer.IsEnabled then
+                gameTimer.Stop()
+
+        // タイマーイベントハンドラ
+        gameTimer.Tick.Add(fun _ -> updateModelAndUI Tick)
+
+        // ゲーム開始時の処理
+        let onStartGame () = updateModelAndUI StartGame
+
         // キーボードイベントハンドラ
         let handleKeyDown (e: KeyEventArgs) =
             match e.Key with
-            | Key.Left ->
-                let (newModel, _) = Update.update MoveLeft currentModel
-                currentModel <- newModel
-
-                match boardContainerRef with
-                | Some container -> container.Child <- GameView.createBoardPanel currentModel
-                | None -> ()
-            | Key.Right ->
-                let (newModel, _) = Update.update MoveRight currentModel
-                currentModel <- newModel
-
-                match boardContainerRef with
-                | Some container -> container.Child <- GameView.createBoardPanel currentModel
-                | None -> ()
-            | Key.Up ->
-                let (newModel, _) = Update.update Rotate currentModel
-                currentModel <- newModel
-
-                match boardContainerRef with
-                | Some container -> container.Child <- GameView.createBoardPanel currentModel
-                | None -> ()
+            | Key.Left -> updateModelAndUI MoveLeft
+            | Key.Right -> updateModelAndUI MoveRight
+            | Key.Up -> updateModelAndUI Rotate
             | _ -> ()
 
         // メインパネルとボードコンテナを作成
