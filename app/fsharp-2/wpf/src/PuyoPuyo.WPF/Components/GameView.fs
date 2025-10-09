@@ -34,8 +34,9 @@ module GameView =
         border
 
     /// ボードを描画
-    let createBoardPanel (model: Model) : Panel =
-        let panel = StackPanel(Orientation = Orientation.Vertical)
+    let createBoardPanel (model: Model) : UIElement =
+        // ボードパネル
+        let boardPanel = StackPanel(Orientation = Orientation.Vertical)
 
         // 現在のぷよの位置を取得
         let currentPiecePositions =
@@ -59,9 +60,39 @@ module GameView =
                 let cellBorder = createCellBorder cell
                 rowPanel.Children.Add(cellBorder) |> ignore
 
-            panel.Children.Add(rowPanel) |> ignore
+            boardPanel.Children.Add(rowPanel) |> ignore
 
-        panel
+        // ゲームオーバー時はオーバーレイを追加
+        if model.Status = GameOver then
+            let grid = Grid()
+            grid.Children.Add(boardPanel) |> ignore
+
+            // 半透明の背景
+            let overlay =
+                Border(
+                    Background = SolidColorBrush(Color.FromArgb(180uy, 0uy, 0uy, 0uy)),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch
+                )
+
+            grid.Children.Add(overlay) |> ignore
+
+            // ゲームオーバーテキスト
+            let gameOverText =
+                TextBlock(
+                    Text = "GAME OVER",
+                    FontSize = 32.0,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                )
+
+            grid.Children.Add(gameOverText) |> ignore
+
+            grid :> UIElement
+        else
+            boardPanel :> UIElement
 
     /// 次のぷよを描画
     let createNextPiecePanel (model: Model) : Panel =
