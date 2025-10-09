@@ -14,7 +14,8 @@ module GameView =
 
     /// セルを描画
     let createCellBorder (cell: Cell) : Border =
-        let border = Border(Width = 30.0, Height = 30.0, BorderBrush = Brushes.Gray, BorderThickness = Thickness(1.0))
+        let border =
+            Border(Width = 30.0, Height = 30.0, BorderBrush = Brushes.Gray, BorderThickness = Thickness(1.0))
 
         match cell with
         | Empty -> border.Background <- Brushes.White

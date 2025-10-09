@@ -42,7 +42,10 @@ module Update =
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Left with
-                | Some movedPiece -> { model with CurrentPiece = Some movedPiece }, Cmd.none
+                | Some movedPiece ->
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
 
@@ -50,7 +53,10 @@ module Update =
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Right with
-                | Some movedPiece -> { model with CurrentPiece = Some movedPiece }, Cmd.none
+                | Some movedPiece ->
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
 
@@ -58,7 +64,10 @@ module Update =
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryRotatePuyoPair model.Board piece with
-                | Some rotatedPiece -> { model with CurrentPiece = Some rotatedPiece }, Cmd.none
+                | Some rotatedPiece ->
+                    { model with
+                        CurrentPiece = Some rotatedPiece },
+                    Cmd.none
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
 

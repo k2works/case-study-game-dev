@@ -40,8 +40,11 @@ module PuyoPair =
         create x y color1 color2 rotation
 
     /// 時計回りに回転
-    let rotateClockwise (pair: PuyoPair) : PuyoPair = { pair with Rotation = (pair.Rotation + 1) % 4 }
+    let rotateClockwise (pair: PuyoPair) : PuyoPair =
+        { pair with
+            Rotation = (pair.Rotation + 1) % 4 }
 
     /// 反時計回りに回転
     let rotateCounterClockwise (pair: PuyoPair) : PuyoPair =
-        { pair with Rotation = (pair.Rotation + 3) % 4 }
+        { pair with
+            Rotation = (pair.Rotation + 3) % 4 }

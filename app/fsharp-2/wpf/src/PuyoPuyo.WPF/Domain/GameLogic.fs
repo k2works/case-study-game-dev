@@ -9,7 +9,11 @@ type Direction =
 module GameLogic =
     /// ぷよペアが指定位置に配置可能かチェック
     let private isValidPosition (board: Board) (x: int) (y: int) : bool =
-        y >= 0 && y < board.Rows && x >= 0 && x < board.Cols && Board.getCell board x y = Empty
+        y >= 0
+        && y < board.Rows
+        && x >= 0
+        && x < board.Cols
+        && Board.getCell board x y = Empty
 
     /// ぷよペアが配置可能かチェック
     let canPlacePuyoPair (board: Board) (pair: PuyoPair) : bool =
@@ -26,9 +30,15 @@ module GameLogic =
             | Right -> (1, 0)
             | Down -> (0, 1)
 
-        let newPair = { pair with X = pair.X + dx; Y = pair.Y + dy }
+        let newPair =
+            { pair with
+                X = pair.X + dx
+                Y = pair.Y + dy }
 
-        if canPlacePuyoPair board newPair then Some newPair else None
+        if canPlacePuyoPair board newPair then
+            Some newPair
+        else
+            None
 
     /// ぷよペアを回転（壁キック処理を含む）
     let tryRotatePuyoPair (board: Board) (pair: PuyoPair) : PuyoPair option =

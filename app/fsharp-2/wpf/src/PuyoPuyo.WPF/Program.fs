@@ -65,7 +65,9 @@ module Program =
             | _ -> ()
 
         // メインパネルとボードコンテナを作成
-        let (mainPanel, boardContainer) = GameView.createMainPanel (ref currentModel) onStartGame
+        let (mainPanel, boardContainer) =
+            GameView.createMainPanel (ref currentModel) onStartGame
+
         boardContainerRef <- Some boardContainer
 
         // Windowをコードで作成

@@ -36,7 +36,7 @@ module GameLogicTests =
         | Some movedPair ->
             movedPair.X |> should equal 3
             movedPair.Y |> should equal 5
-        | None -> failwith "移動できるはずです"
+        | None -> failwith "右に移動できるはずです"
 
     [<Fact>]
     let ``左端では左に移動できない`` () =
@@ -103,7 +103,7 @@ module GameLogicTests =
         | Some rotated ->
             rotated.Rotation |> should equal 1 // 回転成功
             rotated.X |> should equal 4 // 左に1マスキック
-        | None -> failwith "回転できるはずです"
+        | None -> failwith "右端での回転が失敗しました"
 
     [<Fact>]
     let ``左端で回転状態2から回転すると右にキックされる`` () =
@@ -120,7 +120,7 @@ module GameLogicTests =
             // 回転状態2→3では2つ目のぷよが左にはみ出すため、右に1マスキック
             rotated.Rotation |> should equal 3 // 回転成功（2→3）
             rotated.X |> should equal 1 // 右に1マスキック
-        | None -> failwith "回転できるはずです"
+        | None -> failwith "左端での回転が失敗しました"
 
     [<Fact>]
     let ``壁キックできない場合は回転しない`` () =
