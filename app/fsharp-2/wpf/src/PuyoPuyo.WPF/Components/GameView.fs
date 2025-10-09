@@ -61,3 +61,41 @@ module GameView =
             panel.Children.Add(rowPanel) |> ignore
 
         panel
+
+    /// メインパネルを作成
+    let createMainPanel (currentModel: Model ref) (onStartGame: unit -> unit) : Panel * Border =
+        let mainPanel = StackPanel(Orientation = Orientation.Vertical)
+
+        // タイトル
+        let title =
+            TextBlock(
+                Text = "ぷよぷよゲーム",
+                FontSize = 24.0,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = Thickness(10.0)
+            )
+
+        mainPanel.Children.Add(title) |> ignore
+
+        // ボードパネル（後で更新）
+        let boardContainer =
+            Border(
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = Thickness(10.0)
+            )
+
+        mainPanel.Children.Add(boardContainer) |> ignore
+
+        // ゲーム開始ボタン
+        let startButton =
+            Button(Content = "ゲーム開始", Width = 120.0, Height = 40.0, FontSize = 16.0, Margin = Thickness(10.0))
+
+        startButton.Click.Add(fun _ -> onStartGame ())
+
+        mainPanel.Children.Add(startButton) |> ignore
+
+        // 初期ボード表示
+        boardContainer.Child <- createBoardPanel !currentModel
+
+        (mainPanel, boardContainer)

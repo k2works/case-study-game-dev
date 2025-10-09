@@ -26,44 +26,20 @@ module Program =
     [<EntryPoint; STAThread>]
     let main argv =
         let mutable currentModel = Model.init ()
+        let mutable boardContainerRef: Border option = None
 
-        // メインパネルを作成
-        let mainPanel = StackPanel(Orientation = Orientation.Vertical)
-
-        // タイトル
-        let title =
-            TextBlock(
-                Text = "ぷよぷよゲーム",
-                FontSize = 24.0,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = Thickness(10.0)
-            )
-
-        mainPanel.Children.Add(title) |> ignore
-
-        // ボードパネル（後で更新）
-        let boardContainer =
-            Border(
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = Thickness(10.0)
-            )
-
-        mainPanel.Children.Add(boardContainer) |> ignore
-
-        // ゲーム開始ボタン
-        let startButton =
-            Button(Content = "ゲーム開始", Width = 120.0, Height = 40.0, FontSize = 16.0, Margin = Thickness(10.0))
-
-        startButton.Click.Add(fun _ ->
+        // ゲーム開始時の処理
+        let onStartGame () =
             let (newModel, _) = Update.update StartGame currentModel
             currentModel <- newModel
-            boardContainer.Child <- GameView.createBoardPanel currentModel)
 
-        mainPanel.Children.Add(startButton) |> ignore
+            match boardContainerRef with
+            | Some container -> container.Child <- GameView.createBoardPanel currentModel
+            | None -> ()
 
-        // 初期ボード表示
-        boardContainer.Child <- GameView.createBoardPanel currentModel
+        // メインパネルとボードコンテナを作成
+        let (mainPanel, boardContainer) = GameView.createMainPanel (ref currentModel) onStartGame
+        boardContainerRef <- Some boardContainer
 
         // Windowをコードで作成
         let window =
