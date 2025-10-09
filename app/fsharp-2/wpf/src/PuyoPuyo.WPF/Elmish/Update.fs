@@ -11,6 +11,9 @@ type Message =
     | MoveRight
     | MoveDown
     | Rotate
+    | Tick
+    | StartFastFall
+    | StopFastFall
     | HardDrop
     | GameStep
     | TimeStep
@@ -20,6 +23,71 @@ type Message =
     | CheckGameOver
 
 module Update =
+    /// ぷよを下に移動させる（共通処理）
+    let private dropPuyo (model: Model) : Model * Cmd<Message> =
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryMovePuyoPair model.Board piece Down with
+            | Some movedPiece ->
+                // 移動成功
+                { model with
+                    CurrentPiece = Some movedPiece },
+                Cmd.none
+            | None ->
+                // 移動できない（着地）
+                // 1. ぷよを固定
+                let boardWithPiece = GameLogic.fixPuyoPair model.Board piece
+
+                // 2. 重力を適用（浮いているぷよを落とす）
+                let boardAfterGravity = Board.applyGravity boardWithPiece
+
+                // 3. 連鎖処理（消去と重力を繰り返し適用）
+                let (boardAfterChain, isZenkeshi, chainCount, clearedCount) =
+                    Board.clearAndApplyGravityRepeatedly boardAfterGravity
+
+                // 4. スコア計算
+                let newScore =
+                    model.Score
+                    |> Score.addChainScore chainCount clearedCount // 連鎖スコア
+                    |> (fun score ->
+                        if isZenkeshi then
+                            Score.addZenkeshiBonus score // 全消しボーナス
+                        else
+                            score)
+
+                // 5. 次のぷよを CurrentPiece に、新しい NextPiece を生成
+                let currentPiece =
+                    match model.NextPiece with
+                    | Some piece -> piece
+                    | None -> PuyoPair.createRandom 2 1 0
+
+                let newNextPiece = PuyoPair.createRandom 2 1 0
+
+                // 6. ゲームオーバー判定
+                let isGameOver = GameLogic.checkGameOver boardAfterChain currentPiece
+
+                if isGameOver then
+                    // ゲームオーバー
+                    { model with
+                        Board = boardAfterChain
+                        CurrentPiece = None
+                        NextPiece = Some newNextPiece
+                        Score = newScore
+                        LastChainCount = chainCount
+                        IsFastFalling = false
+                        Status = GameOver },
+                    Cmd.none
+                else
+                    // ゲーム続行
+                    { model with
+                        Board = boardAfterChain
+                        CurrentPiece = Some currentPiece
+                        NextPiece = Some newNextPiece
+                        Score = newScore
+                        LastChainCount = chainCount },
+                    Cmd.none
+        | None -> model, Cmd.none
+
     /// Update 関数
     let update (message: Message) (model: Model) : Model * Cmd<Message> =
         match message with
@@ -28,11 +96,12 @@ module Update =
             let nextPiece = PuyoPair.createRandom 2 1 0
 
             { model with
-                Board = Board.create 6 13
+                Board = Board.create 6 12
                 CurrentPiece = Some firstPiece
                 NextPiece = Some nextPiece
-                Score = 0
+                Score = Score.create ()
                 GameTime = 0
+                IsFastFalling = false
                 Status = Playing },
             Cmd.none
 
@@ -42,7 +111,10 @@ module Update =
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Left with
-                | Some movedPiece -> { model with CurrentPiece = Some movedPiece }, Cmd.none
+                | Some movedPiece ->
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
 
@@ -50,8 +122,30 @@ module Update =
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Right with
-                | Some movedPiece -> { model with CurrentPiece = Some movedPiece }, Cmd.none
+                | Some movedPiece ->
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
+
+        | Rotate when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryRotatePuyoPair model.Board piece with
+                | Some rotatedPiece ->
+                    { model with
+                        CurrentPiece = Some rotatedPiece },
+                    Cmd.none
+                | None -> model, Cmd.none
+            | None -> model, Cmd.none
+
+        | Tick when model.Status = Playing -> dropPuyo model
+
+        | MoveDown when model.Status = Playing -> dropPuyo model
+
+        | StartFastFall when model.Status = Playing -> { model with IsFastFalling = true }, Cmd.none
+
+        | StopFastFall when model.Status = Playing -> { model with IsFastFalling = false }, Cmd.none
 
         | _ -> model, Cmd.none

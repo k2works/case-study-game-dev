@@ -7,16 +7,16 @@ open PuyoPuyo.Domain
 [<Fact>]
 let ``空のボードを作成できる`` () =
     // Arrange & Act
-    let board = Board.create 6 13
+    let board = Board.create 6 12
 
     // Assert
     board.Cols |> should equal 6
-    board.Rows |> should equal 13
+    board.Rows |> should equal 12
 
 [<Fact>]
 let ``作成直後のボードはすべて空である`` () =
     // Arrange & Act
-    let board = Board.create 6 13
+    let board = Board.create 6 12
 
     // Assert
     for y in 0 .. board.Rows - 1 do
@@ -26,7 +26,7 @@ let ``作成直後のボードはすべて空である`` () =
 [<Fact>]
 let ``ボードにぷよを配置できる`` () =
     // Arrange
-    let board = Board.create 6 13
+    let board = Board.create 6 12
 
     // Act
     let newBoard = board |> Board.setCell 2 10 (Cell.Filled PuyoColor.Red)
@@ -37,7 +37,7 @@ let ``ボードにぷよを配置できる`` () =
 [<Fact>]
 let ``ボードにぷよを配置しても元のボードは変更されない`` () =
     // Arrange
-    let board = Board.create 6 13
+    let board = Board.create 6 12
 
     // Act
     let newBoard = board |> Board.setCell 2 10 (Cell.Filled PuyoColor.Red)
@@ -45,3 +45,263 @@ let ``ボードにぷよを配置しても元のボードは変更されない``
     // Assert
     Board.getCell board 2 10 |> should equal Cell.Empty
     Board.getCell newBoard 2 10 |> should equal (Cell.Filled PuyoColor.Red)
+
+[<Fact>]
+let ``ぷよペアをボードに固定できる`` () =
+    // Arrange
+    let board = Board.create 6 12
+    let pair = PuyoPair.create 3 10 Red Green 0
+
+    // Act
+    let newBoard = GameLogic.fixPuyoPair board pair
+
+    // Assert
+    let (pos1, pos2) = PuyoPair.getPositions pair
+    let (x1, y1) = pos1
+    let (x2, y2) = pos2
+    Board.getCell newBoard x1 y1 |> should equal (Filled Red)
+    Board.getCell newBoard x2 y2 |> should equal (Filled Green)
+
+[<Fact>]
+let ``ぷよペアを固定しても元のボードは変更されない`` () =
+    // Arrange
+    let board = Board.create 6 12
+    let pair = PuyoPair.create 3 10 Red Green 0
+
+    // Act
+    let newBoard = GameLogic.fixPuyoPair board pair
+
+    // Assert
+    let (pos1, pos2) = PuyoPair.getPositions pair
+    let (x1, y1) = pos1
+    Board.getCell board x1 y1 |> should equal Empty // 元のボードは空のまま
+    Board.getCell newBoard x1 y1 |> should equal (Filled Red) // 新しいボードには固定
+
+[<Fact>]
+let ``横に4つ並んだぷよを検出できる`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 0 11 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+        |> Board.setCell 3 11 (Filled Red)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 1
+    groups |> List.head |> List.length |> should equal 4
+
+[<Fact>]
+let ``縦に4つ並んだぷよを検出できる`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 2 8 (Filled Green)
+        |> Board.setCell 2 9 (Filled Green)
+        |> Board.setCell 2 10 (Filled Green)
+        |> Board.setCell 2 11 (Filled Green)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 1
+    groups |> List.head |> List.length |> should equal 4
+
+[<Fact>]
+let ``L字型につながった5つのぷよを検出できる`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 1 9 (Filled Blue)
+        |> Board.setCell 1 10 (Filled Blue)
+        |> Board.setCell 1 11 (Filled Blue)
+        |> Board.setCell 2 11 (Filled Blue)
+        |> Board.setCell 3 11 (Filled Blue)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 1
+    groups |> List.head |> List.length |> should equal 5
+
+[<Fact>]
+let ``3つ以下のぷよは検出されない`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 0 11 (Filled Yellow)
+        |> Board.setCell 1 11 (Filled Yellow)
+        |> Board.setCell 2 11 (Filled Yellow)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 0
+
+[<Fact>]
+let ``指定した位置のぷよを消去できる`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 0 11 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+        |> Board.setCell 3 11 (Filled Red)
+
+    // Act
+    let positions = [ (0, 11); (1, 11); (2, 11); (3, 11) ]
+    let newBoard = board |> Board.clearPuyos positions
+
+    // Assert
+    Board.getCell newBoard 0 11 |> should equal Empty
+    Board.getCell newBoard 1 11 |> should equal Empty
+    Board.getCell newBoard 2 11 |> should equal Empty
+    Board.getCell newBoard 3 11 |> should equal Empty
+
+[<Fact>]
+let ``浮いているぷよが重力で落下する`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 2 10 (Filled Red) // 浮いているぷよ
+        |> Board.setCell 2 11 (Filled Green) // 土台
+
+    // Act
+    let newBoard = Board.applyGravity board
+
+    // Assert
+    Board.getCell newBoard 2 10 |> should equal (Filled Red) // 落下して土台の上
+    Board.getCell newBoard 2 11 |> should equal (Filled Green) // 土台はそのまま
+
+[<Fact>]
+let ``複数列で独立して重力が適用される`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 3 9 (Filled Blue)
+        |> Board.setCell 3 11 (Filled Yellow)
+
+    // Act
+    let newBoard = Board.applyGravity board
+
+    // Assert
+    // 列1: 赤が底まで落ちる
+    Board.getCell newBoard 1 10 |> should equal Empty
+    Board.getCell newBoard 1 11 |> should equal (Filled Red)
+
+    // 列3: 青と黄色が詰まる
+    Board.getCell newBoard 3 9 |> should equal Empty
+    Board.getCell newBoard 3 10 |> should equal (Filled Blue)
+    Board.getCell newBoard 3 11 |> should equal (Filled Yellow)
+
+[<Fact>]
+let ``ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する`` () =
+    // Arrange
+    // 盤面配置:
+    // 0 0 2 0 0 0  (y=7)
+    // 0 0 2 0 0 0  (y=8)
+    // 0 0 2 0 0 0  (y=9)
+    // 0 1 1 2 0 0  (y=10)
+    // 0 1 1 0 0 0  (y=11)
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+        |> Board.setCell 3 10 (Filled Blue)
+        |> Board.setCell 2 7 (Filled Blue)
+        |> Board.setCell 2 8 (Filled Blue)
+        |> Board.setCell 2 9 (Filled Blue)
+
+    // Act & Assert
+    // 最初の消去判定（赤ぷよが4つ）
+    let groups1 = Board.findConnectedGroups board
+    groups1 |> should not' (be Empty)
+
+    // 消去実行
+    let positions1 = groups1 |> List.concat
+    let boardAfterClear1 = Board.clearPuyos positions1 board
+
+    // 落下処理
+    let boardAfterGravity = Board.applyGravity boardAfterClear1
+
+    // 連鎖判定（2回目の消去判定：青ぷよが4つつながる）
+    let groups2 = Board.findConnectedGroups boardAfterGravity
+
+    // 連鎖が発生していることを確認
+    groups2 |> should not' (be Empty)
+
+[<Fact>]
+let ``盤面上のぷよがすべて消えると全消しになる`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+
+    // Act
+    // 消去判定と実行
+    let groups = Board.findConnectedGroups board
+    let positions = groups |> List.concat
+    let clearedBoard = Board.clearPuyos positions board
+
+    // 全消し判定
+    let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+    // Assert
+    // 全消しになっていることを確認
+    isZenkeshi |> should equal true
+
+[<Fact>]
+let ``盤面上にぷよが残っていると全消しにならない`` () =
+    // Arrange
+    let board = Board.create 6 12
+
+    let board =
+        board
+        |> Board.setCell 1 10 (Filled Red)
+        |> Board.setCell 2 10 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
+        |> Board.setCell 3 11 (Filled Blue) // 消えないぷよ
+
+    // Act
+    // 消去判定と実行
+    let groups = Board.findConnectedGroups board
+    let positions = groups |> List.concat
+    let clearedBoard = Board.clearPuyos positions board
+
+    // 全消し判定
+    let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+    // Assert
+    // 全消しになっていないことを確認
+    isZenkeshi |> should equal false

@@ -516,22 +516,22 @@ WPFプロジェクトの設定を変更します（`src/PuyoPuyo.WPF/PuyoPuyo.WP
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <UseWPF>true</UseWPF>
-    <EnableDefaultPageItems>false</EnableDefaultPageItems>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <UseWPF>true</UseWPF>
+        <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="Domain.fs" />
-    <Compile Include="Program.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Domain.fs" />
+        <Compile Include="Program.fs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Elmish.WPF" Version="3.5.8" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Elmish.WPF" Version="3.5.8" />
+    </ItemGroup>
 
 </Project>
 ```
@@ -567,34 +567,34 @@ dotnet add tests/PuyoPuyo.Tests package FsUnit.xUnit
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <GenerateProgramFile>false</GenerateProgramFile>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <GenerateProgramFile>false</GenerateProgramFile>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="Tests.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Tests.fs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="FsUnit.xUnit" Version="7.1.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="xunit.v3" Version="3.0.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.3">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.msbuild" Version="6.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="FsUnit.xUnit" Version="7.1.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Include="xunit.v3" Version="3.0.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\PuyoPuyo.WPF\PuyoPuyo.WPF.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\PuyoPuyo.WPF\PuyoPuyo.WPF.fsproj" />
+    </ItemGroup>
 
 </Project>
 ```
@@ -1233,9 +1233,9 @@ git commit -m "feat: initialize F# Elmish.WPF Puyo Puyo project with test setup"
 このイテレーションで準備した環境：
 
 1. **バージョン管理**
-   - 既存の Git リポジトリを使用（case-study-game-dev）
-   - .gitignoreの設定（.NET / F# 対応）
-   - Conventional Commitsの規約
+    - 既存の Git リポジトリを使用（case-study-game-dev）
+    - .gitignoreの設定（.NET / F# 対応）
+    - Conventional Commitsの規約
 
 2. **プロジェクト構造**
    ```
@@ -1259,38 +1259,38 @@ git commit -m "feat: initialize F# Elmish.WPF Puyo Puyo project with test setup"
    ```
 
 3. **テスティング**
-   - xUnit v3 のセットアップ
-   - FsUnit.xUnit 7.1.1 の導入
-   - coverlet.msbuild 6.0.4 によるカバレッジ測定
-   - テストプロジェクトから WPF プロジェクトへの参照
+    - xUnit v3 のセットアップ
+    - FsUnit.xUnit 7.1.1 の導入
+    - coverlet.msbuild 6.0.4 によるカバレッジ測定
+    - テストプロジェクトから WPF プロジェクトへの参照
 
 4. **自動化**
-   - dotnet watch によるホットリロード
-   - Cake によるビルド自動化（型安全な C# スクリプト）
-   - タスク依存関係の管理
-   - クロスプラットフォーム対応（build.ps1 / build.sh）
-   - Fantomas によるコードフォーマット自動化
-   - FSharpLint による静的コード解析
-   - coverlet によるテストカバレッジ測定
-   - CI 環境での品質チェック自動化（`dotnet cake --target=CI`）
+    - dotnet watch によるホットリロード
+    - Cake によるビルド自動化（型安全な C# スクリプト）
+    - タスク依存関係の管理
+    - クロスプラットフォーム対応（build.ps1 / build.sh）
+    - Fantomas によるコードフォーマット自動化
+    - FSharpLint による静的コード解析
+    - coverlet によるテストカバレッジ測定
+    - CI 環境での品質チェック自動化（`dotnet cake --target=CI`）
 
 5. **Elmish.WPF の理解**
-   - Elmish.WPF 3.5.8 のセットアップ
-   - Elmish アーキテクチャの基本（Model-View-Update）
-   - 型安全な状態管理
-   - コードベースの UI 構築（XAML を使用しない）
-   - データバインディングの実装
+    - Elmish.WPF 3.5.8 のセットアップ
+    - Elmish アーキテクチャの基本（Model-View-Update）
+    - 型安全な状態管理
+    - コードベースの UI 構築（XAML を使用しない）
+    - データバインディングの実装
 
 6. **技術的な決定事項**
-   - .NET 9 の使用（.NET 10 は FSharpLint 非互換のため）
-   - global.json による SDK バージョン固定（9.0.305）
-   - コード重視のアプローチ（XAML ファイルを使用しない）
-   - 最小限の Elmish.WPF セットアップ（Model、Message、init、update、bindings）
+    - .NET 9 の使用（.NET 10 は FSharpLint 非互換のため）
+    - global.json による SDK バージョン固定（9.0.305）
+    - コード重視のアプローチ（XAML ファイルを使用しない）
+    - 最小限の Elmish.WPF セットアップ（Model、Message、init、update、bindings）
 
 7. **動作確認**
-   - `dotnet cake --target=Run` でアプリケーションが起動
-   - ウィンドウに「ぷよぷよゲーム」が表示されることを確認
-   - `dotnet cake --target=CI` ですべての品質チェックがパス
+    - `dotnet cake --target=Run` でアプリケーションが起動
+    - ウィンドウに「ぷよぷよゲーム」が表示されることを確認
+    - `dotnet cake --target=CI` ですべての品質チェックがパス
 
 「環境構築って面倒だな...」と思われたかもしれませんが、ここで準備したツールがこれからの開発を助けてくれます。テスト駆動開発では、テストを頻繁に実行し、小さな変更を積み重ねていきます。そのため、自動化されたテスト環境とバージョン管理が不可欠なのです。
 
@@ -1300,167 +1300,136 @@ git commit -m "feat: initialize F# Elmish.WPF Puyo Puyo project with test setup"
 
 環境構築の最後に、Elmish.WPF が正しく動作することを確認するための最小限のアプリケーションを作成します。
 
-このセットアップでは、Elmish.WPF の公式 Getting Started ガイドに従い、F# と C# の混合プロジェクト構成を採用します。F# でビジネスロジックを、C# で WPF の UI とエントリーポイントを管理します。
+**重要**: このチュートリアルではコード重視のアプローチを採用し、XAML ファイルは使用しません。すべての UI を F# コードで定義します。
 
-#### プロジェクト構成の概要
+#### Domain.fs の作成
 
-- **F# Class Library** (`src/PuyoPuyo.WPF`): Elmish のロジック（Model、Update、Bindings）を定義
-- **C# WPF App** (`src/PuyoPuyo.App`): XAML による UI 定義とアプリケーションのエントリーポイント
-
-#### ステップ 1: F# プロジェクトの設定
-
-F# Class Library プロジェクトファイル (`src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj`) を以下のように設定します:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWpf>true</UseWpf>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Elmish.WPF" Version="3.5.8" />
-  </ItemGroup>
-</Project>
-```
-
-#### ステップ 2: Model と Message の定義
-
-`src/PuyoPuyo.WPF/Counter.fs` にカウンターの例を実装します:
+Elmish の基本構造を `src/PuyoPuyo.WPF/Domain.fs` に作成します:
 
 ```fsharp
-module Counter
+namespace PuyoPuyo
 
-type Model =
-  { Count: int
-    StepSize: int }
+open Elmish
 
-type Msg =
-  | Increment
-  | Decrement
-  | SetStepSize of int
+/// <summary>
+/// Domain module
+/// </summary>
+module Domain =
+    /// <summary>
+    /// Model
+    /// </summary>
+    type Model = { Message: string }
 
-let init () =
-  { Count = 0
-    StepSize = 1 }
+    /// <summary>
+    /// Message
+    /// </summary>
+    type Message = unit
 
-let update msg m =
-  match msg with
-  | Increment -> { m with Count = m.Count + m.StepSize }
-  | Decrement -> { m with Count = m.Count - m.StepSize }
-  | SetStepSize x -> { m with StepSize = x }
+    /// <summary>
+    /// Initialize the model
+    /// </summary>
+    let init () = { Message = "ぷよぷよゲーム" }
+
+    /// <summary>
+    /// Update the model
+    /// </summary>
+    let update msg model = model
 ```
 
-#### ステップ 3: Bindings の定義
+#### Program.fs の作成
 
-同じファイルに bindings 関数を追加します:
+アプリケーションのエントリーポイントを `src/PuyoPuyo.WPF/Program.fs` に作成します:
 
 ```fsharp
+namespace PuyoPuyo
+
+open System
+open System.Windows
+open System.Windows.Controls
+open Elmish
 open Elmish.WPF
 
-let bindings () =
-  [
-    "CounterValue" |> Binding.oneWay (fun m -> m.Count)
-    "Increment" |> Binding.cmd (fun m -> Increment)
-    "Decrement" |> Binding.cmd (fun m -> Decrement)
-    "StepSize" |> Binding.twoWay(
-      (fun m -> float m.StepSize),
-      (fun newVal m -> int newVal |> SetStepSize))
-  ]
+/// <summary>
+/// Program module
+/// </summary>
+module Program =
+
+    /// <summary>
+    /// Bindings for Elmish.WPF
+    /// </summary>
+    let bindings () : Binding<Domain.Model, Domain.Message> list =
+        [ "Message" |> Binding.oneWay (fun m -> m.Message) ]
+
+    /// <summary>
+    /// Main entry point
+    /// </summary>
+    [<EntryPoint; STAThread>]
+    let main argv =
+        // TextBlockをコードで作成
+        let textBlock =
+            TextBlock(
+                FontSize = 24.0,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            )
+
+        textBlock.SetBinding(TextBlock.TextProperty, "Message") |> ignore
+
+        // Windowをコードで作成
+        let window = Window(Title = "PuyoPuyo", Width = 800.0, Height = 600.0, Content = textBlock)
+
+        Program.mkSimpleWpf Domain.init Domain.update bindings
+        |> Program.withConsoleTrace
+        |> Program.runWindowWithConfig
+            { ElmConfig.Default with
+                LogConsole = true
+                Measure = true }
+            window
+
+        0
 ```
 
-#### ステップ 4: Program.main の作成
+**ポイント**:
+- XAML を使用せず、すべて F# コードで UI を構築
+- `TextBlock` を `Window.Content` に直接設定
+- データバインディングは `SetBinding` メソッドで設定
+- Elmish.WPF の `bindings` で Model のプロパティを公開
 
-`src/PuyoPuyo.WPF/Program.fs` に Elmish ループを起動する関数を定義します:
+#### 動作確認とデバッグ
 
-```fsharp
-module Program
+WPF アプリケーションを実行するには:
 
-open Elmish.WPF
+```bash
+# 開発中の実行
+dotnet cake --target=Run
 
-let main window =
-  Program.mkSimple Counter.init Counter.update Counter.bindings
-  |> Program.runElmishLoop window
+# または watch モードで実行（ファイル変更を自動検出）
+dotnet cake --target=Watch
+
+# 直接実行する場合
+cd src/PuyoPuyo.WPF
+dotnet run
 ```
 
-#### ステップ 5: C# WPF プロジェクトの作成
+アプリケーションが起動し、ウィンドウの中央に「ぷよぷよゲーム」と表示されれば成功です。
 
-Visual Studio テンプレート「WPF App (.NET)」を使用して C# プロジェクトを作成します。
+#### ビルドと品質チェック
 
-プロジェクトファイル (`src/PuyoPuyo.App/PuyoPuyo.App.csproj`) を以下のように設定:
+すべてのタスクが正しく動作することを確認します:
 
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>  <!-- コンソールログを表示したい場合 -->
-    <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+```bash
+# コードフォーマット
+dotnet cake --target=Format
 
-  <ItemGroup>
-    <ProjectReference Include="..\PuyoPuyo.WPF\PuyoPuyo.WPF.fsproj" />
-  </ItemGroup>
-</Project>
+# CI パイプライン（フォーマット、Lint、テスト、カバレッジ）
+dotnet cake --target=CI
 ```
 
-#### ステップ 6: App.xaml.cs の変更
+すべてのチェックがパスすることを確認してください。
 
-`App.xaml.cs` を編集して、アプリケーション起動時に Elmish を初期化します:
-
-```csharp
-using System;
-using System.Windows;
-
-namespace PuyoPuyo.App
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            this.Activated += StartElmish;
-        }
-
-        private void StartElmish(object sender, EventArgs e)
-        {
-            this.Activated -= StartElmish;
-            Program.main(MainWindow);
-        }
-    }
-}
-```
-
-#### ステップ 7: MainWindow.xaml の作成
-
-XAML でバインディングを定義します:
-
-```xml
-<Window
-    x:Class="PuyoPuyo.App.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Counter Sample" Height="200" Width="400">
-  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-    <TextBlock Text="{Binding CounterValue}" FontSize="24" Margin="10"/>
-    <Button Command="{Binding Decrement}" Content="-" Width="40" Height="40" Margin="5"/>
-    <Button Command="{Binding Increment}" Content="+" Width="40" Height="40" Margin="5"/>
-    <TextBlock Text="{Binding StepSize}" FontSize="18" Margin="10"/>
-    <Slider Value="{Binding StepSize}" TickFrequency="1" Minimum="1" Maximum="10" Width="150"/>
-  </StackPanel>
-</Window>
-```
-
-#### 動作確認
-
-C# WPF プロジェクトを実行すると、カウンターアプリケーションが起動します:
-
-- カウンター値が表示される
-- `+` / `-` ボタンでカウントが増減する
-- スライダーでステップサイズを変更できる
-
-この構成により、F# でロジックを、XAML で UI を管理する明確な分離が実現します。
-
-[注: 以降のイテレーションでは、このアーキテクチャを踏襲し、ドメインロジックは F# で、UI は XAML で実装します]
+[注: 以降のイテレーションでは、ドメインロジック部分は Bolero 版と同じですが、
+View 部分を WPF のコード（または必要に応じて XAML）に、
+イベント処理を WPF の Command バインディングに変換します]
 
 ## イテレーション1: ゲーム開始の実装
 
@@ -2159,43 +2128,43 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `PuyoColor`：判別共用体を使った型安全な色定義
-   - `Cell`：セルの状態（空 or 色付き）
-   - `Board`：ゲームボード（イミュータブルな操作）
-   - `PuyoPair`：2つのぷよのペア（回転状態を含む）
+    - `PuyoColor`：判別共用体を使った型安全な色定義
+    - `Cell`：セルの状態（空 or 色付き）
+    - `Board`：ゲームボード（イミュータブルな操作）
+    - `PuyoPair`：2つのぷよのペア（回転状態を含む）
 
 2. **Elmish層**
-   - `Model`：ゲーム状態の定義（Board、CurrentPiece、Scoreなど）
-   - `Message`：イベントの定義（StartGame、ResetGameなど）
-   - `Update`：状態遷移ロジック
+    - `Model`：ゲーム状態の定義（Board、CurrentPiece、Scoreなど）
+    - `Message`：イベントの定義（StartGame、ResetGameなど）
+    - `Update`：状態遷移ロジック
 
 3. **View層（WPF固有）**
-   - XAML によるUIの宣言的定義
-   - Stylesによるスタイリング（CSSの代わり）
-   - ItemsControl によるボードの描画
-   - Command バインディングによるイベント処理
+    - XAML によるUIの宣言的定義
+    - Stylesによるスタイリング（CSSの代わり）
+    - ItemsControl によるボードの描画
+    - Command バインディングによるイベント処理
 
 4. **Bindings層（WPF固有）**
-   - `boardToRows`関数：ボードと現在のぷよを表示用データに変換
-   - `cellToColor`関数：セルの色を16進数文字列に変換
-   - `Binding.oneWay`：データの一方向バインディング
-   - `Binding.cmd`：コマンドバインディング
+    - `boardToRows`関数：ボードと現在のぷよを表示用データに変換
+    - `cellToColor`関数：セルの色を16進数文字列に変換
+    - `Binding.oneWay`：データの一方向バインディング
+    - `Binding.cmd`：コマンドバインディング
 
 5. **TDDサイクルの実践**
-   - Red：失敗するテストを先に作成
-   - Green：テストを通す実装
-   - Refactor：コードの整理
+    - Red：失敗するテストを先に作成
+    - Green：テストを通す実装
+    - Refactor：コードの整理
 
 6. **学んだ重要な概念**
-   - 判別共用体による型安全な定義
-   - イミュータブルなデータ構造
-   - レコードコピー式（`with`キーワード）
-   - Option型による安全なnull処理
-   - パターンマッチング
-   - Elmishの基本（Model-View-Update）
-   - **WPF固有**: XAMLによる宣言的UI定義
-   - **WPF固有**: データバインディング
-   - **WPF固有**: XAML Resourcesによるスタイル定義
+    - 判別共用体による型安全な定義
+    - イミュータブルなデータ構造
+    - レコードコピー式（`with`キーワード）
+    - Option型による安全なnull処理
+    - パターンマッチング
+    - Elmishの基本（Model-View-Update）
+    - **WPF固有**: XAMLによる宣言的UI定義
+    - **WPF固有**: データバインディング
+    - **WPF固有**: XAML Resourcesによるスタイル定義
 
 次のイテレーションでは、ぷよの移動機能を実装していきます。
 
@@ -2567,43 +2536,43 @@ git commit -m "feat: implement puyo movement with keyboard input
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `Direction` 判別共用体（Left, Right, Down）
-   - `GameLogic` モジュール：
-     - `isValidPosition`：位置の有効性チェック
-     - `canPlacePuyoPair`：ぷよペアの配置可能性チェック
-     - `tryMovePuyoPair`：移動試行（Option型を返す）
+    - `Direction` 判別共用体（Left, Right, Down）
+    - `GameLogic` モジュール：
+        - `isValidPosition`：位置の有効性チェック
+        - `canPlacePuyoPair`：ぷよペアの配置可能性チェック
+        - `tryMovePuyoPair`：移動試行（Option型を返す）
 
 2. **Elmish層**
-   - `MoveLeft` / `MoveRight` メッセージの処理
-   - ゲーム状態のガード（`when model.Status = Playing`）
-   - パターンマッチによる安全な状態遷移
+    - `MoveLeft` / `MoveRight` メッセージの処理
+    - ゲーム状態のガード（`when model.Status = Playing`）
+    - パターンマッチによる安全な状態遷移
 
 3. **View層**
-   - キーボードイベントハンドラ（`handleKeyDown`）
-   - `attr.tabindex` でフォーカス可能に
-   - キー操作説明の追加
+    - キーボードイベントハンドラ（`handleKeyDown`）
+    - `attr.tabindex` でフォーカス可能に
+    - キー操作説明の追加
 
 4. **テスト**
-   - ドメインロジックのテスト（4テスト）
-     - 左右移動の成功ケース
-     - 境界でのエラーケース
-   - Elmish統合テスト（4テスト）
-     - メッセージによる状態遷移
-     - ゲーム状態による動作制御
+    - ドメインロジックのテスト（4テスト）
+        - 左右移動の成功ケース
+        - 境界でのエラーケース
+    - Elmish統合テスト（4テスト）
+        - メッセージによる状態遷移
+        - ゲーム状態による動作制御
 
 5. **学んだ重要な概念**
-   - Option型による安全なエラーハンドリング
-   - 関数型プログラミングの純粋関数（副作用なし）
-   - Elmishにおける関心の分離（Domain/Elmish/View）
-   - パターンマッチングによる網羅的な処理
-   - `when`ガードによる条件付きパターンマッチ
-   - タプルによる座標の表現
+    - Option型による安全なエラーハンドリング
+    - 関数型プログラミングの純粋関数（副作用なし）
+    - Elmishにおける関心の分離（Domain/Elmish/View）
+    - パターンマッチングによる網羅的な処理
+    - `when`ガードによる条件付きパターンマッチ
+    - タプルによる座標の表現
 
 6. **TypeScript版との違い**
-   - キー入力検出をViewで処理（Domainは純粋関数）
-   - private フィールドアクセスの代わりにOption型
-   - イベントハンドラのバインド不要（関数型）
-   - nullチェックの代わりにパターンマッチ
+    - キー入力検出をViewで処理（Domainは純粋関数）
+    - private フィールドアクセスの代わりにOption型
+    - イベントハンドラのバインド不要（関数型）
+    - nullチェックの代わりにパターンマッチ
 
 次のイテレーションでは、ぷよの回転機能を実装していきます。
 
@@ -2969,51 +2938,51 @@ git commit -m "feat: implement puyo rotation with wall kick
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `PuyoPair.rotateClockwise`：時計回り回転（回転状態を+1）
-   - `PuyoPair.rotateCounterClockwise`：反時計回り回転（回転状態を+3）
-   - `GameLogic.tryRotatePuyoPair`：回転試行（壁キック処理付き）
-   - 壁キックロジック：左、右の順に1マスずらして配置可能性をチェック
+    - `PuyoPair.rotateClockwise`：時計回り回転（回転状態を+1）
+    - `PuyoPair.rotateCounterClockwise`：反時計回り回転（回転状態を+3）
+    - `GameLogic.tryRotatePuyoPair`：回転試行（壁キック処理付き）
+    - 壁キックロジック：左、右の順に1マスずらして配置可能性をチェック
 
 2. **Elmish層**
-   - `Rotate` メッセージの処理
-   - 回転失敗時の状態維持
-   - パターンマッチによる安全な処理
+    - `Rotate` メッセージの処理
+    - 回転失敗時の状態維持
+    - パターンマッチによる安全な処理
 
 3. **View層**
-   - 上矢印キーで回転
-   - 操作説明の更新
+    - 上矢印キーで回転
+    - 操作説明の更新
 
 4. **テスト**
-   - 回転ロジックの単体テスト（3テスト）
-     - 通常回転
-     - 回転状態の循環
-     - 位置の変化
-   - 壁キックのテスト（3テスト）
-     - 右端での左キック
-     - 左端での右キック
-     - キック不可の場合
-   - Elmish統合テスト（3テスト）
-     - 通常回転
-     - 壁キック発生
-     - 回転失敗
+    - 回転ロジックの単体テスト（3テスト）
+        - 通常回転
+        - 回転状態の循環
+        - 位置の変化
+    - 壁キックのテスト（3テスト）
+        - 右端での左キック
+        - 左端での右キック
+        - キック不可の場合
+    - Elmish統合テスト（3テスト）
+        - 通常回転
+        - 壁キック発生
+        - 回転失敗
 
 5. **学んだ重要な概念**
-   - 剰余演算による循環処理（`(n + k) % m`）
-   - 段階的なフォールバック処理（通常→左キック→右キック）
-   - Option型による連続的な試行
-   - イミュータブルなレコード更新（`{ pair with ... }`）
+    - 剰余演算による循環処理（`(n + k) % m`）
+    - 段階的なフォールバック処理（通常→左キック→右キック）
+    - Option型による連続的な試行
+    - イミュータブルなレコード更新（`{ pair with ... }`）
 
 6. **壁キック処理の工夫**
-   - まず通常回転を試す
-   - 失敗したら左に1マスずらす
-   - さらに失敗したら右に1マスずらす
-   - すべて失敗したら`None`を返す
-   - これにより、プレイヤーの意図を最大限尊重
+    - まず通常回転を試す
+    - 失敗したら左に1マスずらす
+    - さらに失敗したら右に1マスずらす
+    - すべて失敗したら`None`を返す
+    - これにより、プレイヤーの意図を最大限尊重
 
 7. **TypeScript版との違い**
-   - 壁キック処理を`tryRotatePuyoPair`に統合
-   - Option型による段階的な試行
-   - 重複コードなし（関数型のコンポジション）
+    - 壁キック処理を`tryRotatePuyoPair`に統合
+    - Option型による段階的な試行
+    - 重複コードなし（関数型のコンポジション）
 
 次のイテレーションでは、ぷよの自由落下機能を実装していきます。
 
@@ -3237,9 +3206,9 @@ module Subscription =
 1. 下に移動できるか試す
 2. 移動できたら新しい位置に更新
 3. 移動できない（着地）場合：
-   - 現在のぷよをボードに固定
-   - 新しいぷよを生成
-   - Modelを更新
+    - 現在のぷよをボードに固定
+    - 新しいぷよを生成
+    - Modelを更新
 
 ### テスト: Update関数の統合テスト
 
@@ -3373,48 +3342,48 @@ git commit -m "feat: implement auto-falling puyo with gravity
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `Board.fixPuyoPair`：ぷよペアをボードに固定（イミュータブル）
-   - パイプライン演算子による連鎖的な処理
+    - `Board.fixPuyoPair`：ぷよペアをボードに固定（イミュータブル）
+    - パイプライン演算子による連鎖的な処理
 
 2. **Elmish層**
-   - `Tick` メッセージ：タイマーイベント
-   - 自動落下ロジック：
-     - 下に移動を試みる
-     - 移動できたら位置を更新
-     - 着地したらボードに固定し新しいぷよを生成
-   - Subscription：ゲームタイマーの実装
+    - `Tick` メッセージ：タイマーイベント
+    - 自動落下ロジック：
+        - 下に移動を試みる
+        - 移動できたら位置を更新
+        - 着地したらボードに固定し新しいぷよを生成
+    - Subscription：ゲームタイマーの実装
 
 3. **Program設定**
-   - `Program.withSubscription`でタイマーを登録
-   - ゲームのライフサイクル管理
+    - `Program.withSubscription`でタイマーを登録
+    - ゲームのライフサイクル管理
 
 4. **テスト**
-   - ボードへの固定テスト（2テスト）
-     - 固定の成功
-     - イミュータビリティの確認
-   - 自動落下の統合テスト（3テスト）
-     - 通常の落下
-     - 着地と新ぷよ生成
-     - ゲーム状態による制御
+    - ボードへの固定テスト（2テスト）
+        - 固定の成功
+        - イミュータビリティの確認
+    - 自動落下の統合テスト（3テスト）
+        - 通常の落下
+        - 着地と新ぷよ生成
+        - ゲーム状態による制御
 
 5. **学んだ重要な概念**
-   - Elmish Subscription：外部イベントの統合
-   - IDisposable：リソースの適切な解放
-   - パイプライン演算子による関数合成
-   - タイマーのライフサイクル管理
-   - ゲーム状態による動作制御
+    - Elmish Subscription：外部イベントの統合
+    - IDisposable：リソースの適切な解放
+    - パイプライン演算子による関数合成
+    - タイマーのライフサイクル管理
+    - ゲーム状態による動作制御
 
 6. **Subscription の仕組み**
-   - `Sub<Message>`型：サブスクリプションの定義
-   - タプル：`[ [ "id" ], sub ]`形式でサブスクリプションを識別
-   - IDisposable：タイマーの停止とリソース解放
-   - モデル依存：`model.Status`に応じて動的に切り替え
+    - `Sub<Message>`型：サブスクリプションの定義
+    - タプル：`[ [ "id" ], sub ]`形式でサブスクリプションを識別
+    - IDisposable：タイマーの停止とリソース解放
+    - モデル依存：`model.Status`に応じて動的に切り替え
 
 7. **TypeScript版との違い**
-   - タイマーをSubscriptionとして宣言的に定義
-   - `requestAnimationFrame`の代わりに`System.Timers.Timer`
-   - コールバック地獄なし（メッセージベース）
-   - リソース管理が明確（IDisposable）
+    - タイマーをSubscriptionとして宣言的に定義
+    - `requestAnimationFrame`の代わりに`System.Timers.Timer`
+    - コールバック地獄なし（メッセージベース）
+    - リソース管理が明確（IDisposable）
 
 次のイテレーションでは、ぷよの高速落下機能を実装していきます。
 
@@ -3783,46 +3752,46 @@ git commit -m "feat: implement fast falling with down arrow key
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - 既存の`tryMovePuyoPair`を活用（Down方向）
+    - 既存の`tryMovePuyoPair`を活用（Down方向）
 
 2. **Elmish層**
-   - `IsFastFalling`：高速落下モードの状態
-   - `StartFastFall` / `StopFastFall` メッセージ
-   - `MoveDown` メッセージの処理
-   - `dropPuyo`：落下処理の共通化（リファクタリング）
+    - `IsFastFalling`：高速落下モードの状態
+    - `StartFastFall` / `StopFastFall` メッセージ
+    - `MoveDown` メッセージの処理
+    - `dropPuyo`：落下処理の共通化（リファクタリング）
 
 3. **View層**
-   - `handleKeyDown`：下矢印キーでMoveDownとStartFastFall
-   - `handleKeyUp`：キーを離したときにStopFastFall
-   - 操作説明の更新
+    - `handleKeyDown`：下矢印キーでMoveDownとStartFastFall
+    - `handleKeyUp`：キーを離したときにStopFastFall
+    - 操作説明の更新
 
 4. **Subscription**
-   - タイマー速度の動的切り替え（1000ms → 100ms）
-   - `model.IsFastFalling`に応じて速度を変更
+    - タイマー速度の動的切り替え（1000ms → 100ms）
+    - `model.IsFastFalling`に応じて速度を変更
 
 5. **テスト**
-   - MoveDownメッセージのテスト（2テスト）
-   - 高速落下モードの切り替えテスト（3テスト）
-   - ゲーム状態による制御
+    - MoveDownメッセージのテスト（2テスト）
+    - 高速落下モードの切り替えテスト（3テスト）
+    - ゲーム状態による制御
 
 6. **学んだ重要な概念**
-   - keydownとkeyupイベントの組み合わせ
-   - Subscriptionのモデル依存による動的な振る舞い
-   - リファクタリング：重複コードの関数抽出
-   - 状態フラグによる動作切り替え
-   - タイマー速度の動的変更
+    - keydownとkeyupイベントの組み合わせ
+    - Subscriptionのモデル依存による動的な振る舞い
+    - リファクタリング：重複コードの関数抽出
+    - 状態フラグによる動作切り替え
+    - タイマー速度の動的変更
 
 7. **リファクタリングの実践**
-   - Before：TickとMoveDownで重複コード
-   - After：`dropPuyo`関数に共通処理を抽出
-   - DRY原則（Don't Repeat Yourself）の実践
-   - 保守性の向上
+    - Before：TickとMoveDownで重複コード
+    - After：`dropPuyo`関数に共通処理を抽出
+    - DRY原則（Don't Repeat Yourself）の実践
+    - 保守性の向上
 
 8. **TypeScript版との違い**
-   - キー状態管理をModelで一元化
-   - keyup/keydownイベントを別々のメッセージに変換
-   - タイマー速度の宣言的な切り替え
-   - イベントリスナーの手動管理不要
+    - キー状態管理をModelで一元化
+    - keyup/keydownイベントを別々のメッセージに変換
+    - タイマー速度の宣言的な切り替え
+    - イベントリスナーの手動管理不要
 
 次のイテレーションでは、ぷよの消去機能を実装していきます。
 
@@ -4261,56 +4230,56 @@ git commit -m "feat: implement puyo clearing and gravity
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `findConnectedGroups`：BFSでつながったぷよを検出
-     - `getNeighbors`：隣接セルの取得
-     - `findConnectedPuyos`：再帰的BFS探索
-   - `clearPuyos`：指定位置のぷよを消去
-   - `applyGravity`：浮いているぷよを落とす
+    - `findConnectedGroups`：BFSでつながったぷよを検出
+        - `getNeighbors`：隣接セルの取得
+        - `findConnectedPuyos`：再帰的BFS探索
+    - `clearPuyos`：指定位置のぷよを消去
+    - `applyGravity`：浮いているぷよを落とす
 
 2. **アルゴリズム**
-   - BFS（幅優先探索）：つながったぷよの検出
-   - 訪問済み管理：`Set<int * int>`で重複探索を防止
-   - 列ごとの再配置：重力処理
+    - BFS（幅優先探索）：つながったぷよの検出
+    - 訪問済み管理：`Set<int * int>`で重複探索を防止
+    - 列ごとの再配置：重力処理
 
 3. **Elmish層**
-   - `dropPuyo`の拡張：着地→消去→**常に重力を適用**
-   - 消去の有無にかかわらず重力を適用することで浮遊ぷよを防止
+    - `dropPuyo`の拡張：着地→消去→**常に重力を適用**
+    - 消去の有無にかかわらず重力を適用することで浮遊ぷよを防止
 
 4. **テスト**
-   - つながったぷよの検出テスト（4テスト）
-     - 横に4つ
-     - 縦に4つ
-     - L字型に5つ
-     - 3つ以下は検出されない
-   - 消去処理のテスト（1テスト）
-   - 重力処理のテスト（2テスト）
-   - 統合テスト（2テスト）
-     - 着地時の消去処理
-     - **浮遊ぷよの重力適用**（重要なエッジケース）
+    - つながったぷよの検出テスト（4テスト）
+        - 横に4つ
+        - 縦に4つ
+        - L字型に5つ
+        - 3つ以下は検出されない
+    - 消去処理のテスト（1テスト）
+    - 重力処理のテスト（2テスト）
+    - 統合テスト（2テスト）
+        - 着地時の消去処理
+        - **浮遊ぷよの重力適用**（重要なエッジケース）
 
 5. **学んだ重要な概念**
-   - BFS（幅優先探索）アルゴリズム
-   - 再帰関数とパターンマッチング
-   - `Set`型による訪問済み管理
-   - `List.fold`による連鎖的な更新
-   - ミュータブルな配列の局所的な使用（重力処理）
-   - 列ごとのフィルタと再配置
-   - **パイプライン対応の関数設計**（引数順序の工夫）
+    - BFS（幅優先探索）アルゴリズム
+    - 再帰関数とパターンマッチング
+    - `Set`型による訪問済み管理
+    - `List.fold`による連鎖的な更新
+    - ミュータブルな配列の局所的な使用（重力処理）
+    - 列ごとのフィルタと再配置
+    - **パイプライン対応の関数設計**（引数順序の工夫）
 
 6. **F#らしい実装**
-   - 再帰関数によるBFS
-   - パターンマッチングによる分岐
-   - パイプライン演算子 `|>` を活用した可読性の高いコード
-   - データを最後の引数に配置する関数設計
-   - イミュータブルな設計（Set、List）
-   - パイプライン演算子による連鎖
-   - `List.fold`による集約
+    - 再帰関数によるBFS
+    - パターンマッチングによる分岐
+    - パイプライン演算子 `|>` を活用した可読性の高いコード
+    - データを最後の引数に配置する関数設計
+    - イミュータブルな設計（Set、List）
+    - パイプライン演算子による連鎖
+    - `List.fold`による集約
 
 7. **TypeScript版との違い**
-   - BFSの実装が再帰的で宣言的
-   - Setによる訪問済み管理（mutationなし）
-   - パイプライン演算子による可読性
-   - パターンマッチングによる安全な分岐
+    - BFSの実装が再帰的で宣言的
+    - Setによる訪問済み管理（mutationなし）
+    - パイプライン演算子による可読性
+    - パターンマッチングによる安全な分岐
 
 次のイテレーションでは、連鎖反応を実装していきます。
 
@@ -4550,9 +4519,9 @@ F# で連鎖処理を実装する際のポイントを見ていきましょう�
            // 処理して再帰呼び出し
            clearAndApplyGravityRepeatedly boardAfterGravity
    ```
-   - `rec` キーワードで再帰関数を定義
-   - 終了条件（消去グループなし）で再帰を止める
-   - 末尾再帰最適化により、スタックオーバーフローを防ぐ
+    - `rec` キーワードで再帰関数を定義
+    - 終了条件（消去グループなし）で再帰を止める
+    - 末尾再帰最適化により、スタックオーバーフローを防ぐ
 
 2. **不変性の維持**
    ```fsharp
@@ -4560,9 +4529,9 @@ F# で連鎖処理を実装する際のポイントを見ていきましょう�
    let boardAfterGravity = applyGravity clearedBoard
    clearAndApplyGravityRepeatedly boardAfterGravity
    ```
-   - 各ステップで新しい Board を返す
-   - 元の board は変更されない
-   - パイプライン処理で順次適用
+    - 各ステップで新しい Board を返す
+    - 元の board は変更されない
+    - パイプライン処理で順次適用
 
 3. **パターンマッチングによる分岐**
    ```fsharp
@@ -4571,8 +4540,8 @@ F# で連鎖処理を実装する際のポイントを見ていきましょう�
    else
        // 消去処理
    ```
-   - リストが空かどうかで処理を分岐
-   - F# の表現力豊かな条件分岐
+    - リストが空かどうかで処理を分岐
+    - F# の表現力豊かな条件分岐
 
 ### TypeScript版との違い
 
@@ -4581,18 +4550,18 @@ TypeScript 版では、ゲームループの状態遷移（モード切り替え
 ```typescript
 // TypeScript版の状態遷移
 case 'checkErase':
-  const eraseInfo = this.stage.checkErase()
-  if (eraseInfo.erasePuyoCount > 0) {
+const eraseInfo = this.stage.checkErase()
+if (eraseInfo.erasePuyoCount > 0) {
     this.stage.eraseBoards(eraseInfo.eraseInfo)
     this.mode = 'erasing'
-  } else {
+} else {
     this.mode = 'newPuyo'
-  }
-  break
+}
+break
 
 case 'erasing':
-  this.mode = 'checkFall'  // 消去後、重力チェックへ
-  break
+this.mode = 'checkFall'  // 消去後、重力チェックへ
+break
 ```
 
 一方、F# WPF 版では：
@@ -4726,25 +4695,25 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **再帰関数による連鎖処理**：
-   - `rec` キーワードで再帰関数を定義
-   - 終了条件を明確にする
-   - 末尾再帰最適化によるパフォーマンス
+    - `rec` キーワードで再帰関数を定義
+    - 終了条件を明確にする
+    - 末尾再帰最適化によるパフォーマンス
 
 2. **宣言的なコード**：
-   - TypeScript 版の状態遷移と比較してシンプル
-   - 関数型プログラミングの利点を活用
-   - 不変性により安全な処理
+    - TypeScript 版の状態遷移と比較してシンプル
+    - 関数型プログラミングの利点を活用
+    - 不変性により安全な処理
 
 3. **テスト駆動開発の継続**：
-   - 連鎖が発生するケースをテスト
-   - 消去なしのケースもテスト
-   - 複数連鎖のケースで動作確認
-   - テストで仕様を明確化
+    - 連鎖が発生するケースをテスト
+    - 消去なしのケースもテスト
+    - 複数連鎖のケースで動作確認
+    - テストで仕様を明確化
 
 4. **F# の表現力**：
-   - 再帰による自然な連鎖表現
-   - パターンマッチングによる分岐
-   - パイプライン演算子での処理の流れ
+    - 再帰による自然な連鎖表現
+    - パターンマッチングによる分岐
+    - パイプライン演算子での処理の流れ
 
 このイテレーションで、ぷよぷよの醍醐味である連鎖反応が実装できました。次のイテレーションでは、全消しボーナスを実装して、プレイヤーに特別な達成感を提供します！
 
@@ -5225,39 +5194,39 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **全消し判定の実装**：
-   - `Array.forall` による全要素チェック
-   - 二重の `forall` で2次元配列を処理
-   - シンプルなロジックで確実な判定を実現
+    - `Array.forall` による全要素チェック
+    - 二重の `forall` で2次元配列を処理
+    - シンプルなロジックで確実な判定を実現
 
 2. **スコア管理の設計**：
-   - レコード型による不変なスコア表現
-   - モジュールによる操作の抽出
-   - コピー式による安全な更新
+    - レコード型による不変なスコア表現
+    - モジュールによる操作の抽出
+    - コピー式による安全な更新
 
 3. **タプルによる複数戻り値**：
-   - `Board * bool` で最終盤面と全消しフラグを返す
-   - パターンマッチングで分解して利用
-   - F# の簡潔な複数値の扱い
+    - `Board * bool` で最終盤面と全消しフラグを返す
+    - パターンマッチングで分解して利用
+    - F# の簡潔な複数値の扱い
 
 4. **条件分岐によるボーナス加算**：
-   - if 式による全消しチェック
-   - 全消しの場合のみボーナス加算
-   - 不変性を保ちながら状態更新
+    - if 式による全消しチェック
+    - 全消しの場合のみボーナス加算
+    - 不変性を保ちながら状態更新
 
 5. **View への統合**：
-   - スコア表示の追加
-   - リアルタイムなスコア更新
-   - プレイヤーへのフィードバック
+    - スコア表示の追加
+    - リアルタイムなスコア更新
+    - プレイヤーへのフィードバック
 
 6. **テスト駆動開発の継続**：
-   - 全消しになるケースとならないケースの両方をテスト
-   - スコア管理の基本機能をテスト
-   - 統合テストで全体の動作を保証
+    - 全消しになるケースとならないケースの両方をテスト
+    - スコア管理の基本機能をテスト
+    - 統合テストで全体の動作を保証
 
 7. **F# の表現力**：
-   - `Array.forall` による宣言的な全要素チェック
-   - タプルによる複数戻り値の簡潔な表現
-   - パターンマッチングによる値の取り出し
+    - `Array.forall` による宣言的な全要素チェック
+    - タプルによる複数戻り値の簡潔な表現
+    - パターンマッチングによる値の取り出し
 
 このイテレーションで、全消しボーナスという特別な報酬システムが実装できました。次のイテレーションでは、ゲームの終了条件となるゲームオーバー判定を実装していきます！
 
@@ -5673,39 +5642,39 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **ゲームオーバー判定の実装**：
-   - 既存の `canPlacePuyoPair` 関数を再利用
-   - シンプルなロジックで確実な判定を実現
-   - 回転状態も自動的に考慮される
+    - 既存の `canPlacePuyoPair` 関数を再利用
+    - シンプルなロジックで確実な判定を実現
+    - 回転状態も自動的に考慮される
 
 2. **GameStatus の拡張**：
-   - `GameOver` 状態を追加
-   - 判別共用体による安全な状態管理
-   - パターンマッチングで状態に応じた処理
+    - `GameOver` 状態を追加
+    - 判別共用体による安全な状態管理
+    - パターンマッチングで状態に応じた処理
 
 3. **Elmish のメッセージ追加**：
-   - `Restart` メッセージでゲームリセット
-   - `init ()` を呼び出して初期状態に戻す
-   - シンプルなリスタート実装
+    - `Restart` メッセージでゲームリセット
+    - `init ()` を呼び出して初期状態に戻す
+    - シンプルなリスタート実装
 
 4. **Subscription の制御**：
-   - Status に応じてタイマーを制御
-   - GameOver 時はタイマーを停止
-   - リソースの適切な管理
+    - Status に応じてタイマーを制御
+    - GameOver 時はタイマーを停止
+    - リソースの適切な管理
 
 5. **View の条件分岐**：
-   - if 式によるゲームオーバー表示
-   - Status に応じた UI の切り替え
-   - リスタートボタンの表示制御
+    - if 式によるゲームオーバー表示
+    - Status に応じた UI の切り替え
+    - リスタートボタンの表示制御
 
 6. **テスト駆動開発の継続**：
-   - ゲームオーバーになるケースとならないケースをテスト
-   - 回転位置を考慮したテスト
-   - 境界条件のテスト
+    - ゲームオーバーになるケースとならないケースをテスト
+    - 回転位置を考慮したテスト
+    - 境界条件のテスト
 
 7. **F# の表現力**：
-   - 判別共用体による状態管理
-   - パターンマッチングによる分岐
-   - if 式による条件付き View 要素
+    - 判別共用体による状態管理
+    - パターンマッチングによる分岐
+    - if 式による条件付き View 要素
 
 このイテレーションで、ゲームオーバー判定とリスタート機能が実装できました。これで、ぷよぷよゲームの基本的な機能が完成しました！
 

@@ -13,20 +13,22 @@ type Model =
     { Board: Board
       CurrentPiece: PuyoPair option
       NextPiece: PuyoPair option
-      Score: int
+      Score: Score
       Level: int
       GameTime: int
       LastChainCount: int
-      Status: GameStatus }
+      Status: GameStatus
+      IsFastFalling: bool }
 
 module Model =
     /// 初期状態
     let init () : Model =
-        { Board = Board.create 6 13
+        { Board = Board.create 6 12
           CurrentPiece = None
           NextPiece = None
-          Score = 0
+          Score = Score.create ()
           Level = 1
           GameTime = 0
           LastChainCount = 0
-          Status = NotStarted }
+          Status = NotStarted
+          IsFastFalling = false }

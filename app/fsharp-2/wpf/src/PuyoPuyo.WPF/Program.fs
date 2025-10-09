@@ -28,38 +28,56 @@ module Program =
     let main argv =
         let mutable currentModel = Model.init ()
         let mutable boardContainerRef: Border option = None
+        let mutable infoContainerRef: Border option = None
+        let mutable gameTimerRef: System.Windows.Threading.DispatcherTimer option = None
 
-        // ゲーム開始時の処理
-        let onStartGame () =
-            let (newModel, _) = Update.update StartGame currentModel
+        // モデル更新とUI反映のヘルパー関数
+        let updateModelAndUI (message: Message) =
+            let (newModel, _) = Update.update message currentModel
             currentModel <- newModel
 
             match boardContainerRef with
             | Some container -> container.Child <- GameView.createBoardPanel currentModel
             | None -> ()
 
+            match infoContainerRef with
+            | Some container -> container.Child <- GameView.createInfoPanel currentModel
+            | None -> ()
+
+            // タイマー制御
+            match gameTimerRef with
+            | Some timer -> Subscription.controlTimer timer currentModel
+            | None -> ()
+
+        // ゲームタイマーを作成
+        let gameTimer = Subscription.createGameTimer updateModelAndUI
+        gameTimerRef <- Some gameTimer
+
+        // ゲーム開始時の処理
+        let onStartGame () = updateModelAndUI StartGame
+
         // キーボードイベントハンドラ
         let handleKeyDown (e: KeyEventArgs) =
             match e.Key with
-            | Key.Left ->
-                let (newModel, _) = Update.update MoveLeft currentModel
-                currentModel <- newModel
-
-                match boardContainerRef with
-                | Some container -> container.Child <- GameView.createBoardPanel currentModel
-                | None -> ()
-            | Key.Right ->
-                let (newModel, _) = Update.update MoveRight currentModel
-                currentModel <- newModel
-
-                match boardContainerRef with
-                | Some container -> container.Child <- GameView.createBoardPanel currentModel
-                | None -> ()
+            | Key.Left -> updateModelAndUI MoveLeft
+            | Key.Right -> updateModelAndUI MoveRight
+            | Key.Up -> updateModelAndUI Rotate
+            | Key.Down ->
+                updateModelAndUI MoveDown
+                updateModelAndUI StartFastFall
             | _ -> ()
 
-        // メインパネルとボードコンテナを作成
-        let (mainPanel, boardContainer) = GameView.createMainPanel (ref currentModel) onStartGame
+        let handleKeyUp (e: KeyEventArgs) =
+            match e.Key with
+            | Key.Down -> updateModelAndUI StopFastFall
+            | _ -> ()
+
+        // メインパネル、ボードコンテナ、情報コンテナを作成
+        let (mainPanel, boardContainer, infoContainer) =
+            GameView.createMainPanel (ref currentModel) onStartGame
+
         boardContainerRef <- Some boardContainer
+        infoContainerRef <- Some infoContainer
 
         // Windowをコードで作成
         let window =
@@ -67,6 +85,7 @@ module Program =
 
         // キーボードイベントを設定
         window.KeyDown.Add(handleKeyDown)
+        window.KeyUp.Add(handleKeyUp)
 
         Elmish.Program.mkProgram (fun () -> Model.init (), Cmd.none) Update.update bindings
         |> Program.withConsoleTrace
