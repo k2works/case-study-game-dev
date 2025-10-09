@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\PuyoPuyo.Core\PuyoPuyo.Core.fsproj" />
+    <ProjectReference Include="..\..\src\PuyoPuyo.WPF\PuyoPuyo.WPF.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -92,7 +92,7 @@
           }
         }
       },
-      "PuyoPuyo.Core/1.0.0": {
+      "PuyoPuyo.WPF/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
@@ -100,10 +100,10 @@
           "FSharp.Core": "9.0.303"
         },
         "compile": {
-          "bin/placeholder/PuyoPuyo.Core.dll": {}
+          "bin/placeholder/PuyoPuyo.WPF.dll": {}
         },
         "runtime": {
-          "bin/placeholder/PuyoPuyo.Core.dll": {}
+          "bin/placeholder/PuyoPuyo.WPF.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WPF"
@@ -192,15 +192,15 @@
         "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll"
       ]
     },
-    "PuyoPuyo.Core/1.0.0": {
+    "PuyoPuyo.WPF/1.0.0": {
       "type": "project",
-      "path": "../PuyoPuyo.Core/PuyoPuyo.Core.fsproj",
-      "msbuildProject": "../PuyoPuyo.Core/PuyoPuyo.Core.fsproj"
+      "path": "../PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj",
+      "msbuildProject": "../PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0-windows7.0": [
-      "PuyoPuyo.Core >= 1.0.0"
+      "PuyoPuyo.WPF >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -236,8 +236,8 @@
         "net9.0-windows7.0": {
           "targetAlias": "net9.0-windows",
           "projectReferences": {
-            "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj": {
-              "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj"
+            "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj": {
+              "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj"
             }
           }
         }

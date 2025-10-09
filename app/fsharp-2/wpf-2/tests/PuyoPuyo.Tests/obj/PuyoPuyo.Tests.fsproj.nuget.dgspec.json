@@ -4,14 +4,14 @@
     "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\tests\\PuyoPuyo.Tests\\PuyoPuyo.Tests.fsproj": {}
   },
   "projects": {
-    "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj": {
+    "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj",
-        "projectName": "PuyoPuyo.Core",
-        "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj",
+        "projectUniqueName": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj",
+        "projectName": "PuyoPuyo.WPF",
+        "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj",
         "packagesPath": "C:\\Users\\PC202411-1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\obj\\",
+        "outputPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -112,8 +112,8 @@
           "net9.0-windows7.0": {
             "targetAlias": "net9.0-windows",
             "projectReferences": {
-              "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj": {
-                "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj"
+              "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj": {
+                "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj"
               }
             }
           }

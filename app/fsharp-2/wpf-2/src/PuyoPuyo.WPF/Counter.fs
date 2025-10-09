@@ -21,7 +21,7 @@ let update msg m =
     | Decrement -> { m with Count = m.Count - m.StepSize }
     | SetStepSize x -> { m with StepSize = x }
 
-let bindings () (model: Model) (dispatch: Msg -> unit) =
+let bindings () =
     [
         "CounterValue" |> Binding.oneWay (fun m -> m.Count)
         "Increment" |> Binding.cmd (fun m -> Increment)

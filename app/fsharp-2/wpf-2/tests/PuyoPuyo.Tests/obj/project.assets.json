@@ -741,7 +741,7 @@
           }
         }
       },
-      "PuyoPuyo.Core/1.0.0": {
+      "PuyoPuyo.WPF/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
@@ -749,10 +749,10 @@
           "FSharp.Core": "9.0.303"
         },
         "compile": {
-          "bin/placeholder/PuyoPuyo.Core.dll": {}
+          "bin/placeholder/PuyoPuyo.WPF.dll": {}
         },
         "runtime": {
-          "bin/placeholder/PuyoPuyo.Core.dll": {}
+          "bin/placeholder/PuyoPuyo.WPF.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WPF"
@@ -1720,10 +1720,10 @@
         "xunit.v3.runner.inproc.console.nuspec"
       ]
     },
-    "PuyoPuyo.Core/1.0.0": {
+    "PuyoPuyo.WPF/1.0.0": {
       "type": "project",
-      "path": "../../src/PuyoPuyo.Core/PuyoPuyo.Core.fsproj",
-      "msbuildProject": "../../src/PuyoPuyo.Core/PuyoPuyo.Core.fsproj"
+      "path": "../../src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj",
+      "msbuildProject": "../../src/PuyoPuyo.WPF/PuyoPuyo.WPF.fsproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -1731,7 +1731,7 @@
       "FSharp.Core >= 9.0.303",
       "FsUnit.xUnit >= 7.1.1",
       "Microsoft.NET.Test.Sdk >= 17.14.1",
-      "PuyoPuyo.Core >= 1.0.0",
+      "PuyoPuyo.WPF >= 1.0.0",
       "coverlet.msbuild >= 6.0.4",
       "xunit.runner.visualstudio >= 3.1.3",
       "xunit.v3 >= 3.0.0"
@@ -1771,8 +1771,8 @@
         "net9.0-windows7.0": {
           "targetAlias": "net9.0-windows",
           "projectReferences": {
-            "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj": {
-              "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.Core\\PuyoPuyo.Core.fsproj"
+            "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj": {
+              "projectPath": "C:\\Users\\PC202411-1\\IdeaProjects\\case-study-game-dev\\app\\fsharp-2\\wpf-2\\src\\PuyoPuyo.WPF\\PuyoPuyo.WPF.fsproj"
             }
           }
         }
