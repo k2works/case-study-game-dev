@@ -28,6 +28,7 @@ module Program =
     let main argv =
         let mutable currentModel = Model.init ()
         let mutable boardContainerRef: Border option = None
+        let mutable infoContainerRef: Border option = None
         let mutable gameTimerRef: System.Windows.Threading.DispatcherTimer option = None
 
         // モデル更新とUI反映のヘルパー関数
@@ -37,6 +38,10 @@ module Program =
 
             match boardContainerRef with
             | Some container -> container.Child <- GameView.createBoardPanel currentModel
+            | None -> ()
+
+            match infoContainerRef with
+            | Some container -> container.Child <- GameView.createInfoPanel currentModel
             | None -> ()
 
             // タイマー制御
@@ -67,11 +72,12 @@ module Program =
             | Key.Down -> updateModelAndUI StopFastFall
             | _ -> ()
 
-        // メインパネルとボードコンテナを作成
-        let (mainPanel, boardContainer) =
+        // メインパネル、ボードコンテナ、情報コンテナを作成
+        let (mainPanel, boardContainer, infoContainer) =
             GameView.createMainPanel (ref currentModel) onStartGame
 
         boardContainerRef <- Some boardContainer
+        infoContainerRef <- Some infoContainer
 
         // Windowをコードで作成
         let window =
