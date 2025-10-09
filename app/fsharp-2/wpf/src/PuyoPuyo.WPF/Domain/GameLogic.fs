@@ -29,3 +29,26 @@ module GameLogic =
         let newPair = { pair with X = pair.X + dx; Y = pair.Y + dy }
 
         if canPlacePuyoPair board newPair then Some newPair else None
+
+    /// ぷよペアを回転（壁キック処理を含む）
+    let tryRotatePuyoPair (board: Board) (pair: PuyoPair) : PuyoPair option =
+        // 時計回りに回転
+        let rotated = PuyoPair.rotateClockwise pair
+
+        // 回転後の位置が有効かチェック
+        if canPlacePuyoPair board rotated then
+            Some rotated
+        else
+            // 壁キック: 左に1マスずらして試行
+            let kickedLeft = { rotated with X = rotated.X - 1 }
+
+            if canPlacePuyoPair board kickedLeft then
+                Some kickedLeft
+            else
+                // 壁キック: 右に1マスずらして試行
+                let kickedRight = { rotated with X = rotated.X + 1 }
+
+                if canPlacePuyoPair board kickedRight then
+                    Some kickedRight
+                else
+                    None // 回転不可

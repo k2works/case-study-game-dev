@@ -55,6 +55,13 @@ module Program =
                 match boardContainerRef with
                 | Some container -> container.Child <- GameView.createBoardPanel currentModel
                 | None -> ()
+            | Key.Up ->
+                let (newModel, _) = Update.update Rotate currentModel
+                currentModel <- newModel
+
+                match boardContainerRef with
+                | Some container -> container.Child <- GameView.createBoardPanel currentModel
+                | None -> ()
             | _ -> ()
 
         // メインパネルとボードコンテナを作成

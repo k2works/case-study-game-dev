@@ -63,3 +63,38 @@ let ``回転状態3のとき2つ目のぷよは左にある`` () =
     // Assert
     pos1 |> should equal (2, 5) // 軸ぷよ
     pos2 |> should equal (1, 5) // 2つ目のぷよは左
+
+[<Fact>]
+let ``時計回りに回転すると回転状態が1増える`` () =
+    // Arrange
+    let pair = PuyoPair.create 2 5 PuyoColor.Red PuyoColor.Green 0
+
+    // Act
+    let rotated = PuyoPair.rotateClockwise pair
+
+    // Assert
+    rotated.Rotation |> should equal 1
+
+[<Fact>]
+let ``回転状態3から時計回りに回転すると0に戻る`` () =
+    // Arrange
+    let pair = PuyoPair.create 2 5 PuyoColor.Red PuyoColor.Green 3
+
+    // Act
+    let rotated = PuyoPair.rotateClockwise pair
+
+    // Assert
+    rotated.Rotation |> should equal 0
+
+[<Fact>]
+let ``回転すると2つ目のぷよの位置が変わる`` () =
+    // Arrange
+    let pair = PuyoPair.create 3 5 PuyoColor.Red PuyoColor.Green 0 // 回転状態0（上）
+
+    // Act
+    let rotated = PuyoPair.rotateClockwise pair // 回転状態1（右）
+    let (pos1, pos2) = PuyoPair.getPositions rotated
+
+    // Assert
+    pos1 |> should equal (3, 5) // 軸ぷよは変わらない
+    pos2 |> should equal (4, 5) // 2つ目のぷよは右に

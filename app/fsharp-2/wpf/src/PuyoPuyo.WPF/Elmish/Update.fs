@@ -54,4 +54,12 @@ module Update =
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
 
+        | Rotate when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryRotatePuyoPair model.Board piece with
+                | Some rotatedPiece -> { model with CurrentPiece = Some rotatedPiece }, Cmd.none
+                | None -> model, Cmd.none
+            | None -> model, Cmd.none
+
         | _ -> model, Cmd.none
