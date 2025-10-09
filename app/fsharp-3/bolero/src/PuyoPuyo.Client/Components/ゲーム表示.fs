@@ -1,13 +1,11 @@
 namespace PuyoPuyo.Components
 
-open Bolero
 open Bolero.Html
 open PuyoPuyo.Elmish
 open PuyoPuyo.Domain
 
 module ゲーム画面 =
-    /// セルを描画
-    let private viewCell (セル: セル) =
+    let private セルを描画 (セル: セル) =
         let 色 =
             match セル with
             | 空 -> "#CCCCCC"
@@ -18,35 +16,33 @@ module ゲーム画面 =
             attr.style $"background-color: {色}"
         }
 
-    /// ボードを描画
-    let private viewBoard (盤面: 盤面) (currentPiece: ぷよペア option) =
-        // ボードのコピーを作成
-        let displayBoard =
-            Array.init 盤面.行数 (fun y -> Array.init 盤面.列数 (fun x -> PuyoPuyo.Domain.盤面.セル取得 盤面 x y))
+    let private ボードを描画 (盤面: 盤面) (現在のぷよペア: ぷよペア option) =
+        let ボードのコピー =
+            Array.init 盤面.行数 (fun 行 -> Array.init 盤面.列数 (fun 列 -> PuyoPuyo.Domain.盤面.セル取得 盤面 列 行))
 
         // 現在のぷよを重ねて表示
-        match currentPiece with
+        match 現在のぷよペア with
         | Some ピース ->
             let (位置1, 位置2) = ぷよペア.位置取得 ピース
-            let (x1, y1) = 位置1
-            let (x2, y2) = 位置2
+            let (列1, 行1) = 位置1
+            let (列2, 行2) = 位置2
 
-            if y1 >= 0 && y1 < 盤面.行数 && x1 >= 0 && x1 < 盤面.列数 then
-                displayBoard.[y1].[x1] <- 埋まっている ピース.ぷよ1の色
+            if 行1 >= 0 && 行1 < 盤面.行数 && 列1 >= 0 && 列1 < 盤面.列数 then
+                ボードのコピー.[行1].[列1] <- 埋まっている ピース.ぷよ1の色
 
-            if y2 >= 0 && y2 < 盤面.行数 && x2 >= 0 && x2 < 盤面.列数 then
-                displayBoard.[y2].[x2] <- 埋まっている ピース.ぷよ2の色
+            if 行2 >= 0 && 行2 < 盤面.行数 && 列2 >= 0 && 列2 < 盤面.列数 then
+                ボードのコピー.[行2].[列2] <- 埋まっている ピース.ぷよ2の色
         | None -> ()
 
         div {
             attr.``class`` "board"
 
-            for row in displayBoard do
+            for row in ボードのコピー do
                 div {
                     attr.``class`` "board-row"
 
                     for cell in row do
-                        viewCell cell
+                        セルを描画 cell
                 }
         }
 
@@ -56,7 +52,7 @@ module ゲーム画面 =
             attr.``class`` "game-container"
             h1 { "ぷよぷよゲーム" }
 
-            viewBoard モデル.盤面 モデル.現在のぷよ
+            ボードを描画 モデル.盤面 モデル.現在のぷよ
 
             div {
                 attr.``class`` "game-controls"
