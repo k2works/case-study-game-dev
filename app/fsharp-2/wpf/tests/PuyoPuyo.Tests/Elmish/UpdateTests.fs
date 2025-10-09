@@ -190,3 +190,71 @@ let ``着地時に4つ以上つながったぷよが消去される`` () =
     Board.getCell newModel.Board 1 12 |> should equal Empty
     Board.getCell newModel.Board 2 12 |> should equal Empty
     Board.getCell newModel.Board 3 12 |> should equal Empty
+
+[<Fact>]
+let ``着地時に宙に浮いたぷよに重力が適用される`` () =
+    // Arrange
+    let model = Model.init ()
+
+    // ボードに浮いた赤ぷよと、その下に土台となる緑ぷよを配置
+    let board =
+        model.Board
+        |> Board.setCell 3 10 (Filled Red) // 浮いているぷよ
+        |> Board.setCell 3 12 (Filled Green) // 土台
+
+    // 青いぷよペアを別の列の最下端に配置（消去が発生しない）
+    let pair = PuyoPair.create 1 12 Blue Blue 0
+
+    let model =
+        { model with
+            Board = board
+            CurrentPiece = Some pair
+            Status = Playing }
+
+    // Act
+    let (newModel, _) = Update.update Tick model
+
+    // Assert
+    // 浮いていた赤ぷよが落下している
+    Board.getCell newModel.Board 3 10 |> should equal Empty // 元の位置は空
+    Board.getCell newModel.Board 3 11 |> should equal (Filled Red) // 土台の上に落下
+    Board.getCell newModel.Board 3 12 |> should equal (Filled Green) // 土台はそのまま
+
+    // 着地した青ぷよも固定されている
+    Board.getCell newModel.Board 1 12 |> should equal (Filled Blue)
+    Board.getCell newModel.Board 1 11 |> should equal (Filled Blue)
+
+[<Fact>]
+let ``消去が発生しない着地でも重力が適用される`` () =
+    // Arrange
+    let model = Model.init ()
+
+    // ボードに浮いた黄色ぷよを複数配置
+    let board =
+        model.Board
+        |> Board.setCell 0 8 (Filled Yellow) // 浮いているぷよ
+        |> Board.setCell 2 9 (Filled Yellow) // 浮いているぷよ
+        |> Board.setCell 4 10 (Filled Yellow) // 浮いているぷよ
+
+    // 赤いぷよペアを最下端に配置（消去が発生しない）
+    let pair = PuyoPair.create 1 12 Red Red 0
+
+    let model =
+        { model with
+            Board = board
+            CurrentPiece = Some pair
+            Status = Playing }
+
+    // Act
+    let (newModel, _) = Update.update Tick model
+
+    // Assert
+    // すべての浮いていたぷよが底まで落下している
+    Board.getCell newModel.Board 0 8 |> should equal Empty
+    Board.getCell newModel.Board 0 12 |> should equal (Filled Yellow)
+
+    Board.getCell newModel.Board 2 9 |> should equal Empty
+    Board.getCell newModel.Board 2 12 |> should equal (Filled Yellow)
+
+    Board.getCell newModel.Board 4 10 |> should equal Empty
+    Board.getCell newModel.Board 4 12 |> should equal (Filled Yellow)
