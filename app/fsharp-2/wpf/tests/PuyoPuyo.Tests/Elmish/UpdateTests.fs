@@ -28,7 +28,7 @@ let ``Tickメッセージでぷよが下に移動する`` () =
 let ``着地したぷよはボードに固定され新しいぷよが生成される`` () =
     // Arrange
     let model = Model.init ()
-    let pair = PuyoPair.create 3 12 Red Green 0 // 軸ぷよが最下端
+    let pair = PuyoPair.create 3 11 Red Green 0 // 軸ぷよが最下端
 
     let model =
         { model with
@@ -40,8 +40,8 @@ let ``着地したぷよはボードに固定され新しいぷよが生成さ�
 
     // Assert
     // 着地したぷよがボードに固定されている
-    Board.getCell newModel.Board 3 12 |> should equal (Filled Red)
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Green)
+    Board.getCell newModel.Board 3 11 |> should equal (Filled Red)
+    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
 
     // 新しいぷよが生成されている
     match newModel.CurrentPiece with
@@ -92,7 +92,7 @@ let ``MoveDownメッセージでぷよが下に移動する`` () =
 let ``MoveDownで下端に到達した場合は着地する`` () =
     // Arrange
     let model = Model.init ()
-    let pair = PuyoPair.create 3 12 Red Green 0 // 最下端
+    let pair = PuyoPair.create 3 11 Red Green 0 // 最下端
 
     let model =
         { model with
@@ -104,8 +104,8 @@ let ``MoveDownで下端に到達した場合は着地する`` () =
 
     // Assert
     // 着地してボードに固定
-    Board.getCell newModel.Board 3 12 |> should equal (Filled Red)
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Green)
+    Board.getCell newModel.Board 3 11 |> should equal (Filled Red)
+    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
 
     // 新しいぷよが生成
     match newModel.CurrentPiece with
@@ -168,12 +168,12 @@ let ``着地時に4つ以上つながったぷよが消去される`` () =
     // ボードに赤いぷよを3つ横に配置
     let board =
         model.Board
-        |> Board.setCell 0 12 (Filled Red)
-        |> Board.setCell 1 12 (Filled Red)
-        |> Board.setCell 2 12 (Filled Red)
+        |> Board.setCell 0 11 (Filled Red)
+        |> Board.setCell 1 11 (Filled Red)
+        |> Board.setCell 2 11 (Filled Red)
 
-    // 赤いぷよペアを(3,12)に配置（着地すると横に4つ並ぶ）
-    let pair = PuyoPair.create 3 12 Red Red 0
+    // 赤いぷよペアを(3,11)に配置（着地すると横に4つ並ぶ）
+    let pair = PuyoPair.create 3 11 Red Red 0
 
     let model =
         { model with
@@ -186,10 +186,10 @@ let ``着地時に4つ以上つながったぷよが消去される`` () =
 
     // Assert
     // 4つ並んだ赤いぷよが消えている
-    Board.getCell newModel.Board 0 12 |> should equal Empty
-    Board.getCell newModel.Board 1 12 |> should equal Empty
-    Board.getCell newModel.Board 2 12 |> should equal Empty
-    Board.getCell newModel.Board 3 12 |> should equal Empty
+    Board.getCell newModel.Board 0 11 |> should equal Empty
+    Board.getCell newModel.Board 1 11 |> should equal Empty
+    Board.getCell newModel.Board 2 11 |> should equal Empty
+    Board.getCell newModel.Board 3 11 |> should equal Empty
 
 [<Fact>]
 let ``着地時に宙に浮いたぷよに重力が適用される`` () =
@@ -200,10 +200,10 @@ let ``着地時に宙に浮いたぷよに重力が適用される`` () =
     let board =
         model.Board
         |> Board.setCell 3 10 (Filled Red) // 浮いているぷよ
-        |> Board.setCell 3 12 (Filled Green) // 土台
+        |> Board.setCell 3 11 (Filled Green) // 土台
 
     // 青いぷよペアを別の列の最下端に配置（消去が発生しない）
-    let pair = PuyoPair.create 1 12 Blue Blue 0
+    let pair = PuyoPair.create 1 11 Blue Blue 0
 
     let model =
         { model with
@@ -215,14 +215,13 @@ let ``着地時に宙に浮いたぷよに重力が適用される`` () =
     let (newModel, _) = Update.update Tick model
 
     // Assert
-    // 浮いていた赤ぷよが落下している
-    Board.getCell newModel.Board 3 10 |> should equal Empty // 元の位置は空
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Red) // 土台の上に落下
-    Board.getCell newModel.Board 3 12 |> should equal (Filled Green) // 土台はそのまま
+    // 浮いていた赤ぷよが土台の上に落下している
+    Board.getCell newModel.Board 3 10 |> should equal (Filled Red) // 土台の上に落下
+    Board.getCell newModel.Board 3 11 |> should equal (Filled Green) // 土台はそのまま
 
     // 着地した青ぷよも固定されている
-    Board.getCell newModel.Board 1 12 |> should equal (Filled Blue)
     Board.getCell newModel.Board 1 11 |> should equal (Filled Blue)
+    Board.getCell newModel.Board 1 10 |> should equal (Filled Blue)
 
 [<Fact>]
 let ``消去が発生しない着地でも重力が適用される`` () =
@@ -237,7 +236,7 @@ let ``消去が発生しない着地でも重力が適用される`` () =
         |> Board.setCell 4 10 (Filled Yellow) // 浮いているぷよ
 
     // 赤いぷよペアを最下端に配置（消去が発生しない）
-    let pair = PuyoPair.create 1 12 Red Red 0
+    let pair = PuyoPair.create 1 11 Red Red 0
 
     let model =
         { model with
@@ -251,13 +250,13 @@ let ``消去が発生しない着地でも重力が適用される`` () =
     // Assert
     // すべての浮いていたぷよが底まで落下している
     Board.getCell newModel.Board 0 8 |> should equal Empty
-    Board.getCell newModel.Board 0 12 |> should equal (Filled Yellow)
+    Board.getCell newModel.Board 0 11 |> should equal (Filled Yellow)
 
     Board.getCell newModel.Board 2 9 |> should equal Empty
-    Board.getCell newModel.Board 2 12 |> should equal (Filled Yellow)
+    Board.getCell newModel.Board 2 11 |> should equal (Filled Yellow)
 
     Board.getCell newModel.Board 4 10 |> should equal Empty
-    Board.getCell newModel.Board 4 12 |> should equal (Filled Yellow)
+    Board.getCell newModel.Board 4 11 |> should equal (Filled Yellow)
 
 [<Fact>]
 let ``新しいぷよを配置できない場合はゲームオーバーになる`` () =
@@ -269,9 +268,9 @@ let ``新しいぷよを配置できない場合はゲームオーバーにな�
     let board =
         model.Board
         // 土台（最下段）
-        |> Board.setCell 1 12 (Filled Blue)
-        |> Board.setCell 2 12 (Filled Blue)
-        |> Board.setCell 3 12 (Filled Blue)
+        |> Board.setCell 1 11 (Filled Blue)
+        |> Board.setCell 2 11 (Filled Blue)
+        |> Board.setCell 3 11 (Filled Blue)
         // 新しいぷよの配置位置をブロック
         |> Board.setCell 2 0 (Filled Red) // 回転状態0の2つ目のぷよ位置
         |> Board.setCell 2 1 (Filled Blue) // 軸ぷよ位置
@@ -309,7 +308,7 @@ let ``新しいぷよを配置できない場合はゲームオーバーにな�
         |> Board.setCell 3 11 (Filled Green)
 
     // 現在のぷよを最下端に配置（着地後に新しいぷよが生成される）
-    let pair = PuyoPair.create 0 12 Blue Blue 0
+    let pair = PuyoPair.create 0 11 Blue Blue 0
 
     let model =
         { model with

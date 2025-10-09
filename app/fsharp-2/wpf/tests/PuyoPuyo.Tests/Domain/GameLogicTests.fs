@@ -9,7 +9,7 @@ module GameLogicTests =
     [<Fact>]
     let ``ぷよペアを左に移動できる`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 3 5 Red Green 0
 
         // Act
@@ -25,7 +25,7 @@ module GameLogicTests =
     [<Fact>]
     let ``ぷよペアを右に移動できる`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 2 5 Red Green 0
 
         // Act
@@ -41,7 +41,7 @@ module GameLogicTests =
     [<Fact>]
     let ``左端では左に移動できない`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 0 5 Red Green 0
 
         // Act
@@ -53,7 +53,7 @@ module GameLogicTests =
     [<Fact>]
     let ``右端では右に移動できない`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 5 5 Red Green 0
 
         // Act
@@ -65,7 +65,7 @@ module GameLogicTests =
     [<Fact>]
     let ``回転を考慮して右端で右に移動できない`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         // 回転=1(右向き)の場合、2つ目のぷよは右に配置される
         let pair = PuyoPair.create 4 5 Red Green 1
 
@@ -78,7 +78,7 @@ module GameLogicTests =
     [<Fact>]
     let ``通常の回転ができる`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 3 5 Red Green 0
 
         // Act
@@ -92,7 +92,7 @@ module GameLogicTests =
     [<Fact>]
     let ``右端で回転すると左にキックされる`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 5 5 Red Green 0 // 右端、回転状態0（上）
 
         // Act
@@ -108,7 +108,7 @@ module GameLogicTests =
     [<Fact>]
     let ``左端で回転状態2から回転すると右にキックされる`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 0 5 Red Green 2 // 左端、回転状態2（下）
 
         // Act
@@ -125,7 +125,7 @@ module GameLogicTests =
     [<Fact>]
     let ``壁キックできない場合は回転しない`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         // 右隣にぷよを配置（壁キックできない状況を作る）
         let board = Board.setCell 4 5 (Filled Blue) board
         let pair = PuyoPair.create 5 5 Red Green 0
@@ -139,7 +139,7 @@ module GameLogicTests =
     [<Fact>]
     let ``ぷよペアを下に移動できる`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let pair = PuyoPair.create 3 5 Red Green 0
 
         // Act
@@ -153,8 +153,8 @@ module GameLogicTests =
     [<Fact>]
     let ``下端では下に移動できない`` () =
         // Arrange
-        let board = Board.create 6 13
-        let pair = PuyoPair.create 3 12 Red Green 0 // 軸ぷよが y=12（最下端）、回転状態0（上）なので2つ目のぷよは y=11
+        let board = Board.create 6 12
+        let pair = PuyoPair.create 3 11 Red Green 0 // 軸ぷよが y=11（最下端）、回転状態0（上）なので2つ目のぷよは y=10
 
         // Act
         let result = GameLogic.tryMovePuyoPair board pair Down
@@ -165,7 +165,7 @@ module GameLogicTests =
     [<Fact>]
     let ``下にぷよがある場合は移動できない`` () =
         // Arrange
-        let board = Board.create 6 13
+        let board = Board.create 6 12
         let board = Board.setCell 3 6 (Filled Blue) board // 軸ぷよの真下に障害物
         let pair = PuyoPair.create 3 5 Red Green 0
 
@@ -179,7 +179,7 @@ module GameLogicTests =
     let ``新しいぷよを配置できない場合、ゲームオーバーになる`` () =
         // Arrange
         // ボードの上部（新しいぷよが配置される位置）にぷよを配置
-        let board = Board.create 6 13
+        let board = Board.create 6 12
 
         let board =
             board
@@ -201,7 +201,7 @@ module GameLogicTests =
     let ``新しいぷよを配置できる場合、ゲームオーバーにならない`` () =
         // Arrange
         // 空のボード
-        let board = Board.create 6 13
+        let board = Board.create 6 12
 
         // 新しいぷよペア
         let newPiece = PuyoPair.create 2 1 Blue Green 0

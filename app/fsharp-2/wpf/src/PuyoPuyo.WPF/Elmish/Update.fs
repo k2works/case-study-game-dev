@@ -96,7 +96,7 @@ module Update =
             let nextPiece = PuyoPair.createRandom 2 1 0
 
             { model with
-                Board = Board.create 6 13
+                Board = Board.create 6 12
                 CurrentPiece = Some firstPiece
                 NextPiece = Some nextPiece
                 Score = Score.create ()

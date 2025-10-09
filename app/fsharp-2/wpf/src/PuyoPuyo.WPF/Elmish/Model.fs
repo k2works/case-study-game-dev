@@ -23,7 +23,7 @@ type Model =
 module Model =
     /// 初期状態
     let init () : Model =
-        { Board = Board.create 6 13
+        { Board = Board.create 6 12
           CurrentPiece = None
           NextPiece = None
           Score = Score.create ()
