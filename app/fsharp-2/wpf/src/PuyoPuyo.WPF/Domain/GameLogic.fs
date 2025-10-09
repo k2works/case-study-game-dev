@@ -7,6 +7,16 @@ type Direction =
     | Down
 
 module GameLogic =
+    /// ぷよペアをボードに固定
+    let fixPuyoPair (board: Board) (pair: PuyoPair) : Board =
+        let (pos1, pos2) = PuyoPair.getPositions pair
+        let (x1, y1) = pos1
+        let (x2, y2) = pos2
+
+        board
+        |> Board.setCell x1 y1 (Filled pair.Puyo1Color)
+        |> Board.setCell x2 y2 (Filled pair.Puyo2Color)
+
     /// ぷよペアが指定位置に配置可能かチェック
     let private isValidPosition (board: Board) (x: int) (y: int) : bool =
         y >= 0

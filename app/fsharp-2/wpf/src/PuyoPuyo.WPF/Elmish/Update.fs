@@ -11,6 +11,7 @@ type Message =
     | MoveRight
     | MoveDown
     | Rotate
+    | Tick
     | HardDrop
     | GameStep
     | TimeStep
@@ -69,6 +70,27 @@ module Update =
                         CurrentPiece = Some rotatedPiece },
                     Cmd.none
                 | None -> model, Cmd.none
+            | None -> model, Cmd.none
+
+        | Tick when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                // 下に移動を試みる
+                match GameLogic.tryMovePuyoPair model.Board piece Down with
+                | Some movedPiece ->
+                    // 移動成功
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    Cmd.none
+                | None ->
+                    // 移動できない（着地）
+                    let newBoard = GameLogic.fixPuyoPair model.Board piece
+                    let nextPiece = PuyoPair.createRandom 2 1 0
+
+                    { model with
+                        Board = newBoard
+                        CurrentPiece = Some nextPiece },
+                    Cmd.none
             | None -> model, Cmd.none
 
         | _ -> model, Cmd.none
