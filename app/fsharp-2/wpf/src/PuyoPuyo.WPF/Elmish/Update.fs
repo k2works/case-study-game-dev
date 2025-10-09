@@ -55,17 +55,23 @@ module Update =
                         else
                             score)
 
-                // 5. 次のぷよを生成
-                let nextPiece = PuyoPair.createRandom 2 1 0
+                // 5. 次のぷよを CurrentPiece に、新しい NextPiece を生成
+                let currentPiece =
+                    match model.NextPiece with
+                    | Some piece -> piece
+                    | None -> PuyoPair.createRandom 2 1 0
+
+                let newNextPiece = PuyoPair.createRandom 2 1 0
 
                 // 6. ゲームオーバー判定
-                let isGameOver = GameLogic.checkGameOver boardAfterChain nextPiece
+                let isGameOver = GameLogic.checkGameOver boardAfterChain currentPiece
 
                 if isGameOver then
                     // ゲームオーバー
                     { model with
                         Board = boardAfterChain
                         CurrentPiece = None
+                        NextPiece = Some newNextPiece
                         Score = newScore
                         LastChainCount = chainCount
                         Status = GameOver },
@@ -74,7 +80,8 @@ module Update =
                     // ゲーム続行
                     { model with
                         Board = boardAfterChain
-                        CurrentPiece = Some nextPiece
+                        CurrentPiece = Some currentPiece
+                        NextPiece = Some newNextPiece
                         Score = newScore
                         LastChainCount = chainCount },
                     Cmd.none
