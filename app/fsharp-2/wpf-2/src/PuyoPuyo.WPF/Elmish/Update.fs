@@ -1,6 +1,7 @@
 module Elmish.Update
 
 open System
+open Domain.Board
 open Domain.GameLogic
 open Domain.PuyoPair
 open Elmish.Model
@@ -16,12 +17,25 @@ let private dropPuyo (random: Random) (model: Model) =
             { model with
                 CurrentPair = Some movedPair }
         | None ->
-            // 移動できない場合、ぷよを固定して新しいぷよを生成
-            let newBoard = fixPuyoPair model.Board pair
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+
+            // 消去処理
+            let groups = findConnectedGroups boardWithPuyo
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    applyGravity boardWithPuyo
+                else
+                    let positions = groups |> List.concat
+                    boardWithPuyo
+                    |> clearPuyos positions
+                    |> applyGravity
+
+            // 新しいぷよを生成
             let newPair = generatePuyoPair random
 
             { model with
-                Board = newBoard
+                Board = boardAfterClear
                 CurrentPair = Some newPair }
     | None -> model
 

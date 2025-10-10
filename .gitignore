@@ -182,4 +182,4 @@ venv/
 ENV/
 env/
 htmlcov
-.coverage
+.coveragenul

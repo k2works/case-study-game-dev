@@ -256,3 +256,38 @@ module ``ぷよの高速落下`` =
 
         // 新しいぷよペアが生成される
         newModel.CurrentPair |> should not' (equal None)
+
+module ``ぷよの消去`` =
+    [<Fact>]
+    let ``着地時に4つ以上つながったぷよが消える`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ボードに赤いぷよを 3 つ並べておく
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+
+        // 赤いぷよペアを上から落とす
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 4つつながって消える
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 9 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 8 newModel.Board |> should equal Domain.Puyo.Empty
