@@ -5,6 +5,7 @@
     <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
     <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

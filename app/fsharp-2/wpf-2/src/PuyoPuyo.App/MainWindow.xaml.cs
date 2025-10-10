@@ -15,19 +15,25 @@ namespace PuyoPuyo.App
         {
             if (DataContext == null) return;
 
-            var viewModel = DataContext as dynamic;
-            if (viewModel == null) return;
+            var viewModelType = DataContext.GetType();
+            ICommand? command = null;
 
             switch (e.Key)
             {
                 case Key.Left:
-                    viewModel.MoveLeft?.Execute(null);
-                    e.Handled = true;
+                    var moveLeftProp = viewModelType.GetProperty("MoveLeft");
+                    command = moveLeftProp?.GetValue(DataContext) as ICommand;
                     break;
                 case Key.Right:
-                    viewModel.MoveRight?.Execute(null);
-                    e.Handled = true;
+                    var moveRightProp = viewModelType.GetProperty("MoveRight");
+                    command = moveRightProp?.GetValue(DataContext) as ICommand;
                     break;
+            }
+
+            if (command?.CanExecute(null) == true)
+            {
+                command.Execute(null);
+                e.Handled = true;
             }
         }
     }
