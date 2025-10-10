@@ -2973,57 +2973,81 @@ module GameLogic =
 
 ### Update 関数の拡張
 
-「ドメインロジックができたので、次はElmishのUpdate関数を拡張しましょう！」はい、Rotateメッセージを処理できるようにします。
+「ドメインロジックができたので、次は Elmish の Update 関数を拡張しましょう！」はい、Rotate メッセージを処理できるようにします。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | Rotate when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryRotatePuyoPair model.Board piece with
-            | Some rotatedPiece ->
-                { model with CurrentPiece = Some rotatedPiece }, Cmd.none
-            | None ->
-                model, Cmd.none
-        | None ->
-            model, Cmd.none
+// src/PuyoPuyo.WPF/Elmish/Update.fs（updateWithRandom の Rotate 処理）
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
 ```
 
-「移動の処理と同じパターンですね！」そうです！以下の点をチェックしています：
+「シンプルですね！」そうです！以下の処理を行っています：
 
-1. ゲーム中（Playing）のみ回転可能
-2. 現在のぷよが存在するか
-3. 回転が成功したか（壁キック含む）
+1. 現在のぷよペアが存在するか確認
+2. `tryRotatePuyoPair` で回転を試みる（壁キック処理含む）
+3. 成功したら新しい回転状態のペアでモデルを更新
+4. 失敗したら現在のモデルをそのまま返す
+
+**Elmish.WPF 版の特徴**:
+- `Cmd` を返さず、`Model` のみを返す
+- `when model.GameState = Playing` のような条件は不要（シンプルな実装）
 
 ### View の拡張
 
-「次はViewでキーボード入力を受け取るようにしましょう！」はい、上矢印キーで回転できるようにします。
+「次は View でキーボード入力を受け取るようにしましょう！」はい、上矢印キーで回転できるようにします。
+
+Elmish.WPF では、XAML の `KeyBinding` と F# の `Binding.cmd` を組み合わせて使います。
+
+まず、GameView.fs に Rotate コマンドのバインディングを追加します：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（handleKeyDownの更新）
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | "ArrowUp" -> dispatch Rotate
-        | _ -> ()
+// src/PuyoPuyo.WPF/Components/GameView.fs（bindingsの更新）
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun _ -> 0)
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]  // 追加
 ```
 
-「シンプルですね！」そうです！上矢印キーが押されたら`Rotate`メッセージをdispatchするだけです。
+次に、XAML でキーバインディングを定義します：
 
-操作説明も更新しましょう：
-
-```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（viewの更新）
-                | Playing ->
-                    div [] [
-                        p [] [text "← →: 左右移動"]
-                        p [] [text "↑: 回転"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "リセット"]
-                    ]
+```xml
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window.InputBindings>
+    <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+    <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    <KeyBinding Key="Down" Command="{Binding MoveDown}" />
+    <KeyBinding Key="Up" Command="{Binding Rotate}" />  <!-- 追加 -->
+</Window.InputBindings>
 ```
+
+「Bolero 版と何が違うんですか？」いくつか大きな違いがあります：
+
+1. **キーバインディングの定義場所**:
+   - Bolero: JavaScript の `keydown` イベントハンドラ
+   - Elmish.WPF: XAML の `KeyBinding` による宣言的定義
+
+2. **コマンドの実行**:
+   - Bolero: `dispatch` 関数でメッセージを送信
+   - Elmish.WPF: WPF のコマンドバインディングで自動的にメッセージが送信される
+
+3. **コードの場所**:
+   - Bolero: すべて F# コード内
+   - Elmish.WPF: XAML で UI 定義、F# でバインディング定義
+
+「なぜ XAML を使うんですか？」WPF の標準的な方法で、宣言的に UI を定義できます。また、デザイナーツールとの統合も容易になります。Elmish.WPF は WPF のエコシステムを活用しながら、Elmish アーキテクチャの利点を享受できます。
 
 ### テスト: Update関数の統合テスト
 
@@ -3087,15 +3111,34 @@ let ``回転できない場合は状態が変わらない`` () =
         failwith "ぷよが存在するはずです"
 ```
 
+「Bolero版と同じテストコードですね！」そうです！Update関数の実装がBoleroとElmish.WPFで同じため、テストコードも同じです。これは、Elmishアーキテクチャの優れた点の一つです。
+
+「どういうことですか？」Elmishアーキテクチャでは、Update関数はプラットフォームに依存しないピュアな関数です。入力（Message, Model）に対して出力（Model, Cmd）を返すだけで、副作用がありません。このため、Web（Bolero）でもデスクトップ（Elmish.WPF）でも同じテストコードでテストできます。
+
+プラットフォーム固有の違いは、View層にのみ現れます：
+- **Bolero**: Blazorのコンポーネントとイベントハンドラ
+- **Elmish.WPF**: WPFのコントロールとネイティブイベント
+
+このように、ビジネスロジック（Domain + Update）とUI（View）を明確に分離することで、テスタビリティと移植性が向上します。
+
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、WPFアプリケーションを起動します：
 
 ```bash
-dotnet cake --target=Watch
+cd app/fsharp-2/wpf
+dotnet run --project src/PuyoPuyo.WPF
 ```
 
-ブラウザで画面をクリックしてフォーカスを当てた後、上矢印キーを押すとぷよが回転し、壁際では自動的に位置が調整されるはずです！
+または、テストを実行して動作を確認することもできます：
+
+```bash
+dotnet test tests/PuyoPuyo.Tests
+```
+
+アプリケーションが起動したら、「ゲーム開始」ボタンをクリックして、上矢印キーを押すとぷよが回転し、壁際では自動的に位置が調整されるはずです！
+
+「Bolero版と違ってブラウザを開かないんですね！」そうです！Elmish.WPFはデスクトップアプリケーションなので、Windowsのネイティブウィンドウとして起動します。これにより、ブラウザを必要とせず、デスクトップアプリケーションとしての利点を活かせます。
 
 ### コミット
 
@@ -3129,10 +3172,17 @@ git commit -m "feat: implement puyo rotation with wall kick
    - `Rotate` メッセージの処理
    - 回転失敗時の状態維持
    - パターンマッチによる安全な処理
+   - **Bolero版との共通点**：Update関数の実装は完全に同じ
 
-3. **View層**
-   - 上矢印キーで回転
-   - 操作説明の更新
+3. **View層（Elmish.WPF固有）**
+   - WPFの`KeyEventArgs`を使用したキーボードイベント処理
+   - `Key.Up`列挙型による型安全なキー判定
+   - `updateModelAndUI`による直接的なモデル更新とUI再描画
+   - F#コードによるWindowの作成とイベントハンドラの設定
+   - **Bolero版との違い**：
+     - Blazorのイベントハンドラ → WPFネイティブイベント
+     - `"ArrowUp"`文字列 → `Key.Up`列挙型
+     - `dispatch`関数 → `updateModelAndUI`関数
 
 4. **テスト**
    - 回転ロジックの単体テスト（3テスト）
@@ -3147,12 +3197,17 @@ git commit -m "feat: implement puyo rotation with wall kick
      - 通常回転
      - 壁キック発生
      - 回転失敗
+   - **Bolero版との共通点**：テストコードは完全に同じ（プラットフォーム非依存）
 
 5. **学んだ重要な概念**
    - 剰余演算による循環処理（`(n + k) % m`）
    - 段階的なフォールバック処理（通常→左キック→右キック）
    - Option型による連続的な試行
    - イミュータブルなレコード更新（`{ pair with ... }`）
+   - **Elmishアーキテクチャの利点**：
+     - Update関数のプラットフォーム非依存性
+     - テストコードの再利用性
+     - ビジネスロジックとUIの明確な分離
 
 6. **壁キック処理の工夫**
    - まず通常回転を試す
@@ -3165,6 +3220,26 @@ git commit -m "feat: implement puyo rotation with wall kick
    - 壁キック処理を`tryRotatePuyoPair`に統合
    - Option型による段階的な試行
    - 重複コードなし（関数型のコンポジション）
+
+8. **Bolero版（Web）とElmish.WPF版（Desktop）の比較**
+
+   **共通部分（プラットフォーム非依存）**：
+   - Domain層：完全に同じ実装
+   - Elmish層（Model, Message, Update）：完全に同じ実装
+   - テストコード：完全に同じコードで動作
+
+   **異なる部分（プラットフォーム固有）**：
+   - View層のイベント処理：
+     - Bolero: Blazorの`KeyboardEventArgs`, `"ArrowUp"`文字列, `dispatch`関数
+     - Elmish.WPF: WPFの`KeyEventArgs`, `Key.Up`列挙型, `updateModelAndUI`関数
+   - UI構築方法：
+     - Bolero: HTMLライクなBolero DSL
+     - Elmish.WPF: F#コードによるWPFコントロール生成
+   - 実行環境：
+     - Bolero: ブラウザ上で実行
+     - Elmish.WPF: Windowsネイティブアプリとして実行
+
+この構造により、ビジネスロジックを一度実装すれば、WebとDesktopの両方で動作するアプリケーションを効率的に開発できます。
 
 次のイテレーションでは、ぷよの自由落下機能を実装していきます。
 
