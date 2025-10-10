@@ -3585,11 +3585,14 @@ git commit -m "feat: implement auto-falling puyo with gravity
 
 このユーザーストーリーを実現するために、TODOリストを作成してみましょう：
 
-- [ ] 下矢印キーの入力を検出する
-- [ ] MoveDownメッセージを処理する
-- [ ] 高速落下用のタイマーを実装する
-- [ ] 通常タイマーと高速タイマーを切り替える
-- [ ] 各機能に対応するテストを作成する
+- [x] 下矢印キーの入力を検出する（XAML KeyBinding）
+- [x] MoveDownメッセージを処理する
+- [x] 落下処理を共通化する（dropPuyo 関数）
+- [x] 各機能に対応するテストを作成する
+
+WPF 版では、以下は不要です：
+- ~~高速落下用のタイマーを実装する~~（WPF のキーリピート機能を使用）
+- ~~通常タイマーと高速タイマーを切り替える~~（状態管理不要）
 
 ### テスト: 下方向への移動
 
@@ -3598,42 +3601,58 @@ git commit -m "feat: implement auto-falling puyo with gravity
 ```fsharp
 // tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
 
-[<Fact>]
-let ``MoveDownメッセージでぷよが下に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 5 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+module ``ぷよの高速落下`` =
+    [<Fact>]
+    let ``MoveDownメッセージでぷよペアが下に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Act
-    let (newModel, _) = Update.update MoveDown model
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.Y |> should equal 6
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Act
+        let newModel = updateWithRandom random MoveDown model
 
-[<Fact>]
-let ``下端に到達した場合は着地する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 11 Red Green 0  // 下端近く
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.Y |> should equal 6
+            pair.ChildPosition.Y |> should equal 5
+        | None -> failwith "CurrentPair should exist"
 
-    // Act
-    let (newModel, _) = Update.update MoveDown model
+    [<Fact>]
+    let ``MoveDownメッセージで下端に到達した場合はぷよが固定される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Assert
-    // 着地してボードに固定
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Red)
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
 
-    // 新しいぷよが生成
-    match newModel.CurrentPiece with
-    | Some _ -> ()
-    | None -> failwith "新しいぷよが生成されるはずです"
+        // Act
+        let newModel = updateWithRandom random MoveDown model
+
+        // Assert
+        // ぷよが固定されてボードに配置される
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal initialPair.Axis
+
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal initialPair.Child
+
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)
 ```
 
 「Tickメッセージと同じ処理になりそうですね！」そうです！下に移動を試みて、着地したらボードに固定して新しいぷよを生成する、という処理は共通です。
@@ -3644,217 +3663,90 @@ let ``下端に到達した場合は着地する`` () =
 
 ```fsharp
 // src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | MoveDown when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            // 下に移動を試みる
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = newBoard
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
-        | None ->
-            model, Cmd.none
+
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | Tick -> dropPuyo random model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
+    | MoveDown -> dropPuyo random model  // Tick と同じ処理を使用
 ```
 
 「Tickメッセージの処理と全く同じですね！」そうです！重複していますね。後でリファクタリングして共通化することもできますが、今は動作を優先しましょう。
 
 ### View の拡張
 
-「下矢印キーの入力を受け取るようにしましょう！」はい、キーボードイベントハンドラに追加します。
+「下矢印キーの入力を受け取るようにしましょう！」はい、Elmish.WPF では XAML の KeyBinding を使ってキー入力を処理します。
+
+まず、GameView.fs に MoveDown コマンドのバインディングを追加します：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（handleKeyDownの更新）
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | "ArrowUp" -> dispatch Rotate
-        | "ArrowDown" -> dispatch MoveDown
-        | _ -> ()
+// src/PuyoPuyo.WPF/Components/GameView.fs（bindingsの更新）
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)  // 追加
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
 ```
 
-操作説明も更新しましょう：
+次に、XAML でキーバインディングを定義します：
 
-```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（viewの更新）
-                | Playing ->
-                    div [] [
-                        p [] [text "← →: 左右移動"]
-                        p [] [text "↑: 回転"]
-                        p [] [text "↓: 高速落下"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "リセット"]
-                    ]
+```xml
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window
+    x:Class="PuyoPuyo.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="ぷよぷよゲーム" Height="690" Width="500"
+    Focusable="True">
+  <Window.InputBindings>
+    <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+    <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    <KeyBinding Key="Down" Command="{Binding MoveDown}" />  <!-- 追加 -->
+    <KeyBinding Key="Up" Command="{Binding Rotate}" />
+  </Window.InputBindings>
+  <!-- ... 既存のUI定義 ... -->
+</Window>
 ```
 
-### 高速落下タイマーの実装
+「Bolero 版の handleKeyDown 関数とは違いますね！」そうです！WPF では XAML で宣言的にキー入力を定義し、Elmish.WPF のバインディングを通じてメッセージをディスパッチします。コードでイベントハンドラを書く必要はありません。
 
-「下キーを押している間だけ速く落ちるようにしたいんですが？」良い質問ですね！そのためには、Modelに「高速落下モード」の状態を追加し、タイマーの速度を切り替える必要があります。
-
-まず、Modelを拡張します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Model.fs（Modelの更新）
-type Model = {
-    Board: Board
-    CurrentPiece: PuyoPair option
-    NextPiece: PuyoPair option
-    Score: int
-    Level: int
-    GameTime: int
-    LastChainCount: int
-    Status: GameStatus
-    IsFastFalling: bool  // 高速落下モード
-}
-
-module Model =
-    let init () : Model =
-        {
-            Board = Board.create 6 13
-            CurrentPiece = None
-            NextPiece = None
-            Score = 0
-            Level = 1
-            GameTime = 0
-            LastChainCount = 0
-            Status = NotStarted
-            IsFastFalling = false
-        }
-```
-
-次に、高速落下の開始/終了メッセージを追加します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Messageの追加）
-type Message =
-    | StartGame
-    | ResetGame
-    | MoveLeft
-    | MoveRight
-    | MoveDown
-    | Rotate
-    | Tick
-    | StartFastFall  // 高速落下開始
-    | StopFastFall   // 高速落下終了
-```
-
-「キーを押したときと離したときで別のメッセージを送るんですね！」そうです！Viewでkeydownとkeyupの両方のイベントを処理します。
-
-```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（イベントハンドラの更新）
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | "ArrowUp" -> dispatch Rotate
-        | "ArrowDown" ->
-            dispatch MoveDown
-            dispatch StartFastFall
-        | _ -> ()
-
-    let private handleKeyUp (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowDown" -> dispatch StopFastFall
-        | _ -> ()
-
-    /// メインView
-    let view (model: Model) (dispatch: Message -> unit) =
-        div [
-            attr.classes ["game-container"]
-            attr.tabindex 0
-            on.keydown (handleKeyDown dispatch)
-            on.keyup (handleKeyUp dispatch)  // keyupイベントを追加
-        ] [
-            // ... 既存のコード ...
-        ]
-```
-
-Update関数で高速落下モードを切り替えます：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | StartFastFall when model.Status = Playing ->
-        { model with IsFastFalling = true }, Cmd.none
-
-    | StopFastFall when model.Status = Playing ->
-        { model with IsFastFalling = false }, Cmd.none
-```
-
-最後に、Subscriptionでタイマーの速度を切り替えます：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Subscription.fs（更新）
-module Subscription =
-    /// ゲームタイマー（高速落下時は速く）
-    let gameTimer (model: Model) : Sub<Message> =
-        if model.Status = Playing then
-            let interval = if model.IsFastFalling then 100.0 else 1000.0
-            let sub dispatch =
-                let timer = new System.Timers.Timer(interval)
-                timer.Elapsed.Add(fun _ -> dispatch Tick)
-                timer.Start()
-                { new IDisposable with
-                    member _.Dispose() = timer.Stop(); timer.Dispose() }
-            [ [ "gameTimer" ], sub ]
-        else
-            []
-```
-
-「高速落下モードのときは100msごと、通常時は1000msごとにTickが発行されるんですね！」そうです！これにより、下キーを押している間は10倍速く落ちるようになります。
-
-### テスト: 高速落下モード
-
-「高速落下モードの切り替えもテストしましょう！」はい、テストを追加します。
-
-```fsharp
-// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
-
-[<Fact>]
-let ``StartFastFallメッセージで高速落下モードになる`` () =
-    // Arrange
-    let model = Model.init ()
-    let model = { model with Status = Playing; IsFastFalling = false }
-
-    // Act
-    let (newModel, _) = Update.update StartFastFall model
-
-    // Assert
-    newModel.IsFastFalling |> should equal true
-
-[<Fact>]
-let ``StopFastFallメッセージで高速落下モードが解除される`` () =
-    // Arrange
-    let model = Model.init ()
-    let model = { model with Status = Playing; IsFastFalling = true }
-
-    // Act
-    let (newModel, _) = Update.update StopFastFall model
-
-    // Assert
-    newModel.IsFastFalling |> should equal false
-
-[<Fact>]
-let ``ゲーム中でない場合は高速落下モードにならない`` () =
-    // Arrange
-    let model = Model.init ()
-    let model = { model with Status = NotStarted; IsFastFalling = false }
-
-    // Act
-    let (newModel, _) = Update.update StartFastFall model
-
-    // Assert
-    newModel.IsFastFalling |> should equal false
-```
+「下キーを押している間だけ速く落ちるようにはできますか？」Elmish.WPF 版では、シンプルに MoveDown メッセージを使って高速落下を実現します。キーを押している間は連続して MoveDown メッセージが送られるため、特別な状態管理は不要です。WPF のキーボードイベントが自動的にキーリピートを処理してくれます。
 
 ### リファクタリング: 落下処理の共通化
 
@@ -3862,54 +3754,85 @@ let ``ゲーム中でない場合は高速落下モードにならない`` () =
 
 ```fsharp
 // src/PuyoPuyo.WPF/Elmish/Update.fs（ヘルパー関数の追加）
-module Update =
-    // ... 既存のコード ...
 
-    /// ぷよを下に移動させる（共通処理）
-    let private dropPuyo (model: Model) : Model * Cmd<Message> =
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = newBoard
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定して新しいぷよを生成
+            let newBoard = fixPuyoPair model.Board pair
+            let newPair = generatePuyoPair random
 
-    /// Update 関数
-    let update (message: Message) (model: Model) : Model * Cmd<Message> =
-        match message with
-        // ... 既存のコード ...
+            { model with
+                Board = newBoard
+                CurrentPair = Some newPair }
+    | None -> model
 
-        | Tick when model.Status = Playing ->
-            dropPuyo model
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | Tick -> dropPuyo random model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
+    | MoveDown -> dropPuyo random model
 
-        | MoveDown when model.Status = Playing ->
-            dropPuyo model
-
-        // ... その他のメッセージ ...
+// 更新関数（Elmish用）
+let update msg model =
+    let random = Random()
+    updateWithRandom random msg model
 ```
 
-「重複がなくなってスッキリしましたね！」そうです！これで、落下処理のロジックが一箇所にまとまりました。
+「重複がなくなってスッキリしましたね！」そうです！これで、落下処理のロジックが一箇所にまとまりました。`dropPuyo` 関数は `Tick` と `MoveDown` の両方で使用されています。
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、アプリケーションをビルドして実行します：
 
 ```bash
-dotnet cake --target=Watch
+# テストを実行して確認
+dotnet test
+
+# アプリケーションを実行
+dotnet run --project src/PuyoPuyo.App
 ```
 
-ブラウザで「ゲーム開始」ボタンをクリックして、下矢印キーを押してみてください。キーを押している間は速く落ち、離すと通常速度に戻るはずです！
+「ゲーム開始」ボタンをクリックして、下矢印キーを押してみてください。キーを押している間は WPF のキーリピート機能により、連続して MoveDown メッセージが送られ、ぷよが速く落ちます！
 
 ### コミット
 
@@ -3919,14 +3842,12 @@ dotnet cake --target=Watch
 git add .
 git commit -m "feat: implement fast falling with down arrow key
 
-- Add IsFastFalling to Model
-- Add StartFastFall and StopFastFall messages
-- Add keyup event handler for stopping fast fall
-- Update gameTimer subscription to adjust speed based on IsFastFalling
+- Add MoveDown message to Model
+- Add MoveDown command binding to GameView
+- Add KeyBinding for Down key in MainWindow.xaml
 - Extract common dropPuyo function to eliminate duplication
-- Add unit tests for fast fall mode (3 tests)
-- Add integration test for MoveDown (2 tests)
-- All tests passing (42 tests)"
+- Add unit tests for MoveDown message (2 tests)
+- All tests passing"
 ```
 
 ### イテレーション5のまとめ
@@ -3935,45 +3856,50 @@ git commit -m "feat: implement fast falling with down arrow key
 
 1. **ドメイン層**
    - 既存の`tryMovePuyoPair`を活用（Down方向）
+   - 変更なし（既存機能を再利用）
 
 2. **Elmish層**
-   - `IsFastFalling`：高速落下モードの状態
-   - `StartFastFall` / `StopFastFall` メッセージ
    - `MoveDown` メッセージの処理
    - `dropPuyo`：落下処理の共通化（リファクタリング）
+   - `updateWithRandom`：テスト用の更新関数
 
-3. **View層**
-   - `handleKeyDown`：下矢印キーでMoveDownとStartFastFall
-   - `handleKeyUp`：キーを離したときにStopFastFall
-   - 操作説明の更新
+3. **View層（Elmish.WPF）**
+   - `GameView.fs`：MoveDown コマンドのバインディング追加
+   - `MainWindow.xaml`：Down キーの KeyBinding 追加
+   - XAML による宣言的なキー入力処理
 
-4. **Subscription**
-   - タイマー速度の動的切り替え（1000ms → 100ms）
-   - `model.IsFastFalling`に応じて速度を変更
-
-5. **テスト**
+4. **テスト**
    - MoveDownメッセージのテスト（2テスト）
-   - 高速落下モードの切り替えテスト（3テスト）
-   - ゲーム状態による制御
+   - 下端到達時の挙動確認
+   - `updateWithRandom` を使った決定論的テスト
 
-6. **学んだ重要な概念**
-   - keydownとkeyupイベントの組み合わせ
-   - Subscriptionのモデル依存による動的な振る舞い
+5. **学んだ重要な概念**
+   - WPF KeyBinding による宣言的キー入力
+   - Elmish.WPF の Binding.cmd でのコマンドバインディング
    - リファクタリング：重複コードの関数抽出
-   - 状態フラグによる動作切り替え
-   - タイマー速度の動的変更
+   - WPF のキーリピート機能の活用
+   - XAML と F# の責任分離
 
-7. **リファクタリングの実践**
+6. **リファクタリングの実践**
    - Before：TickとMoveDownで重複コード
    - After：`dropPuyo`関数に共通処理を抽出
    - DRY原則（Don't Repeat Yourself）の実践
    - 保守性の向上
 
-8. **TypeScript版との違い**
-   - キー状態管理をModelで一元化
-   - keyup/keydownイベントを別々のメッセージに変換
-   - タイマー速度の宣言的な切り替え
-   - イベントリスナーの手動管理不要
+7. **Bolero版との違い**
+   - IsFastFalling 状態フラグは不要
+   - StartFastFall / StopFastFall メッセージは不要
+   - handleKeyDown / handleKeyUp 関数は不要
+   - Subscription のタイマー速度切り替えは不要
+   - WPF のキーリピートが自動的に高速落下を実現
+   - XAML で宣言的にキー入力を定義
+   - よりシンプルな実装
+
+8. **WPF の利点**
+   - キーボードイベントの自動リピート処理
+   - XAML による宣言的な UI 定義
+   - コマンドバインディングによる疎結合
+   - イベントハンドラのコード削減
 
 次のイテレーションでは、ぷよの消去機能を実装していきます。
 
