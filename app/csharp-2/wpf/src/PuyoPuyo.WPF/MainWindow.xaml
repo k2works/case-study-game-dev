@@ -3,10 +3,72 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PuyoPuyo.WPF"
+        xmlns:viewmodels="clr-namespace:PuyoPuyo.WPF.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="ぷよぷよ TDD" Height="600" Width="400">
+    <Window.DataContext>
+        <viewmodels:GameViewModel />
+    </Window.DataContext>
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- スコア表示 -->
+        <StackPanel Grid.Row="0" Margin="10">
+            <TextBlock Text="{Binding Game.Score.CurrentScore, StringFormat='スコア: {0}'}"
+                       FontSize="20" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Game.Score.ChainCount, StringFormat='チェーン: {0}'}"
+                       FontSize="16"/>
+        </StackPanel>
+
+        <!-- ゲームエリア -->
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2" Margin="10">
+            <Canvas x:Name="GameCanvas" Background="White" Width="300" Height="480">
+                <!-- ステージに配置されたぷよ -->
+                <ItemsControl ItemsSource="{Binding StagePuyos}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Ellipse Width="40" Height="40" Fill="{Binding Color}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- 軸ぷよ -->
+                <Ellipse Width="40" Height="40"
+                         Canvas.Left="{Binding CurrentPuyoX}"
+                         Canvas.Top="{Binding CurrentPuyoY}"
+                         Fill="{Binding CurrentPuyoColor}"/>
+
+                <!-- 副ぷよ -->
+                <Ellipse Width="40" Height="40"
+                         Canvas.Left="{Binding SubPuyoX}"
+                         Canvas.Top="{Binding SubPuyoY}"
+                         Fill="{Binding SubPuyoColor}"/>
+            </Canvas>
+        </Border>
+
+        <!-- ボタンエリア -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="10">
+            <Button Content="スタート" Command="{Binding StartCommand}"
+                    Width="100" Height="40" Margin="5"/>
+            <Button Content="リセット" Command="{Binding ResetCommand}"
+                    Width="100" Height="40" Margin="5"/>
+        </StackPanel>
     </Grid>
 </Window>
