@@ -70,8 +70,12 @@ let tryRotatePuyoPair (board: Board) (pair: PuyoPair) : PuyoPair option =
         // 壁キックを試す（左に1マス）
         let kickedLeft =
             { rotated with
-                AxisPosition = { rotated.AxisPosition with X = rotated.AxisPosition.X - 1 }
-                ChildPosition = { rotated.ChildPosition with X = rotated.ChildPosition.X - 1 } }
+                AxisPosition =
+                    { rotated.AxisPosition with
+                        X = rotated.AxisPosition.X - 1 }
+                ChildPosition =
+                    { rotated.ChildPosition with
+                        X = rotated.ChildPosition.X - 1 } }
 
         if canPlacePuyoPair board kickedLeft then
             Some kickedLeft
@@ -79,8 +83,12 @@ let tryRotatePuyoPair (board: Board) (pair: PuyoPair) : PuyoPair option =
             // 壁キックを試す（右に1マス）
             let kickedRight =
                 { rotated with
-                    AxisPosition = { rotated.AxisPosition with X = rotated.AxisPosition.X + 1 }
-                    ChildPosition = { rotated.ChildPosition with X = rotated.ChildPosition.X + 1 } }
+                    AxisPosition =
+                        { rotated.AxisPosition with
+                            X = rotated.AxisPosition.X + 1 }
+                    ChildPosition =
+                        { rotated.ChildPosition with
+                            X = rotated.ChildPosition.X + 1 } }
 
             if canPlacePuyoPair board kickedRight then
                 Some kickedRight
