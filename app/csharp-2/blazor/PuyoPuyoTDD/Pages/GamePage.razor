@@ -1,0 +1,43 @@
+@page "/game"
+@using PuyoPuyoTDD.Models
+@inject IJSRuntime JSRuntime
+
+<PageTitle>ぷよぷよ</PageTitle>
+
+<h1>ぷよぷよ</h1>
+
+<div class="game-container">
+    <div class="game-info">
+        <p>スコア: @game.Score.Value</p>
+        <p>モード: @game.Mode</p>
+    </div>
+    <canvas id="stageCanvas" width="@canvasWidth" height="@canvasHeight"></canvas>
+</div>
+
+@code {
+    private Game game = new();
+    private int canvasWidth;
+    private int canvasHeight;
+
+    /// <summary>
+    /// コンポーネント初期化時の処理.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        game.Initialize();
+        canvasWidth = game.Config.StageWidth * game.Config.PuyoSize;
+        canvasHeight = game.Config.StageHeight * game.Config.PuyoSize;
+    }
+
+    /// <summary>
+    /// レンダリング完了後の処理.
+    /// </summary>
+    /// <param name="firstRender">初回レンダリングかどうか.</param>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("startGameLoop");
+        }
+    }
+}
