@@ -12,6 +12,7 @@ type PuyoViewModel = { X: float; Y: float; Color: string }
 
 let getAllPuyos (model: Model) =
     let cellSize = 40.0
+    let yOffset = 40.0 // Y座標-1のぷよを表示するためのオフセット
     // ボード上のぷよを収集
     let boardPuyos =
         [ for x in 0..5 do
@@ -21,7 +22,7 @@ let getAllPuyos (model: Model) =
                   if color <> Empty then
                       yield
                           { X = float x * cellSize
-                            Y = float y * cellSize
+                            Y = float y * cellSize + yOffset
                             Color = puyoColorToString color } ]
     // 現在のぷよペアを追加
     let pairPuyos =
@@ -29,10 +30,10 @@ let getAllPuyos (model: Model) =
         | None -> []
         | Some pair ->
             [ { X = float pair.AxisPosition.X * cellSize
-                Y = float pair.AxisPosition.Y * cellSize
+                Y = float pair.AxisPosition.Y * cellSize + yOffset
                 Color = puyoColorToString pair.Axis }
               { X = float pair.ChildPosition.X * cellSize
-                Y = float pair.ChildPosition.Y * cellSize
+                Y = float pair.ChildPosition.Y * cellSize + yOffset
                 Color = puyoColorToString pair.Child } ]
 
     List.append boardPuyos pairPuyos
