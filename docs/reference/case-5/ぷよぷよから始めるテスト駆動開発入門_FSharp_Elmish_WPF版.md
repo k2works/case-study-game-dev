@@ -1908,24 +1908,36 @@ module Model =
 「次はMessageを定義しましょう！」はい、ユーザーの操作やゲームイベントを表すMessageを定義します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs
-namespace PuyoPuyo.Elmish
+// src/PuyoPuyo.WPF/Elmish/Model.fs
+module Elmish.Model
 
-/// ゲームのメッセージ
+open Domain.Board
+open Domain.GameLogic
+open Domain.PuyoPair
+open Domain.Score
+
+// ゲームモデル
+type Model =
+    { Board: Board
+      Score: Score
+      GameState: GameState
+      CurrentPair: PuyoPair option }
+
+// メッセージ定義
 type Message =
     | StartGame
-    | ResetGame
+    | Tick
     | MoveLeft
     | MoveRight
     | MoveDown
     | Rotate
-    | HardDrop
-    | GameStep
-    | TimeStep
-    | SpawnNewPiece
-    | FixPiece
-    | ProcessChain
-    | CheckGameOver
+
+// 初期化関数
+let init () =
+    { Board = createBoard ()
+      Score = initialScore
+      GameState = NotStarted
+      CurrentPair = None }
 ```
 
 「たくさんのメッセージがありますね！」そうですね。それぞれのメッセージが特定のイベントや操作を表しています。今回のイテレーションでは、まず`StartGame`だけを実装していきます。
@@ -1935,36 +1947,40 @@ type Message =
 「Update関数を実装しましょう！」はい、まずは基本的な部分だけを実装します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（続き）
-module Update =
-    open Elmish
-    open PuyoPuyo.Domain.PuyoPair
+// src/PuyoPuyo.WPF/Elmish/Update.fs
+module Elmish.Update
 
-    /// Update 関数
-    let update (message: Message) (model: Model) : Model * Cmd<Message> =
-        match message with
-        | StartGame ->
-            let firstPiece = PuyoPair.createRandom 2 1 0
-            let nextPiece = PuyoPair.createRandom 2 1 0
+open System
+open Domain.GameLogic
+open Domain.PuyoPair
+open Elmish.Model
 
-            {
-                model with
-                    Board = Board.create 6 13
-                    CurrentPiece = Some firstPiece
-                    NextPiece = Some nextPiece
-                    Score = 0
-                    GameTime = 0
-                    Status = Playing
-            }, Cmd.none
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | _ ->
+        model
 
-        | ResetGame ->
-            Model.init (), Cmd.none
-
-        | _ ->
-            model, Cmd.none
+// 更新関数（Elmish用）
+let update msg model =
+    let random = Random()
+    updateWithRandom random msg model
 ```
 
+「Bolero 版と違って `Cmd.none` を返していませんね？」そうです！これが重要な違いです：
+
+**Elmish.WPF での Update 関数の特徴**:
+- **戻り値**: `Model` のみ（`Model * Cmd<Message>` ではない）
+- **Cmd の使用**: `update` 関数では使用しない（`init` 関数でのみ使用）
+- **理由**: Elmish.WPF は WPF の UI スレッドと統合するための設計
+
 「`with`キーワードを使っているのはなぜですか？」F#のレコード型には「レコードコピー式」という機能があり、`{ model with Score = 0 }`のように書くことで、一部のフィールドだけを変更した新しいレコードを作成できます。元の`model`は変更されません。
+
+「`updateWithRandom` 関数があるのはなぜですか？」テストで `Random` を注入できるようにするためです。これにより、テストで決定的な値を使って検証できます。
 
 ### XAML View の実装
 
@@ -1973,179 +1989,247 @@ module Update =
 #### MainWindow.xaml
 
 ```xml
-<!-- src/PuyoPuyo.WPF/MainWindow.xaml -->
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ぷよぷよゲーム" Height="600" Width="400">
-    <Window.Resources>
-        <!-- ボーダースタイル -->
-        <Style x:Key="BoardBorderStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="#333333"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Background" Value="#F0F0F0"/>
-            <Setter Property="Margin" Value="20,0,20,0"/>
-        </Style>
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window
+    x:Class="PuyoPuyo.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="ぷよぷよゲーム" Height="690" Width="500"
+    Focusable="True">
+  <StackPanel Orientation="Vertical">
+    <!-- タイトル -->
+    <TextBlock Text="ぷよぷよゲーム" FontSize="24" HorizontalAlignment="Center" Margin="10"/>
 
-        <!-- セルスタイル -->
-        <Style x:Key="CellStyle" TargetType="Border">
-            <Setter Property="Width" Value="30"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="BorderBrush" Value="#DDDDDD"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
+    <!-- ゲームエリア（ボードと情報パネルを横に並べる） -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+      <!-- ゲームボード -->
+      <Border BorderBrush="Black" BorderThickness="2" Margin="10">
+        <Canvas Background="WhiteSmoke" Width="240" Height="520">
+          <ItemsControl ItemsSource="{Binding Puyos}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <Canvas/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+              <Style>
+                <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+              </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Ellipse Width="36" Height="36" Fill="{Binding Color}" Stroke="Black" StrokeThickness="1"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Canvas>
+      </Border>
 
-        <!-- ボタンスタイル -->
-        <Style x:Key="GameButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-    </Window.Resources>
+      <!-- 情報パネル -->
+      <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top">
+        <!-- スコア表示 -->
+        <TextBlock Text="Score" FontSize="14" FontWeight="Bold" Margin="0,5,0,5"/>
+        <TextBlock Text="{Binding Score}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <!-- 連鎖数表示 -->
+        <TextBlock Text="Chain" FontSize="14" FontWeight="Bold" Margin="0,5,0,5"/>
+        <TextBlock Text="{Binding Chain}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
-        <!-- タイトル -->
-        <TextBlock Grid.Row="0"
-                   Text="ぷよぷよゲーム"
-                   FontSize="24"
-                   FontFamily="Arial"
-                   HorizontalAlignment="Center"
-                   Margin="10"/>
-
-        <!-- ゲームボード -->
-        <Border Grid.Row="1" Style="{StaticResource BoardBorderStyle}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-            <ItemsControl ItemsSource="{Binding BoardRows}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ItemsControl ItemsSource="{Binding}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource CellStyle}"
-                                            Background="{Binding Color}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <!-- 次のぷよ表示 -->
+        <TextBlock Text="Next" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,5,0,5"/>
+        <Border Width="50" Height="50" BorderBrush="LightGray" BorderThickness="1" Margin="0,0,0,10">
+          <Canvas Background="Transparent" Width="50" Height="50">
+            <!-- 次のぷよはここに表示される（将来実装） -->
+          </Canvas>
         </Border>
+      </StackPanel>
+    </StackPanel>
 
-        <!-- コントロール -->
-        <StackPanel Grid.Row="2"
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    Margin="10">
-            <Button Content="ゲーム開始"
-                    Command="{Binding StartGame}"
-                    Visibility="{Binding StartButtonVisibility}"
-                    Style="{StaticResource GameButtonStyle}"/>
-            <Button Content="リセット"
-                    Command="{Binding ResetGame}"
-                    Visibility="{Binding ResetButtonVisibility}"
-                    Style="{StaticResource GameButtonStyle}"/>
-        </StackPanel>
-    </Grid>
+    <!-- コントロールボタン -->
+    <Button Command="{Binding StartGame}" Content="ゲーム開始" Width="120" Height="40" Margin="10" IsEnabled="{Binding CanStartGame}"/>
+  </StackPanel>
 </Window>
 ```
 
-「XAMLではCSSの代わりにResourcesでスタイルを定義するんですね！」そうです！XAMLでは`<Window.Resources>`セクションでスタイルを定義し、`Style="{StaticResource ...}"`で参照します。
+「Bolero 版と大きく違いますね！」そうです！重要な違いを説明します：
+
+**Bolero 版との違い**:
+- **Bolero**: `ItemsControl` で `Grid` を使用して行・列を表示
+- **Elmish.WPF**: `Canvas` を使用して絶対位置指定でぷよを配置
+
+WPF の `Canvas` を使うことで、以下の利点があります：
+
+1. **絶対位置指定**: 各ぷよの位置を `Canvas.Left` と `Canvas.Top` で正確に指定
+2. **シンプルなバインディング**: ぷよのリスト（`Puyos`）を直接バインド
+3. **パフォーマンス**: グリッド全体ではなく、必要なぷよだけを描画
+
+「`IsEnabled="{Binding CanStartGame}"` で何をしているんですか？」良い質問ですね！`CanStartGame` は、ゲームが NotStarted 状態のときだけ `true` を返すバインディングです。これにより、ゲーム開始ボタンは最初だけ有効になり、ゲーム中は無効になります。
 
 #### Elmish Bindings の実装
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Bindings.fs
-module PuyoPuyo.Elmish.Bindings
+// src/PuyoPuyo.WPF/Components/GameView.fs
+module Components.GameView
 
 open Elmish.WPF
-open PuyoPuyo.Elmish.Model
-open PuyoPuyo.Elmish.Update
-open PuyoPuyo.Domain.Board
-open PuyoPuyo.Domain.Puyo
-open PuyoPuyo.Domain.PuyoPair
+open Domain.Board
+open Domain.GameLogic
+open Domain.Puyo
+open Domain.PuyoPair
+open Elmish.Model
 
-/// セルの色を文字列に変換
-let private cellToColor (cell: Cell) : string =
-    match cell with
-    | Empty -> "#CCCCCC"
-    | Filled color -> Puyo.toHex color
+// ぷよ表示用ViewModel
+type PuyoViewModel = { X: float; Y: float; Color: string }
 
-/// ボードを表示用の行データに変換
-let private boardToRows (board: Board) (currentPiece: PuyoPair option) =
-    // ボードのコピーを作成
-    let displayBoard =
-        Array.init board.Rows (fun y ->
-            Array.init board.Cols (fun x ->
-                Board.getCell board x y))
+let getAllPuyos (model: Model) =
+    let cellSize = 40.0
+    let yOffset = 40.0 // Y座標-1のぷよを表示するためのオフセット
+    // ボード上のぷよを収集
+    let boardPuyos =
+        [ for x in 0..5 do
+              for y in 0..11 do
+                  let color = getCellColor x y model.Board
 
-    // 現在のぷよを重ねて表示
-    match currentPiece with
-    | Some piece ->
-        let (pos1, pos2) = PuyoPair.getPositions piece
-        let (x1, y1) = pos1
-        let (x2, y2) = pos2
-        if y1 >= 0 && y1 < board.Rows && x1 >= 0 && x1 < board.Cols then
-            displayBoard.[y1].[x1] <- Filled piece.Puyo1Color
-        if y2 >= 0 && y2 < board.Rows && x2 >= 0 && x2 < board.Cols then
-            displayBoard.[y2].[x2] <- Filled piece.Puyo2Color
-    | None -> ()
+                  if color <> Empty then
+                      yield
+                          { X = float x * cellSize
+                            Y = float y * cellSize + yOffset
+                            Color = puyoColorToString color } ]
+    // 現在のぷよペアを追加
+    let pairPuyos =
+        match model.CurrentPair with
+        | None -> []
+        | Some pair ->
+            [ { X = float pair.AxisPosition.X * cellSize
+                Y = float pair.AxisPosition.Y * cellSize + yOffset
+                Color = puyoColorToString pair.Axis }
+              { X = float pair.ChildPosition.X * cellSize
+                Y = float pair.ChildPosition.Y * cellSize + yOffset
+                Color = puyoColorToString pair.Child } ]
 
-    // 匿名レコードに変換（WPFバインディング用）
-    displayBoard
-    |> Array.map (fun row ->
-        row |> Array.map (fun cell ->
-            {| Color = cellToColor cell |}))
+    List.append boardPuyos pairPuyos
 
-/// バインディング定義
-let bindings () : Binding<Model, Message> list = [
-    "BoardRows" |> Binding.oneWay (fun m -> boardToRows m.Board m.CurrentPiece)
-    "StartGame" |> Binding.cmd (fun _ -> StartGame)
-    "ResetGame" |> Binding.cmd (fun _ -> ResetGame)
-    "StartButtonVisibility" |> Binding.oneWay (fun m ->
-        if m.Status = NotStarted then "Visible" else "Collapsed")
-    "ResetButtonVisibility" |> Binding.oneWay (fun m ->
-        if m.Status = Playing then "Visible" else "Collapsed")
-]
+// Elmish バインディング
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted) ]
 ```
 
-「Bindingsでボードとぷよペアをマージして表示用データを作っているんですね！」そうです！Bolero版の`viewBoard`関数と同じロジックを、WPF用のバインディング関数として実装しています。
+「`Binding.cmd` と `Binding.oneWay` の違いは何ですか？」良い質問ですね！
+
+- **`Binding.cmd`**: コマンド（ユーザーアクション）をバインド
+  - 例: `"StartGame" |> Binding.cmd (fun _ -> StartGame)`
+  - XAML での使用: `Command="{Binding StartGame}"`
+
+- **`Binding.oneWay`**: データの一方向バインディング
+  - 例: `"Score" |> Binding.oneWay (fun m -> m.Score)`
+  - XAML での使用: `Text="{Binding Score}"`
+
+「`getAllPuyos` 関数で何をしているんですか？」この関数は、ボード上の固定されたぷよと現在落下中のぷよペアを結合して、表示用の `PuyoViewModel` のリストを作成しています。各ぷよは `X`、`Y` 座標と `Color` を持ち、XAML の `Canvas` 上に絶対位置で配置されます。
 
 #### アプリケーションのエントリーポイント
 
 ```fsharp
-// src/PuyoPuyo.WPF/App.xaml.fs
-namespace PuyoPuyo
+// src/PuyoPuyo.WPF/Program.fs
+module Program
 
+open System
 open System.Windows
 open Elmish
 open Elmish.WPF
 
-type App() =
-    inherit Application()
+[<STAThread>]
+[<EntryPoint>]
+let main _ =
+    let app = Application()
 
-    override this.OnStartup(e) =
-        base.OnStartup(e)
+    let window = PuyoPuyo.App.MainWindow()
+    window.Loaded.Add(fun _ -> window.Focus() |> ignore)
 
-        let mainWindow = MainWindow()
+    Program.mkSimple Elmish.Model.init Elmish.Update.update Components.GameView.bindings
+    |> Program.runElmishLoop window
 
-        Program.mkSimple PuyoPuyo.Elmish.Model.init PuyoPuyo.Elmish.Update.update PuyoPuyo.Elmish.Bindings.bindings
-        |> Program.runElmishLoop mainWindow
+    app.Run(window)
 ```
 
-「`Program.mkSimple`でElmishを起動するんですね！」そうです！Elmish.WPFでは、`Program.mkSimple`に初期化関数、更新関数、バインディング関数を渡すことでElmishループを開始します。
+「`Program.mkSimple` でElmishを起動するんですね！」そうです！Elmish.WPFでは、`Program.mkSimple`に3つの関数を渡すことでElmishループを開始します：
+
+1. **init**: 初期状態を作成する関数
+2. **update**: メッセージを受け取って状態を更新する関数
+3. **bindings**: Model と View をつなぐバインディング定義
+
+「`Program.runElmishLoop` は何をしているんですか？」この関数は、Elmish のメインループを開始し、WPF の `Window` と統合します。これにより、Model の変更が自動的に UI に反映されます。
+
+### テスト: Update 関数の統合テスト
+
+「Update 関数の動作もテストしたいです！」良いですね！Elmish の統合テストを追加しましょう。
+
+```fsharp
+// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs
+module Elmish.UpdateTests
+
+open System
+open Xunit
+open FsUnit.Xunit
+open Domain.PuyoPair
+open Domain.GameLogic
+open Elmish.Model
+open Elmish.Update
+
+module ``ゲーム初期化`` =
+    [<Fact>]
+    let ``初期化時にゲーム状態がNotStarted`` () =
+        // Arrange & Act
+        let model = init ()
+
+        // Assert
+        model.GameState |> should equal NotStarted
+
+module ``ゲームループ`` =
+    [<Fact>]
+    let ``StartGameメッセージで新しいぷよペアが生成される`` () =
+        // Arrange
+        let model = init ()
+        let random = Random(42)
+
+        // Act
+        let newModel = updateWithRandom random StartGame model
+
+        // Assert
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``StartGameメッセージでゲーム状態がPlayingになる`` () =
+        // Arrange
+        let model = init ()
+        let random = Random(42)
+
+        // Act
+        let newModel = updateWithRandom random StartGame model
+
+        // Assert
+        newModel.GameState |> should equal Playing
+```
+
+「`updateWithRandom` を使っているのはなぜですか？」良い質問ですね！テストでは、ランダム性を排除して決定的な結果を得るために、シード値を指定した `Random` インスタンスを注入します。これにより、毎回同じ結果が得られ、テストが安定します。
+
+「Bolero 版のテストと何が違いますか？」重要な違いがあります：
+
+**Bolero 版との違い**:
+- **Bolero**: `let newModel, _ = update StartGame model` のようにタプルを分解
+- **Elmish.WPF**: `let newModel = updateWithRandom random StartGame model` で Model だけを受け取る
+
+Elmish.WPF の `update` 関数は `Model` のみを返すため、タプル分解は不要です。
+
+テストを実行して、すべて通ることを確認しましょう：
+
+```bash
+dotnet cake --target=Test
+```
 
 ### 動作確認
 
@@ -2169,17 +2253,17 @@ WPFウィンドウが開き、「ゲーム開始」ボタンが表示され、�
 
 ```bash
 git add .
-git commit -m "feat: implement basic game board and puyo display (WPF)
+git commit -m "feat: implement basic game board and puyo display (Elmish.WPF)
 
 - Add PuyoColor discriminated union (Red, Green, Blue, Yellow)
 - Add Board type with create, getCell, setCell functions
-- Add PuyoPair type with rotation support
+- Add PuyoPair type with AxisPosition and ChildPosition
 - Add Elmish Model and Message types
-- Add basic Update function (StartGame, ResetGame)
-- Add XAML View with board rendering
-- Add Elmish.WPF Bindings with board-to-rows conversion
-- Add XAML styles for game elements
-- All tests passing (11 tests)"
+- Add Update function with updateWithRandom for testing
+- Add XAML View with Canvas-based board rendering
+- Add Elmish.WPF Bindings with getAllPuyos function
+- Add CanStartGame binding for button enable/disable
+- All tests passing (21 tests)"
 ```
 
 ### イテレーション1のまとめ
@@ -2187,27 +2271,28 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `PuyoColor`：判別共用体を使った型安全な色定義
-   - `Cell`：セルの状態（空 or 色付き）
-   - `Board`：ゲームボード（イミュータブルな操作）
-   - `PuyoPair`：2つのぷよのペア（回転状態を含む）
+   - `PuyoColor`：判別共用体を使った型安全な色定義（Red、Green、Blue、Yellow）
+   - `Board`：2次元配列による不変のゲームボード
+   - `PuyoPair`：軸ぷよと子ぷよの2つの位置と色を持つペア
+   - `GameState`：ゲーム状態（NotStarted、Playing、GameOver）
 
 2. **Elmish層**
-   - `Model`：ゲーム状態の定義（Board、CurrentPiece、Scoreなど）
-   - `Message`：イベントの定義（StartGame、ResetGameなど）
-   - `Update`：状態遷移ロジック
+   - `Model`：ゲーム状態の定義（Board、CurrentPair、Score、GameState）
+   - `Message`：イベントの定義（StartGame、Tick、MoveLeft、MoveRight、MoveDown、Rotate）
+   - `Update`：状態遷移ロジック（`updateWithRandom` でテスト容易性を確保）
+   - **重要**: Elmish.WPF では `update` 関数は `Model` のみを返す（`Cmd` は返さない）
 
 3. **View層（WPF固有）**
-   - XAML によるUIの宣言的定義
-   - Stylesによるスタイリング（CSSの代わり）
-   - ItemsControl によるボードの描画
-   - Command バインディングによるイベント処理
+   - XAML による UI の宣言的定義
+   - `Canvas` を使用した絶対位置指定によるぷよの配置
+   - `ItemsControl` による動的なぷよリストの描画
+   - `Command` バインディングによるイベント処理
 
 4. **Bindings層（WPF固有）**
-   - `boardToRows`関数：ボードと現在のぷよを表示用データに変換
-   - `cellToColor`関数：セルの色を16進数文字列に変換
-   - `Binding.oneWay`：データの一方向バインディング
-   - `Binding.cmd`：コマンドバインディング
+   - `getAllPuyos` 関数：ボード上のぷよと現在のぷよペアを `PuyoViewModel` のリストに変換
+   - `Binding.oneWay`：データの一方向バインディング（Score、Chain、Puyos）
+   - `Binding.cmd`：コマンドバインディング（StartGame）
+   - `CanStartGame`：ゲーム状態に基づくボタンの有効/無効制御
 
 5. **TDDサイクルの実践**
    - Red：失敗するテストを先に作成
@@ -2216,14 +2301,16 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 
 6. **学んだ重要な概念**
    - 判別共用体による型安全な定義
-   - イミュータブルなデータ構造
+   - イミュータブルなデータ構造（レコード型）
    - レコードコピー式（`with`キーワード）
    - Option型による安全なnull処理
    - パターンマッチング
-   - Elmishの基本（Model-View-Update）
-   - **WPF固有**: XAMLによる宣言的UI定義
-   - **WPF固有**: データバインディング
-   - **WPF固有**: XAML Resourcesによるスタイル定義
+   - Elmishの基本（Model-Message-Update）
+   - **Elmish.WPF固有**: `update` 関数は `Model` のみを返す（`Model * Cmd` ではない）
+   - **Elmish.WPF固有**: テスト用に `updateWithRandom` で Random を注入
+   - **WPF固有**: XAML の `Canvas` による絶対位置指定
+   - **WPF固有**: データバインディング（`Binding.oneWay`、`Binding.cmd`）
+   - **WPF固有**: `IsEnabled` バインディングによる動的UI制御
 
 次のイテレーションでは、ぷよの移動機能を実装していきます。
 
