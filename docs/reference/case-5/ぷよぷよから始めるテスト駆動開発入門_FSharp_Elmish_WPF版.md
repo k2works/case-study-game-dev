@@ -3319,69 +3319,141 @@ dotnet cake --target=Test
 まず、タイマーメッセージを追加しましょう：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Messageの追加）
+// src/PuyoPuyo.WPF/Elmish/Model.fs（Messageの追加）
 type Message =
     | StartGame
-    | ResetGame
+    | Tick
     | MoveLeft
     | MoveRight
+    | MoveDown
     | Rotate
-    | Tick  // タイマーメッセージを追加
-    // ... 他のメッセージ ...
 ```
 
 次に、Subscriptionを定義します：
 
 ```fsharp
 // src/PuyoPuyo.WPF/Elmish/Subscription.fs
-namespace PuyoPuyo.Elmish
+module Elmish.Subscription
 
-open Elmish
 open System
+open Elmish
+open Domain.GameLogic
+open Elmish.Model
 
-module Subscription =
-    /// ゲームタイマー（1秒ごとにTickメッセージを発行）
-    let gameTimer (model: Model) : Sub<Message> =
-        if model.Status = Playing then
-            let sub dispatch =
-                let timer = new System.Timers.Timer(1000.0)
-                timer.Elapsed.Add(fun _ -> dispatch Tick)
-                timer.Start()
-                { new IDisposable with
-                    member _.Dispose() = timer.Stop(); timer.Dispose() }
-            [ [ "gameTimer" ], sub ]
-        else
-            []
+// タイマーサブスクリプション（ゲームループ）
+let timerSubscription (model: Model) : Cmd<Message> =
+    let sub dispatch =
+        let timer = new System.Timers.Timer(500.0) // 500ms間隔
+        timer.AutoReset <- true
+        timer.Elapsed.Add(fun _ -> dispatch Tick)
+        timer.Start()
+
+    Cmd.ofSub sub
 ```
 
-「Subscriptionって何ですか？」良い質問ですね！Subscriptionは、外部のイベント（タイマー、WebSocket、キーボードなど）をElmishのメッセージに変換する仕組みです。ゲームが`Playing`状態のときのみタイマーが動作し、`Tick`メッセージを定期的に発行します。
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **タイマーの実装**:
+   - Elmish.WPF: `System.Timers.Timer` を使用
+   - Bolero: `requestAnimationFrame` や `DispatcherTimer` を使用
+
+2. **戻り値の型**:
+   - Elmish.WPF: `Cmd<Message>` を返す
+   - Bolero: `Sub<Message>` を返す（タプル形式 `[["id"], sub]`）
+
+3. **リソース管理**:
+   - Elmish.WPF: 明示的な `IDisposable` 実装は不要（`Cmd.ofSub` が管理）
+   - Bolero: `IDisposable` を明示的に実装
+
+「Subscriptionって何ですか？」良い質問ですね！Subscriptionは、外部のイベント（タイマー、WebSocket、キーボードなど）をElmishのメッセージに変換する仕組みです。WPF 版では `System.Timers.Timer` を使って、定期的に `Tick` メッセージを発行します。
 
 ### Update 関数の拡張
 
 「Tickメッセージを受け取ったときの処理を実装しましょう！」はい、自動落下のロジックを追加します。
 
+まず、ぷよを下に落とす共通処理を実装します：
+
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | Tick when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            // 下に移動を試みる
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = newBoard
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+// src/PuyoPuyo.WPF/Elmish/Update.fs
+
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定して新しいぷよを生成
+            let newBoard = fixPuyoPair model.Board pair
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = newBoard
+                CurrentPair = Some newPair }
+    | None -> model
 ```
+
+次に、Update 関数で `Tick` メッセージを処理します：
+
+```fsharp
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | Tick -> dropPuyo random model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
+    | MoveDown -> dropPuyo random model
+
+// 更新関数（Elmish用）
+let update msg model =
+    let random = Random()
+    updateWithRandom random msg model
+```
+
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **戻り値の型**:
+   - Elmish.WPF: `Model` のみを返す（Cmd は使用しない）
+   - Bolero: `Model * Cmd<Message>` のタプルを返す
+
+2. **共通処理の抽出**:
+   - `dropPuyo` 関数で `Tick` と `MoveDown` の共通処理を実装
+
+3. **テスト容易性**:
+   - `updateWithRandom` でランダム生成器を外部から注入可能
 
 「着地したら新しいぷよを生成するんですね！」そうです！以下の処理を行っています：
 
@@ -3399,107 +3471,150 @@ module Subscription =
 ```fsharp
 // tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
 
-[<Fact>]
-let ``Tickメッセージでぷよが下に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 5 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+module ``ゲームループ`` =
+    [<Fact>]
+    let ``Tickメッセージでぷよペアが下に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Act
-    let (newModel, _) = Update.update Tick model
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.Y |> should equal 6
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Act
+        let newModel = updateWithRandom random Tick model
 
-[<Fact>]
-let ``着地したぷよはボードに固定され新しいぷよが生成される`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 11 Red Green 0  // 下端近く
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.Y |> should equal 6
+            pair.ChildPosition.Y |> should equal 5
+        | None -> failwith "CurrentPair should exist"
 
-    // Act
-    let (newModel, _) = Update.update Tick model
+    [<Fact>]
+    let ``Tickメッセージで下に移動できない場合はぷよが固定される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Assert
-    // 着地したぷよがボードに固定されている
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Red)
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
 
-    // 新しいぷよが生成されている
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 2
-        newPair.Y |> should equal 1
-    | None ->
-        failwith "新しいぷよが生成されるはずです"
+        // Act
+        let newModel = updateWithRandom random Tick model
 
-[<Fact>]
-let ``ゲーム中でない場合は落下しない`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 5 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = NotStarted }
+        // Assert
+        // ぷよが固定されてボードに配置される
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal initialPair.Axis
 
-    // Act
-    let (newModel, _) = Update.update Tick model
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal initialPair.Child
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.Y |> should equal 5  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``Tickメッセージでぷよ固定後に新しいぷよが生成される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some newPair ->
+            // 初期位置に配置される
+            newPair.AxisPosition.X |> should equal 2
+            newPair.AxisPosition.Y |> should equal 0
+        | None -> failwith "新しいぷよペアが生成されるべきです"
 ```
+
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **Update 関数の呼び出し**:
+   - Elmish.WPF: `updateWithRandom random Tick model` → `newModel`
+   - Bolero: `Update.update Tick model` → `(newModel, _)`
+
+2. **戻り値の処理**:
+   - Elmish.WPF: タプル分解不要（Model のみ返る）
+   - Bolero: タプルから Model を取り出す `(newModel, _)`
+
+3. **テストの明確性**:
+   - `updateWithRandom` を使うことでランダム性を制御可能
 
 ### Program の設定
 
 「Subscriptionを使うには、Programの設定が必要ですね！」そうです！メインのエントリーポイントでSubscriptionを登録します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Main.fs（更新）
-module PuyoGame.Main
+// src/PuyoPuyo.WPF/Program.fs
+module Program
 
 open Elmish
-open WPF
-open WPF.Html
-open PuyoPuyo.Elmish.Model
-open PuyoPuyo.Elmish.Update
-open PuyoPuyo.Elmish.Subscription
-open PuyoPuyo.Components.GameView
+open Elmish.WPF
+open Elmish.Model
+open Elmish.Update
+open Elmish.Subscription
+open Components.GameView
 
-type MyApp() =
-    inherit ProgramComponent<Model, Message>()
+let main window =
+    let config = ElmConfig.Default
 
-    override this.Program =
-        let init () = Model.init (), Cmd.none
-
-        let update msg model =
-            Update.update msg model
-
-        let view model dispatch =
-            GameView.view model dispatch
-
-        Program.mkProgram init update view
-        |> Program.withSubscription (fun model -> Subscription.gameTimer model)
+    Program.mkProgram (fun () -> init (), Cmd.none) (fun msg model -> update msg model, Cmd.none) (fun _ _ ->
+        bindings ())
+    |> Program.withSubscription timerSubscription
+    |> Program.withConsoleTrace
+    |> Program.startElmishLoop config window
 ```
 
-「`Program.withSubscription`でタイマーを登録するんですね！」そうです！これにより、ゲームがPlaying状態のときのみタイマーが動作し、定期的に`Tick`メッセージが発行されます。
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **Program の構築**:
+   - Elmish.WPF: `Program.mkProgram` に `(fun () -> init(), Cmd.none)` を直接渡す
+   - Bolero: `Program.mkProgram init update view` のように関数を渡す
+
+2. **実行方法**:
+   - Elmish.WPF: `Program.startElmishLoop config window`
+   - Bolero: `Program.withHost` で Blazor のホストに統合
+
+3. **デバッグ機能**:
+   - `Program.withConsoleTrace` でコンソールに状態遷移をログ出力可能
+
+「`Program.withSubscription`でタイマーを登録するんですね！」そうです！これにより、タイマーが定期的に`Tick`メッセージを発行し、ぷよの自動落下を実現します。
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、アプリケーションを起動します：
 
 ```bash
-dotnet cake --target=Watch
+dotnet cake --target=Run
 ```
 
-ブラウザで「ゲーム開始」ボタンをクリックすると、ぷよが自動的に落下し、着地すると新しいぷよが生成されるはずです！
+WPF アプリケーションが起動し、「スタート」ボタンをクリックすると、ぷよが自動的に 500ms 間隔で落下し、着地すると新しいぷよが生成されるはずです！
+
+コンソールに `Program.withConsoleTrace` によって状態遷移のログが出力されるので、動作を確認できます。
 
 ### コミット
 
@@ -3509,14 +3624,13 @@ dotnet cake --target=Watch
 git add .
 git commit -m "feat: implement auto-falling puyo with gravity
 
-- Add Board.fixPuyoPair to fix puyo pair to board
+- Add dropPuyo function for common drop logic
 - Add Tick message for timer events
-- Add Subscription module with gameTimer
+- Add Subscription module with System.Timers.Timer
 - Update Elmish Update function for Tick message
 - Auto-generate new puyo when current puyo lands
-- Add unit tests for fixPuyoPair (2 tests)
 - Add integration tests for Tick handling (3 tests)
-- All tests passing (35 tests)"
+- All tests passing"
 ```
 
 ### イテレーション4のまとめ
@@ -3524,50 +3638,59 @@ git commit -m "feat: implement auto-falling puyo with gravity
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `Board.fixPuyoPair`：ぷよペアをボードに固定（イミュータブル）
+   - 既に実装済みの `tryMovePuyoPair` で下方向の移動に対応
+   - `fixPuyoPair` でぷよペアをボードに固定（イミュータブル）
    - パイプライン演算子による連鎖的な処理
 
 2. **Elmish層**
    - `Tick` メッセージ：タイマーイベント
+   - `dropPuyo` 関数：`Tick` と `MoveDown` の共通処理
    - 自動落下ロジック：
      - 下に移動を試みる
      - 移動できたら位置を更新
      - 着地したらボードに固定し新しいぷよを生成
-   - Subscription：ゲームタイマーの実装
+   - Subscription：`System.Timers.Timer` によるタイマーの実装
 
 3. **Program設定**
-   - `Program.withSubscription`でタイマーを登録
-   - ゲームのライフサイクル管理
+   - `Program.withSubscription` でタイマーを登録
+   - `Program.withConsoleTrace` でデバッグログを出力
+   - `Program.startElmishLoop` で WPF アプリに統合
 
 4. **テスト**
-   - ボードへの固定テスト（2テスト）
-     - 固定の成功
-     - イミュータビリティの確認
    - 自動落下の統合テスト（3テスト）
      - 通常の落下
      - 着地と新ぷよ生成
-     - ゲーム状態による制御
+     - 新ぷよの初期位置確認
+   - `updateWithRandom` によるテスト容易性の向上
 
 5. **学んだ重要な概念**
    - Elmish Subscription：外部イベントの統合
-   - IDisposable：リソースの適切な解放
+   - `System.Timers.Timer`：WPF でのタイマー実装
+   - `Cmd.ofSub`：サブスクリプションの登録
    - パイプライン演算子による関数合成
    - タイマーのライフサイクル管理
-   - ゲーム状態による動作制御
 
-6. **Subscription の仕組み**
-   - `Sub<Message>`型：サブスクリプションの定義
-   - タプル：`[ [ "id" ], sub ]`形式でサブスクリプションを識別
-   - IDisposable：タイマーの停止とリソース解放
-   - モデル依存：`model.Status`に応じて動的に切り替え
+6. **Elmish.WPF と Bolero の違い**
+   - **Subscription の定義**:
+     - Elmish.WPF: `Cmd<Message>` を返す、`Cmd.ofSub` を使用
+     - Bolero: `Sub<Message>` を返す、タプル形式
+   - **Update 関数の戻り値**:
+     - Elmish.WPF: `Model` のみ（Cmd は使用しない）
+     - Bolero: `Model * Cmd<Message>` のタプル
+   - **タイマーの実装**:
+     - Elmish.WPF: `System.Timers.Timer`
+     - Bolero: `requestAnimationFrame` や `DispatcherTimer`
+   - **Program の構築**:
+     - Elmish.WPF: `Program.startElmishLoop`
+     - Bolero: `Program.withHost`
 
-7. **TypeScript版との違い**
-   - タイマーをSubscriptionとして宣言的に定義
-   - `requestAnimationFrame`の代わりに`System.Timers.Timer`
-   - コールバック地獄なし（メッセージベース）
-   - リソース管理が明確（IDisposable）
+7. **WPF 版の利点**
+   - デスクトップアプリケーションとしてのネイティブな動作
+   - `System.Timers.Timer` による正確なタイミング制御
+   - `Program.withConsoleTrace` による簡単なデバッグ
+   - Elmish アーキテクチャの理解がしやすい（Cmd を使わないシンプルな実装）
 
-次のイテレーションでは、ぷよの高速落下機能を実装していきます。
+次のイテレーションでは、ぷよの高速落下機能（`MoveDown` メッセージ）を実装していきます。
 
 ## イテレーション5: ぷよの高速落下の実装
 
