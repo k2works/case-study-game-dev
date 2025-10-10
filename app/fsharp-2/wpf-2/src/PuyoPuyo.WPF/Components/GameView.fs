@@ -50,4 +50,5 @@ let bindings () =
       "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
       "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
       "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
-      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
+      "Rotate" |> Binding.cmd (fun _ -> Rotate)
+      "RestartGame" |> Binding.cmd (fun _ -> RestartGame) ]

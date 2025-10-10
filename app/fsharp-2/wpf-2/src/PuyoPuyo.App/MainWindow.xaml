@@ -48,7 +48,8 @@
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
               <TextBlock Text="GAME OVER" FontSize="32" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
               <TextBlock Text="{Binding Score, StringFormat='Score: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-              <TextBlock Text="{Binding Chain, StringFormat='Chain: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+              <TextBlock Text="{Binding Chain, StringFormat='Chain: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+              <Button Command="{Binding RestartGame}" Content="もう一度プレイ" Width="150" Height="40" FontSize="16"/>
             </StackPanel>
           </Border>
         </Grid>

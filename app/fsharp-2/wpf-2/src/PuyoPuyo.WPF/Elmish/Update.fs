@@ -108,6 +108,11 @@ let updateWithRandom (random: Random) msg model =
             | None -> model
         | None -> model
     | MoveDown -> dropPuyo random model
+    | RestartGame ->
+        // ゲームを初期状態にリセットして新しいぷよペアを生成
+        { init () with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
 
 // 更新関数（Elmish用）
 let update msg model =
