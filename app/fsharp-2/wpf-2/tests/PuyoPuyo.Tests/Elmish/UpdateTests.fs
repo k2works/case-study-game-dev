@@ -203,3 +203,56 @@ module ``ぷよの移動`` =
             pair.AxisPosition.X |> should equal 3
             pair.ChildPosition.X |> should equal 3
         | None -> failwith "CurrentPair should exist"
+
+module ``ぷよの高速落下`` =
+    [<Fact>]
+    let ``MoveDownメッセージでぷよペアが下に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random MoveDown model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.Y |> should equal 6
+            pair.ChildPosition.Y |> should equal 5
+        | None -> failwith "CurrentPair should exist"
+
+    [<Fact>]
+    let ``MoveDownメッセージで下端に到達した場合はぷよが固定される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random MoveDown model
+
+        // Assert
+        // ぷよが固定されてボードに配置される
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal initialPair.Axis
+
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal initialPair.Child
+
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)

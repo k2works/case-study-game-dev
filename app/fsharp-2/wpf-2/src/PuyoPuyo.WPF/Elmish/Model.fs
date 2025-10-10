@@ -18,6 +18,7 @@ type Message =
     | Tick
     | MoveLeft
     | MoveRight
+    | MoveDown
     | Rotate
 
 // 初期化関数
