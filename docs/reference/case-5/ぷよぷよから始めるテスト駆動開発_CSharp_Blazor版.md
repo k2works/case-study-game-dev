@@ -511,6 +511,149 @@ git add .
 git commit -m 'chore: 静的コード解析の設定'
 ```
 
+### Lintツール
+
+**静的コード解析**に加えて、より詳細なコード品質チェックを行うために**Lintツール**を導入しましょう。C#/.NETでは、追加のアナライザパッケージを導入することで、より厳密なコードチェックが可能になります。
+
+```bash
+# より厳密なコード品質チェックのためのアナライザを追加
+cd PuyoPuyoTDD
+dotnet add package Microsoft.CodeAnalysis.NetAnalyzers
+dotnet add package StyleCop.Analyzers
+cd ..
+```
+
+「StyleCop.Analyzersって何？」と思われるかもしれませんね。StyleCopは、C#のコーディング規約を自動的にチェックしてくれるツールです。「命名規則は守られているか？」「ドキュメントコメントは書かれているか？」などをチェックしてくれますよ。
+
+#### StyleCopの設定
+
+StyleCopの動作をカスタマイズするために、`stylecop.json`ファイルを作成しましょう：
+
+```bash
+cat > PuyoPuyoTDD/stylecop.json << 'EOF'
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "PuyoPuyoTDD",
+      "copyrightText": "Copyright (c) {companyName}. All rights reserved.",
+      "documentExposedElements": true,
+      "documentInternalElements": false,
+      "documentPrivateElements": false,
+      "documentInterfaces": true,
+      "documentPrivateFields": false
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": false,
+      "allowedHungarianPrefixes": []
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace",
+      "systemUsingDirectivesFirst": true,
+      "blankLinesBetweenUsingGroups": "allow"
+    },
+    "layoutRules": {
+      "newlineAtEndOfFile": "require"
+    },
+    "maintainabilityRules": {
+      "topLevelTypes": "multiple"
+    }
+  }
+}
+EOF
+```
+
+次に、プロジェクトファイルでStyleCopを有効にします：
+
+```bash
+# PuyoPuyoTDD.csprojにStyleCop設定を追加
+cat >> PuyoPuyoTDD/PuyoPuyoTDD.csproj << 'EOF'
+
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+EOF
+```
+
+「stylecop.jsonは何を設定しているんですか？」良い質問です！このファイルでは、以下のようなルールを設定しています：
+
+- **documentationRules**: ドキュメントコメントに関するルール（public要素にはコメントを必須にするなど）
+- **namingRules**: 命名規則（ハンガリアン記法を許可するかなど）
+- **orderingRules**: using文の並び順に関するルール
+- **layoutRules**: レイアウトに関するルール（ファイル末尾の改行など）
+- **maintainabilityRules**: 保守性に関するルール
+
+#### .editorconfigでのLint設定の追加
+
+既存の`.editorconfig`にStyleCopのルールレベルを追加しましょう：
+
+```bash
+cat >> .editorconfig << 'EOF'
+
+# StyleCop Analyzers rules
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = suggestion
+
+# SA1633: File should have header
+dotnet_diagnostic.SA1633.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1309: Field names should not begin with underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1200: Using directives should be placed correctly
+dotnet_diagnostic.SA1200.severity = warning
+
+# SA1208: System using directives should be placed before other using directives
+dotnet_diagnostic.SA1208.severity = warning
+
+# SA1210: Using directives should be ordered alphabetically by namespace
+dotnet_diagnostic.SA1210.severity = warning
+
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = suggestion
+EOF
+```
+
+「たくさんのルールがありますね！」そうですね。これらのルールは、コードの一貫性と品質を保つために重要です。いくつか重要なものを説明しましょう：
+
+- **SA1600**: public要素にドキュメントコメントを付けることを推奨（suggestionレベル）
+- **SA1633**: ファイルヘッダーは不要に設定（プロジェクトによって必要性が異なるため）
+- **SA1101**: thisプレフィックスは不要に設定（C#の一般的な慣習に従う）
+- **SA1309**: フィールド名のアンダースコアプレフィックスを許可（プライベートフィールドの慣習）
+- **SA1200-1210**: using文の配置と順序に関する警告
+
+#### Lintの実行
+
+それでは、Lintを実行してみましょう：
+
+```bash
+# ビルドとともにLintチェックが実行される
+dotnet build
+
+# より詳細な出力が必要な場合
+dotnet build /p:TreatWarningsAsErrors=true
+```
+
+「/p:TreatWarningsAsErrors=trueって何ですか？」これは、警告をエラーとして扱うオプションです。CI/CD環境で使うと、コード品質を強制的に維持できますよ！
+
+Lintエラーや警告が表示された場合は、コードを修正しましょう。多くの場合、`dotnet format`で自動修正できます：
+
+```bash
+# フォーマットとともに自動修正可能な問題を修正
+dotnet format
+```
+
+```bash
+git add .
+git commit -m 'chore: Lintツールの設定'
+```
+
 ### コードフォーマッタ
 
 **コードフォーマッタ**は開発チーム内でのコーディングスタイルを統一するためのツールです。C#/.NETでは`dotnet format`コマンドが標準で提供されています。「わざわざインストールしなくていいんですか？」はい、最初から使えるんです！
@@ -688,6 +831,34 @@ Task("Build")
     });
 });
 
+Task("Lint")
+    .Description("コードのLintチェック")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    Information("Lintチェックを実行中...");
+    
+    // 警告をエラーとして扱ってビルド
+    var lintSettings = new DotNetBuildSettings
+    {
+        Configuration = configuration,
+        NoRestore = true,
+        MSBuildSettings = new DotNetMSBuildSettings()
+    };
+    lintSettings.MSBuildSettings.TreatAllWarningsAs = MSBuildTreatAllWarningsAs.Error;
+    
+    try
+    {
+        DotNetBuild("./PuyoPuyoTDD.sln", lintSettings);
+        Information("✅ Lintチェックが成功しました");
+    }
+    catch
+    {
+        Warning("⚠️ Lintチェックで警告またはエラーが見つかりました");
+        throw;
+    }
+});
+
 Task("Test")
     .Description("テストの実行")
     .IsDependentOn("Build")
@@ -736,6 +907,7 @@ Task("Coverage")
 Task("Quality")
     .Description("すべての品質チェックを実行")
     .IsDependentOn("Format")
+    .IsDependentOn("Lint")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
     .IsDependentOn("Coverage")
@@ -777,6 +949,7 @@ EOF
 - **Restore**: NuGetパッケージを復元
 - **Format**: コードをフォーマット
 - **Build**: プロジェクトをビルド
+- **Lint**: コードのLintチェック（警告をエラーとして扱う）
 - **Test**: テストを実行
 - **Coverage**: カバレッジを測定してレポート生成
 - **Quality**: すべての品質チェックを実行（デフォルト）
@@ -792,6 +965,7 @@ dotnet cake
 dotnet cake --target=Clean
 dotnet cake --target=Format
 dotnet cake --target=Build
+dotnet cake --target=Lint
 dotnet cake --target=Test
 dotnet cake --target=Coverage
 

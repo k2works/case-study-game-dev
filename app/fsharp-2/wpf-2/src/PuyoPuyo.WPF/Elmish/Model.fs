@@ -21,6 +21,7 @@ type Message =
     | MoveRight
     | MoveDown
     | Rotate
+    | RestartGame
 
 // 初期化関数
 let init () =

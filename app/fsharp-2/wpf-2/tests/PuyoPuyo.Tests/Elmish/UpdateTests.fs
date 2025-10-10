@@ -465,3 +465,58 @@ module ``ゲームオーバー`` =
         // Assert
         newModel.GameState |> should equal GameOver
         newModel.CurrentPair |> should equal None
+
+module ``ゲーム再開`` =
+    [<Fact>]
+    let ``RestartGameメッセージでゲーム状態がリセットされる`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ゲームオーバー状態のモデルを作成
+        let board =
+            init().Board |> Domain.Board.setCellColor 2 5 Domain.Puyo.Red
+
+        let model =
+            { init () with
+                Board = board
+                Score = 1000
+                Chain = 5
+                GameState = GameOver
+                CurrentPair = None }
+
+        // Act
+        let newModel = updateWithRandom random RestartGame model
+
+        // Assert
+        // ボードが空になる
+        newModel.Board |> should equal (Array2D.create 6 12 Domain.Puyo.Empty)
+        // スコアがリセットされる
+        newModel.Score |> should equal 0
+        // 連鎖数がリセットされる
+        newModel.Chain |> should equal 0
+        // ゲーム状態がPlayingになる
+        newModel.GameState |> should equal Playing
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``RestartGameメッセージで新しいぷよペアが初期位置に配置される`` () =
+        // Arrange
+        let random = Random(42)
+
+        let model =
+            { init () with
+                GameState = GameOver
+                CurrentPair = None }
+
+        // Act
+        let newModel = updateWithRandom random RestartGame model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 2
+            pair.AxisPosition.Y |> should equal 0
+            pair.ChildPosition.X |> should equal 2
+            pair.ChildPosition.Y |> should equal -1
+        | None -> failwith "新しいぷよペアが生成されるべきです"
