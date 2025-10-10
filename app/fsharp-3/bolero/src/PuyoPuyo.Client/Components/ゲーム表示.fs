@@ -52,6 +52,9 @@ module ゲーム画面 =
         match e.Key with
         | "ArrowLeft" -> ディスパッチ 左移動
         | "ArrowRight" -> ディスパッチ 右移動
+        | "ArrowUp"
+        | "z"
+        | "Z" -> ディスパッチ 回転
         | _ -> ()
 
     /// メインView
@@ -83,6 +86,7 @@ module ゲーム画面 =
                     div {
                         attr.``class`` "instructions"
                         p { "← → : 移動" }
+                        p { "↑ / Z : 回転" }
                     }
 
                 | ゲームオーバー ->

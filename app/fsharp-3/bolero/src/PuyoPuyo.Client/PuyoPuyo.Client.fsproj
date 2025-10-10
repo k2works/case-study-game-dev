@@ -12,6 +12,7 @@
     <Compile Include="Domain\ゲームロジック.fs" />
     <Compile Include="Elmish\モデル.fs" />
     <Compile Include="Elmish\更新.fs" />
+    <Compile Include="Elmish\サブスクリプション.fs" />
     <Compile Include="Components\ゲーム表示.fs" />
     <Compile Include="Main.fs" />
     <Compile Include="Startup.fs" />
