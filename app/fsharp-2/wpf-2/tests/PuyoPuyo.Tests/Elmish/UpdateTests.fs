@@ -291,3 +291,51 @@ module ``ぷよの消去`` =
         Domain.Board.getCellColor 2 10 newModel.Board |> should equal Domain.Puyo.Empty
         Domain.Board.getCellColor 2 9 newModel.Board |> should equal Domain.Puyo.Empty
         Domain.Board.getCellColor 2 8 newModel.Board |> should equal Domain.Puyo.Empty
+
+module ``連鎖反応`` =
+    [<Fact>]
+    let ``初期化時の連鎖カウントは0`` () =
+        // Arrange & Act
+        let model = init ()
+
+        // Assert
+        model.Chain |> should equal 0
+
+    [<Fact>]
+    let ``連鎖が発生すると連鎖カウントが増加する`` () =
+        // Arrange
+        let random = Random(42)
+
+        // 連鎖が発生する配置:
+        // 赤ぷよ 4つ（下）+ 青ぷよ 4つ（上）
+        // 赤が消えると青が落ちて4つつながり、連鎖発生
+        let board =
+            init().Board
+            // 赤ぷよ（下）
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 8 Domain.Puyo.Red
+            // 青ぷよ（縦3 + 横1）
+            |> Domain.Board.setCellColor 2 7 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 6 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 5 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 3 8 Domain.Puyo.Blue
+
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 4 }
+                          ChildPosition = { X = 2; Y = 3 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させて連鎖を発生させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 2連鎖が発生（1回目の消去 + 2回目の消去）
+        newModel.Chain |> should be (greaterThanOrEqualTo 2)

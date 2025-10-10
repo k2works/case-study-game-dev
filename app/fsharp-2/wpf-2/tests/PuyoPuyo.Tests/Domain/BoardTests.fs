@@ -42,6 +42,7 @@ module ``ぷよの消去`` =
     let ``横に4つ並んだぷよを検出できる`` () =
         // Arrange
         let board = createBoard ()
+
         let board =
             board
             |> setCellColor 0 11 Red
@@ -60,6 +61,7 @@ module ``ぷよの消去`` =
     let ``縦に4つ並んだぷよを検出できる`` () =
         // Arrange
         let board = createBoard ()
+
         let board =
             board
             |> setCellColor 2 8 Green
@@ -78,6 +80,7 @@ module ``ぷよの消去`` =
     let ``L字型につながった5つのぷよを検出できる`` () =
         // Arrange
         let board = createBoard ()
+
         let board =
             board
             |> setCellColor 1 9 Blue
@@ -97,6 +100,7 @@ module ``ぷよの消去`` =
     let ``3つ以下のぷよは検出されない`` () =
         // Arrange
         let board = createBoard ()
+
         let board =
             board
             |> setCellColor 0 11 Yellow
@@ -113,6 +117,7 @@ module ``ぷよの消去`` =
     let ``指定した位置のぷよを消去できる`` () =
         // Arrange
         let board = createBoard ()
+
         let board =
             board
             |> setCellColor 0 11 Red
@@ -121,7 +126,7 @@ module ``ぷよの消去`` =
             |> setCellColor 3 11 Red
 
         // Act
-        let positions = [(0, 11); (1, 11); (2, 11); (3, 11)]
+        let positions = [ (0, 11); (1, 11); (2, 11); (3, 11) ]
         let newBoard = board |> clearPuyos positions
 
         // Assert
@@ -134,13 +139,10 @@ module ``ぷよの消去`` =
     let ``消去後にぷよが落下する`` () =
         // Arrange
         let board = createBoard ()
-        let board =
-            board
-            |> setCellColor 0 8 Red
-            |> setCellColor 0 11 Green
+        let board = board |> setCellColor 0 8 Red |> setCellColor 0 11 Green
 
         // Act - (0, 11) のぷよを消去
-        let newBoard = board |> clearPuyos [(0, 11)]
+        let newBoard = board |> clearPuyos [ (0, 11) ]
         let droppedBoard = newBoard |> applyGravity
 
         // Assert - (0, 8) にあった赤いぷよが (0, 11) に落下

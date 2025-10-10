@@ -9,6 +9,7 @@ open Domain.Score
 type Model =
     { Board: Board
       Score: Score
+      Chain: int
       GameState: GameState
       CurrentPair: PuyoPair option }
 
@@ -25,5 +26,6 @@ type Message =
 let init () =
     { Board = createBoard ()
       Score = initialScore
+      Chain = 0
       GameState = NotStarted
       CurrentPair = None }

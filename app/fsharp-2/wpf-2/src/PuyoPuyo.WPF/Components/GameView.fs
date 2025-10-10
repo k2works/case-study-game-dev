@@ -41,7 +41,7 @@ let getAllPuyos (model: Model) =
 // Elmish バインディング
 let bindings () =
     [ "Score" |> Binding.oneWay (fun m -> m.Score)
-      "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
+      "Chain" |> Binding.oneWay (fun m -> m.Chain)
       "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
       "StartGame" |> Binding.cmd (fun _ -> StartGame)
       "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
