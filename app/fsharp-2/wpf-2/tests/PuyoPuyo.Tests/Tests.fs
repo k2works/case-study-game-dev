@@ -68,3 +68,29 @@ module ``ぷよペア生成`` =
 
         // Assert
         pair.Rotation |> should equal 0
+
+module ``ゲームループ`` =
+    [<Fact>]
+    let ``StartGameメッセージで新しいぷよペアが生成される`` () =
+        // Arrange
+        let model = Game.init ()
+        let random = System.Random(42)
+
+        // Act
+        let newModel = Game.updateWithRandom random Game.StartGame model
+
+        // Assert
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``Tickメッセージでゲーム状態が更新される`` () =
+        // Arrange
+        let random = System.Random(42)
+        let model = { Game.init () with CurrentPair = Some(Game.generatePuyoPair random) }
+
+        // Act
+        let newModel = Game.updateWithRandom random Game.Tick model
+
+        // Assert
+        // Tick処理が実行されること（現時点では状態が保持されることを確認）
+        newModel.GameState |> should equal Game.Playing
