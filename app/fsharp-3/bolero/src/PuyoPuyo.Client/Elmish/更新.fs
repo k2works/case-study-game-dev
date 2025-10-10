@@ -12,8 +12,7 @@ type メッセージ =
     | 下移動
     | 回転
     | 高速落下
-    | ゲームステップ
-    | 時間ステップ
+    | タイマー刻み
     | 新しいぷよ生成
     | ぷよ固定
     | 連鎖処理
@@ -52,6 +51,42 @@ module 更新 =
                 match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ぷよペア 右 with
                 | Some 移動後のぷよペア -> { モデル with 現在のぷよ = Some 移動後のぷよペア }, Cmd.none
                 | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | 回転 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア壁キック回転 モデル.盤面 ぷよペア PuyoPuyo.Domain.ぷよペア.時計回り回転 with
+                | Some 回転後のぷよペア -> { モデル with 現在のぷよ = Some 回転後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | 下移動 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ぷよペア 下 with
+                | Some 移動後のぷよペア -> { モデル with 現在のぷよ = Some 移動後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | タイマー刻み when モデル.状態 = プレイ中 ->
+            match モデル.現在のぷよ with
+            | Some ペア ->
+                // 下に移動を試みる
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+                | Some 移動後のペア ->
+                    // 移動成功
+                    { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
+                | None ->
+                    // 移動できない（着地）
+                    let 新しい盤面 = 盤面操作.ぷよペア固定 モデル.盤面 ペア
+                    let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                    { モデル with
+                        盤面 = 新しい盤面
+                        現在のぷよ = モデル.次のぷよ
+                        次のぷよ = Some 次のペア },
+                    Cmd.none
             | None -> モデル, Cmd.none
 
         | _ -> モデル, Cmd.none
