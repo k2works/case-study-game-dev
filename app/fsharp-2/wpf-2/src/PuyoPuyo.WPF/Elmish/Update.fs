@@ -57,6 +57,7 @@ let private dropPuyo (random: Random) (model: Model) =
                 match model.NextPair with
                 | Some next -> next
                 | None -> generatePuyoPair random
+
             let newNextPair = generatePuyoPair random
 
             // ゲームオーバー判定

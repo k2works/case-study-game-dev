@@ -41,6 +41,7 @@ let getAllPuyos (model: Model) =
 // 次のぷよ表示用のViewModel を取得
 let getNextPuyos (model: Model) =
     let cellSize = 20.0 // 次のぷよ表示エリアは小さめ
+
     match model.NextPair with
     | None -> []
     | Some pair ->

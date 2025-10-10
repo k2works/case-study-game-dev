@@ -505,8 +505,7 @@ module ``ゲーム再開`` =
         let random = Random(42)
 
         // ゲームオーバー状態のモデルを作成
-        let board =
-            init().Board |> Domain.Board.setCellColor 2 5 Domain.Puyo.Red
+        let board = init().Board |> Domain.Board.setCellColor 2 5 Domain.Puyo.Red
 
         let model =
             { init () with
