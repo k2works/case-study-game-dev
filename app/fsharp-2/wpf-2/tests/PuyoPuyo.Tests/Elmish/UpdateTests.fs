@@ -405,3 +405,63 @@ module ``全消しボーナス`` =
 
         // Assert - ボーナスは加算されない（スコア0のまま）
         newModel.Score |> should equal 0
+
+module ``ゲームオーバー`` =
+    [<Fact>]
+    let ``新しいぷよが初期位置に配置できない場合はゲームオーバー`` () =
+        // Arrange
+        let random = Random(42)
+
+        // 初期位置 (X=2, Y=0) をぷよで埋める（ゲームオーバー状態）
+        // ぷよペアの初期位置: AxisPosition = { X = 2; Y = 0 }, ChildPosition = { X = 2; Y = -1 }
+        // 連鎖が発生しないように色を交互に配置
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 0 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 1 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 2 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 3 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 4 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 5 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 6 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 7 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 8 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+
+        // 底にぷよを配置（次のTickで固定されて X=2 の列が埋まる）
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Blue
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 11 }
+                          ChildPosition = { X = 2; Y = 10 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - ぷよを固定して新しいぷよを生成（X=2, Y=0が埋まっているのでゲームオーバー）
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        newModel.GameState |> should equal GameOver
+        newModel.CurrentPair |> should equal None
+
+    [<Fact>]
+    let ``ゲームオーバー後はTickで状態が変わらない`` () =
+        // Arrange
+        let random = Random(42)
+
+        let model =
+            { init () with
+                GameState = GameOver
+                CurrentPair = None }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        newModel.GameState |> should equal GameOver
+        newModel.CurrentPair |> should equal None

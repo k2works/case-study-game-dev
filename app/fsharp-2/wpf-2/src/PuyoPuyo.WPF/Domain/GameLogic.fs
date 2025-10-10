@@ -109,3 +109,20 @@ let fixPuyoPair (board: Board) (pair: PuyoPair) : Board =
         newBoard <- setCellColor pair.ChildPosition.X pair.ChildPosition.Y pair.Child newBoard
 
     newBoard
+
+// ゲームオーバー判定（新しいぷよペアが初期位置に配置できない場合）
+let checkGameOver (board: Board) (pair: PuyoPair) : bool =
+    // 軸ぷよと子ぷよの両方をチェック
+    let axisBlocked =
+        if pair.AxisPosition.Y >= 0 then
+            getCellColor pair.AxisPosition.X pair.AxisPosition.Y board <> Empty
+        else
+            false
+
+    let childBlocked =
+        if pair.ChildPosition.Y >= 0 then
+            getCellColor pair.ChildPosition.X pair.ChildPosition.Y board <> Empty
+        else
+            false
+
+    axisBlocked || childBlocked

@@ -403,3 +403,60 @@ module ``ぷよの自由落下`` =
             movedPair.AxisPosition.Y |> should equal 1
             movedPair.ChildPosition.Y |> should equal 0
         | None -> failwith "Y=-1のぷよを含むペアでも下に移動できるはずです"
+
+module ``ゲームオーバー判定`` =
+    [<Fact>]
+    let ``初期位置にぷよがない場合はゲームオーバーではない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 0 }
+              ChildPosition = { X = 2; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let isGameOver = checkGameOver board pair
+
+        // Assert
+        isGameOver |> should equal false
+
+    [<Fact>]
+    let ``初期位置（軸ぷよ）に既存ぷよがある場合はゲームオーバー`` () =
+        // Arrange
+        let board = createBoard ()
+        let board = setCellColor 2 0 Green board
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 0 }
+              ChildPosition = { X = 2; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let isGameOver = checkGameOver board pair
+
+        // Assert
+        isGameOver |> should equal true
+
+    [<Fact>]
+    let ``初期位置（子ぷよ）に既存ぷよがある場合はゲームオーバー`` () =
+        // Arrange
+        let board = createBoard ()
+        let board = setCellColor 2 1 Green board
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 1 }
+              ChildPosition = { X = 2; Y = 0 }
+              Rotation = 0 }
+
+        // Act
+        let isGameOver = checkGameOver board pair
+
+        // Assert
+        isGameOver |> should equal true

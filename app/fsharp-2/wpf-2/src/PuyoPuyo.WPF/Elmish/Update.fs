@@ -51,11 +51,20 @@ let private dropPuyo (random: Random) (model: Model) =
             // 新しいぷよを生成
             let newPair = generatePuyoPair random
 
-            { model with
-                Board = boardAfterChain
-                Chain = chainCount
-                Score = model.Score + bonusScore
-                CurrentPair = Some newPair }
+            // ゲームオーバー判定
+            if checkGameOver boardAfterChain newPair then
+                { model with
+                    Board = boardAfterChain
+                    Chain = chainCount
+                    Score = model.Score + bonusScore
+                    CurrentPair = None
+                    GameState = GameOver }
+            else
+                { model with
+                    Board = boardAfterChain
+                    Chain = chainCount
+                    Score = model.Score + bonusScore
+                    CurrentPair = Some newPair }
     | None -> model
 
 // ランダム生成器を受け取る更新関数（テスト用）
@@ -65,7 +74,12 @@ let updateWithRandom (random: Random) msg model =
         { model with
             CurrentPair = Some(generatePuyoPair random)
             GameState = Playing }
-    | Tick -> dropPuyo random model
+    | Tick ->
+        // ゲームオーバー状態では何もしない
+        if model.GameState = GameOver then
+            model
+        else
+            dropPuyo random model
     | MoveLeft ->
         match model.CurrentPair with
         | Some pair ->
