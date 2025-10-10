@@ -108,3 +108,87 @@ module ``ぷよペアの移動`` =
 
         // Assert
         result |> should equal None
+
+    [<Fact>]
+    let ``スポーンエリア（Y<0）でも左に移動できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 0 }
+              ChildPosition = { X = 2; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Left
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 1
+            movedPair.AxisPosition.Y |> should equal 0
+            movedPair.ChildPosition.X |> should equal 1
+            movedPair.ChildPosition.Y |> should equal -1
+        | None -> failwith "スポーンエリアでも左に移動できるはずです"
+
+    [<Fact>]
+    let ``スポーンエリア（Y<0）でも右に移動できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 0 }
+              ChildPosition = { X = 2; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Right
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 3
+            movedPair.AxisPosition.Y |> should equal 0
+            movedPair.ChildPosition.X |> should equal 3
+            movedPair.ChildPosition.Y |> should equal -1
+        | None -> failwith "スポーンエリアでも右に移動できるはずです"
+
+    [<Fact>]
+    let ``スポーンエリアでも左端では左に移動できない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 0; Y = 0 }
+              ChildPosition = { X = 0; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Left
+
+        // Assert
+        result |> should equal None
+
+    [<Fact>]
+    let ``スポーンエリアでも右端では右に移動できない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 5; Y = 0 }
+              ChildPosition = { X = 5; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Right
+
+        // Assert
+        result |> should equal None

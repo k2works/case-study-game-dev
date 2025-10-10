@@ -18,9 +18,14 @@ type Direction =
     | Right
     | Down
 
-// 位置が有効かチェック
+// 位置が有効かチェック（Y < 0 は画面上部の出現エリアとして許可）
 let private isValidPosition (board: Board) (x: int) (y: int) : bool =
-    x >= 0 && x < 6 && y >= 0 && y < 12 && getCellColor x y board = Empty
+    if y < 0 then
+        // 画面上部（Y < 0）は横の範囲だけチェック
+        x >= 0 && x < 6
+    else
+        // 通常エリアは空セルかチェック
+        x >= 0 && x < 6 && y < 12 && getCellColor x y board = Empty
 
 // ぷよペアを指定方向に移動（可能な場合のみ）
 let tryMovePuyoPair (board: Board) (pair: PuyoPair) (direction: Direction) : PuyoPair option =

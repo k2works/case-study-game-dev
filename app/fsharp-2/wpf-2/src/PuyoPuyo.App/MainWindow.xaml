@@ -2,7 +2,12 @@
     x:Class="PuyoPuyo.App.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="ぷよぷよゲーム" Height="690" Width="500">
+    Title="ぷよぷよゲーム" Height="690" Width="500"
+    Focusable="True">
+  <Window.InputBindings>
+    <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+    <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+  </Window.InputBindings>
   <StackPanel Orientation="Vertical">
     <!-- タイトル -->
     <TextBlock Text="ぷよぷよゲーム" FontSize="24" HorizontalAlignment="Center" Margin="10"/>
