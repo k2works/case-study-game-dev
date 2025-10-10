@@ -17,11 +17,7 @@ let rec private processChain (board: Board) (chainCount: int) : Board * int * in
     if List.isEmpty groups then
         // 消去対象がない場合、連鎖終了
         // 全消しチェック
-        let bonus =
-            if isAllClear board then
-                allClearBonus
-            else
-                0
+        let bonus = if isAllClear board then allClearBonus else 0
 
         (board, chainCount, bonus)
     else
