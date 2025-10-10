@@ -30,3 +30,41 @@ module ``ゲーム初期化`` =
 
         // Assert
         model.GameState |> should equal Game.Playing
+
+module ``ぷよペア生成`` =
+    [<Fact>]
+    let ``generatePuyoPairは2つのぷよを含むペアを生成する`` () =
+        // Arrange
+        let random = System.Random(42)
+
+        // Act
+        let pair = Game.generatePuyoPair random
+
+        // Assert
+        pair.Axis |> should not' (equal Game.Empty)
+        pair.Child |> should not' (equal Game.Empty)
+
+    [<Fact>]
+    let ``generatePuyoPairは初期位置を設定する`` () =
+        // Arrange
+        let random = System.Random(42)
+
+        // Act
+        let pair = Game.generatePuyoPair random
+
+        // Assert
+        pair.AxisPosition.X |> should equal 2
+        pair.AxisPosition.Y |> should equal 0
+        pair.ChildPosition.X |> should equal 2
+        pair.ChildPosition.Y |> should equal -1
+
+    [<Fact>]
+    let ``generatePuyoPairは回転方向を0に設定する`` () =
+        // Arrange
+        let random = System.Random(42)
+
+        // Act
+        let pair = Game.generatePuyoPair random
+
+        // Assert
+        pair.Rotation |> should equal 0
