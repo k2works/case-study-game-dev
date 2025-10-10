@@ -39,6 +39,49 @@ dotnet test
 dotnet run --project PuyoPuyoTDD/PuyoPuyoTDD.csproj
 ```
 
+### Cake タスクランナー
+
+このプロジェクトでは Cake を使用してビルド、テスト、品質チェックを自動化しています。
+
+#### Cake のインストール
+
+```bash
+dotnet tool install -g Cake.Tool
+```
+
+#### 利用可能なタスク
+
+- **Clean**: ビルド成果物とテスト結果をクリーンアップ
+- **Restore**: NuGet パッケージを復元
+- **Format**: コードをフォーマット
+- **Build**: プロジェクトをビルド
+- **Lint**: コードの Lint チェック（警告をエラーとして扱う）
+- **Test**: テストを実行
+- **Coverage**: カバレッジを測定してレポート生成
+- **Quality**: すべての品質チェックを実行（デフォルト）
+- **Watch**: ファイル監視と自動テスト実行
+
+#### タスクの実行
+
+```bash
+# デフォルトタスク（Quality）を実行
+dotnet cake
+
+# 特定のタスクを実行
+dotnet cake --target=Clean
+dotnet cake --target=Format
+dotnet cake --target=Build
+dotnet cake --target=Lint
+dotnet cake --target=Test
+dotnet cake --target=Coverage
+
+# すべての品質チェックを実行
+dotnet cake --target=Quality
+
+# ファイル監視と自動テスト実行
+dotnet cake --target=Watch
+```
+
 ## 開発ガイドライン
 
 このプロジェクトはテスト駆動開発 (TDD) に従って開発されています。
