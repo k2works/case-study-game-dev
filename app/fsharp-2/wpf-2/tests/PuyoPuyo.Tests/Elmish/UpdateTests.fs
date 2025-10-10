@@ -120,11 +120,9 @@ module ``ゲームループ`` =
 
         // Assert
         // ぷよが固定されてボードに配置される
-        Domain.Board.getCellColor 2 11 newModel.Board
-        |> should equal initialPair.Axis
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal initialPair.Axis
 
-        Domain.Board.getCellColor 2 10 newModel.Board
-        |> should equal initialPair.Child
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal initialPair.Child
 
         // 新しいぷよペアが生成される
         newModel.CurrentPair |> should not' (equal None)

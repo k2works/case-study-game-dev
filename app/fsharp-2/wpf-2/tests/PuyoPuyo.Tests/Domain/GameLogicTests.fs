@@ -380,7 +380,7 @@ module ``ぷよの自由落下`` =
 
         // Assert
         getCellColor 2 0 newBoard |> should equal Red
-        // Y=-1は画面外なので何もしない（テストでは確認不要）
+    // Y=-1は画面外なので何もしない（テストでは確認不要）
 
     [<Fact>]
     let ``画面上部（Y-1）のぷよを含むペアは下に移動できる`` () =
