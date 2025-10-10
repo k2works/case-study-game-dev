@@ -113,3 +113,31 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* ぷよぷよゲーム用スタイル */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.game-info {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.game-info p {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    border-radius: 0.25rem;
+}
+
+#stageCanvas {
+    border: 2px solid #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
