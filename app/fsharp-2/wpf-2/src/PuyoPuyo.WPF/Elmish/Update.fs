@@ -1,6 +1,7 @@
 module Elmish.Update
 
 open System
+open Domain.GameLogic
 open Domain.PuyoPair
 open Elmish.Model
 
@@ -9,7 +10,8 @@ let updateWithRandom (random: Random) msg model =
     match msg with
     | StartGame ->
         { model with
-            CurrentPair = Some(generatePuyoPair random) }
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
     | Tick -> model
 
 // 更新関数（Elmish用）

@@ -2,6 +2,7 @@ module Components.GameView
 
 open Elmish.WPF
 open Domain.Board
+open Domain.GameLogic
 open Domain.Puyo
 open Domain.PuyoPair
 open Elmish.Model
@@ -41,4 +42,5 @@ let bindings () =
     [ "Score" |> Binding.oneWay (fun m -> m.Score)
       "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
       "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
-      "StartGame" |> Binding.cmd (fun _ -> StartGame) ]
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted) ]

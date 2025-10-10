@@ -7,6 +7,7 @@ open Domain.Score
 
 // ゲーム状態
 type GameState =
+    | NotStarted
     | Playing
     | Paused
     | GameOver

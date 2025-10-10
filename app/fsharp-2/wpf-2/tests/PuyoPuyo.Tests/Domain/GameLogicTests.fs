@@ -6,6 +6,11 @@ open Domain.GameLogic
 
 module ``ゲーム状態`` =
     [<Fact>]
+    let ``GameStateにはNotStarted状態がある`` () =
+        // Assert
+        NotStarted |> should equal NotStarted
+
+    [<Fact>]
     let ``GameStateにはPlaying状態がある`` () =
         // Assert
         Playing |> should equal Playing

@@ -26,12 +26,12 @@ module ``ゲーム初期化`` =
         model.Score |> should equal 0
 
     [<Fact>]
-    let ``初期化時にゲーム状態がPlaying`` () =
+    let ``初期化時にゲーム状態がNotStarted`` () =
         // Arrange & Act
         let model = init ()
 
         // Assert
-        model.GameState |> should equal Playing
+        model.GameState |> should equal NotStarted
 
 module ``ゲームループ`` =
     [<Fact>]
@@ -47,13 +47,26 @@ module ``ゲームループ`` =
         newModel.CurrentPair |> should not' (equal None)
 
     [<Fact>]
-    let ``Tickメッセージでゲーム状態が更新される`` () =
+    let ``StartGameメッセージでゲーム状態がPlayingになる`` () =
+        // Arrange
+        let model = init ()
+        let random = Random(42)
+
+        // Act
+        let newModel = updateWithRandom random StartGame model
+
+        // Assert
+        newModel.GameState |> should equal Playing
+
+    [<Fact>]
+    let ``Tickメッセージでゲーム状態が保持される`` () =
         // Arrange
         let random = Random(42)
 
         let model =
             { init () with
-                CurrentPair = Some(generatePuyoPair random) }
+                CurrentPair = Some(generatePuyoPair random)
+                GameState = Playing }
 
         // Act
         let newModel = updateWithRandom random Tick model

@@ -54,6 +54,6 @@
     </StackPanel>
 
     <!-- コントロールボタン -->
-    <Button Command="{Binding StartGame}" Content="ゲーム開始" Width="120" Height="40" Margin="10"/>
+    <Button Command="{Binding StartGame}" Content="ゲーム開始" Width="120" Height="40" Margin="10" IsEnabled="{Binding CanStartGame}"/>
   </StackPanel>
 </Window>

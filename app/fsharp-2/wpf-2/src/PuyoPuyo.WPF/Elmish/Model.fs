@@ -21,5 +21,5 @@ type Message =
 let init () =
     { Board = createBoard ()
       Score = initialScore
-      GameState = Playing
+      GameState = NotStarted
       CurrentPair = None }
