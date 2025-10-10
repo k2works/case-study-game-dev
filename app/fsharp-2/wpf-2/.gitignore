@@ -54,3 +54,6 @@ tools/**
 # Coverage
 coverage/
 *.opencover.xml
+
+# Publish
+publish/

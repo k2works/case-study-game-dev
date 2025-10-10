@@ -134,6 +134,27 @@ Task("Coverage")
     Information("カバレッジレポート: ./tests/PuyoPuyo.Tests/coverage/coverage.opencover.xml");
 });
 
+Task("Publish")
+    .Description("アプリケーションを公開")
+    .IsDependentOn("Test")
+    .Does(() =>
+{
+    var publishDir = "./publish";
+    CleanDirectory(publishDir);
+
+    DotNetPublish("./src/PuyoPuyo.App/PuyoPuyo.App.csproj", new DotNetPublishSettings
+    {
+        Configuration = configuration,
+        OutputDirectory = publishDir,
+        SelfContained = true,
+        Runtime = "win-x64",
+        PublishSingleFile = true,
+        PublishTrimmed = false
+    });
+
+    Information($"アプリケーションを {publishDir} に公開しました");
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット
 ///////////////////////////////////////////////////////////////////////////////
