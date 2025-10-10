@@ -4751,7 +4751,7 @@ git commit -m "feat: implement puyo clearing and gravity
 
 次のイテレーションでは、連鎖反応を実装していきます。
 
-## イテレーション7: 連鎖反応の実装
+## イテレーション 7: 連鎖反応の実装
 
 「ぷよを消せるようになったけど、ぷよぷよの醍醐味は連鎖じゃないですか？」そうですね！ぷよぷよの最も魅力的な要素の一つは、連鎖反応です。ぷよが消えて落下した結果、新たな消去パターンが生まれ、連続して消去が発生する「連鎖」を実装していきましょう！
 
@@ -4763,207 +4763,225 @@ git commit -m "feat: implement puyo clearing and gravity
 
 「れ〜んさ〜ん！」と叫びたくなるような連鎖反応を実装して、プレイヤーがより高いスコアを目指せるようにしましょう。
 
-### TODOリスト
+### 現在の実装を確認する
 
-「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODO リストを作成してみましょう。
+「連鎖反応を実装するには、どんな作業が必要ですか？」まずは、現在の `Update.fs` の `dropPuyo` 関数を見てみましょう。
 
-「連鎖反応を実装する」という機能を実現するためには、以下のようなタスクが必要そうですね：
-
-- 連鎖判定を実装する（ぷよが消えた後に新たな消去パターンがあるかを判定する）
-- 連鎖カウントを実装する（何連鎖目かをカウントする）
-- 連鎖ボーナスの計算を実装する（連鎖数に応じたボーナス点を計算する）
-
-「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
-
-### テスト: 連鎖判定
-
-「最初に何をテストすればいいんでしょうか？」まずは、連鎖判定をテストしましょう。ぷよが消えて落下した後に、新たな消去パターンが発生するかどうかを判定する機能が必要です。
+`src/PuyoPuyo.WPF/Elmish/Update.fs` の現在の実装：
 
 ```fsharp
-// tests/PuyoPuyo.Tests/BoardTests.fs（続き）
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with CurrentPair = Some movedPair }
+        | None ->
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
 
-[<Fact>]
-let ``ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する`` () =
-    // ゲームの盤面にぷよを配置
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 2 0 0 0
-    // 0 0 2 0 0 0
-    // 0 0 2 0 0 0
-    // 0 1 1 2 0 0
-    // 0 1 1 0 0 0
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
-        |> Board.setCell 3 10 (Filled Blue)
-        |> Board.setCell 2 7 (Filled Blue)
-        |> Board.setCell 2 8 (Filled Blue)
-        |> Board.setCell 2 9 (Filled Blue)
+            // 消去判定
+            let groups = findConnectedGroups boardAfterGravity
 
-    // 最初の消去判定
-    let groups1 = Board.findConnectedGroups board
-    groups1 |> should not' (be Empty)
+            // 消去処理
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    boardAfterGravity
+                else
+                    let positions = groups |> List.concat
+                    boardAfterGravity |> clearPuyos positions
 
-    // 消去実行
-    let positions1 = groups1 |> List.concat
-    let boardAfterClear1 = Board.clearPuyos board positions1
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
 
-    // 落下処理
-    let boardAfterGravity = Board.applyGravity boardAfterClear1
-
-    // 連鎖判定（2回目の消去判定）
-    let groups2 = Board.findConnectedGroups boardAfterGravity
-
-    // 連鎖が発生していることを確認（青ぷよが4つつながっている）
-    groups2 |> should not' (be Empty)
+            { model with
+                Board = boardAfterClear
+                CurrentPair = Some newPair }
+    | None -> model
 ```
 
-「このテストでは何を確認しているんですか？」このテストでは、以下のシナリオを確認しています：
+「この実装の問題は何ですか？」現在の実装では、「固定 → 重力 → 消去 → 新ぷよ生成」という流れで、**1回しか消去判定をしていません**。連鎖を実現するには、消去後に再度「重力 → 消去判定」を繰り返す必要があります。
 
-1. まず、特定のパターンでぷよを配置します（赤ぷよの2×2の正方形と、その上に青ぷよが縦に3つ並び、さらに青ぷよが横に1つある状態）
-2. 最初の消去判定で赤ぷよの正方形が消えます
-3. 消去後に落下処理を行うと、上にあった青ぷよが落下します
-4. 落下した結果、新たに青ぷよが4つつながり、連鎖が発生することを確認します
+### TDD サイクル開始
 
-「なるほど、連鎖の仕組みがテストで表現されているんですね！」そうです！このテストは、ぷよぷよの連鎖の基本的な仕組みを表現しています。では、このテストが通るか確認してみましょう。
+#### RED: 連鎖のテストを書く
+
+まず、連鎖が発生することを確認するテストを書きましょう。`tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs` に新しいテストモジュールを追加します：
+
+```fsharp
+module ``連鎖反応`` =
+    [<Fact>]
+    let ``初期化時の連鎖カウントは0`` () =
+        // Arrange & Act
+        let model = init ()
+
+        // Assert
+        model.Chain |> should equal 0
+
+    [<Fact>]
+    let ``連鎖が発生すると連鎖カウントが増加する`` () =
+        // Arrange
+        let random = Random(42)
+
+        // 連鎖が発生する配置:
+        // 赤ぷよ 4つ（下）+ 青ぷよ 4つ（上）
+        // 赤が消えると青が落ちて4つつながり、連鎖発生
+        let board =
+            init().Board
+            // 赤ぷよ（下）
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 8 Domain.Puyo.Red
+            // 青ぷよ（縦3 + 横1）
+            |> Domain.Board.setCellColor 2 7 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 6 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 5 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 3 8 Domain.Puyo.Blue
+
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 4 }
+                          ChildPosition = { X = 2; Y = 3 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させて連鎖を発生させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 2連鎖が発生（1回目の消去 + 2回目の消去）
+        newModel.Chain |> should be (greaterThanOrEqualTo 2)
+```
+
+「このテストは何を確認しているんですか？」このテストでは以下を確認しています：
+
+1. **初期配置**：赤ぷよ4つ（縦）と青ぷよ4つ（縦3 + 横1）を配置
+2. **1回目の消去**：赤ぷよ4つと新しく着地した赤ぷよ2つの計6つが消える
+3. **重力適用**：青ぷよが落下
+4. **2回目の消去**：落下した青ぷよが4つつながり、連鎖が発生
 
 ### 実装: 連鎖判定
 
-「既存のゲームループを見てみると、実は連鎖反応は既に実装されています！」そうなんです。イテレーション6で実装したゲームループの仕組みが、そのまま連鎖反応を実現しているんです。
+連鎖反応を実装するために、まず連鎖カウントを管理する必要があります。TDD のサイクルに従って進めていきましょう。
 
-「え？本当ですか？」はい。Elmish の update 関数の実装を見てみましょう：
+#### RED: Model に Chain フィールドを追加
+
+まず、`Model` に `Chain` フィールドを追加する必要があります。これがないとテストがコンパイルエラーになります。
+
+`src/PuyoPuyo.WPF/Elmish/Model.fs` を更新：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Main.fs の update 関数（抜粋）
-let update message model =
-    match message with
-    // ...
+// ゲームモデル
+type Model =
+    { Board: Board
+      Score: Score
+      Chain: int
+      GameState: GameState
+      CurrentPair: PuyoPair option }
 
-    | Tick when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 着地処理
-                let boardWithPuyo = Board.fixPuyoPair model.Board piece
+// 初期化関数
+let init () =
+    { Board = createBoard ()
+      Score = initialScore
+      Chain = 0
+      GameState = NotStarted
+      CurrentPair = None }
+```
 
-                // 消去判定と処理
-                let groups = Board.findConnectedGroups boardWithPuyo
-                let boardAfterClear =
-                    if List.isEmpty groups then
-                        boardWithPuyo
-                    else
-                        let positions = groups |> List.concat
-                        let clearedBoard = Board.clearPuyos boardWithPuyo positions
-                        Board.applyGravity clearedBoard  // ← ここで重力適用
+テストをビルドして実行してみましょう：
 
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = boardAfterClear
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+```bash
+dotnet cake --target=Build
+```
+
+「ビルドは成功しますか？」はい、成功します。次にテストを実行します：
+
+```bash
+dotnet cake --target=Test
+```
+
+```
+成功!   -失敗:     1、合格:    58、スキップ:     0、合計:    59
+```
+
+「1つ失敗しましたね！」はい、連鎖カウントのテストが失敗します。現在の実装では連鎖が発生しないので、`Chain` が 0 のままです。
+
+#### GREEN: 連鎖処理を実装
+
+連鎖を実現するために、`Update.fs` に再帰的な連鎖処理関数を実装します：
+
+```fsharp
+// 連鎖処理を再帰的に実行
+let rec private processChain (board: Board) (chainCount: int) : Board * int =
+    // 消去判定
+    let groups = findConnectedGroups board
+
+    if List.isEmpty groups then
+        // 消去対象がない場合、連鎖終了
+        (board, chainCount)
+    else
+        // 消去処理
+        let positions = groups |> List.concat
+        let boardAfterClear = board |> clearPuyos positions
+        // 重力適用
+        let boardAfterGravity = applyGravity boardAfterClear
+        // 連鎖カウントを増やして再帰呼び出し
+        processChain boardAfterGravity (chainCount + 1)
+```
+
+「この関数は何をしているんですか？」`processChain` 関数は以下の処理を行います：
+
+1. **消去判定**：`findConnectedGroups` で消去可能なぷよを検索
+2. **連鎖終了判定**：消去対象がなければ終了
+3. **消去処理**：消去対象があれば `clearPuyos` で消去
+4. **重力適用**：`applyGravity` で落下
+5. **再帰呼び出し**：連鎖カウントを増やして再度消去判定
+
+次に、`dropPuyo` 関数を更新して、`processChain` を使用するようにします：
+
+```fsharp
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
+
+            // 連鎖処理
+            let (boardAfterChain, chainCount) = processChain boardAfterGravity 0
+
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterChain
+                Chain = chainCount
+                CurrentPair = Some newPair }
+    | None -> model
 ```
 
-「この実装の何が連鎖反応を実現しているんですか？」現在の実装では、1回の着地で1回だけ消去と重力を適用していますが、連鎖を実現するには、消去後に再度消去判定を繰り返す必要があります。
+「どこが変わったんですか？」主な変更点は：
 
-#### 連鎖の流れ
-
-連鎖を実現するには、以下のような流れが必要です：
-
-1. **1回目の消去**：
-   ```
-   着地 → 消去判定 → 消去 → 重力適用
-   ```
-
-2. **2回目の消去（連鎖）**：
-   ```
-   消去判定 → 消去あり → 消去 → 重力適用
-   ```
-
-3. **連鎖終了**：
-   ```
-   消去判定 → 消去なし → 次のぷよ
-   ```
-
-「つまり、消去後に再度消去判定を繰り返す必要があるんですね！」そのとおりです！では、連鎖を実現する処理を実装していきましょう。
-
-### 実装: 連鎖処理の再帰的な実装
-
-まず、消去と重力を繰り返し適用する関数を実装します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Domain/Board.fs（続き）
-
-module Board =
-    // ... 既存のコード ...
-
-    /// 消去と重力を繰り返し適用（連鎖処理）
-    let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
-        let groups = findConnectedGroups board
-        if List.isEmpty groups then
-            // 消去対象がない場合は終了
-            board
-        else
-            // 消去して重力を適用
-            let positions = groups |> List.concat
-            let clearedBoard = clearPuyos board positions
-            let boardAfterGravity = applyGravity clearedBoard
-
-            // 再帰的に消去判定を繰り返す
-            clearAndApplyGravityRepeatedly boardAfterGravity
-```
-
-「この関数は何をしているんですか？」この関数は、再帰的に消去と重力を適用し続けます：
-
-1. 消去対象のグループを検出
-2. グループがない場合は終了
-3. グループがある場合は消去して重力を適用
-4. 再度1に戻る（再帰呼び出し）
-
-「なるほど、消去対象がなくなるまで繰り返すんですね！」そうです。では、この関数を update 関数から呼び出すように修正しましょう。
-
-```fsharp
-// src/PuyoPuyo.WPF/Main.fs の dropPuyo 関数を修正
-
-let private dropPuyo (model: Model) : Model * Cmd<Message> =
-    match model.CurrentPiece with
-    | Some piece ->
-        match GameLogic.tryMovePuyoPair model.Board piece Down with
-        | Some movedPiece ->
-            { model with CurrentPiece = Some movedPiece }, Cmd.none
-        | None ->
-            // 着地処理
-            let boardWithPuyo = Board.fixPuyoPair model.Board piece
-
-            // 連鎖処理（消去と重力を繰り返し適用）
-            let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardWithPuyo
-
-            let nextPiece = PuyoPair.createRandom 2 1 0
-            {
-                model with
-                    Board = boardAfterChain
-                    CurrentPiece = Some nextPiece
-            }, Cmd.none
-    | None ->
-        model, Cmd.none
-```
-
-「これで連鎖が動くようになりましたか？」はい！`clearAndApplyGravityRepeatedly` 関数が、消去対象がなくなるまで自動的に繰り返し処理を行うため、連鎖が実現されます。
-
-### テスト実行
+1. **消去処理を processChain に置き換え**：再帰的に連鎖を処理
+2. **Chain フィールドを更新**：連鎖カウントを Model に保存
 
 テストを実行してみましょう：
 
@@ -4971,185 +4989,79 @@ let private dropPuyo (model: Model) : Model * Cmd<Message> =
 dotnet cake --target=Test
 ```
 
-「テストは通りましたか？」はい！連鎖のテストを含めて、全てのテストがパスしました。
-
-### 解説: 再帰的な連鎖処理
-
-F# で連鎖処理を実装する際のポイントを見ていきましょう：
-
-1. **再帰関数の活用**
-   ```fsharp
-   let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
-       let groups = findConnectedGroups board
-       if List.isEmpty groups then
-           board
-       else
-           // 処理して再帰呼び出し
-           clearAndApplyGravityRepeatedly boardAfterGravity
-   ```
-   - `rec` キーワードで再帰関数を定義
-   - 終了条件（消去グループなし）で再帰を止める
-   - 末尾再帰最適化により、スタックオーバーフローを防ぐ
-
-2. **不変性の維持**
-   ```fsharp
-   let clearedBoard = clearPuyos board positions
-   let boardAfterGravity = applyGravity clearedBoard
-   clearAndApplyGravityRepeatedly boardAfterGravity
-   ```
-   - 各ステップで新しい Board を返す
-   - 元の board は変更されない
-   - パイプライン処理で順次適用
-
-3. **パターンマッチングによる分岐**
-   ```fsharp
-   if List.isEmpty groups then
-       board
-   else
-       // 消去処理
-   ```
-   - リストが空かどうかで処理を分岐
-   - F# の表現力豊かな条件分岐
-
-### TypeScript版との違い
-
-TypeScript 版では、ゲームループの状態遷移（モード切り替え）によって連鎖を実現していました：
-
-```typescript
-// TypeScript版の状態遷移
-case 'checkErase':
-  const eraseInfo = this.stage.checkErase()
-  if (eraseInfo.erasePuyoCount > 0) {
-    this.stage.eraseBoards(eraseInfo.eraseInfo)
-    this.mode = 'erasing'
-  } else {
-    this.mode = 'newPuyo'
-  }
-  break
-
-case 'erasing':
-  this.mode = 'checkFall'  // 消去後、重力チェックへ
-  break
+```
+成功!   -失敗:     0、合格:    59、スキップ:     0、合計:    59
 ```
 
-一方、F# WPF 版では：
+「全テスト成功しましたね！」はい、連鎖機能が正しく実装できました！
+
+### View の更新
+
+連鎖カウントを表示するために、`GameView.fs` のバインディングを更新します：
+
+`src/PuyoPuyo.WPF/Components/GameView.fs`:
 
 ```fsharp
-// F#版の再帰的処理
-let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
-    let groups = findConnectedGroups board
-    if List.isEmpty groups then
-        board
-    else
-        let positions = groups |> List.concat
-        let clearedBoard = clearPuyos board positions
-        let boardAfterGravity = applyGravity clearedBoard
-        clearAndApplyGravityRepeatedly boardAfterGravity
+// Elmish バインディング
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun m -> m.Chain)
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
 ```
 
-**主な違い**：
+「Chain の表示は XAML に既にあるんですか？」はい、`src/PuyoPuyo.App/MainWindow.xaml` には既に Chain の表示が定義されています（49-51行目）。
 
-| 観点 | TypeScript版 | F# WPF版 |
-|------|--------------|-------------|
-| 実装方式 | 状態遷移（モード管理） | 再帰関数 |
-| 処理の流れ | イベントループで段階的 | 一度の関数呼び出しで完結 |
-| コードの複雑さ | モードごとの分岐が必要 | シンプルな再帰処理 |
-| デバッグ | 状態遷移を追う必要あり | 関数の入出力を確認 |
+### 動作確認
 
-「F# の方がシンプルに書けるんですね！」そうです。再帰関数と不変性により、連鎖処理を宣言的に表現できています。
+アプリケーションを起動して、連鎖が発生することを確認しましょう：
 
-### テストの追加
-
-連鎖が正しく動作することを確認するため、複数のテストケースを追加しましょう：
-
-```fsharp
-// tests/PuyoPuyo.Tests/BoardTests.fs（続き）
-
-[<Fact>]
-let ``連鎖処理で消去対象がない場合は盤面がそのまま返される`` () =
-    let board =
-        Board.create 6 12
-        |> Board.setCell 0 11 (Filled Red)
-        |> Board.setCell 1 11 (Filled Blue)
-
-    let result = Board.clearAndApplyGravityRepeatedly board
-
-    // 消去対象がないため、盤面は変わらない
-    Board.getCell result 0 11 |> should equal (Filled Red)
-    Board.getCell result 1 11 |> should equal (Filled Blue)
-
-[<Fact>]
-let ``連鎖処理で2連鎖が正しく動作する`` () =
-    // 1連鎖目で赤が消え、2連鎖目で青が消えるパターン
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
-        |> Board.setCell 3 10 (Filled Blue)
-        |> Board.setCell 2 7 (Filled Blue)
-        |> Board.setCell 2 8 (Filled Blue)
-        |> Board.setCell 2 9 (Filled Blue)
-
-    let result = Board.clearAndApplyGravityRepeatedly board
-
-    // すべてのぷよが消えている（2連鎖が発生）
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            Board.getCell result x y |> should equal Empty
-
-[<Fact>]
-let ``連鎖処理で3連鎖が正しく動作する`` () =
-    // 3連鎖が発生するパターン
-    let board =
-        Board.create 6 12
-        // 1連鎖目: 赤ぷよ（下部）
-        |> Board.setCell 0 10 (Filled Red)
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 0 11 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        // 2連鎖目: 青ぷよ（中部）
-        |> Board.setCell 0 6 (Filled Blue)
-        |> Board.setCell 0 7 (Filled Blue)
-        |> Board.setCell 0 8 (Filled Blue)
-        |> Board.setCell 1 8 (Filled Blue)
-        // 3連鎖目: 緑ぷよ（上部）
-        |> Board.setCell 0 2 (Filled Green)
-        |> Board.setCell 0 3 (Filled Green)
-        |> Board.setCell 0 4 (Filled Green)
-        |> Board.setCell 1 4 (Filled Green)
-
-    let result = Board.clearAndApplyGravityRepeatedly board
-
-    // すべてのぷよが消えている（3連鎖が発生）
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            Board.getCell result x y |> should equal Empty
+```bash
+dotnet run --project src/PuyoPuyo.App/PuyoPuyo.App.csproj
 ```
 
-「これらのテストは何を確認しているんですか？」これらのテストでは、以下を確認しています：
+同じ色のぷよを縦に4つ並べて、その上に別の色のぷよを配置してみてください。下のぷよが消えると、上のぷよが落下して新たに4つつながり、連鎖が発生します！
 
-1. **消去なしのケース**：消去対象がない場合、盤面がそのまま返される
-2. **2連鎖のケース**：赤ぷよが消えた後、青ぷよが落下して2連鎖が発生
-3. **3連鎖のケース**：複数回の連鎖が正しく動作する
+### CI 実行
+
+すべてのチェックが通ることを確認しましょう：
+
+```bash
+dotnet cake --target=ci
+```
+
+すべてのタスクが成功することを確認します：
+- ✅ Format-Check
+- ✅ Lint
+- ✅ Build
+- ✅ Test（59 tests passed）
+- ✅ Coverage（76%以上）
 
 ### コミット
 
-テストが全て通ったら、コミットしましょう：
+動作確認できたので、コミットしましょう：
 
 ```bash
 git add .
 git commit -m "$(cat <<'EOF'
-feat: implement chain reaction system
+feat: イテレーション 7 - 連鎖反応を実装
 
-- Add clearAndApplyGravityRepeatedly for recursive chain processing
-- Update dropPuyo to use chain processing function
-- Add test for basic chain reaction (2 chains)
-- Add test for no clearing case
-- Add test for 2-chain scenario
-- Add test for 3-chain scenario
-- All tests passing (54 tests)
+- Model に Chain フィールドを追加
+- 連鎖処理を再帰的に実行する processChain 関数を実装
+  - 消去判定 → 消去 → 重力 → 再帰呼び出し
+  - 連鎖カウントを増やしながら繰り返し
+  - 消去対象がなくなったら終了
+- dropPuyo 関数を連鎖対応に修正
+  - ぷよ固定後に processChain を呼び出し
+  - 連鎖カウントを Model に保存
+- GameView の bindings に Chain バインディングを追加
+- UpdateTests に連鎖反応のテストを追加（2件）
+- All 59 tests passing
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -6726,7 +6638,379 @@ EOF
 - 複雑なロジックのテスト分割戦略
 - ドメインロジックと UI の分離の重要性
 
-これで、ぷよぷよゲームの核心的な機能である「ぷよの消去」が実装できました！次のイテレーションでは、連鎖反応やスコア計算などのより高度な機能に取り組んでいきます。
+これで、ぷよぷよゲームの核心的な機能である「ぷよの消去」が実装できました！次のイテレーションでは、連鎖反応を実装していきます。
+
+---
+
+## イテレーション 7: 連鎖反応の実装
+
+「ぷよを消せるようになったけど、ぷよぷよの醍醐味は連鎖じゃないですか？」そうですね！ぷよぷよの最も魅力的な要素の一つは、連鎖反応です。ぷよが消えて落下した結果、新たな消去パターンが生まれ、連続して消去が発生する「連鎖」を実装していきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、連鎖反応を起こしてより高いスコアを獲得できる
+
+「れ〜んさ〜ん！」と叫びたくなるような連鎖反応を実装して、プレイヤーがより高いスコアを目指せるようにしましょう。
+
+### 現在の実装を確認する
+
+「連鎖反応を実装するには、どんな作業が必要ですか？」まずは、現在の `Update.fs` の `dropPuyo` 関数を見てみましょう。
+
+`src/PuyoPuyo.WPF/Elmish/Update.fs` の現在の実装：
+
+```fsharp
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with CurrentPair = Some movedPair }
+        | None ->
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
+
+            // 消去判定
+            let groups = findConnectedGroups boardAfterGravity
+
+            // 消去処理
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    boardAfterGravity
+                else
+                    let positions = groups |> List.concat
+                    boardAfterGravity |> clearPuyos positions
+
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterClear
+                CurrentPair = Some newPair }
+    | None -> model
+```
+
+「この実装の問題は何ですか？」現在の実装では、「固定 → 重力 → 消去 → 新ぷよ生成」という流れで、**1回しか消去判定をしていません**。連鎖を実現するには、消去後に再度「重力 → 消去判定」を繰り返す必要があります。
+
+### TDD サイクル開始
+
+#### RED: 連鎖のテストを書く
+
+まず、連鎖が発生することを確認するテストを書きましょう。`tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs` に新しいテストモジュールを追加します：
+
+```fsharp
+module ``連鎖反応`` =
+    [<Fact>]
+    let ``初期化時の連鎖カウントは0`` () =
+        // Arrange & Act
+        let model = init ()
+
+        // Assert
+        model.Chain |> should equal 0
+
+    [<Fact>]
+    let ``連鎖が発生すると連鎖カウントが増加する`` () =
+        // Arrange
+        let random = Random(42)
+
+        // 連鎖が発生する配置:
+        // 赤ぷよ 4つ（下）+ 青ぷよ 4つ（上）
+        // 赤が消えると青が落ちて4つつながり、連鎖発生
+        let board =
+            init().Board
+            // 赤ぷよ（下）
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 8 Domain.Puyo.Red
+            // 青ぷよ（縦3 + 横1）
+            |> Domain.Board.setCellColor 2 7 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 6 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 5 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 3 8 Domain.Puyo.Blue
+
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 4 }
+                          ChildPosition = { X = 2; Y = 3 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させて連鎖を発生させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 2連鎖が発生（1回目の消去 + 2回目の消去）
+        newModel.Chain |> should be (greaterThanOrEqualTo 2)
+```
+
+「このテストは何を確認しているんですか？」このテストでは以下を確認しています：
+
+1. **初期配置**：赤ぷよ4つ（縦）と青ぷよ4つ（縦3 + 横1）を配置
+2. **1回目の消去**：赤ぷよ4つと新しく着地した赤ぷよ2つの計6つが消える
+3. **重力適用**：青ぷよが落下
+4. **2回目の消去**：落下した青ぷよが4つつながり、連鎖が発生
+
+#### RED: Model に Chain フィールドを追加
+
+まず、`Model` に `Chain` フィールドを追加する必要があります。これがないとテストがコンパイルエラーになります。
+
+`src/PuyoPuyo.WPF/Elmish/Model.fs` を更新：
+
+```fsharp
+// ゲームモデル
+type Model =
+    { Board: Board
+      Score: Score
+      Chain: int
+      GameState: GameState
+      CurrentPair: PuyoPair option }
+
+// 初期化関数
+let init () =
+    { Board = createBoard ()
+      Score = initialScore
+      Chain = 0
+      GameState = NotStarted
+      CurrentPair = None }
+```
+
+テストをビルドして実行してみましょう：
+
+```bash
+dotnet cake --target=Build
+```
+
+「ビルドは成功しますか？」はい、成功します。次にテストを実行します：
+
+```bash
+dotnet cake --target=Test
+```
+
+```
+成功!   -失敗:     1、合格:    58、スキップ:     0、合計:    59
+```
+
+「1つ失敗しましたね！」はい、連鎖カウントのテストが失敗します。現在の実装では連鎖が発生しないので、`Chain` が 0 のままです。
+
+#### GREEN: 連鎖処理を実装
+
+連鎖を実現するために、`Update.fs` に再帰的な連鎖処理関数を実装します：
+
+```fsharp
+// 連鎖処理を再帰的に実行
+let rec private processChain (board: Board) (chainCount: int) : Board * int =
+    // 消去判定
+    let groups = findConnectedGroups board
+
+    if List.isEmpty groups then
+        // 消去対象がない場合、連鎖終了
+        (board, chainCount)
+    else
+        // 消去処理
+        let positions = groups |> List.concat
+        let boardAfterClear = board |> clearPuyos positions
+        // 重力適用
+        let boardAfterGravity = applyGravity boardAfterClear
+        // 連鎖カウントを増やして再帰呼び出し
+        processChain boardAfterGravity (chainCount + 1)
+```
+
+「この関数は何をしているんですか？」`processChain` 関数は以下の処理を行います：
+
+1. **消去判定**：`findConnectedGroups` で消去可能なぷよを検索
+2. **連鎖終了判定**：消去対象がなければ終了
+3. **消去処理**：消去対象があれば `clearPuyos` で消去
+4. **重力適用**：`applyGravity` で落下
+5. **再帰呼び出し**：連鎖カウントを増やして再度消去判定
+
+次に、`dropPuyo` 関数を更新して、`processChain` を使用するようにします：
+
+```fsharp
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with CurrentPair = Some movedPair }
+        | None ->
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
+
+            // 連鎖処理
+            let (boardAfterChain, chainCount) = processChain boardAfterGravity 0
+
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterChain
+                Chain = chainCount
+                CurrentPair = Some newPair }
+    | None -> model
+```
+
+「どこが変わったんですか？」主な変更点は：
+
+1. **消去処理を processChain に置き換え**：再帰的に連鎖を処理
+2. **Chain フィールドを更新**：連鎖カウントを Model に保存
+
+テストを実行してみましょう：
+
+```bash
+dotnet cake --target=Test
+```
+
+```
+成功!   -失敗:     0、合格:    59、スキップ:     0、合計:    59
+```
+
+「全テスト成功しましたね！」はい、連鎖機能が正しく実装できました！
+
+### View の更新
+
+連鎖カウントを表示するために、`GameView.fs` のバインディングを更新します：
+
+`src/PuyoPuyo.WPF/Components/GameView.fs`:
+
+```fsharp
+// Elmish バインディング
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun m -> m.Chain)
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
+```
+
+「Chain の表示は XAML に既にあるんですか？」はい、`src/PuyoPuyo.App/MainWindow.xaml` には既に Chain の表示が定義されています（49-51行目）。
+
+### 動作確認
+
+アプリケーションを起動して、連鎖が発生することを確認しましょう：
+
+```bash
+dotnet run --project src/PuyoPuyo.App/PuyoPuyo.App.csproj
+```
+
+同じ色のぷよを縦に4つ並べて、その上に別の色のぷよを配置してみてください。下のぷよが消えると、上のぷよが落下して新たに4つつながり、連鎖が発生します！
+
+### CI 実行
+
+すべてのチェックが通ることを確認しましょう：
+
+```bash
+dotnet cake --target=ci
+```
+
+すべてのタスクが成功することを確認します：
+- ✅ Format-Check
+- ✅ Lint
+- ✅ Build
+- ✅ Test（59 tests passed）
+- ✅ Coverage（76%以上）
+
+### コミット
+
+動作確認できたので、コミットしましょう：
+
+```bash
+git add .
+git commit -m "$(cat <<'EOF'
+feat: イテレーション 7 - 連鎖反応を実装
+
+- Model に Chain フィールドを追加
+- 連鎖処理を再帰的に実行する processChain 関数を実装
+  - 消去判定 → 消去 → 重力 → 再帰呼び出し
+  - 連鎖カウントを増やしながら繰り返し
+  - 消去対象がなくなったら終了
+- dropPuyo 関数を連鎖対応に修正
+  - ぷよ固定後に processChain を呼び出し
+  - 連鎖カウントを Model に保存
+- GameView の bindings に Chain バインディングを追加
+- UpdateTests に連鎖反応のテストを追加（2件）
+- All 59 tests passing
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+```
+
+### 連鎖反応の仕組み
+
+「Elmish.WPF 版では、どうやって連鎖を実現したんですか？」Fable 版とは異なるアプローチを取りました：
+
+**Fable 版のアプローチ**：
+- GameMode による状態遷移（NewPuyo → Playing → CheckFall → CheckErase → Erasing...）
+- `Erasing → CheckFall → CheckErase` のサイクルで連鎖を実現
+- モードの遷移が連鎖を自動的に生成
+
+**Elmish.WPF 版のアプローチ**：
+- 再帰関数 `processChain` による連鎖処理
+- 「消去 → 重力 → 消去判定」を再帰的に繰り返し
+- より直接的でシンプルな実装
+
+「どちらの方が良いんですか？」両方とも正しいアプローチです：
+
+- **Fable 版**：ゲームモードによる明示的な状態管理、アニメーション制御が容易
+- **Elmish.WPF 版**：シンプルな再帰、理解しやすい、テストしやすい
+
+Elmish.WPF 版では、アニメーションの要件が少ないため、再帰的なアプローチでシンプルに実装しました。
+
+### イテレーション 7 のまとめ
+
+このイテレーションで実装した内容：
+
+1. **連鎖処理の実装**
+   - `processChain` 再帰関数の実装
+   - 消去 → 重力 → 消去判定の繰り返し
+   - 連鎖カウントの管理
+
+2. **Model の拡張**
+   - `Chain` フィールドの追加
+   - 初期値の設定
+
+3. **Update 関数の修正**
+   - `dropPuyo` 関数で `processChain` を呼び出し
+   - 連鎖カウントを Model に保存
+
+4. **テストの追加**
+   - 初期化時の連鎖カウントテスト
+   - 連鎖発生時のカウント増加テスト
+
+5. **TDD サイクルの実践**
+   - Red：Chain フィールド不足でコンパイルエラー → テスト失敗
+   - Green：processChain 実装、全テスト成功
+   - Refactor：コードフォーマットの確認
+
+**学んだこと**：
+- F# の再帰関数による連鎖処理の実装
+- Fable 版との設計アプローチの違い
+- シンプルな実装と複雑な実装のトレードオフ
+- テスト駆動開発による安全な機能追加
+
+Fable 版では GameMode による状態遷移で連鎖を実現しましたが、Elmish.WPF 版では再帰関数によるシンプルなアプローチで同じ機能を実現しました。どちらも F# の特性を活かした良い実装です！
 
 ---
 
