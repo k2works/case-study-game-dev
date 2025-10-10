@@ -12,6 +12,6 @@ let main window =
 
     Program.mkProgram (fun () -> init (), Cmd.none) (fun msg model -> update msg model, Cmd.none) (fun _ _ ->
         bindings ())
-    |> Program.withSubscription (fun model -> Cmd.ofSub (timerSubscription model))
+    |> Program.withSubscription timerSubscription
     |> Program.withConsoleTrace
     |> Program.startElmishLoop config window
