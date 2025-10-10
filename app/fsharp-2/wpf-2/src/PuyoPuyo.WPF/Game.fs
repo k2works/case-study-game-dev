@@ -66,7 +66,9 @@ let init () =
 // ランダム生成器を受け取る更新関数（テスト用）
 let updateWithRandom (random: Random) msg model =
     match msg with
-    | StartGame -> { model with CurrentPair = Some(generatePuyoPair random) }
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random) }
     | Tick -> model
 
 // 更新関数（Elmish用）
@@ -105,8 +107,8 @@ let getAllPuyos (model: Model) =
     let cellSize = 40.0
     // ボード上のぷよを収集
     let boardPuyos =
-        [ for x in 0 .. 5 do
-              for y in 0 .. 11 do
+        [ for x in 0..5 do
+              for y in 0..11 do
                   let color = model.Board.[x, y]
 
                   if color <> Empty then
@@ -125,6 +127,7 @@ let getAllPuyos (model: Model) =
               { X = float pair.ChildPosition.X * cellSize
                 Y = float pair.ChildPosition.Y * cellSize
                 Color = puyoColorToString pair.Child } ]
+
     List.append boardPuyos pairPuyos
 
 // Elmish バインディング

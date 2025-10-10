@@ -86,7 +86,10 @@ module ``ゲームループ`` =
     let ``Tickメッセージでゲーム状態が更新される`` () =
         // Arrange
         let random = System.Random(42)
-        let model = { Game.init () with CurrentPair = Some(Game.generatePuyoPair random) }
+
+        let model =
+            { Game.init () with
+                CurrentPair = Some(Game.generatePuyoPair random) }
 
         // Act
         let newModel = Game.updateWithRandom random Game.Tick model
@@ -100,7 +103,10 @@ module ``ぷよ表示`` =
     let ``getCellColorは指定位置のぷよ色を返す`` () =
         // Arrange
         let model = Game.init ()
-        let model = { model with Board = Array2D.create 6 12 Game.Empty }
+
+        let model =
+            { model with
+                Board = Array2D.create 6 12 Game.Empty }
         // ボードの(1, 2)に赤いぷよを配置
         model.Board.[1, 2] <- Game.Red
 
@@ -126,7 +132,10 @@ module ``ぷよ表示`` =
         // Arrange
         let random = System.Random(42)
         let model = Game.init ()
-        let model = { model with CurrentPair = Some(Game.generatePuyoPair random) }
+
+        let model =
+            { model with
+                CurrentPair = Some(Game.generatePuyoPair random) }
 
         // Act
         let puyos = Game.getCurrentPairPuyos model
