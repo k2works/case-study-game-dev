@@ -9,8 +9,8 @@ open Elmish.Model
 // 全消しボーナスの定数
 let private allClearBonus = 3600
 
-// 連鎖処理を再帰的に実行（戻り値: ボード、連鎖数、ボーナススコア）
-let rec private processChain (board: Board) (chainCount: int) : Board * int * int =
+// 連鎖処理を再帰的に実行（戻り値: ボード、連鎖数、累計スコア）
+let rec private processChain (board: Board) (chainCount: int) (accumulatedScore: int) : Board * int * int =
     // 消去判定
     let groups = findConnectedGroups board
 
@@ -19,15 +19,19 @@ let rec private processChain (board: Board) (chainCount: int) : Board * int * in
         // 全消しチェック
         let bonus = if isAllClear board then allClearBonus else 0
 
-        (board, chainCount, bonus)
+        (board, chainCount, accumulatedScore + bonus)
     else
         // 消去処理
         let positions = groups |> List.concat
+        let puyoCount = List.length positions
+        // 基本点: 消したぷよ数 × 10点
+        let score = puyoCount * 10
+
         let boardAfterClear = board |> clearPuyos positions
         // 重力適用
         let boardAfterGravity = applyGravity boardAfterClear
         // 連鎖カウントを増やして再帰呼び出し
-        processChain boardAfterGravity (chainCount + 1)
+        processChain boardAfterGravity (chainCount + 1) (accumulatedScore + score)
 
 // ぷよを下に移動させる（共通処理）
 let private dropPuyo (random: Random) (model: Model) =
@@ -45,8 +49,8 @@ let private dropPuyo (random: Random) (model: Model) =
             // 重力適用
             let boardAfterGravity = applyGravity boardWithPuyo
 
-            // 連鎖処理
-            let (boardAfterChain, chainCount, bonusScore) = processChain boardAfterGravity 0
+            // 連鎖処理（累計スコアを 0 から開始）
+            let (boardAfterChain, chainCount, earnedScore) = processChain boardAfterGravity 0 0
 
             // 新しいぷよを生成
             let newPair = generatePuyoPair random
@@ -56,14 +60,14 @@ let private dropPuyo (random: Random) (model: Model) =
                 { model with
                     Board = boardAfterChain
                     Chain = chainCount
-                    Score = model.Score + bonusScore
+                    Score = model.Score + earnedScore
                     CurrentPair = None
                     GameState = GameOver }
             else
                 { model with
                     Board = boardAfterChain
                     Chain = chainCount
-                    Score = model.Score + bonusScore
+                    Score = model.Score + earnedScore
                     CurrentPair = Some newPair }
     | None -> model
 

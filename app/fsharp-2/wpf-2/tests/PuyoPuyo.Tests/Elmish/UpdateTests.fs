@@ -292,6 +292,38 @@ module ``ぷよの消去`` =
         Domain.Board.getCellColor 2 9 newModel.Board |> should equal Domain.Puyo.Empty
         Domain.Board.getCellColor 2 8 newModel.Board |> should equal Domain.Puyo.Empty
 
+    [<Fact>]
+    let ``4つのぷよを消すと40点獲得できる`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ボードに赤いぷよを 2 つ + 緑のぷよを 1 つ並べておく
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 3 11 Domain.Puyo.Green
+
+        // 赤いぷよペアを上から落とす（4つ消える、全消しにならない）
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 9 }
+                          ChildPosition = { X = 2; Y = 8 }
+                          Rotation = 0 }
+                GameState = Playing
+                Score = 0 }
+
+        // Act - 着地させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 4個 × 10点 = 40点
+        newModel.Score |> should equal 40
+
 module ``連鎖反応`` =
     [<Fact>]
     let ``初期化時の連鎖カウントは0`` () =
@@ -370,11 +402,11 @@ module ``全消しボーナス`` =
         // Act - 着地させて全消しさせる
         let newModel = updateWithRandom random Tick model
 
-        // Assert - 全消しボーナス3600点が加算される
-        newModel.Score |> should equal 3600
+        // Assert - 通常スコア (5個 × 10点 = 50点) + 全消しボーナス (3600点) = 3650点
+        newModel.Score |> should equal 3650
 
     [<Fact>]
-    let ``全消しでない場合はボーナスが加算されない`` () =
+    let ``全消しでない場合は全消しボーナスが加算されない`` () =
         // Arrange
         let random = Random(42)
 
@@ -403,8 +435,8 @@ module ``全消しボーナス`` =
         // Act - 着地させる（赤だけ消えて緑が残る）
         let newModel = updateWithRandom random Tick model
 
-        // Assert - ボーナスは加算されない（スコア0のまま）
-        newModel.Score |> should equal 0
+        // Assert - 通常スコアは加算されるが全消しボーナスはなし (5個 × 10点 = 50点)
+        newModel.Score |> should equal 50
 
 module ``ゲームオーバー`` =
     [<Fact>]
