@@ -15,15 +15,11 @@
       "allowedHungarianPrefixes": []
     },
     "orderingRules": {
-      "usingDirectivesPlacement": "outsideNamespace",
       "systemUsingDirectivesFirst": true,
       "blankLinesBetweenUsingGroups": "allow"
     },
     "layoutRules": {
       "newlineAtEndOfFile": "require"
-    },
-    "maintainabilityRules": {
-      "topLevelTypes": "multiple"
     }
   }
 }
