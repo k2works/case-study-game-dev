@@ -95,3 +95,17 @@ let tryRotatePuyoPair (board: Board) (pair: PuyoPair) : PuyoPair option =
             else
                 // 回転できない
                 None
+
+// ぷよペアをボードに固定（着地処理）
+let fixPuyoPair (board: Board) (pair: PuyoPair) : Board =
+    let mutable newBoard = board
+
+    // 軸ぷよを固定（Y >= 0 の場合のみ）
+    if pair.AxisPosition.Y >= 0 then
+        newBoard <- setCellColor pair.AxisPosition.X pair.AxisPosition.Y pair.Axis newBoard
+
+    // 子ぷよを固定（Y >= 0 の場合のみ）
+    if pair.ChildPosition.Y >= 0 then
+        newBoard <- setCellColor pair.ChildPosition.X pair.ChildPosition.Y pair.Child newBoard
+
+    newBoard

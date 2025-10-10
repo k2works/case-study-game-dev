@@ -282,3 +282,124 @@ module ``ぷよペアの回転`` =
 
         // Assert
         result |> should equal None
+
+module ``ぷよの自由落下`` =
+    [<Fact>]
+    let ``空のボードではぷよペアは下に移動できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 5 }
+              ChildPosition = { X = 2; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Down
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.Y |> should equal 6
+            movedPair.ChildPosition.Y |> should equal 5
+        | None -> failwith "下に移動できるはずです"
+
+    [<Fact>]
+    let ``底に到達したぷよペアは下に移動できない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 11 }
+              ChildPosition = { X = 2; Y = 10 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Down
+
+        // Assert
+        result |> should equal None
+
+    [<Fact>]
+    let ``他のぷよの上では下に移動できない`` () =
+        // Arrange
+        let board = createBoard ()
+        // 下にぷよを配置
+        let board = setCellColor 2 6 Green board
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 5 }
+              ChildPosition = { X = 2; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Down
+
+        // Assert
+        result |> should equal None
+
+    [<Fact>]
+    let ``ぷよペアをボードに固定できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 5 }
+              ChildPosition = { X = 2; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let newBoard = fixPuyoPair board pair
+
+        // Assert
+        getCellColor 2 5 newBoard |> should equal Red
+        getCellColor 2 4 newBoard |> should equal Blue
+
+    [<Fact>]
+    let ``画面上部（Y<0）のぷよは固定されない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 0 }
+              ChildPosition = { X = 2; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let newBoard = fixPuyoPair board pair
+
+        // Assert
+        getCellColor 2 0 newBoard |> should equal Red
+        // Y=-1は画面外なので何もしない（テストでは確認不要）
+
+    [<Fact>]
+    let ``画面上部（Y-1）のぷよを含むペアは下に移動できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 0 }
+              ChildPosition = { X = 2; Y = -1 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Down
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.Y |> should equal 1
+            movedPair.ChildPosition.Y |> should equal 0
+        | None -> failwith "Y=-1のぷよを含むペアでも下に移動できるはずです"

@@ -75,6 +75,86 @@ module ``ゲームループ`` =
         // Tick処理が実行されること（現時点では状態が保持されることを確認）
         newModel.GameState |> should equal Playing
 
+    [<Fact>]
+    let ``Tickメッセージでぷよペアが下に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.Y |> should equal 6
+            pair.ChildPosition.Y |> should equal 5
+        | None -> failwith "CurrentPair should exist"
+
+    [<Fact>]
+    let ``Tickメッセージで下に移動できない場合はぷよが固定される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        // ぷよが固定されてボードに配置される
+        Domain.Board.getCellColor 2 11 newModel.Board
+        |> should equal initialPair.Axis
+
+        Domain.Board.getCellColor 2 10 newModel.Board
+        |> should equal initialPair.Child
+
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``Tickメッセージでぷよ固定後に新しいぷよが生成される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some newPair ->
+            // 初期位置に配置される
+            newPair.AxisPosition.X |> should equal 2
+            newPair.AxisPosition.Y |> should equal 0
+        | None -> failwith "新しいぷよペアが生成されるべきです"
+
 module ``ぷよの移動`` =
     [<Fact>]
     let ``MoveLeftメッセージでぷよペアが左に移動する`` () =
