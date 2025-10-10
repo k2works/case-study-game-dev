@@ -2227,6 +2227,129 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 
 次のイテレーションでは、ぷよの移動機能を実装していきます。
 
+### イテレーション1の実施内容
+
+このイテレーションでは、wpf プロジェクトの実装を参考にしながら、wpf-2 プロジェクトのファイル構成と UI を整備しました。
+
+#### 実施したリファクタリング
+
+**1. ファイル構成の再組織化 (commit 7a37fe2)**
+
+ソースコードをドメイン駆動設計に準拠した構成に再組織化：
+
+```
+wpf-2/src/PuyoPuyo.WPF/
+├── Domain/              # ドメイン層
+│   ├── Puyo.fs         # ぷよの色定義
+│   ├── Board.fs        # ボード管理
+│   ├── Score.fs        # スコア型
+│   ├── PuyoPair.fs     # ぷよペアロジック
+│   └── GameLogic.fs    # ゲーム状態
+├── Elmish/             # Elmish 層
+│   ├── Model.fs        # モデルとメッセージ定義
+│   ├── Update.fs       # 更新ロジック
+│   └── Subscription.fs # タイマー購読
+├── Components/         # コンポーネント層
+│   └── GameView.fs     # ビューモデルとバインディング
+└── Program.fs          # エントリーポイント
+```
+
+削除したファイル：
+- Counter.fs (サンプルコード)
+- Library.fs (未使用)
+- Game.fs (上記ファイルに分割)
+
+**2. テストファイル構成の再組織化 (commit cac81f7)**
+
+テストも同様にモジュール別に分割：
+
+```
+wpf-2/tests/PuyoPuyo.Tests/
+├── Domain/
+│   ├── PuyoTests.fs        # ぷよ色テスト (2 tests)
+│   ├── BoardTests.fs       # ボード操作テスト (3 tests)
+│   ├── ScoreTests.fs       # スコアテスト (1 test)
+│   ├── PuyoPairTests.fs    # ぷよペアテスト (5 tests)
+│   └── GameLogicTests.fs   # ゲーム状態テスト (4 tests)
+├── Elmish/
+│   └── UpdateTests.fs      # 更新ロジックテスト (6 tests)
+└── Tests.fs                # エントリーポイント
+```
+
+テスト数: 19 → 21 テスト
+
+#### UI の改善
+
+**3. MainWindow.xaml レイアウト更新 (commit 71428bf)**
+
+wpf の GameView.fs に合わせてレイアウトを改善：
+- タイトル、ボード、情報パネルを横並びに配置
+- Score、Chain、Next 表示エリアを追加
+- Chain バインディングを追加（現在は 0 を返す、将来実装予定）
+- ウィンドウ幅を 400px → 500px に拡張
+
+**4. NotStarted 状態の追加 (commit 3728859)**
+
+ゲーム状態に NotStarted を追加してボタン制御を実装：
+- GameState に NotStarted を追加
+- 初期状態を NotStarted に変更
+- StartGame メッセージで GameState を Playing に更新
+- CanStartGame バインディングを追加
+- MainWindow.xaml のボタンに IsEnabled バインディングを追加
+- テスト 2 件追加（合計 21 テスト）
+
+**5. ウィンドウ高さ調整 (commit 649a1ba)**
+
+スタートボタンが隠れる問題を解決：
+- ウィンドウ高さを 600px → 650px に変更
+
+**6. Y 座標-1 の子ぷよ表示対応 (commit 1e5f766)**
+
+初期表示で上のぷよ（子ぷよ）を表示できるように：
+- GameView.fs で Y 座標に 40px のオフセットを追加
+- Canvas 高さを 480px → 520px に拡張（13 行分）
+- ウィンドウ高さを 650px → 690px に調整
+
+これにより、ぷよペアの初期位置 (Axis: Y=0, Child: Y=-1) の両方のぷよが画面に表示されるようになりました。
+
+#### CI パイプライン実行結果
+
+全てのタスクが成功：
+
+| タスク | ステータス | 詳細 |
+|--------|-----------|------|
+| Clean | ✅ 完了 | ビルド成果物クリーンアップ |
+| Format-Check | ✅ 完了 | コードフォーマットチェック |
+| Lint | ✅ 完了 | 0 warnings |
+| Restore | ✅ 完了 | NuGet パッケージ復元 |
+| Build | ✅ 成功 | 0 errors, 0 warnings |
+| Test | ✅ 成功 | **21/21 テスト合格** |
+| Coverage | ✅ 完了 | Line: 48.30%, Branch: 58.33%, Method: 56.60% |
+
+#### 学んだこと
+
+1. **ドメイン駆動設計のファイル構成**
+   - Domain、Elmish、Components の明確な分離
+   - 各層の責務の明確化
+   - テストも同じ構成で整理
+
+2. **WPF データバインディング**
+   - IsEnabled バインディングによる動的な UI 制御
+   - CanStartGame で NotStarted 状態の時のみボタンを有効化
+
+3. **Canvas の座標系**
+   - 負の Y 座標を表示するためのオフセット技法
+   - Canvas のサイズ調整とウィンドウサイズの連動
+
+4. **F# のモジュールシステム**
+   - 1 ファイル 1 モジュールの原則
+   - コンパイル順序の重要性（.fsproj の Compile 順序）
+
+5. **TDD の継続的な実践**
+   - リファクタリング後もテストが全て通過
+   - テスト数の増加（19 → 21 テスト）
+   - CI パイプラインによる品質保証
+
 
 ## イテレーション2: ぷよの移動の実装
 
