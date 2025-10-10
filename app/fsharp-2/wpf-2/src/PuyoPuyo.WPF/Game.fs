@@ -80,7 +80,55 @@ let timerSubscription (dispatch: Message -> unit) =
     timer.Elapsed.Add(fun _ -> dispatch Tick)
     timer.Start()
 
+// ぷよ表示用関数
+let getCellColor x y (model: Model) = model.Board.[x, y]
+
+let getCurrentPairPuyos (model: Model) =
+    match model.CurrentPair with
+    | None -> []
+    | Some pair ->
+        [ (pair.AxisPosition.X, pair.AxisPosition.Y, pair.Axis)
+          (pair.ChildPosition.X, pair.ChildPosition.Y, pair.Child) ]
+
+// ぷよ表示用ViewModel
+type PuyoViewModel = { X: float; Y: float; Color: string }
+
+let puyoColorToString color =
+    match color with
+    | Empty -> "Transparent"
+    | Red -> "Red"
+    | Blue -> "Blue"
+    | Green -> "Green"
+    | Yellow -> "Yellow"
+
+let getAllPuyos (model: Model) =
+    let cellSize = 40.0
+    // ボード上のぷよを収集
+    let boardPuyos =
+        [ for x in 0 .. 5 do
+              for y in 0 .. 11 do
+                  let color = model.Board.[x, y]
+
+                  if color <> Empty then
+                      yield
+                          { X = float x * cellSize
+                            Y = float y * cellSize
+                            Color = puyoColorToString color } ]
+    // 現在のぷよペアを追加
+    let pairPuyos =
+        match model.CurrentPair with
+        | None -> []
+        | Some pair ->
+            [ { X = float pair.AxisPosition.X * cellSize
+                Y = float pair.AxisPosition.Y * cellSize
+                Color = puyoColorToString pair.Axis }
+              { X = float pair.ChildPosition.X * cellSize
+                Y = float pair.ChildPosition.Y * cellSize
+                Color = puyoColorToString pair.Child } ]
+    List.append boardPuyos pairPuyos
+
 // Elmish バインディング
 let bindings () =
     [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
       "StartGame" |> Binding.cmd (fun _ -> StartGame) ]

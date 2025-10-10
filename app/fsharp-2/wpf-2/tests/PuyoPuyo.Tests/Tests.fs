@@ -94,3 +94,42 @@ module ``ゲームループ`` =
         // Assert
         // Tick処理が実行されること（現時点では状態が保持されることを確認）
         newModel.GameState |> should equal Game.Playing
+
+module ``ぷよ表示`` =
+    [<Fact>]
+    let ``getCellColorは指定位置のぷよ色を返す`` () =
+        // Arrange
+        let model = Game.init ()
+        let model = { model with Board = Array2D.create 6 12 Game.Empty }
+        // ボードの(1, 2)に赤いぷよを配置
+        model.Board.[1, 2] <- Game.Red
+
+        // Act
+        let color = Game.getCellColor 1 2 model
+
+        // Assert
+        color |> should equal Game.Red
+
+    [<Fact>]
+    let ``getCellColorは空のセルでEmptyを返す`` () =
+        // Arrange
+        let model = Game.init ()
+
+        // Act
+        let color = Game.getCellColor 0 0 model
+
+        // Assert
+        color |> should equal Game.Empty
+
+    [<Fact>]
+    let ``getCurrentPairPuyosはぷよペアの位置と色を返す`` () =
+        // Arrange
+        let random = System.Random(42)
+        let model = Game.init ()
+        let model = { model with CurrentPair = Some(Game.generatePuyoPair random) }
+
+        // Act
+        let puyos = Game.getCurrentPairPuyos model
+
+        // Assert
+        puyos |> List.length |> should equal 2

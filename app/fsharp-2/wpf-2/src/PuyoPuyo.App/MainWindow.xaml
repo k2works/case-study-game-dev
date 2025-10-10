@@ -16,9 +16,28 @@
       <TextBlock Text="{Binding Score}" FontSize="18"/>
     </StackPanel>
 
-    <!-- ゲームボード（プレースホルダー） -->
+    <!-- ゲームボード -->
     <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2" Margin="10">
-      <Canvas Background="WhiteSmoke" Width="300" Height="480"/>
+      <Canvas Background="WhiteSmoke" Width="240" Height="480">
+        <ItemsControl ItemsSource="{Binding Puyos}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <Canvas/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemContainerStyle>
+            <Style>
+              <Setter Property="Canvas.Left" Value="{Binding X}"/>
+              <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+            </Style>
+          </ItemsControl.ItemContainerStyle>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Ellipse Width="36" Height="36" Fill="{Binding Color}" Stroke="Black" StrokeThickness="1"/>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Canvas>
     </Border>
 
     <!-- コントロールボタン -->
