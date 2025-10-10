@@ -63,3 +63,61 @@ module ``ぷよペア生成`` =
 
         // Assert
         puyos |> List.length |> should equal 0
+
+module ``ぷよペアの回転`` =
+    [<Fact>]
+    let ``時計回りに回転すると回転状態が1増える`` () =
+        // Arrange
+        let random = Random(42)
+        let pair = generatePuyoPair random
+
+        // Act
+        let rotated = rotateClockwise pair
+
+        // Assert
+        rotated.Rotation |> should equal 1
+
+    [<Fact>]
+    let ``回転状態3から時計回りに回転すると0に戻る`` () =
+        // Arrange
+        let random = Random(42)
+        let pair = generatePuyoPair random
+        let pair = { pair with Rotation = 3 }
+
+        // Act
+        let rotated = rotateClockwise pair
+
+        // Assert
+        rotated.Rotation |> should equal 0
+
+    [<Fact>]
+    let ``回転すると2つ目のぷよの位置が変わる`` () =
+        // Arrange
+        let pair =
+            { Axis = Red
+              Child = Green
+              AxisPosition = { X = 3; Y = 5 }
+              ChildPosition = { X = 3; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let rotated = rotateClockwise pair
+
+        // Assert
+        rotated.AxisPosition.X |> should equal 3
+        rotated.AxisPosition.Y |> should equal 5
+        rotated.ChildPosition.X |> should equal 4
+        rotated.ChildPosition.Y |> should equal 5
+
+    [<Fact>]
+    let ``反時計回りに回転すると回転状態が1減る`` () =
+        // Arrange
+        let random = Random(42)
+        let pair = generatePuyoPair random
+        let pair = { pair with Rotation = 1 }
+
+        // Act
+        let rotated = rotateCounterClockwise pair
+
+        // Assert
+        rotated.Rotation |> should equal 0

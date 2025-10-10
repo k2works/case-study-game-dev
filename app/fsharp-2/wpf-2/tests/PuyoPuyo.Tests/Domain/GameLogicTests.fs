@@ -192,3 +192,93 @@ module ``ぷよペアの移動`` =
 
         // Assert
         result |> should equal None
+
+module ``ぷよペアの回転`` =
+    [<Fact>]
+    let ``通常の回転ができる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Green
+              AxisPosition = { X = 3; Y = 5 }
+              ChildPosition = { X = 3; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryRotatePuyoPair board pair
+
+        // Assert
+        match result with
+        | Some rotatedPair ->
+            rotatedPair.Rotation |> should equal 1
+            rotatedPair.ChildPosition.X |> should equal 4
+            rotatedPair.ChildPosition.Y |> should equal 5
+        | None -> failwith "回転できるはずです"
+
+    [<Fact>]
+    let ``右端で回転すると左にキックされる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Green
+              AxisPosition = { X = 5; Y = 5 }
+              ChildPosition = { X = 5; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryRotatePuyoPair board pair
+
+        // Assert
+        match result with
+        | Some rotatedPair ->
+            rotatedPair.Rotation |> should equal 1
+            rotatedPair.AxisPosition.X |> should equal 4
+            rotatedPair.ChildPosition.X |> should equal 5
+        | None -> failwith "壁キックで回転できるはずです"
+
+    [<Fact>]
+    let ``左端で回転すると右にキックされる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Green
+              AxisPosition = { X = 0; Y = 5 }
+              ChildPosition = { X = 0; Y = 6 }
+              Rotation = 2 }
+
+        // Act
+        let result = tryRotatePuyoPair board pair
+
+        // Assert
+        match result with
+        | Some rotatedPair ->
+            rotatedPair.Rotation |> should equal 3
+            rotatedPair.AxisPosition.X |> should equal 1
+            rotatedPair.ChildPosition.X |> should equal 0
+        | None -> failwith "壁キックで回転できるはずです"
+
+    [<Fact>]
+    let ``壁キックできない場合は回転しない`` () =
+        // Arrange
+        let board = createBoard ()
+        // 右端にぷよを配置（壁キック不可）
+        let board = setCellColor 4 5 Blue board
+
+        let pair =
+            { Axis = Red
+              Child = Green
+              AxisPosition = { X = 5; Y = 5 }
+              ChildPosition = { X = 5; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryRotatePuyoPair board pair
+
+        // Assert
+        result |> should equal None

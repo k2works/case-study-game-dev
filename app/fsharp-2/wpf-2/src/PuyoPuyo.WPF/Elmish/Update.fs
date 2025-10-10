@@ -31,6 +31,15 @@ let updateWithRandom (random: Random) msg model =
                     CurrentPair = Some movedPair }
             | None -> model
         | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
 
 // 更新関数（Elmish用）
 let update msg model =

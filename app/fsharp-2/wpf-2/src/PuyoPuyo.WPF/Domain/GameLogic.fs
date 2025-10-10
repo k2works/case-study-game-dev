@@ -53,3 +53,37 @@ let tryMovePuyoPair (board: Board) (pair: PuyoPair) (direction: Direction) : Puy
                 ChildPosition = newChildPos }
     else
         None
+
+// ぷよペアが配置可能かチェック
+let private canPlacePuyoPair (board: Board) (pair: PuyoPair) : bool =
+    isValidPosition board pair.AxisPosition.X pair.AxisPosition.Y
+    && isValidPosition board pair.ChildPosition.X pair.ChildPosition.Y
+
+// ぷよペアを回転（壁キック処理付き）
+let tryRotatePuyoPair (board: Board) (pair: PuyoPair) : PuyoPair option =
+    // 通常回転を試す
+    let rotated = PuyoPair.rotateClockwise pair
+
+    if canPlacePuyoPair board rotated then
+        Some rotated
+    else
+        // 壁キックを試す（左に1マス）
+        let kickedLeft =
+            { rotated with
+                AxisPosition = { rotated.AxisPosition with X = rotated.AxisPosition.X - 1 }
+                ChildPosition = { rotated.ChildPosition with X = rotated.ChildPosition.X - 1 } }
+
+        if canPlacePuyoPair board kickedLeft then
+            Some kickedLeft
+        else
+            // 壁キックを試す（右に1マス）
+            let kickedRight =
+                { rotated with
+                    AxisPosition = { rotated.AxisPosition with X = rotated.AxisPosition.X + 1 }
+                    ChildPosition = { rotated.ChildPosition with X = rotated.ChildPosition.X + 1 } }
+
+            if canPlacePuyoPair board kickedRight then
+                Some kickedRight
+            else
+                // 回転できない
+                None

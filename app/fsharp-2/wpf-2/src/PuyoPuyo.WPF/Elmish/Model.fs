@@ -18,6 +18,7 @@ type Message =
     | Tick
     | MoveLeft
     | MoveRight
+    | Rotate
 
 // 初期化関数
 let init () =
