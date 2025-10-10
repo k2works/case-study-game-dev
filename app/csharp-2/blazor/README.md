@@ -60,6 +60,7 @@ dotnet tool install -g Cake.Tool
 - **Coverage**: カバレッジを測定してレポート生成
 - **Quality**: すべての品質チェックを実行（デフォルト）
 - **Watch**: ファイル監視と自動テスト実行
+- **CI**: CI 環境で実行するタスク（Clean, Restore, Format, Lint, Test）
 
 #### タスクの実行
 
@@ -80,6 +81,9 @@ dotnet cake --target=Quality
 
 # ファイル監視と自動テスト実行
 dotnet cake --target=Watch
+
+# CI 環境で実行
+dotnet cake --target=CI
 ```
 
 ## 開発ガイドライン

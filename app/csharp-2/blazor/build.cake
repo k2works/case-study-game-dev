@@ -162,6 +162,18 @@ Task("Watch")
     });
 });
 
+Task("CI")
+    .Description("CI環境で実行するタスク")
+    .IsDependentOn("Clean")
+    .IsDependentOn("Restore")
+    .IsDependentOn("Format")
+    .IsDependentOn("Lint")
+    .IsDependentOn("Test")
+    .Does(() =>
+{
+    Information("✅ CI タスクが完了しました！");
+});
+
 Task("Default")
     .Description("デフォルトタスク（Quality）")
     .IsDependentOn("Quality");

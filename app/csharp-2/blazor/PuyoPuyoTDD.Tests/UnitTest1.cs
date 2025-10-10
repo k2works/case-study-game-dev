@@ -1,4 +1,4 @@
-﻿namespace PuyoPuyoTDD.Tests;
+namespace PuyoPuyoTDD.Tests;
 
 public class UnitTest1
 {
