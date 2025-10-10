@@ -7,6 +7,7 @@
   <Window.InputBindings>
     <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
     <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    <KeyBinding Key="Down" Command="{Binding MoveDown}" />
     <KeyBinding Key="Up" Command="{Binding Rotate}" />
   </Window.InputBindings>
   <StackPanel Orientation="Vertical">

@@ -47,4 +47,5 @@ let bindings () =
       "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
       "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
       "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
       "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
