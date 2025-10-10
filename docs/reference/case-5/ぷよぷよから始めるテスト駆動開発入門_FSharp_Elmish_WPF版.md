@@ -6197,4 +6197,537 @@ EOF
 
 ---
 
+## イテレーション 6: ぷよの消去の実装
+
+「ぷよが落ちてくるようになったけど、ぷよぷよの醍醐味はぷよを消すことですよね？」そうですね！ぷよぷよの最も重要な要素の一つは、同じ色のぷよを4つ以上つなげると消去できる機能です。今回は、その「ぷよの消去」機能を実装していきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、同じ色のぷよを4つ以上つなげると消去できる
+
+「これがぷよぷよの基本ルールですね！」そうです！同じ色のぷよを4つ以上つなげると消去できるというのが、ぷよぷよの基本的なルールです。これを実装することで、ゲームとしての面白さが大きく向上しますね。
+
+### TODO リスト
+
+「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODO リストを作成してみましょう。
+
+「ぷよを消去する」という機能を実現するためには、以下のようなタスクが必要そうですね：
+
+- **ぷよの接続判定を実装する**：隣接する同じ色のぷよを検出する（幅優先探索 BFS を使用）
+- **4つ以上つながったぷよの検出を実装する**：消去対象となるぷよのグループを特定する
+- **ぷよの消去処理を実装する**：消去対象のぷよを実際に消す
+- **重力の適用を実装する**：消去後にぷよを落下させる
+- **Update 関数への統合**：ぷよ固定時に消去判定と消去処理を実行する
+
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
+
+### テスト: ぷよの接続判定
+
+「最初に何をテストすればいいんでしょうか？」まずは、ぷよの接続判定をテストしましょう。同じ色のぷよが4つ以上つながっているかどうかを判定する機能が必要です。
+
+`BoardTests.fs` に新しいテストモジュールを追加します：
+
+```fsharp
+// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（追加）
+
+module ``ぷよの消去`` =
+    [<Fact>]
+    let ``横に4つ並んだぷよを検出できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 0 11 Red
+            |> setCellColor 1 11 Red
+            |> setCellColor 2 11 Red
+            |> setCellColor 3 11 Red
+
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 1
+        groups |> List.head |> List.length |> should equal 4
+
+    [<Fact>]
+    let ``縦に4つ並んだぷよを検出できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 2 8 Green
+            |> setCellColor 2 9 Green
+            |> setCellColor 2 10 Green
+            |> setCellColor 2 11 Green
+
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 1
+        groups |> List.head |> List.length |> should equal 4
+
+    [<Fact>]
+    let ``L字型につながった5つのぷよを検出できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 1 9 Blue
+            |> setCellColor 1 10 Blue
+            |> setCellColor 1 11 Blue
+            |> setCellColor 2 11 Blue
+            |> setCellColor 3 11 Blue
+
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 1
+        groups |> List.head |> List.length |> should equal 5
+
+    [<Fact>]
+    let ``3つ以下のぷよは検出されない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 0 11 Yellow
+            |> setCellColor 1 11 Yellow
+            |> setCellColor 2 11 Yellow
+
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 0
+```
+
+「このテストでは何を確認しているんですか？」このテストでは、以下の4つのケースを確認しています：
+
+1. **横に4つ並んだ場合**：水平方向につながったぷよが検出されるか
+2. **縦に4つ並んだ場合**：垂直方向につながったぷよが検出されるか
+3. **L字型の場合**：複雑な形でつながったぷよが検出されるか
+4. **3つ以下の場合**：消去条件を満たさないぷよは検出されないか
+
+「なるほど、4つ以上という条件が重要なんですね！」そうです！ぷよぷよの基本ルールですね。
+
+### テスト実行（RED）
+
+「テストを実行して、失敗することを確認しましょう！」はい、まだ `findConnectedGroups` 関数を実装していないので、コンパイルエラーになるはずです。
+
+```bash
+dotnet cake --target=Build
+```
+
+予想通り、コンパイルエラーが発生します。これが TDD の RED フェーズです。
+
+### 実装: ぷよの接続判定（GREEN）
+
+「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、ぷよの接続判定を実装していきましょう。
+
+`Board.fs` に新しい関数を追加します：
+
+```fsharp
+// src/PuyoPuyo.WPF/Domain/Board.fs（追加）
+
+// 隣接するセルの座標を取得
+let private getNeighbors (x: int) (y: int) : (int * int) list =
+    [ (x - 1, y) // 左
+      (x + 1, y) // 右
+      (x, y - 1) // 上
+      (x, y + 1) ] // 下
+
+// ボードの範囲内かチェック
+let private isInBounds (board: Board) (x: int) (y: int) : bool =
+    x >= 0 && x < Array2D.length1 board && y >= 0 && y < Array2D.length2 board
+
+// 指定位置から同じ色のつながったぷよを探索（BFS）
+let private findConnectedPuyos
+    (board: Board)
+    (startX: int)
+    (startY: int)
+    (color: PuyoColor)
+    (visited: Set<int * int>)
+    : (int * int) list =
+    let rec bfs (queue: (int * int) list) (visited: Set<int * int>) (result: (int * int) list) =
+        match queue with
+        | [] -> result
+        | (x, y) :: rest ->
+            if Set.contains (x, y) visited then
+                bfs rest visited result
+            else
+                let newVisited = Set.add (x, y) visited
+
+                let neighbors =
+                    getNeighbors x y
+                    |> List.filter (fun (nx, ny) ->
+                        not (Set.contains (nx, ny) newVisited)
+                        && isInBounds board nx ny
+                        && getCellColor nx ny board = color)
+
+                bfs (rest @ neighbors) newVisited ((x, y) :: result)
+
+    bfs [ (startX, startY) ] visited []
+
+// 4つ以上つながっているぷよのグループを検出
+let findConnectedGroups (board: Board) : ((int * int) list) list =
+    let mutable visited = Set.empty
+    let mutable groups = []
+
+    for y in 0 .. (Array2D.length2 board - 1) do
+        for x in 0 .. (Array2D.length1 board - 1) do
+            if not (Set.contains (x, y) visited) then
+                let color = getCellColor x y board
+
+                if color <> Empty then
+                    let group = findConnectedPuyos board x y color visited
+
+                    if List.length group >= 4 then
+                        groups <- group :: groups
+
+                    visited <- visited + Set.ofList group
+
+    groups
+```
+
+「BFS（幅優先探索）を使っているんですね！」その通りです。F# では、再帰関数を使って BFS を実装しています。`findConnectedPuyos` 関数は、指定された位置から同じ色のぷよを再帰的に探索します。
+
+「`visited` Set で訪問済みのセルを管理しているのがポイントですね！」はい！これにより、同じセルを複数回訪問することを防ぎ、効率的に探索できます。
+
+### テスト実行（GREEN）
+
+「実装が終わったので、テストを実行しましょう！」はい、テストが通るはずです。
+
+```bash
+dotnet cake --target=Test
+```
+
+すべてのテストが通ることを確認します。
+
+### テスト: ぷよの消去処理
+
+「次は実際にぷよを消す処理をテストしましょう！」はい、消去対象のぷよを実際に削除する処理をテストします。
+
+```fsharp
+// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（追加）
+
+    [<Fact>]
+    let ``指定した位置のぷよを消去できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 0 11 Red
+            |> setCellColor 1 11 Red
+            |> setCellColor 2 11 Red
+            |> setCellColor 3 11 Red
+
+        // Act
+        let positions = [ (0, 11); (1, 11); (2, 11); (3, 11) ]
+        let newBoard = board |> clearPuyos positions
+
+        // Assert
+        getCellColor 0 11 newBoard |> should equal Empty
+        getCellColor 1 11 newBoard |> should equal Empty
+        getCellColor 2 11 newBoard |> should equal Empty
+        getCellColor 3 11 newBoard |> should equal Empty
+
+    [<Fact>]
+    let ``消去後にぷよが落下する`` () =
+        // Arrange
+        let board = createBoard ()
+        let board = board |> setCellColor 0 8 Red |> setCellColor 0 11 Green
+
+        // Act - (0, 11) のぷよを消去
+        let newBoard = board |> clearPuyos [ (0, 11) ]
+        let droppedBoard = newBoard |> applyGravity
+
+        // Assert - (0, 8) にあった赤いぷよが (0, 11) に落下
+        getCellColor 0 11 droppedBoard |> should equal Red
+        getCellColor 0 8 droppedBoard |> should equal Empty
+```
+
+### テスト実行（RED）
+
+テストを実行して、コンパイルエラーを確認します：
+
+```bash
+dotnet cake --target=Build
+```
+
+### 実装: ぷよの消去処理と重力適用（GREEN）
+
+「消去処理と重力を実装しましょう！」はい、2つの関数を実装します。
+
+```fsharp
+// src/PuyoPuyo.WPF/Domain/Board.fs（追加）
+
+// 指定した位置のぷよを消去
+let clearPuyos (positions: (int * int) list) (board: Board) : Board =
+    let newBoard = Array2D.copy board
+    positions |> List.iter (fun (x, y) -> newBoard.[x, y] <- Empty)
+    newBoard
+
+// 重力を適用してぷよを落下させる
+let applyGravity (board: Board) : Board =
+    let newBoard = Array2D.copy board
+    let width = Array2D.length1 board
+    let height = Array2D.length2 board
+
+    // 各列ごとに処理
+    for x in 0 .. width - 1 do
+        // 下から上に向かって詰める
+        let mutable writeY = height - 1
+
+        for y in (height - 1) .. -1 .. 0 do
+            let color = newBoard.[x, y]
+
+            if color <> Empty then
+                if y <> writeY then
+                    newBoard.[x, writeY] <- color
+                    newBoard.[x, y] <- Empty
+
+                writeY <- writeY - 1
+
+    newBoard
+```
+
+「`clearPuyos` は指定位置を Empty にして、`applyGravity` は各列を下から詰めていくんですね！」その通りです。重力処理では、各列ごとに下から上へスキャンし、空でないセルを下に詰めていきます。
+
+### テスト実行（GREEN）
+
+テストを実行します：
+
+```bash
+dotnet cake --target=Test
+```
+
+すべてのテストが通ることを確認します。
+
+### Update 関数への統合
+
+「最後に、ゲームの Update 関数に消去処理を組み込みましょう！」はい、ぷよが固定されたときに消去処理を実行するように変更します。
+
+まず、統合テストを追加します：
+
+```fsharp
+// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（追加）
+
+module ``ぷよの消去`` =
+    [<Fact>]
+    let ``着地時に4つ以上つながったぷよが消える`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ボードに赤いぷよを 3 つ並べておく
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+
+        // 赤いぷよペアを上から落とす
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 4つつながって消える
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 9 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 8 newModel.Board |> should equal Domain.Puyo.Empty
+```
+
+### テスト実行（RED）
+
+テストを実行して、失敗することを確認します：
+
+```bash
+dotnet cake --target=Test
+```
+
+現在の実装では消去処理がないため、テストは失敗します。
+
+### 実装: Update 関数の修正（GREEN）
+
+「Update 関数を修正して、消去処理を組み込みましょう！」はい、`dropPuyo` 関数を修正します。
+
+```fsharp
+// src/PuyoPuyo.WPF/Elmish/Update.fs（修正）
+
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
+        | None ->
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+
+            // 消去処理
+            let groups = findConnectedGroups boardWithPuyo
+
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    applyGravity boardWithPuyo
+                else
+                    let positions = groups |> List.concat
+                    boardWithPuyo |> clearPuyos positions |> applyGravity
+
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterClear
+                CurrentPair = Some newPair }
+    | None -> model
+```
+
+「ぷよを固定した後、消去判定をして、消去対象があれば消去→重力、なければ重力だけ適用するんですね！」その通りです！ロジックはシンプルですが、これでぷよ消去機能が完成します。
+
+### テスト実行（GREEN）
+
+テストを実行します：
+
+```bash
+dotnet cake --target=Test
+```
+
+すべてのテストが通ることを確認します。57 個のテストがすべて成功するはずです。
+
+### リファクタリング
+
+「リファクタリングは必要ですか？」今回の実装は既にシンプルで明確なので、大きなリファクタリングは不要です。ただし、コードフォーマットを確認しておきましょう。
+
+```bash
+dotnet cake --target=Format
+```
+
+### 動作確認
+
+「実装が終わったので、動かしてみましょう！」はい、アプリケーションを起動します：
+
+```bash
+dotnet run --project src/PuyoPuyo.App/PuyoPuyo.App.csproj
+```
+
+ゲームを開始して、同じ色のぷよを4つつなげてみてください。ぷよが消えて、上にあったぷよが落下することを確認できるはずです！
+
+### CI 実行
+
+「すべてのチェックが通ることを確認しましょう！」はい、CI パイプラインを実行します：
+
+```bash
+dotnet cake --target=ci
+```
+
+すべてのタスクが成功することを確認します：
+- ✅ Format-Check
+- ✅ Lint
+- ✅ Build
+- ✅ Test（57 tests passed）
+- ✅ Coverage（75%以上）
+
+### コミット
+
+「動作確認できたので、コミットしましょう！」はい、Conventional Commits の規約に従ってコミットします：
+
+```bash
+git add .
+git commit -m "$(cat <<'EOF'
+feat: イテレーション 6 - ぷよの消去機能を実装
+
+- Board.fs に接続判定関数を追加（BFS アルゴリズム）
+  - getNeighbors: 隣接セル座標取得
+  - isInBounds: 範囲内チェック
+  - findConnectedPuyos: 同色の接続ぷよを探索（BFS）
+  - findConnectedGroups: 4つ以上のグループを検出
+- Board.fs にぷよ消去と重力関数を追加
+  - clearPuyos: 指定位置のぷよを消去
+  - applyGravity: 消去後にぷよを落下
+- Update.fs の dropPuyo 関数を拡張
+  - ぷよ固定時に消去判定を実行
+  - 4つ以上つながったぷよを消去
+  - 消去後に重力を適用
+- BoardTests.fs にぷよ消去のテストを追加（6件）
+- UpdateTests.fs に統合テストを追加（1件）
+- All 57 tests passing
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+```
+
+### イテレーション 6 のまとめ
+
+このイテレーションで実装した内容：
+
+1. **BFS による接続判定**：
+   - 幅優先探索アルゴリズムを使用
+   - `visited` Set で訪問済みセルを管理
+   - 再帰関数とパターンマッチングによる実装
+   - 4つ以上つながったぷよのグループを検出
+
+2. **ぷよの消去処理**：
+   - `clearPuyos` 関数で指定位置を Empty に設定
+   - イミュータブルな実装（Array2D.copy を使用）
+   - シンプルで理解しやすいロジック
+
+3. **重力の適用**：
+   - `applyGravity` 関数で列ごとにぷよを落下
+   - 下から上へスキャンして詰める
+   - 効率的なアルゴリズム
+
+4. **Update 関数への統合**：
+   - ぷよ固定時に消去処理を自動実行
+   - 消去→重力→新ぷよ生成の流れ
+   - ゲームループにシームレスに統合
+
+5. **TDD サイクルの実践**：
+   - Red：6件の Board テスト + 1件の統合テスト
+   - Green：最小限の実装で通す
+   - Refactor：コードフォーマットの適用
+
+6. **F# の表現力**：
+   - 再帰関数による BFS 実装
+   - パターンマッチングによるリスト処理
+   - パイプライン演算子による関数合成
+   - イミュータブルなデータ構造
+
+**学んだこと**：
+- グラフ探索アルゴリズム（BFS）の実装方法
+- F# での可変状態（`mutable`）の適切な使用
+- 複雑なロジックのテスト分割戦略
+- ドメインロジックと UI の分離の重要性
+
+これで、ぷよぷよゲームの核心的な機能である「ぷよの消去」が実装できました！次のイテレーションでは、連鎖反応やスコア計算などのより高度な機能に取り組んでいきます。
+
+---
+
 **著者より**: このチュートリアルは、テスト駆動開発と関数型プログラミングの素晴らしさを伝えたいという思いから作成しました。質問やフィードバックがあれば、ぜひお気軽にお寄せください。一緒に学び、成長していきましょう!
