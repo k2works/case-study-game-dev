@@ -74,3 +74,54 @@ module ``ゲームループ`` =
         // Assert
         // Tick処理が実行されること（現時点では状態が保持されることを確認）
         newModel.GameState |> should equal Playing
+
+module ``ぷよの移動`` =
+    [<Fact>]
+    let ``MoveLeftメッセージでぷよペアが左に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 3; Y = 5 }
+                            ChildPosition = { X = 3; Y = 4 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random MoveLeft model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 2
+            pair.ChildPosition.X |> should equal 2
+        | None -> failwith "CurrentPair should exist"
+
+    [<Fact>]
+    let ``MoveRightメッセージでぷよペアが右に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random MoveRight model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 3
+            pair.ChildPosition.X |> should equal 3
+        | None -> failwith "CurrentPair should exist"

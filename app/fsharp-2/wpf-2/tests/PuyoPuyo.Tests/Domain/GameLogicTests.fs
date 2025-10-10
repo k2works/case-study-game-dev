@@ -2,7 +2,10 @@ module Domain.GameLogicTests
 
 open Xunit
 open FsUnit.Xunit
+open Domain.Board
 open Domain.GameLogic
+open Domain.Puyo
+open Domain.PuyoPair
 
 module ``ゲーム状態`` =
     [<Fact>]
@@ -24,3 +27,84 @@ module ``ゲーム状態`` =
     let ``GameStateにはGameOver状態がある`` () =
         // Assert
         GameOver |> should equal GameOver
+
+module ``ぷよペアの移動`` =
+    [<Fact>]
+    let ``ぷよペアを左に移動できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 3; Y = 5 }
+              ChildPosition = { X = 3; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Left
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 2
+            movedPair.ChildPosition.X |> should equal 2
+        | None -> failwith "移動できるはずです"
+
+    [<Fact>]
+    let ``ぷよペアを右に移動できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 2; Y = 5 }
+              ChildPosition = { X = 2; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Right
+
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 3
+            movedPair.ChildPosition.X |> should equal 3
+        | None -> failwith "移動できるはずです"
+
+    [<Fact>]
+    let ``左端では左に移動できない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 0; Y = 5 }
+              ChildPosition = { X = 0; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Left
+
+        // Assert
+        result |> should equal None
+
+    [<Fact>]
+    let ``右端では右に移動できない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let pair =
+            { Axis = Red
+              Child = Blue
+              AxisPosition = { X = 5; Y = 5 }
+              ChildPosition = { X = 5; Y = 4 }
+              Rotation = 0 }
+
+        // Act
+        let result = tryMovePuyoPair board pair Right
+
+        // Assert
+        result |> should equal None

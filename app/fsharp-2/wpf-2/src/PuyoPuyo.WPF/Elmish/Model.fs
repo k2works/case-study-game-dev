@@ -16,6 +16,8 @@ type Model =
 type Message =
     | StartGame
     | Tick
+    | MoveLeft
+    | MoveRight
 
 // 初期化関数
 let init () =

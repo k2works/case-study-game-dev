@@ -13,6 +13,24 @@ let updateWithRandom (random: Random) msg model =
             CurrentPair = Some(generatePuyoPair random)
             GameState = Playing }
     | Tick -> model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
 
 // 更新関数（Elmish用）
 let update msg model =

@@ -44,4 +44,6 @@ let bindings () =
       "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
       "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
       "StartGame" |> Binding.cmd (fun _ -> StartGame)
-      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted) ]
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight) ]
