@@ -11,7 +11,8 @@ type Model =
       Score: Score
       Chain: int
       GameState: GameState
-      CurrentPair: PuyoPair option }
+      CurrentPair: PuyoPair option
+      NextPair: PuyoPair option }
 
 // メッセージ定義
 type Message =
@@ -29,4 +30,5 @@ let init () =
       Score = initialScore
       Chain = 0
       GameState = NotStarted
-      CurrentPair = None }
+      CurrentPair = None
+      NextPair = None }

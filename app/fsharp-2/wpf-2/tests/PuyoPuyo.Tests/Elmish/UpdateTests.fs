@@ -552,3 +552,65 @@ module ``ゲーム再開`` =
             pair.ChildPosition.X |> should equal 2
             pair.ChildPosition.Y |> should equal -1
         | None -> failwith "新しいぷよペアが生成されるべきです"
+
+module ``次のぷよ表示`` =
+    [<Fact>]
+    let ``StartGameメッセージで次のぷよが生成される`` () =
+        // Arrange
+        let model = init ()
+        let random = Random(42)
+
+        // Act
+        let newModel = updateWithRandom random StartGame model
+
+        // Assert
+        newModel.NextPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``Tickメッセージでぷよ固定後にNextPairがCurrentPairになる`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+        let nextPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                NextPair = Some nextPair
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        // NextPair が CurrentPair になる（位置は初期位置にリセットされる）
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.Axis |> should equal nextPair.Axis
+            pair.Child |> should equal nextPair.Child
+        | None -> failwith "CurrentPair should exist"
+
+    [<Fact>]
+    let ``Tickメッセージでぷよ固定後に新しいNextPairが生成される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        newModel.NextPair |> should not' (equal None)

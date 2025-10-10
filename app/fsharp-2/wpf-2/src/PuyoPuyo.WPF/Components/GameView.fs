@@ -38,11 +38,25 @@ let getAllPuyos (model: Model) =
 
     List.append boardPuyos pairPuyos
 
+// 次のぷよ表示用のViewModel を取得
+let getNextPuyos (model: Model) =
+    let cellSize = 20.0 // 次のぷよ表示エリアは小さめ
+    match model.NextPair with
+    | None -> []
+    | Some pair ->
+        [ { X = 15.0
+            Y = 5.0
+            Color = puyoColorToString pair.Axis }
+          { X = 15.0
+            Y = 25.0
+            Color = puyoColorToString pair.Child } ]
+
 // Elmish バインディング
 let bindings () =
     [ "Score" |> Binding.oneWay (fun m -> m.Score)
       "Chain" |> Binding.oneWay (fun m -> m.Chain)
       "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "NextPuyos" |> Binding.oneWay (fun m -> getNextPuyos m)
       "StartGame" |> Binding.cmd (fun _ -> StartGame)
       "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
       "IsGameOver" |> Binding.oneWay (fun m -> m.GameState = GameOver)

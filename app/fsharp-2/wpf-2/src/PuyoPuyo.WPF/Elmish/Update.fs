@@ -52,23 +52,29 @@ let private dropPuyo (random: Random) (model: Model) =
             // 連鎖処理（累計スコアを 0 から開始）
             let (boardAfterChain, chainCount, earnedScore) = processChain boardAfterGravity 0 0
 
-            // 新しいぷよを生成
-            let newPair = generatePuyoPair random
+            // NextPair を CurrentPair に、新しい NextPair を生成
+            let newCurrentPair =
+                match model.NextPair with
+                | Some next -> next
+                | None -> generatePuyoPair random
+            let newNextPair = generatePuyoPair random
 
             // ゲームオーバー判定
-            if checkGameOver boardAfterChain newPair then
+            if checkGameOver boardAfterChain newCurrentPair then
                 { model with
                     Board = boardAfterChain
                     Chain = chainCount
                     Score = model.Score + earnedScore
                     CurrentPair = None
+                    NextPair = Some newNextPair
                     GameState = GameOver }
             else
                 { model with
                     Board = boardAfterChain
                     Chain = chainCount
                     Score = model.Score + earnedScore
-                    CurrentPair = Some newPair }
+                    CurrentPair = Some newCurrentPair
+                    NextPair = Some newNextPair }
     | None -> model
 
 // ランダム生成器を受け取る更新関数（テスト用）
@@ -77,6 +83,7 @@ let updateWithRandom (random: Random) msg model =
     | StartGame ->
         { model with
             CurrentPair = Some(generatePuyoPair random)
+            NextPair = Some(generatePuyoPair random)
             GameState = Playing }
     | Tick ->
         // ゲームオーバー状態では何もしない
@@ -116,6 +123,7 @@ let updateWithRandom (random: Random) msg model =
         // ゲームを初期状態にリセットして新しいぷよペアを生成
         { init () with
             CurrentPair = Some(generatePuyoPair random)
+            NextPair = Some(generatePuyoPair random)
             GameState = Playing }
 
 // 更新関数（Elmish用）
