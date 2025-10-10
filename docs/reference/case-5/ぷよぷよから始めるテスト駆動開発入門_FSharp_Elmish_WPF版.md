@@ -2374,9 +2374,9 @@ wpf の GameView.fs に合わせてレイアウトを改善：
 - [ ] Update関数にキー入力処理を組み込む
 - [ ] 各機能に対応するテストを作成する
 
-### テスト: キー入力の検出
+### テスト: ぷよの移動ロジック
 
-「最初は何からテストしますか？」まずは、キー入力を検出する機能からテストしましょう。WPFではキーボードイベントをどう扱うか考える必要があります。
+「最初は何からテストしますか？」まずは、ぷよの移動ロジックをテストしましょう。Elmish.WPF では、キー入力は View 層で処理し、Message として dispatch します。Domain 層では、純粋な移動ロジックだけをテストします。
 
 ```fsharp
 // tests/PuyoPuyo.Tests/Domain/GameLogicTests.fs
@@ -2387,74 +2387,102 @@ open FsUnit.Xunit
 open PuyoPuyo.Domain.PuyoPair
 open PuyoPuyo.Domain.Board
 open PuyoPuyo.Domain.Puyo
+open PuyoPuyo.Domain.GameLogic
 
-[<Fact>]
-let ``ぷよペアを左に移動できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 3 5 Red Green 0
+module ``ぷよペアの移動`` =
+    [<Fact>]
+    let ``ぷよペアを左に移動できる`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 3; Y = 5 }
+              ChildPosition = { X = 3; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Left
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Left
 
-    // Assert
-    match result with
-    | Some movedPair ->
-        movedPair.X |> should equal 2
-        movedPair.Y |> should equal 5
-    | None ->
-        failwith "移動できるはずです"
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 2
+            movedPair.ChildPosition.X |> should equal 2
+        | None ->
+            failwith "移動できるはずです"
 
-[<Fact>]
-let ``ぷよペアを右に移動できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 2 5 Red Green 0
+    [<Fact>]
+    let ``ぷよペアを右に移動できる`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 2; Y = 5 }
+              ChildPosition = { X = 2; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Right
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Right
 
-    // Assert
-    match result with
-    | Some movedPair ->
-        movedPair.X |> should equal 3
-        movedPair.Y |> should equal 5
-    | None ->
-        failwith "移動できるはずです"
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 3
+            movedPair.ChildPosition.X |> should equal 3
+        | None ->
+            failwith "移動できるはずです"
 
-[<Fact>]
-let ``左端では左に移動できない`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 0 5 Red Green 0
+    [<Fact>]
+    let ``左端では左に移動できない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 0; Y = 5 }
+              ChildPosition = { X = 0; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Left
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Left
 
-    // Assert
-    result |> should equal None
+        // Assert
+        result |> should equal None
 
-[<Fact>]
-let ``右端では右に移動できない`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 5 5 Red Green 0
+    [<Fact>]
+    let ``右端では右に移動できない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 5; Y = 5 }
+              ChildPosition = { X = 5; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Right
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Right
 
-    // Assert
-    result |> should equal None
+        // Assert
+        result |> should equal None
 ```
 
-「TypeScript版と違って、キー入力の検出をテストしていませんね？」そうです！WPFでは、キー入力はView層で処理し、Messageとしてdispatchします。ドメイン層では、純粋な移動ロジックだけをテストします。これがElmishアーキテクチャの利点で、UIとビジネスロジックが完全に分離されます。
+「ぷよペアの構造が TypeScript 版と違いますね？」そうです！Elmish.WPF 版では、ぷよペアを以下のレコード型で表現しています：
+
+```fsharp
+type PuyoPair =
+    { AxisPosition: Position    // 軸ぷよの位置
+      ChildPosition: Position   // 子ぷよの位置
+      AxisColor: PuyoColor      // 軸ぷよの色
+      ChildColor: PuyoColor }   // 子ぷよの色
+```
+
+これにより、2つのぷよの位置と色を明示的に管理できます。
 
 ### 実装: 移動ロジック
 
 「テストが失敗することを確認したら、実装に進みましょう！」そうですね。まず、移動方向を表す型と移動ロジックを実装します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Domain/GameLogic.fs
+// src/PuyoPuyo.Domain/GameLogic.fs
 namespace PuyoPuyo.Domain
 
 open PuyoPuyo.Domain.Board
@@ -2467,27 +2495,35 @@ type Direction =
     | Down
 
 module GameLogic =
-    /// ぷよペアが指定位置に配置可能かチェック
-    let private isValidPosition (board: Board) (x: int) (y: int) : bool =
-        y >= 0 && y < board.Rows && x >= 0 && x < board.Cols &&
-        Board.getCell board x y = Empty
+    /// 指定位置が盤面内で空かチェック
+    let private isValidPosition (board: Board) (pos: Position) : bool =
+        pos.Y >= 0
+        && pos.Y < board.Rows
+        && pos.X >= 0
+        && pos.X < board.Cols
+        && Board.getCell board pos.X pos.Y = Empty
 
     /// ぷよペアが配置可能かチェック
     let canPlacePuyoPair (board: Board) (pair: PuyoPair) : bool =
-        let (pos1, pos2) = PuyoPair.getPositions pair
-        let (x1, y1) = pos1
-        let (x2, y2) = pos2
-        isValidPosition board x1 y1 && isValidPosition board x2 y2
+        isValidPosition board pair.AxisPosition
+        && isValidPosition board pair.ChildPosition
 
     /// ぷよペアを指定方向に移動（可能な場合のみ）
     let tryMovePuyoPair (board: Board) (pair: PuyoPair) (direction: Direction) : PuyoPair option =
-        let (dx, dy) =
+        let offset =
             match direction with
-            | Left -> (-1, 0)
-            | Right -> (1, 0)
-            | Down -> (0, 1)
+            | Left -> { X = -1; Y = 0 }
+            | Right -> { X = 1; Y = 0 }
+            | Down -> { X = 0; Y = 1 }
 
-        let newPair = { pair with X = pair.X + dx; Y = pair.Y + dy }
+        let newPair =
+            { pair with
+                AxisPosition =
+                    { X = pair.AxisPosition.X + offset.X
+                      Y = pair.AxisPosition.Y + offset.Y }
+                ChildPosition =
+                    { X = pair.ChildPosition.X + offset.X
+                      Y = pair.ChildPosition.Y + offset.Y } }
 
         if canPlacePuyoPair board newPair then
             Some newPair
@@ -2495,7 +2531,15 @@ module GameLogic =
             None
 ```
 
-「`tryMovePuyoPair`が`option`型を返しているのはなぜですか？」良い質問ですね！移動できる場合は`Some newPair`を返し、移動できない場合（壁や障害物がある）は`None`を返します。これにより、呼び出し側で移動の成功/失敗を安全に判定できます。
+「`tryMovePuyoPair` が `option` 型を返しているのはなぜですか？」良い質問ですね！移動できる場合は `Some newPair` を返し、移動できない場合（壁や障害物がある）は `None` を返します。これにより、呼び出し側で移動の成功/失敗を安全に判定できます。
+
+「`Position` を使っているのはどうしてですか？」Elmish.WPF 版では、座標を以下のレコード型で表現しています：
+
+```fsharp
+type Position = { X: int; Y: int }
+```
+
+タプル `(int * int)` ではなく、名前付きレコードを使うことで、X と Y を明示的に区別でき、コードの可読性が向上します。
 
 テストを実行して、すべて通ることを確認しましょう：
 
@@ -2505,198 +2549,222 @@ dotnet cake --target=Test
 
 ### Update 関数の拡張
 
-「ドメインロジックができたので、次はElmishのUpdate関数を拡張しましょう！」はい、MoveLeftとMoveRightメッセージを処理できるようにします。
+「ドメインロジックができたので、次は Elmish の Update 関数を拡張しましょう！」はい、MoveLeft と MoveRight メッセージを処理できるようにします。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | MoveLeft when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Left with
-            | Some movedPiece ->
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                model, Cmd.none
-        | None ->
-            model, Cmd.none
+// src/PuyoPuyo.WPF/Elmish/Update.fs（updateWithRandom 関数の続き）
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair -> { model with CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
 
-    | MoveRight when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Right with
-            | Some movedPiece ->
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                model, Cmd.none
-        | None ->
-            model, Cmd.none
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair -> { model with CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
 ```
+
+「Bolero 版と何が違いますか？」重要な違いがあります！
+
+**Bolero 版との違い**:
+- **Bolero**: `Model * Cmd<Message>` のタプルを返す
+- **Elmish.WPF**: `Model` のみを返す
+
+Elmish.WPF では、`Cmd` は `init` 関数で使用され、`update` 関数は新しい `Model` だけを返します。これは Elmish.WPF が WPF の UI スレッドと統合するための設計です。
 
 「パターンマッチングを使って、安全に処理しているんですね！」そうです！以下の点をチェックしています：
 
-1. `when model.Status = Playing`：ゲーム中のみ移動可能
-2. `match model.CurrentPiece`：現在のぷよが存在するか
-3. `match GameLogic.tryMovePuyoPair`：移動が成功したか
+1. `match model.CurrentPair`：現在のぷよペアが存在するか
+2. `match tryMovePuyoPair`：移動が成功したか
 
-すべての条件が満たされた場合のみ、新しい位置でModelを更新します。
+すべての条件が満たされた場合のみ、新しい位置で Model を更新します。ゲーム状態のチェック（Playing かどうか）は、この時点ではまだ実装していません（イテレーション 3 で追加します）。
 
 ### View の拡張
 
-「次はViewでキーボード入力を受け取るようにしましょう！」はい、キーボードイベントハンドラを追加します。
+「次は View でキーボード入力を受け取るようにしましょう！」はい、Elmish.WPF では XAML と F# の両方を更新します。
+
+まず、F# 側で Message コマンドをバインディングします：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（viewの更新）
+// src/PuyoPuyo.WPF/Components/GameView.fs（bindings 関数の更新）
 module GameView =
-    // ... 既存のコード ...
-
-    /// キーボードイベントハンドラ
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | _ -> ()
-
-    /// メインView
-    let view (model: Model) (dispatch: Message -> unit) =
-        div [
-            attr.classes ["game-container"]
-            attr.tabindex 0  // キーボードフォーカスを受け取れるようにする
-            on.keydown (handleKeyDown dispatch)
-        ] [
-            h1 [] [text "ぷよぷよゲーム"]
-
-            viewBoard model.Board model.CurrentPiece
-
-            div [attr.classes ["game-controls"]] [
-                match model.Status with
-                | NotStarted ->
-                    button [
-                        on.click (fun _ -> dispatch StartGame)
-                    ] [text "ゲーム開始"]
-
-                | Playing ->
-                    div [] [
-                        p [] [text "矢印キー: 左右移動"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "リセット"]
-                    ]
-
-                | GameOver ->
-                    div [] [
-                        h2 [] [text "ゲームオーバー"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "もう一度プレイ"]
-                    ]
-            ]
-        ]
+    let bindings () =
+        [ "Score" |> Binding.oneWay (fun m -> m.Score)
+          "Chain" |> Binding.oneWay (fun _ -> 0)
+          "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+          "StartGame" |> Binding.cmd (fun _ -> StartGame)
+          "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+          // 左右移動コマンドを追加
+          "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+          "MoveRight" |> Binding.cmd (fun _ -> MoveRight) ]
 ```
 
-「`attr.tabindex 0`は何ですか？」これは、HTML要素がキーボードフォーカスを受け取れるようにする属性です。通常、`div`要素はキーボードイベントを受け取れませんが、`tabindex`を設定することで可能になります。
+次に、XAML 側でキーバインディングを設定します：
 
-### テスト: Update関数の統合テスト
+```xml
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window x:Class="PuyoPuyo.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ぷよぷよゲーム" Height="600" Width="400">
 
-「Update関数の動作もテストしたいです！」良いですね！Elmishの統合テストを追加しましょう。
+    <!-- キーボード入力バインディング -->
+    <Window.InputBindings>
+        <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+        <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <!-- ... 既存の UI 定義 ... -->
+    </Grid>
+</Window>
+```
+
+「Bolero 版と大きく違いますね！」そうです！重要な違いを説明します：
+
+**Bolero 版との違い**:
+- **Bolero**: `handleKeyDown` 関数で `KeyboardEventArgs` を処理
+- **Elmish.WPF**: XAML の `KeyBinding` と `Binding.cmd` を使用
+
+WPF では、キーボード入力を処理する標準的な方法として `InputBindings` を使います。これにより、以下の利点があります：
+
+1. **宣言的な定義**: XAML でキーバインディングを明示的に定義
+2. **WPF の標準機能**: フォーカス管理が自動
+3. **分離**: UI 定義（XAML）とロジック（F#）の明確な分離
+
+「`tabindex` は不要なんですか？」はい、WPF では Window 全体がキーボード入力を受け取るため、HTML のような `tabindex` 設定は不要です。
+
+### テスト: Update 関数の統合テスト
+
+「Update 関数の動作もテストしたいです！」良いですね！Elmish の統合テストを追加しましょう。
 
 ```fsharp
 // tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs
 module PuyoPuyo.Tests.Elmish.UpdateTests
 
+open System
 open Xunit
 open FsUnit.Xunit
-open PuyoPuyo.Elmish
-open PuyoPuyo.Domain.PuyoPair
+open PuyoPuyo.WPF.Elmish.Model
+open PuyoPuyo.WPF.Elmish.Update
 open PuyoPuyo.Domain.Puyo
 
-[<Fact>]
-let ``MoveLeftメッセージでぷよが左に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+module ``ぷよの移動`` =
+    [<Fact>]
+    let ``MoveLeftメッセージでぷよペアが左に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Act
-    let (newModel, _) = Update.update MoveLeft model
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 3; Y = 5 }
+                            ChildPosition = { X = 3; Y = 4 } }
+                GameState = Playing }
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 2
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Act
+        let newModel = updateWithRandom random MoveLeft model
 
-[<Fact>]
-let ``MoveRightメッセージでぷよが右に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 2 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 2
+            pair.ChildPosition.X |> should equal 2
+        | None -> failwith "CurrentPair should exist"
 
-    // Act
-    let (newModel, _) = Update.update MoveRight model
+    [<Fact>]
+    let ``MoveRightメッセージでぷよペアが右に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 3
-    | None ->
-        failwith "ぷよが存在するはずです"
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
 
-[<Fact>]
-let ``左端では左に移動できない`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 0 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Act
+        let newModel = updateWithRandom random MoveRight model
 
-    // Act
-    let (newModel, _) = Update.update MoveLeft model
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 3
+            pair.ChildPosition.X |> should equal 3
+        | None -> failwith "CurrentPair should exist"
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 0  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
+    [<Fact>]
+    let ``左端では左に移動できない`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-[<Fact>]
-let ``ゲーム中でない場合は移動できない`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 2 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = NotStarted }
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 0; Y = 5 }
+                            ChildPosition = { X = 0; Y = 4 } }
+                GameState = Playing }
 
-    // Act
-    let (newModel, _) = Update.update MoveLeft model
+        // Act
+        let newModel = updateWithRandom random MoveLeft model
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 2  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 0 // 位置が変わらない
+            pair.ChildPosition.X |> should equal 0
+        | None -> failwith "CurrentPair should exist"
 ```
 
-「Elmish層のテストでは、Modelの状態遷移を確認しているんですね！」そうです！これにより、以下の点を確認できます：
+「Bolero 版と何が違いますか？」重要な違いがあります！
+
+**Bolero 版との違い**:
+- **Bolero**: `Update.update MoveLeft model` → `(newModel, _)` でタプル分解
+- **Elmish.WPF**: `updateWithRandom random MoveLeft model` → `newModel` のみ
+
+Elmish.WPF では、update 関数が `Cmd` を返さないため、タプル分解は不要です。また、`Random` インスタンスを渡す必要があります。
+
+「Elmish 層のテストでは、Model の状態遷移を確認しているんですね！」そうです！これにより、以下の点を確認できます：
 
 1. メッセージを受け取ったときの正しい状態遷移
-2. ゲーム状態（Playing/NotStarted）による動作の違い
-3. 境界条件での動作
+2. ぷよペアの位置の正確な更新
+3. 境界条件での動作（移動できない場合）
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、まずテストを実行します：
 
 ```bash
-dotnet cake --target=Watch
+dotnet cake --target=Test
 ```
 
-ブラウザで画面をクリックしてフォーカスを当てた後、左右矢印キーを押すとぷよが左右に移動するはずです！
+すべてのテストが通ることを確認したら、アプリケーションを起動します：
+
+```bash
+dotnet cake --target=Run
+```
+
+ウィンドウが表示されたら、左右矢印キーを押すとぷよが左右に移動するはずです！WPF では、ウィンドウが自動的にキーボードフォーカスを持つため、特別な操作は不要です。
 
 ### コミット
 
-「動作確認できたので、コミットしましょう！」はい、Conventional Commitsの規約に従ってコミットします：
+「動作確認できたので、コミットしましょう！」はい、Conventional Commits の規約に従ってコミットします：
 
 ```bash
 git add .
@@ -2705,56 +2773,63 @@ git commit -m "feat: implement puyo movement with keyboard input
 - Add Direction type (Left, Right, Down)
 - Add GameLogic module with tryMovePuyoPair function
 - Add boundary checking (canPlacePuyoPair)
-- Update Elmish Update function for MoveLeft/MoveRight
-- Add keyboard event handler in View
-- Add tabindex for keyboard focus
+- Update Update.fs for MoveLeft/MoveRight messages
+- Add KeyBinding in XAML for Left/Right arrow keys
+- Add MoveLeft/MoveRight command bindings in GameView.fs
 - Add unit tests for movement logic (4 tests)
-- Add integration tests for Update function (4 tests)
-- All tests passing (19 tests)"
+- Add integration tests for Update function (3 tests)
+- All tests passing"
 ```
 
-### イテレーション2のまとめ
+### イテレーション 2 のまとめ
 
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
    - `Direction` 判別共用体（Left, Right, Down）
    - `GameLogic` モジュール：
-     - `isValidPosition`：位置の有効性チェック
+     - `isValidPosition`：位置の有効性チェック（Position レコード使用）
      - `canPlacePuyoPair`：ぷよペアの配置可能性チェック
-     - `tryMovePuyoPair`：移動試行（Option型を返す）
+     - `tryMovePuyoPair`：移動試行（Option 型を返す）
 
-2. **Elmish層**
+2. **Elmish 層**
    - `MoveLeft` / `MoveRight` メッセージの処理
-   - ゲーム状態のガード（`when model.Status = Playing`）
    - パターンマッチによる安全な状態遷移
+   - `updateWithRandom` 関数で Model のみを返す（Cmd なし）
 
-3. **View層**
-   - キーボードイベントハンドラ（`handleKeyDown`）
-   - `attr.tabindex` でフォーカス可能に
-   - キー操作説明の追加
+3. **View 層**
+   - XAML の `Window.InputBindings` でキーバインディング定義
+   - `Binding.cmd` で MoveLeft/MoveRight コマンド公開
+   - WPF の標準的なキーボード入力処理
 
 4. **テスト**
-   - ドメインロジックのテスト（4テスト）
+   - ドメインロジックのテスト（4 テスト）
      - 左右移動の成功ケース
      - 境界でのエラーケース
-   - Elmish統合テスト（4テスト）
+   - Elmish 統合テスト（3 テスト）
      - メッセージによる状態遷移
-     - ゲーム状態による動作制御
+     - `updateWithRandom` の動作確認
+     - タプル分解不要（Model のみ返す）
 
 5. **学んだ重要な概念**
-   - Option型による安全なエラーハンドリング
+   - Option 型による安全なエラーハンドリング
    - 関数型プログラミングの純粋関数（副作用なし）
-   - Elmishにおける関心の分離（Domain/Elmish/View）
+   - Elmish における関心の分離（Domain/Elmish/View）
    - パターンマッチングによる網羅的な処理
-   - `when`ガードによる条件付きパターンマッチ
-   - タプルによる座標の表現
+   - Position レコードによる座標の表現（タプルより明示的）
+   - WPF の InputBindings による宣言的なキーバインディング
 
-6. **TypeScript版との違い**
-   - キー入力検出をViewで処理（Domainは純粋関数）
-   - private フィールドアクセスの代わりにOption型
-   - イベントハンドラのバインド不要（関数型）
-   - nullチェックの代わりにパターンマッチ
+6. **Bolero 版との違い**
+   - **Update 関数**: `Model * Cmd<Message>` ではなく `Model` のみを返す
+   - **キー入力**: `handleKeyDown` 関数ではなく XAML の `KeyBinding` を使用
+   - **フォーカス**: `tabindex` 不要（Window が自動的にフォーカスを持つ）
+   - **テスト**: タプル分解 `(newModel, _)` が不要
+   - **座標**: タプル `(int * int)` ではなく Position レコード `{ X: int; Y: int }` を使用
+
+7. **WPF 固有の利点**
+   - 宣言的な UI 定義（XAML）とロジック（F#）の明確な分離
+   - WPF の標準機能を活用（InputBindings、Command パターン）
+   - キーボードフォーカスの自動管理
 
 次のイテレーションでは、ぷよの回転機能を実装していきます。
 
