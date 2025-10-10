@@ -149,6 +149,19 @@ Task("Quality")
     Information("✅ すべての品質チェックが完了しました！");
 });
 
+Task("Run")
+    .Description("アプリケーションの実行")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    Information("アプリケーションを起動中...");
+    DotNetRun("./PuyoPuyoTDD/PuyoPuyoTDD.csproj", new DotNetRunSettings
+    {
+        Configuration = configuration,
+        NoBuild = true
+    });
+});
+
 Task("Watch")
     .Description("ファイル監視と自動ビルド・テスト")
     .Does(() =>
