@@ -45,6 +45,8 @@ let bindings () =
       "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
       "StartGame" |> Binding.cmd (fun _ -> StartGame)
       "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "IsGameOver" |> Binding.oneWay (fun m -> m.GameState = GameOver)
+      "IsPlaying" |> Binding.oneWay (fun m -> m.GameState = Playing)
       "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
       "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
       "MoveDown" |> Binding.cmd (fun _ -> MoveDown)

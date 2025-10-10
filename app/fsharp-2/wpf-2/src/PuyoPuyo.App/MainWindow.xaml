@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="ぷよぷよゲーム" Height="690" Width="500"
     Focusable="True">
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+  </Window.Resources>
   <Window.InputBindings>
     <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
     <KeyBinding Key="Right" Command="{Binding MoveRight}" />
@@ -18,26 +21,37 @@
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
       <!-- ゲームボード -->
       <Border BorderBrush="Black" BorderThickness="2" Margin="10">
-        <Canvas Background="WhiteSmoke" Width="240" Height="520">
-          <ItemsControl ItemsSource="{Binding Puyos}">
-            <ItemsControl.ItemsPanel>
-              <ItemsPanelTemplate>
-                <Canvas/>
-              </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-              <Style>
-                <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-              </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Ellipse Width="36" Height="36" Fill="{Binding Color}" Stroke="Black" StrokeThickness="1"/>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </Canvas>
+        <Grid Width="240" Height="520">
+          <Canvas Background="WhiteSmoke">
+            <ItemsControl ItemsSource="{Binding Puyos}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <Canvas/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemContainerStyle>
+                <Style>
+                  <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                  <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+              </ItemsControl.ItemContainerStyle>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Ellipse Width="36" Height="36" Fill="{Binding Color}" Stroke="Black" StrokeThickness="1"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Canvas>
+
+          <!-- ゲームオーバー表示 -->
+          <Border Background="#CC000000" Visibility="{Binding IsGameOver, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+              <TextBlock Text="GAME OVER" FontSize="32" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+              <TextBlock Text="{Binding Score, StringFormat='Score: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+              <TextBlock Text="{Binding Chain, StringFormat='Chain: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+            </StackPanel>
+          </Border>
+        </Grid>
       </Border>
 
       <!-- 情報パネル -->
