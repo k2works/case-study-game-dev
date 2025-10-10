@@ -339,3 +339,69 @@ module ``連鎖反応`` =
 
         // Assert - 2連鎖が発生（1回目の消去 + 2回目の消去）
         newModel.Chain |> should be (greaterThanOrEqualTo 2)
+
+module ``全消しボーナス`` =
+    [<Fact>]
+    let ``全消し時に3600点のボーナスが加算される`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ボードに赤いぷよを 3 つ並べておく（全消しになる配置）
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+
+        // 赤いぷよペアを上から落として全消しさせる
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing
+                Score = 0 }
+
+        // Act - 着地させて全消しさせる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 全消しボーナス3600点が加算される
+        newModel.Score |> should equal 3600
+
+    [<Fact>]
+    let ``全消しでない場合はボーナスが加算されない`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ボードに赤いぷよ 3 つ + 緑のぷよ 1 つ（全消しにならない配置）
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 3 11 Domain.Puyo.Green
+
+        // 赤いぷよペアを上から落とす（赤だけ消えて緑が残る）
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing
+                Score = 0 }
+
+        // Act - 着地させる（赤だけ消えて緑が残る）
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - ボーナスは加算されない（スコア0のまま）
+        newModel.Score |> should equal 0

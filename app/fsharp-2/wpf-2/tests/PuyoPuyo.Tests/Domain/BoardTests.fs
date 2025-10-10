@@ -148,3 +148,26 @@ module ``ぷよの消去`` =
         // Assert - (0, 8) にあった赤いぷよが (0, 11) に落下
         getCellColor 0 11 droppedBoard |> should equal Red
         getCellColor 0 8 droppedBoard |> should equal Empty
+
+module ``全消し判定`` =
+    [<Fact>]
+    let ``盤面が空の場合は全消しと判定される`` () =
+        // Arrange
+        let board = createBoard ()
+
+        // Act
+        let isAllClear = isAllClear board
+
+        // Assert
+        isAllClear |> should equal true
+
+    [<Fact>]
+    let ``盤面にぷよが残っている場合は全消しと判定されない`` () =
+        // Arrange
+        let board = createBoard () |> setCellColor 2 11 Red
+
+        // Act
+        let isAllClear = isAllClear board
+
+        // Assert
+        isAllClear |> should equal false

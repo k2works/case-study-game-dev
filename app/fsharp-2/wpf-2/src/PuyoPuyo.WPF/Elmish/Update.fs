@@ -6,14 +6,24 @@ open Domain.GameLogic
 open Domain.PuyoPair
 open Elmish.Model
 
-// 連鎖処理を再帰的に実行
-let rec private processChain (board: Board) (chainCount: int) : Board * int =
+// 全消しボーナスの定数
+let private allClearBonus = 3600
+
+// 連鎖処理を再帰的に実行（戻り値: ボード、連鎖数、ボーナススコア）
+let rec private processChain (board: Board) (chainCount: int) : Board * int * int =
     // 消去判定
     let groups = findConnectedGroups board
 
     if List.isEmpty groups then
         // 消去対象がない場合、連鎖終了
-        (board, chainCount)
+        // 全消しチェック
+        let bonus =
+            if isAllClear board then
+                allClearBonus
+            else
+                0
+
+        (board, chainCount, bonus)
     else
         // 消去処理
         let positions = groups |> List.concat
@@ -40,7 +50,7 @@ let private dropPuyo (random: Random) (model: Model) =
             let boardAfterGravity = applyGravity boardWithPuyo
 
             // 連鎖処理
-            let (boardAfterChain, chainCount) = processChain boardAfterGravity 0
+            let (boardAfterChain, chainCount, bonusScore) = processChain boardAfterGravity 0
 
             // 新しいぷよを生成
             let newPair = generatePuyoPair random
@@ -48,6 +58,7 @@ let private dropPuyo (random: Random) (model: Model) =
             { model with
                 Board = boardAfterChain
                 Chain = chainCount
+                Score = model.Score + bonusScore
                 CurrentPair = Some newPair }
     | None -> model
 

@@ -104,3 +104,16 @@ let applyGravity (board: Board) : Board =
                 writeY <- writeY - 1
 
     newBoard
+
+// 全消し判定（盤面上のぷよがすべて消えたかをチェック）
+let isAllClear (board: Board) : bool =
+    let width = Array2D.length1 board
+    let height = Array2D.length2 board
+    let mutable hasAnyPuyo = false
+
+    for y in 0 .. height - 1 do
+        for x in 0 .. width - 1 do
+            if getCellColor x y board <> Empty then
+                hasAnyPuyo <- true
+
+    not hasAnyPuyo
