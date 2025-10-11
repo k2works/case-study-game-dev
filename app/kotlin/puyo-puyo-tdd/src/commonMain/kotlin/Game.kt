@@ -30,6 +30,7 @@ class Game {
         // 各コンポーネントの初期化
         config = Config()
         stage = Stage(config)
+        stage.initialize()
         player = Player(config, stage)
         score = Score()
 
