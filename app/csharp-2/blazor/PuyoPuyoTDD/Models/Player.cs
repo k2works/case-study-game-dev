@@ -376,6 +376,37 @@ public class Player
     }
 
     /// <summary>
+    /// ゲームオーバー判定を行います.
+    /// </summary>
+    /// <returns>ゲームオーバーの場合true.</returns>
+    public bool CheckGameOver()
+    {
+        // 新しいぷよの配置位置（軸ぷよ）にすでにぷよがあるかチェック
+        if (this.stage.GetPuyo(this.puyoX, this.puyoY) != 0)
+        {
+            return true;
+        }
+
+        // 子ぷよの位置もチェック
+        var (childX, childY) = this.GetChildPuyoPosition(this.rotation);
+
+        // 子ぷよが画面外の場合はチェックしない
+        if (childY < 0 || childY >= this.config.StageHeight ||
+            childX < 0 || childX >= this.config.StageWidth)
+        {
+            return false;
+        }
+
+        // 子ぷよの位置にぷよがあるかチェック
+        if (this.stage.GetPuyo(childX, childY) != 0)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// 子ぷよの位置を計算します.
     /// </summary>
     /// <param name="rotation">回転状態.</param>

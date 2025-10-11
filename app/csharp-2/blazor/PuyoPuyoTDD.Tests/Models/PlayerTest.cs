@@ -533,4 +533,63 @@ public class PlayerTest
         // Assert
         Assert.Equal(initialRotation, this.player.Rotation); // 回転できない
     }
+
+    /// <summary>
+    /// 新しいぷよを配置できない場合はゲームオーバー判定がtrueになるかテスト.
+    /// </summary>
+    [Fact]
+    public void 新しいぷよを配置できない場合はゲームオーバー判定がtrueになる()
+    {
+        // Arrange
+        this.stage.Initialize();
+
+        // ステージの上部（新しいぷよの配置位置）にぷよを配置
+        this.stage.SetPuyo(2, 0, 1); // 中央上部
+        this.player.CreateNewPuyo();
+
+        // Act
+        var isGameOver = this.player.CheckGameOver();
+
+        // Assert
+        Assert.True(isGameOver);
+    }
+
+    /// <summary>
+    /// 新しいぷよを配置できる場合はゲームオーバー判定がfalseになるかテスト.
+    /// </summary>
+    [Fact]
+    public void 新しいぷよを配置できる場合はゲームオーバー判定がfalseになる()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.player.CreateNewPuyo();
+
+        // Act
+        var isGameOver = this.player.CheckGameOver();
+
+        // Assert
+        Assert.False(isGameOver);
+    }
+
+    /// <summary>
+    /// 子ぷよの位置が画面外の場合はゲームオーバーではないかテスト.
+    /// </summary>
+    [Fact]
+    public void 子ぷよの位置が画面外の場合はゲームオーバーではない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.player.CreateNewPuyo();
+
+        // 子ぷよが画面外（上）になる位置に配置
+        this.player.SetPuyoY(0);
+        this.player.SetRotation(0); // 上向き（子ぷよが y=-1 になる）
+
+        // Act
+        var isGameOver = this.player.CheckGameOver();
+
+        // Assert
+        // 子ぷよの位置が画面外の場合はゲームオーバーではない
+        Assert.False(isGameOver);
+    }
 }
