@@ -28,6 +28,6 @@ class ConfigTest {
         val config = Config()
 
         // Act & Assert
-        assertEquals(32, config.puyoSize)
+        assertEquals(40, config.puyoSize)
     }
 }
