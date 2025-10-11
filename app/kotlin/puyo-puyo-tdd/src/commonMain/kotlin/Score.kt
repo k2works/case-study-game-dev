@@ -48,5 +48,14 @@ class Score {
 
             return basePoints * chainBonus
         }
+
+        /**
+         * 全消しボーナスを計算します
+         *
+         * @return 全消しボーナスのポイント
+         */
+        fun calculateAllClearBonus(): Int {
+            return 3600
+        }
     }
 }

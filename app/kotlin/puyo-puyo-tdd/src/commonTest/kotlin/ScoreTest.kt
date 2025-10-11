@@ -70,4 +70,11 @@ class ScoreTest {
         val score10 = Score.calculate(erasedCount = 4, chainCount = 10)
         assertEquals(6400, score10) // 4 × 10 × 160 = 6400
     }
+
+    @Test
+    fun 全消しボーナスを計算できる() {
+        val bonus = Score.calculateAllClearBonus()
+
+        assertEquals(3600, bonus)
+    }
 }
