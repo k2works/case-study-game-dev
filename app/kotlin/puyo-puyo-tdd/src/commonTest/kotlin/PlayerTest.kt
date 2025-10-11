@@ -300,4 +300,59 @@ class PlayerTest {
         assertEquals(player.puyoX, childX)
         assertEquals(player.puyoY - 1, childY) // 軸ぷよの上
     }
+
+    @Test
+    fun ぷよを右回転できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+        val initialRotation = player.rotation
+
+        // Act
+        player.rotateRight()
+
+        // Assert
+        assertEquals((initialRotation + 1) % 4, player.rotation)
+    }
+
+    @Test
+    fun ぷよを左回転できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // Act
+        player.rotateLeft()
+
+        // Assert
+        assertEquals(3, player.rotation) // 0 から左回転すると 3
+    }
+
+    @Test
+    fun 壁の近くで回転すると壁蹴りが発生する() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // ぷよを右端まで移動
+        while (player.puyoX < config.stageWidth - 1) {
+            player.moveRight()
+        }
+
+        // Act
+        player.rotateRight() // 子ぷよが右に来る回転
+
+        // Assert
+        // 壁蹴りで左にずれる
+        assertTrue(player.puyoX < config.stageWidth - 1)
+    }
 }

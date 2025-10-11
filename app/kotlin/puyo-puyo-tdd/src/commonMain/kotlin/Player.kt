@@ -79,4 +79,84 @@ class Player(private val config: Config, private val stage: Stage) {
             else -> Pair(puyoX, puyoY - 1)
         }
     }
+
+    fun rotateRight() {
+        val newRotation = (rotation + 1) % 4
+
+        // 回転後の子ぷよの位置を計算
+        val (childX, childY) =
+            when (newRotation) {
+                0 -> Pair(puyoX, puyoY - 1)
+                1 -> Pair(puyoX + 1, puyoY)
+                2 -> Pair(puyoX, puyoY + 1)
+                3 -> Pair(puyoX - 1, puyoY)
+                else -> Pair(puyoX, puyoY - 1)
+            }
+
+        // 壁蹴り処理
+        if (childX < 0) {
+            puyoX++ // 左端を超える場合、右にずらす
+        } else if (childX >= config.stageWidth) {
+            puyoX-- // 右端を超える場合、左にずらす
+        }
+
+        // 再計算
+        val (newChildX, newChildY) =
+            when (newRotation) {
+                0 -> Pair(puyoX, puyoY - 1)
+                1 -> Pair(puyoX + 1, puyoY)
+                2 -> Pair(puyoX, puyoY + 1)
+                3 -> Pair(puyoX - 1, puyoY)
+                else -> Pair(puyoX, puyoY - 1)
+            }
+
+        // 衝突チェック
+        if (newChildY >= 0 && newChildY < config.stageHeight &&
+            newChildX >= 0 && newChildX < config.stageWidth
+        ) {
+            if (stage.getPuyo(puyoX, puyoY) == 0 &&
+                stage.getPuyo(newChildX, newChildY) == 0
+            ) {
+                rotation = newRotation
+            }
+        }
+    }
+
+    fun rotateLeft() {
+        val newRotation = (rotation + 3) % 4
+
+        val (childX, childY) =
+            when (newRotation) {
+                0 -> Pair(puyoX, puyoY - 1)
+                1 -> Pair(puyoX + 1, puyoY)
+                2 -> Pair(puyoX, puyoY + 1)
+                3 -> Pair(puyoX - 1, puyoY)
+                else -> Pair(puyoX, puyoY - 1)
+            }
+
+        if (childX < 0) {
+            puyoX++
+        } else if (childX >= config.stageWidth) {
+            puyoX--
+        }
+
+        val (newChildX, newChildY) =
+            when (newRotation) {
+                0 -> Pair(puyoX, puyoY - 1)
+                1 -> Pair(puyoX + 1, puyoY)
+                2 -> Pair(puyoX, puyoY + 1)
+                3 -> Pair(puyoX - 1, puyoY)
+                else -> Pair(puyoX, puyoY - 1)
+            }
+
+        if (newChildY >= 0 && newChildY < config.stageHeight &&
+            newChildX >= 0 && newChildX < config.stageWidth
+        ) {
+            if (stage.getPuyo(puyoX, puyoY) == 0 &&
+                stage.getPuyo(newChildX, newChildY) == 0
+            ) {
+                rotation = newRotation
+            }
+        }
+    }
 }
