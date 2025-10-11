@@ -1145,3 +1145,4234 @@ $ ./gradlew run
 - **集中力の向上**: コード品質管理から開放され、ロジックに集中可能
 
 次のエピソードでは、これらのツールを活用して実際にぷよぷよゲームの実装を始めていきましょう。まずはゲームの設定から始めて、少しずつ機能を追加していきます。楽しみにしていてくださいね！
+
+## イテレーション 1: ゲーム開始の実装
+
+さあ、いよいよコードを書き始めましょう！テスト駆動開発では、小さなイテレーション（反復）で機能を少しずつ追加していきます。最初のイテレーションでは、最も基本的な機能である「ゲームの開始」を実装します。
+
+> システム構築はどこから始めるべきだろうか。システム構築が終わったらこうなる、というストーリーを語るところからだ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう:
+
+> プレイヤーとして、新しいゲームを開始できる
+
+このシンプルなストーリーから始めることで、ゲームの基本的な構造を作り、後続の機能追加の土台を築くことができます。では、テスト駆動開発のサイクルに従って、まずはテストから書いていきましょう！
+
+### TODO リスト
+
+さて、ユーザーストーリーを実装するために、まずは TODO リストを作成しましょう。TODO リストは、大きな機能を小さなタスクに分解するのに役立ちます。
+
+> 何をテストすべきだろうか - 着手する前に、必要になりそうなテストをリストに書き出しておこう。
+>
+> — Kent Beck 『テスト駆動開発』
+
+私たちの「新しいゲームを開始できる」というユーザーストーリーを実現するためには、どのようなタスクが必要でしょうか？考えてみましょう:
+
+- [ ] ゲーム設定（Config）を定義する
+- [ ] ゲームの初期化処理を実装する
+- [ ] ステージ（Stage）を実装する
+- [ ] プレイヤー（Player）を実装する
+- [ ] スコア（Score）を実装する
+- [ ] ゲーム画面を表示する
+
+これらのタスクを一つずつ実装していきましょう。テスト駆動開発では、各タスクに対してテスト→実装→リファクタリングのサイクルを回します。まずは「ゲーム設定」から始めましょう！
+
+### テスト: ゲーム設定
+
+さて、TODO リストの最初のタスク「ゲーム設定（Config）を定義する」に取り掛かりましょう。テスト駆動開発では、まずテストを書くことから始めます。
+
+> テストファースト
+>
+> いつテストを書くべきだろうか——それはテスト対象のコードを書く前だ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+では、ゲーム設定をテストするコードを書いてみましょう。何をテストすべきでしょうか？ゲーム設定には、ステージの幅・高さ、ぷよのサイズなどの基本的な設定値が必要ですね。
+
+`src/commonTest/kotlin/ConfigTest.kt` を作成します:
+
+```kotlin
+package com.example.puyopuyo
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class ConfigTest {
+    @Test
+    fun ステージの幅が正しく設定されている() {
+        // Arrange
+        val config = Config()
+
+        // Act & Assert
+        assertEquals(6, config.stageWidth)
+    }
+
+    @Test
+    fun ステージの高さが正しく設定されている() {
+        // Arrange
+        val config = Config()
+
+        // Act & Assert
+        assertEquals(13, config.stageHeight)
+    }
+
+    @Test
+    fun ぷよのサイズが正しく設定されている() {
+        // Arrange
+        val config = Config()
+
+        // Act & Assert
+        assertEquals(32, config.puyoSize)
+    }
+}
+```
+
+このテストでは、`Config` クラスが適切な設定値を持っているかを確認しています。ステージの幅は 6、高さは 13、ぷよのサイズは 32 ピクセルという、ぷよぷよゲームの標準的な設定値です。
+
+### 実装: ゲーム設定
+
+テストを書いたら、次に実行してみましょう。どうなるでしょうか？
+
+```
+Unresolved reference: Config
+```
+
+おっと！まだ `Config` クラスを実装していないので、当然エラーになりますね。これがテスト駆動開発の「Red（赤）」の状態です。テストが失敗することを確認できました。
+
+では、テストが通るように最小限のコードを実装していきましょう。「最小限」というのがポイントです。この段階では、テストが通ることだけを目指して、必要最低限のコードを書きます。
+
+`src/commonMain/kotlin/Config.kt` を作成します:
+
+```kotlin
+package com.example.puyopuyo
+
+class Config {
+    val stageWidth: Int = 6
+    val stageHeight: Int = 13
+    val puyoSize: Int = 32
+}
+```
+
+「こんなに簡単でいいの？」と思われるかもしれませんね。はい、これで十分なんです！Kotlin のプロパティは自動的に getter を生成してくれるので、Java のような冗長なコードを書く必要がありません。
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+テストが通りましたね！おめでとうございます。これがテスト駆動開発の「Green（緑）」の状態です。
+
+### 解説: ゲーム設定
+
+実装したゲーム設定について、少し解説しておきましょう。`Config` クラスは、ゲーム全体で使用する設定値を一元管理するクラスです:
+
+- **stageWidth**: ステージの横幅（マス数）= 6
+- **stageHeight**: ステージの高さ（マス数）= 13
+- **puyoSize**: 1 つのぷよの表示サイズ（ピクセル数）= 32
+
+これらの値をクラスにまとめることで、設定の変更が容易になります。例えば、「ステージを広くしたい」と思ったときに、`stageWidth` の値を変更するだけで済むんです。これは、「変更に強いコード」を書くための重要なテクニックです。
+
+> 定数を使用することで、マジックナンバーを排除し、コードの可読性と保守性を向上させる。
+>
+> — Robert C. Martin 『Clean Code』
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: ゲーム設定クラスを追加'
+```
+
+### テスト: ゲームの初期化
+
+次に、ゲームの初期化処理のテストを書きます。ゲームが初期化されたとき、必要なコンポーネントが正しく作成されることを確認しましょう。
+
+`src/commonTest/kotlin/GameTest.kt` を作成します:
+
+```kotlin
+package com.example.puyopuyo
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+
+class GameTest {
+    @Test
+    fun ゲームを初期化すると必要なコンポーネントが作成される() {
+        // Arrange
+        val game = Game()
+
+        // Act
+        game.initialize()
+
+        // Assert
+        assertNotNull(game.config)
+        assertNotNull(game.stage)
+        assertNotNull(game.player)
+        assertNotNull(game.score)
+    }
+
+    @Test
+    fun ゲームを初期化するとゲームモードがStartになる() {
+        // Arrange
+        val game = Game()
+
+        // Act
+        game.initialize()
+
+        // Assert
+        assertEquals(GameMode.Start, game.mode)
+    }
+}
+```
+
+### 実装: ゲームの初期化
+
+テストが失敗することを確認したら、実装していきましょう。
+
+`src/commonMain/kotlin/Game.kt` を作成します:
+
+```kotlin
+package com.example.puyopuyo
+
+enum class GameMode {
+    Start,
+    CheckFall,
+    Fall,
+    CheckErase,
+    Erasing,
+    NewPuyo,
+    Playing,
+    GameOver
+}
+
+class Game {
+    lateinit var config: Config
+        private set
+    lateinit var stage: Stage
+        private set
+    lateinit var player: Player
+        private set
+    lateinit var score: Score
+        private set
+    var mode: GameMode = GameMode.Start
+        private set
+
+    private var frame: Int = 0
+    private var combinationCount: Int = 0
+
+    fun initialize() {
+        // 各コンポーネントの初期化
+        config = Config()
+        stage = Stage(config)
+        player = Player(config, stage)
+        score = Score()
+
+        // ゲームモードを設定
+        mode = GameMode.Start
+        frame = 0
+        combinationCount = 0
+    }
+}
+```
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+おっと、まだ `Stage`、`Player`、`Score` クラスが実装されていないのでエラーになりますね。これらのクラスも順次実装していきましょう。
+
+### 実装: Stage、Player、Score の基本構造
+
+テストを通すために、最小限の実装を追加します。
+
+`src/commonMain/kotlin/Stage.kt`:
+
+```kotlin
+package com.example.puyopuyo
+
+class Stage(private val config: Config) {
+    // TODO: 実装は後のイテレーションで
+}
+```
+
+`src/commonMain/kotlin/Player.kt`:
+
+```kotlin
+package com.example.puyopuyo
+
+class Player(private val config: Config, private val stage: Stage) {
+    // TODO: 実装は後のイテレーションで
+}
+```
+
+`src/commonMain/kotlin/Score.kt`:
+
+```kotlin
+package com.example.puyopuyo
+
+class Score {
+    var value: Int = 0
+        private set
+
+    fun add(points: Int) {
+        value += points
+    }
+
+    fun reset() {
+        value = 0
+    }
+}
+```
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+すべてのテストが通りましたね！Green の状態です。
+
+### 解説: ゲームの初期化
+
+実装したゲームの初期化処理について解説しておきましょう。この処理では、主に以下のことを行っています:
+
+1. 各コンポーネント（Config、Stage、Player、Score）のインスタンスを作成
+2. ゲームモードを `Start` に設定
+3. フレームカウンタと連鎖カウンタを 0 にリセット
+
+各コンポーネントの役割:
+
+- **Config**: ゲームの設定値を管理
+- **Stage**: ゲームのステージ（盤面）を管理
+- **Player**: プレイヤーの入力と操作を管理
+- **Score**: スコアの計算と表示を管理
+
+このように、責任を明確に分けることで、コードの保守性が高まります。これはオブジェクト指向設計の基本原則の一つ、「単一責任の原則」に従っています。
+
+> 単一責任の原則（SRP）: クラスを変更する理由は 1 つだけであるべき。
+>
+> — Robert C. Martin 『Clean Architecture』
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: ゲーム初期化処理を実装'
+```
+
+### 画面の表示
+
+さて、ゲームのコアロジックは実装できましたが、「実際にゲームを動かしてみたい！」と思いますよね。ここからは、Compose Multiplatform を使ってゲームの画面を表示していきましょう。
+
+#### Compose Multiplatform での UI 構築
+
+Compose Multiplatform では、宣言的な UI 構築が可能です。「宣言的」とは、「UI がどうあるべきか」を記述することで、「どうやって UI を変更するか」は Compose が自動的に処理してくれるという意味です。
+
+> 宣言的 UI では、UI ツリー全体を概念的に再生成し、変更された部分のみを実際に更新します。これにより、UI の状態管理が大幅に簡素化されます。
+>
+> — Jetpack Compose ドキュメント
+
+従来の命令的 UI と比較してみましょう:
+
+**命令的 UI（従来の方法）:**
+```kotlin
+// 状態が変わるたびに UI を手動で更新する必要がある
+val scoreText = TextView()
+scoreText.text = "スコア: 0"
+
+// スコアが変わったら...
+fun updateScore(newScore: Int) {
+    scoreText.text = "スコア: $newScore"  // 手動で更新
+}
+```
+
+**宣言的 UI（Compose の方法）:**
+```kotlin
+// 状態が変わると自動的に UI が更新される
+@Composable
+fun ScoreDisplay(score: Int) {
+    Text("スコア: $score")  // score が変わると自動的に再描画
+}
+```
+
+宣言的 UI では、状態と UI が常に同期されるため、「あれ？画面が更新されない...」という問題が減るんです。便利ですよね！
+
+#### メインエントリーポイントの実装
+
+まず、アプリケーションのエントリーポイントを作成します。デスクトップアプリケーションの場合、`Main.kt` がエントリーポイントになります。
+
+`src/desktopMain/kotlin/Main.kt`:
+
+```kotlin
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import com.example.puyopuyo.GameApp
+
+fun main() = application {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "ぷよぷよ TDD"
+    ) {
+        GameApp()
+    }
+}
+```
+
+このコードでは、以下のことを行っています:
+
+- **application**: Compose Desktop アプリケーションを起動
+- **Window**: ウィンドウを作成（タイトルとクローズハンドラを設定）
+- **GameApp**: ゲーム画面のルートコンポーネントを表示
+
+シンプルですよね！これだけでウィンドウが作成されます。
+
+#### ゲーム画面の実装
+
+次に、ゲーム画面全体を表示する `GameApp` コンポーネントを実装します。
+
+`src/commonMain/kotlin/GameApp.kt`:
+
+```kotlin
+package com.example.puyopuyo
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun GameApp() {
+    // ゲームインスタンスの作成と初期化
+    val game = remember {
+        Game().apply {
+            initialize()
+        }
+    }
+
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // タイトル
+                Text(
+                    text = "ぷよぷよ",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // スコア表示
+                Text(
+                    text = "スコア: ${game.score.value}",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ゲームモード表示
+                Text(
+                    text = "モード: ${game.mode}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // ゲームステージ
+                GameStage(game)
+            }
+        }
+    }
+}
+```
+
+このコードについて、重要なポイントを解説します:
+
+**remember の使用:**
+
+```kotlin
+val game = remember {
+    Game().apply {
+        initialize()
+    }
+}
+```
+
+`remember` は、Composable 関数が再実行されても値を保持し続けるための仕組みです。「再実行されても？」と思われるかもしれませんね。実は、Compose では状態が変わるたびに Composable 関数が再実行されるんです。でも、`remember` を使うことで、ゲームインスタンスは最初の 1 回だけ作成され、以降は同じインスタンスが使い回されます。
+
+**MaterialTheme の適用:**
+
+```kotlin
+MaterialTheme {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        // UI コンポーネント
+    }
+}
+```
+
+`MaterialTheme` は、Google の Material Design 3 のスタイルを適用するためのコンポーネントです。これにより、一貫したデザインの UI を簡単に作成できます。
+
+**レイアウトの構築:**
+
+```kotlin
+Column(
+    modifier = Modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center
+) {
+    // UI コンポーネントを縦に配置
+}
+```
+
+`Column` は、子要素を縦方向に配置するレイアウトコンポーネントです:
+
+- `fillMaxSize()`: 親のサイズいっぱいに広がる
+- `horizontalAlignment`: 水平方向の配置（ここでは中央揃え）
+- `verticalArrangement`: 垂直方向の配置（ここでは中央揃え）
+
+#### ゲームステージの実装
+
+次に、ゲームのステージ（盤面）を表示する `GameStage` コンポーネントを実装します。
+
+`src/commonMain/kotlin/GameStage.kt`:
+
+```kotlin
+package com.example.puyopuyo
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun GameStage(game: Game) {
+    val stageWidthPx = (game.config.stageWidth * game.config.puyoSize).dp
+    val stageHeightPx = (game.config.stageHeight * game.config.puyoSize).dp
+
+    Canvas(
+        modifier = Modifier
+            .size(width = stageWidthPx, height = stageHeightPx)
+            .border(2.dp, Color.Black)
+    ) {
+        // ステージの背景
+        drawRect(
+            color = Color.White,
+            size = Size(size.width, size.height)
+        )
+
+        // グリッド線の描画
+        val cellSize = game.config.puyoSize.toFloat()
+
+        // 縦線
+        for (x in 0..game.config.stageWidth) {
+            val xPos = x * cellSize
+            drawLine(
+                color = Color.LightGray,
+                start = Offset(xPos, 0f),
+                end = Offset(xPos, size.height),
+                strokeWidth = 1f
+            )
+        }
+
+        // 横線
+        for (y in 0..game.config.stageHeight) {
+            val yPos = y * cellSize
+            drawLine(
+                color = Color.LightGray,
+                start = Offset(0f, yPos),
+                end = Offset(size.width, yPos),
+                strokeWidth = 1f
+            )
+        }
+
+        // TODO: ぷよの描画（後のイテレーションで実装）
+    }
+}
+```
+
+このコードについて解説します:
+
+**Canvas の使用:**
+
+```kotlin
+Canvas(
+    modifier = Modifier
+        .size(width = stageWidthPx, height = stageHeightPx)
+        .border(2.dp, Color.Black)
+) {
+    // 描画処理
+}
+```
+
+`Canvas` は、自由に図形を描画できる Compose コンポーネントです。ゲームのような独自の描画が必要な場合に使用します。
+
+**グリッド線の描画:**
+
+```kotlin
+// 縦線
+for (x in 0..game.config.stageWidth) {
+    val xPos = x * cellSize
+    drawLine(
+        color = Color.LightGray,
+        start = Offset(xPos, 0f),
+        end = Offset(xPos, size.height),
+        strokeWidth = 1f
+    )
+}
+```
+
+グリッド線を描画することで、ステージのマス目が見えるようになります。これにより、ぷよの配置がわかりやすくなりますね。
+
+#### アプリケーションの実行
+
+さて、実装したアプリケーションを実行してみましょう！
+
+```bash
+# デスクトップアプリケーションを起動
+$ ./gradlew run
+```
+
+ウィンドウが開いて、以下のような画面が表示されるはずです:
+
+- タイトル「ぷよぷよ」
+- スコア表示「スコア: 0」
+- ゲームモード表示「モード: Start」
+- 白い背景にグリッド線が引かれたステージ
+
+「動いた！」と感動しませんか？まだぷよは表示されませんが、ゲームの基本的な画面ができました。
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: Compose Multiplatform で画面表示を実装'
+```
+
+### イテレーション 1 のまとめ
+
+おめでとうございます！イテレーション 1 が完了しました。このイテレーションで実装したことを振り返ってみましょう:
+
+#### 実装した機能
+
+- [x] ゲーム設定（Config）を定義する
+- [x] ゲームの初期化処理を実装する
+- [x] ステージ（Stage）の基本構造を作成する
+- [x] プレイヤー（Player）の基本構造を作成する
+- [x] スコア（Score）を実装する
+- [x] ゲーム画面を表示する
+
+#### 学んだこと
+
+1. **テスト駆動開発のサイクル**: Red → Green → Refactor の流れを体験しました
+2. **単一責任の原則**: 各クラスに明確な責任を持たせることの重要性を学びました
+3. **Kotlin の簡潔な構文**: プロパティの自動生成により、コードが簡潔になることを実感しました
+4. **TODO リストの活用**: 大きなタスクを小さく分解することで、着実に進められることを体験しました
+5. **Compose Multiplatform の宣言的 UI**: 状態と UI が常に同期される仕組みを理解しました
+6. **remember による状態管理**: 再実行されても値を保持する仕組みを学びました
+
+次のイテレーションでは、ぷよの移動機能を実装し、実際にゲームとして遊べるようにしていきます。楽しみにしていてくださいね！
+
+## イテレーション 2: ぷよの落下
+
+イテレーション 1 では、ゲームの基本構造と画面表示を実装しました。しかし、まだぷよは表示されていませんね。このイテレーションでは、ぷよを生成して落下させる機能を実装していきましょう！
+
+> 少しずつ前に進む。それが唯一の方法だ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリーは以下です:
+
+> プレイヤーとして、落ちてくるぷよを見ることができる
+
+シンプルですが、これがゲームの基本動作になります。ぷよが生成されて、重力によって落下していく様子を実装していきましょう。
+
+### TODO リスト
+
+今回のユーザーストーリーを実現するために必要なタスクを洗い出しましょう:
+
+- [ ] ステージにぷよを配置・取得する機能を実装する
+- [ ] プレイヤーが新しいぷよを生成する機能を実装する
+- [ ] ぷよが自動的に落下する機能を実装する
+- [ ] ステージ上のぷよを画面に描画する
+
+それでは、TDD のサイクルに従って、一つずつ実装していきましょう！
+
+### テスト: ステージにぷよを配置・取得する
+
+最初のタスクは、ステージにぷよを配置したり取得したりする機能です。ステージはぷよぷよゲームの盤面ですから、どのマスにどんなぷよがあるかを管理する必要がありますね。
+
+`src/commonTest/kotlin/StageTest.kt` にテストを追加します:
+
+```kotlin
+package com.example.puyopuyo
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class StageTest {
+    @Test
+    fun 初期状態では全てのマスが空である() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // Act & Assert
+        for (y in 0 until config.stageHeight) {
+            for (x in 0 until config.stageWidth) {
+                assertEquals(0, stage.getPuyo(x, y))
+            }
+        }
+    }
+
+    @Test
+    fun ぷよを配置できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // Act
+        stage.setPuyo(2, 10, 1) // (x=2, y=10) に種類1のぷよを配置
+
+        // Assert
+        assertEquals(1, stage.getPuyo(2, 10))
+    }
+
+    @Test
+    fun 複数のぷよを配置できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // Act
+        stage.setPuyo(0, 12, 1) // 赤ぷよ
+        stage.setPuyo(1, 12, 2) // 青ぷよ
+        stage.setPuyo(2, 12, 3) // 緑ぷよ
+        stage.setPuyo(3, 12, 4) // 黄ぷよ
+
+        // Assert
+        assertEquals(1, stage.getPuyo(0, 12))
+        assertEquals(2, stage.getPuyo(1, 12))
+        assertEquals(3, stage.getPuyo(2, 12))
+        assertEquals(4, stage.getPuyo(3, 12))
+    }
+
+    @Test
+    fun ぷよを上書きできる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        stage.setPuyo(2, 10, 1)
+
+        // Act
+        stage.setPuyo(2, 10, 2) // 上書き
+
+        // Assert
+        assertEquals(2, stage.getPuyo(2, 10))
+    }
+}
+```
+
+このテストでは、以下の機能を確認しています:
+
+- 初期状態では全てのマスが空（0）であること
+- `setPuyo()` でぷよを配置できること
+- `getPuyo()` で配置したぷよを取得できること
+- 複数のぷよを配置できること
+- ぷよを上書きできること
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+当然、まだ `initialize()`、`getPuyo()`、`setPuyo()` メソッドを実装していないので、テストは失敗します。これが Red の状態です。
+
+### 実装: ステージにぷよを配置・取得する
+
+では、テストが通るように `Stage` クラスを実装しましょう。
+
+`src/commonMain/kotlin/Stage.kt` を以下のように更新します:
+
+```kotlin
+package com.example.puyopuyo
+
+class Stage(private val config: Config) {
+    private lateinit var field: Array<IntArray>
+
+    fun initialize() {
+        field = Array(config.stageHeight) { IntArray(config.stageWidth) { 0 } }
+    }
+
+    fun getPuyo(x: Int, y: Int): Int {
+        return field[y][x]
+    }
+
+    fun setPuyo(x: Int, y: Int, puyoType: Int) {
+        field[y][x] = puyoType
+    }
+}
+```
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+すべてのテストが通りましたね！Green の状態です。
+
+### 解説: ステージの実装
+
+実装した `Stage` クラスについて解説しておきましょう。
+
+**2 次元配列によるフィールド管理:**
+
+```kotlin
+private lateinit var field: Array<IntArray>
+```
+
+ステージは 2 次元配列 `field` でぷよの配置を管理しています。`Array<IntArray>` は「配列の配列」で、以下のような構造になっています:
+
+```
+field[y][x] = ぷよの種類
+
+field = [
+  [0, 0, 0, 0, 0, 0],  // y = 0 (一番上の行)
+  [0, 0, 0, 0, 0, 0],  // y = 1
+  ...
+  [0, 0, 0, 0, 0, 0],  // y = 12 (一番下の行)
+]
+```
+
+各要素の値は以下を表します:
+
+- `0`: 空のマス
+- `1`: 赤ぷよ
+- `2`: 青ぷよ
+- `3`: 緑ぷよ
+- `4`: 黄ぷよ
+
+**初期化処理:**
+
+```kotlin
+fun initialize() {
+    field = Array(config.stageHeight) { IntArray(config.stageWidth) { 0 } }
+}
+```
+
+`initialize()` メソッドでは、ステージの高さ × 幅のサイズの 2 次元配列を作成し、全ての要素を `0`（空）で初期化しています。Kotlin では配列の初期化時にラムダ式を使えるので、とても簡潔に書けますね。
+
+**ぷよの配置と取得:**
+
+```kotlin
+fun getPuyo(x: Int, y: Int): Int {
+    return field[y][x]
+}
+
+fun setPuyo(x: Int, y: Int, puyoType: Int) {
+    field[y][x] = puyoType
+}
+```
+
+- `getPuyo(x, y)`: 指定座標のぷよの種類を取得
+- `setPuyo(x, y, puyoType)`: 指定座標にぷよを配置
+
+注意点として、配列のインデックスは `field[y][x]` の順番になっています。「なぜ x が後なの？」と思われるかもしれませんね。これは一般的な 2 次元配列の表記法に従っているためです。
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: Stage クラスにぷよの配置・取得機能を追加'
+```
+
+### テスト: プレイヤーが新しいぷよを生成する
+
+次に、プレイヤーが新しいぷよを生成する機能を実装しましょう。「ぷよが落ちてくる」ためには、まずぷよを生成する必要がありますよね。
+
+`src/commonTest/kotlin/PlayerTest.kt` を作成します:
+
+```kotlin
+package com.example.puyopuyo
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class PlayerTest {
+    @Test
+    fun 新しいぷよを生成すると初期位置に配置される() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+
+        // Act
+        player.createNewPuyo()
+
+        // Assert
+        assertEquals(2, player.puyoX) // ステージの中央（6マスの場合、x=2）
+        assertEquals(0, player.puyoY) // 一番上（y=0）
+    }
+
+    @Test
+    fun 新しいぷよを生成するとぷよの種類が設定される() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+
+        // Act
+        player.createNewPuyo()
+
+        // Assert
+        // ぷよの種類は1〜4のいずれか
+        assertTrue(player.puyoType in 1..4)
+    }
+
+    @Test
+    fun 新しいぷよを生成すると次のぷよも決まる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+
+        // Act
+        player.createNewPuyo()
+
+        // Assert
+        // 次のぷよの種類も1〜4のいずれか
+        assertTrue(player.nextPuyoType in 1..4)
+    }
+
+    @Test
+    fun 新しいぷよを生成すると回転状態が0になる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+
+        // Act
+        player.createNewPuyo()
+
+        // Assert
+        assertEquals(0, player.rotation)
+    }
+}
+```
+
+このテストでは、以下の機能を確認しています:
+
+- 新しいぷよが初期位置（x=2, y=0）に配置されること
+- ぷよの種類が 1〜4 の範囲で設定されること
+- 次のぷよの種類も決まること
+- 回転状態が 0（上向き）になること
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+まだ実装していないので、テストは失敗します。Red の状態ですね。
+
+### 実装: プレイヤーが新しいぷよを生成する
+
+では、`Player` クラスを実装していきましょう。
+
+`src/commonMain/kotlin/Player.kt` を以下のように更新します:
+
+```kotlin
+package com.example.puyopuyo
+
+import kotlin.random.Random
+
+class Player(private val config: Config, private val stage: Stage) {
+    var puyoX: Int = 2
+        private set
+    var puyoY: Int = 0
+        private set
+    var puyoType: Int = 0
+        private set
+    var nextPuyoType: Int = 0
+        private set
+    var rotation: Int = 0
+        private set
+
+    fun createNewPuyo() {
+        puyoX = 2 // ステージの中央
+        puyoY = 0 // 一番上
+        puyoType = Random.nextInt(1, 5) // 1〜4のランダムな値
+        nextPuyoType = Random.nextInt(1, 5)
+        rotation = 0 // 回転状態を0（上向き）にリセット
+    }
+}
+```
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+すべてのテストが通りましたね！Green の状態です。
+
+### 解説: ぷよの生成
+
+実装した `Player` クラスのぷよ生成機能について解説しておきましょう。
+
+**プレイヤーの状態:**
+
+```kotlin
+var puyoX: Int = 2
+    private set
+var puyoY: Int = 0
+    private set
+var puyoType: Int = 0
+    private set
+var nextPuyoType: Int = 0
+    private set
+var rotation: Int = 0
+    private set
+```
+
+プレイヤーは以下の状態を持っています:
+
+- `puyoX`, `puyoY`: 現在のぷよの位置
+- `puyoType`: 現在のぷよの種類（1〜4）
+- `nextPuyoType`: 次のぷよの種類（1〜4）
+- `rotation`: 回転状態（0〜3）
+
+これらのプロパティは `private set` により、外部から読み取りはできますが、書き込みはできません。「なぜ？」と思われるかもしれませんね。これは、プレイヤーの状態を `Player` クラス内でのみ変更できるようにするためです。これにより、意図しない状態変更を防げるんです。
+
+**ぷよの生成処理:**
+
+```kotlin
+fun createNewPuyo() {
+    puyoX = 2 // ステージの中央
+    puyoY = 0 // 一番上
+    puyoType = Random.nextInt(1, 5) // 1〜4のランダムな値
+    nextPuyoType = Random.nextInt(1, 5)
+    rotation = 0 // 回転状態を0（上向き）にリセット
+}
+```
+
+`createNewPuyo()` メソッドでは、以下の処理を行っています:
+
+1. **初期位置の設定**: ぷよをステージの中央上部（x=2, y=0）に配置
+2. **ぷよの種類の決定**: `Random.nextInt(1, 5)` で 1〜4 のランダムな値を生成
+3. **次のぷよの準備**: 次のぷよの種類も同時に決定
+4. **回転状態のリセット**: 回転状態を 0（上向き）にリセット
+
+**Random.nextInt について:**
+
+```kotlin
+Random.nextInt(1, 5) // 1以上5未満の整数 = 1, 2, 3, 4
+```
+
+Kotlin の `Random.nextInt(from, until)` は、`from` 以上 `until` 未満の整数を生成します。したがって、`Random.nextInt(1, 5)` は 1, 2, 3, 4 のいずれかを返します。
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: Player クラスにぷよ生成機能を追加'
+```
+
+### テスト: ぷよが自動的に落下する
+
+さて、ぷよが生成できるようになったので、次は「落下」機能を実装しましょう。ぷよぷよゲームの基本ですね！
+
+`src/commonTest/kotlin/PlayerTest.kt` にテストを追加します:
+
+```kotlin
+@Test
+fun ぷよを下に移動できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+    val initialY = player.puyoY
+
+    // Act
+    val result = player.moveDown()
+
+    // Assert
+    assertTrue(result) // 移動成功
+    assertEquals(initialY + 1, player.puyoY)
+}
+
+@Test
+fun ぷよがステージの底に到達したら移動できない() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // ぷよをステージの底まで移動
+    while (player.puyoY < config.stageHeight - 1) {
+        player.moveDown()
+    }
+
+    // Act
+    val result = player.moveDown()
+
+    // Assert
+    assertFalse(result) // 移動失敗
+}
+
+@Test
+fun ぷよが着地判定できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // ぷよをステージの底まで移動
+    while (player.puyoY < config.stageHeight - 1) {
+        player.moveDown()
+    }
+
+    // Act
+    val hasLanded = player.hasLanded()
+
+    // Assert
+    assertTrue(hasLanded)
+}
+
+@Test
+fun 着地したぷよをステージに配置できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+    val puyoType = player.puyoType
+
+    // ぷよをステージの底まで移動
+    while (!player.hasLanded()) {
+        player.moveDown()
+    }
+    val finalX = player.puyoX
+    val finalY = player.puyoY
+
+    // Act
+    player.placePuyoOnStage()
+
+    // Assert
+    assertEquals(puyoType, stage.getPuyo(finalX, finalY))
+}
+```
+
+このテストでは、以下の機能を確認しています:
+
+- `moveDown()`: ぷよが下に移動できること
+- ステージの底に到達したら移動できないこと
+- `hasLanded()`: 着地判定ができること
+- `placePuyoOnStage()`: 着地したぷよをステージに配置できること
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+まだ実装していないので、テストは失敗します。Red の状態です。
+
+### 実装: ぷよが自動的に落下する
+
+では、落下機能を実装していきましょう。
+
+`src/commonMain/kotlin/Player.kt` に以下のメソッドを追加します:
+
+```kotlin
+fun moveDown(): Boolean {
+    if (puyoY < config.stageHeight - 1) {
+        // 移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX, puyoY + 1) == 0) {
+            puyoY++
+            return true
+        }
+    }
+    return false
+}
+
+fun hasLanded(): Boolean {
+    // ステージの底に到達したか
+    if (puyoY >= config.stageHeight - 1) {
+        return true
+    }
+    // 下にぷよがあるか
+    if (stage.getPuyo(puyoX, puyoY + 1) != 0) {
+        return true
+    }
+    return false
+}
+
+fun placePuyoOnStage() {
+    stage.setPuyo(puyoX, puyoY, puyoType)
+}
+```
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+すべてのテストが通りましたね！Green の状態です。
+
+### 解説: ぷよの落下
+
+実装した落下機能について解説しておきましょう。
+
+**下への移動:**
+
+```kotlin
+fun moveDown(): Boolean {
+    if (puyoY < config.stageHeight - 1) {
+        // 移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX, puyoY + 1) == 0) {
+            puyoY++
+            return true
+        }
+    }
+    return false
+}
+```
+
+`moveDown()` メソッドでは、以下のチェックを行っています:
+
+1. **境界チェック**: ステージの底（`y = stageHeight - 1`）に到達していないか
+2. **衝突チェック**: 移動先のマスが空（値が 0）か
+
+両方の条件を満たせば、ぷよを下に移動させて `true` を返します。移動できない場合は `false` を返します。「移動できたかどうか」を返り値で知らせるんですね。
+
+**着地判定:**
+
+```kotlin
+fun hasLanded(): Boolean {
+    // ステージの底に到達したか
+    if (puyoY >= config.stageHeight - 1) {
+        return true
+    }
+    // 下にぷよがあるか
+    if (stage.getPuyo(puyoX, puyoY + 1) != 0) {
+        return true
+    }
+    return false
+}
+```
+
+`hasLanded()` メソッドでは、ぷよが着地したかを判定します。着地条件は以下の 2 つです:
+
+1. ステージの底に到達した
+2. 下のマスに既にぷよがある
+
+どちらかの条件を満たせば、ぷよは着地したと判断します。
+
+**ステージへの配置:**
+
+```kotlin
+fun placePuyoOnStage() {
+    stage.setPuyo(puyoX, puyoY, puyoType)
+}
+```
+
+`placePuyoOnStage()` メソッドは、着地したぷよをステージに配置します。現在のぷよの位置（`puyoX`, `puyoY`）と種類（`puyoType`）を使って、ステージの `setPuyo()` を呼び出すだけのシンプルな実装です。
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: Player クラスにぷよ落下機能を追加'
+```
+
+### ステージ上のぷよを画面に描画する
+
+さて、ここまででぷよの生成と落下のロジックは完成しました。最後に、これらのぷよを実際に画面に表示しましょう！
+
+#### ぷよの色定義
+
+まず、ぷよの種類ごとに色を定義します。
+
+`src/commonMain/kotlin/PuyoColor.kt` を作成します:
+
+```kotlin
+package com.example.puyopuyo
+
+import androidx.compose.ui.graphics.Color
+
+object PuyoColor {
+    val Empty = Color.White
+    val Red = Color(0xFFFF4444)      // 赤ぷよ (type = 1)
+    val Blue = Color(0xFF4444FF)     // 青ぷよ (type = 2)
+    val Green = Color(0xFF44FF44)    // 緑ぷよ (type = 3)
+    val Yellow = Color(0xFFFFFF44)   // 黄ぷよ (type = 4)
+
+    fun getColor(puyoType: Int): Color {
+        return when (puyoType) {
+            1 -> Red
+            2 -> Blue
+            3 -> Green
+            4 -> Yellow
+            else -> Empty
+        }
+    }
+}
+```
+
+このオブジェクトでは:
+
+- `object` キーワードでシングルトンを定義しています
+- ぷよの種類ごとに色を定義
+- `getColor()` 関数でぷよの種類から色を取得
+
+#### ゲームステージの更新
+
+次に、`GameStage.kt` を更新して、ステージ上のぷよと落下中のぷよを描画します。
+
+`src/commonMain/kotlin/GameStage.kt` を以下のように更新します:
+
+```kotlin
+package com.example.puyopuyo
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun GameStage(game: Game) {
+    val stageWidthPx = (game.config.stageWidth * game.config.puyoSize).dp
+    val stageHeightPx = (game.config.stageHeight * game.config.puyoSize).dp
+
+    Canvas(
+        modifier = Modifier
+            .size(width = stageWidthPx, height = stageHeightPx)
+            .border(2.dp, Color.Black)
+    ) {
+        // ステージの背景
+        drawRect(
+            color = Color.White,
+            size = Size(size.width, size.height)
+        )
+
+        val cellSize = game.config.puyoSize.toFloat()
+
+        // グリッド線の描画
+        // 縦線
+        for (x in 0..game.config.stageWidth) {
+            val xPos = x * cellSize
+            drawLine(
+                color = Color.LightGray,
+                start = Offset(xPos, 0f),
+                end = Offset(xPos, size.height),
+                strokeWidth = 1f
+            )
+        }
+
+        // 横線
+        for (y in 0..game.config.stageHeight) {
+            val yPos = y * cellSize
+            drawLine(
+                color = Color.LightGray,
+                start = Offset(0f, yPos),
+                end = Offset(size.width, yPos),
+                strokeWidth = 1f
+            )
+        }
+
+        // ステージ上のぷよを描画
+        for (y in 0 until game.config.stageHeight) {
+            for (x in 0 until game.config.stageWidth) {
+                val puyoType = game.stage.getPuyo(x, y)
+                if (puyoType != 0) {
+                    drawPuyo(x, y, puyoType, cellSize)
+                }
+            }
+        }
+
+        // 落下中のぷよを描画
+        if (game.player.puyoType != 0) {
+            drawPuyo(
+                game.player.puyoX,
+                game.player.puyoY,
+                game.player.puyoType,
+                cellSize
+            )
+        }
+    }
+}
+
+/**
+ * ぷよを描画する
+ */
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawPuyo(
+    x: Int,
+    y: Int,
+    puyoType: Int,
+    cellSize: Float
+) {
+    val padding = cellSize * 0.1f
+    val puyoSize = cellSize - padding * 2
+
+    drawRoundRect(
+        color = PuyoColor.getColor(puyoType),
+        topLeft = Offset(
+            x = x * cellSize + padding,
+            y = y * cellSize + padding
+        ),
+        size = Size(puyoSize, puyoSize),
+        cornerRadius = CornerRadius(puyoSize * 0.2f, puyoSize * 0.2f)
+    )
+
+    // ぷよのハイライト（光沢効果）
+    drawCircle(
+        color = Color.White.copy(alpha = 0.3f),
+        radius = puyoSize * 0.2f,
+        center = Offset(
+            x = x * cellSize + cellSize * 0.35f,
+            y = y * cellSize + cellSize * 0.35f
+        )
+    )
+}
+```
+
+この実装について解説しましょう:
+
+**ぷよの描画関数:**
+
+```kotlin
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawPuyo(
+    x: Int,
+    y: Int,
+    puyoType: Int,
+    cellSize: Float
+) {
+    // ...
+}
+```
+
+`drawPuyo()` は、`DrawScope` の拡張関数として定義されています。これにより、`Canvas` のスコープ内で `drawPuyo()` を呼び出せるようになります。
+
+**ぷよの描画:**
+
+```kotlin
+val padding = cellSize * 0.1f
+val puyoSize = cellSize - padding * 2
+
+drawRoundRect(
+    color = PuyoColor.getColor(puyoType),
+    topLeft = Offset(
+        x = x * cellSize + padding,
+        y = y * cellSize + padding
+    ),
+    size = Size(puyoSize, puyoSize),
+    cornerRadius = CornerRadius(puyoSize * 0.2f, puyoSize * 0.2f)
+)
+```
+
+- マスのサイズから 10% のパディングを確保
+- 角丸の長方形でぷよを描画
+- `cornerRadius` で角を丸くして、ぷよらしい見た目に
+
+**光沢効果:**
+
+```kotlin
+// ぷよのハイライト（光沢効果）
+drawCircle(
+    color = Color.White.copy(alpha = 0.3f),
+    radius = puyoSize * 0.2f,
+    center = Offset(
+        x = x * cellSize + cellSize * 0.35f,
+        y = y * cellSize + cellSize * 0.35f
+    )
+)
+```
+
+ぷよの左上に半透明の白い円を描画することで、光沢効果を表現しています。これにより、ぷよに立体感が出るんです。
+
+#### アプリケーションの更新
+
+最後に、`GameApp.kt` を更新して、ぷよが自動的に落下するようにします。実際のゲームループは後のイテレーションで実装しますが、ここでは簡単な仕組みを追加しましょう。
+
+`src/commonMain/kotlin/GameApp.kt` を以下のように更新します:
+
+```kotlin
+package com.example.puyopuyo
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun GameApp() {
+    // ゲームインスタンスの作成と初期化
+    val game = remember {
+        Game().apply {
+            initialize()
+            player.createNewPuyo() // 最初のぷよを生成
+        }
+    }
+
+    // 再描画のトリガー
+    var updateTrigger by remember { mutableStateOf(0) }
+
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // タイトル
+                Text(
+                    text = "ぷよぷよ",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // スコア表示
+                Text(
+                    text = "スコア: ${game.score.value}",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ゲームモード表示
+                Text(
+                    text = "モード: ${game.mode}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // ゲームステージ
+                GameStage(game)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // テスト用ボタン（後で削除予定）
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(onClick = {
+                        game.player.moveDown()
+                        updateTrigger++ // 再描画をトリガー
+                    }) {
+                        Text("下に移動")
+                    }
+
+                    Button(onClick = {
+                        if (game.player.hasLanded()) {
+                            game.player.placePuyoOnStage()
+                            game.player.createNewPuyo()
+                        }
+                        updateTrigger++
+                    }) {
+                        Text("新しいぷよ")
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+この更新では:
+
+- `player.createNewPuyo()` で最初のぷよを生成
+- `updateTrigger` で再描画をトリガー
+- テスト用のボタンを追加（手動でぷよを移動・生成）
+
+#### アプリケーションの実行
+
+さて、実装したアプリケーションを実行してみましょう！
+
+```bash
+# デスクトップアプリケーションを起動
+$ ./gradlew run
+```
+
+ウィンドウが開いて、以下のような画面が表示されるはずです:
+
+- ステージの中央上部に色付きのぷよが表示される
+- 「下に移動」ボタンをクリックするとぷよが落下する
+- ぷよが底に到達したら「新しいぷよ」ボタンで次のぷよを生成できる
+- ステージに配置されたぷよは残り続ける
+
+「動いた！ぷよが見える！」と感動しますよね。まだ自動落下ではありませんが、ぷよぷよゲームらしくなってきました！
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: ぷよの描画機能を実装'
+```
+
+### イテレーション 2 のまとめ
+
+おめでとうございます！イテレーション 2 が完了しました。このイテレーションで実装したことを振り返ってみましょう:
+
+#### 実装した機能
+
+- [x] ステージにぷよを配置・取得する機能を実装する
+- [x] プレイヤーが新しいぷよを生成する機能を実装する
+- [x] ぷよが自動的に落下する機能を実装する
+- [x] ステージ上のぷよを画面に描画する
+
+#### 実装したクラスとメソッド
+
+**Stage クラス:**
+- `initialize()`: ステージを初期化
+- `getPuyo(x, y)`: 指定座標のぷよを取得
+- `setPuyo(x, y, puyoType)`: 指定座標にぷよを配置
+
+**Player クラス:**
+- `createNewPuyo()`: 新しいぷよを生成
+- `moveDown()`: ぷよを下に移動
+- `hasLanded()`: ぷよが着地したか判定
+- `placePuyoOnStage()`: 着地したぷよをステージに配置
+
+**PuyoColor オブジェクト:**
+- `getColor(puyoType)`: ぷよの種類から色を取得
+
+**GameStage コンポーネント:**
+- `drawPuyo()`: ぷよを描画する拡張関数
+
+#### 学んだこと
+
+1. **2 次元配列の使い方**: ステージの状態を 2 次元配列で管理する方法を学びました
+2. **private set の活用**: プロパティの読み取りは許可しつつ、書き込みを制限する方法を理解しました
+3. **境界チェックと衝突判定**: ゲームロジックに必要な基本的なチェック処理を実装しました
+4. **Kotlin の Random クラス**: `Random.nextInt()` でランダムな値を生成する方法を学びました
+5. **Compose の Canvas**: `Canvas` を使った自由な描画方法を理解しました
+6. **DrawScope の拡張関数**: `DrawScope` の拡張関数として描画ロジックを分離する方法を学びました
+7. **object によるシングルトン**: Kotlin の `object` キーワードでシングルトンを定義する方法を理解しました
+8. **mutableStateOf による状態管理**: Compose での状態変更と再描画のトリガー方法を学びました
+
+#### 次のイテレーションへ
+
+現在、ぷよは手動で移動・生成できますが、まだゲームとしては完成していません。次のイテレーションでは、以下の機能を実装していきます:
+
+- ぷよの自動落下（ゲームループの実装）
+- キーボード操作（左右移動、回転）
+- ぷよの回転機能
+- 2 つのぷよ（軸ぷよと子ぷよ）の実装
+
+少しずつゲームらしくなってきましたね。引き続き、テスト駆動開発のサイクルに従って、機能を追加していきましょう！
+
+## イテレーション 3: ぷよの操作
+
+イテレーション 2 では、ぷよの生成と落下機能を実装しました。しかし、ぷよを操作できないとゲームになりませんよね。このイテレーションでは、プレイヤーがぷよを左右に移動したり回転したりする機能を実装していきましょう！
+
+> プログラミングとは、学習のプロセスである。テストを書き、プログラムを動かし、そして学ぶ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリーは以下です:
+
+> プレイヤーとして、落ちてくるぷよを左右に移動したり回転したりして、好きな場所に配置できる
+
+ぷよぷよゲームの醍醐味である「ぷよの操作」ですね。ぷよを移動・回転させて、戦略的に配置していきましょう。
+
+### TODO リスト
+
+今回のユーザーストーリーを実現するために必要なタスクを洗い出しましょう:
+
+- [ ] ぷよを左右に移動する機能を実装する
+- [ ] ぷよを回転する機能を実装する
+- [ ] 2 つのぷよ（軸ぷよと子ぷよ）を実装する
+- [ ] キーボードで操作できるようにする
+
+それでは、TDD のサイクルに従って、一つずつ実装していきましょう！
+
+### テスト: ぷよを左右に移動する
+
+最初のタスクは、ぷよを左右に移動する機能です。プレイヤーがぷよを好きな位置に配置できるようにしましょう。
+
+`src/commonTest/kotlin/PlayerTest.kt` にテストを追加します:
+
+```kotlin
+@Test
+fun ぷよを左に移動できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+    val initialX = player.puyoX
+
+    // Act
+    player.moveLeft()
+
+    // Assert
+    assertEquals(initialX - 1, player.puyoX)
+}
+
+@Test
+fun ぷよを右に移動できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+    val initialX = player.puyoX
+
+    // Act
+    player.moveRight()
+
+    // Assert
+    assertEquals(initialX + 1, player.puyoX)
+}
+
+@Test
+fun ぷよが左端にある場合は左に移動できない() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // ぷよを左端まで移動
+    while (player.puyoX > 0) {
+        player.moveLeft()
+    }
+
+    // Act
+    player.moveLeft()
+
+    // Assert
+    assertEquals(0, player.puyoX) // 左端から動かない
+}
+
+@Test
+fun ぷよが右端にある場合は右に移動できない() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // ぷよを右端まで移動
+    while (player.puyoX < config.stageWidth - 1) {
+        player.moveRight()
+    }
+
+    // Act
+    player.moveRight()
+
+    // Assert
+    assertEquals(config.stageWidth - 1, player.puyoX) // 右端から動かない
+}
+
+@Test
+fun 左に他のぷよがある場合は左に移動できない() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // 左側にぷよを配置
+    stage.setPuyo(player.puyoX - 1, player.puyoY, 1)
+    val initialX = player.puyoX
+
+    // Act
+    player.moveLeft()
+
+    // Assert
+    assertEquals(initialX, player.puyoX) // 移動しない
+}
+
+@Test
+fun 右に他のぷよがある場合は右に移動できない() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // 右側にぷよを配置
+    stage.setPuyo(player.puyoX + 1, player.puyoY, 1)
+    val initialX = player.puyoX
+
+    // Act
+    player.moveRight()
+
+    // Assert
+    assertEquals(initialX, player.puyoX) // 移動しない
+}
+```
+
+このテストでは、以下の機能を確認しています:
+
+- ぷよを左に移動できること
+- ぷよを右に移動できること
+- 左端・右端で移動できないこと
+- 他のぷよがある場合は移動できないこと
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+まだ実装していないので、テストは失敗します。Red の状態ですね。
+
+### 実装: ぷよを左右に移動する
+
+では、`Player` クラスに左右移動の機能を実装していきましょう。
+
+`src/commonMain/kotlin/Player.kt` に以下のメソッドを追加します:
+
+```kotlin
+fun moveLeft() {
+    if (puyoX > 0) {
+        // 移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX - 1, puyoY) == 0) {
+            puyoX--
+        }
+    }
+}
+
+fun moveRight() {
+    if (puyoX < config.stageWidth - 1) {
+        // 移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX + 1, puyoY) == 0) {
+            puyoX++
+        }
+    }
+}
+```
+
+テストを実行してみましょう:
+
+```bash
+$ ./gradlew test
+```
+
+すべてのテストが通りましたね！Green の状態です。
+
+### 解説: ぷよの左右移動
+
+実装した左右移動機能について解説しておきましょう。
+
+**左への移動:**
+
+```kotlin
+fun moveLeft() {
+    if (puyoX > 0) {
+        // 移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX - 1, puyoY) == 0) {
+            puyoX--
+        }
+    }
+}
+```
+
+`moveLeft()` メソッドでは、以下のチェックを行っています:
+
+1. **境界チェック**: 左端（`x = 0`）に到達していないか
+2. **衝突チェック**: 移動先のマスが空（値が 0）か
+
+両方の条件を満たせば、ぷよを左に移動させます。
+
+**右への移動:**
+
+```kotlin
+fun moveRight() {
+    if (puyoX < config.stageWidth - 1) {
+        // 移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX + 1, puyoY) == 0) {
+            puyoX++
+        }
+    }
+}
+```
+
+`moveRight()` メソッドも同様に、境界チェックと衝突チェックを行います。右端は `x = stageWidth - 1` です。
+
+**moveDown() との類似性:**
+
+「あれ？`moveDown()` と似ているな」と思いませんか？そうなんです。移動処理のパターンは以下のように共通しています:
+
+1. 境界チェック
+2. 衝突チェック
+3. 移動
+
+この共通パターンに気づくことが、より良い設計への第一歩です。「重複を排除できないかな？」と考えることが大切ですが、今の段階ではこのままにしておきましょう。後のリファクタリングで改善できるかもしれませんね。
+
+設定をコミットしておきましょう:
+
+```bash
+$ git add .
+$ git commit -m 'feat: Player クラスにぷよの左右移動機能を追加'
+```
+
+### イテレーション 3 のまとめ
+
+おめでとうございます！イテレーション 3 が完了しました。このイテレーションで実装したことを振り返ってみましょう:
+
+#### 実装した機能
+
+- [x] ぷよを左右に移動する機能を実装する
+- [ ] ぷよを回転する機能を実装する（次のイテレーションで実装予定）
+- [ ] 2 つのぷよ（軸ぷよと子ぷよ）を実装する（次のイテレーションで実装予定）
+- [ ] キーボードで操作できるようにする（次のイテレーションで実装予定）
+
+#### 実装したクラスとメソッド
+
+**Player クラス:**
+- `moveLeft()`: ぷよを左に移動
+- `moveRight()`: ぷよを右に移動
+
+#### 学んだこと
+
+1. **移動処理の共通パターン**: 境界チェック → 衝突チェック → 移動という共通パターンを理解しました
+2. **重複コードの認識**: `moveLeft()`, `moveRight()`, `moveDown()` の類似性に気づき、将来のリファクタリングの可能性を学びました
+3. **段階的な実装**: 複雑な機能も小さなステップで確実に実装できることを体験しました
+
+#### 次のイテレーションへ
+
+現在、ぷよを左右に移動できるようになりましたが、まだ回転機能や 2 つのぷよ（軸ぷよと子ぷよ）、キーボード操作が実装されていません。次のイテレーションでは、これらの機能を実装していきます。
+
+ぷよぷよゲームとして、少しずつ形になってきましたね。引き続き、テスト駆動開発のサイクルに従って、機能を追加していきましょう！
+
+## イテレーション 4: 2 つのぷよと回転
+
+イテレーション 3 では、ぷよの左右移動機能を実装しました。しかし、現在のぷよは 1 つだけで、回転もできません。本物のぷよぷよゲームでは、2 つのぷよ（軸ぷよと子ぷよ）が一組になって落ちてきて、回転させることができますよね。このイテレーションでは、2 つのぷよと回転機能を実装していきましょう！
+
+> 複雑さは段階的に追加する。一度に全てを実装しようとしない。
+>
+> — Kent Beck 『テスト駆動開発』
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリーは以下です:
+
+> プレイヤーとして、2 つ一組のぷよを回転させて、好きな向きで配置できる
+
+ぷよぷよの醍醐味である「回転」ですね。2 つのぷよを回転させて、戦略的に配置していきましょう。
+
+### TODO リスト
+
+今回のユーザーストーリーを実現するために必要なタスクを洗い出しましょう:
+
+- [ ] 2 つのぷよ（軸ぷよと子ぷよ）の概念を実装する
+- [ ] ぷよを回転する機能を実装する
+- [ ] 回転時の壁蹴り（がべキック）を実装する
+- [ ] 2 つのぷよを画面に描画する
+
+それでは、TDD のサイクルに従って、一つずつ実装していきましょう！
+
+### テスト: 2 つのぷよ（軸ぷよと子ぷよ）
+
+まず、2 つのぷよの概念を実装しましょう。ぷよぷよゲームでは、軸ぷよを中心に子ぷよが回転します。
+
+`src/commonTest/kotlin/PlayerTest.kt` にテストを追加します:
+
+```kotlin
+@Test
+fun 新しいぷよを生成すると子ぷよの種類も設定される() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+
+    // Act
+    player.createNewPuyo()
+
+    // Assert
+    assertTrue(player.childPuyoType in 1..4)
+}
+
+@Test
+fun 子ぷよの初期位置は軸ぷよの上() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // Act
+    val (childX, childY) = player.getChildPuyoPosition()
+
+    // Assert
+    assertEquals(player.puyoX, childX)
+    assertEquals(player.puyoY - 1, childY) // 軸ぷよの上
+}
+```
+
+### 実装: 2 つのぷよ
+
+`Player` クラスに子ぷよのプロパティとメソッドを追加します:
+
+```kotlin
+var childPuyoType: Int = 0
+    private set
+
+fun createNewPuyo() {
+    puyoX = 2
+    puyoY = 0
+    puyoType = Random.nextInt(1, 5)
+    childPuyoType = Random.nextInt(1, 5) // 子ぷよの種類を設定
+    nextPuyoType = Random.nextInt(1, 5)
+    rotation = 0
+}
+
+fun getChildPuyoPosition(): Pair<Int, Int> {
+    return when (rotation) {
+        0 -> Pair(puyoX, puyoY - 1)     // 上
+        1 -> Pair(puyoX + 1, puyoY)     // 右
+        2 -> Pair(puyoX, puyoY + 1)     // 下
+        3 -> Pair(puyoX - 1, puyoY)     // 左
+        else -> Pair(puyoX, puyoY - 1)
+    }
+}
+```
+
+### 解説: 2 つのぷよ
+
+**回転状態と子ぷよの位置:**
+
+```kotlin
+fun getChildPuyoPosition(): Pair<Int, Int> {
+    return when (rotation) {
+        0 -> Pair(puyoX, puyoY - 1)     // 上
+        1 -> Pair(puyoX + 1, puyoY)     // 右
+        2 -> Pair(puyoX, puyoY + 1)     // 下
+        3 -> Pair(puyoX - 1, puyoY)     // 左
+        else -> Pair(puyoX, puyoY - 1)
+    }
+}
+```
+
+`rotation` の値によって、子ぷよの位置が決まります:
+- `0`: 軸ぷよの上
+- `1`: 軸ぷよの右
+- `2`: 軸ぷよの下
+- `3`: 軸ぷよの左
+
+この仕組みにより、回転を実装するときは `rotation` の値を変えるだけで、子ぷよの位置が自動的に変わるんです。
+
+```bash
+$ git add .
+$ git commit -m 'feat: Player クラスに子ぷよの概念を追加'
+```
+
+### テスト: ぷよの回転
+
+次に、回転機能のテストを書きます:
+
+```kotlin
+@Test
+fun ぷよを右回転できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+    val initialRotation = player.rotation
+
+    // Act
+    player.rotateRight()
+
+    // Assert
+    assertEquals((initialRotation + 1) % 4, player.rotation)
+}
+
+@Test
+fun ぷよを左回転できる() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // Act
+    player.rotateLeft()
+
+    // Assert
+    assertEquals(3, player.rotation) // 0 から左回転すると 3
+}
+
+@Test
+fun 壁の近くで回転すると壁蹴りが発生する() {
+    // Arrange
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    // ぷよを右端まで移動
+    while (player.puyoX < config.stageWidth - 1) {
+        player.moveRight()
+    }
+
+    // Act
+    player.rotateRight() // 子ぷよが右に来る回転
+
+    // Assert
+    // 壁蹴りで左にずれる
+    assertTrue(player.puyoX < config.stageWidth - 1)
+}
+```
+
+### 実装: ぷよの回転
+
+`Player` クラスに回転メソッドを追加します:
+
+```kotlin
+fun rotateRight() {
+    val newRotation = (rotation + 1) % 4
+
+    // 回転後の子ぷよの位置を計算
+    val (childX, childY) = when (newRotation) {
+        0 -> Pair(puyoX, puyoY - 1)
+        1 -> Pair(puyoX + 1, puyoY)
+        2 -> Pair(puyoX, puyoY + 1)
+        3 -> Pair(puyoX - 1, puyoY)
+        else -> Pair(puyoX, puyoY - 1)
+    }
+
+    // 壁蹴り処理
+    if (childX < 0) {
+        puyoX++  // 左端を超える場合、右にずらす
+    } else if (childX >= config.stageWidth) {
+        puyoX--  // 右端を超える場合、左にずらす
+    }
+
+    // 再計算
+    val (newChildX, newChildY) = when (newRotation) {
+        0 -> Pair(puyoX, puyoY - 1)
+        1 -> Pair(puyoX + 1, puyoY)
+        2 -> Pair(puyoX, puyoY + 1)
+        3 -> Pair(puyoX - 1, puyoY)
+        else -> Pair(puyoX, puyoY - 1)
+    }
+
+    // 衝突チェック
+    if (newChildY >= 0 && newChildY < config.stageHeight &&
+        newChildX >= 0 && newChildX < config.stageWidth) {
+        if (stage.getPuyo(puyoX, puyoY) == 0 &&
+            stage.getPuyo(newChildX, newChildY) == 0) {
+            rotation = newRotation
+        }
+    }
+}
+
+fun rotateLeft() {
+    val newRotation = (rotation + 3) % 4
+
+    // 右回転と同様の処理（省略）
+    val (childX, childY) = when (newRotation) {
+        0 -> Pair(puyoX, puyoY - 1)
+        1 -> Pair(puyoX + 1, puyoY)
+        2 -> Pair(puyoX, puyoY + 1)
+        3 -> Pair(puyoX - 1, puyoY)
+        else -> Pair(puyoX, puyoY - 1)
+    }
+
+    if (childX < 0) {
+        puyoX++
+    } else if (childX >= config.stageWidth) {
+        puyoX--
+    }
+
+    val (newChildX, newChildY) = when (newRotation) {
+        0 -> Pair(puyoX, puyoY - 1)
+        1 -> Pair(puyoX + 1, puyoY)
+        2 -> Pair(puyoX, puyoY + 1)
+        3 -> Pair(puyoX - 1, puyoY)
+        else -> Pair(puyoX, puyoY - 1)
+    }
+
+    if (newChildY >= 0 && newChildY < config.stageHeight &&
+        newChildX >= 0 && newChildX < config.stageWidth) {
+        if (stage.getPuyo(puyoX, puyoY) == 0 &&
+            stage.getPuyo(newChildX, newChildY) == 0) {
+            rotation = newRotation
+        }
+    }
+}
+```
+
+### 解説: 回転と壁蹴り
+
+**壁蹴り（がべキック）:**
+
+```kotlin
+if (childX < 0) {
+    puyoX++  // 左端を超える場合、右にずらす
+} else if (childX >= config.stageWidth) {
+    puyoX--  // 右端を超える場合、左にずらす
+}
+```
+
+壁蹴りは、回転後に子ぷよが壁の外に出てしまう場合、軸ぷよをずらして回転を可能にする処理です。これにより、壁際でも回転できるようになります。ぷよぷよゲームの重要なテクニックですね。
+
+```bash
+$ git add .
+$ git commit -m 'feat: Player クラスにぷよの回転機能を追加'
+```
+
+### 2 つのぷよの描画
+
+最後に、`GameStage.kt` を更新して子ぷよも描画します:
+
+```kotlin
+// 落下中のぷよを描画（軸ぷよ）
+if (game.player.puyoType != 0) {
+    drawPuyo(
+        game.player.puyoX,
+        game.player.puyoY,
+        game.player.puyoType,
+        cellSize
+    )
+
+    // 子ぷよの描画
+    val (childX, childY) = game.player.getChildPuyoPosition()
+    if (childY >= 0 && childY < game.config.stageHeight) {
+        drawPuyo(childX, childY, game.player.childPuyoType, cellSize)
+    }
+}
+```
+
+また、`placePuyoOnStage()` も更新して、両方のぷよを配置するようにします:
+
+```kotlin
+fun placePuyoOnStage() {
+    // 軸ぷよを配置
+    stage.setPuyo(puyoX, puyoY, puyoType)
+
+    // 子ぷよを配置
+    val (childX, childY) = getChildPuyoPosition()
+    if (childY >= 0 && childY < config.stageHeight) {
+        stage.setPuyo(childX, childY, childPuyoType)
+    }
+}
+```
+
+```bash
+$ git add .
+$ git commit -m 'feat: 2つのぷよの描画を実装'
+```
+
+### イテレーション 4 のまとめ
+
+おめでとうございます！イテレーション 4 が完了しました。
+
+#### 実装した機能
+
+- [x] 2 つのぷよ（軸ぷよと子ぷよ）の概念を実装する
+- [x] ぷよを回転する機能を実装する
+- [x] 回転時の壁蹴り（がべキック）を実装する
+- [x] 2 つのぷよを画面に描画する
+
+#### 学んだこと
+
+1. **軸と子の関係**: 軸ぷよを中心に子ぷよが回転する仕組みを理解しました
+2. **回転状態の管理**: `rotation` の値（0〜3）で 4 方向を表現する方法を学びました
+3. **壁蹴り処理**: ゲームの操作性を高める重要なテクニックを実装しました
+4. **Pair の活用**: Kotlin の `Pair` 型で座標を返す方法を学びました
+
+ぷよぷよゲームの基本的な操作機能が揃いましたね。次のイテレーションでは、キーボード操作と自動落下を実装していきましょう！
+
+## イテレーション 5: キーボード操作とゲームループ
+
+イテレーション 4 では、2 つのぷよと回転機能を実装しました。これで必要な操作機能は揃いましたが、まだボタンクリックでしか操作できませんし、ぷよは自動的に落ちてきません。このイテレーションでは、キーボード操作とゲームループを実装して、本物のぷよぷよゲームに近づけていきましょう！
+
+> ソフトウェアは段階的に成長させる。小さな変更を繰り返し、常に動作する状態を保つ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリーは以下です:
+
+> プレイヤーとして、キーボードでぷよを操作し、自動的に落ちてくるぷよを楽しめる
+
+ゲームとして遊べる状態にしましょう。キーボードで操作でき、ぷよが自動的に落ちてくるようになります。
+
+### TODO リスト
+
+今回のユーザーストーリーを実現するために必要なタスクを洗い出しましょう:
+
+- [ ] キーボード操作を実装する
+- [ ] ゲームループを実装する
+- [ ] 自動落下機能を実装する
+- [ ] テスト用ボタンを削除する
+
+それでは、実装していきましょう！
+
+### キーボード操作の実装
+
+まず、キーボードイベントを処理できるようにします。Compose Desktop では、`onKeyEvent` を使ってキー入力を処理できます。
+
+`src/desktopMain/kotlin/Main.kt` を更新します:
+
+```kotlin
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.input.key.*
+import com.example.puyopuyo.GameApp
+
+fun main() = application {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "ぷよぷよ TDD",
+        onKeyEvent = { event ->
+            if (event.type == KeyEventType.KeyDown) {
+                handleKeyEvent(event.key)
+                true
+            } else {
+                false
+            }
+        }
+    ) {
+        GameApp()
+    }
+}
+
+private fun handleKeyEvent(key: Key): Boolean {
+    return when (key) {
+        Key.DirectionLeft -> {
+            // 左キー処理
+            true
+        }
+        Key.DirectionRight -> {
+            // 右キー処理
+            true
+        }
+        Key.DirectionUp -> {
+            // 上キー（回転）処理
+            true
+        }
+        Key.DirectionDown -> {
+            // 下キー（高速落下）処理
+            true
+        }
+        Key.X -> {
+            // X キー（左回転）処理
+            true
+        }
+        else -> false
+    }
+}
+```
+
+実際には、ゲームインスタンスにアクセスする必要があるため、`GameApp` 内でキーイベントを処理します。
+
+`src/commonMain/kotlin/GameApp.kt` を更新します:
+
+```kotlin
+@Composable
+fun GameApp() {
+    val game = remember {
+        Game().apply {
+            initialize()
+            player.createNewPuyo()
+        }
+    }
+
+    var updateTrigger by remember { mutableStateOf(0) }
+
+    // キーイベントハンドラ
+    LaunchedEffect(Unit) {
+        // ゲームループは後で実装
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .onKeyEvent { event ->
+                if (event.type == KeyEventType.KeyDown) {
+                    when (event.key) {
+                        Key.DirectionLeft -> {
+                            game.player.moveLeft()
+                            updateTrigger++
+                            true
+                        }
+                        Key.DirectionRight -> {
+                            game.player.moveRight()
+                            updateTrigger++
+                            true
+                        }
+                        Key.DirectionUp, Key.Z -> {
+                            game.player.rotateRight()
+                            updateTrigger++
+                            true
+                        }
+                        Key.X -> {
+                            game.player.rotateLeft()
+                            updateTrigger++
+                            true
+                        }
+                        Key.DirectionDown -> {
+                            game.player.moveDown()
+                            updateTrigger++
+                            true
+                        }
+                        else -> false
+                    }
+                } else {
+                    false
+                }
+            }
+            .focusable()
+    ) {
+        MaterialTheme {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "ぷよぷよ",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "スコア: ${game.score.value}",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "モード: ${game.mode}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    GameStage(game)
+                }
+            }
+        }
+    }
+}
+```
+
+### 解説: キーボード操作
+
+**onKeyEvent の使用:**
+
+```kotlin
+.onKeyEvent { event ->
+    if (event.type == KeyEventType.KeyDown) {
+        when (event.key) {
+            Key.DirectionLeft -> {
+                game.player.moveLeft()
+                updateTrigger++
+                true
+            }
+            // ...
+        }
+    }
+}
+```
+
+- `onKeyEvent`: キーボードイベントをキャプチャ
+- `KeyEventType.KeyDown`: キーが押されたときのみ処理
+- `updateTrigger++`: 画面を再描画
+- `focusable()`: キーボードフォーカスを受け取れるようにする
+
+```bash
+$ git add .
+$ git commit -m 'feat: キーボード操作を実装'
+```
+
+### ゲームループの実装
+
+次に、ゲームループを実装して、ぷよが自動的に落ちるようにします。
+
+```kotlin
+@Composable
+fun GameApp() {
+    val game = remember {
+        Game().apply {
+            initialize()
+            player.createNewPuyo()
+        }
+    }
+
+    var updateTrigger by remember { mutableStateOf(0) }
+    var frameCount by remember { mutableStateOf(0) }
+
+    // ゲームループ
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(16) // 約60FPS
+            frameCount++
+
+            // 約1秒ごとに落下
+            if (frameCount % 60 == 0) {
+                if (!game.player.moveDown()) {
+                    // 着地した
+                    if (game.player.hasLanded()) {
+                        game.player.placePuyoOnStage()
+                        game.player.createNewPuyo()
+                    }
+                }
+                updateTrigger++
+            }
+        }
+    }
+
+    // UI部分（省略）
+}
+```
+
+### 解説: ゲームループ
+
+**LaunchedEffect:**
+
+```kotlin
+LaunchedEffect(Unit) {
+    while (true) {
+        delay(16) // 約60FPS
+        frameCount++
+
+        if (frameCount % 60 == 0) {
+            // 1秒ごとに落下
+        }
+    }
+}
+```
+
+- `LaunchedEffect(Unit)`: Composable のライフサイクルに連動したコルーチンを起動
+- `delay(16)`: 約 60FPS で実行（16ms ≈ 1/60秒）
+- `frameCount % 60 == 0`: 60フレームごと（約1秒）に落下
+
+これにより、ぷよが自動的に落ちるようになります。
+
+```bash
+$ git add .
+$ git commit -m 'feat: ゲームループと自動落下を実装'
+```
+
+### テスト用ボタンの削除
+
+最後に、イテレーション 2 で追加したテスト用ボタンを削除します。もうキーボードで操作できるので、ボタンは不要ですね。
+
+`GameApp.kt` から以下のコードを削除:
+
+```kotlin
+// テスト用ボタン（削除）
+Row(
+    horizontalArrangement = Arrangement.spacedBy(8.dp)
+) {
+    Button(onClick = {
+        game.player.moveDown()
+        updateTrigger++
+    }) {
+        Text("下に移動")
+    }
+
+    Button(onClick = {
+        if (game.player.hasLanded()) {
+            game.player.placePuyoOnStage()
+            game.player.createNewPuyo()
+        }
+        updateTrigger++
+    }) {
+        Text("新しいぷよ")
+    }
+}
+```
+
+```bash
+$ git add .
+$ git commit -m 'refactor: テスト用ボタンを削除'
+```
+
+### アプリケーションの実行
+
+さあ、実装したアプリケーションを実行してみましょう！
+
+```bash
+$ ./gradlew run
+```
+
+今度こそ、本物のぷよぷよゲームとして遊べます:
+
+- ぷよが自動的に落ちてくる
+- 矢印キーで左右に移動
+- 上キーまたは Z キーで右回転
+- X キーで左回転
+- 下キーで高速落下
+
+「ついに遊べるゲームになった！」と感動しますよね。
+
+### イテレーション 5 のまとめ
+
+おめでとうございます！イテレーション 5 が完了しました。
+
+#### 実装した機能
+
+- [x] キーボード操作を実装する
+- [x] ゲームループを実装する
+- [x] 自動落下機能を実装する
+- [x] テスト用ボタンを削除する
+
+#### 学んだこと
+
+1. **onKeyEvent の使用**: Compose でキーボード入力を処理する方法を学びました
+2. **LaunchedEffect の活用**: Composable のライフサイクルに連動したコルーチンを理解しました
+3. **ゲームループの実装**: 約60FPSで動作するゲームループを実装しました
+4. **フレームカウント**: フレーム数を数えて定期的な処理を実行する方法を学びました
+
+#### 次のイテレーションへ
+
+現在、ぷよぷよゲームとして遊べる状態になりましたが、まだ重要な機能が実装されていません:
+
+- ぷよの消去機能（同じ色が 4 つ以上つながったら消える）
+- 連鎖機能
+- ゲームオーバー判定
+- スコア計算
+
+次のイテレーションでは、これらの機能を実装して、完全なぷよぷよゲームに仕上げていきましょう！
+
+ここまでで、テスト駆動開発のサイクルに従って、段階的にゲームを作り上げてきました。小さなステップを積み重ねることで、複雑なゲームも実装できることを体験できたのではないでしょうか。
+
+## イテレーション 6: ぷよの消去処理
+
+### ユーザーストーリー
+
+> プレイヤーとして、同じ色のぷよが 4 つ以上つながったら消えて、重力で上のぷよが落ちてくるゲームを楽しめる
+
+このイテレーションでは、ぷよぷよの核心的な機能である「消去処理」を実装します。同じ色のぷよが 4 つ以上つながったら消え、その後重力が適用されて上のぷよが落下します。
+
+### TODO リスト
+
+このイテレーションで実装する機能:
+
+- [ ] 接続されたぷよを探索する機能を実装する（深さ優先探索）
+- [ ] 消去判定機能を実装する（4 つ以上つながったぷよを見つける）
+- [ ] 消去実行機能を実装する（つながったぷよを削除する）
+- [ ] 重力処理を実装する（空いたスペースにぷよを落下させる）
+- [ ] ゲームに消去処理を統合する
+
+### 1. 接続されたぷよを探索する（深さ優先探索）
+
+まずは、同じ色のぷよがどれだけつながっているかを調べる機能をテストから書いていきます。
+
+#### テストコード (Red)
+
+`Stage.kt` に消去関連の機能を追加します。まずはテストから：
+
+```kotlin
+// StageTest.kt
+@Test
+fun 隣接する同じ色のぷよを探索できる() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 縦に4つ並べる
+    stage.setPuyo(2, 10, 1)
+    stage.setPuyo(2, 11, 1)
+    stage.setPuyo(2, 12, 1)
+    stage.setPuyo(2, 13, 1)
+
+    val connectedPuyos = stage.searchConnectedPuyo(2, 10, 1)
+
+    assertEquals(4, connectedPuyos.size)
+}
+
+@Test
+fun L字型につながったぷよを探索できる() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // L字型に配置
+    stage.setPuyo(2, 12, 1)
+    stage.setPuyo(2, 13, 1)
+    stage.setPuyo(3, 13, 1)
+    stage.setPuyo(4, 13, 1)
+
+    val connectedPuyos = stage.searchConnectedPuyo(2, 12, 1)
+
+    assertEquals(4, connectedPuyos.size)
+}
+```
+
+このテストでは：
+- 縦に 4 つ並んだぷよを探索できるか
+- L 字型につながったぷよを探索できるか
+
+をテストしています。
+
+#### 実装コード (Green)
+
+```kotlin
+// Stage.kt
+data class PuyoPosition(val x: Int, val y: Int, val type: Int)
+
+class Stage(private val config: Config) {
+    // ... 既存のコード ...
+
+    /**
+     * 接続されたぷよを探索します（深さ優先探索）
+     */
+    fun searchConnectedPuyo(
+        x: Int,
+        y: Int,
+        type: Int,
+        visited: Array<BooleanArray> = Array(config.stageWidth) { BooleanArray(config.stageHeight) },
+        result: MutableList<PuyoPosition> = mutableListOf()
+    ): List<PuyoPosition> {
+        // 範囲外チェック
+        if (x !in 0 until config.stageWidth || y !in 0 until config.stageHeight) {
+            return result
+        }
+
+        // 訪問済みチェック
+        if (visited[x][y]) {
+            return result
+        }
+
+        // 同じ色かチェック
+        if (board[x][y] != type) {
+            return result
+        }
+
+        // 訪問済みにする
+        visited[x][y] = true
+        result.add(PuyoPosition(x, y, type))
+
+        // 上下左右を再帰的に探索
+        searchConnectedPuyo(x - 1, y, type, visited, result) // 左
+        searchConnectedPuyo(x + 1, y, type, visited, result) // 右
+        searchConnectedPuyo(x, y - 1, type, visited, result) // 上
+        searchConnectedPuyo(x, y + 1, type, visited, result) // 下
+
+        return result
+    }
+}
+```
+
+#### 解説
+
+**深さ優先探索（DFS: Depth-First Search）**
+
+この実装では、深さ優先探索というアルゴリズムを使っています：
+
+1. **基底ケース（再帰の終了条件）**:
+   - 範囲外なら終了
+   - 訪問済みなら終了
+   - 違う色なら終了
+
+2. **再帰ケース**:
+   - 現在位置を訪問済みにする
+   - 現在位置を結果に追加
+   - 上下左右の 4 方向に対して再帰的に探索
+
+**Kotlin のデフォルト引数**
+
+```kotlin
+fun searchConnectedPuyo(
+    x: Int,
+    y: Int,
+    type: Int,
+    visited: Array<BooleanArray> = Array(config.stageWidth) { BooleanArray(config.stageHeight) },
+    result: MutableList<PuyoPosition> = mutableListOf()
+): List<PuyoPosition>
+```
+
+デフォルト引数を使うことで、最初の呼び出し時は `visited` と `result` を省略できます：
+
+```kotlin
+// 最初の呼び出し
+val connected = stage.searchConnectedPuyo(2, 10, 1)
+
+// 再帰呼び出し時は visited と result を引き継ぐ
+searchConnectedPuyo(x - 1, y, type, visited, result)
+```
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: 接続されたぷよを探索する機能を実装"
+```
+
+### 2. 消去判定機能を実装する
+
+次に、ステージ全体をチェックして、4 つ以上つながったぷよを見つける機能を実装します。
+
+#### テストコード (Red)
+
+```kotlin
+// StageTest.kt
+@Test
+fun 消去判定で4つ以上つながったぷよが見つかる() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 縦に4つ並べる（消える）
+    stage.setPuyo(2, 10, 1)
+    stage.setPuyo(2, 11, 1)
+    stage.setPuyo(2, 12, 1)
+    stage.setPuyo(2, 13, 1)
+
+    val eraseInfo = stage.checkErase()
+
+    assertEquals(4, eraseInfo.erasePuyoCount)
+}
+
+@Test
+fun 消去判定で3つ以下のぷよは消えない() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 縦に3つだけ並べる（消えない）
+    stage.setPuyo(2, 11, 1)
+    stage.setPuyo(2, 12, 1)
+    stage.setPuyo(2, 13, 1)
+
+    val eraseInfo = stage.checkErase()
+
+    assertEquals(0, eraseInfo.erasePuyoCount)
+}
+
+@Test
+fun 複数の色のぷよが混在していても正しく消去判定できる() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 赤4つ（消える）
+    stage.setPuyo(2, 10, 1)
+    stage.setPuyo(2, 11, 1)
+    stage.setPuyo(2, 12, 1)
+    stage.setPuyo(2, 13, 1)
+
+    // 青3つ（消えない）
+    stage.setPuyo(3, 11, 2)
+    stage.setPuyo(3, 12, 2)
+    stage.setPuyo(3, 13, 2)
+
+    val eraseInfo = stage.checkErase()
+
+    // 赤の4つだけが消去対象
+    assertEquals(4, eraseInfo.erasePuyoCount)
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Stage.kt
+data class EraseInfo(
+    val erasePuyoCount: Int,
+    val eraseList: List<PuyoPosition>
+)
+
+class Stage(private val config: Config) {
+    // ... 既存のコード ...
+
+    /**
+     * 消去可能なぷよをチェックします
+     */
+    fun checkErase(): EraseInfo {
+        val eraseList = mutableListOf<PuyoPosition>()
+        val visited = Array(config.stageWidth) { BooleanArray(config.stageHeight) }
+
+        for (x in 0 until config.stageWidth) {
+            for (y in 0 until config.stageHeight) {
+                if (board[x][y] != 0 && !visited[x][y]) {
+                    val connectedPuyos = searchConnectedPuyo(x, y, board[x][y], visited)
+
+                    // 4つ以上つながっていたら消去対象
+                    if (connectedPuyos.size >= 4) {
+                        eraseList.addAll(connectedPuyos)
+                    }
+                }
+            }
+        }
+
+        return EraseInfo(eraseList.size, eraseList)
+    }
+}
+```
+
+#### 解説
+
+**消去判定のアルゴリズム**
+
+1. ステージ全体をループ
+2. 各マスについて、まだ訪問していない場合：
+   - 接続されたぷよを探索
+   - 4 つ以上つながっていたら消去リストに追加
+
+**visited フラグの重要性**
+
+```kotlin
+val visited = Array(config.stageWidth) { BooleanArray(config.stageHeight) }
+```
+
+`visited` フラグを使うことで：
+- 同じぷよを重複してチェックしない
+- 効率的に探索できる
+
+例えば、4 つつながったぷよがある場合：
+- 最初のぷよから探索して 4 つ見つかる
+- 次のぷよはすでに `visited` なのでスキップ
+- 重複して数えることがない
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: 消去判定機能を実装"
+```
+
+### 3. 消去実行機能を実装する
+
+消去対象のぷよを実際に削除する機能を実装します。
+
+#### テストコード (Red)
+
+```kotlin
+// StageTest.kt
+@Test
+fun 消去リストのぷよを削除できる() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 縦に4つ並べる
+    stage.setPuyo(2, 10, 1)
+    stage.setPuyo(2, 11, 1)
+    stage.setPuyo(2, 12, 1)
+    stage.setPuyo(2, 13, 1)
+
+    val eraseInfo = stage.checkErase()
+    stage.executeErase(eraseInfo.eraseList)
+
+    // すべて0になっている
+    assertEquals(0, stage.getPuyo(2, 10))
+    assertEquals(0, stage.getPuyo(2, 11))
+    assertEquals(0, stage.getPuyo(2, 12))
+    assertEquals(0, stage.getPuyo(2, 13))
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Stage.kt
+class Stage(private val config: Config) {
+    // ... 既存のコード ...
+
+    /**
+     * 消去対象のぷよを消去します
+     */
+    fun executeErase(eraseList: List<PuyoPosition>) {
+        for (puyo in eraseList) {
+            board[puyo.x][puyo.y] = 0
+        }
+    }
+}
+```
+
+#### 解説
+
+この関数はシンプルで、消去リストに含まれるぷよを順番に `0` にしていくだけです。
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: 消去実行機能を実装"
+```
+
+### 4. 重力処理を実装する
+
+ぷよを消した後、空いたスペースに上のぷよを落下させる機能を実装します。
+
+#### テストコード (Red)
+
+```kotlin
+// StageTest.kt
+@Test
+fun 重力を適用すると空中に浮いているぷよが落下する() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 下に空きがある状態でぷよを配置
+    stage.setPuyo(2, 10, 1)  // 空中に浮いている
+
+    stage.applyGravity()
+
+    // 一番下まで落ちる
+    assertEquals(0, stage.getPuyo(2, 10))
+    assertEquals(1, stage.getPuyo(2, 13))
+}
+
+@Test
+fun 重力を適用すると複数のぷよが正しく落下する() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 下に土台がある状態
+    stage.setPuyo(2, 13, 1)  // 土台
+    stage.setPuyo(2, 11, 2)  // 浮いている
+    stage.setPuyo(2, 10, 3)  // 浮いている
+
+    stage.applyGravity()
+
+    // 土台の上に積み重なる
+    assertEquals(1, stage.getPuyo(2, 13))
+    assertEquals(2, stage.getPuyo(2, 12))
+    assertEquals(3, stage.getPuyo(2, 11))
+    assertEquals(0, stage.getPuyo(2, 10))
+}
+
+@Test
+fun 重力適用時に途中で消えたぷよの上のぷよが落ちる() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+
+    // 下から: 赤4つ（消える）、その上に青1つ
+    stage.setPuyo(2, 10, 2)  // 青
+    stage.setPuyo(2, 11, 1)  // 赤
+    stage.setPuyo(2, 12, 1)  // 赤
+    stage.setPuyo(2, 13, 1)  // 赤
+    stage.setPuyo(3, 13, 1)  // 赤（L字の一部）
+
+    // 消去判定→消去実行
+    val eraseInfo = stage.checkErase()
+    stage.executeErase(eraseInfo.eraseList)
+
+    // 重力適用
+    stage.applyGravity()
+
+    // 青が一番下まで落ちる
+    assertEquals(2, stage.getPuyo(2, 13))
+    assertEquals(0, stage.getPuyo(2, 10))
+    assertEquals(0, stage.getPuyo(2, 11))
+    assertEquals(0, stage.getPuyo(2, 12))
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Stage.kt
+class Stage(private val config: Config) {
+    // ... 既存のコード ...
+
+    /**
+     * 重力を適用してぷよを落下させます
+     */
+    fun applyGravity() {
+        // 各列について処理
+        for (x in 0 until config.stageWidth) {
+            // 下から詰めていく位置
+            var writeY = config.stageHeight - 1
+
+            // 下から上に向かってぷよを探索
+            for (readY in config.stageHeight - 1 downTo 0) {
+                if (board[x][readY] != 0) {
+                    // ぷよがある場合、下に詰める
+                    if (readY != writeY) {
+                        board[x][writeY] = board[x][readY]
+                        board[x][readY] = 0
+                    }
+                    writeY--
+                }
+            }
+        }
+    }
+}
+```
+
+#### 解説
+
+**重力処理のアルゴリズム**
+
+この実装は「2 ポインタ」アルゴリズムを使っています：
+
+1. `writeY`: 次にぷよを書き込む位置（下から）
+2. `readY`: 現在読み取っているぷよの位置（下から上へ）
+
+処理の流れ：
+
+```
+初期状態:        処理中:         結果:
+0  0  0         0  0  0        0  0  0
+2  2  0         0  2  0        0  0  0
+0  0  0   →    0  0  0   →   2  2  0
+1  1  0         2  2  0        1  1  0
+```
+
+各列ごとに：
+- 下から上に向かってぷよを探索（`readY`）
+- ぷよを見つけたら、下から詰めていく（`writeY`）
+- 読み取り位置と書き込み位置が違う場合は移動
+
+**Kotlin の downTo**
+
+```kotlin
+for (readY in config.stageHeight - 1 downTo 0)
+```
+
+`downTo` は Kotlin の範囲演算子で、降順にループします：
+- `13 downTo 0` は 13, 12, 11, ..., 1, 0 の順
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: 重力処理を実装"
+```
+
+### 5. ゲームに消去処理を統合する
+
+最後に、ゲームループに消去処理を組み込みます。
+
+#### 実装コード
+
+```kotlin
+// App.kt の LaunchedEffect 内を修正
+LaunchedEffect(Unit) {
+    while (true) {
+        delay(16) // 約60FPS
+        frameCount++
+
+        // 約1秒ごとに落下
+        if (frameCount % 60 == 0) {
+            if (!game.player.moveDown()) {
+                // 着地した
+                if (game.player.hasLanded()) {
+                    game.player.placePuyoOnStage()
+
+                    // 消去処理を実行
+                    var eraseInfo = game.stage.checkErase()
+                    while (eraseInfo.erasePuyoCount > 0) {
+                        // 消去実行
+                        game.stage.executeErase(eraseInfo.eraseList)
+
+                        // 重力適用
+                        game.stage.applyGravity()
+
+                        // 再度消去判定（連鎖のため）
+                        eraseInfo = game.stage.checkErase()
+                    }
+
+                    game.player.createNewPuyo()
+                }
+            }
+            updateTrigger++
+        }
+    }
+}
+```
+
+#### 解説
+
+**消去処理のループ**
+
+```kotlin
+var eraseInfo = game.stage.checkErase()
+while (eraseInfo.erasePuyoCount > 0) {
+    game.stage.executeErase(eraseInfo.eraseList)
+    game.stage.applyGravity()
+    eraseInfo = game.stage.checkErase()
+}
+```
+
+このループは：
+1. 消去判定を行う
+2. 消去するぷよがある場合：
+   - ぷよを消す
+   - 重力を適用
+   - 再度消去判定（連鎖のため）
+3. 消去するぷよがなくなるまで繰り返す
+
+これにより、連鎖が自動的に処理されます！
+
+> **連鎖の例**
+>
+> ```
+> ステップ1: 着地
+> ○ ○ ○ ●
+> ○ ○ ● ●
+> ○ ● ● ●
+> ● ● ● ●  ← 4つつながった
+>
+> ステップ2: 消去
+> ○ ○ ○
+> ○ ○
+> ○
+>
+> ステップ3: 重力
+>
+>
+> ○ ○ ○
+> ○ ○ ○    ← ここで再び4つつながる
+>
+> ステップ4: 連鎖！
+> ```
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: ゲームに消去処理を統合"
+```
+
+### イテレーション 6 のまとめ
+
+おめでとうございます！イテレーション 6 が完了しました。
+
+#### 実装した機能
+
+- [x] 接続されたぷよを探索する機能を実装する（深さ優先探索）
+- [x] 消去判定機能を実装する（4 つ以上つながったぷよを見つける）
+- [x] 消去実行機能を実装する（つながったぷよを削除する）
+- [x] 重力処理を実装する（空いたスペースにぷよを落下させる）
+- [x] ゲームに消去処理を統合する
+
+#### 学んだこと
+
+1. **深さ優先探索（DFS）アルゴリズム**
+   - 再帰を使った探索アルゴリズム
+   - `visited` フラグで重複チェックを防ぐ
+   - 上下左右の 4 方向を探索
+
+2. **Kotlin のデフォルト引数**
+   - 再帰関数で便利に使える
+   - 最初の呼び出しと再帰呼び出しで引数を変えられる
+
+3. **2 ポインタアルゴリズム**
+   - 重力処理で使用
+   - 読み取り位置と書き込み位置を分けて管理
+
+4. **連鎖処理**
+   - ループで消去→重力→消去判定を繰り返す
+   - シンプルなロジックで自然に連鎖が実現
+
+#### 次のイテレーションへ
+
+ぷよぷよの基本的なゲーム性が完成しました！次のイテレーションでは：
+
+- スコア計算（消したぷよの数と連鎖数に応じて）
+- ゲームオーバー判定（画面上部にぷよが到達したら）
+- ゲームオーバー画面の表示
+
+これらを実装して、完全なぷよぷよゲームに仕上げていきましょう！
+
+## イテレーション 7: スコア計算とゲームオーバー
+
+### ユーザーストーリー
+
+> プレイヤーとして、ぷよを消したときにスコアが加算され、ゲームオーバーになったら結果が表示されるゲームを楽しめる
+
+このイテレーションでは、ゲームを完成させるための最終的な機能を実装します。スコア計算、連鎖ボーナス、全消しボーナス、ゲームオーバー判定、そしてゲームオーバー画面を追加します。
+
+### TODO リスト
+
+このイテレーションで実装する機能:
+
+- [ ] スコアクラスを実装する
+- [ ] スコア計算機能を実装する（消去数 × 連鎖ボーナス）
+- [ ] 全消しボーナスを実装する
+- [ ] ゲームオーバー判定を実装する
+- [ ] ゲームオーバー画面を実装する
+- [ ] リスタート機能を実装する
+
+### 1. スコアクラスを実装する
+
+まずは、スコアを管理するクラスをテストから作っていきます。
+
+#### テストコード (Red)
+
+```kotlin
+// ScoreTest.kt
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class ScoreTest {
+    @Test
+    fun スコアの初期値は0() {
+        val score = Score()
+
+        assertEquals(0, score.value)
+    }
+
+    @Test
+    fun スコアを加算できる() {
+        val score = Score()
+
+        score.add(100)
+
+        assertEquals(100, score.value)
+    }
+
+    @Test
+    fun スコアをリセットできる() {
+        val score = Score()
+        score.add(500)
+
+        score.reset()
+
+        assertEquals(0, score.value)
+    }
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Score.kt
+class Score {
+    var value: Int = 0
+        private set
+
+    /**
+     * スコアを加算します
+     */
+    fun add(points: Int) {
+        value += points
+    }
+
+    /**
+     * スコアをリセットします
+     */
+    fun reset() {
+        value = 0
+    }
+}
+```
+
+#### 解説
+
+シンプルなスコア管理クラスです。`value` プロパティは外部から読み取り専用で、`add()` と `reset()` メソッドでのみ変更できます。
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: スコアクラスを実装"
+```
+
+### 2. スコア計算機能を実装する
+
+次に、消去したぷよの数と連鎖数に応じてスコアを計算する機能を実装します。
+
+#### テストコード (Red)
+
+```kotlin
+// ScoreTest.kt
+@Test
+fun 消去数に応じてスコアを計算できる() {
+    // 4個消去、1連鎖
+    val score1 = Score.calculate(erasedCount = 4, chainCount = 1)
+    assertEquals(40, score1) // 4 × 10 × 1 = 40
+
+    // 5個消去、1連鎖
+    val score2 = Score.calculate(erasedCount = 5, chainCount = 1)
+    assertEquals(50, score2) // 5 × 10 × 1 = 50
+}
+
+@Test
+fun 連鎖数に応じてスコアボーナスが増える() {
+    // 4個消去、1連鎖
+    val score1 = Score.calculate(erasedCount = 4, chainCount = 1)
+    assertEquals(40, score1) // 4 × 10 × 1 = 40
+
+    // 4個消去、2連鎖
+    val score2 = Score.calculate(erasedCount = 4, chainCount = 2)
+    assertEquals(320, score2) // 4 × 10 × 8 = 320
+
+    // 4個消去、3連鎖
+    val score3 = Score.calculate(erasedCount = 4, chainCount = 3)
+    assertEquals(640, score3) // 4 × 10 × 16 = 640
+}
+
+@Test
+fun 高連鎖になるほどボーナスが大きくなる() {
+    // 5連鎖
+    val score5 = Score.calculate(erasedCount = 4, chainCount = 5)
+    assertEquals(2560, score5) // 4 × 10 × 64 = 2560
+
+    // 8連鎖以上
+    val score8 = Score.calculate(erasedCount = 4, chainCount = 8)
+    assertEquals(6400, score8) // 4 × 10 × 160 = 6400
+
+    // 10連鎖（8連鎖以上は同じボーナス）
+    val score10 = Score.calculate(erasedCount = 4, chainCount = 10)
+    assertEquals(6400, score10) // 4 × 10 × 160 = 6400
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Score.kt
+class Score {
+    // ... 既存のコード ...
+
+    companion object {
+        /**
+         * スコアを計算します
+         *
+         * @param erasedCount 消去したぷよの数
+         * @param chainCount 連鎖数
+         * @return 計算されたスコア
+         */
+        fun calculate(erasedCount: Int, chainCount: Int): Int {
+            // 基本点: 消去数 × 10
+            val basePoints = erasedCount * 10
+
+            // 連鎖ボーナス倍率
+            val chainBonus = when (chainCount) {
+                1 -> 1      // 1連鎖: ×1
+                2 -> 8      // 2連鎖: ×8
+                3 -> 16     // 3連鎖: ×16
+                4 -> 32     // 4連鎖: ×32
+                5 -> 64     // 5連鎖: ×64
+                6 -> 96     // 6連鎖: ×96
+                7 -> 128    // 7連鎖: ×128
+                else -> 160 // 8連鎖以上: ×160
+            }
+
+            return basePoints * chainBonus
+        }
+    }
+}
+```
+
+#### 解説
+
+**スコア計算式**
+
+```
+スコア = 消去数 × 10 × 連鎖ボーナス
+```
+
+**連鎖ボーナステーブル**
+
+| 連鎖数 | ボーナス倍率 |
+|--------|--------------|
+| 1連鎖  | ×1           |
+| 2連鎖  | ×8           |
+| 3連鎖  | ×16          |
+| 4連鎖  | ×32          |
+| 5連鎖  | ×64          |
+| 6連鎖  | ×96          |
+| 7連鎖  | ×128         |
+| 8連鎖以上 | ×160      |
+
+この倍率により、連鎖を続けるほど爆発的にスコアが増えます。
+
+**companion object**
+
+Kotlin の `companion object` は、クラスのインスタンスを作らずに呼び出せる静的メソッドを定義するための機能です：
+
+```kotlin
+// インスタンス不要で呼び出せる
+val score = Score.calculate(4, 2)
+```
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: スコア計算機能を実装"
+```
+
+### 3. 全消しボーナスを実装する
+
+ステージ上のぷよをすべて消した場合のボーナスを実装します。
+
+#### テストコード (Red)
+
+```kotlin
+// ScoreTest.kt
+@Test
+fun 全消しボーナスを計算できる() {
+    val bonus = Score.calculateAllClearBonus()
+
+    assertEquals(3600, bonus)
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Score.kt
+companion object {
+    // ... 既存のコード ...
+
+    /**
+     * 全消しボーナスを計算します
+     *
+     * @return 全消しボーナスのポイント
+     */
+    fun calculateAllClearBonus(): Int {
+        return 3600
+    }
+}
+```
+
+#### 解説
+
+全消しボーナスは固定で 3600 ポイントです。イテレーション 6 で実装した `Stage.isAllClear()` メソッドと組み合わせて使います。
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: 全消しボーナスを実装"
+```
+
+### 4. ゲームにスコア計算を統合する
+
+ゲームに `Score` クラスを追加し、連鎖が発生したときにスコアを加算するようにします。
+
+#### 実装コード
+
+まず、`Game` クラスに `Score` を追加します：
+
+```kotlin
+// Game.kt
+class Game {
+    val config = Config()
+    val stage = Stage(config)
+    val player = Player(config, stage)
+    val score = Score()  // 追加
+
+    init {
+        stage.initialize()
+        player.createNewPuyo()
+    }
+}
+```
+
+次に、`Stage.kt` に連鎖情報を返す機能を追加します：
+
+```kotlin
+// Stage.kt
+data class ChainInfo(val erasedPuyoCount: Int)
+
+data class ChainResult(
+    val chainCount: Int,
+    val chainInfoList: List<ChainInfo>
+)
+
+class Stage(private val config: Config) {
+    // ... 既存のコード ...
+
+    /**
+     * 連鎖処理を実行します
+     */
+    fun processChain(): ChainResult {
+        var chainCount = 0
+        val chainInfoList = mutableListOf<ChainInfo>()
+
+        while (true) {
+            // 消去判定
+            val eraseInfo = checkErase()
+
+            if (eraseInfo.erasePuyoCount == 0) {
+                // 消去するぷよがなければ終了
+                break
+            }
+
+            // 連鎖情報を記録
+            chainInfoList.add(ChainInfo(eraseInfo.erasePuyoCount))
+
+            // 消去実行
+            executeErase(eraseInfo.eraseList)
+            chainCount++
+
+            // 重力適用
+            applyGravity()
+        }
+
+        return ChainResult(chainCount, chainInfoList)
+    }
+
+    /**
+     * 全消し判定を行います
+     */
+    fun isAllClear(): Boolean {
+        for (x in 0 until config.stageWidth) {
+            for (y in 0 until config.stageHeight) {
+                if (board[x][y] != 0) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+}
+```
+
+そして、`App.kt` のゲームループを更新します：
+
+```kotlin
+// App.kt の LaunchedEffect 内を修正
+LaunchedEffect(Unit) {
+    while (true) {
+        delay(16) // 約60FPS
+        frameCount++
+
+        // 約1秒ごとに落下
+        if (frameCount % 60 == 0) {
+            if (!game.player.moveDown()) {
+                // 着地した
+                if (game.player.hasLanded()) {
+                    game.player.placePuyoOnStage()
+
+                    // 連鎖処理を実行
+                    val chainResult = game.stage.processChain()
+
+                    if (chainResult.chainCount > 0) {
+                        // 各連鎖のスコアを計算
+                        chainResult.chainInfoList.forEachIndexed { index, chainInfo ->
+                            val chainNumber = index + 1 // 連鎖数は1から始まる
+                            val points = Score.calculate(
+                                chainInfo.erasedPuyoCount,
+                                chainNumber
+                            )
+                            game.score.add(points)
+                        }
+
+                        // 全消し判定を行い、全消しならボーナスを加算
+                        if (game.stage.isAllClear()) {
+                            val bonus = Score.calculateAllClearBonus()
+                            game.score.add(bonus)
+                        }
+                    }
+
+                    game.player.createNewPuyo()
+                }
+            }
+            updateTrigger++
+        }
+    }
+}
+```
+
+最後に、スコアを画面に表示します：
+
+```kotlin
+// App.kt
+Column(
+    modifier = Modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally
+) {
+    // スコア表示を追加
+    Text(
+        text = "スコア: ${game.score.value}",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(16.dp)
+    )
+
+    Canvas(/* ... 既存の Canvas コード ... */) {
+        // ...
+    }
+
+    // キーボード操作の Box
+    Box(/* ... */) {
+        // ...
+    }
+}
+```
+
+#### 解説
+
+**連鎖処理の変更**
+
+以前のイテレーションでは、消去処理をループで実装していましたが、今回は `processChain()` メソッドに統合しました。このメソッドは：
+
+1. 消去→重力→消去判定を繰り返す
+2. 各連鎖で消去したぷよの数を記録
+3. 連鎖数と詳細情報を返す
+
+**スコア加算のロジック**
+
+```kotlin
+chainResult.chainInfoList.forEachIndexed { index, chainInfo ->
+    val chainNumber = index + 1 // 連鎖数は1から始まる
+    val points = Score.calculate(
+        chainInfo.erasedPuyoCount,
+        chainNumber
+    )
+    game.score.add(points)
+}
+```
+
+`forEachIndexed` を使って、各連鎖のインデックス（0始まり）と情報を取得し、連鎖数（1始まり）に変換してスコアを計算します。
+
+**全消しボーナス**
+
+```kotlin
+if (game.stage.isAllClear()) {
+    val bonus = Score.calculateAllClearBonus()
+    game.score.add(bonus)
+}
+```
+
+連鎖処理が終わった後、ステージが空になっていたら全消しボーナスを加算します。
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: ゲームにスコア計算を統合"
+```
+
+### 5. ゲームオーバー判定を実装する
+
+新しいぷよが生成できなくなったらゲームオーバーにする機能を実装します。
+
+#### テストコード (Red)
+
+```kotlin
+// PlayerTest.kt
+@Test
+fun 新しいぷよの位置にすでにぷよがあるとゲームオーバー() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+
+    // 新しいぷよの初期位置（2, 0）にぷよを配置
+    stage.setPuyo(2, 0, 1)
+    player.createNewPuyo()
+
+    val isGameOver = player.checkGameOver()
+
+    assertEquals(true, isGameOver)
+}
+
+@Test
+fun 新しいぷよの位置が空いているとゲームオーバーではない() {
+    val config = Config()
+    val stage = Stage(config)
+    stage.initialize()
+    val player = Player(config, stage)
+    player.createNewPuyo()
+
+    val isGameOver = player.checkGameOver()
+
+    assertEquals(false, isGameOver)
+}
+```
+
+#### 実装コード (Green)
+
+```kotlin
+// Player.kt
+class Player(private val config: Config, private val stage: Stage) {
+    // ... 既存のコード ...
+
+    /**
+     * ゲームオーバー判定を行います
+     */
+    fun checkGameOver(): Boolean {
+        // 新しいぷよの配置位置（軸ぷよ）にすでにぷよがあるかチェック
+        if (stage.getPuyo(puyoX, puyoY) != 0) {
+            return true
+        }
+
+        // 子ぷよの位置もチェック
+        val (childX, childY) = getChildPuyoPosition()
+
+        // 子ぷよが画面外の場合はチェックしない
+        if (childY < 0 || childY >= config.stageHeight ||
+            childX < 0 || childX >= config.stageWidth) {
+            return false
+        }
+
+        // 子ぷよの位置にぷよがあるかチェック
+        if (stage.getPuyo(childX, childY) != 0) {
+            return true
+        }
+
+        return false
+    }
+}
+```
+
+#### 解説
+
+ゲームオーバー判定は：
+1. 新しいぷよの軸ぷよの位置にすでにぷよがあるか
+2. 子ぷよの位置にすでにぷよがあるか（画面内の場合のみ）
+
+をチェックします。どちらかに既存のぷよがあれば、新しいぷよを配置できないのでゲームオーバーです。
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: ゲームオーバー判定を実装"
+```
+
+### 6. ゲームオーバー画面を実装する
+
+ゲームオーバー時に画面を表示し、リスタート機能を追加します。
+
+#### 実装コード
+
+まず、`Game` クラスにゲームモードを追加します：
+
+```kotlin
+// Game.kt
+enum class GameMode {
+    PLAYING,
+    GAME_OVER
+}
+
+class Game {
+    val config = Config()
+    val stage = Stage(config)
+    val player = Player(config, stage)
+    val score = Score()
+    var mode: GameMode = GameMode.PLAYING
+
+    init {
+        stage.initialize()
+        player.createNewPuyo()
+    }
+
+    /**
+     * ゲームをリスタートします
+     */
+    fun restart() {
+        stage.initialize()
+        score.reset()
+        player.createNewPuyo()
+        mode = GameMode.PLAYING
+    }
+}
+```
+
+次に、`App.kt` でゲームオーバー判定と画面表示を実装します：
+
+```kotlin
+// App.kt
+@Composable
+fun App() {
+    var game by remember { mutableStateOf(Game()) }
+    var updateTrigger by remember { mutableStateOf(0) }
+    var frameCount by remember { mutableStateOf(0) }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // スコア表示
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "スコア: ${game.score.value}",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "モード: ${if (game.mode == GameMode.PLAYING) "プレイ中" else "ゲームオーバー"}",
+                fontSize = 18.sp
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .size(
+                    (game.config.stageWidth * cellSize).dp,
+                    (game.config.stageHeight * cellSize).dp
+                )
+        ) {
+            // ゲーム画面
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(2.dp, Color.Black)
+                    .onKeyEvent { event ->
+                        if (game.mode == GameMode.PLAYING && event.type == KeyEventType.KeyDown) {
+                            when (event.key) {
+                                Key.DirectionLeft -> {
+                                    game.player.moveLeft()
+                                    updateTrigger++
+                                    true
+                                }
+                                Key.DirectionRight -> {
+                                    game.player.moveRight()
+                                    updateTrigger++
+                                    true
+                                }
+                                Key.DirectionUp, Key.Z -> {
+                                    game.player.rotateRight()
+                                    updateTrigger++
+                                    true
+                                }
+                                Key.X -> {
+                                    game.player.rotateLeft()
+                                    updateTrigger++
+                                    true
+                                }
+                                Key.DirectionDown -> {
+                                    game.player.moveDown()
+                                    updateTrigger++
+                                    true
+                                }
+                                else -> false
+                            }
+                        } else {
+                            false
+                        }
+                    }
+                    .focusable()
+            ) {
+                updateTrigger // トリガーで再描画
+
+                // 背景
+                drawRect(Color.White)
+
+                // ... ステージと落下中のぷよの描画 ...
+            }
+
+            // ゲームオーバー画面
+            if (game.mode == GameMode.GAME_OVER) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.7f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .padding(32.dp)
+                    ) {
+                        Text(
+                            text = "GAME OVER",
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Red
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "スコア: ${game.score.value}",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = {
+                                game.restart()
+                                updateTrigger++
+                            }
+                        ) {
+                            Text("もう一度プレイする", fontSize = 18.sp)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ゲームループ
+    LaunchedEffect(game.mode) {
+        frameCount = 0
+        while (game.mode == GameMode.PLAYING) {
+            delay(16) // 約60FPS
+            frameCount++
+
+            // 約1秒ごとに落下
+            if (frameCount % 60 == 0) {
+                if (!game.player.moveDown()) {
+                    // 着地した
+                    if (game.player.hasLanded()) {
+                        game.player.placePuyoOnStage()
+
+                        // 連鎖処理を実行
+                        val chainResult = game.stage.processChain()
+
+                        if (chainResult.chainCount > 0) {
+                            // スコア計算
+                            chainResult.chainInfoList.forEachIndexed { index, chainInfo ->
+                                val chainNumber = index + 1
+                                val points = Score.calculate(
+                                    chainInfo.erasedPuyoCount,
+                                    chainNumber
+                                )
+                                game.score.add(points)
+                            }
+
+                            // 全消しボーナス
+                            if (game.stage.isAllClear()) {
+                                val bonus = Score.calculateAllClearBonus()
+                                game.score.add(bonus)
+                            }
+                        }
+
+                        // 新しいぷよを生成
+                        game.player.createNewPuyo()
+
+                        // ゲームオーバー判定
+                        if (game.player.checkGameOver()) {
+                            game.mode = GameMode.GAME_OVER
+                        }
+                    }
+                }
+                updateTrigger++
+            }
+        }
+    }
+}
+```
+
+#### 解説
+
+**ゲームモードの管理**
+
+```kotlin
+enum class GameMode {
+    PLAYING,
+    GAME_OVER
+}
+```
+
+ゲームの状態を管理するための列挙型です。`PLAYING` と `GAME_OVER` の 2 つの状態があります。
+
+**ゲームオーバー画面**
+
+```kotlin
+if (game.mode == GameMode.GAME_OVER) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.7f)),
+        contentAlignment = Alignment.Center
+    ) {
+        // ゲームオーバーメッセージとリスタートボタン
+    }
+}
+```
+
+半透明の黒い背景（`alpha = 0.7f`）の上に、白い角丸のボックスでゲームオーバーメッセージを表示します。
+
+**リスタート機能**
+
+```kotlin
+fun restart() {
+    stage.initialize()
+    score.reset()
+    player.createNewPuyo()
+    mode = GameMode.PLAYING
+}
+```
+
+ステージとスコアをリセットし、新しいぷよを生成してゲームモードを `PLAYING` に戻します。
+
+**LaunchedEffect の key**
+
+```kotlin
+LaunchedEffect(game.mode) {
+    frameCount = 0
+    while (game.mode == GameMode.PLAYING) {
+        // ...
+    }
+}
+```
+
+`LaunchedEffect(game.mode)` とすることで、`game.mode` が変更されたときに Effect が再起動されます。これにより、リスタート時にゲームループが正しく再開されます。
+
+#### コミット
+
+```bash
+git add .
+git commit -m "feat: ゲームオーバー画面とリスタート機能を実装"
+```
+
+### イテレーション 7 のまとめ
+
+おめでとうございます！イテレーション 7 が完了し、ぷよぷよゲームが完成しました！
+
+#### 実装した機能
+
+- [x] スコアクラスを実装する
+- [x] スコア計算機能を実装する（消去数 × 連鎖ボーナス）
+- [x] 全消しボーナスを実装する
+- [x] ゲームオーバー判定を実装する
+- [x] ゲームオーバー画面を実装する
+- [x] リスタート機能を実装する
+
+#### 学んだこと
+
+1. **companion object**
+   - クラスのインスタンスなしで呼び出せる静的メソッド
+   - `Score.calculate()` のようにユーティリティ関数として使える
+
+2. **連鎖ボーナスの計算**
+   - 指数関数的に増加するボーナステーブル
+   - `when` 式での分岐処理
+
+3. **ゲーム状態管理**
+   - `enum class` でゲームモードを定義
+   - 状態に応じて UI とロジックを切り替え
+
+4. **LaunchedEffect の key パラメータ**
+   - key が変更されると Effect が再起動される
+   - ゲームループの再開に活用
+
+5. **Compose の UI レイヤリング**
+   - `Box` と `Modifier.background()` で半透明オーバーレイ
+   - ゲームオーバー画面の実装パターン
+
+#### 完成したゲームの特徴
+
+- ✅ ぷよを操作できる（移動・回転）
+- ✅ 自動落下する
+- ✅ 4 つ以上つながったら消える
+- ✅ 連鎖が発生する
+- ✅ スコアが計算される
+- ✅ 全消しボーナスがある
+- ✅ ゲームオーバー判定がある
+- ✅ リスタートできる
+
+### さらなる改善のアイデア
+
+このゲームは完成しましたが、さらに改良できる要素があります：
+
+1. **Next ぷよの表示**: 次に来るぷよを表示する
+2. **効果音**: ぷよを消したときの音
+3. **アニメーション**: 消去時のエフェクト
+4. **難易度調整**: 落下速度が徐々に速くなる
+5. **ハイスコア**: ローカルストレージに保存
+6. **2 人対戦モード**: おじゃまぷよの実装
+
+これらの機能を追加することで、さらに本格的なゲームに仕上げることができます！
+
+### テスト駆動開発を振り返って
+
+この「ぷよぷよから始めるテスト駆動開発入門」では、7 つのイテレーションを通じて、段階的にゲームを作り上げてきました：
+
+- **イテレーション 0**: 環境構築
+- **イテレーション 1**: ゲームの初期化と表示
+- **イテレーション 2**: ぷよの落下
+- **イテレーション 3**: 左右移動
+- **イテレーション 4**: 2 つぷよと回転
+- **イテレーション 5**: キーボード操作とゲームループ
+- **イテレーション 6**: 消去処理
+- **イテレーション 7**: スコア計算とゲームオーバー
+
+各イテレーションで：
+
+1. **小さなステップ**: 一度に 1 つの機能だけを実装
+2. **Red-Green-Refactor**: テスト → 実装 → 改善のサイクル
+3. **早期のフィードバック**: テストによる即座の確認
+4. **自信を持ってリファクタリング**: テストがあるので安心
+
+テスト駆動開発は、最初は遠回りに感じるかもしれません。しかし：
+
+- バグが早期に発見できる
+- 設計が改善される
+- ドキュメントの役割も果たす
+- リファクタリングが安全にできる
+
+という大きなメリットがあります。
+
+> "Make it work, make it right, make it fast."
+>
+> — Kent Beck
+
+まずは動くものを作り、次に正しく作り、最後に高速化する。テスト駆動開発は、この原則を実践するための強力な手法です。
+
+お疲れ様でした！あなたは TDD でぷよぷよゲームを完成させることができました。この経験を活かして、さらに素晴らしいソフトウェアを作っていってください！
