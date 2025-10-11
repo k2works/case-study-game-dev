@@ -104,14 +104,23 @@ cd build/compose/jars
 #### リリースパッケージの作成
 
 ```bash
-# 必要なファイルを ZIP にまとめる
-cd build/compose/jars
-zip puyo-puyo-tdd-v1.0.0.zip \
-  puyo-puyo-tdd-windows-x64-1.0.0.jar \
-  puyo-puyo-tdd.bat \
-  puyo-puyo-tdd.sh \
-  README.txt
+# 完全なリリースパッケージを作成（推奨）
+./gradlew release
+
+# または個別にタスクを実行
+./gradlew createReleasePackage
+
+# 生成されたパッケージ
+# build/release/puyo-puyo-tdd-v1.0.1.zip
 ```
+
+**パッケージ内容:**
+- `puyo-puyo-tdd-windows-x64-1.0.1.jar` - 実行可能 JAR (バージョン非依存の起動スクリプト対応)
+- `puyo-puyo-tdd.bat` - Windows 起動スクリプト
+- `puyo-puyo-tdd.sh` - Linux/macOS 起動スクリプト
+- `README.txt` - クイックスタートガイド
+- `README.md` - プロジェクトドキュメント
+- `RELEASE.md` - リリースノート
 
 **[⬆ back to top](#構成)**
 
