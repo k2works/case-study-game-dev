@@ -311,4 +311,27 @@ public class PlayerTest
         // Assert
         Assert.False(hasLanded);
     }
+
+    /// <summary>
+    /// 着地したぷよをステージに配置できるかテスト.
+    /// </summary>
+    [Fact]
+    public void 着地したぷよをステージに配置できる()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(1);
+        this.player.SetPuyoY(11);
+        this.player.SetRotation(0); // 上向き
+        var puyoType = this.player.PuyoType;
+
+        // Act
+        this.player.PlacePuyoOnStage();
+
+        // Assert
+        // 軸ぷよ (1, 11) と子ぷよ (1, 10) がステージに配置される
+        Assert.Equal(puyoType, this.stage.GetPuyo(1, 11));
+        Assert.Equal(puyoType, this.stage.GetPuyo(1, 10));
+    }
 }

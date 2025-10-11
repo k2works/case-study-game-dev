@@ -225,4 +225,35 @@ public class Player
         int maxY = this.rotation == 2 ? this.config.StageHeight - 2 : this.config.StageHeight - 1;
         return this.puyoY >= maxY;
     }
+
+    /// <summary>
+    /// 着地したぷよをステージに配置します.
+    /// </summary>
+    public void PlacePuyoOnStage()
+    {
+        // 軸ぷよを配置
+        this.stage.SetPuyo(this.puyoX, this.puyoY, this.puyoType);
+
+        // 子ぷよの位置を計算して配置
+        int childX = this.puyoX;
+        int childY = this.puyoY;
+
+        switch (this.rotation)
+        {
+            case 0: // 上
+                childY = this.puyoY - 1;
+                break;
+            case 1: // 右
+                childX = this.puyoX + 1;
+                break;
+            case 2: // 下
+                childY = this.puyoY + 1;
+                break;
+            case 3: // 左
+                childX = this.puyoX - 1;
+                break;
+        }
+
+        this.stage.SetPuyo(childX, childY, this.puyoType);
+    }
 }

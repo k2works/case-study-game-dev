@@ -55,6 +55,17 @@ public class Stage
     }
 
     /// <summary>
+    /// ぷよを取得します.
+    /// </summary>
+    /// <param name="x">X座標.</param>
+    /// <param name="y">Y座標.</param>
+    /// <returns>ぷよの種類.</returns>
+    public int GetPuyo(int x, int y)
+    {
+        return this.board[x, y];
+    }
+
+    /// <summary>
     /// 消去可能なぷよをチェックします.
     /// </summary>
     /// <returns>消去情報.</returns>
