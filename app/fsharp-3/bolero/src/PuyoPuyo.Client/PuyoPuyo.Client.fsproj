@@ -6,6 +6,7 @@
     <RootNamespace>PuyoPuyo</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Domain\測定単位.fs" />
     <Compile Include="Domain\ぷよ.fs" />
     <Compile Include="Domain\盤面.fs" />
     <Compile Include="Domain\ぷよペア.fs" />

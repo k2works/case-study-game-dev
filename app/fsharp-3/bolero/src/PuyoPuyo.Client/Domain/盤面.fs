@@ -8,30 +8,34 @@ type セル =
     | 埋まっている of ぷよの色
 
 /// ゲームボード
-type 盤面 = { 列数: int; 行数: int; セル配列: セル[][] }
+type 盤面 = { 列数: int<列>; 行数: int<行>; セル配列: セル[][] }
 
 module 盤面 =
     /// 空のボードを作成
-    let 作成 (列数: int) (行数: int) : 盤面 =
+    let 作成 (列数: int<列>) (行数: int<行>) : 盤面 =
         { 列数 = 列数
           行数 = 行数
-          セル配列 = Array.init 行数 (fun _ -> Array.create 列数 空) }
+          セル配列 = Array.init (int 行数) (fun _ -> Array.create (int 列数) 空) }
 
     /// セルの取得
-    let セル取得 (盤面: 盤面) (列: int) (行: int) : セル =
-        if 行 >= 0 && 行 < 盤面.行数 && 列 >= 0 && 列 < 盤面.列数 then
-            盤面.セル配列.[行].[列]
+    let セル取得 (盤面: 盤面) (列: int<列>) (行: int<行>) : セル =
+        let 列値 = int 列
+        let 行値 = int 行
+        if 行値 >= 0 && 行値 < (int 盤面.行数) && 列値 >= 0 && 列値 < (int 盤面.列数) then
+            盤面.セル配列.[行値].[列値]
         else
             空
 
     /// セルの設定（イミュータブル）
-    let セル設定 (盤面: 盤面) (設定列: int) (設定行: int) (設定セル: セル) : 盤面 =
-        if 設定行 >= 0 && 設定行 < 盤面.行数 && 設定列 >= 0 && 設定列 < 盤面.列数 then
+    let セル設定 (盤面: 盤面) (設定列: int<列>) (設定行: int<行>) (設定セル: セル) : 盤面 =
+        let 設定列値 = int 設定列
+        let 設定行値 = int 設定行
+        if 設定行値 >= 0 && 設定行値 < (int 盤面.行数) && 設定列値 >= 0 && 設定列値 < (int 盤面.列数) then
             let 新しいセル配列 =
                 盤面.セル配列
                 |> Array.mapi (fun 行 列内セル配列 ->
-                    if 行 = 設定行 then
-                        列内セル配列 |> Array.mapi (fun 列 セル -> if 列 = 設定列 then 設定セル else セル)
+                    if 行 = 設定行値 then
+                        列内セル配列 |> Array.mapi (fun 列 セル -> if 列 = 設定列値 then 設定セル else セル)
                     else
                         列内セル配列)
 
@@ -40,19 +44,19 @@ module 盤面 =
             盤面
 
     /// 2つの位置にぷよを固定（ぷよペア用のヘルパー関数）
-    let ぷよ2つ固定 (盤面: 盤面) (位置1: int * int) (色1: ぷよの色) (位置2: int * int) (色2: ぷよの色) : 盤面 =
+    let ぷよ2つ固定 (盤面: 盤面) (位置1: int<列> * int<行>) (色1: ぷよの色) (位置2: int<列> * int<行>) (色2: ぷよの色) : 盤面 =
         let (x1, y1) = 位置1
         let (x2, y2) = 位置2
 
         盤面 |> (fun 盤 -> セル設定 盤 x1 y1 (埋まっている 色1)) |> (fun 盤 -> セル設定 盤 x2 y2 (埋まっている 色2))
 
     /// つながったぷよグループを検出（BFS アルゴリズム）
-    let つながったグループ検出 (盤面: 盤面) : (int * int) list list =
-        let 訪問済み = Array.init 盤面.行数 (fun _ -> Array.create 盤面.列数 false)
+    let つながったグループ検出 (盤面: 盤面) : (int<列> * int<行>) list list =
+        let 訪問済み = Array.init (int 盤面.行数) (fun _ -> Array.create (int 盤面.列数) false)
         let mutable グループリスト = []
 
         /// BFS で同じ色のつながったぷよを探索
-        let BFS探索 (開始列: int) (開始行: int) (対象色: ぷよの色) : (int * int) list =
+        let BFS探索 (開始列: int) (開始行: int) (対象色: ぷよの色) : (int<列> * int<行>) list =
             let キュー = System.Collections.Generic.Queue<int * int>()
             let mutable グループ = []
 
@@ -67,20 +71,20 @@ module 盤面 =
                 let 隣接セル = [ (現在列 - 1, 現在行); (現在列 + 1, 現在行); (現在列, 現在行 - 1); (現在列, 現在行 + 1) ]
 
                 for (隣列, 隣行) in 隣接セル do
-                    if 隣行 >= 0 && 隣行 < 盤面.行数 && 隣列 >= 0 && 隣列 < 盤面.列数 && not 訪問済み.[隣行].[隣列] then
-                        match セル取得 盤面 隣列 隣行 with
+                    if 隣行 >= 0 && 隣行 < (int 盤面.行数) && 隣列 >= 0 && 隣列 < (int 盤面.列数) && not 訪問済み.[隣行].[隣列] then
+                        match セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 隣列) (LanguagePrimitives.Int32WithMeasure<行> 隣行) with
                         | 埋まっている 色 when 色 = 対象色 ->
                             訪問済み.[隣行].[隣列] <- true
                             キュー.Enqueue((隣列, 隣行))
                         | _ -> ()
 
-            グループ
+            グループ |> List.map (fun (列, 行) -> (LanguagePrimitives.Int32WithMeasure<列> 列, LanguagePrimitives.Int32WithMeasure<行> 行))
 
         // すべてのセルをスキャン
-        for 行 in 0 .. 盤面.行数 - 1 do
-            for 列 in 0 .. 盤面.列数 - 1 do
+        for 行 in 0 .. (int 盤面.行数) - 1 do
+            for 列 in 0 .. (int 盤面.列数) - 1 do
                 if not 訪問済み.[行].[列] then
-                    match セル取得 盤面 列 行 with
+                    match セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行) with
                     | 埋まっている 色 ->
                         let グループ = BFS探索 列 行 色
 
@@ -92,36 +96,37 @@ module 盤面 =
         グループリスト
 
     /// 指定位置のぷよを消去
-    let ぷよ消去 (盤面: 盤面) (消去位置リスト: (int * int) list) : 盤面 =
+    let ぷよ消去 (盤面: 盤面) (消去位置リスト: (int<列> * int<行>) list) : 盤面 =
         List.fold (fun 現在の盤面 (列, 行) -> セル設定 現在の盤面 列 行 空) 盤面 消去位置リスト
 
     /// 重力を適用（浮いているぷよを落下させる）
     let 重力適用 (盤面: 盤面) : 盤面 =
         // 各列に対して重力を適用
         let rec 列を処理 (現在の盤面: 盤面) (列: int) : 盤面 =
-            if 列 >= 盤面.列数 then
+            if 列 >= (int 盤面.列数) then
                 現在の盤面
             else
+                let 列測定単位 = LanguagePrimitives.Int32WithMeasure<列> 列
                 // 下から順に空でないセルを集める（現在の盤面から読み取る）
                 let mutable ぷよリスト = []
 
-                for 行 in 0 .. 盤面.行数 - 1 do
-                    match セル取得 現在の盤面 列 行 with
+                for 行 in 0 .. (int 盤面.行数) - 1 do
+                    match セル取得 現在の盤面 列測定単位 (LanguagePrimitives.Int32WithMeasure<行> 行) with
                     | 埋まっている 色 -> ぷよリスト <- 色 :: ぷよリスト
                     | 空 -> ()
 
                 // 列全体をクリア
                 let mutable 列クリア後 = 現在の盤面
 
-                for 行 in 0 .. 盤面.行数 - 1 do
-                    列クリア後 <- セル設定 列クリア後 列 行 空
+                for 行 in 0 .. (int 盤面.行数) - 1 do
+                    列クリア後 <- セル設定 列クリア後 列測定単位 (LanguagePrimitives.Int32WithMeasure<行> 行) 空
 
                 // 下から順にぷよを配置
-                let mutable 現在行 = 盤面.行数 - 1
+                let mutable 現在行 = (int 盤面.行数) - 1
                 let mutable 列処理後 = 列クリア後
 
                 for 色 in ぷよリスト do
-                    列処理後 <- セル設定 列処理後 列 現在行 (埋まっている 色)
+                    列処理後 <- セル設定 列処理後 列測定単位 (LanguagePrimitives.Int32WithMeasure<行> 現在行) (埋まっている 色)
                     現在行 <- 現在行 - 1
 
                 列を処理 列処理後 (列 + 1)
