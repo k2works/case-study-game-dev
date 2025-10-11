@@ -177,4 +177,37 @@ public class Player
     {
         this.rotation = rotation;
     }
+
+    /// <summary>
+    /// ぷよのY座標を設定します.
+    /// </summary>
+    /// <param name="y">Y座標.</param>
+    public void SetPuyoY(int y)
+    {
+        this.puyoY = y;
+    }
+
+    /// <summary>
+    /// 落下速度を取得します.
+    /// </summary>
+    /// <returns>落下速度.</returns>
+    public int GetDropSpeed()
+    {
+        return this.InputKeyDown ? 10 : 1;
+    }
+
+    /// <summary>
+    /// ぷよを下に移動します.
+    /// </summary>
+    /// <returns>移動できたかどうか.</returns>
+    public bool MoveDown()
+    {
+        if (this.puyoY < this.config.StageHeight - 1)
+        {
+            this.puyoY++;
+            return true;
+        }
+
+        return false;
+    }
 }

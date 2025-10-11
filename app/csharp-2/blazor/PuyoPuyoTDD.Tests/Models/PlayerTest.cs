@@ -187,4 +187,56 @@ public class PlayerTest
         // Assert
         Assert.Equal(0, this.player.Rotation);
     }
+
+    /// <summary>
+    /// 下キーが押されていると落下速度が上がるかテスト.
+    /// </summary>
+    [Fact]
+    public void 下キーが押されていると落下速度が上がる()
+    {
+        // Arrange
+        this.player.SetInputDown(true);
+
+        // Act
+        var dropSpeed = this.player.GetDropSpeed();
+
+        // Assert
+        Assert.True(dropSpeed > 1);
+    }
+
+    /// <summary>
+    /// 下に移動できる場合下に移動するかテスト.
+    /// </summary>
+    [Fact]
+    public void 下に移動できる場合下に移動する()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        var initialY = this.player.PuyoY;
+
+        // Act
+        var canMove = this.player.MoveDown();
+
+        // Assert
+        Assert.True(canMove);
+        Assert.Equal(initialY + 1, this.player.PuyoY);
+    }
+
+    /// <summary>
+    /// 下に障害物がある場合下に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void 下に障害物がある場合下に移動できない()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoY(this.config.StageHeight - 1);
+
+        // Act
+        var canMove = this.player.MoveDown();
+
+        // Assert
+        Assert.False(canMove);
+        Assert.Equal(this.config.StageHeight - 1, this.player.PuyoY);
+    }
 }
