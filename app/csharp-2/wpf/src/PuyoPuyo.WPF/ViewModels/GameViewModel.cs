@@ -75,6 +75,9 @@ public partial class GameViewModel : ObservableObject
                     // 着地した場合の処理
                     Game.Player.PlacePuyoOnStage(Game.Stage);
 
+                    // 重力を適用（ぷよを下に落とす）
+                    Game.Stage.ApplyGravity();
+
                     // 連鎖カウントのリセット
                     int chainCount = 0;
 
