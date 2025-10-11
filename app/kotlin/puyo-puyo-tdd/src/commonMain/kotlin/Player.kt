@@ -49,7 +49,14 @@ class Player(private val config: Config, private val stage: Stage) {
     }
 
     fun placePuyoOnStage() {
+        // 軸ぷよを配置
         stage.setPuyo(puyoX, puyoY, puyoType)
+
+        // 子ぷよを配置
+        val (childX, childY) = getChildPuyoPosition()
+        if (childY >= 0 && childY < config.stageHeight) {
+            stage.setPuyo(childX, childY, childPuyoType)
+        }
     }
 
     fun moveLeft() {

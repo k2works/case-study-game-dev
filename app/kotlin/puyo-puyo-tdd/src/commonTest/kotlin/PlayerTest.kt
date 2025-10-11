@@ -154,6 +154,32 @@ class PlayerTest {
     }
 
     @Test
+    fun 着地したぷよを配置すると子ぷよもステージに配置される() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+        val childPuyoType = player.childPuyoType
+
+        // ぷよをステージの底まで移動
+        while (!player.hasLanded()) {
+            player.moveDown()
+        }
+        val (childX, childY) = player.getChildPuyoPosition()
+
+        // Act
+        player.placePuyoOnStage()
+
+        // Assert
+        // 子ぷよがステージ内にある場合のみ配置される
+        if (childY >= 0 && childY < config.stageHeight) {
+            assertEquals(childPuyoType, stage.getPuyo(childX, childY))
+        }
+    }
+
+    @Test
     fun ぷよを左に移動できる() {
         // Arrange
         val config = Config()

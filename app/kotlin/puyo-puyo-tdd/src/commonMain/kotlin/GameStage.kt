@@ -46,8 +46,21 @@ fun GameStage(game: Game) {
             }
         }
 
-        // 落下中のぷよを描画
-        drawPuyo(game.player.puyoX, game.player.puyoY, game.player.puyoType, game.config.puyoSize)
+        // 落下中のぷよを描画（軸ぷよ）
+        if (game.player.puyoType != 0) {
+            drawPuyo(
+                game.player.puyoX,
+                game.player.puyoY,
+                game.player.puyoType,
+                game.config.puyoSize,
+            )
+
+            // 子ぷよの描画
+            val (childX, childY) = game.player.getChildPuyoPosition()
+            if (childY >= 0 && childY < game.config.stageHeight) {
+                drawPuyo(childX, childY, game.player.childPuyoType, game.config.puyoSize)
+            }
+        }
     }
 }
 
