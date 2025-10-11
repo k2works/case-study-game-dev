@@ -18,10 +18,10 @@ let ``スコアを加算できる`` () =
     let 現在のスコア = スコア.作成 ()
 
     // Act
-    let updatedScore = スコア.スコア加算 現在のスコア 100
+    let 更新スコア = スコア.スコア加算 現在のスコア 100
 
     // Assert
-    updatedScore.値 |> should equal 100
+    更新スコア.値 |> should equal 100
 
 [<Fact>]
 let ``スコアを複数回加算できる`` () =
@@ -37,10 +37,10 @@ let ``全消しボーナスを加算できる`` () =
     let 現在のスコア = スコア.作成 ()
 
     // Act
-    let updatedScore = スコア.全消しボーナス加算 現在のスコア
+    let 更新スコア = スコア.全消しボーナス加算 現在のスコア
 
     // Assert
-    updatedScore.値 |> should equal 3600
+    更新スコア.値 |> should equal 3600
 
 [<Fact>]
 let ``通常スコアと全消しボーナスを組み合わせて加算できる`` () =
