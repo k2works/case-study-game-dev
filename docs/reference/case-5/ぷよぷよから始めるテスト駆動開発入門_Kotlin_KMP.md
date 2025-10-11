@@ -1226,12 +1226,12 @@ class ConfigTest {
         val config = Config()
 
         // Act & Assert
-        assertEquals(32, config.puyoSize)
+        assertEquals(40, config.puyoSize)
     }
 }
 ```
 
-このテストでは、`Config` クラスが適切な設定値を持っているかを確認しています。ステージの幅は 6、高さは 13、ぷよのサイズは 32 ピクセルという、ぷよぷよゲームの標準的な設定値です。
+このテストでは、`Config` クラスが適切な設定値を持っているかを確認しています。ステージの幅は 6、高さは 13、ぷよのサイズは 40 ピクセルという、ぷよぷよゲームの標準的な設定値です。
 
 ### 実装: ゲーム設定
 
@@ -1253,7 +1253,7 @@ package com.example.puyopuyo
 class Config {
     val stageWidth: Int = 6
     val stageHeight: Int = 13
-    val puyoSize: Int = 32
+    val puyoSize: Int = 40
 }
 ```
 
@@ -1273,7 +1273,7 @@ $ ./gradlew test
 
 - **stageWidth**: ステージの横幅（マス数）= 6
 - **stageHeight**: ステージの高さ（マス数）= 13
-- **puyoSize**: 1 つのぷよの表示サイズ（ピクセル数）= 32
+- **puyoSize**: 1 つのぷよの表示サイズ（ピクセル数）= 40
 
 これらの値をクラスにまとめることで、設定の変更が容易になります。例えば、「ステージを広くしたい」と思ったときに、`stageWidth` の値を変更するだけで済むんです。これは、「変更に強いコード」を書くための重要なテクニックです。
 
@@ -1348,7 +1348,7 @@ enum class GameMode {
     Erasing,
     NewPuyo,
     Playing,
-    GameOver
+    GameOver,
 }
 
 class Game {
@@ -1370,6 +1370,7 @@ class Game {
         // 各コンポーネントの初期化
         config = Config()
         stage = Stage(config)
+        stage.initialize()
         player = Player(config, stage)
         score = Score()
 
@@ -1509,27 +1510,32 @@ fun ScoreDisplay(score: Int) {
 
 まず、アプリケーションのエントリーポイントを作成します。デスクトップアプリケーションの場合、`Main.kt` がエントリーポイントになります。
 
-`src/desktopMain/kotlin/Main.kt`:
+`src/jvmMain/kotlin/Main.kt`:
 
 ```kotlin
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.example.puyopuyo.GameApp
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "ぷよぷよ TDD"
-    ) {
-        GameApp()
+fun main() =
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "ぷよぷよ TDD",
+            state = WindowState(width = 400.dp, height = 800.dp),
+        ) {
+            GameApp()
+        }
     }
-}
 ```
 
 このコードでは、以下のことを行っています:
 
 - **application**: Compose Desktop アプリケーションを起動
 - **Window**: ウィンドウを作成（タイトルとクローズハンドラを設定）
+- **WindowState**: ウィンドウのサイズを 400×800 ピクセルに設定
 - **GameApp**: ゲーム画面のルートコンポーネントを表示
 
 シンプルですよね！これだけでウィンドウが作成されます。
@@ -1544,9 +1550,9 @@ fun main() = application {
 package com.example.puyopuyo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -1564,7 +1570,7 @@ fun GameApp() {
     MaterialTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colors.background
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -1574,7 +1580,7 @@ fun GameApp() {
                 // タイトル
                 Text(
                     text = "ぷよぷよ",
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.h3
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1582,7 +1588,7 @@ fun GameApp() {
                 // スコア表示
                 Text(
                     text = "スコア: ${game.score.value}",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.h5
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1590,7 +1596,7 @@ fun GameApp() {
                 // ゲームモード表示
                 Text(
                     text = "モード: ${game.mode}",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.body1
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -1623,14 +1629,14 @@ val game = remember {
 MaterialTheme {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colors.background
     ) {
         // UI コンポーネント
     }
 }
 ```
 
-`MaterialTheme` は、Google の Material Design 3 のスタイルを適用するためのコンポーネントです。これにより、一貫したデザインの UI を簡単に作成できます。
+`MaterialTheme` は、Google の Material Design のスタイルを適用するためのコンポーネントです。これにより、一貫したデザインの UI を簡単に作成できます。
 
 **レイアウトの構築:**
 
@@ -2644,7 +2650,7 @@ drawCircle(
 
 #### アプリケーションの更新
 
-最後に、`GameApp.kt` を更新して、ぷよが自動的に落下するようにします。実際のゲームループは後のイテレーションで実装しますが、ここでは簡単な仕組みを追加しましょう。
+最後に、`GameApp.kt` を更新して、ぷよが自動的に落下するようにします。ゲームループを実装して、500ms ごとにぷよを下に移動させましょう。
 
 `src/commonMain/kotlin/GameApp.kt` を以下のように更新します:
 
@@ -2652,10 +2658,9 @@ drawCircle(
 package com.example.puyopuyo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -2664,38 +2669,59 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GameApp() {
     // ゲームインスタンスの作成と初期化
-    val game = remember {
-        Game().apply {
-            initialize()
-            player.createNewPuyo() // 最初のぷよを生成
+    val game =
+        remember {
+            Game().apply {
+                initialize()
+                player.createNewPuyo()
+            }
         }
-    }
 
-    // 再描画のトリガー
+    // 再描画をトリガーするための状態
     var updateTrigger by remember { mutableStateOf(0) }
+
+    // ゲームループ：500ms ごとにぷよを下に移動
+    LaunchedEffect(updateTrigger) {
+        kotlinx.coroutines.delay(500)
+        if (!game.player.moveDown()) {
+            // 移動できなかった場合は着地
+            if (game.player.hasLanded()) {
+                game.player.placePuyoOnStage()
+                game.player.createNewPuyo()
+            }
+        }
+        updateTrigger++ // 再描画をトリガー
+    }
 
     MaterialTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colors.background,
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 // タイトル
                 Text(
                     text = "ぷよぷよ",
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.h3,
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ゲームステージ
+                key(updateTrigger) {
+                    GameStage(game)
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // スコア表示
                 Text(
                     text = "スコア: ${game.score.value}",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.h5,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -2703,37 +2729,8 @@ fun GameApp() {
                 // ゲームモード表示
                 Text(
                     text = "モード: ${game.mode}",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.body1,
                 )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // ゲームステージ
-                GameStage(game)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // テスト用ボタン（後で削除予定）
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(onClick = {
-                        game.player.moveDown()
-                        updateTrigger++ // 再描画をトリガー
-                    }) {
-                        Text("下に移動")
-                    }
-
-                    Button(onClick = {
-                        if (game.player.hasLanded()) {
-                            game.player.placePuyoOnStage()
-                            game.player.createNewPuyo()
-                        }
-                        updateTrigger++
-                    }) {
-                        Text("新しいぷよ")
-                    }
-                }
             }
         }
     }
@@ -2743,8 +2740,12 @@ fun GameApp() {
 この更新では:
 
 - `player.createNewPuyo()` で最初のぷよを生成
-- `updateTrigger` で再描画をトリガー
-- テスト用のボタンを追加（手動でぷよを移動・生成）
+- `updateTrigger` 状態で再描画をトリガー
+- `LaunchedEffect` でゲームループを実装
+  - 500ms ごとにぷよを下に移動
+  - 移動できない場合は着地判定を行い、新しいぷよを生成
+  - `updateTrigger++` で次のループをトリガー
+- `key(updateTrigger)` で GameStage を包むことで、状態が変わったときに再描画される
 
 #### アプリケーションの実行
 
@@ -2758,11 +2759,11 @@ $ ./gradlew run
 ウィンドウが開いて、以下のような画面が表示されるはずです:
 
 - ステージの中央上部に色付きのぷよが表示される
-- 「下に移動」ボタンをクリックするとぷよが落下する
-- ぷよが底に到達したら「新しいぷよ」ボタンで次のぷよを生成できる
+- 500ms ごとに自動的にぷよが下に落下する
+- ぷよが底に到達したら自動的に新しいぷよが生成される
 - ステージに配置されたぷよは残り続ける
 
-「動いた！ぷよが見える！」と感動しますよね。まだ自動落下ではありませんが、ぷよぷよゲームらしくなってきました！
+「動いた！ぷよが自動的に落ちてくる！」と感動しますよね。ゲームループが実装されて、ぷよぷよゲームらしくなってきました！
 
 設定をコミットしておきましょう:
 
@@ -2811,17 +2812,18 @@ $ git commit -m 'feat: ぷよの描画機能を実装'
 6. **DrawScope の拡張関数**: `DrawScope` の拡張関数として描画ロジックを分離する方法を学びました
 7. **object によるシングルトン**: Kotlin の `object` キーワードでシングルトンを定義する方法を理解しました
 8. **mutableStateOf による状態管理**: Compose での状態変更と再描画のトリガー方法を学びました
+9. **LaunchedEffect によるゲームループ**: コルーチンを使った自動実行と状態更新の仕組みを理解しました
+10. **key による再描画制御**: Compose での効率的な再描画のトリガー方法を学びました
 
 #### 次のイテレーションへ
 
-現在、ぷよは手動で移動・生成できますが、まだゲームとしては完成していません。次のイテレーションでは、以下の機能を実装していきます:
+現在、ぷよは自動的に落下し、新しいぷよが生成されるようになりました。次のイテレーションでは、以下の機能を実装していきます:
 
-- ぷよの自動落下（ゲームループの実装）
 - キーボード操作（左右移動、回転）
 - ぷよの回転機能
 - 2 つのぷよ（軸ぷよと子ぷよ）の実装
 
-少しずつゲームらしくなってきましたね。引き続き、テスト駆動開発のサイクルに従って、機能を追加していきましょう！
+ゲームらしくなってきましたね。引き続き、テスト駆動開発のサイクルに従って、機能を追加していきましょう！
 
 ## イテレーション 3: ぷよの操作
 
