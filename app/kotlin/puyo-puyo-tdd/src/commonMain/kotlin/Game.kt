@@ -21,7 +21,6 @@ class Game {
     lateinit var score: Score
         private set
     var mode: GameMode = GameMode.Start
-        private set
 
     private var frame: Int = 0
     private var combinationCount: Int = 0

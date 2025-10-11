@@ -33,11 +33,12 @@ fun GameApp() {
     val focusRequester = remember { FocusRequester() }
 
     // ゲームループ：約60FPSで動作
-    LaunchedEffect(Unit) {
+    LaunchedEffect(game.mode) {
         // 起動時にフォーカスを要求
         focusRequester.requestFocus()
 
-        while (true) {
+        frameCount = 0
+        while (game.mode != GameMode.GameOver) {
             kotlinx.coroutines.delay(16) // 約60FPS
             frameCount++
 
@@ -70,7 +71,13 @@ fun GameApp() {
                             }
                         }
 
+                        // 新しいぷよを生成
                         game.player.createNewPuyo()
+
+                        // ゲームオーバー判定
+                        if (game.player.checkGameOver()) {
+                            game.mode = GameMode.GameOver
+                        }
                     }
                 }
                 updateTrigger++ // 再描画をトリガー
@@ -84,7 +91,7 @@ fun GameApp() {
                 .fillMaxSize()
                 .focusRequester(focusRequester)
                 .onKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown) {
+                    if (game.mode != GameMode.GameOver && event.type == KeyEventType.KeyDown) {
                         when (event.key) {
                             Key.DirectionLeft -> {
                                 game.player.moveLeft()
@@ -166,6 +173,40 @@ fun GameApp() {
                         updateTrigger++
                     }) {
                         Text("リセット")
+                    }
+
+                    // ゲームオーバー画面
+                    if (game.mode == GameMode.GameOver) {
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "GAME OVER",
+                                style = MaterialTheme.typography.h3,
+                                color = MaterialTheme.colors.error,
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                text = "最終スコア: ${game.score.value}",
+                                style = MaterialTheme.typography.h5,
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Button(
+                                onClick = {
+                                    game.reset()
+                                    game.mode = GameMode.Start
+                                    updateTrigger++
+                                },
+                            ) {
+                                Text("もう一度プレイする")
+                            }
+                        }
                     }
                 }
             }
