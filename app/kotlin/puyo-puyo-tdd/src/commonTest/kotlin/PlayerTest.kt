@@ -432,4 +432,35 @@ class PlayerTest {
         // この時点で子ぷよ(puyoY + 1)が配置済みぷよの上に到達
         assertTrue(player.hasLanded())
     }
+
+    @Test
+    fun 子ぷよが下にある状態で移動できなくなる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // 底にぷよを配置
+        stage.setPuyo(2, 11, 1)
+
+        // 子ぷよを下にする（2回右回転）
+        player.rotateRight()
+        player.rotateRight()
+        assertEquals(2, player.rotation) // 子ぷよが下
+
+        // puyoY=9 まで移動（子ぷよが puyoY=10 になる）
+        while (player.puyoY < 9) {
+            player.moveDown()
+        }
+
+        // Act
+        // この時点で子ぷよ（puyoY + 1 = 10）の下（11）に配置済みぷよがある
+        val canMove = player.moveDown()
+
+        // Assert
+        assertFalse(canMove) // 移動できない
+        assertEquals(9, player.puyoY) // 移動していない
+    }
 }

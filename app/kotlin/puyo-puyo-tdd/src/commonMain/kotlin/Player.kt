@@ -26,14 +26,37 @@ class Player(private val config: Config, private val stage: Stage) {
     }
 
     fun moveDown(): Boolean {
-        if (puyoY < config.stageHeight - 1) {
-            // 移動先にぷよがないかチェック
-            if (stage.getPuyo(puyoX, puyoY + 1) == 0) {
-                puyoY++
-                return true
+        // 軸ぷよが底に到達していないかチェック
+        if (puyoY >= config.stageHeight - 1) {
+            return false
+        }
+
+        // 軸ぷよの移動先にぷよがないかチェック
+        if (stage.getPuyo(puyoX, puyoY + 1) != 0) {
+            return false
+        }
+
+        // 子ぷよの移動先チェック
+        val (childX, childY) = getChildPuyoPosition()
+        if (childY >= 0 && childY < config.stageHeight) {
+            // 子ぷよが範囲内にある場合
+            val newChildY = childY + 1
+
+            // 子ぷよが底を超えるかチェック
+            if (newChildY >= config.stageHeight) {
+                return false
+            }
+
+            // 子ぷよの移動先にぷよがないかチェック
+            val newChildX = childX
+            if (stage.getPuyo(newChildX, newChildY) != 0) {
+                return false
             }
         }
-        return false
+
+        // 移動可能
+        puyoY++
+        return true
     }
 
     fun hasLanded(): Boolean {
