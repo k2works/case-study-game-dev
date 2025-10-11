@@ -277,4 +277,38 @@ public class PlayerTest
         Assert.True(canMove);
         Assert.Equal(this.config.StageHeight - 1, this.player.PuyoY);
     }
+
+    /// <summary>
+    /// ぷよが着地したかどうかを判定できるかテスト.
+    /// </summary>
+    [Fact]
+    public void ぷよが着地したかどうかを判定できる()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoY(this.config.StageHeight - 1);
+
+        // Act
+        var hasLanded = this.player.HasLanded();
+
+        // Assert
+        Assert.True(hasLanded);
+    }
+
+    /// <summary>
+    /// ぷよが空中にいる場合は着地していないと判定されるかテスト.
+    /// </summary>
+    [Fact]
+    public void ぷよが空中にいる場合は着地していないと判定される()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoY(5);
+
+        // Act
+        var hasLanded = this.player.HasLanded();
+
+        // Assert
+        Assert.False(hasLanded);
+    }
 }

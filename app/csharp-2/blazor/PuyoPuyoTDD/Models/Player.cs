@@ -214,4 +214,15 @@ public class Player
 
         return false;
     }
+
+    /// <summary>
+    /// ぷよが着地したかどうかを判定します.
+    /// </summary>
+    /// <returns>着地しているかどうか.</returns>
+    public bool HasLanded()
+    {
+        // 回転状態によって子ぷよの位置が変わるため、境界チェックを調整
+        int maxY = this.rotation == 2 ? this.config.StageHeight - 2 : this.config.StageHeight - 1;
+        return this.puyoY >= maxY;
+    }
 }
