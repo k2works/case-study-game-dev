@@ -39,4 +39,17 @@ class Game {
         frame = 0
         combinationCount = 0
     }
+
+    fun reset() {
+        // ステージをクリア
+        stage.initialize()
+        // スコアをリセット
+        score.reset()
+        // 新しいぷよを生成
+        player.createNewPuyo()
+        // ゲームモードをリセット
+        mode = GameMode.Start
+        frame = 0
+        combinationCount = 0
+    }
 }

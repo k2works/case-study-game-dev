@@ -31,4 +31,55 @@ class GameTest {
         // Assert
         assertEquals(GameMode.Start, game.mode)
     }
+
+    @Test
+    fun ゲームをリセットするとステージがクリアされる() {
+        // Arrange
+        val game = Game()
+        game.initialize()
+        game.player.createNewPuyo()
+        // ステージにぷよを配置
+        game.stage.setPuyo(0, 0, 1)
+        game.stage.setPuyo(1, 1, 2)
+
+        // Act
+        game.reset()
+
+        // Assert
+        // ステージが空になっている
+        for (y in 0 until game.config.stageHeight) {
+            for (x in 0 until game.config.stageWidth) {
+                assertEquals(0, game.stage.getPuyo(x, y))
+            }
+        }
+    }
+
+    @Test
+    fun ゲームをリセットするとスコアがゼロになる() {
+        // Arrange
+        val game = Game()
+        game.initialize()
+        game.score.add(1000)
+
+        // Act
+        game.reset()
+
+        // Assert
+        assertEquals(0, game.score.value)
+    }
+
+    @Test
+    fun ゲームをリセットすると新しいぷよが生成される() {
+        // Arrange
+        val game = Game()
+        game.initialize()
+        game.player.createNewPuyo()
+
+        // Act
+        game.reset()
+
+        // Assert
+        // 新しいぷよが生成されている（puyoType が 0 でない）
+        assertNotNull(game.player.puyoType)
+    }
 }
