@@ -3,7 +3,9 @@
 
 # スクリプトのディレクトリを取得
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-JAR_FILE="$SCRIPT_DIR/puyo-puyo-tdd-windows-x64-1.0.0.jar"
+
+# JAR ファイルを自動検出（バージョン非依存）
+JAR_FILE=$(ls "$SCRIPT_DIR"/puyo-puyo-tdd-windows-x64-*.jar 2>/dev/null | head -1)
 
 # Java のバージョンチェック
 if ! command -v java &> /dev/null; then
@@ -15,9 +17,10 @@ if ! command -v java &> /dev/null; then
 fi
 
 # JAR ファイルの存在確認
-if [ ! -f "$JAR_FILE" ]; then
+if [ -z "$JAR_FILE" ] || [ ! -f "$JAR_FILE" ]; then
     echo "エラー: JAR ファイルが見つかりません。"
-    echo "場所: $JAR_FILE"
+    echo "場所: $SCRIPT_DIR"
+    echo "想定ファイル名: puyo-puyo-tdd-windows-x64-*.jar"
     exit 1
 fi
 

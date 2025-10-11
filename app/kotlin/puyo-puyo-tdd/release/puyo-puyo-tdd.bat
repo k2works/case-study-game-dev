@@ -14,9 +14,21 @@ if %errorlevel% neq 0 (
 
 REM JAR ファイルのパスを取得
 set JAR_DIR=%~dp0
-set JAR_FILE=%JAR_DIR%puyo-puyo-tdd-windows-x64-1.0.0.jar
+
+REM JAR ファイルを自動検出（バージョン非依存）
+for %%f in ("%JAR_DIR%puyo-puyo-tdd-windows-x64-*.jar") do (
+    set JAR_FILE=%%f
+)
 
 REM JAR ファイルの存在確認
+if not defined JAR_FILE (
+    echo エラー: JAR ファイルが見つかりません。
+    echo 場所: %JAR_DIR%
+    echo 想定ファイル名: puyo-puyo-tdd-windows-x64-*.jar
+    pause
+    exit /b 1
+)
+
 if not exist "%JAR_FILE%" (
     echo エラー: JAR ファイルが見つかりません。
     echo 場所: %JAR_FILE%
