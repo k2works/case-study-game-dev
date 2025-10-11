@@ -204,4 +204,31 @@ class Player(private val config: Config, private val stage: Stage) {
             }
         }
     }
+
+    /**
+     * ゲームオーバー判定を行います
+     */
+    fun checkGameOver(): Boolean {
+        // 新しいぷよの配置位置（軸ぷよ）にすでにぷよがあるかチェック
+        if (stage.getPuyo(puyoX, puyoY) != 0) {
+            return true
+        }
+
+        // 子ぷよの位置もチェック
+        val (childX, childY) = getChildPuyoPosition()
+
+        // 子ぷよが画面外の場合はチェックしない
+        if (childY < 0 || childY >= config.stageHeight ||
+            childX < 0 || childX >= config.stageWidth
+        ) {
+            return false
+        }
+
+        // 子ぷよの位置にぷよがあるかチェック
+        if (stage.getPuyo(childX, childY) != 0) {
+            return true
+        }
+
+        return false
+    }
 }

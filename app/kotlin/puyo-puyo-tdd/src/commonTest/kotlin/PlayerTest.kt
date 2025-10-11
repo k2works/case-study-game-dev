@@ -463,4 +463,33 @@ class PlayerTest {
         assertFalse(canMove) // 移動できない
         assertEquals(9, player.puyoY) // 移動していない
     }
+
+    @Test
+    fun 新しいぷよの位置にすでにぷよがあるとゲームオーバー() {
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+
+        // 新しいぷよの初期位置（2, 0）にぷよを配置
+        stage.setPuyo(2, 0, 1)
+        player.createNewPuyo()
+
+        val isGameOver = player.checkGameOver()
+
+        assertEquals(true, isGameOver)
+    }
+
+    @Test
+    fun 新しいぷよの位置が空いているとゲームオーバーではない() {
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        val isGameOver = player.checkGameOver()
+
+        assertEquals(false, isGameOver)
+    }
 }
