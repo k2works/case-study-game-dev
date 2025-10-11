@@ -12,6 +12,19 @@ namespace PuyoPuyoTDD.Models;
 public record EraseInfo(int erasePuyoCount, List<(int X, int Y, int Type)> eraseList);
 
 /// <summary>
+/// 連鎖情報.
+/// </summary>
+/// <param name="erasePuyoCount">消去したぷよの数.</param>
+public record ChainInfo(int erasePuyoCount);
+
+/// <summary>
+/// 連鎖結果.
+/// </summary>
+/// <param name="chainCount">連鎖数.</param>
+/// <param name="chainInfoList">各連鎖の情報.</param>
+public record ChainResult(int chainCount, List<ChainInfo> chainInfoList);
+
+/// <summary>
 /// ステージクラス.
 /// </summary>
 public class Stage
@@ -138,10 +151,11 @@ public class Stage
     /// <summary>
     /// 連鎖処理を実行します.
     /// </summary>
-    /// <returns>連鎖数.</returns>
-    public int ProcessChain()
+    /// <returns>連鎖結果.</returns>
+    public ChainResult ProcessChain()
     {
         int chainCount = 0;
+        var chainInfoList = new List<ChainInfo>();
 
         while (true)
         {
@@ -154,6 +168,9 @@ public class Stage
                 break;
             }
 
+            // 連鎖情報を記録
+            chainInfoList.Add(new ChainInfo(eraseInfo.erasePuyoCount));
+
             // 消去実行
             this.ExecuteErase(eraseInfo.eraseList);
             chainCount++;
@@ -162,7 +179,7 @@ public class Stage
             this.ApplyGravity();
         }
 
-        return chainCount;
+        return new ChainResult(chainCount, chainInfoList);
     }
 
     /// <summary>

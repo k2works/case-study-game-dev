@@ -175,16 +175,18 @@
         game.Stage.ApplyGravity();
 
         // 連鎖処理を実行
-        int chainCount = game.Stage.ProcessChain();
+        var chainResult = game.Stage.ProcessChain();
 
-        if (chainCount > 0)
+        if (chainResult.chainCount > 0)
         {
-            // 連鎖が発生した場合、各連鎖のスコアを計算
-            // 簡易実装: 最後の連鎖のみスコア加算
-            // 実際のゲームでは各連鎖ごとにスコアを計算する必要がある
-            var eraseInfo = game.Stage.CheckErase();
-            int points = Score.Calculate(eraseInfo.erasePuyoCount, chainCount);
-            game.Score.Add(points);
+            // 各連鎖のスコアを計算
+            for (int i = 0; i < chainResult.chainInfoList.Count; i++)
+            {
+                int chainNumber = i + 1; // 連鎖数は1から始まる
+                var chainInfo = chainResult.chainInfoList[i];
+                int points = Score.Calculate(chainInfo.erasePuyoCount, chainNumber);
+                game.Score.Add(points);
+            }
 
             // 全消し判定を行い、全消しならボーナスを加算
             if (game.Stage.IsAllClear())

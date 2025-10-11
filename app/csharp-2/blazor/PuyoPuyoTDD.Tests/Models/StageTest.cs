@@ -147,11 +147,18 @@ public class StageTest
         this.stage.SetPuyo(1, 7, 2);  // 離れた位置
 
         // Act
-        int chainCount = this.stage.ProcessChain();
+        var chainResult = this.stage.ProcessChain();
 
         // Assert
         // 1連鎖: 赤4つ消去 -> 落下後、2連鎖: 青4つ消去
-        Assert.Equal(2, chainCount);
+        Assert.Equal(2, chainResult.chainCount);
+        Assert.Equal(2, chainResult.chainInfoList.Count);
+
+        // 1連鎖目: 赤4つ消去
+        Assert.Equal(4, chainResult.chainInfoList[0].erasePuyoCount);
+
+        // 2連鎖目: 青4つ消去
+        Assert.Equal(4, chainResult.chainInfoList[1].erasePuyoCount);
 
         // すべてのぷよが消えている
         Assert.Equal(0, this.stage.GetPuyo(1, 11));
