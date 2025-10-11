@@ -52,6 +52,11 @@ compose.desktop {
     application {
         mainClass = "MainKt"
 
+        // ProGuard を無効化（Java 21 は ProGuard 7.2.2 でサポートされていないため）
+        buildTypes.release.proguard {
+            isEnabled.set(false)
+        }
+
         nativeDistributions {
             targetFormats(
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
