@@ -3552,85 +3552,134 @@ private fun handleKeyEvent(key: Key): Boolean {
 ```kotlin
 @Composable
 fun GameApp() {
-    val game = remember {
-        Game().apply {
-            initialize()
-            player.createNewPuyo()
+    // ゲームインスタンスの作成と初期化
+    val game =
+        remember {
+            Game().apply {
+                initialize()
+                player.createNewPuyo()
+            }
+        }
+
+    // 再描画をトリガーするための状態
+    var updateTrigger by remember { mutableStateOf(0) }
+    var frameCount by remember { mutableStateOf(0) }
+
+    // フォーカス制御
+    val focusRequester = remember { FocusRequester() }
+
+    // ゲームループ：約60FPSで動作
+    LaunchedEffect(Unit) {
+        // 起動時にフォーカスを要求
+        focusRequester.requestFocus()
+
+        while (true) {
+            kotlinx.coroutines.delay(16) // 約60FPS
+            frameCount++
+
+            // 約1秒ごとに落下
+            if (frameCount % 60 == 0) {
+                if (!game.player.moveDown()) {
+                    // 移動できなかった場合は着地
+                    if (game.player.hasLanded()) {
+                        game.player.placePuyoOnStage()
+                        game.player.createNewPuyo()
+                    }
+                }
+                updateTrigger++ // 再描画をトリガー
+            }
         }
     }
 
-    var updateTrigger by remember { mutableStateOf(0) }
-
-    // キーイベントハンドラ
-    LaunchedEffect(Unit) {
-        // ゲームループは後で実装
-    }
-
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .onKeyEvent { event ->
-                if (event.type == KeyEventType.KeyDown) {
-                    when (event.key) {
-                        Key.DirectionLeft -> {
-                            game.player.moveLeft()
-                            updateTrigger++
-                            true
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .focusRequester(focusRequester)
+                .onKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown) {
+                        when (event.key) {
+                            Key.DirectionLeft -> {
+                                game.player.moveLeft()
+                                updateTrigger++
+                                true
+                            }
+                            Key.DirectionRight -> {
+                                game.player.moveRight()
+                                updateTrigger++
+                                true
+                            }
+                            Key.DirectionUp, Key.Z -> {
+                                game.player.rotateRight()
+                                updateTrigger++
+                                true
+                            }
+                            Key.X -> {
+                                game.player.rotateLeft()
+                                updateTrigger++
+                                true
+                            }
+                            Key.DirectionDown -> {
+                                game.player.moveDown()
+                                updateTrigger++
+                                true
+                            }
+                            else -> false
                         }
-                        Key.DirectionRight -> {
-                            game.player.moveRight()
-                            updateTrigger++
-                            true
-                        }
-                        Key.DirectionUp, Key.Z -> {
-                            game.player.rotateRight()
-                            updateTrigger++
-                            true
-                        }
-                        Key.X -> {
-                            game.player.rotateLeft()
-                            updateTrigger++
-                            true
-                        }
-                        Key.DirectionDown -> {
-                            game.player.moveDown()
-                            updateTrigger++
-                            true
-                        }
-                        else -> false
+                    } else {
+                        false
                     }
-                } else {
-                    false
                 }
-            }
-            .focusable()
+                .focusable(),
     ) {
         MaterialTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colors.background,
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
+                    // タイトル
                     Text(
                         text = "ぷよぷよ",
-                        style = MaterialTheme.typography.headlineLarge
+                        style = MaterialTheme.typography.h3,
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // ゲームステージ
+                    key(updateTrigger) {
+                        GameStage(game)
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // スコア表示
                     Text(
                         text = "スコア: ${game.score.value}",
-                        style = MaterialTheme.typography.headlineMedium
+                        style = MaterialTheme.typography.h5,
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // ゲームモード表示
                     Text(
                         text = "モード: ${game.mode}",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.body1,
                     )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    GameStage(game)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // リセットボタン
+                    Button(onClick = {
+                        game.reset()
+                        updateTrigger++
+                    }) {
+                        Text("リセット")
+                    }
                 }
             }
         }
@@ -3639,6 +3688,32 @@ fun GameApp() {
 ```
 
 ### 解説: キーボード操作
+
+**FocusRequester によるフォーカス制御:**
+
+```kotlin
+// フォーカス制御
+val focusRequester = remember { FocusRequester() }
+
+LaunchedEffect(Unit) {
+    // 起動時にフォーカスを要求
+    focusRequester.requestFocus()
+    // ...
+}
+
+Box(
+    modifier = Modifier
+        .fillMaxSize()
+        .focusRequester(focusRequester)
+        .onKeyEvent { ... }
+        .focusable()
+) { ... }
+```
+
+- `FocusRequester`: フォーカスを明示的に制御するためのオブジェクト
+- `focusRequester.requestFocus()`: 起動時に自動的にフォーカスを取得
+- `.focusRequester(focusRequester)`: Modifier にフォーカス制御を関連付け
+- `.focusable()`: キーボードフォーカスを受け取れるようにする
 
 **onKeyEvent の使用:**
 
@@ -3660,7 +3735,6 @@ fun GameApp() {
 - `onKeyEvent`: キーボードイベントをキャプチャ
 - `KeyEventType.KeyDown`: キーが押されたときのみ処理
 - `updateTrigger++`: 画面を再描画
-- `focusable()`: キーボードフォーカスを受け取れるようにする
 
 ```bash
 $ git add .
@@ -3672,39 +3746,27 @@ $ git commit -m 'feat: キーボード操作を実装'
 次に、ゲームループを実装して、ぷよが自動的に落ちるようにします。
 
 ```kotlin
-@Composable
-fun GameApp() {
-    val game = remember {
-        Game().apply {
-            initialize()
-            player.createNewPuyo()
-        }
-    }
+// ゲームループ：約60FPSで動作
+LaunchedEffect(Unit) {
+    // 起動時にフォーカスを要求
+    focusRequester.requestFocus()
 
-    var updateTrigger by remember { mutableStateOf(0) }
-    var frameCount by remember { mutableStateOf(0) }
+    while (true) {
+        kotlinx.coroutines.delay(16) // 約60FPS
+        frameCount++
 
-    // ゲームループ
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(16) // 約60FPS
-            frameCount++
-
-            // 約1秒ごとに落下
-            if (frameCount % 60 == 0) {
-                if (!game.player.moveDown()) {
-                    // 着地した
-                    if (game.player.hasLanded()) {
-                        game.player.placePuyoOnStage()
-                        game.player.createNewPuyo()
-                    }
+        // 約1秒ごとに落下
+        if (frameCount % 60 == 0) {
+            if (!game.player.moveDown()) {
+                // 移動できなかった場合は着地
+                if (game.player.hasLanded()) {
+                    game.player.placePuyoOnStage()
+                    game.player.createNewPuyo()
                 }
-                updateTrigger++
             }
+            updateTrigger++ // 再描画をトリガー
         }
     }
-
-    // UI部分（省略）
 }
 ```
 
@@ -3714,22 +3776,27 @@ fun GameApp() {
 
 ```kotlin
 LaunchedEffect(Unit) {
+    // 起動時にフォーカスを要求
+    focusRequester.requestFocus()
+
     while (true) {
-        delay(16) // 約60FPS
+        kotlinx.coroutines.delay(16) // 約60FPS
         frameCount++
 
+        // 約1秒ごとに落下
         if (frameCount % 60 == 0) {
-            // 1秒ごとに落下
+            // ぷよを落下させる
         }
     }
 }
 ```
 
 - `LaunchedEffect(Unit)`: Composable のライフサイクルに連動したコルーチンを起動
-- `delay(16)`: 約 60FPS で実行（16ms ≈ 1/60秒）
-- `frameCount % 60 == 0`: 60フレームごと（約1秒）に落下
+- `focusRequester.requestFocus()`: 起動時にキーボードフォーカスを自動取得
+- `kotlinx.coroutines.delay(16)`: 約 60FPS で実行（16ms ≈ 1/60秒）
+- `frameCount % 60 == 0`: 60 フレームごと（約1秒）に落下
 
-これにより、ぷよが自動的に落ちるようになります。
+これにより、ぷよが自動的に落ちるようになります。また、起動時に自動的にフォーカスを取得することで、ユーザーがクリックしなくてもキーボード操作が可能になります。
 
 ```bash
 $ git add .
