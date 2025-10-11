@@ -138,7 +138,48 @@ public class Player
     {
         if (this.puyoX > 0)
         {
-            this.puyoX--;
+            int nextX = this.puyoX - 1;
+
+            // 軸ぷよの衝突判定
+            if (this.stage.GetPuyo(nextX, this.puyoY) != 0)
+            {
+                return;
+            }
+
+            // 子ぷよの位置を計算
+            int childX = this.puyoX;
+            int childY = this.puyoY;
+
+            switch (this.rotation)
+            {
+                case 0: // 上
+                    childY = this.puyoY - 1;
+                    break;
+                case 1: // 右
+                    childX = this.puyoX + 1;
+                    break;
+                case 2: // 下
+                    childY = this.puyoY + 1;
+                    break;
+                case 3: // 左
+                    childX = this.puyoX - 1;
+                    break;
+            }
+
+            // 子ぷよの移動後の位置
+            int nextChildX = childX - 1;
+
+            // 子ぷよの境界チェックと衝突判定
+            if (nextChildX >= 0 && nextChildX < this.config.StageWidth &&
+                childY >= 0 && childY < this.config.StageHeight)
+            {
+                if (this.stage.GetPuyo(nextChildX, childY) != 0)
+                {
+                    return;
+                }
+            }
+
+            this.puyoX = nextX;
         }
     }
 
@@ -149,7 +190,48 @@ public class Player
     {
         if (this.puyoX < this.config.StageWidth - 1)
         {
-            this.puyoX++;
+            int nextX = this.puyoX + 1;
+
+            // 軸ぷよの衝突判定
+            if (this.stage.GetPuyo(nextX, this.puyoY) != 0)
+            {
+                return;
+            }
+
+            // 子ぷよの位置を計算
+            int childX = this.puyoX;
+            int childY = this.puyoY;
+
+            switch (this.rotation)
+            {
+                case 0: // 上
+                    childY = this.puyoY - 1;
+                    break;
+                case 1: // 右
+                    childX = this.puyoX + 1;
+                    break;
+                case 2: // 下
+                    childY = this.puyoY + 1;
+                    break;
+                case 3: // 左
+                    childX = this.puyoX - 1;
+                    break;
+            }
+
+            // 子ぷよの移動後の位置
+            int nextChildX = childX + 1;
+
+            // 子ぷよの境界チェックと衝突判定
+            if (nextChildX >= 0 && nextChildX < this.config.StageWidth &&
+                childY >= 0 && childY < this.config.StageHeight)
+            {
+                if (this.stage.GetPuyo(nextChildX, childY) != 0)
+                {
+                    return;
+                }
+            }
+
+            this.puyoX = nextX;
         }
     }
 

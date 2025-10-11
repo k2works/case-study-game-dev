@@ -377,4 +377,88 @@ public class PlayerTest
         // 下に移動すると子ぷよが (2, 9) に衝突するので移動できない
         Assert.False(canMove);
     }
+
+    /// <summary>
+    /// ステージのぷよと衝突する場合は左に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void ステージのぷよと衝突する場合は左に移動できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(1, 5, 1); // ステージにぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(2);
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(0); // 上向き
+
+        // Act
+        this.player.MoveLeft();
+
+        // Assert
+        Assert.Equal(2, this.player.PuyoX); // 移動できないので位置は変わらない
+    }
+
+    /// <summary>
+    /// ステージのぷよと衝突する場合は右に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void ステージのぷよと衝突する場合は右に移動できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(3, 5, 1); // ステージにぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(2);
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(0); // 上向き
+
+        // Act
+        this.player.MoveRight();
+
+        // Assert
+        Assert.Equal(2, this.player.PuyoX); // 移動できないので位置は変わらない
+    }
+
+    /// <summary>
+    /// 子ぷよがステージのぷよと衝突する場合は左に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void 子ぷよがステージのぷよと衝突する場合は左に移動できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(2, 5, 1); // ステージにぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(3);
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(3); // 左向き（子ぷよが x=2 にある）
+
+        // Act
+        this.player.MoveLeft();
+
+        // Assert
+        Assert.Equal(3, this.player.PuyoX); // 移動できないので位置は変わらない
+    }
+
+    /// <summary>
+    /// 子ぷよがステージのぷよと衝突する場合は右に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void 子ぷよがステージのぷよと衝突する場合は右に移動できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(3, 5, 1); // ステージにぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(2);
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(1); // 右向き（子ぷよが x=3 にある）
+
+        // Act
+        this.player.MoveRight();
+
+        // Assert
+        Assert.Equal(2, this.player.PuyoX); // 移動できないので位置は変わらない
+    }
 }
