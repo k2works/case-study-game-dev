@@ -1,0 +1,156 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Cake: Build",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Cake: Test",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Test"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Cake: Watch",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Watch"
+            ],
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "owner": "csharp",
+                "pattern": {
+                    "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning)\\s+(\\w+):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "code": 5,
+                    "message": 6
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*watch.*started.*",
+                    "endsPattern": "^.*Passed.*Failed.*"
+                }
+            }
+        },
+        {
+            "label": "Cake: Coverage",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Coverage"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Cake: Format",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Format"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Cake: Lint",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Lint"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Cake: All Quality Checks",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=All"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Cake: Run",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Run"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Cake: Clean",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "cake",
+                "--target=Clean"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

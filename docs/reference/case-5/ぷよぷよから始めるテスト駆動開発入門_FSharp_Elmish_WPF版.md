@@ -1908,24 +1908,36 @@ module Model =
 「次はMessageを定義しましょう！」はい、ユーザーの操作やゲームイベントを表すMessageを定義します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs
-namespace PuyoPuyo.Elmish
+// src/PuyoPuyo.WPF/Elmish/Model.fs
+module Elmish.Model
 
-/// ゲームのメッセージ
+open Domain.Board
+open Domain.GameLogic
+open Domain.PuyoPair
+open Domain.Score
+
+// ゲームモデル
+type Model =
+    { Board: Board
+      Score: Score
+      GameState: GameState
+      CurrentPair: PuyoPair option }
+
+// メッセージ定義
 type Message =
     | StartGame
-    | ResetGame
+    | Tick
     | MoveLeft
     | MoveRight
     | MoveDown
     | Rotate
-    | HardDrop
-    | GameStep
-    | TimeStep
-    | SpawnNewPiece
-    | FixPiece
-    | ProcessChain
-    | CheckGameOver
+
+// 初期化関数
+let init () =
+    { Board = createBoard ()
+      Score = initialScore
+      GameState = NotStarted
+      CurrentPair = None }
 ```
 
 「たくさんのメッセージがありますね！」そうですね。それぞれのメッセージが特定のイベントや操作を表しています。今回のイテレーションでは、まず`StartGame`だけを実装していきます。
@@ -1935,36 +1947,40 @@ type Message =
 「Update関数を実装しましょう！」はい、まずは基本的な部分だけを実装します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（続き）
-module Update =
-    open Elmish
-    open PuyoPuyo.Domain.PuyoPair
+// src/PuyoPuyo.WPF/Elmish/Update.fs
+module Elmish.Update
 
-    /// Update 関数
-    let update (message: Message) (model: Model) : Model * Cmd<Message> =
-        match message with
-        | StartGame ->
-            let firstPiece = PuyoPair.createRandom 2 1 0
-            let nextPiece = PuyoPair.createRandom 2 1 0
+open System
+open Domain.GameLogic
+open Domain.PuyoPair
+open Elmish.Model
 
-            {
-                model with
-                    Board = Board.create 6 13
-                    CurrentPiece = Some firstPiece
-                    NextPiece = Some nextPiece
-                    Score = 0
-                    GameTime = 0
-                    Status = Playing
-            }, Cmd.none
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | _ ->
+        model
 
-        | ResetGame ->
-            Model.init (), Cmd.none
-
-        | _ ->
-            model, Cmd.none
+// 更新関数（Elmish用）
+let update msg model =
+    let random = Random()
+    updateWithRandom random msg model
 ```
 
+「Bolero 版と違って `Cmd.none` を返していませんね？」そうです！これが重要な違いです：
+
+**Elmish.WPF での Update 関数の特徴**:
+- **戻り値**: `Model` のみ（`Model * Cmd<Message>` ではない）
+- **Cmd の使用**: `update` 関数では使用しない（`init` 関数でのみ使用）
+- **理由**: Elmish.WPF は WPF の UI スレッドと統合するための設計
+
 「`with`キーワードを使っているのはなぜですか？」F#のレコード型には「レコードコピー式」という機能があり、`{ model with Score = 0 }`のように書くことで、一部のフィールドだけを変更した新しいレコードを作成できます。元の`model`は変更されません。
+
+「`updateWithRandom` 関数があるのはなぜですか？」テストで `Random` を注入できるようにするためです。これにより、テストで決定的な値を使って検証できます。
 
 ### XAML View の実装
 
@@ -1973,179 +1989,247 @@ module Update =
 #### MainWindow.xaml
 
 ```xml
-<!-- src/PuyoPuyo.WPF/MainWindow.xaml -->
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ぷよぷよゲーム" Height="600" Width="400">
-    <Window.Resources>
-        <!-- ボーダースタイル -->
-        <Style x:Key="BoardBorderStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="#333333"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Background" Value="#F0F0F0"/>
-            <Setter Property="Margin" Value="20,0,20,0"/>
-        </Style>
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window
+    x:Class="PuyoPuyo.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="ぷよぷよゲーム" Height="690" Width="500"
+    Focusable="True">
+  <StackPanel Orientation="Vertical">
+    <!-- タイトル -->
+    <TextBlock Text="ぷよぷよゲーム" FontSize="24" HorizontalAlignment="Center" Margin="10"/>
 
-        <!-- セルスタイル -->
-        <Style x:Key="CellStyle" TargetType="Border">
-            <Setter Property="Width" Value="30"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="BorderBrush" Value="#DDDDDD"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
+    <!-- ゲームエリア（ボードと情報パネルを横に並べる） -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+      <!-- ゲームボード -->
+      <Border BorderBrush="Black" BorderThickness="2" Margin="10">
+        <Canvas Background="WhiteSmoke" Width="240" Height="520">
+          <ItemsControl ItemsSource="{Binding Puyos}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <Canvas/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+              <Style>
+                <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+              </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Ellipse Width="36" Height="36" Fill="{Binding Color}" Stroke="Black" StrokeThickness="1"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Canvas>
+      </Border>
 
-        <!-- ボタンスタイル -->
-        <Style x:Key="GameButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-    </Window.Resources>
+      <!-- 情報パネル -->
+      <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top">
+        <!-- スコア表示 -->
+        <TextBlock Text="Score" FontSize="14" FontWeight="Bold" Margin="0,5,0,5"/>
+        <TextBlock Text="{Binding Score}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <!-- 連鎖数表示 -->
+        <TextBlock Text="Chain" FontSize="14" FontWeight="Bold" Margin="0,5,0,5"/>
+        <TextBlock Text="{Binding Chain}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
-        <!-- タイトル -->
-        <TextBlock Grid.Row="0"
-                   Text="ぷよぷよゲーム"
-                   FontSize="24"
-                   FontFamily="Arial"
-                   HorizontalAlignment="Center"
-                   Margin="10"/>
-
-        <!-- ゲームボード -->
-        <Border Grid.Row="1" Style="{StaticResource BoardBorderStyle}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-            <ItemsControl ItemsSource="{Binding BoardRows}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ItemsControl ItemsSource="{Binding}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource CellStyle}"
-                                            Background="{Binding Color}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <!-- 次のぷよ表示 -->
+        <TextBlock Text="Next" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,5,0,5"/>
+        <Border Width="50" Height="50" BorderBrush="LightGray" BorderThickness="1" Margin="0,0,0,10">
+          <Canvas Background="Transparent" Width="50" Height="50">
+            <!-- 次のぷよはここに表示される（将来実装） -->
+          </Canvas>
         </Border>
+      </StackPanel>
+    </StackPanel>
 
-        <!-- コントロール -->
-        <StackPanel Grid.Row="2"
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    Margin="10">
-            <Button Content="ゲーム開始"
-                    Command="{Binding StartGame}"
-                    Visibility="{Binding StartButtonVisibility}"
-                    Style="{StaticResource GameButtonStyle}"/>
-            <Button Content="リセット"
-                    Command="{Binding ResetGame}"
-                    Visibility="{Binding ResetButtonVisibility}"
-                    Style="{StaticResource GameButtonStyle}"/>
-        </StackPanel>
-    </Grid>
+    <!-- コントロールボタン -->
+    <Button Command="{Binding StartGame}" Content="ゲーム開始" Width="120" Height="40" Margin="10" IsEnabled="{Binding CanStartGame}"/>
+  </StackPanel>
 </Window>
 ```
 
-「XAMLではCSSの代わりにResourcesでスタイルを定義するんですね！」そうです！XAMLでは`<Window.Resources>`セクションでスタイルを定義し、`Style="{StaticResource ...}"`で参照します。
+「Bolero 版と大きく違いますね！」そうです！重要な違いを説明します：
+
+**Bolero 版との違い**:
+- **Bolero**: `ItemsControl` で `Grid` を使用して行・列を表示
+- **Elmish.WPF**: `Canvas` を使用して絶対位置指定でぷよを配置
+
+WPF の `Canvas` を使うことで、以下の利点があります：
+
+1. **絶対位置指定**: 各ぷよの位置を `Canvas.Left` と `Canvas.Top` で正確に指定
+2. **シンプルなバインディング**: ぷよのリスト（`Puyos`）を直接バインド
+3. **パフォーマンス**: グリッド全体ではなく、必要なぷよだけを描画
+
+「`IsEnabled="{Binding CanStartGame}"` で何をしているんですか？」良い質問ですね！`CanStartGame` は、ゲームが NotStarted 状態のときだけ `true` を返すバインディングです。これにより、ゲーム開始ボタンは最初だけ有効になり、ゲーム中は無効になります。
 
 #### Elmish Bindings の実装
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Bindings.fs
-module PuyoPuyo.Elmish.Bindings
+// src/PuyoPuyo.WPF/Components/GameView.fs
+module Components.GameView
 
 open Elmish.WPF
-open PuyoPuyo.Elmish.Model
-open PuyoPuyo.Elmish.Update
-open PuyoPuyo.Domain.Board
-open PuyoPuyo.Domain.Puyo
-open PuyoPuyo.Domain.PuyoPair
+open Domain.Board
+open Domain.GameLogic
+open Domain.Puyo
+open Domain.PuyoPair
+open Elmish.Model
 
-/// セルの色を文字列に変換
-let private cellToColor (cell: Cell) : string =
-    match cell with
-    | Empty -> "#CCCCCC"
-    | Filled color -> Puyo.toHex color
+// ぷよ表示用ViewModel
+type PuyoViewModel = { X: float; Y: float; Color: string }
 
-/// ボードを表示用の行データに変換
-let private boardToRows (board: Board) (currentPiece: PuyoPair option) =
-    // ボードのコピーを作成
-    let displayBoard =
-        Array.init board.Rows (fun y ->
-            Array.init board.Cols (fun x ->
-                Board.getCell board x y))
+let getAllPuyos (model: Model) =
+    let cellSize = 40.0
+    let yOffset = 40.0 // Y座標-1のぷよを表示するためのオフセット
+    // ボード上のぷよを収集
+    let boardPuyos =
+        [ for x in 0..5 do
+              for y in 0..11 do
+                  let color = getCellColor x y model.Board
 
-    // 現在のぷよを重ねて表示
-    match currentPiece with
-    | Some piece ->
-        let (pos1, pos2) = PuyoPair.getPositions piece
-        let (x1, y1) = pos1
-        let (x2, y2) = pos2
-        if y1 >= 0 && y1 < board.Rows && x1 >= 0 && x1 < board.Cols then
-            displayBoard.[y1].[x1] <- Filled piece.Puyo1Color
-        if y2 >= 0 && y2 < board.Rows && x2 >= 0 && x2 < board.Cols then
-            displayBoard.[y2].[x2] <- Filled piece.Puyo2Color
-    | None -> ()
+                  if color <> Empty then
+                      yield
+                          { X = float x * cellSize
+                            Y = float y * cellSize + yOffset
+                            Color = puyoColorToString color } ]
+    // 現在のぷよペアを追加
+    let pairPuyos =
+        match model.CurrentPair with
+        | None -> []
+        | Some pair ->
+            [ { X = float pair.AxisPosition.X * cellSize
+                Y = float pair.AxisPosition.Y * cellSize + yOffset
+                Color = puyoColorToString pair.Axis }
+              { X = float pair.ChildPosition.X * cellSize
+                Y = float pair.ChildPosition.Y * cellSize + yOffset
+                Color = puyoColorToString pair.Child } ]
 
-    // 匿名レコードに変換（WPFバインディング用）
-    displayBoard
-    |> Array.map (fun row ->
-        row |> Array.map (fun cell ->
-            {| Color = cellToColor cell |}))
+    List.append boardPuyos pairPuyos
 
-/// バインディング定義
-let bindings () : Binding<Model, Message> list = [
-    "BoardRows" |> Binding.oneWay (fun m -> boardToRows m.Board m.CurrentPiece)
-    "StartGame" |> Binding.cmd (fun _ -> StartGame)
-    "ResetGame" |> Binding.cmd (fun _ -> ResetGame)
-    "StartButtonVisibility" |> Binding.oneWay (fun m ->
-        if m.Status = NotStarted then "Visible" else "Collapsed")
-    "ResetButtonVisibility" |> Binding.oneWay (fun m ->
-        if m.Status = Playing then "Visible" else "Collapsed")
-]
+// Elmish バインディング
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted) ]
 ```
 
-「Bindingsでボードとぷよペアをマージして表示用データを作っているんですね！」そうです！Bolero版の`viewBoard`関数と同じロジックを、WPF用のバインディング関数として実装しています。
+「`Binding.cmd` と `Binding.oneWay` の違いは何ですか？」良い質問ですね！
+
+- **`Binding.cmd`**: コマンド（ユーザーアクション）をバインド
+  - 例: `"StartGame" |> Binding.cmd (fun _ -> StartGame)`
+  - XAML での使用: `Command="{Binding StartGame}"`
+
+- **`Binding.oneWay`**: データの一方向バインディング
+  - 例: `"Score" |> Binding.oneWay (fun m -> m.Score)`
+  - XAML での使用: `Text="{Binding Score}"`
+
+「`getAllPuyos` 関数で何をしているんですか？」この関数は、ボード上の固定されたぷよと現在落下中のぷよペアを結合して、表示用の `PuyoViewModel` のリストを作成しています。各ぷよは `X`、`Y` 座標と `Color` を持ち、XAML の `Canvas` 上に絶対位置で配置されます。
 
 #### アプリケーションのエントリーポイント
 
 ```fsharp
-// src/PuyoPuyo.WPF/App.xaml.fs
-namespace PuyoPuyo
+// src/PuyoPuyo.WPF/Program.fs
+module Program
 
+open System
 open System.Windows
 open Elmish
 open Elmish.WPF
 
-type App() =
-    inherit Application()
+[<STAThread>]
+[<EntryPoint>]
+let main _ =
+    let app = Application()
 
-    override this.OnStartup(e) =
-        base.OnStartup(e)
+    let window = PuyoPuyo.App.MainWindow()
+    window.Loaded.Add(fun _ -> window.Focus() |> ignore)
 
-        let mainWindow = MainWindow()
+    Program.mkSimple Elmish.Model.init Elmish.Update.update Components.GameView.bindings
+    |> Program.runElmishLoop window
 
-        Program.mkSimple PuyoPuyo.Elmish.Model.init PuyoPuyo.Elmish.Update.update PuyoPuyo.Elmish.Bindings.bindings
-        |> Program.runElmishLoop mainWindow
+    app.Run(window)
 ```
 
-「`Program.mkSimple`でElmishを起動するんですね！」そうです！Elmish.WPFでは、`Program.mkSimple`に初期化関数、更新関数、バインディング関数を渡すことでElmishループを開始します。
+「`Program.mkSimple` でElmishを起動するんですね！」そうです！Elmish.WPFでは、`Program.mkSimple`に3つの関数を渡すことでElmishループを開始します：
+
+1. **init**: 初期状態を作成する関数
+2. **update**: メッセージを受け取って状態を更新する関数
+3. **bindings**: Model と View をつなぐバインディング定義
+
+「`Program.runElmishLoop` は何をしているんですか？」この関数は、Elmish のメインループを開始し、WPF の `Window` と統合します。これにより、Model の変更が自動的に UI に反映されます。
+
+### テスト: Update 関数の統合テスト
+
+「Update 関数の動作もテストしたいです！」良いですね！Elmish の統合テストを追加しましょう。
+
+```fsharp
+// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs
+module Elmish.UpdateTests
+
+open System
+open Xunit
+open FsUnit.Xunit
+open Domain.PuyoPair
+open Domain.GameLogic
+open Elmish.Model
+open Elmish.Update
+
+module ``ゲーム初期化`` =
+    [<Fact>]
+    let ``初期化時にゲーム状態がNotStarted`` () =
+        // Arrange & Act
+        let model = init ()
+
+        // Assert
+        model.GameState |> should equal NotStarted
+
+module ``ゲームループ`` =
+    [<Fact>]
+    let ``StartGameメッセージで新しいぷよペアが生成される`` () =
+        // Arrange
+        let model = init ()
+        let random = Random(42)
+
+        // Act
+        let newModel = updateWithRandom random StartGame model
+
+        // Assert
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``StartGameメッセージでゲーム状態がPlayingになる`` () =
+        // Arrange
+        let model = init ()
+        let random = Random(42)
+
+        // Act
+        let newModel = updateWithRandom random StartGame model
+
+        // Assert
+        newModel.GameState |> should equal Playing
+```
+
+「`updateWithRandom` を使っているのはなぜですか？」良い質問ですね！テストでは、ランダム性を排除して決定的な結果を得るために、シード値を指定した `Random` インスタンスを注入します。これにより、毎回同じ結果が得られ、テストが安定します。
+
+「Bolero 版のテストと何が違いますか？」重要な違いがあります：
+
+**Bolero 版との違い**:
+- **Bolero**: `let newModel, _ = update StartGame model` のようにタプルを分解
+- **Elmish.WPF**: `let newModel = updateWithRandom random StartGame model` で Model だけを受け取る
+
+Elmish.WPF の `update` 関数は `Model` のみを返すため、タプル分解は不要です。
+
+テストを実行して、すべて通ることを確認しましょう：
+
+```bash
+dotnet cake --target=Test
+```
 
 ### 動作確認
 
@@ -2169,17 +2253,17 @@ WPFウィンドウが開き、「ゲーム開始」ボタンが表示され、�
 
 ```bash
 git add .
-git commit -m "feat: implement basic game board and puyo display (WPF)
+git commit -m "feat: implement basic game board and puyo display (Elmish.WPF)
 
 - Add PuyoColor discriminated union (Red, Green, Blue, Yellow)
 - Add Board type with create, getCell, setCell functions
-- Add PuyoPair type with rotation support
+- Add PuyoPair type with AxisPosition and ChildPosition
 - Add Elmish Model and Message types
-- Add basic Update function (StartGame, ResetGame)
-- Add XAML View with board rendering
-- Add Elmish.WPF Bindings with board-to-rows conversion
-- Add XAML styles for game elements
-- All tests passing (11 tests)"
+- Add Update function with updateWithRandom for testing
+- Add XAML View with Canvas-based board rendering
+- Add Elmish.WPF Bindings with getAllPuyos function
+- Add CanStartGame binding for button enable/disable
+- All tests passing (21 tests)"
 ```
 
 ### イテレーション1のまとめ
@@ -2187,27 +2271,28 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `PuyoColor`：判別共用体を使った型安全な色定義
-   - `Cell`：セルの状態（空 or 色付き）
-   - `Board`：ゲームボード（イミュータブルな操作）
-   - `PuyoPair`：2つのぷよのペア（回転状態を含む）
+   - `PuyoColor`：判別共用体を使った型安全な色定義（Red、Green、Blue、Yellow）
+   - `Board`：2次元配列による不変のゲームボード
+   - `PuyoPair`：軸ぷよと子ぷよの2つの位置と色を持つペア
+   - `GameState`：ゲーム状態（NotStarted、Playing、GameOver）
 
 2. **Elmish層**
-   - `Model`：ゲーム状態の定義（Board、CurrentPiece、Scoreなど）
-   - `Message`：イベントの定義（StartGame、ResetGameなど）
-   - `Update`：状態遷移ロジック
+   - `Model`：ゲーム状態の定義（Board、CurrentPair、Score、GameState）
+   - `Message`：イベントの定義（StartGame、Tick、MoveLeft、MoveRight、MoveDown、Rotate）
+   - `Update`：状態遷移ロジック（`updateWithRandom` でテスト容易性を確保）
+   - **重要**: Elmish.WPF では `update` 関数は `Model` のみを返す（`Cmd` は返さない）
 
 3. **View層（WPF固有）**
-   - XAML によるUIの宣言的定義
-   - Stylesによるスタイリング（CSSの代わり）
-   - ItemsControl によるボードの描画
-   - Command バインディングによるイベント処理
+   - XAML による UI の宣言的定義
+   - `Canvas` を使用した絶対位置指定によるぷよの配置
+   - `ItemsControl` による動的なぷよリストの描画
+   - `Command` バインディングによるイベント処理
 
 4. **Bindings層（WPF固有）**
-   - `boardToRows`関数：ボードと現在のぷよを表示用データに変換
-   - `cellToColor`関数：セルの色を16進数文字列に変換
-   - `Binding.oneWay`：データの一方向バインディング
-   - `Binding.cmd`：コマンドバインディング
+   - `getAllPuyos` 関数：ボード上のぷよと現在のぷよペアを `PuyoViewModel` のリストに変換
+   - `Binding.oneWay`：データの一方向バインディング（Score、Chain、Puyos）
+   - `Binding.cmd`：コマンドバインディング（StartGame）
+   - `CanStartGame`：ゲーム状態に基づくボタンの有効/無効制御
 
 5. **TDDサイクルの実践**
    - Red：失敗するテストを先に作成
@@ -2216,16 +2301,141 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 
 6. **学んだ重要な概念**
    - 判別共用体による型安全な定義
-   - イミュータブルなデータ構造
+   - イミュータブルなデータ構造（レコード型）
    - レコードコピー式（`with`キーワード）
    - Option型による安全なnull処理
    - パターンマッチング
-   - Elmishの基本（Model-View-Update）
-   - **WPF固有**: XAMLによる宣言的UI定義
-   - **WPF固有**: データバインディング
-   - **WPF固有**: XAML Resourcesによるスタイル定義
+   - Elmishの基本（Model-Message-Update）
+   - **Elmish.WPF固有**: `update` 関数は `Model` のみを返す（`Model * Cmd` ではない）
+   - **Elmish.WPF固有**: テスト用に `updateWithRandom` で Random を注入
+   - **WPF固有**: XAML の `Canvas` による絶対位置指定
+   - **WPF固有**: データバインディング（`Binding.oneWay`、`Binding.cmd`）
+   - **WPF固有**: `IsEnabled` バインディングによる動的UI制御
 
 次のイテレーションでは、ぷよの移動機能を実装していきます。
+
+### イテレーション1の実施内容
+
+このイテレーションでは、wpf プロジェクトの実装を参考にしながら、wpf-2 プロジェクトのファイル構成と UI を整備しました。
+
+#### 実施したリファクタリング
+
+**1. ファイル構成の再組織化 (commit 7a37fe2)**
+
+ソースコードをドメイン駆動設計に準拠した構成に再組織化：
+
+```
+wpf-2/src/PuyoPuyo.WPF/
+├── Domain/              # ドメイン層
+│   ├── Puyo.fs         # ぷよの色定義
+│   ├── Board.fs        # ボード管理
+│   ├── Score.fs        # スコア型
+│   ├── PuyoPair.fs     # ぷよペアロジック
+│   └── GameLogic.fs    # ゲーム状態
+├── Elmish/             # Elmish 層
+│   ├── Model.fs        # モデルとメッセージ定義
+│   ├── Update.fs       # 更新ロジック
+│   └── Subscription.fs # タイマー購読
+├── Components/         # コンポーネント層
+│   └── GameView.fs     # ビューモデルとバインディング
+└── Program.fs          # エントリーポイント
+```
+
+削除したファイル：
+- Counter.fs (サンプルコード)
+- Library.fs (未使用)
+- Game.fs (上記ファイルに分割)
+
+**2. テストファイル構成の再組織化 (commit cac81f7)**
+
+テストも同様にモジュール別に分割：
+
+```
+wpf-2/tests/PuyoPuyo.Tests/
+├── Domain/
+│   ├── PuyoTests.fs        # ぷよ色テスト (2 tests)
+│   ├── BoardTests.fs       # ボード操作テスト (3 tests)
+│   ├── ScoreTests.fs       # スコアテスト (1 test)
+│   ├── PuyoPairTests.fs    # ぷよペアテスト (5 tests)
+│   └── GameLogicTests.fs   # ゲーム状態テスト (4 tests)
+├── Elmish/
+│   └── UpdateTests.fs      # 更新ロジックテスト (6 tests)
+└── Tests.fs                # エントリーポイント
+```
+
+テスト数: 19 → 21 テスト
+
+#### UI の改善
+
+**3. MainWindow.xaml レイアウト更新 (commit 71428bf)**
+
+wpf の GameView.fs に合わせてレイアウトを改善：
+- タイトル、ボード、情報パネルを横並びに配置
+- Score、Chain、Next 表示エリアを追加
+- Chain バインディングを追加（現在は 0 を返す、将来実装予定）
+- ウィンドウ幅を 400px → 500px に拡張
+
+**4. NotStarted 状態の追加 (commit 3728859)**
+
+ゲーム状態に NotStarted を追加してボタン制御を実装：
+- GameState に NotStarted を追加
+- 初期状態を NotStarted に変更
+- StartGame メッセージで GameState を Playing に更新
+- CanStartGame バインディングを追加
+- MainWindow.xaml のボタンに IsEnabled バインディングを追加
+- テスト 2 件追加（合計 21 テスト）
+
+**5. ウィンドウ高さ調整 (commit 649a1ba)**
+
+スタートボタンが隠れる問題を解決：
+- ウィンドウ高さを 600px → 650px に変更
+
+**6. Y 座標-1 の子ぷよ表示対応 (commit 1e5f766)**
+
+初期表示で上のぷよ（子ぷよ）を表示できるように：
+- GameView.fs で Y 座標に 40px のオフセットを追加
+- Canvas 高さを 480px → 520px に拡張（13 行分）
+- ウィンドウ高さを 650px → 690px に調整
+
+これにより、ぷよペアの初期位置 (Axis: Y=0, Child: Y=-1) の両方のぷよが画面に表示されるようになりました。
+
+#### CI パイプライン実行結果
+
+全てのタスクが成功：
+
+| タスク | ステータス | 詳細 |
+|--------|-----------|------|
+| Clean | ✅ 完了 | ビルド成果物クリーンアップ |
+| Format-Check | ✅ 完了 | コードフォーマットチェック |
+| Lint | ✅ 完了 | 0 warnings |
+| Restore | ✅ 完了 | NuGet パッケージ復元 |
+| Build | ✅ 成功 | 0 errors, 0 warnings |
+| Test | ✅ 成功 | **21/21 テスト合格** |
+| Coverage | ✅ 完了 | Line: 48.30%, Branch: 58.33%, Method: 56.60% |
+
+#### 学んだこと
+
+1. **ドメイン駆動設計のファイル構成**
+   - Domain、Elmish、Components の明確な分離
+   - 各層の責務の明確化
+   - テストも同じ構成で整理
+
+2. **WPF データバインディング**
+   - IsEnabled バインディングによる動的な UI 制御
+   - CanStartGame で NotStarted 状態の時のみボタンを有効化
+
+3. **Canvas の座標系**
+   - 負の Y 座標を表示するためのオフセット技法
+   - Canvas のサイズ調整とウィンドウサイズの連動
+
+4. **F# のモジュールシステム**
+   - 1 ファイル 1 モジュールの原則
+   - コンパイル順序の重要性（.fsproj の Compile 順序）
+
+5. **TDD の継続的な実践**
+   - リファクタリング後もテストが全て通過
+   - テスト数の増加（19 → 21 テスト）
+   - CI パイプラインによる品質保証
 
 
 ## イテレーション2: ぷよの移動の実装
@@ -2251,9 +2461,9 @@ git commit -m "feat: implement basic game board and puyo display (WPF)
 - [ ] Update関数にキー入力処理を組み込む
 - [ ] 各機能に対応するテストを作成する
 
-### テスト: キー入力の検出
+### テスト: ぷよの移動ロジック
 
-「最初は何からテストしますか？」まずは、キー入力を検出する機能からテストしましょう。WPFではキーボードイベントをどう扱うか考える必要があります。
+「最初は何からテストしますか？」まずは、ぷよの移動ロジックをテストしましょう。Elmish.WPF では、キー入力は View 層で処理し、Message として dispatch します。Domain 層では、純粋な移動ロジックだけをテストします。
 
 ```fsharp
 // tests/PuyoPuyo.Tests/Domain/GameLogicTests.fs
@@ -2264,74 +2474,102 @@ open FsUnit.Xunit
 open PuyoPuyo.Domain.PuyoPair
 open PuyoPuyo.Domain.Board
 open PuyoPuyo.Domain.Puyo
+open PuyoPuyo.Domain.GameLogic
 
-[<Fact>]
-let ``ぷよペアを左に移動できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 3 5 Red Green 0
+module ``ぷよペアの移動`` =
+    [<Fact>]
+    let ``ぷよペアを左に移動できる`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 3; Y = 5 }
+              ChildPosition = { X = 3; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Left
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Left
 
-    // Assert
-    match result with
-    | Some movedPair ->
-        movedPair.X |> should equal 2
-        movedPair.Y |> should equal 5
-    | None ->
-        failwith "移動できるはずです"
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 2
+            movedPair.ChildPosition.X |> should equal 2
+        | None ->
+            failwith "移動できるはずです"
 
-[<Fact>]
-let ``ぷよペアを右に移動できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 2 5 Red Green 0
+    [<Fact>]
+    let ``ぷよペアを右に移動できる`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 2; Y = 5 }
+              ChildPosition = { X = 2; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Right
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Right
 
-    // Assert
-    match result with
-    | Some movedPair ->
-        movedPair.X |> should equal 3
-        movedPair.Y |> should equal 5
-    | None ->
-        failwith "移動できるはずです"
+        // Assert
+        match result with
+        | Some movedPair ->
+            movedPair.AxisPosition.X |> should equal 3
+            movedPair.ChildPosition.X |> should equal 3
+        | None ->
+            failwith "移動できるはずです"
 
-[<Fact>]
-let ``左端では左に移動できない`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 0 5 Red Green 0
+    [<Fact>]
+    let ``左端では左に移動できない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 0; Y = 5 }
+              ChildPosition = { X = 0; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Left
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Left
 
-    // Assert
-    result |> should equal None
+        // Assert
+        result |> should equal None
 
-[<Fact>]
-let ``右端では右に移動できない`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let pair = PuyoPair.create 5 5 Red Green 0
+    [<Fact>]
+    let ``右端では右に移動できない`` () =
+        // Arrange
+        let board = Board.create 6 13
+        let pair =
+            { AxisPosition = { X = 5; Y = 5 }
+              ChildPosition = { X = 5; Y = 4 }
+              AxisColor = Red
+              ChildColor = Green }
 
-    // Act
-    let result = GameLogic.tryMovePuyoPair board pair Right
+        // Act
+        let result = GameLogic.tryMovePuyoPair board pair Right
 
-    // Assert
-    result |> should equal None
+        // Assert
+        result |> should equal None
 ```
 
-「TypeScript版と違って、キー入力の検出をテストしていませんね？」そうです！WPFでは、キー入力はView層で処理し、Messageとしてdispatchします。ドメイン層では、純粋な移動ロジックだけをテストします。これがElmishアーキテクチャの利点で、UIとビジネスロジックが完全に分離されます。
+「ぷよペアの構造が TypeScript 版と違いますね？」そうです！Elmish.WPF 版では、ぷよペアを以下のレコード型で表現しています：
+
+```fsharp
+type PuyoPair =
+    { AxisPosition: Position    // 軸ぷよの位置
+      ChildPosition: Position   // 子ぷよの位置
+      AxisColor: PuyoColor      // 軸ぷよの色
+      ChildColor: PuyoColor }   // 子ぷよの色
+```
+
+これにより、2つのぷよの位置と色を明示的に管理できます。
 
 ### 実装: 移動ロジック
 
 「テストが失敗することを確認したら、実装に進みましょう！」そうですね。まず、移動方向を表す型と移動ロジックを実装します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Domain/GameLogic.fs
+// src/PuyoPuyo.Domain/GameLogic.fs
 namespace PuyoPuyo.Domain
 
 open PuyoPuyo.Domain.Board
@@ -2344,27 +2582,35 @@ type Direction =
     | Down
 
 module GameLogic =
-    /// ぷよペアが指定位置に配置可能かチェック
-    let private isValidPosition (board: Board) (x: int) (y: int) : bool =
-        y >= 0 && y < board.Rows && x >= 0 && x < board.Cols &&
-        Board.getCell board x y = Empty
+    /// 指定位置が盤面内で空かチェック
+    let private isValidPosition (board: Board) (pos: Position) : bool =
+        pos.Y >= 0
+        && pos.Y < board.Rows
+        && pos.X >= 0
+        && pos.X < board.Cols
+        && Board.getCell board pos.X pos.Y = Empty
 
     /// ぷよペアが配置可能かチェック
     let canPlacePuyoPair (board: Board) (pair: PuyoPair) : bool =
-        let (pos1, pos2) = PuyoPair.getPositions pair
-        let (x1, y1) = pos1
-        let (x2, y2) = pos2
-        isValidPosition board x1 y1 && isValidPosition board x2 y2
+        isValidPosition board pair.AxisPosition
+        && isValidPosition board pair.ChildPosition
 
     /// ぷよペアを指定方向に移動（可能な場合のみ）
     let tryMovePuyoPair (board: Board) (pair: PuyoPair) (direction: Direction) : PuyoPair option =
-        let (dx, dy) =
+        let offset =
             match direction with
-            | Left -> (-1, 0)
-            | Right -> (1, 0)
-            | Down -> (0, 1)
+            | Left -> { X = -1; Y = 0 }
+            | Right -> { X = 1; Y = 0 }
+            | Down -> { X = 0; Y = 1 }
 
-        let newPair = { pair with X = pair.X + dx; Y = pair.Y + dy }
+        let newPair =
+            { pair with
+                AxisPosition =
+                    { X = pair.AxisPosition.X + offset.X
+                      Y = pair.AxisPosition.Y + offset.Y }
+                ChildPosition =
+                    { X = pair.ChildPosition.X + offset.X
+                      Y = pair.ChildPosition.Y + offset.Y } }
 
         if canPlacePuyoPair board newPair then
             Some newPair
@@ -2372,7 +2618,15 @@ module GameLogic =
             None
 ```
 
-「`tryMovePuyoPair`が`option`型を返しているのはなぜですか？」良い質問ですね！移動できる場合は`Some newPair`を返し、移動できない場合（壁や障害物がある）は`None`を返します。これにより、呼び出し側で移動の成功/失敗を安全に判定できます。
+「`tryMovePuyoPair` が `option` 型を返しているのはなぜですか？」良い質問ですね！移動できる場合は `Some newPair` を返し、移動できない場合（壁や障害物がある）は `None` を返します。これにより、呼び出し側で移動の成功/失敗を安全に判定できます。
+
+「`Position` を使っているのはどうしてですか？」Elmish.WPF 版では、座標を以下のレコード型で表現しています：
+
+```fsharp
+type Position = { X: int; Y: int }
+```
+
+タプル `(int * int)` ではなく、名前付きレコードを使うことで、X と Y を明示的に区別でき、コードの可読性が向上します。
 
 テストを実行して、すべて通ることを確認しましょう：
 
@@ -2382,198 +2636,222 @@ dotnet cake --target=Test
 
 ### Update 関数の拡張
 
-「ドメインロジックができたので、次はElmishのUpdate関数を拡張しましょう！」はい、MoveLeftとMoveRightメッセージを処理できるようにします。
+「ドメインロジックができたので、次は Elmish の Update 関数を拡張しましょう！」はい、MoveLeft と MoveRight メッセージを処理できるようにします。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | MoveLeft when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Left with
-            | Some movedPiece ->
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                model, Cmd.none
-        | None ->
-            model, Cmd.none
+// src/PuyoPuyo.WPF/Elmish/Update.fs（updateWithRandom 関数の続き）
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair -> { model with CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
 
-    | MoveRight when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Right with
-            | Some movedPiece ->
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                model, Cmd.none
-        | None ->
-            model, Cmd.none
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair -> { model with CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
 ```
+
+「Bolero 版と何が違いますか？」重要な違いがあります！
+
+**Bolero 版との違い**:
+- **Bolero**: `Model * Cmd<Message>` のタプルを返す
+- **Elmish.WPF**: `Model` のみを返す
+
+Elmish.WPF では、`Cmd` は `init` 関数で使用され、`update` 関数は新しい `Model` だけを返します。これは Elmish.WPF が WPF の UI スレッドと統合するための設計です。
 
 「パターンマッチングを使って、安全に処理しているんですね！」そうです！以下の点をチェックしています：
 
-1. `when model.Status = Playing`：ゲーム中のみ移動可能
-2. `match model.CurrentPiece`：現在のぷよが存在するか
-3. `match GameLogic.tryMovePuyoPair`：移動が成功したか
+1. `match model.CurrentPair`：現在のぷよペアが存在するか
+2. `match tryMovePuyoPair`：移動が成功したか
 
-すべての条件が満たされた場合のみ、新しい位置でModelを更新します。
+すべての条件が満たされた場合のみ、新しい位置で Model を更新します。ゲーム状態のチェック（Playing かどうか）は、この時点ではまだ実装していません（イテレーション 3 で追加します）。
 
 ### View の拡張
 
-「次はViewでキーボード入力を受け取るようにしましょう！」はい、キーボードイベントハンドラを追加します。
+「次は View でキーボード入力を受け取るようにしましょう！」はい、Elmish.WPF では XAML と F# の両方を更新します。
+
+まず、F# 側で Message コマンドをバインディングします：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（viewの更新）
+// src/PuyoPuyo.WPF/Components/GameView.fs（bindings 関数の更新）
 module GameView =
-    // ... 既存のコード ...
-
-    /// キーボードイベントハンドラ
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | _ -> ()
-
-    /// メインView
-    let view (model: Model) (dispatch: Message -> unit) =
-        div [
-            attr.classes ["game-container"]
-            attr.tabindex 0  // キーボードフォーカスを受け取れるようにする
-            on.keydown (handleKeyDown dispatch)
-        ] [
-            h1 [] [text "ぷよぷよゲーム"]
-
-            viewBoard model.Board model.CurrentPiece
-
-            div [attr.classes ["game-controls"]] [
-                match model.Status with
-                | NotStarted ->
-                    button [
-                        on.click (fun _ -> dispatch StartGame)
-                    ] [text "ゲーム開始"]
-
-                | Playing ->
-                    div [] [
-                        p [] [text "矢印キー: 左右移動"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "リセット"]
-                    ]
-
-                | GameOver ->
-                    div [] [
-                        h2 [] [text "ゲームオーバー"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "もう一度プレイ"]
-                    ]
-            ]
-        ]
+    let bindings () =
+        [ "Score" |> Binding.oneWay (fun m -> m.Score)
+          "Chain" |> Binding.oneWay (fun _ -> 0)
+          "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+          "StartGame" |> Binding.cmd (fun _ -> StartGame)
+          "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+          // 左右移動コマンドを追加
+          "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+          "MoveRight" |> Binding.cmd (fun _ -> MoveRight) ]
 ```
 
-「`attr.tabindex 0`は何ですか？」これは、HTML要素がキーボードフォーカスを受け取れるようにする属性です。通常、`div`要素はキーボードイベントを受け取れませんが、`tabindex`を設定することで可能になります。
+次に、XAML 側でキーバインディングを設定します：
 
-### テスト: Update関数の統合テスト
+```xml
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window x:Class="PuyoPuyo.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ぷよぷよゲーム" Height="600" Width="400">
 
-「Update関数の動作もテストしたいです！」良いですね！Elmishの統合テストを追加しましょう。
+    <!-- キーボード入力バインディング -->
+    <Window.InputBindings>
+        <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+        <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <!-- ... 既存の UI 定義 ... -->
+    </Grid>
+</Window>
+```
+
+「Bolero 版と大きく違いますね！」そうです！重要な違いを説明します：
+
+**Bolero 版との違い**:
+- **Bolero**: `handleKeyDown` 関数で `KeyboardEventArgs` を処理
+- **Elmish.WPF**: XAML の `KeyBinding` と `Binding.cmd` を使用
+
+WPF では、キーボード入力を処理する標準的な方法として `InputBindings` を使います。これにより、以下の利点があります：
+
+1. **宣言的な定義**: XAML でキーバインディングを明示的に定義
+2. **WPF の標準機能**: フォーカス管理が自動
+3. **分離**: UI 定義（XAML）とロジック（F#）の明確な分離
+
+「`tabindex` は不要なんですか？」はい、WPF では Window 全体がキーボード入力を受け取るため、HTML のような `tabindex` 設定は不要です。
+
+### テスト: Update 関数の統合テスト
+
+「Update 関数の動作もテストしたいです！」良いですね！Elmish の統合テストを追加しましょう。
 
 ```fsharp
 // tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs
 module PuyoPuyo.Tests.Elmish.UpdateTests
 
+open System
 open Xunit
 open FsUnit.Xunit
-open PuyoPuyo.Elmish
-open PuyoPuyo.Domain.PuyoPair
+open PuyoPuyo.WPF.Elmish.Model
+open PuyoPuyo.WPF.Elmish.Update
 open PuyoPuyo.Domain.Puyo
 
-[<Fact>]
-let ``MoveLeftメッセージでぷよが左に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+module ``ぷよの移動`` =
+    [<Fact>]
+    let ``MoveLeftメッセージでぷよペアが左に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Act
-    let (newModel, _) = Update.update MoveLeft model
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 3; Y = 5 }
+                            ChildPosition = { X = 3; Y = 4 } }
+                GameState = Playing }
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 2
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Act
+        let newModel = updateWithRandom random MoveLeft model
 
-[<Fact>]
-let ``MoveRightメッセージでぷよが右に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 2 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 2
+            pair.ChildPosition.X |> should equal 2
+        | None -> failwith "CurrentPair should exist"
 
-    // Act
-    let (newModel, _) = Update.update MoveRight model
+    [<Fact>]
+    let ``MoveRightメッセージでぷよペアが右に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 3
-    | None ->
-        failwith "ぷよが存在するはずです"
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
 
-[<Fact>]
-let ``左端では左に移動できない`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 0 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Act
+        let newModel = updateWithRandom random MoveRight model
 
-    // Act
-    let (newModel, _) = Update.update MoveLeft model
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 3
+            pair.ChildPosition.X |> should equal 3
+        | None -> failwith "CurrentPair should exist"
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 0  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
+    [<Fact>]
+    let ``左端では左に移動できない`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-[<Fact>]
-let ``ゲーム中でない場合は移動できない`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 2 1 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = NotStarted }
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 0; Y = 5 }
+                            ChildPosition = { X = 0; Y = 4 } }
+                GameState = Playing }
 
-    // Act
-    let (newModel, _) = Update.update MoveLeft model
+        // Act
+        let newModel = updateWithRandom random MoveLeft model
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 2  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.X |> should equal 0 // 位置が変わらない
+            pair.ChildPosition.X |> should equal 0
+        | None -> failwith "CurrentPair should exist"
 ```
 
-「Elmish層のテストでは、Modelの状態遷移を確認しているんですね！」そうです！これにより、以下の点を確認できます：
+「Bolero 版と何が違いますか？」重要な違いがあります！
+
+**Bolero 版との違い**:
+- **Bolero**: `Update.update MoveLeft model` → `(newModel, _)` でタプル分解
+- **Elmish.WPF**: `updateWithRandom random MoveLeft model` → `newModel` のみ
+
+Elmish.WPF では、update 関数が `Cmd` を返さないため、タプル分解は不要です。また、`Random` インスタンスを渡す必要があります。
+
+「Elmish 層のテストでは、Model の状態遷移を確認しているんですね！」そうです！これにより、以下の点を確認できます：
 
 1. メッセージを受け取ったときの正しい状態遷移
-2. ゲーム状態（Playing/NotStarted）による動作の違い
-3. 境界条件での動作
+2. ぷよペアの位置の正確な更新
+3. 境界条件での動作（移動できない場合）
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、まずテストを実行します：
 
 ```bash
-dotnet cake --target=Watch
+dotnet cake --target=Test
 ```
 
-ブラウザで画面をクリックしてフォーカスを当てた後、左右矢印キーを押すとぷよが左右に移動するはずです！
+すべてのテストが通ることを確認したら、アプリケーションを起動します：
+
+```bash
+dotnet cake --target=Run
+```
+
+ウィンドウが表示されたら、左右矢印キーを押すとぷよが左右に移動するはずです！WPF では、ウィンドウが自動的にキーボードフォーカスを持つため、特別な操作は不要です。
 
 ### コミット
 
-「動作確認できたので、コミットしましょう！」はい、Conventional Commitsの規約に従ってコミットします：
+「動作確認できたので、コミットしましょう！」はい、Conventional Commits の規約に従ってコミットします：
 
 ```bash
 git add .
@@ -2582,56 +2860,63 @@ git commit -m "feat: implement puyo movement with keyboard input
 - Add Direction type (Left, Right, Down)
 - Add GameLogic module with tryMovePuyoPair function
 - Add boundary checking (canPlacePuyoPair)
-- Update Elmish Update function for MoveLeft/MoveRight
-- Add keyboard event handler in View
-- Add tabindex for keyboard focus
+- Update Update.fs for MoveLeft/MoveRight messages
+- Add KeyBinding in XAML for Left/Right arrow keys
+- Add MoveLeft/MoveRight command bindings in GameView.fs
 - Add unit tests for movement logic (4 tests)
-- Add integration tests for Update function (4 tests)
-- All tests passing (19 tests)"
+- Add integration tests for Update function (3 tests)
+- All tests passing"
 ```
 
-### イテレーション2のまとめ
+### イテレーション 2 のまとめ
 
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
    - `Direction` 判別共用体（Left, Right, Down）
    - `GameLogic` モジュール：
-     - `isValidPosition`：位置の有効性チェック
+     - `isValidPosition`：位置の有効性チェック（Position レコード使用）
      - `canPlacePuyoPair`：ぷよペアの配置可能性チェック
-     - `tryMovePuyoPair`：移動試行（Option型を返す）
+     - `tryMovePuyoPair`：移動試行（Option 型を返す）
 
-2. **Elmish層**
+2. **Elmish 層**
    - `MoveLeft` / `MoveRight` メッセージの処理
-   - ゲーム状態のガード（`when model.Status = Playing`）
    - パターンマッチによる安全な状態遷移
+   - `updateWithRandom` 関数で Model のみを返す（Cmd なし）
 
-3. **View層**
-   - キーボードイベントハンドラ（`handleKeyDown`）
-   - `attr.tabindex` でフォーカス可能に
-   - キー操作説明の追加
+3. **View 層**
+   - XAML の `Window.InputBindings` でキーバインディング定義
+   - `Binding.cmd` で MoveLeft/MoveRight コマンド公開
+   - WPF の標準的なキーボード入力処理
 
 4. **テスト**
-   - ドメインロジックのテスト（4テスト）
+   - ドメインロジックのテスト（4 テスト）
      - 左右移動の成功ケース
      - 境界でのエラーケース
-   - Elmish統合テスト（4テスト）
+   - Elmish 統合テスト（3 テスト）
      - メッセージによる状態遷移
-     - ゲーム状態による動作制御
+     - `updateWithRandom` の動作確認
+     - タプル分解不要（Model のみ返す）
 
 5. **学んだ重要な概念**
-   - Option型による安全なエラーハンドリング
+   - Option 型による安全なエラーハンドリング
    - 関数型プログラミングの純粋関数（副作用なし）
-   - Elmishにおける関心の分離（Domain/Elmish/View）
+   - Elmish における関心の分離（Domain/Elmish/View）
    - パターンマッチングによる網羅的な処理
-   - `when`ガードによる条件付きパターンマッチ
-   - タプルによる座標の表現
+   - Position レコードによる座標の表現（タプルより明示的）
+   - WPF の InputBindings による宣言的なキーバインディング
 
-6. **TypeScript版との違い**
-   - キー入力検出をViewで処理（Domainは純粋関数）
-   - private フィールドアクセスの代わりにOption型
-   - イベントハンドラのバインド不要（関数型）
-   - nullチェックの代わりにパターンマッチ
+6. **Bolero 版との違い**
+   - **Update 関数**: `Model * Cmd<Message>` ではなく `Model` のみを返す
+   - **キー入力**: `handleKeyDown` 関数ではなく XAML の `KeyBinding` を使用
+   - **フォーカス**: `tabindex` 不要（Window が自動的にフォーカスを持つ）
+   - **テスト**: タプル分解 `(newModel, _)` が不要
+   - **座標**: タプル `(int * int)` ではなく Position レコード `{ X: int; Y: int }` を使用
+
+7. **WPF 固有の利点**
+   - 宣言的な UI 定義（XAML）とロジック（F#）の明確な分離
+   - WPF の標準機能を活用（InputBindings、Command パターン）
+   - キーボードフォーカスの自動管理
 
 次のイテレーションでは、ぷよの回転機能を実装していきます。
 
@@ -2850,57 +3135,81 @@ module GameLogic =
 
 ### Update 関数の拡張
 
-「ドメインロジックができたので、次はElmishのUpdate関数を拡張しましょう！」はい、Rotateメッセージを処理できるようにします。
+「ドメインロジックができたので、次は Elmish の Update 関数を拡張しましょう！」はい、Rotate メッセージを処理できるようにします。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | Rotate when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryRotatePuyoPair model.Board piece with
-            | Some rotatedPiece ->
-                { model with CurrentPiece = Some rotatedPiece }, Cmd.none
-            | None ->
-                model, Cmd.none
-        | None ->
-            model, Cmd.none
+// src/PuyoPuyo.WPF/Elmish/Update.fs（updateWithRandom の Rotate 処理）
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
 ```
 
-「移動の処理と同じパターンですね！」そうです！以下の点をチェックしています：
+「シンプルですね！」そうです！以下の処理を行っています：
 
-1. ゲーム中（Playing）のみ回転可能
-2. 現在のぷよが存在するか
-3. 回転が成功したか（壁キック含む）
+1. 現在のぷよペアが存在するか確認
+2. `tryRotatePuyoPair` で回転を試みる（壁キック処理含む）
+3. 成功したら新しい回転状態のペアでモデルを更新
+4. 失敗したら現在のモデルをそのまま返す
+
+**Elmish.WPF 版の特徴**:
+- `Cmd` を返さず、`Model` のみを返す
+- `when model.GameState = Playing` のような条件は不要（シンプルな実装）
 
 ### View の拡張
 
-「次はViewでキーボード入力を受け取るようにしましょう！」はい、上矢印キーで回転できるようにします。
+「次は View でキーボード入力を受け取るようにしましょう！」はい、上矢印キーで回転できるようにします。
+
+Elmish.WPF では、XAML の `KeyBinding` と F# の `Binding.cmd` を組み合わせて使います。
+
+まず、GameView.fs に Rotate コマンドのバインディングを追加します：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（handleKeyDownの更新）
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | "ArrowUp" -> dispatch Rotate
-        | _ -> ()
+// src/PuyoPuyo.WPF/Components/GameView.fs（bindingsの更新）
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun _ -> 0)
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]  // 追加
 ```
 
-「シンプルですね！」そうです！上矢印キーが押されたら`Rotate`メッセージをdispatchするだけです。
+次に、XAML でキーバインディングを定義します：
 
-操作説明も更新しましょう：
-
-```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（viewの更新）
-                | Playing ->
-                    div [] [
-                        p [] [text "← →: 左右移動"]
-                        p [] [text "↑: 回転"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "リセット"]
-                    ]
+```xml
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window.InputBindings>
+    <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+    <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    <KeyBinding Key="Down" Command="{Binding MoveDown}" />
+    <KeyBinding Key="Up" Command="{Binding Rotate}" />  <!-- 追加 -->
+</Window.InputBindings>
 ```
+
+「Bolero 版と何が違うんですか？」いくつか大きな違いがあります：
+
+1. **キーバインディングの定義場所**:
+   - Bolero: JavaScript の `keydown` イベントハンドラ
+   - Elmish.WPF: XAML の `KeyBinding` による宣言的定義
+
+2. **コマンドの実行**:
+   - Bolero: `dispatch` 関数でメッセージを送信
+   - Elmish.WPF: WPF のコマンドバインディングで自動的にメッセージが送信される
+
+3. **コードの場所**:
+   - Bolero: すべて F# コード内
+   - Elmish.WPF: XAML で UI 定義、F# でバインディング定義
+
+「なぜ XAML を使うんですか？」WPF の標準的な方法で、宣言的に UI を定義できます。また、デザイナーツールとの統合も容易になります。Elmish.WPF は WPF のエコシステムを活用しながら、Elmish アーキテクチャの利点を享受できます。
 
 ### テスト: Update関数の統合テスト
 
@@ -2964,15 +3273,34 @@ let ``回転できない場合は状態が変わらない`` () =
         failwith "ぷよが存在するはずです"
 ```
 
+「Bolero版と同じテストコードですね！」そうです！Update関数の実装がBoleroとElmish.WPFで同じため、テストコードも同じです。これは、Elmishアーキテクチャの優れた点の一つです。
+
+「どういうことですか？」Elmishアーキテクチャでは、Update関数はプラットフォームに依存しないピュアな関数です。入力（Message, Model）に対して出力（Model, Cmd）を返すだけで、副作用がありません。このため、Web（Bolero）でもデスクトップ（Elmish.WPF）でも同じテストコードでテストできます。
+
+プラットフォーム固有の違いは、View層にのみ現れます：
+- **Bolero**: Blazorのコンポーネントとイベントハンドラ
+- **Elmish.WPF**: WPFのコントロールとネイティブイベント
+
+このように、ビジネスロジック（Domain + Update）とUI（View）を明確に分離することで、テスタビリティと移植性が向上します。
+
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、WPFアプリケーションを起動します：
 
 ```bash
-dotnet cake --target=Watch
+cd app/fsharp-2/wpf
+dotnet run --project src/PuyoPuyo.WPF
 ```
 
-ブラウザで画面をクリックしてフォーカスを当てた後、上矢印キーを押すとぷよが回転し、壁際では自動的に位置が調整されるはずです！
+または、テストを実行して動作を確認することもできます：
+
+```bash
+dotnet test tests/PuyoPuyo.Tests
+```
+
+アプリケーションが起動したら、「ゲーム開始」ボタンをクリックして、上矢印キーを押すとぷよが回転し、壁際では自動的に位置が調整されるはずです！
+
+「Bolero版と違ってブラウザを開かないんですね！」そうです！Elmish.WPFはデスクトップアプリケーションなので、Windowsのネイティブウィンドウとして起動します。これにより、ブラウザを必要とせず、デスクトップアプリケーションとしての利点を活かせます。
 
 ### コミット
 
@@ -3006,10 +3334,17 @@ git commit -m "feat: implement puyo rotation with wall kick
    - `Rotate` メッセージの処理
    - 回転失敗時の状態維持
    - パターンマッチによる安全な処理
+   - **Bolero版との共通点**：Update関数の実装は完全に同じ
 
-3. **View層**
-   - 上矢印キーで回転
-   - 操作説明の更新
+3. **View層（Elmish.WPF固有）**
+   - WPFの`KeyEventArgs`を使用したキーボードイベント処理
+   - `Key.Up`列挙型による型安全なキー判定
+   - `updateModelAndUI`による直接的なモデル更新とUI再描画
+   - F#コードによるWindowの作成とイベントハンドラの設定
+   - **Bolero版との違い**：
+     - Blazorのイベントハンドラ → WPFネイティブイベント
+     - `"ArrowUp"`文字列 → `Key.Up`列挙型
+     - `dispatch`関数 → `updateModelAndUI`関数
 
 4. **テスト**
    - 回転ロジックの単体テスト（3テスト）
@@ -3024,12 +3359,17 @@ git commit -m "feat: implement puyo rotation with wall kick
      - 通常回転
      - 壁キック発生
      - 回転失敗
+   - **Bolero版との共通点**：テストコードは完全に同じ（プラットフォーム非依存）
 
 5. **学んだ重要な概念**
    - 剰余演算による循環処理（`(n + k) % m`）
    - 段階的なフォールバック処理（通常→左キック→右キック）
    - Option型による連続的な試行
    - イミュータブルなレコード更新（`{ pair with ... }`）
+   - **Elmishアーキテクチャの利点**：
+     - Update関数のプラットフォーム非依存性
+     - テストコードの再利用性
+     - ビジネスロジックとUIの明確な分離
 
 6. **壁キック処理の工夫**
    - まず通常回転を試す
@@ -3042,6 +3382,26 @@ git commit -m "feat: implement puyo rotation with wall kick
    - 壁キック処理を`tryRotatePuyoPair`に統合
    - Option型による段階的な試行
    - 重複コードなし（関数型のコンポジション）
+
+8. **Bolero版（Web）とElmish.WPF版（Desktop）の比較**
+
+   **共通部分（プラットフォーム非依存）**：
+   - Domain層：完全に同じ実装
+   - Elmish層（Model, Message, Update）：完全に同じ実装
+   - テストコード：完全に同じコードで動作
+
+   **異なる部分（プラットフォーム固有）**：
+   - View層のイベント処理：
+     - Bolero: Blazorの`KeyboardEventArgs`, `"ArrowUp"`文字列, `dispatch`関数
+     - Elmish.WPF: WPFの`KeyEventArgs`, `Key.Up`列挙型, `updateModelAndUI`関数
+   - UI構築方法：
+     - Bolero: HTMLライクなBolero DSL
+     - Elmish.WPF: F#コードによるWPFコントロール生成
+   - 実行環境：
+     - Bolero: ブラウザ上で実行
+     - Elmish.WPF: Windowsネイティブアプリとして実行
+
+この構造により、ビジネスロジックを一度実装すれば、WebとDesktopの両方で動作するアプリケーションを効率的に開発できます。
 
 次のイテレーションでは、ぷよの自由落下機能を実装していきます。
 
@@ -3196,69 +3556,141 @@ dotnet cake --target=Test
 まず、タイマーメッセージを追加しましょう：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Messageの追加）
+// src/PuyoPuyo.WPF/Elmish/Model.fs（Messageの追加）
 type Message =
     | StartGame
-    | ResetGame
+    | Tick
     | MoveLeft
     | MoveRight
+    | MoveDown
     | Rotate
-    | Tick  // タイマーメッセージを追加
-    // ... 他のメッセージ ...
 ```
 
 次に、Subscriptionを定義します：
 
 ```fsharp
 // src/PuyoPuyo.WPF/Elmish/Subscription.fs
-namespace PuyoPuyo.Elmish
+module Elmish.Subscription
 
-open Elmish
 open System
+open Elmish
+open Domain.GameLogic
+open Elmish.Model
 
-module Subscription =
-    /// ゲームタイマー（1秒ごとにTickメッセージを発行）
-    let gameTimer (model: Model) : Sub<Message> =
-        if model.Status = Playing then
-            let sub dispatch =
-                let timer = new System.Timers.Timer(1000.0)
-                timer.Elapsed.Add(fun _ -> dispatch Tick)
-                timer.Start()
-                { new IDisposable with
-                    member _.Dispose() = timer.Stop(); timer.Dispose() }
-            [ [ "gameTimer" ], sub ]
-        else
-            []
+// タイマーサブスクリプション（ゲームループ）
+let timerSubscription (model: Model) : Cmd<Message> =
+    let sub dispatch =
+        let timer = new System.Timers.Timer(500.0) // 500ms間隔
+        timer.AutoReset <- true
+        timer.Elapsed.Add(fun _ -> dispatch Tick)
+        timer.Start()
+
+    Cmd.ofSub sub
 ```
 
-「Subscriptionって何ですか？」良い質問ですね！Subscriptionは、外部のイベント（タイマー、WebSocket、キーボードなど）をElmishのメッセージに変換する仕組みです。ゲームが`Playing`状態のときのみタイマーが動作し、`Tick`メッセージを定期的に発行します。
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **タイマーの実装**:
+   - Elmish.WPF: `System.Timers.Timer` を使用
+   - Bolero: `requestAnimationFrame` や `DispatcherTimer` を使用
+
+2. **戻り値の型**:
+   - Elmish.WPF: `Cmd<Message>` を返す
+   - Bolero: `Sub<Message>` を返す（タプル形式 `[["id"], sub]`）
+
+3. **リソース管理**:
+   - Elmish.WPF: 明示的な `IDisposable` 実装は不要（`Cmd.ofSub` が管理）
+   - Bolero: `IDisposable` を明示的に実装
+
+「Subscriptionって何ですか？」良い質問ですね！Subscriptionは、外部のイベント（タイマー、WebSocket、キーボードなど）をElmishのメッセージに変換する仕組みです。WPF 版では `System.Timers.Timer` を使って、定期的に `Tick` メッセージを発行します。
 
 ### Update 関数の拡張
 
 「Tickメッセージを受け取ったときの処理を実装しましょう！」はい、自動落下のロジックを追加します。
 
+まず、ぷよを下に落とす共通処理を実装します：
+
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | Tick when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            // 下に移動を試みる
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = newBoard
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+// src/PuyoPuyo.WPF/Elmish/Update.fs
+
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定して新しいぷよを生成
+            let newBoard = fixPuyoPair model.Board pair
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = newBoard
+                CurrentPair = Some newPair }
+    | None -> model
 ```
+
+次に、Update 関数で `Tick` メッセージを処理します：
+
+```fsharp
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | Tick -> dropPuyo random model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
+    | MoveDown -> dropPuyo random model
+
+// 更新関数（Elmish用）
+let update msg model =
+    let random = Random()
+    updateWithRandom random msg model
+```
+
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **戻り値の型**:
+   - Elmish.WPF: `Model` のみを返す（Cmd は使用しない）
+   - Bolero: `Model * Cmd<Message>` のタプルを返す
+
+2. **共通処理の抽出**:
+   - `dropPuyo` 関数で `Tick` と `MoveDown` の共通処理を実装
+
+3. **テスト容易性**:
+   - `updateWithRandom` でランダム生成器を外部から注入可能
 
 「着地したら新しいぷよを生成するんですね！」そうです！以下の処理を行っています：
 
@@ -3276,107 +3708,150 @@ module Subscription =
 ```fsharp
 // tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
 
-[<Fact>]
-let ``Tickメッセージでぷよが下に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 5 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+module ``ゲームループ`` =
+    [<Fact>]
+    let ``Tickメッセージでぷよペアが下に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Act
-    let (newModel, _) = Update.update Tick model
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.Y |> should equal 6
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Act
+        let newModel = updateWithRandom random Tick model
 
-[<Fact>]
-let ``着地したぷよはボードに固定され新しいぷよが生成される`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 11 Red Green 0  // 下端近く
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.Y |> should equal 6
+            pair.ChildPosition.Y |> should equal 5
+        | None -> failwith "CurrentPair should exist"
 
-    // Act
-    let (newModel, _) = Update.update Tick model
+    [<Fact>]
+    let ``Tickメッセージで下に移動できない場合はぷよが固定される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Assert
-    // 着地したぷよがボードに固定されている
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Red)
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
 
-    // 新しいぷよが生成されている
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.X |> should equal 2
-        newPair.Y |> should equal 1
-    | None ->
-        failwith "新しいぷよが生成されるはずです"
+        // Act
+        let newModel = updateWithRandom random Tick model
 
-[<Fact>]
-let ``ゲーム中でない場合は落下しない`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 5 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = NotStarted }
+        // Assert
+        // ぷよが固定されてボードに配置される
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal initialPair.Axis
 
-    // Act
-    let (newModel, _) = Update.update Tick model
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal initialPair.Child
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.Y |> should equal 5  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)
+
+    [<Fact>]
+    let ``Tickメッセージでぷよ固定後に新しいぷよが生成される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
+
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
+
+        // Act
+        let newModel = updateWithRandom random Tick model
+
+        // Assert
+        match newModel.CurrentPair with
+        | Some newPair ->
+            // 初期位置に配置される
+            newPair.AxisPosition.X |> should equal 2
+            newPair.AxisPosition.Y |> should equal 0
+        | None -> failwith "新しいぷよペアが生成されるべきです"
 ```
+
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **Update 関数の呼び出し**:
+   - Elmish.WPF: `updateWithRandom random Tick model` → `newModel`
+   - Bolero: `Update.update Tick model` → `(newModel, _)`
+
+2. **戻り値の処理**:
+   - Elmish.WPF: タプル分解不要（Model のみ返る）
+   - Bolero: タプルから Model を取り出す `(newModel, _)`
+
+3. **テストの明確性**:
+   - `updateWithRandom` を使うことでランダム性を制御可能
 
 ### Program の設定
 
 「Subscriptionを使うには、Programの設定が必要ですね！」そうです！メインのエントリーポイントでSubscriptionを登録します。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Main.fs（更新）
-module PuyoGame.Main
+// src/PuyoPuyo.WPF/Program.fs
+module Program
 
 open Elmish
-open WPF
-open WPF.Html
-open PuyoPuyo.Elmish.Model
-open PuyoPuyo.Elmish.Update
-open PuyoPuyo.Elmish.Subscription
-open PuyoPuyo.Components.GameView
+open Elmish.WPF
+open Elmish.Model
+open Elmish.Update
+open Elmish.Subscription
+open Components.GameView
 
-type MyApp() =
-    inherit ProgramComponent<Model, Message>()
+let main window =
+    let config = ElmConfig.Default
 
-    override this.Program =
-        let init () = Model.init (), Cmd.none
-
-        let update msg model =
-            Update.update msg model
-
-        let view model dispatch =
-            GameView.view model dispatch
-
-        Program.mkProgram init update view
-        |> Program.withSubscription (fun model -> Subscription.gameTimer model)
+    Program.mkProgram (fun () -> init (), Cmd.none) (fun msg model -> update msg model, Cmd.none) (fun _ _ ->
+        bindings ())
+    |> Program.withSubscription timerSubscription
+    |> Program.withConsoleTrace
+    |> Program.startElmishLoop config window
 ```
 
-「`Program.withSubscription`でタイマーを登録するんですね！」そうです！これにより、ゲームがPlaying状態のときのみタイマーが動作し、定期的に`Tick`メッセージが発行されます。
+**Elmish.WPF 版と Bolero 版の違い**:
+
+1. **Program の構築**:
+   - Elmish.WPF: `Program.mkProgram` に `(fun () -> init(), Cmd.none)` を直接渡す
+   - Bolero: `Program.mkProgram init update view` のように関数を渡す
+
+2. **実行方法**:
+   - Elmish.WPF: `Program.startElmishLoop config window`
+   - Bolero: `Program.withHost` で Blazor のホストに統合
+
+3. **デバッグ機能**:
+   - `Program.withConsoleTrace` でコンソールに状態遷移をログ出力可能
+
+「`Program.withSubscription`でタイマーを登録するんですね！」そうです！これにより、タイマーが定期的に`Tick`メッセージを発行し、ぷよの自動落下を実現します。
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、アプリケーションを起動します：
 
 ```bash
-dotnet cake --target=Watch
+dotnet cake --target=Run
 ```
 
-ブラウザで「ゲーム開始」ボタンをクリックすると、ぷよが自動的に落下し、着地すると新しいぷよが生成されるはずです！
+WPF アプリケーションが起動し、「スタート」ボタンをクリックすると、ぷよが自動的に 500ms 間隔で落下し、着地すると新しいぷよが生成されるはずです！
+
+コンソールに `Program.withConsoleTrace` によって状態遷移のログが出力されるので、動作を確認できます。
 
 ### コミット
 
@@ -3386,14 +3861,13 @@ dotnet cake --target=Watch
 git add .
 git commit -m "feat: implement auto-falling puyo with gravity
 
-- Add Board.fixPuyoPair to fix puyo pair to board
+- Add dropPuyo function for common drop logic
 - Add Tick message for timer events
-- Add Subscription module with gameTimer
+- Add Subscription module with System.Timers.Timer
 - Update Elmish Update function for Tick message
 - Auto-generate new puyo when current puyo lands
-- Add unit tests for fixPuyoPair (2 tests)
 - Add integration tests for Tick handling (3 tests)
-- All tests passing (35 tests)"
+- All tests passing"
 ```
 
 ### イテレーション4のまとめ
@@ -3401,50 +3875,59 @@ git commit -m "feat: implement auto-falling puyo with gravity
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `Board.fixPuyoPair`：ぷよペアをボードに固定（イミュータブル）
+   - 既に実装済みの `tryMovePuyoPair` で下方向の移動に対応
+   - `fixPuyoPair` でぷよペアをボードに固定（イミュータブル）
    - パイプライン演算子による連鎖的な処理
 
 2. **Elmish層**
    - `Tick` メッセージ：タイマーイベント
+   - `dropPuyo` 関数：`Tick` と `MoveDown` の共通処理
    - 自動落下ロジック：
      - 下に移動を試みる
      - 移動できたら位置を更新
      - 着地したらボードに固定し新しいぷよを生成
-   - Subscription：ゲームタイマーの実装
+   - Subscription：`System.Timers.Timer` によるタイマーの実装
 
 3. **Program設定**
-   - `Program.withSubscription`でタイマーを登録
-   - ゲームのライフサイクル管理
+   - `Program.withSubscription` でタイマーを登録
+   - `Program.withConsoleTrace` でデバッグログを出力
+   - `Program.startElmishLoop` で WPF アプリに統合
 
 4. **テスト**
-   - ボードへの固定テスト（2テスト）
-     - 固定の成功
-     - イミュータビリティの確認
    - 自動落下の統合テスト（3テスト）
      - 通常の落下
      - 着地と新ぷよ生成
-     - ゲーム状態による制御
+     - 新ぷよの初期位置確認
+   - `updateWithRandom` によるテスト容易性の向上
 
 5. **学んだ重要な概念**
    - Elmish Subscription：外部イベントの統合
-   - IDisposable：リソースの適切な解放
+   - `System.Timers.Timer`：WPF でのタイマー実装
+   - `Cmd.ofSub`：サブスクリプションの登録
    - パイプライン演算子による関数合成
    - タイマーのライフサイクル管理
-   - ゲーム状態による動作制御
 
-6. **Subscription の仕組み**
-   - `Sub<Message>`型：サブスクリプションの定義
-   - タプル：`[ [ "id" ], sub ]`形式でサブスクリプションを識別
-   - IDisposable：タイマーの停止とリソース解放
-   - モデル依存：`model.Status`に応じて動的に切り替え
+6. **Elmish.WPF と Bolero の違い**
+   - **Subscription の定義**:
+     - Elmish.WPF: `Cmd<Message>` を返す、`Cmd.ofSub` を使用
+     - Bolero: `Sub<Message>` を返す、タプル形式
+   - **Update 関数の戻り値**:
+     - Elmish.WPF: `Model` のみ（Cmd は使用しない）
+     - Bolero: `Model * Cmd<Message>` のタプル
+   - **タイマーの実装**:
+     - Elmish.WPF: `System.Timers.Timer`
+     - Bolero: `requestAnimationFrame` や `DispatcherTimer`
+   - **Program の構築**:
+     - Elmish.WPF: `Program.startElmishLoop`
+     - Bolero: `Program.withHost`
 
-7. **TypeScript版との違い**
-   - タイマーをSubscriptionとして宣言的に定義
-   - `requestAnimationFrame`の代わりに`System.Timers.Timer`
-   - コールバック地獄なし（メッセージベース）
-   - リソース管理が明確（IDisposable）
+7. **WPF 版の利点**
+   - デスクトップアプリケーションとしてのネイティブな動作
+   - `System.Timers.Timer` による正確なタイミング制御
+   - `Program.withConsoleTrace` による簡単なデバッグ
+   - Elmish アーキテクチャの理解がしやすい（Cmd を使わないシンプルな実装）
 
-次のイテレーションでは、ぷよの高速落下機能を実装していきます。
+次のイテレーションでは、ぷよの高速落下機能（`MoveDown` メッセージ）を実装していきます。
 
 ## イテレーション5: ぷよの高速落下の実装
 
@@ -3462,11 +3945,14 @@ git commit -m "feat: implement auto-falling puyo with gravity
 
 このユーザーストーリーを実現するために、TODOリストを作成してみましょう：
 
-- [ ] 下矢印キーの入力を検出する
-- [ ] MoveDownメッセージを処理する
-- [ ] 高速落下用のタイマーを実装する
-- [ ] 通常タイマーと高速タイマーを切り替える
-- [ ] 各機能に対応するテストを作成する
+- [x] 下矢印キーの入力を検出する（XAML KeyBinding）
+- [x] MoveDownメッセージを処理する
+- [x] 落下処理を共通化する（dropPuyo 関数）
+- [x] 各機能に対応するテストを作成する
+
+WPF 版では、以下は不要です：
+- ~~高速落下用のタイマーを実装する~~（WPF のキーリピート機能を使用）
+- ~~通常タイマーと高速タイマーを切り替える~~（状態管理不要）
 
 ### テスト: 下方向への移動
 
@@ -3475,42 +3961,58 @@ git commit -m "feat: implement auto-falling puyo with gravity
 ```fsharp
 // tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
 
-[<Fact>]
-let ``MoveDownメッセージでぷよが下に移動する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 5 Red Green 0
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+module ``ぷよの高速落下`` =
+    [<Fact>]
+    let ``MoveDownメッセージでぷよペアが下に移動する`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Act
-    let (newModel, _) = Update.update MoveDown model
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 5 }
+                            ChildPosition = { X = 2; Y = 4 } }
+                GameState = Playing }
 
-    // Assert
-    match newModel.CurrentPiece with
-    | Some newPair ->
-        newPair.Y |> should equal 6
-    | None ->
-        failwith "ぷよが存在するはずです"
+        // Act
+        let newModel = updateWithRandom random MoveDown model
 
-[<Fact>]
-let ``下端に到達した場合は着地する`` () =
-    // Arrange
-    let model = Model.init ()
-    let pair = PuyoPair.create 3 11 Red Green 0  // 下端近く
-    let model = { model with CurrentPiece = Some pair; Status = Playing }
+        // Assert
+        match newModel.CurrentPair with
+        | Some pair ->
+            pair.AxisPosition.Y |> should equal 6
+            pair.ChildPosition.Y |> should equal 5
+        | None -> failwith "CurrentPair should exist"
 
-    // Act
-    let (newModel, _) = Update.update MoveDown model
+    [<Fact>]
+    let ``MoveDownメッセージで下端に到達した場合はぷよが固定される`` () =
+        // Arrange
+        let random = Random(42)
+        let initialPair = generatePuyoPair random
 
-    // Assert
-    // 着地してボードに固定
-    Board.getCell newModel.Board 3 11 |> should equal (Filled Red)
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Green)
+        let model =
+            { init () with
+                CurrentPair =
+                    Some
+                        { initialPair with
+                            AxisPosition = { X = 2; Y = 11 }
+                            ChildPosition = { X = 2; Y = 10 } }
+                GameState = Playing }
 
-    // 新しいぷよが生成
-    match newModel.CurrentPiece with
-    | Some _ -> ()
-    | None -> failwith "新しいぷよが生成されるはずです"
+        // Act
+        let newModel = updateWithRandom random MoveDown model
+
+        // Assert
+        // ぷよが固定されてボードに配置される
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal initialPair.Axis
+
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal initialPair.Child
+
+        // 新しいぷよペアが生成される
+        newModel.CurrentPair |> should not' (equal None)
 ```
 
 「Tickメッセージと同じ処理になりそうですね！」そうです！下に移動を試みて、着地したらボードに固定して新しいぷよを生成する、という処理は共通です。
@@ -3521,217 +4023,90 @@ let ``下端に到達した場合は着地する`` () =
 
 ```fsharp
 // src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | MoveDown when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            // 下に移動を試みる
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = newBoard
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
-        | None ->
-            model, Cmd.none
+
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | Tick -> dropPuyo random model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
+    | MoveDown -> dropPuyo random model  // Tick と同じ処理を使用
 ```
 
 「Tickメッセージの処理と全く同じですね！」そうです！重複していますね。後でリファクタリングして共通化することもできますが、今は動作を優先しましょう。
 
 ### View の拡張
 
-「下矢印キーの入力を受け取るようにしましょう！」はい、キーボードイベントハンドラに追加します。
+「下矢印キーの入力を受け取るようにしましょう！」はい、Elmish.WPF では XAML の KeyBinding を使ってキー入力を処理します。
+
+まず、GameView.fs に MoveDown コマンドのバインディングを追加します：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（handleKeyDownの更新）
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | "ArrowUp" -> dispatch Rotate
-        | "ArrowDown" -> dispatch MoveDown
-        | _ -> ()
+// src/PuyoPuyo.WPF/Components/GameView.fs（bindingsの更新）
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun _ -> 0) // 連鎖数（将来実装予定）
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)  // 追加
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
 ```
 
-操作説明も更新しましょう：
+次に、XAML でキーバインディングを定義します：
 
-```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（viewの更新）
-                | Playing ->
-                    div [] [
-                        p [] [text "← →: 左右移動"]
-                        p [] [text "↑: 回転"]
-                        p [] [text "↓: 高速落下"]
-                        button [
-                            on.click (fun _ -> dispatch ResetGame)
-                        ] [text "リセット"]
-                    ]
+```xml
+<!-- src/PuyoPuyo.App/MainWindow.xaml -->
+<Window
+    x:Class="PuyoPuyo.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="ぷよぷよゲーム" Height="690" Width="500"
+    Focusable="True">
+  <Window.InputBindings>
+    <KeyBinding Key="Left" Command="{Binding MoveLeft}" />
+    <KeyBinding Key="Right" Command="{Binding MoveRight}" />
+    <KeyBinding Key="Down" Command="{Binding MoveDown}" />  <!-- 追加 -->
+    <KeyBinding Key="Up" Command="{Binding Rotate}" />
+  </Window.InputBindings>
+  <!-- ... 既存のUI定義 ... -->
+</Window>
 ```
 
-### 高速落下タイマーの実装
+「Bolero 版の handleKeyDown 関数とは違いますね！」そうです！WPF では XAML で宣言的にキー入力を定義し、Elmish.WPF のバインディングを通じてメッセージをディスパッチします。コードでイベントハンドラを書く必要はありません。
 
-「下キーを押している間だけ速く落ちるようにしたいんですが？」良い質問ですね！そのためには、Modelに「高速落下モード」の状態を追加し、タイマーの速度を切り替える必要があります。
-
-まず、Modelを拡張します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Model.fs（Modelの更新）
-type Model = {
-    Board: Board
-    CurrentPiece: PuyoPair option
-    NextPiece: PuyoPair option
-    Score: int
-    Level: int
-    GameTime: int
-    LastChainCount: int
-    Status: GameStatus
-    IsFastFalling: bool  // 高速落下モード
-}
-
-module Model =
-    let init () : Model =
-        {
-            Board = Board.create 6 13
-            CurrentPiece = None
-            NextPiece = None
-            Score = 0
-            Level = 1
-            GameTime = 0
-            LastChainCount = 0
-            Status = NotStarted
-            IsFastFalling = false
-        }
-```
-
-次に、高速落下の開始/終了メッセージを追加します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Messageの追加）
-type Message =
-    | StartGame
-    | ResetGame
-    | MoveLeft
-    | MoveRight
-    | MoveDown
-    | Rotate
-    | Tick
-    | StartFastFall  // 高速落下開始
-    | StopFastFall   // 高速落下終了
-```
-
-「キーを押したときと離したときで別のメッセージを送るんですね！」そうです！Viewでkeydownとkeyupの両方のイベントを処理します。
-
-```fsharp
-// src/PuyoPuyo.WPF/Components/GameView.fs（イベントハンドラの更新）
-    let private handleKeyDown (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowLeft" -> dispatch MoveLeft
-        | "ArrowRight" -> dispatch MoveRight
-        | "ArrowUp" -> dispatch Rotate
-        | "ArrowDown" ->
-            dispatch MoveDown
-            dispatch StartFastFall
-        | _ -> ()
-
-    let private handleKeyUp (dispatch: Message -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
-        match e.Key with
-        | "ArrowDown" -> dispatch StopFastFall
-        | _ -> ()
-
-    /// メインView
-    let view (model: Model) (dispatch: Message -> unit) =
-        div [
-            attr.classes ["game-container"]
-            attr.tabindex 0
-            on.keydown (handleKeyDown dispatch)
-            on.keyup (handleKeyUp dispatch)  // keyupイベントを追加
-        ] [
-            // ... 既存のコード ...
-        ]
-```
-
-Update関数で高速落下モードを切り替えます：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（Update関数の続き）
-    | StartFastFall when model.Status = Playing ->
-        { model with IsFastFalling = true }, Cmd.none
-
-    | StopFastFall when model.Status = Playing ->
-        { model with IsFastFalling = false }, Cmd.none
-```
-
-最後に、Subscriptionでタイマーの速度を切り替えます：
-
-```fsharp
-// src/PuyoPuyo.WPF/Elmish/Subscription.fs（更新）
-module Subscription =
-    /// ゲームタイマー（高速落下時は速く）
-    let gameTimer (model: Model) : Sub<Message> =
-        if model.Status = Playing then
-            let interval = if model.IsFastFalling then 100.0 else 1000.0
-            let sub dispatch =
-                let timer = new System.Timers.Timer(interval)
-                timer.Elapsed.Add(fun _ -> dispatch Tick)
-                timer.Start()
-                { new IDisposable with
-                    member _.Dispose() = timer.Stop(); timer.Dispose() }
-            [ [ "gameTimer" ], sub ]
-        else
-            []
-```
-
-「高速落下モードのときは100msごと、通常時は1000msごとにTickが発行されるんですね！」そうです！これにより、下キーを押している間は10倍速く落ちるようになります。
-
-### テスト: 高速落下モード
-
-「高速落下モードの切り替えもテストしましょう！」はい、テストを追加します。
-
-```fsharp
-// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
-
-[<Fact>]
-let ``StartFastFallメッセージで高速落下モードになる`` () =
-    // Arrange
-    let model = Model.init ()
-    let model = { model with Status = Playing; IsFastFalling = false }
-
-    // Act
-    let (newModel, _) = Update.update StartFastFall model
-
-    // Assert
-    newModel.IsFastFalling |> should equal true
-
-[<Fact>]
-let ``StopFastFallメッセージで高速落下モードが解除される`` () =
-    // Arrange
-    let model = Model.init ()
-    let model = { model with Status = Playing; IsFastFalling = true }
-
-    // Act
-    let (newModel, _) = Update.update StopFastFall model
-
-    // Assert
-    newModel.IsFastFalling |> should equal false
-
-[<Fact>]
-let ``ゲーム中でない場合は高速落下モードにならない`` () =
-    // Arrange
-    let model = Model.init ()
-    let model = { model with Status = NotStarted; IsFastFalling = false }
-
-    // Act
-    let (newModel, _) = Update.update StartFastFall model
-
-    // Assert
-    newModel.IsFastFalling |> should equal false
-```
+「下キーを押している間だけ速く落ちるようにはできますか？」Elmish.WPF 版では、シンプルに MoveDown メッセージを使って高速落下を実現します。キーを押している間は連続して MoveDown メッセージが送られるため、特別な状態管理は不要です。WPF のキーボードイベントが自動的にキーリピートを処理してくれます。
 
 ### リファクタリング: 落下処理の共通化
 
@@ -3739,54 +4114,85 @@ let ``ゲーム中でない場合は高速落下モードにならない`` () =
 
 ```fsharp
 // src/PuyoPuyo.WPF/Elmish/Update.fs（ヘルパー関数の追加）
-module Update =
-    // ... 既存のコード ...
 
-    /// ぷよを下に移動させる（共通処理）
-    let private dropPuyo (model: Model) : Model * Cmd<Message> =
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let newBoard = Board.fixPuyoPair model.Board piece
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = newBoard
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定して新しいぷよを生成
+            let newBoard = fixPuyoPair model.Board pair
+            let newPair = generatePuyoPair random
 
-    /// Update 関数
-    let update (message: Message) (model: Model) : Model * Cmd<Message> =
-        match message with
-        // ... 既存のコード ...
+            { model with
+                Board = newBoard
+                CurrentPair = Some newPair }
+    | None -> model
 
-        | Tick when model.Status = Playing ->
-            dropPuyo model
+// ランダム生成器を受け取る更新関数（テスト用）
+let updateWithRandom (random: Random) msg model =
+    match msg with
+    | StartGame ->
+        { model with
+            CurrentPair = Some(generatePuyoPair random)
+            GameState = Playing }
+    | Tick -> dropPuyo random model
+    | MoveLeft ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Left with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | MoveRight ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryMovePuyoPair model.Board pair Right with
+            | Some movedPair ->
+                { model with
+                    CurrentPair = Some movedPair }
+            | None -> model
+        | None -> model
+    | Rotate ->
+        match model.CurrentPair with
+        | Some pair ->
+            match tryRotatePuyoPair model.Board pair with
+            | Some rotatedPair ->
+                { model with
+                    CurrentPair = Some rotatedPair }
+            | None -> model
+        | None -> model
+    | MoveDown -> dropPuyo random model
 
-        | MoveDown when model.Status = Playing ->
-            dropPuyo model
-
-        // ... その他のメッセージ ...
+// 更新関数（Elmish用）
+let update msg model =
+    let random = Random()
+    updateWithRandom random msg model
 ```
 
-「重複がなくなってスッキリしましたね！」そうです！これで、落下処理のロジックが一箇所にまとまりました。
+「重複がなくなってスッキリしましたね！」そうです！これで、落下処理のロジックが一箇所にまとまりました。`dropPuyo` 関数は `Tick` と `MoveDown` の両方で使用されています。
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、アプリケーションをビルドして実行します：
 
 ```bash
-dotnet cake --target=Watch
+# テストを実行して確認
+dotnet test
+
+# アプリケーションを実行
+dotnet run --project src/PuyoPuyo.App
 ```
 
-ブラウザで「ゲーム開始」ボタンをクリックして、下矢印キーを押してみてください。キーを押している間は速く落ち、離すと通常速度に戻るはずです！
+「ゲーム開始」ボタンをクリックして、下矢印キーを押してみてください。キーを押している間は WPF のキーリピート機能により、連続して MoveDown メッセージが送られ、ぷよが速く落ちます！
 
 ### コミット
 
@@ -3796,14 +4202,12 @@ dotnet cake --target=Watch
 git add .
 git commit -m "feat: implement fast falling with down arrow key
 
-- Add IsFastFalling to Model
-- Add StartFastFall and StopFastFall messages
-- Add keyup event handler for stopping fast fall
-- Update gameTimer subscription to adjust speed based on IsFastFalling
+- Add MoveDown message to Model
+- Add MoveDown command binding to GameView
+- Add KeyBinding for Down key in MainWindow.xaml
 - Extract common dropPuyo function to eliminate duplication
-- Add unit tests for fast fall mode (3 tests)
-- Add integration test for MoveDown (2 tests)
-- All tests passing (42 tests)"
+- Add unit tests for MoveDown message (2 tests)
+- All tests passing"
 ```
 
 ### イテレーション5のまとめ
@@ -3812,535 +4216,586 @@ git commit -m "feat: implement fast falling with down arrow key
 
 1. **ドメイン層**
    - 既存の`tryMovePuyoPair`を活用（Down方向）
+   - 変更なし（既存機能を再利用）
 
 2. **Elmish層**
-   - `IsFastFalling`：高速落下モードの状態
-   - `StartFastFall` / `StopFastFall` メッセージ
    - `MoveDown` メッセージの処理
    - `dropPuyo`：落下処理の共通化（リファクタリング）
+   - `updateWithRandom`：テスト用の更新関数
 
-3. **View層**
-   - `handleKeyDown`：下矢印キーでMoveDownとStartFastFall
-   - `handleKeyUp`：キーを離したときにStopFastFall
-   - 操作説明の更新
+3. **View層（Elmish.WPF）**
+   - `GameView.fs`：MoveDown コマンドのバインディング追加
+   - `MainWindow.xaml`：Down キーの KeyBinding 追加
+   - XAML による宣言的なキー入力処理
 
-4. **Subscription**
-   - タイマー速度の動的切り替え（1000ms → 100ms）
-   - `model.IsFastFalling`に応じて速度を変更
-
-5. **テスト**
+4. **テスト**
    - MoveDownメッセージのテスト（2テスト）
-   - 高速落下モードの切り替えテスト（3テスト）
-   - ゲーム状態による制御
+   - 下端到達時の挙動確認
+   - `updateWithRandom` を使った決定論的テスト
 
-6. **学んだ重要な概念**
-   - keydownとkeyupイベントの組み合わせ
-   - Subscriptionのモデル依存による動的な振る舞い
+5. **学んだ重要な概念**
+   - WPF KeyBinding による宣言的キー入力
+   - Elmish.WPF の Binding.cmd でのコマンドバインディング
    - リファクタリング：重複コードの関数抽出
-   - 状態フラグによる動作切り替え
-   - タイマー速度の動的変更
+   - WPF のキーリピート機能の活用
+   - XAML と F# の責任分離
 
-7. **リファクタリングの実践**
+6. **リファクタリングの実践**
    - Before：TickとMoveDownで重複コード
    - After：`dropPuyo`関数に共通処理を抽出
    - DRY原則（Don't Repeat Yourself）の実践
    - 保守性の向上
 
-8. **TypeScript版との違い**
-   - キー状態管理をModelで一元化
-   - keyup/keydownイベントを別々のメッセージに変換
-   - タイマー速度の宣言的な切り替え
-   - イベントリスナーの手動管理不要
+7. **Bolero版との違い**
+   - IsFastFalling 状態フラグは不要
+   - StartFastFall / StopFastFall メッセージは不要
+   - handleKeyDown / handleKeyUp 関数は不要
+   - Subscription のタイマー速度切り替えは不要
+   - WPF のキーリピートが自動的に高速落下を実現
+   - XAML で宣言的にキー入力を定義
+   - よりシンプルな実装
+
+8. **WPF の利点**
+   - キーボードイベントの自動リピート処理
+   - XAML による宣言的な UI 定義
+   - コマンドバインディングによる疎結合
+   - イベントハンドラのコード削減
 
 次のイテレーションでは、ぷよの消去機能を実装していきます。
 
 ## イテレーション6: ぷよの消去の実装
 
-「ぷよが積み上がってきましたが、消えませんね？」そうですね！ぷよぷよの最も重要な機能、同じ色のぷよが4つ以上つながったら消える機能を実装しましょう！
+「ぷよが落ちてくるようになったけど、ぷよぷよの醍醐味はぷよを消すことですよね？」そうですね！ぷよぷよの最も重要な要素の一つは、同じ色のぷよを4つ以上つなげると消去できる機能です。今回は、その「ぷよの消去」機能を実装していきましょう！
 
 ### ユーザーストーリー
 
 まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
 
-> システムとして、同じ色のぷよが4つ以上つながっている場合、それらを消去できる
+> プレイヤーとして、同じ色のぷよを4つ以上つなげると消去できる
 
-「4つ以上つながったら消えるんですね！」そうです！ぷよぷよでは、同じ色のぷよが縦か横に4つ以上つながると消えます。
+「これがぷよぷよの基本ルールですね！」そうです！同じ色のぷよを4つ以上つなげると消去できるというのが、ぷよぷよの基本的なルールです。これを実装することで、ゲームとしての面白さが大きく向上しますね。
 
-### TODOリスト
+### TODO リスト
 
-このユーザーストーリーを実現するために、TODOリストを作成してみましょう：
+「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODO リストを作成してみましょう。
 
-- [ ] つながっているぷよを検出する機能を実装する
-- [ ] 4つ以上つながっているぷよグループを見つける
-- [ ] ぷよを消去する処理を実装する
-- [ ] 消去後にぷよを落下させる処理を実装する
-- [ ] 着地後に消去判定を行う
-- [ ] 各機能に対応するテストを作成する
+「ぷよを消去する」という機能を実現するためには、以下のようなタスクが必要そうですね：
 
-### テスト: つながっているぷよの検出
+- **ぷよの接続判定を実装する**：隣接する同じ色のぷよを検出する（幅優先探索 BFS を使用）
+- **4つ以上つながったぷよの検出を実装する**：消去対象となるぷよのグループを特定する
+- **ぷよの消去処理を実装する**：消去対象のぷよを実際に消す
+- **重力の適用を実装する**：消去後にぷよを落下させる
+- **Update 関数への統合**：ぷよ固定時に消去判定と消去処理を実行する
 
-「最初は何からテストしますか？」まずは、同じ色のぷよがつながっているかを検出する機能からテストしましょう。
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
 
-```fsharp
-// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（続き）
+### テスト: ぷよの接続判定
 
-[<Fact>]
-let ``横に4つ並んだぷよを検出できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 0 12 (Filled Red)
-        |> Board.setCell 1 12 (Filled Red)
-        |> Board.setCell 2 12 (Filled Red)
-        |> Board.setCell 3 12 (Filled Red)
+「最初に何をテストすればいいんでしょうか？」まずは、ぷよの接続判定をテストしましょう。同じ色のぷよが4つ以上つながっているかどうかを判定する機能が必要です。
 
-    // Act
-    let groups = Board.findConnectedGroups board
-
-    // Assert
-    groups |> List.length |> should equal 1
-    groups |> List.head |> List.length |> should equal 4
-
-[<Fact>]
-let ``縦に4つ並んだぷよを検出できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 2 9 (Filled Green)
-        |> Board.setCell 2 10 (Filled Green)
-        |> Board.setCell 2 11 (Filled Green)
-        |> Board.setCell 2 12 (Filled Green)
-
-    // Act
-    let groups = Board.findConnectedGroups board
-
-    // Assert
-    groups |> List.length |> should equal 1
-    groups |> List.head |> List.length |> should equal 4
-
-[<Fact>]
-let ``L字型につながった5つのぷよを検出できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 1 10 (Filled Blue)
-        |> Board.setCell 1 11 (Filled Blue)
-        |> Board.setCell 1 12 (Filled Blue)
-        |> Board.setCell 2 12 (Filled Blue)
-        |> Board.setCell 3 12 (Filled Blue)
-
-    // Act
-    let groups = Board.findConnectedGroups board
-
-    // Assert
-    groups |> List.length |> should equal 1
-    groups |> List.head |> List.length |> should equal 5
-
-[<Fact>]
-let ``3つ以下のぷよは検出されない`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 0 12 (Filled Yellow)
-        |> Board.setCell 1 12 (Filled Yellow)
-        |> Board.setCell 2 12 (Filled Yellow)
-
-    // Act
-    let groups = Board.findConnectedGroups board
-
-    // Assert
-    groups |> List.length |> should equal 0
-```
-
-「つながっているぷよをどうやって検出するんですか？」良い質問ですね！幅優先探索（BFS）や深さ優先探索（DFS）というアルゴリズムを使って、同じ色のぷよをたどっていきます。
-
-### 実装: つながっているぷよの検出
-
-「テストが失敗することを確認したら、実装に進みましょう！」そうですね。
+`BoardTests.fs` に新しいテストモジュールを追加します：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Domain/Board.fs（続き）
+// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（追加）
 
-module Board =
-    // ... 既存のコード ...
+module ``ぷよの消去`` =
+    [<Fact>]
+    let ``横に4つ並んだぷよを検出できる`` () =
+        // Arrange
+        let board = createBoard ()
 
-    /// 隣接するセルの座標を取得
-    let private getNeighbors (x: int) (y: int) : (int * int) list =
-        [
-            (x - 1, y)  // 左
-            (x + 1, y)  // 右
-            (x, y - 1)  // 上
-            (x, y + 1)  // 下
-        ]
+        let board =
+            board
+            |> setCellColor 0 11 Red
+            |> setCellColor 1 11 Red
+            |> setCellColor 2 11 Red
+            |> setCellColor 3 11 Red
 
-    /// 指定位置から同じ色のつながったぷよを探索（BFS）
-    let private findConnectedPuyos (board: Board) (startX: int) (startY: int) (color: PuyoColor) (visited: Set<int * int>) : (int * int) list =
-        let rec bfs (queue: (int * int) list) (visited: Set<int * int>) (result: (int * int) list) =
-            match queue with
-            | [] -> result
-            | (x, y) :: rest ->
-                if Set.contains (x, y) visited then
-                    bfs rest visited result
-                else
-                    let newVisited = Set.add (x, y) visited
-                    let neighbors =
-                        getNeighbors x y
-                        |> List.filter (fun (nx, ny) ->
-                            not (Set.contains (nx, ny) newVisited) &&
-                            match getCell board nx ny with
-                            | Filled c when c = color -> true
-                            | _ -> false)
-                    bfs (rest @ neighbors) newVisited ((x, y) :: result)
+        // Act
+        let groups = findConnectedGroups board
 
-        bfs [(startX, startY)] visited []
+        // Assert
+        groups |> List.length |> should equal 1
+        groups |> List.head |> List.length |> should equal 4
 
-    /// 4つ以上つながっているぷよのグループを検出
-    let findConnectedGroups (board: Board) : ((int * int) list) list =
-        let mutable visited = Set.empty
-        let mutable groups = []
+    [<Fact>]
+    let ``縦に4つ並んだぷよを検出できる`` () =
+        // Arrange
+        let board = createBoard ()
 
-        for y in 0 .. board.Rows - 1 do
-            for x in 0 .. board.Cols - 1 do
-                if not (Set.contains (x, y) visited) then
-                    match getCell board x y with
-                    | Filled color ->
-                        let group = findConnectedPuyos board x y color visited
-                        if List.length group >= 4 then
-                            groups <- group :: groups
-                        visited <- visited + Set.ofList group
-                    | Empty -> ()
+        let board =
+            board
+            |> setCellColor 2 8 Green
+            |> setCellColor 2 9 Green
+            |> setCellColor 2 10 Green
+            |> setCellColor 2 11 Green
 
-        groups
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 1
+        groups |> List.head |> List.length |> should equal 4
+
+    [<Fact>]
+    let ``L字型につながった5つのぷよを検出できる`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 1 9 Blue
+            |> setCellColor 1 10 Blue
+            |> setCellColor 1 11 Blue
+            |> setCellColor 2 11 Blue
+            |> setCellColor 3 11 Blue
+
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 1
+        groups |> List.head |> List.length |> should equal 5
+
+    [<Fact>]
+    let ``3つ以下のぷよは検出されない`` () =
+        // Arrange
+        let board = createBoard ()
+
+        let board =
+            board
+            |> setCellColor 0 11 Yellow
+            |> setCellColor 1 11 Yellow
+            |> setCellColor 2 11 Yellow
+
+        // Act
+        let groups = findConnectedGroups board
+
+        // Assert
+        groups |> List.length |> should equal 0
 ```
 
-「BFS（幅優先探索）を使っているんですね！」そうです！キューを使って、同じ色のぷよを順番にたどっていきます。F#の再帰関数とパターンマッチングを使って、綺麗に書けますね。
+「このテストでは何を確認しているんですか？」このテストでは、以下の4つのケースを確認しています：
 
-テストを実行して、すべて通ることを確認しましょう：
+1. **横に4つ並んだ場合**：水平方向につながったぷよが検出されるか
+2. **縦に4つ並んだ場合**：垂直方向につながったぷよが検出されるか
+3. **L字型の場合**：複雑な形でつながったぷよが検出されるか
+4. **3つ以下の場合**：消去条件を満たさないぷよは検出されないか
+
+「なるほど、4つ以上という条件が重要なんですね！」そうです！ぷよぷよの基本ルールですね。
+
+### テスト実行（RED）
+
+「テストを実行して、失敗することを確認しましょう！」はい、まだ `findConnectedGroups` 関数を実装していないので、コンパイルエラーになるはずです。
+
+```bash
+dotnet cake --target=Build
+```
+
+予想通り、コンパイルエラーが発生します。これが TDD の RED フェーズです。
+
+### 実装: ぷよの接続判定（GREEN）
+
+「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、ぷよの接続判定を実装していきましょう。
+
+`Board.fs` に新しい関数を追加します：
+
+```fsharp
+// src/PuyoPuyo.WPF/Domain/Board.fs（追加）
+
+// 隣接するセルの座標を取得
+let private getNeighbors (x: int) (y: int) : (int * int) list =
+    [ (x - 1, y) // 左
+      (x + 1, y) // 右
+      (x, y - 1) // 上
+      (x, y + 1) ] // 下
+
+// ボードの範囲内かチェック
+let private isInBounds (board: Board) (x: int) (y: int) : bool =
+    x >= 0 && x < Array2D.length1 board && y >= 0 && y < Array2D.length2 board
+
+// 指定位置から同じ色のつながったぷよを探索（BFS）
+let private findConnectedPuyos
+    (board: Board)
+    (startX: int)
+    (startY: int)
+    (color: PuyoColor)
+    (visited: Set<int * int>)
+    : (int * int) list =
+    let rec bfs (queue: (int * int) list) (visited: Set<int * int>) (result: (int * int) list) =
+        match queue with
+        | [] -> result
+        | (x, y) :: rest ->
+            if Set.contains (x, y) visited then
+                bfs rest visited result
+            else
+                let newVisited = Set.add (x, y) visited
+
+                let neighbors =
+                    getNeighbors x y
+                    |> List.filter (fun (nx, ny) ->
+                        not (Set.contains (nx, ny) newVisited)
+                        && isInBounds board nx ny
+                        && getCellColor nx ny board = color)
+
+                bfs (rest @ neighbors) newVisited ((x, y) :: result)
+
+    bfs [ (startX, startY) ] visited []
+
+// 4つ以上つながっているぷよのグループを検出
+let findConnectedGroups (board: Board) : ((int * int) list) list =
+    let mutable visited = Set.empty
+    let mutable groups = []
+
+    for y in 0 .. (Array2D.length2 board - 1) do
+        for x in 0 .. (Array2D.length1 board - 1) do
+            if not (Set.contains (x, y) visited) then
+                let color = getCellColor x y board
+
+                if color <> Empty then
+                    let group = findConnectedPuyos board x y color visited
+
+                    if List.length group >= 4 then
+                        groups <- group :: groups
+
+                    visited <- visited + Set.ofList group
+
+    groups
+```
+
+「BFS（幅優先探索）を使っているんですね！」その通りです。F# では、再帰関数を使って BFS を実装しています。`findConnectedPuyos` 関数は、指定された位置から同じ色のぷよを再帰的に探索します。
+
+「`visited` Set で訪問済みのセルを管理しているのがポイントですね！」はい！これにより、同じセルを複数回訪問することを防ぎ、効率的に探索できます。
+
+### テスト実行（GREEN）
+
+「実装が終わったので、テストを実行しましょう！」はい、テストが通るはずです。
 
 ```bash
 dotnet cake --target=Test
 ```
 
-### テスト: ぷよの消去
+すべてのテストが通ることを確認します。
 
-「次はぷよを消す処理をテストしましょう！」はい、検出したぷよを実際に消去する処理をテストします。
+### テスト: ぷよの消去処理
+
+「次は実際にぷよを消す処理をテストしましょう！」はい、消去対象のぷよを実際に削除する処理をテストします。
 
 ```fsharp
-// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（続き）
+// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（追加）
 
-[<Fact>]
-let ``指定した位置のぷよを消去できる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 0 12 (Filled Red)
-        |> Board.setCell 1 12 (Filled Red)
-        |> Board.setCell 2 12 (Filled Red)
-        |> Board.setCell 3 12 (Filled Red)
+    [<Fact>]
+    let ``指定した位置のぷよを消去できる`` () =
+        // Arrange
+        let board = createBoard ()
 
-    // Act
-    let positions = [(0, 12); (1, 12); (2, 12); (3, 12)]
-    let newBoard = board |> Board.clearPuyos positions
+        let board =
+            board
+            |> setCellColor 0 11 Red
+            |> setCellColor 1 11 Red
+            |> setCellColor 2 11 Red
+            |> setCellColor 3 11 Red
 
-    // Assert
-    Board.getCell newBoard 0 12 |> should equal Empty
-    Board.getCell newBoard 1 12 |> should equal Empty
-    Board.getCell newBoard 2 12 |> should equal Empty
-    Board.getCell newBoard 3 12 |> should equal Empty
+        // Act
+        let positions = [ (0, 11); (1, 11); (2, 11); (3, 11) ]
+        let newBoard = board |> clearPuyos positions
+
+        // Assert
+        getCellColor 0 11 newBoard |> should equal Empty
+        getCellColor 1 11 newBoard |> should equal Empty
+        getCellColor 2 11 newBoard |> should equal Empty
+        getCellColor 3 11 newBoard |> should equal Empty
+
+    [<Fact>]
+    let ``消去後にぷよが落下する`` () =
+        // Arrange
+        let board = createBoard ()
+        let board = board |> setCellColor 0 8 Red |> setCellColor 0 11 Green
+
+        // Act - (0, 11) のぷよを消去
+        let newBoard = board |> clearPuyos [ (0, 11) ]
+        let droppedBoard = newBoard |> applyGravity
+
+        // Assert - (0, 8) にあった赤いぷよが (0, 11) に落下
+        getCellColor 0 11 droppedBoard |> should equal Red
+        getCellColor 0 8 droppedBoard |> should equal Empty
 ```
 
-### 実装: ぷよの消去
+### テスト実行（RED）
 
-```fsharp
-// src/PuyoPuyo.WPF/Domain/Board.fs（続き）
+テストを実行して、コンパイルエラーを確認します：
 
-module Board =
-    // ... 既存のコード ...
-
-    /// 指定位置のぷよを消去
-    let clearPuyos (positions: (int * int) list) (board: Board) : Board =
-        positions
-        |> List.fold (fun b (x, y) -> setCell x y Empty b) board
+```bash
+dotnet cake --target=Build
 ```
 
-「`List.fold`を使って連鎖的に消去しているんですね！」そうです！関数型プログラミングの典型的なパターンです。また、`setCell` の引数順序を変更したことで、パイプライン演算子と組み合わせて使いやすくなりました。
+### 実装: ぷよの消去処理と重力適用（GREEN）
 
-### テスト: 重力による落下
-
-「ぷよを消した後、上のぷよが落ちてこないといけませんね！」そうです！重力処理を実装しましょう。
+「消去処理と重力を実装しましょう！」はい、2つの関数を実装します。
 
 ```fsharp
-// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（続き）
+// src/PuyoPuyo.WPF/Domain/Board.fs（追加）
 
-[<Fact>]
-let ``重力を適用すると浮いているぷよが落ちる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 2 8 (Filled Green)   // 浮いているぷよ
-        |> Board.setCell 2 12 (Filled Red)    // 下にあるぷよ
+// 指定した位置のぷよを消去
+let clearPuyos (positions: (int * int) list) (board: Board) : Board =
+    let newBoard = Array2D.copy board
+    positions |> List.iter (fun (x, y) -> newBoard.[x, y] <- Empty)
+    newBoard
 
-    // Act
-    let newBoard = Board.applyGravity board
+// 重力を適用してぷよを落下させる
+let applyGravity (board: Board) : Board =
+    let newBoard = Array2D.copy board
+    let width = Array2D.length1 board
+    let height = Array2D.length2 board
 
-    // Assert
-    Board.getCell newBoard 2 8 |> should equal Empty
-    Board.getCell newBoard 2 11 |> should equal (Filled Green)  // 落ちた
-    Board.getCell newBoard 2 12 |> should equal (Filled Red)
+    // 各列ごとに処理
+    for x in 0 .. width - 1 do
+        // 下から上に向かって詰める
+        let mutable writeY = height - 1
 
-[<Fact>]
-let ``重力を適用すると複数のぷよが落ちる`` () =
-    // Arrange
-    let board = Board.create 6 13
-    let board =
-        board
-        |> Board.setCell 1 5 (Filled Blue)
-        |> Board.setCell 1 6 (Filled Yellow)
-        |> Board.setCell 1 12 (Filled Red)
+        for y in (height - 1) .. -1 .. 0 do
+            let color = newBoard.[x, y]
 
-    // Act
-    let newBoard = Board.applyGravity board
+            if color <> Empty then
+                if y <> writeY then
+                    newBoard.[x, writeY] <- color
+                    newBoard.[x, y] <- Empty
 
-    // Assert
-    Board.getCell newBoard 1 5 |> should equal Empty
-    Board.getCell newBoard 1 6 |> should equal Empty
-    Board.getCell newBoard 1 10 |> should equal (Filled Blue)
-    Board.getCell newBoard 1 11 |> should equal (Filled Yellow)
-    Board.getCell newBoard 1 12 |> should equal (Filled Red)
+                writeY <- writeY - 1
+
+    newBoard
 ```
 
-### 実装: 重力による落下
+「`clearPuyos` は指定位置を Empty にして、`applyGravity` は各列を下から詰めていくんですね！」その通りです。重力処理では、各列ごとに下から上へスキャンし、空でないセルを下に詰めていきます。
 
-```fsharp
-// src/PuyoPuyo.WPF/Domain/Board.fs（続き）
+### テスト実行（GREEN）
 
-module Board =
-    // ... 既存のコード ...
+テストを実行します：
 
-    /// 重力を適用（浮いているぷよを落とす）
-    let applyGravity (board: Board) : Board =
-        let mutable newCells = Array.init board.Rows (fun _ -> Array.create board.Cols Empty)
-
-        // 各列ごとに処理
-        for x in 0 .. board.Cols - 1 do
-            let column =
-                [| for y in 0 .. board.Rows - 1 -> board.Cells.[y].[x] |]
-                |> Array.filter (fun cell -> cell <> Empty)
-
-            // 下から詰める
-            let startY = board.Rows - column.Length
-            for i in 0 .. column.Length - 1 do
-                newCells.[startY + i].[x] <- column.[i]
-
-        { board with Cells = newCells }
+```bash
+dotnet cake --target=Test
 ```
 
-「各列ごとに空でないセルを集めて、下から詰め直しているんですね！」そうです！これで、消去後に上のぷよが正しく落ちてきます。
+すべてのテストが通ることを確認します。
 
-### Update 関数の拡張
+### Update 関数への統合
 
-「着地後に消去処理を行うようにしましょう！」はい、`dropPuyo`関数を拡張します。
+「最後に、ゲームの Update 関数に消去処理を組み込みましょう！」はい、ぷよが固定されたときに消去処理を実行するように変更します。
+
+まず、統合テストを追加します：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Elmish/Update.fs（dropPuyoの更新）
-    let private dropPuyo (model: Model) : Model * Cmd<Message> =
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                // 移動成功
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let boardWithPuyo = Board.fixPuyoPair model.Board piece
+// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（追加）
 
-                // 消去処理
-                let groups = Board.findConnectedGroups boardWithPuyo
-                let boardAfterClear =
-                    if List.isEmpty groups then
-                        Board.applyGravity boardWithPuyo
-                    else
-                        let positions = groups |> List.concat
-                        boardWithPuyo
-                        |> Board.clearPuyos positions
-                        |> Board.applyGravity
+module ``ぷよの消去`` =
+    [<Fact>]
+    let ``着地時に4つ以上つながったぷよが消える`` () =
+        // Arrange
+        let random = Random(42)
 
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = boardAfterClear
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+        // ボードに赤いぷよを 3 つ並べておく
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+
+        // 赤いぷよペアを上から落とす
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 4つつながって消える
+        Domain.Board.getCellColor 2 11 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 10 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 9 newModel.Board |> should equal Domain.Puyo.Empty
+        Domain.Board.getCellColor 2 8 newModel.Board |> should equal Domain.Puyo.Empty
+```
+
+### テスト実行（RED）
+
+テストを実行して、失敗することを確認します：
+
+```bash
+dotnet cake --target=Test
+```
+
+現在の実装では消去処理がないため、テストは失敗します。
+
+### 実装: Update 関数の修正（GREEN）
+
+「Update 関数を修正して、消去処理を組み込みましょう！」はい、`dropPuyo` 関数を修正します。
+
+```fsharp
+// src/PuyoPuyo.WPF/Elmish/Update.fs（修正）
+
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+
+            // 消去処理
+            let groups = findConnectedGroups boardWithPuyo
+
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    applyGravity boardWithPuyo
+                else
+                    let positions = groups |> List.concat
+                    boardWithPuyo |> clearPuyos positions |> applyGravity
+
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterClear
+                CurrentPair = Some newPair }
+    | None -> model
 ```
 
-「着地→消去→重力の順に処理しているんですね！」そうです！以下の流れで処理されます：
+「ぷよを固定した後、消去判定をして、消去対象があれば消去→重力、なければ重力だけ適用するんですね！」その通りです！ロジックはシンプルですが、これでぷよ消去機能が完成します。
 
-1. ぷよをボードに固定
-2. つながっているぷよを検出
-3. 4つ以上のグループがあれば消去
-4. **重力を常に適用して浮いているぷよを落とす**（消去がない場合も適用）
-5. 新しいぷよを生成
+### テスト実行（GREEN）
 
-> **🔧 重要な修正点**: 初期の実装では、消去がない場合は重力を適用していませんでした。しかし、これではぷよペアの片方が空中に浮いたままになる問題が発生します。そのため、消去の有無にかかわらず、着地後は常に `Board.applyGravity` を適用するよう修正しました。
+テストを実行します：
 
-### テスト: Update関数の統合テスト
-
-「消去処理の統合テストも追加しましょう！」はい、実際のゲームフローをテストします。
-
-```fsharp
-// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
-
-[<Fact>]
-let ``着地時に4つ以上つながったぷよが消える`` () =
-    // Arrange
-    let model = Model.init ()
-    // 下に3つ並べておく
-    let board =
-        model.Board
-        |> Board.setCell 0 12 (Filled Red)
-        |> Board.setCell 1 12 (Filled Red)
-        |> Board.setCell 2 12 (Filled Red)
-
-    // 4つ目のぷよを落とす（1回のTickで着地する位置に配置）
-    let pair = PuyoPair.create 3 12 Red Green 0
-    let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
-
-    // Act
-    let (newModel, _) = Update.update Tick model  // 着地
-
-    // Assert
-    // 4つつながったので消えている
-    Board.getCell newModel.Board 0 12 |> should equal Empty
-    Board.getCell newModel.Board 1 12 |> should equal Empty
-    Board.getCell newModel.Board 2 12 |> should equal Empty
-
-    // 緑のぷよは重力で落ちて下端に残っている
-    Board.getCell newModel.Board 3 12 |> should equal (Filled Green)
-
-[<Fact>]
-let ``着地時に消去されなくても重力が適用される`` () =
-    // Arrange
-    let model = Model.init ()
-    // 縦向きのぷよペアを配置（下端）
-    let board =
-        model.Board
-        |> Board.setCell 3 12 (Filled Red)   // 軸ぷよ
-        |> Board.setCell 3 11 (Filled Green) // 子ぷよ
-
-    // 横向きのぷよペアを重ねる（rotation=3で左向き、軸ぷよが右）
-    let pair = PuyoPair.create 3 10 Blue Yellow 3
-    let model = { model with Board = board; CurrentPiece = Some pair; Status = Playing }
-
-    // Act
-    let (newModel, _) = Update.update Tick model  // 着地
-
-    // Assert
-    // 軸ぷよ（Blue）は縦ぷよの上に着地
-    Board.getCell newModel.Board 3 10 |> should equal (Filled Blue)
-
-    // 子ぷよ（Yellow）は重力で(2,12)に落ちる
-    Board.getCell newModel.Board 2 12 |> should equal (Filled Yellow)
-
-    // (2,10)は空になっている
-    Board.getCell newModel.Board 2 10 |> should equal Empty
+```bash
+dotnet cake --target=Test
 ```
 
-「浮遊ぷよのテストを追加したんですね！」そうです！横向きのぷよペアの片方が縦向きのぷよに重なり、もう片方が空中に浮く状況を再現しています。着地後は常に重力が適用されるため、浮いているぷよは正しく落下します。
+すべてのテストが通ることを確認します。57 個のテストがすべて成功するはずです。
+
+### リファクタリング
+
+「リファクタリングは必要ですか？」今回の実装は既にシンプルで明確なので、大きなリファクタリングは不要です。ただし、コードフォーマットを確認しておきましょう。
+
+```bash
+dotnet cake --target=Format
+```
 
 ### 動作確認
 
-「実装が終わったので、動かしてみましょう！」はい、開発サーバーを起動します：
+「実装が終わったので、動かしてみましょう！」はい、アプリケーションを起動します：
 
 ```bash
-dotnet cake --target=Watch
+dotnet run --project src/PuyoPuyo.App/PuyoPuyo.App.csproj
 ```
 
-ブラウザでゲームを開始し、同じ色のぷよを4つつなげてみてください。消えるはずです！
+ゲームを開始して、同じ色のぷよを4つつなげてみてください。ぷよが消えて、上にあったぷよが落下することを確認できるはずです！
+
+### CI 実行
+
+「すべてのチェックが通ることを確認しましょう！」はい、CI パイプラインを実行します：
+
+```bash
+dotnet cake --target=ci
+```
+
+すべてのタスクが成功することを確認します：
+- ✅ Format-Check
+- ✅ Lint
+- ✅ Build
+- ✅ Test（57 tests passed）
+- ✅ Coverage（75%以上）
 
 ### コミット
 
-「動作確認できたので、コミットしましょう！」はい、Conventional Commitsの規約に従ってコミットします：
+「動作確認できたので、コミットしましょう！」はい、Conventional Commits の規約に従ってコミットします：
 
 ```bash
 git add .
-git commit -m "feat: implement puyo clearing and gravity
+git commit -m "$(cat <<'EOF'
+feat: イテレーション 6 - ぷよの消去機能を実装
 
-- Add findConnectedGroups to detect 4+ connected puyos using BFS
-- Add clearPuyos to remove puyos at specified positions
-- Add applyGravity to drop floating puyos after clearing
-- Update dropPuyo to handle clearing after landing
-- Add unit tests for connected group detection (4 tests)
-- Add unit tests for clearing (1 test)
-- Add unit tests for gravity (2 tests)
-- Add integration test for clearing on landing (1 test)
-- All tests passing (50 tests)"
+- Board.fs に接続判定関数を追加（BFS アルゴリズム）
+  - getNeighbors: 隣接セル座標取得
+  - isInBounds: 範囲内チェック
+  - findConnectedPuyos: 同色の接続ぷよを探索（BFS）
+  - findConnectedGroups: 4つ以上のグループを検出
+- Board.fs にぷよ消去と重力関数を追加
+  - clearPuyos: 指定位置のぷよを消去
+  - applyGravity: 消去後にぷよを落下
+- Update.fs の dropPuyo 関数を拡張
+  - ぷよ固定時に消去判定を実行
+  - 4つ以上つながったぷよを消去
+  - 消去後に重力を適用
+- BoardTests.fs にぷよ消去のテストを追加（6件）
+- UpdateTests.fs に統合テストを追加（1件）
+- All 57 tests passing
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
 ```
 
-### イテレーション6のまとめ
+### イテレーション 6 のまとめ
 
 このイテレーションで実装した内容：
 
-1. **ドメイン層**
-   - `findConnectedGroups`：BFSでつながったぷよを検出
-     - `getNeighbors`：隣接セルの取得
-     - `findConnectedPuyos`：再帰的BFS探索
-   - `clearPuyos`：指定位置のぷよを消去
-   - `applyGravity`：浮いているぷよを落とす
+1. **BFS による接続判定**：
+    - 幅優先探索アルゴリズムを使用
+    - `visited` Set で訪問済みセルを管理
+    - 再帰関数とパターンマッチングによる実装
+    - 4つ以上つながったぷよのグループを検出
 
-2. **アルゴリズム**
-   - BFS（幅優先探索）：つながったぷよの検出
-   - 訪問済み管理：`Set<int * int>`で重複探索を防止
-   - 列ごとの再配置：重力処理
+2. **ぷよの消去処理**：
+    - `clearPuyos` 関数で指定位置を Empty に設定
+    - イミュータブルな実装（Array2D.copy を使用）
+    - シンプルで理解しやすいロジック
 
-3. **Elmish層**
-   - `dropPuyo`の拡張：着地→消去→**常に重力を適用**
-   - 消去の有無にかかわらず重力を適用することで浮遊ぷよを防止
+3. **重力の適用**：
+    - `applyGravity` 関数で列ごとにぷよを落下
+    - 下から上へスキャンして詰める
+    - 効率的なアルゴリズム
 
-4. **テスト**
-   - つながったぷよの検出テスト（4テスト）
-     - 横に4つ
-     - 縦に4つ
-     - L字型に5つ
-     - 3つ以下は検出されない
-   - 消去処理のテスト（1テスト）
-   - 重力処理のテスト（2テスト）
-   - 統合テスト（2テスト）
-     - 着地時の消去処理
-     - **浮遊ぷよの重力適用**（重要なエッジケース）
+4. **Update 関数への統合**：
+    - ぷよ固定時に消去処理を自動実行
+    - 消去→重力→新ぷよ生成の流れ
+    - ゲームループにシームレスに統合
 
-5. **学んだ重要な概念**
-   - BFS（幅優先探索）アルゴリズム
-   - 再帰関数とパターンマッチング
-   - `Set`型による訪問済み管理
-   - `List.fold`による連鎖的な更新
-   - ミュータブルな配列の局所的な使用（重力処理）
-   - 列ごとのフィルタと再配置
-   - **パイプライン対応の関数設計**（引数順序の工夫）
+5. **TDD サイクルの実践**：
+    - Red：6件の Board テスト + 1件の統合テスト
+    - Green：最小限の実装で通す
+    - Refactor：コードフォーマットの適用
 
-6. **F#らしい実装**
-   - 再帰関数によるBFS
-   - パターンマッチングによる分岐
-   - パイプライン演算子 `|>` を活用した可読性の高いコード
-   - データを最後の引数に配置する関数設計
-   - イミュータブルな設計（Set、List）
-   - パイプライン演算子による連鎖
-   - `List.fold`による集約
+6. **F# の表現力**：
+    - 再帰関数による BFS 実装
+    - パターンマッチングによるリスト処理
+    - パイプライン演算子による関数合成
+    - イミュータブルなデータ構造
 
-7. **TypeScript版との違い**
-   - BFSの実装が再帰的で宣言的
-   - Setによる訪問済み管理（mutationなし）
-   - パイプライン演算子による可読性
-   - パターンマッチングによる安全な分岐
+**学んだこと**：
+- グラフ探索アルゴリズム（BFS）の実装方法
+- F# での可変状態（`mutable`）の適切な使用
+- 複雑なロジックのテスト分割戦略
+- ドメインロジックと UI の分離の重要性
 
-次のイテレーションでは、連鎖反応を実装していきます。
+これで、ぷよぷよゲームの核心的な機能である「ぷよの消去」が実装できました！次のイテレーションでは、連鎖反応を実装していきます。
+
+---
+
 
 ## イテレーション7: 連鎖反応の実装
 
@@ -4354,207 +4809,225 @@ git commit -m "feat: implement puyo clearing and gravity
 
 「れ〜んさ〜ん！」と叫びたくなるような連鎖反応を実装して、プレイヤーがより高いスコアを目指せるようにしましょう。
 
-### TODOリスト
+### 現在の実装を確認する
 
-「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODO リストを作成してみましょう。
+「連鎖反応を実装するには、どんな作業が必要ですか？」まずは、現在の `Update.fs` の `dropPuyo` 関数を見てみましょう。
 
-「連鎖反応を実装する」という機能を実現するためには、以下のようなタスクが必要そうですね：
-
-- 連鎖判定を実装する（ぷよが消えた後に新たな消去パターンがあるかを判定する）
-- 連鎖カウントを実装する（何連鎖目かをカウントする）
-- 連鎖ボーナスの計算を実装する（連鎖数に応じたボーナス点を計算する）
-
-「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
-
-### テスト: 連鎖判定
-
-「最初に何をテストすればいいんでしょうか？」まずは、連鎖判定をテストしましょう。ぷよが消えて落下した後に、新たな消去パターンが発生するかどうかを判定する機能が必要です。
+`src/PuyoPuyo.WPF/Elmish/Update.fs` の現在の実装：
 
 ```fsharp
-// tests/PuyoPuyo.Tests/BoardTests.fs（続き）
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with CurrentPair = Some movedPair }
+        | None ->
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
 
-[<Fact>]
-let ``ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する`` () =
-    // ゲームの盤面にぷよを配置
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 2 0 0 0
-    // 0 0 2 0 0 0
-    // 0 0 2 0 0 0
-    // 0 1 1 2 0 0
-    // 0 1 1 0 0 0
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
-        |> Board.setCell 3 10 (Filled Blue)
-        |> Board.setCell 2 7 (Filled Blue)
-        |> Board.setCell 2 8 (Filled Blue)
-        |> Board.setCell 2 9 (Filled Blue)
+            // 消去判定
+            let groups = findConnectedGroups boardAfterGravity
 
-    // 最初の消去判定
-    let groups1 = Board.findConnectedGroups board
-    groups1 |> should not' (be Empty)
+            // 消去処理
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    boardAfterGravity
+                else
+                    let positions = groups |> List.concat
+                    boardAfterGravity |> clearPuyos positions
 
-    // 消去実行
-    let positions1 = groups1 |> List.concat
-    let boardAfterClear1 = Board.clearPuyos board positions1
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
 
-    // 落下処理
-    let boardAfterGravity = Board.applyGravity boardAfterClear1
-
-    // 連鎖判定（2回目の消去判定）
-    let groups2 = Board.findConnectedGroups boardAfterGravity
-
-    // 連鎖が発生していることを確認（青ぷよが4つつながっている）
-    groups2 |> should not' (be Empty)
+            { model with
+                Board = boardAfterClear
+                CurrentPair = Some newPair }
+    | None -> model
 ```
 
-「このテストでは何を確認しているんですか？」このテストでは、以下のシナリオを確認しています：
+「この実装の問題は何ですか？」現在の実装では、「固定 → 重力 → 消去 → 新ぷよ生成」という流れで、**1回しか消去判定をしていません**。連鎖を実現するには、消去後に再度「重力 → 消去判定」を繰り返す必要があります。
 
-1. まず、特定のパターンでぷよを配置します（赤ぷよの2×2の正方形と、その上に青ぷよが縦に3つ並び、さらに青ぷよが横に1つある状態）
-2. 最初の消去判定で赤ぷよの正方形が消えます
-3. 消去後に落下処理を行うと、上にあった青ぷよが落下します
-4. 落下した結果、新たに青ぷよが4つつながり、連鎖が発生することを確認します
+### TDD サイクル開始
 
-「なるほど、連鎖の仕組みがテストで表現されているんですね！」そうです！このテストは、ぷよぷよの連鎖の基本的な仕組みを表現しています。では、このテストが通るか確認してみましょう。
+#### RED: 連鎖のテストを書く
+
+まず、連鎖が発生することを確認するテストを書きましょう。`tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs` に新しいテストモジュールを追加します：
+
+```fsharp
+module ``連鎖反応`` =
+    [<Fact>]
+    let ``初期化時の連鎖カウントは0`` () =
+        // Arrange & Act
+        let model = init ()
+
+        // Assert
+        model.Chain |> should equal 0
+
+    [<Fact>]
+    let ``連鎖が発生すると連鎖カウントが増加する`` () =
+        // Arrange
+        let random = Random(42)
+
+        // 連鎖が発生する配置:
+        // 赤ぷよ 4つ（下）+ 青ぷよ 4つ（上）
+        // 赤が消えると青が落ちて4つつながり、連鎖発生
+        let board =
+            init().Board
+            // 赤ぷよ（下）
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 8 Domain.Puyo.Red
+            // 青ぷよ（縦3 + 横1）
+            |> Domain.Board.setCellColor 2 7 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 6 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 2 5 Domain.Puyo.Blue
+            |> Domain.Board.setCellColor 3 8 Domain.Puyo.Blue
+
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 4 }
+                          ChildPosition = { X = 2; Y = 3 }
+                          Rotation = 0 }
+                GameState = Playing }
+
+        // Act - 着地させて連鎖を発生させる
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - 2連鎖が発生（1回目の消去 + 2回目の消去）
+        newModel.Chain |> should be (greaterThanOrEqualTo 2)
+```
+
+「このテストは何を確認しているんですか？」このテストでは以下を確認しています：
+
+1. **初期配置**：赤ぷよ4つ（縦）と青ぷよ4つ（縦3 + 横1）を配置
+2. **1回目の消去**：赤ぷよ4つと新しく着地した赤ぷよ2つの計6つが消える
+3. **重力適用**：青ぷよが落下
+4. **2回目の消去**：落下した青ぷよが4つつながり、連鎖が発生
 
 ### 実装: 連鎖判定
 
-「既存のゲームループを見てみると、実は連鎖反応は既に実装されています！」そうなんです。イテレーション6で実装したゲームループの仕組みが、そのまま連鎖反応を実現しているんです。
+連鎖反応を実装するために、まず連鎖カウントを管理する必要があります。TDD のサイクルに従って進めていきましょう。
 
-「え？本当ですか？」はい。Elmish の update 関数の実装を見てみましょう：
+#### RED: Model に Chain フィールドを追加
+
+まず、`Model` に `Chain` フィールドを追加する必要があります。これがないとテストがコンパイルエラーになります。
+
+`src/PuyoPuyo.WPF/Elmish/Model.fs` を更新：
 
 ```fsharp
-// src/PuyoPuyo.WPF/Main.fs の update 関数（抜粋）
-let update message model =
-    match message with
-    // ...
+// ゲームモデル
+type Model =
+    { Board: Board
+      Score: Score
+      Chain: int
+      GameState: GameState
+      CurrentPair: PuyoPair option }
 
-    | Tick when model.Status = Playing ->
-        match model.CurrentPiece with
-        | Some piece ->
-            match GameLogic.tryMovePuyoPair model.Board piece Down with
-            | Some movedPiece ->
-                { model with CurrentPiece = Some movedPiece }, Cmd.none
-            | None ->
-                // 着地処理
-                let boardWithPuyo = Board.fixPuyoPair model.Board piece
+// 初期化関数
+let init () =
+    { Board = createBoard ()
+      Score = initialScore
+      Chain = 0
+      GameState = NotStarted
+      CurrentPair = None }
+```
 
-                // 消去判定と処理
-                let groups = Board.findConnectedGroups boardWithPuyo
-                let boardAfterClear =
-                    if List.isEmpty groups then
-                        boardWithPuyo
-                    else
-                        let positions = groups |> List.concat
-                        let clearedBoard = Board.clearPuyos boardWithPuyo positions
-                        Board.applyGravity clearedBoard  // ← ここで重力適用
+テストをビルドして実行してみましょう：
 
-                let nextPiece = PuyoPair.createRandom 2 1 0
-                {
-                    model with
-                        Board = boardAfterClear
-                        CurrentPiece = Some nextPiece
-                }, Cmd.none
+```bash
+dotnet cake --target=Build
+```
+
+「ビルドは成功しますか？」はい、成功します。次にテストを実行します：
+
+```bash
+dotnet cake --target=Test
+```
+
+```
+成功!   -失敗:     1、合格:    58、スキップ:     0、合計:    59
+```
+
+「1つ失敗しましたね！」はい、連鎖カウントのテストが失敗します。現在の実装では連鎖が発生しないので、`Chain` が 0 のままです。
+
+#### GREEN: 連鎖処理を実装
+
+連鎖を実現するために、`Update.fs` に再帰的な連鎖処理関数を実装します：
+
+```fsharp
+// 連鎖処理を再帰的に実行
+let rec private processChain (board: Board) (chainCount: int) : Board * int =
+    // 消去判定
+    let groups = findConnectedGroups board
+
+    if List.isEmpty groups then
+        // 消去対象がない場合、連鎖終了
+        (board, chainCount)
+    else
+        // 消去処理
+        let positions = groups |> List.concat
+        let boardAfterClear = board |> clearPuyos positions
+        // 重力適用
+        let boardAfterGravity = applyGravity boardAfterClear
+        // 連鎖カウントを増やして再帰呼び出し
+        processChain boardAfterGravity (chainCount + 1)
+```
+
+「この関数は何をしているんですか？」`processChain` 関数は以下の処理を行います：
+
+1. **消去判定**：`findConnectedGroups` で消去可能なぷよを検索
+2. **連鎖終了判定**：消去対象がなければ終了
+3. **消去処理**：消去対象があれば `clearPuyos` で消去
+4. **重力適用**：`applyGravity` で落下
+5. **再帰呼び出し**：連鎖カウントを増やして再度消去判定
+
+次に、`dropPuyo` 関数を更新して、`processChain` を使用するようにします：
+
+```fsharp
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with CurrentPair = Some movedPair }
         | None ->
-            model, Cmd.none
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
+
+            // 連鎖処理
+            let (boardAfterChain, chainCount) = processChain boardAfterGravity 0
+
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterChain
+                Chain = chainCount
+                CurrentPair = Some newPair }
+    | None -> model
 ```
 
-「この実装の何が連鎖反応を実現しているんですか？」現在の実装では、1回の着地で1回だけ消去と重力を適用していますが、連鎖を実現するには、消去後に再度消去判定を繰り返す必要があります。
+「どこが変わったんですか？」主な変更点は：
 
-#### 連鎖の流れ
-
-連鎖を実現するには、以下のような流れが必要です：
-
-1. **1回目の消去**：
-   ```
-   着地 → 消去判定 → 消去 → 重力適用
-   ```
-
-2. **2回目の消去（連鎖）**：
-   ```
-   消去判定 → 消去あり → 消去 → 重力適用
-   ```
-
-3. **連鎖終了**：
-   ```
-   消去判定 → 消去なし → 次のぷよ
-   ```
-
-「つまり、消去後に再度消去判定を繰り返す必要があるんですね！」そのとおりです！では、連鎖を実現する処理を実装していきましょう。
-
-### 実装: 連鎖処理の再帰的な実装
-
-まず、消去と重力を繰り返し適用する関数を実装します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Domain/Board.fs（続き）
-
-module Board =
-    // ... 既存のコード ...
-
-    /// 消去と重力を繰り返し適用（連鎖処理）
-    let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
-        let groups = findConnectedGroups board
-        if List.isEmpty groups then
-            // 消去対象がない場合は終了
-            board
-        else
-            // 消去して重力を適用
-            let positions = groups |> List.concat
-            let clearedBoard = clearPuyos board positions
-            let boardAfterGravity = applyGravity clearedBoard
-
-            // 再帰的に消去判定を繰り返す
-            clearAndApplyGravityRepeatedly boardAfterGravity
-```
-
-「この関数は何をしているんですか？」この関数は、再帰的に消去と重力を適用し続けます：
-
-1. 消去対象のグループを検出
-2. グループがない場合は終了
-3. グループがある場合は消去して重力を適用
-4. 再度1に戻る（再帰呼び出し）
-
-「なるほど、消去対象がなくなるまで繰り返すんですね！」そうです。では、この関数を update 関数から呼び出すように修正しましょう。
-
-```fsharp
-// src/PuyoPuyo.WPF/Main.fs の dropPuyo 関数を修正
-
-let private dropPuyo (model: Model) : Model * Cmd<Message> =
-    match model.CurrentPiece with
-    | Some piece ->
-        match GameLogic.tryMovePuyoPair model.Board piece Down with
-        | Some movedPiece ->
-            { model with CurrentPiece = Some movedPiece }, Cmd.none
-        | None ->
-            // 着地処理
-            let boardWithPuyo = Board.fixPuyoPair model.Board piece
-
-            // 連鎖処理（消去と重力を繰り返し適用）
-            let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardWithPuyo
-
-            let nextPiece = PuyoPair.createRandom 2 1 0
-            {
-                model with
-                    Board = boardAfterChain
-                    CurrentPiece = Some nextPiece
-            }, Cmd.none
-    | None ->
-        model, Cmd.none
-```
-
-「これで連鎖が動くようになりましたか？」はい！`clearAndApplyGravityRepeatedly` 関数が、消去対象がなくなるまで自動的に繰り返し処理を行うため、連鎖が実現されます。
-
-### テスト実行
+1. **消去処理を processChain に置き換え**：再帰的に連鎖を処理
+2. **Chain フィールドを更新**：連鎖カウントを Model に保存
 
 テストを実行してみましょう：
 
@@ -4562,185 +5035,79 @@ let private dropPuyo (model: Model) : Model * Cmd<Message> =
 dotnet cake --target=Test
 ```
 
-「テストは通りましたか？」はい！連鎖のテストを含めて、全てのテストがパスしました。
-
-### 解説: 再帰的な連鎖処理
-
-F# で連鎖処理を実装する際のポイントを見ていきましょう：
-
-1. **再帰関数の活用**
-   ```fsharp
-   let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
-       let groups = findConnectedGroups board
-       if List.isEmpty groups then
-           board
-       else
-           // 処理して再帰呼び出し
-           clearAndApplyGravityRepeatedly boardAfterGravity
-   ```
-   - `rec` キーワードで再帰関数を定義
-   - 終了条件（消去グループなし）で再帰を止める
-   - 末尾再帰最適化により、スタックオーバーフローを防ぐ
-
-2. **不変性の維持**
-   ```fsharp
-   let clearedBoard = clearPuyos board positions
-   let boardAfterGravity = applyGravity clearedBoard
-   clearAndApplyGravityRepeatedly boardAfterGravity
-   ```
-   - 各ステップで新しい Board を返す
-   - 元の board は変更されない
-   - パイプライン処理で順次適用
-
-3. **パターンマッチングによる分岐**
-   ```fsharp
-   if List.isEmpty groups then
-       board
-   else
-       // 消去処理
-   ```
-   - リストが空かどうかで処理を分岐
-   - F# の表現力豊かな条件分岐
-
-### TypeScript版との違い
-
-TypeScript 版では、ゲームループの状態遷移（モード切り替え）によって連鎖を実現していました：
-
-```typescript
-// TypeScript版の状態遷移
-case 'checkErase':
-  const eraseInfo = this.stage.checkErase()
-  if (eraseInfo.erasePuyoCount > 0) {
-    this.stage.eraseBoards(eraseInfo.eraseInfo)
-    this.mode = 'erasing'
-  } else {
-    this.mode = 'newPuyo'
-  }
-  break
-
-case 'erasing':
-  this.mode = 'checkFall'  // 消去後、重力チェックへ
-  break
+```
+成功!   -失敗:     0、合格:    59、スキップ:     0、合計:    59
 ```
 
-一方、F# WPF 版では：
+「全テスト成功しましたね！」はい、連鎖機能が正しく実装できました！
+
+### View の更新
+
+連鎖カウントを表示するために、`GameView.fs` のバインディングを更新します：
+
+`src/PuyoPuyo.WPF/Components/GameView.fs`:
 
 ```fsharp
-// F#版の再帰的処理
-let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
-    let groups = findConnectedGroups board
-    if List.isEmpty groups then
-        board
-    else
-        let positions = groups |> List.concat
-        let clearedBoard = clearPuyos board positions
-        let boardAfterGravity = applyGravity clearedBoard
-        clearAndApplyGravityRepeatedly boardAfterGravity
+// Elmish バインディング
+let bindings () =
+    [ "Score" |> Binding.oneWay (fun m -> m.Score)
+      "Chain" |> Binding.oneWay (fun m -> m.Chain)
+      "Puyos" |> Binding.oneWay (fun m -> getAllPuyos m)
+      "StartGame" |> Binding.cmd (fun _ -> StartGame)
+      "CanStartGame" |> Binding.oneWay (fun m -> m.GameState = NotStarted)
+      "MoveLeft" |> Binding.cmd (fun _ -> MoveLeft)
+      "MoveRight" |> Binding.cmd (fun _ -> MoveRight)
+      "MoveDown" |> Binding.cmd (fun _ -> MoveDown)
+      "Rotate" |> Binding.cmd (fun _ -> Rotate) ]
 ```
 
-**主な違い**：
+「Chain の表示は XAML に既にあるんですか？」はい、`src/PuyoPuyo.App/MainWindow.xaml` には既に Chain の表示が定義されています（49-51行目）。
 
-| 観点 | TypeScript版 | F# WPF版 |
-|------|--------------|-------------|
-| 実装方式 | 状態遷移（モード管理） | 再帰関数 |
-| 処理の流れ | イベントループで段階的 | 一度の関数呼び出しで完結 |
-| コードの複雑さ | モードごとの分岐が必要 | シンプルな再帰処理 |
-| デバッグ | 状態遷移を追う必要あり | 関数の入出力を確認 |
+### 動作確認
 
-「F# の方がシンプルに書けるんですね！」そうです。再帰関数と不変性により、連鎖処理を宣言的に表現できています。
+アプリケーションを起動して、連鎖が発生することを確認しましょう：
 
-### テストの追加
-
-連鎖が正しく動作することを確認するため、複数のテストケースを追加しましょう：
-
-```fsharp
-// tests/PuyoPuyo.Tests/BoardTests.fs（続き）
-
-[<Fact>]
-let ``連鎖処理で消去対象がない場合は盤面がそのまま返される`` () =
-    let board =
-        Board.create 6 12
-        |> Board.setCell 0 11 (Filled Red)
-        |> Board.setCell 1 11 (Filled Blue)
-
-    let result = Board.clearAndApplyGravityRepeatedly board
-
-    // 消去対象がないため、盤面は変わらない
-    Board.getCell result 0 11 |> should equal (Filled Red)
-    Board.getCell result 1 11 |> should equal (Filled Blue)
-
-[<Fact>]
-let ``連鎖処理で2連鎖が正しく動作する`` () =
-    // 1連鎖目で赤が消え、2連鎖目で青が消えるパターン
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
-        |> Board.setCell 3 10 (Filled Blue)
-        |> Board.setCell 2 7 (Filled Blue)
-        |> Board.setCell 2 8 (Filled Blue)
-        |> Board.setCell 2 9 (Filled Blue)
-
-    let result = Board.clearAndApplyGravityRepeatedly board
-
-    // すべてのぷよが消えている（2連鎖が発生）
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            Board.getCell result x y |> should equal Empty
-
-[<Fact>]
-let ``連鎖処理で3連鎖が正しく動作する`` () =
-    // 3連鎖が発生するパターン
-    let board =
-        Board.create 6 12
-        // 1連鎖目: 赤ぷよ（下部）
-        |> Board.setCell 0 10 (Filled Red)
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 0 11 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        // 2連鎖目: 青ぷよ（中部）
-        |> Board.setCell 0 6 (Filled Blue)
-        |> Board.setCell 0 7 (Filled Blue)
-        |> Board.setCell 0 8 (Filled Blue)
-        |> Board.setCell 1 8 (Filled Blue)
-        // 3連鎖目: 緑ぷよ（上部）
-        |> Board.setCell 0 2 (Filled Green)
-        |> Board.setCell 0 3 (Filled Green)
-        |> Board.setCell 0 4 (Filled Green)
-        |> Board.setCell 1 4 (Filled Green)
-
-    let result = Board.clearAndApplyGravityRepeatedly board
-
-    // すべてのぷよが消えている（3連鎖が発生）
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            Board.getCell result x y |> should equal Empty
+```bash
+dotnet run --project src/PuyoPuyo.App/PuyoPuyo.App.csproj
 ```
 
-「これらのテストは何を確認しているんですか？」これらのテストでは、以下を確認しています：
+同じ色のぷよを縦に4つ並べて、その上に別の色のぷよを配置してみてください。下のぷよが消えると、上のぷよが落下して新たに4つつながり、連鎖が発生します！
 
-1. **消去なしのケース**：消去対象がない場合、盤面がそのまま返される
-2. **2連鎖のケース**：赤ぷよが消えた後、青ぷよが落下して2連鎖が発生
-3. **3連鎖のケース**：複数回の連鎖が正しく動作する
+### CI 実行
+
+すべてのチェックが通ることを確認しましょう：
+
+```bash
+dotnet cake --target=ci
+```
+
+すべてのタスクが成功することを確認します：
+- ✅ Format-Check
+- ✅ Lint
+- ✅ Build
+- ✅ Test（59 tests passed）
+- ✅ Coverage（76%以上）
 
 ### コミット
 
-テストが全て通ったら、コミットしましょう：
+動作確認できたので、コミットしましょう：
 
 ```bash
 git add .
 git commit -m "$(cat <<'EOF'
-feat: implement chain reaction system
+feat: イテレーション 7 - 連鎖反応を実装
 
-- Add clearAndApplyGravityRepeatedly for recursive chain processing
-- Update dropPuyo to use chain processing function
-- Add test for basic chain reaction (2 chains)
-- Add test for no clearing case
-- Add test for 2-chain scenario
-- Add test for 3-chain scenario
-- All tests passing (54 tests)
+- Model に Chain フィールドを追加
+- 連鎖処理を再帰的に実行する processChain 関数を実装
+  - 消去判定 → 消去 → 重力 → 再帰呼び出し
+  - 連鎖カウントを増やしながら繰り返し
+  - 消去対象がなくなったら終了
+- dropPuyo 関数を連鎖対応に修正
+  - ぷよ固定後に processChain を呼び出し
+  - 連鎖カウントを Model に保存
+- GameView の bindings に Chain バインディングを追加
+- UpdateTests に連鎖反応のテストを追加（2件）
+- All 59 tests passing
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -4778,15 +5145,15 @@ EOF
 
 ## イテレーション8: 全消しボーナスの実装
 
-「連鎖ができるようになったけど、ぷよぷよには全消しボーナスもありますよね？」そうですね！ぷよぷよには、盤面上のぷよをすべて消すと得られる「全消し（ぜんけし）ボーナス」という特別な報酬があります。今回は、その全消しボーナスを実装していきましょう！
+「ぷよぷよといえば、全消しボーナスもありますよね？」そうですね！全てのぷよが消えた状態を「全消し」（ぜんけし、別名「ぜんけし」または "All Clear"）と呼びます。これを達成したプレイヤーには特別なボーナス点が与えられます。今回は、この全消し判定とボーナス加算を実装していきましょう！
 
 ### ユーザーストーリー
 
 まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
 
-> プレイヤーとして、盤面上のぷよをすべて消したときに全消しボーナスを獲得できる
+> プレイヤーとして、盤面上の全てのぷよを消すと全消しボーナスが加算される
 
-「やった！全部消えた！」という達成感と共に、特別なボーナスポイントを獲得できる機能を実装します。これにより、プレイヤーは全消しを狙った戦略を考えるようになりますね。
+「全消しは達成が難しいから、特別なボーナスがあるといいですね！」そうですね。全消しは上級者向けのテクニックで、これを達成したプレイヤーには特別な報酬を与えることで、ゲームの戦略性と達成感を高めることができます。
 
 ### TODOリスト
 
@@ -4794,432 +5161,268 @@ EOF
 
 「全消しボーナスを実装する」という機能を実現するためには、以下のようなタスクが必要そうですね：
 
-- 全消し判定を実装する（盤面上のぷよがすべて消えたかどうかを判定する）
-- スコア管理を実装する（スコアの計算と表示を管理する）
-- 全消しボーナスの計算を実装する（全消し時に加算するボーナス点を計算する）
+- 全消し判定を実装する（盤面上にぷよが残っていないかチェック）
+- Update 関数に全消し処理を統合する（連鎖処理後にボーナス加算）
+- テストを追加・実行して確認する
+- CI パイプラインを実行する
+- 変更をコミットする
 
 「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
 
-### テスト: 全消し判定
+### テスト: 全消し判定（RED フェーズ）
 
-「最初に何をテストすればいいんでしょうか？」まずは、全消し判定をテストしましょう。盤面上のぷよがすべて消えたかどうかを判定する機能が必要です。
+「最初に何をテストすればいいんでしょうか？」まずは、全消し判定をテストしましょう。盤面上に残っているぷよがあるかどうかをチェックする機能が必要です。
 
 ```fsharp
-// tests/PuyoPuyo.Tests/BoardTests.fs（続き）
+// tests/PuyoPuyo.Tests/Domain/BoardTests.fs（続き）
 
-[<Fact>]
-let ``盤面上のぷよがすべて消えると全消しになる`` () =
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
+module ``全消し判定`` =
+    [<Fact>]
+    let ``盤面が空の場合は全消しと判定される`` () =
+        // Arrange
+        let board = createBoard ()
 
-    // 消去判定と実行
-    let groups = Board.findConnectedGroups board
-    let positions = groups |> List.concat
-    let clearedBoard = Board.clearPuyos board positions
+        // Act
+        let isAllClear = isAllClear board
 
-    // 全消し判定
-    let isZenkeshi = Board.checkZenkeshi clearedBoard
+        // Assert
+        isAllClear |> should equal true
 
-    // 全消しになっていることを確認
-    isZenkeshi |> should equal true
+    [<Fact>]
+    let ``盤面にぷよが残っている場合は全消しと判定されない`` () =
+        // Arrange
+        let board = createBoard () |> setCellColor 2 11 Red
 
-[<Fact>]
-let ``盤面上にぷよが残っていると全消しにならない`` () =
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
-        |> Board.setCell 3 11 (Filled Blue)  // 消えないぷよ
+        // Act
+        let isAllClear = isAllClear board
 
-    // 消去判定と実行
-    let groups = Board.findConnectedGroups board
-    let positions = groups |> List.concat
-    let clearedBoard = Board.clearPuyos board positions
-
-    // 全消し判定
-    let isZenkeshi = Board.checkZenkeshi clearedBoard
-
-    // 全消しになっていないことを確認
-    isZenkeshi |> should equal false
+        // Assert
+        isAllClear |> should equal false
 ```
 
 「このテストでは何を確認しているんですか？」このテストでは、以下の2つのケースを確認しています：
 
-1. 盤面上のぷよがすべて消えた場合、全消しと判定されるか
+1. 盤面が空の場合、全消しと判定されるか
 2. 盤面上にぷよが残っている場合、全消しと判定されないか
 
-「最初のテストでは、2×2の正方形に赤ぷよを配置して、それらが消えた後に全消しになるんですね？」そうです！最初のテストでは、2×2の正方形に赤ぷよを配置し、それらが消去された後に盤面が空になるので、全消しと判定されるはずです。
+「シンプルなテストですね！」そうです。最もシンプルなケースから始めるのがTDDの基本です。
 
-「2つ目のテストでは、消えないぷよが残るようにしているんですね？」その通りです！2つ目のテストでは、2×2の正方形に赤ぷよを配置した上で、別の場所に青ぷよを1つ配置しています。赤ぷよは消えますが、青ぷよは消えないので、全消しにはならないはずです。
+まずテストを実行して、失敗することを確認します：
 
-「なるほど、全消し判定の条件がよく分かりますね！」では、このテストが通るように実装していきましょう。
+```bash
+dotnet build && dotnet test
+```
 
-### 実装: 全消し判定
+「コンパイルエラーが出ましたか？」はい、`isAllClear` 関数が定義されていないためエラーになりました。これが RED フェーズです。
 
-「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、全消し判定を実装していきましょう。
+### 実装: 全消し判定（GREEN フェーズ）
+
+「それでは実装に進みましょう！」そうですね。では、全消し判定を実装していきましょう。
 
 ```fsharp
 // src/PuyoPuyo.WPF/Domain/Board.fs（続き）
 
-module Board =
-    // ... 既存のコード ...
+// 全消し判定（盤面上のぷよがすべて消えたかをチェック）
+let isAllClear (board: Board) : bool =
+    let width = Array2D.length1 board
+    let height = Array2D.length2 board
+    let mutable hasAnyPuyo = false
 
-    /// 全消し判定（盤面上にぷよがあるかチェック）
-    let checkZenkeshi (board: Board) : bool =
-        board.Cells
-        |> Array.forall (fun row ->
-            row |> Array.forall (fun cell -> cell = Empty))
+    for y in 0 .. height - 1 do
+        for x in 0 .. width - 1 do
+            if getCellColor x y board <> Empty then
+                hasAnyPuyo <- true
+
+    not hasAnyPuyo
 ```
 
 「シンプルですね！」そうですね。全消し判定の実装自体はとてもシンプルです。盤面上のすべてのセルをチェックし、全てが `Empty` であれば `true` を返します。
 
-「`Array.forall` を使っているんですね！」その通りです！`Array.forall` は、配列の全ての要素が条件を満たすかをチェックする関数です。外側の `forall` で各行を、内側の `forall` で各列をチェックしています。
+「ミュータブルな変数を使っているんですね！」その通りです！このような判定処理では、フラグを使って結果を追跡する方法がシンプルで分かりやすいです。
+
+テストを再実行します：
+
+```bash
+dotnet build && dotnet test
+```
+
+「テストは通りましたか？」はい！全 61 テストがパスしました。GREEN フェーズ完了です。
 
 ### 解説: 全消し判定
 
 全消し判定では、以下のことを行っています：
 
-1. 盤面上のすべての行を順番にチェック
-2. 各行のすべてのセルが `Empty` かどうかをチェック
-3. すべてのセルが空であれば `true`、1つでもぷよがあれば `false`
+1. 盤面のサイズを取得（`Array2D.length1` で幅、`Array2D.length2` で高さ）
+2. すべてのセルを走査してぷよの有無をチェック
+3. ぷよが1つでも見つかったら `hasAnyPuyo` フラグを立てる
+4. フラグの否定を返す（ぷよがなければ全消し）
 
 「全消し判定はいつ行われるんですか？」良い質問ですね！全消し判定は、連鎖処理が完了した後に行われます。ぷよが消えた後、盤面上にぷよが残っていないかをチェックするんです。
 
-### テスト: スコア管理
+### テスト: 全消しボーナス（RED フェーズ）
 
-次に、スコア管理の機能を実装します。まずはテストから書いていきましょう。
-
-```fsharp
-// tests/PuyoPuyo.Tests/ScoreTests.fs（新規作成）
-
-module PuyoPuyo.Tests.ScoreTests
-
-open Xunit
-open FsUnit.Xunit
-open PuyoPuyo.WPF.Domain.Score
-
-[<Fact>]
-let ``初期スコアは0である`` () =
-    let score = Score.create ()
-    score.Value |> should equal 0
-
-[<Fact>]
-let ``スコアを加算できる`` () =
-    let score = Score.create ()
-    let updatedScore = Score.addScore score 100
-    updatedScore.Value |> should equal 100
-
-[<Fact>]
-let ``スコアを複数回加算できる`` () =
-    let score =
-        Score.create ()
-        |> Score.addScore 100
-        |> Score.addScore 200
-    score.Value |> should equal 300
-```
-
-「スコア管理のテストでは何を確認しているんですか？」これらのテストでは、以下を確認しています：
-
-1. 初期状態でスコアが0であること
-2. スコアを加算できること
-3. スコアを複数回加算できること
-
-### 実装: スコア管理
-
-スコアを管理する型とモジュールを実装します。
+次に、全消しボーナスの加算をテストします。
 
 ```fsharp
-// src/PuyoPuyo.WPF/Domain/Score.fs（新規作成）
+// tests/PuyoPuyo.Tests/Elmish/UpdateTests.fs（続き）
 
-namespace PuyoPuyo.WPF.Domain
+module ``全消しボーナス`` =
+    [<Fact>]
+    let ``全消し時に3600点のボーナスが加算される`` () =
+        // Arrange
+        let random = Random(42)
 
-/// スコアを表す型
-type Score = {
-    Value: int
-}
+        // ボードに赤いぷよを 3 つ並べておく（全消しになる配置）
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
 
-module Score =
-    /// スコアを作成
-    let create () : Score =
-        { Value = 0 }
+        // 赤いぷよペアを上から落として全消しさせる
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing
+                Score = 0 }
 
-    /// スコアを加算
-    let addScore (score: Score) (points: int) : Score =
-        { score with Value = score.Value + points }
+        // Act - 着地させて全消しさせる
+        let newModel = updateWithRandom random Tick model
 
-    /// 全消しボーナスを加算
-    let addZenkeshiBonus (score: Score) : Score =
-        let zenkeshiBonus = 3600
-        addScore score zenkeshiBonus
+        // Assert - 全消しボーナス3600点が加算される
+        newModel.Score |> should equal 3600
+
+    [<Fact>]
+    let ``全消しでない場合はボーナスが加算されない`` () =
+        // Arrange
+        let random = Random(42)
+
+        // ボードに赤いぷよ 3 つ + 緑のぷよ 1 つ（全消しにならない配置）
+        let board =
+            init().Board
+            |> Domain.Board.setCellColor 2 11 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 10 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 2 9 Domain.Puyo.Red
+            |> Domain.Board.setCellColor 3 11 Domain.Puyo.Green
+
+        // 赤いぷよペアを上から落とす（赤だけ消えて緑が残る）
+        let model =
+            { init () with
+                Board = board
+                CurrentPair =
+                    Some
+                        { Axis = Domain.Puyo.Red
+                          Child = Domain.Puyo.Red
+                          AxisPosition = { X = 2; Y = 8 }
+                          ChildPosition = { X = 2; Y = 7 }
+                          Rotation = 0 }
+                GameState = Playing
+                Score = 0 }
+
+        // Act - 着地させる（赤だけ消えて緑が残る）
+        let newModel = updateWithRandom random Tick model
+
+        // Assert - ボーナスは加算されない（スコア0のまま）
+        newModel.Score |> should equal 0
 ```
 
-「スコアはレコード型で表現するんですね！」そうです。F# のレコード型は不変で、コピー式 (`{ score with Value = ... }`) で簡単に新しいスコアを作成できます。
+「全消しボーナスのテストでは何を確認しているんですか？」これらのテストでは、以下を確認しています：
 
-「全消しボーナスは固定値なんですね！」はい、全消しボーナスは固定で 3600 点とします。これは、プレイヤーに特別な達成感を与えるための値です。
+1. 全消し時に 3600 点のボーナスが加算されること
+2. 全消しでない場合はボーナスが加算されないこと
 
-### テスト: 全消しボーナス
-
-全消しボーナスのテストを追加しましょう。
-
-```fsharp
-// tests/PuyoPuyo.Tests/ScoreTests.fs（続き）
-
-[<Fact>]
-let ``全消しボーナスを加算できる`` () =
-    let score = Score.create ()
-    let updatedScore = Score.addZenkeshiBonus score
-    updatedScore.Value |> should equal 3600
-
-[<Fact>]
-let ``通常スコアと全消しボーナスを組み合わせて加算できる`` () =
-    let score =
-        Score.create ()
-        |> Score.addScore 1000
-        |> Score.addZenkeshiBonus
-    score.Value |> should equal 4600
-```
-
-### Model への統合
-
-スコアを Model に追加します。
-
-```fsharp
-// src/PuyoPuyo.WPF/Main.fs の Model 型を修正
-
-type Model = {
-    Board: Board
-    CurrentPiece: PuyoPair option
-    Status: GameStatus
-    IsFastFalling: bool
-    Score: Score  // ← 追加
-}
-```
-
-init 関数も修正します：
-
-```fsharp
-// src/PuyoPuyo.WPF/Main.fs の init 関数を修正
-
-let init () =
-    let initialBoard = Board.create 6 12
-    let initialPiece = PuyoPair.createRandom 2 1 0
-    {
-        Board = initialBoard
-        CurrentPiece = Some initialPiece
-        Status = Playing
-        IsFastFalling = false
-        Score = Score.create ()  // ← 追加
-    }, Cmd.none
-```
-
-### 全消し判定と連鎖処理の統合
-
-連鎖処理に全消し判定を組み込みます。連鎖処理が完了した後のボード状態を返すだけでなく、全消しだったかどうかも返すように修正します。
-
-```fsharp
-// src/PuyoPuyo.WPF/Domain/Board.fs の clearAndApplyGravityRepeatedly を修正
-
-module Board =
-    // ... 既存のコード ...
-
-    /// 消去と重力を繰り返し適用（連鎖処理）、全消しかどうかも返す
-    let rec private clearAndApplyGravityRepeatedlyImpl (board: Board) : Board =
-        let groups = findConnectedGroups board
-        if List.isEmpty groups then
-            board
-        else
-            let positions = groups |> List.concat
-            let clearedBoard = clearPuyos board positions
-            let boardAfterGravity = applyGravity clearedBoard
-            clearAndApplyGravityRepeatedlyImpl boardAfterGravity
-
-    /// 消去と重力を繰り返し適用し、最終状態と全消しフラグを返す
-    let clearAndApplyGravityRepeatedly (board: Board) : Board * bool =
-        let finalBoard = clearAndApplyGravityRepeatedlyImpl board
-        let isZenkeshi = checkZenkeshi finalBoard
-        (finalBoard, isZenkeshi)
-```
-
-「戻り値がタプルになったんですね！」そうです。F# では複数の値を返す場合、タプルを使うのが一般的です。
-
-### update 関数の修正
-
-dropPuyo 関数を修正して、全消しボーナスを加算するようにします。
-
-```fsharp
-// src/PuyoPuyo.WPF/Main.fs の dropPuyo 関数を修正
-
-let private dropPuyo (model: Model) : Model * Cmd<Message> =
-    match model.CurrentPiece with
-    | Some piece ->
-        match GameLogic.tryMovePuyoPair model.Board piece Down with
-        | Some movedPiece ->
-            { model with CurrentPiece = Some movedPiece }, Cmd.none
-        | None ->
-            // 着地処理
-            let boardWithPuyo = Board.fixPuyoPair model.Board piece
-
-            // 連鎖処理（消去と重力を繰り返し適用）
-            let (boardAfterChain, isZenkeshi) = Board.clearAndApplyGravityRepeatedly boardWithPuyo
-
-            // 全消しの場合はボーナス加算
-            let newScore =
-                if isZenkeshi then
-                    Score.addZenkeshiBonus model.Score
-                else
-                    model.Score
-
-            let nextPiece = PuyoPair.createRandom 2 1 0
-            {
-                model with
-                    Board = boardAfterChain
-                    CurrentPiece = Some nextPiece
-                    Score = newScore
-            }, Cmd.none
-    | None ->
-        model, Cmd.none
-```
-
-「全消しのときだけボーナスが加算されるんですね！」そうです。if 式を使って、全消しの場合はボーナスを加算し、そうでない場合は現在のスコアをそのまま使います。
-
-### View への統合
-
-スコアを画面に表示するように view 関数を修正します。
-
-```fsharp
-// src/PuyoPuyo.WPF/Main.fs の view 関数を修正
-
-let view model dispatch =
-    div [ attr.style "font-family: monospace; text-align: center; padding: 20px;" ] [
-        h1 [] [ text "ぷよぷよ" ]
-
-        // スコア表示
-        div [ attr.style "margin-bottom: 10px; font-size: 20px;" ] [
-            text $"Score: {model.Score.Value}"
-        ]
-
-        // ゲームボード
-        div [ attr.style "display: inline-block; border: 2px solid black; background-color: #f0f0f0;" ] [
-            for y in 0 .. model.Board.Rows - 1 do
-                div [ attr.style "display: flex;" ] [
-                    for x in 0 .. model.Board.Cols - 1 do
-                        let cell = Board.getCell model.Board x y
-                        let color =
-                            match cell with
-                            | Empty -> "white"
-                            | Filled puyoColor ->
-                                match puyoColor with
-                                | Red -> "red"
-                                | Green -> "green"
-                                | Blue -> "blue"
-                                | Yellow -> "yellow"
-
-                        // 現在のぷよペアを描画
-                        let isPuyoPair =
-                            match model.CurrentPiece with
-                            | Some piece ->
-                                let (pos1, pos2) = PuyoPair.getPositions piece
-                                (x, y) = pos1 || (x, y) = pos2
-                            | None -> false
-
-                        let finalColor =
-                            if isPuyoPair then
-                                match model.CurrentPiece with
-                                | Some piece ->
-                                    let (pos1, pos2) = PuyoPair.getPositions piece
-                                    if (x, y) = pos1 then
-                                        match piece.Puyo1Color with
-                                        | Red -> "red"
-                                        | Green -> "green"
-                                        | Blue -> "blue"
-                                        | Yellow -> "yellow"
-                                    elif (x, y) = pos2 then
-                                        match piece.Puyo2Color with
-                                        | Red -> "red"
-                                        | Green -> "green"
-                                        | Blue -> "blue"
-                                        | Yellow -> "yellow"
-                                    else
-                                        color
-                                | None -> color
-                            else
-                                color
-
-                        div [
-                            attr.style $"width: 30px; height: 30px; border: 1px solid #ccc; background-color: {finalColor};"
-                        ] []
-                ]
-        ]
-
-        // 操作説明
-        div [ attr.style "margin-top: 20px;" ] [
-            p [] [ text "← → : 移動" ]
-            p [] [ text "↑ : 回転" ]
-            p [] [ text "↓ : 高速落下" ]
-        ]
-    ]
-```
-
-「スコアが画面の上部に表示されるんですね！」そうです。プレイヤーは現在のスコアをいつでも確認できるようになります。
-
-### テスト実行
-
-テストを実行してみましょう：
+テストを実行して、失敗することを確認します：
 
 ```bash
-dotnet cake --target=Test
+dotnet build && dotnet test
 ```
 
-「テストは通りましたか？」はい！全消し判定とスコア管理のテストを含めて、全てのテストがパスしました。
+「期待値と実際の値が異なりましたか？」はい、期待値は 3600 ですが、実際は 0 でした。これが RED フェーズです。
 
-### 統合テスト
+### 実装: Update 関数への統合（GREEN フェーズ）
 
-全消しボーナスが正しく動作することを確認する統合テストを追加しましょう。
+全消し判定を Update 関数の連鎖処理に組み込みます。
 
 ```fsharp
-// tests/PuyoPuyo.Tests/BoardTests.fs（続き）
+// src/PuyoPuyo.WPF/Elmish/Update.fs
 
-[<Fact>]
-let ``全消しの場合はフラグがtrueになる`` () =
-    let board =
-        Board.create 6 12
-        |> Board.setCell 1 10 (Filled Red)
-        |> Board.setCell 2 10 (Filled Red)
-        |> Board.setCell 1 11 (Filled Red)
-        |> Board.setCell 2 11 (Filled Red)
+open System
+open Domain.Board
+open Domain.GameLogic
+open Domain.PuyoPair
+open Elmish.Model
 
-    let (finalBoard, isZenkeshi) = Board.clearAndApplyGravityRepeatedly board
+// 全消しボーナスの定数
+let private allClearBonus = 3600
 
-    // 全消しフラグがtrueであることを確認
-    isZenkeshi |> should equal true
+// 連鎖処理を再帰的に実行（戻り値: ボード、連鎖数、ボーナススコア）
+let rec private processChain (board: Board) (chainCount: int) : Board * int * int =
+    // 消去判定
+    let groups = findConnectedGroups board
 
-    // すべてのセルが空であることを確認
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            Board.getCell finalBoard x y |> should equal Empty
+    if List.isEmpty groups then
+        // 消去対象がない場合、連鎖終了
+        // 全消しチェック
+        let bonus = if isAllClear board then allClearBonus else 0
 
-[<Fact>]
-let ``全消しでない場合はフラグがfalseになる`` () =
-    let board =
-        Board.create 6 12
-        |> Board.setCell 0 11 (Filled Red)
-        |> Board.setCell 1 11 (Filled Blue)
+        (board, chainCount, bonus)
+    else
+        // 消去処理
+        let positions = groups |> List.concat
+        let boardAfterClear = board |> clearPuyos positions
+        // 重力適用
+        let boardAfterGravity = applyGravity boardAfterClear
+        // 連鎖カウントを増やして再帰呼び出し
+        processChain boardAfterGravity (chainCount + 1)
 
-    let (finalBoard, isZenkeshi) = Board.clearAndApplyGravityRepeatedly board
+// ぷよを下に移動させる（共通処理）
+let private dropPuyo (random: Random) (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        // 下に移動を試みる
+        match tryMovePuyoPair model.Board pair Down with
+        | Some movedPair ->
+            // 移動できた場合
+            { model with
+                CurrentPair = Some movedPair }
+        | None ->
+            // 移動できない場合、ぷよを固定
+            let boardWithPuyo = fixPuyoPair model.Board pair
+            // 重力適用
+            let boardAfterGravity = applyGravity boardWithPuyo
 
-    // 全消しフラグがfalseであることを確認
-    isZenkeshi |> should equal false
+            // 連鎖処理
+            let (boardAfterChain, chainCount, bonusScore) = processChain boardAfterGravity 0
 
-    // ぷよが残っていることを確認
-    Board.getCell finalBoard 0 11 |> should equal (Filled Red)
-    Board.getCell finalBoard 1 11 |> should equal (Filled Blue)
+            // 新しいぷよを生成
+            let newPair = generatePuyoPair random
+
+            { model with
+                Board = boardAfterChain
+                Chain = chainCount
+                Score = model.Score + bonusScore
+                CurrentPair = Some newPair }
+    | None -> model
 ```
+
+「戻り値が3つになったんですね！」そうです。`processChain` 関数は、最終的なボード、連鎖数、そしてボーナススコアの3つを返すように変更しました。
+
+「全消しのときだけボーナスが加算されるんですね！」その通りです。`if isAllClear board` で全消し判定を行い、全消しの場合は 3600 点、そうでない場合は 0 点を返します。
+
+テストを実行します：
+
+```bash
+dotnet build && dotnet test
+```
+
+「テストは通りましたか？」はい！全 63 テストがパスしました。GREEN フェーズ完了です。
 
 ### コミット
 
@@ -5228,18 +5431,31 @@ let ``全消しでない場合はフラグがfalseになる`` () =
 ```bash
 git add .
 git commit -m "$(cat <<'EOF'
-feat: implement all-clear bonus system
+feat: イテレーション8 - 全消しボーナスを実装
 
-- Add checkZenkeshi function to detect all-clear state
-- Create Score module for score management
-- Add Score to Model with initial value 0
-- Update clearAndApplyGravityRepeatedly to return isZenkeshi flag
-- Update dropPuyo to add all-clear bonus (3600 points)
-- Add score display to view
-- Add tests for all-clear detection (2 tests)
-- Add tests for score management (5 tests)
-- Add integration tests for all-clear flag (2 tests)
-- All tests passing (63 tests)
+全消し時に3600点のボーナスが加算される機能を実装しました。
+
+## 変更内容
+
+### Domain/Board.fs
+- `isAllClear` 関数を追加
+  - 盤面上のすべてのセルが Empty かどうかを判定
+
+### Elmish/Update.fs
+- `processChain` 関数を拡張
+  - 連鎖処理後に全消し判定を実行
+  - 全消し時に3600点のボーナスを返すように変更
+  - 戻り値を (Board * int * int) に変更（ボード、連鎖数、ボーナススコア）
+- `dropPuyo` 関数を修正
+  - processChain から受け取ったボーナススコアをモデルに加算
+
+### テスト
+- BoardTests.fs に全消し判定のテストを追加
+- UpdateTests.fs に全消しボーナスのテストを追加
+  - 全消し時に3600点のボーナスが加算されることを確認
+  - 全消しでない場合はボーナスが加算されないことを確認
+
+全テスト(63件)がパスし、CI パイプラインも成功しました。
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -5253,17 +5469,17 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **全消し判定の実装**：
-   - `Array.forall` による全要素チェック
-   - 二重の `forall` で2次元配列を処理
+   - ミュータブルなフラグによる判定処理
+   - 二重ループで2次元配列を処理
    - シンプルなロジックで確実な判定を実現
 
-2. **スコア管理の設計**：
-   - レコード型による不変なスコア表現
-   - モジュールによる操作の抽出
-   - コピー式による安全な更新
+2. **TDD サイクルの実践**：
+   - RED フェーズ：失敗するテストを書く
+   - GREEN フェーズ：テストを通す最小限の実装
+   - テストファーストで機能を構築
 
 3. **タプルによる複数戻り値**：
-   - `Board * bool` で最終盤面と全消しフラグを返す
+   - `Board * int * int` で最終盤面、連鎖数、ボーナススコアを返す
    - パターンマッチングで分解して利用
    - F# の簡潔な複数値の扱い
 
@@ -5272,20 +5488,15 @@ EOF
    - 全消しの場合のみボーナス加算
    - 不変性を保ちながら状態更新
 
-5. **View への統合**：
-   - スコア表示の追加
-   - リアルタイムなスコア更新
-   - プレイヤーへのフィードバック
+5. **Elmish.WPF のアーキテクチャ**：
+   - Model-View-Update パターンの活用
+   - イミュータブルなモデル更新
+   - 副作用のない純粋関数
 
 6. **テスト駆動開発の継続**：
    - 全消しになるケースとならないケースの両方をテスト
-   - スコア管理の基本機能をテスト
    - 統合テストで全体の動作を保証
-
-7. **F# の表現力**：
-   - `Array.forall` による宣言的な全要素チェック
-   - タプルによる複数戻り値の簡潔な表現
-   - パターンマッチングによる値の取り出し
+   - CI パイプラインで品質を継続的に確認
 
 このイテレーションで、全消しボーナスという特別な報酬システムが実装できました。次のイテレーションでは、ゲームの終了条件となるゲームオーバー判定を実装していきます！
 
@@ -5788,4 +5999,3 @@ EOF
 
 ---
 
-**著者より**: このチュートリアルは、テスト駆動開発と関数型プログラミングの素晴らしさを伝えたいという思いから作成しました。質問やフィードバックがあれば、ぜひお気軽にお寄せください。一緒に学び、成長していきましょう!

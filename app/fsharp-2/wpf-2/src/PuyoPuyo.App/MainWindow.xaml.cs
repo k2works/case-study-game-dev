@@ -7,6 +7,7 @@ namespace PuyoPuyo.App
         public MainWindow()
         {
             InitializeComponent();
+            this.Loaded += (s, e) => this.Focus();
         }
     }
 }

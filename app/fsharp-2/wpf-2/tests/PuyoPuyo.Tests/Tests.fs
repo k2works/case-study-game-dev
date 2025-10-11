@@ -1,7 +1,11 @@
-﻿module Tests
+module Tests
 
-open System
-open Xunit
+// イテレーション1: ゲーム開始の実装
 
-[<Fact>]
-let ``My test`` () = Assert.True(true)
+// すべてのテストは以下のモジュールに分割されています:
+// - Domain.PuyoTests
+// - Domain.BoardTests
+// - Domain.ScoreTests
+// - Domain.PuyoPairTests
+// - Domain.GameLogicTests
+// - Elmish.UpdateTests

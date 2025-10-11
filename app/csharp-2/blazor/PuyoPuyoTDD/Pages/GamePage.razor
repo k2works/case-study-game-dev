@@ -1,0 +1,309 @@
+@page "/game"
+@using PuyoPuyoTDD.Models
+@inject IJSRuntime JSRuntime
+
+<PageTitle>ぷよぷよ</PageTitle>
+
+<h1>ぷよぷよ</h1>
+
+<div class="game-container">
+    <div class="game-info">
+        <p>スコア: @game.Score.Value</p>
+        <p>モード: @game.Mode</p>
+    </div>
+    <canvas id="stageCanvas" width="@canvasWidth" height="@canvasHeight"></canvas>
+
+    @if (game.Mode == GameMode.GameOver)
+    {
+        <div class="game-over-overlay">
+            <div class="game-over-message">
+                <h2>GAME OVER</h2>
+                <p>スコア: @game.Score.Value</p>
+                <button @onclick="HandleRestart" class="restart-button">もう一度プレイする</button>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .game-over-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .game-over-message {
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-over-message h2 {
+        color: #d32f2f;
+        font-size: 3rem;
+        margin: 0 0 20px 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-over-message p {
+        font-size: 1.5rem;
+        margin: 20px 0;
+        color: #333;
+    }
+
+    .restart-button {
+        font-size: 1.2rem;
+        padding: 15px 30px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .restart-button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+@code {
+    private Game game = new();
+    private int canvasWidth;
+    private int canvasHeight;
+    private DotNetObjectReference<GamePage>? dotNetHelper;
+
+    /// <summary>
+    /// コンポーネント初期化時の処理.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        game.Initialize();
+        game.Player.CreateNewPuyo(); // 最初のぷよを生成
+        canvasWidth = game.Config.StageWidth * game.Config.PuyoSize;
+        canvasHeight = game.Config.StageHeight * game.Config.PuyoSize;
+    }
+
+    /// <summary>
+    /// レンダリング完了後の処理.
+    /// </summary>
+    /// <param name="firstRender">初回レンダリングかどうか.</param>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetHelper = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("initializeGame", dotNetHelper);
+            await JSRuntime.InvokeVoidAsync("startGameLoop");
+        }
+    }
+
+    /// <summary>
+    /// JavaScript からキーが押されたときに呼ばれる.
+    /// </summary>
+    /// <param name="key">押されたキー.</param>
+    [JSInvokable]
+    public void OnKeyDown(string key)
+    {
+        switch (key)
+        {
+            case "ArrowLeft":
+                game.Player.SetInputLeft(true);
+                game.Player.MoveLeft();
+                break;
+            case "ArrowRight":
+                game.Player.SetInputRight(true);
+                game.Player.MoveRight();
+                break;
+            case "ArrowUp":
+                game.Player.SetInputUp(true);
+                game.Player.RotateRight();
+                break;
+            case "ArrowDown":
+                game.Player.SetInputDown(true);
+                break;
+            case "KeyX":
+                game.Player.RotateLeft();
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// JavaScript からキーが離されたときに呼ばれる.
+    /// </summary>
+    /// <param name="key">離されたキー.</param>
+    [JSInvokable]
+    public void OnKeyUp(string key)
+    {
+        switch (key)
+        {
+            case "ArrowLeft":
+                game.Player.SetInputLeft(false);
+                break;
+            case "ArrowRight":
+                game.Player.SetInputRight(false);
+                break;
+            case "ArrowUp":
+                game.Player.SetInputUp(false);
+                break;
+            case "ArrowDown":
+                game.Player.SetInputDown(false);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// ぷよの描画情報を JavaScript に渡す.
+    /// </summary>
+    /// <returns>ぷよの描画情報.</returns>
+    [JSInvokable]
+    public object GetPuyoData()
+    {
+        return new
+        {
+            x = game.Player.PuyoX,
+            y = game.Player.PuyoY,
+            type = game.Player.PuyoType,
+            rotation = game.Player.Rotation,
+        };
+    }
+
+    /// <summary>
+    /// 落下速度を JavaScript に渡す.
+    /// </summary>
+    /// <returns>落下速度.</returns>
+    [JSInvokable]
+    public int GetDropSpeed()
+    {
+        return game.Player.GetDropSpeed();
+    }
+
+    /// <summary>
+    /// ぷよを下に移動する.
+    /// </summary>
+    /// <returns>移動できたかどうか.</returns>
+    [JSInvokable]
+    public bool MoveDown()
+    {
+        return game.Player.MoveDown();
+    }
+
+    /// <summary>
+    /// ぷよが着地したかどうかを判定する.
+    /// </summary>
+    /// <returns>着地しているかどうか.</returns>
+    [JSInvokable]
+    public bool HasLanded()
+    {
+        return game.Player.HasLanded();
+    }
+
+    /// <summary>
+    /// 新しいぷよを生成する.
+    /// </summary>
+    [JSInvokable]
+    public void CreateNewPuyo()
+    {
+        game.Player.CreateNewPuyo();
+
+        // ゲームオーバー判定
+        if (game.Player.CheckGameOver())
+        {
+            game.Mode = GameMode.GameOver;
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// 着地したぷよをステージに配置する.
+    /// </summary>
+    [JSInvokable]
+    public void PlacePuyoOnStage()
+    {
+        game.Player.PlacePuyoOnStage();
+    }
+
+    /// <summary>
+    /// 連鎖処理を実行してスコアを更新する.
+    /// </summary>
+    [JSInvokable]
+    public void ProcessChainAndUpdateScore()
+    {
+        // 着地後、まず重力を適用（浮いているぷよを落下させる）
+        game.Stage.ApplyGravity();
+
+        // 連鎖処理を実行
+        var chainResult = game.Stage.ProcessChain();
+
+        if (chainResult.chainCount > 0)
+        {
+            // 各連鎖のスコアを計算
+            for (int i = 0; i < chainResult.chainInfoList.Count; i++)
+            {
+                int chainNumber = i + 1; // 連鎖数は1から始まる
+                var chainInfo = chainResult.chainInfoList[i];
+                int points = Score.Calculate(chainInfo.erasePuyoCount, chainNumber);
+                game.Score.Add(points);
+            }
+
+            // 全消し判定を行い、全消しならボーナスを加算
+            if (game.Stage.IsAllClear())
+            {
+                int allClearBonus = Score.CalculateAllClearBonus();
+                game.Score.Add(allClearBonus);
+            }
+        }
+    }
+
+    /// <summary>
+    /// ステージのぷよデータを取得する.
+    /// </summary>
+    /// <returns>ステージのぷよデータ.</returns>
+    [JSInvokable]
+    public object GetStageData()
+    {
+        var stagePuyos = new List<object>();
+        for (int y = 0; y < game.Config.StageHeight; y++)
+        {
+            for (int x = 0; x < game.Config.StageWidth; x++)
+            {
+                int puyoType = game.Stage.GetPuyo(x, y);
+                if (puyoType != 0)
+                {
+                    stagePuyos.Add(new { x, y, type = puyoType });
+                }
+            }
+        }
+
+        return stagePuyos;
+    }
+
+    /// <summary>
+    /// ゲームをリスタートする.
+    /// </summary>
+    private void HandleRestart()
+    {
+        game.Restart();
+        game.Player.CreateNewPuyo();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// コンポーネント破棄時の処理.
+    /// </summary>
+    public void Dispose()
+    {
+        dotNetHelper?.Dispose();
+    }
+}

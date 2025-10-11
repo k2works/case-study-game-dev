@@ -10,7 +10,7 @@ namespace PuyoPuyo.App
             this.Activated += StartElmish;
         }
 
-        private void StartElmish(object sender, EventArgs e)
+        private void StartElmish(object? sender, EventArgs e)
         {
             this.Activated -= StartElmish;
             Program.main(MainWindow);
