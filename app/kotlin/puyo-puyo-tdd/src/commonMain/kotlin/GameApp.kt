@@ -47,6 +47,20 @@ fun GameApp() {
                     // 移動できなかった場合は着地
                     if (game.player.hasLanded()) {
                         game.player.placePuyoOnStage()
+
+                        // 消去処理を実行
+                        var eraseInfo = game.stage.checkErase()
+                        while (eraseInfo.erasePuyoCount > 0) {
+                            // 消去実行
+                            game.stage.executeErase(eraseInfo.eraseList)
+
+                            // 重力適用
+                            game.stage.applyGravity()
+
+                            // 再度消去判定（連鎖のため）
+                            eraseInfo = game.stage.checkErase()
+                        }
+
                         game.player.createNewPuyo()
                     }
                 }
