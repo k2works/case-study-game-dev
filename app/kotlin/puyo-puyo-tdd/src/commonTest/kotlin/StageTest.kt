@@ -172,4 +172,30 @@ class StageTest {
         // 赤の4つだけが消去対象
         assertEquals(4, eraseInfo.erasePuyoCount)
     }
+
+    @Test
+    fun 消去リストのぷよを削除できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 縦に4つ並べる
+        stage.setPuyo(2, 9, 1)
+        stage.setPuyo(2, 10, 1)
+        stage.setPuyo(2, 11, 1)
+        stage.setPuyo(2, 12, 1)
+
+        val eraseInfo = stage.checkErase()
+
+        // Act
+        stage.executeErase(eraseInfo.eraseList)
+
+        // Assert
+        // すべて0になっている
+        assertEquals(0, stage.getPuyo(2, 9))
+        assertEquals(0, stage.getPuyo(2, 10))
+        assertEquals(0, stage.getPuyo(2, 11))
+        assertEquals(0, stage.getPuyo(2, 12))
+    }
 }

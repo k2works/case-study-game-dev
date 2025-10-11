@@ -87,4 +87,13 @@ class Stage(private val config: Config) {
 
         return EraseInfo(eraseList.size, eraseList)
     }
+
+    /**
+     * 消去対象のぷよを消去します
+     */
+    fun executeErase(eraseList: List<PuyoPosition>) {
+        for (puyo in eraseList) {
+            field[puyo.y][puyo.x] = 0
+        }
+    }
 }
