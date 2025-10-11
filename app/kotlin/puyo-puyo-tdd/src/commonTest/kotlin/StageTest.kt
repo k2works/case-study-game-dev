@@ -198,4 +198,76 @@ class StageTest {
         assertEquals(0, stage.getPuyo(2, 11))
         assertEquals(0, stage.getPuyo(2, 12))
     }
+
+    @Test
+    fun 重力を適用すると空中に浮いているぷよが落下する() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 下に空きがある状態でぷよを配置
+        stage.setPuyo(2, 9, 1) // 空中に浮いている
+
+        // Act
+        stage.applyGravity()
+
+        // Assert
+        // 一番下まで落ちる
+        assertEquals(0, stage.getPuyo(2, 9))
+        assertEquals(1, stage.getPuyo(2, 12))
+    }
+
+    @Test
+    fun 重力を適用すると複数のぷよが正しく落下する() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 下に土台がある状態
+        stage.setPuyo(2, 12, 1) // 土台
+        stage.setPuyo(2, 10, 2) // 浮いている
+        stage.setPuyo(2, 9, 3) // 浮いている
+
+        // Act
+        stage.applyGravity()
+
+        // Assert
+        // 土台の上に積み重なる
+        assertEquals(1, stage.getPuyo(2, 12))
+        assertEquals(2, stage.getPuyo(2, 11))
+        assertEquals(3, stage.getPuyo(2, 10))
+        assertEquals(0, stage.getPuyo(2, 9))
+    }
+
+    @Test
+    fun 重力適用時に途中で消えたぷよの上のぷよが落ちる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 下から: 赤4つ（消える）、その上に青1つ
+        stage.setPuyo(2, 9, 2) // 青
+        stage.setPuyo(2, 10, 1) // 赤
+        stage.setPuyo(2, 11, 1) // 赤
+        stage.setPuyo(2, 12, 1) // 赤
+        stage.setPuyo(3, 12, 1) // 赤（L字の一部）
+
+        // Act
+        // 消去判定→消去実行
+        val eraseInfo = stage.checkErase()
+        stage.executeErase(eraseInfo.eraseList)
+
+        // 重力適用
+        stage.applyGravity()
+
+        // Assert
+        // 青が一番下まで落ちる
+        assertEquals(2, stage.getPuyo(2, 12))
+        assertEquals(0, stage.getPuyo(2, 9))
+        assertEquals(0, stage.getPuyo(2, 10))
+        assertEquals(0, stage.getPuyo(2, 11))
+    }
 }

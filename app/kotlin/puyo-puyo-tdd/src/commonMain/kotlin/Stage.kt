@@ -96,4 +96,27 @@ class Stage(private val config: Config) {
             field[puyo.y][puyo.x] = 0
         }
     }
+
+    /**
+     * 重力を適用してぷよを落下させます
+     */
+    fun applyGravity() {
+        // 各列について処理
+        for (x in 0 until config.stageWidth) {
+            // 下から詰めていく位置
+            var writeY = config.stageHeight - 1
+
+            // 下から上に向かってぷよを探索
+            for (readY in config.stageHeight - 1 downTo 0) {
+                if (field[readY][x] != 0) {
+                    // ぷよがある場合、下に詰める
+                    if (readY != writeY) {
+                        field[writeY][x] = field[readY][x]
+                        field[readY][x] = 0
+                    }
+                    writeY--
+                }
+            }
+        }
+    }
 }
