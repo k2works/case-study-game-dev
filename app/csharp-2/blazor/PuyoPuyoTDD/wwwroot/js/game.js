@@ -22,10 +22,11 @@ window.initializeGame = function(helper) {
  * @param {KeyboardEvent} event - キーボードイベント
  */
 function handleKeyDown(event) {
-    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key) || event.code === 'KeyX') {
         event.preventDefault();
         if (dotNetHelper) {
-            dotNetHelper.invokeMethodAsync('OnKeyDown', event.key);
+            const key = event.code === 'KeyX' ? 'KeyX' : event.key;
+            dotNetHelper.invokeMethodAsync('OnKeyDown', key);
         }
     }
 }
@@ -117,7 +118,7 @@ async function drawGame(ctx, canvas) {
  */
 function drawPuyo(ctx, puyoData) {
     const cellSize = 32;
-    const { x, y, type } = puyoData;
+    const { x, y, type, rotation } = puyoData;
 
     // ぷよの色を決定 (type: 1=赤, 2=青, 3=緑, 4=黄)
     const colors = {
@@ -129,7 +130,41 @@ function drawPuyo(ctx, puyoData) {
 
     const color = colors[type] || '#cccccc';
 
-    // ぷよを円形で描画
+    // 軸ぷよを描画
+    drawSinglePuyo(ctx, x, y, color, cellSize);
+
+    // 回転に応じて子ぷよの位置を計算
+    let childX = x;
+    let childY = y;
+
+    switch (rotation) {
+        case 0: // 上
+            childY = y - 1;
+            break;
+        case 1: // 右
+            childX = x + 1;
+            break;
+        case 2: // 下
+            childY = y + 1;
+            break;
+        case 3: // 左
+            childX = x - 1;
+            break;
+    }
+
+    // 子ぷよを描画（軸ぷよと同じ色）
+    drawSinglePuyo(ctx, childX, childY, color, cellSize);
+}
+
+/**
+ * 単一のぷよを描画します
+ * @param {CanvasRenderingContext2D} ctx - Canvas の 2D コンテキスト
+ * @param {number} x - X座標
+ * @param {number} y - Y座標
+ * @param {string} color - ぷよの色
+ * @param {number} cellSize - セルのサイズ
+ */
+function drawSinglePuyo(ctx, x, y, color, cellSize) {
     const centerX = x * cellSize + cellSize / 2;
     const centerY = y * cellSize + cellSize / 2;
     const radius = cellSize / 2 - 2; // 少し余白を持たせる

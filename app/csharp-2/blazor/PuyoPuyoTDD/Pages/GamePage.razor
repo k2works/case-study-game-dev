@@ -64,9 +64,13 @@
                 break;
             case "ArrowUp":
                 game.Player.SetInputUp(true);
+                game.Player.RotateRight();
                 break;
             case "ArrowDown":
                 game.Player.SetInputDown(true);
+                break;
+            case "KeyX":
+                game.Player.RotateLeft();
                 break;
         }
 
