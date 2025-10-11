@@ -118,6 +118,26 @@
     }
 
     /// <summary>
+    /// 落下速度を JavaScript に渡す.
+    /// </summary>
+    /// <returns>落下速度.</returns>
+    [JSInvokable]
+    public int GetDropSpeed()
+    {
+        return game.Player.GetDropSpeed();
+    }
+
+    /// <summary>
+    /// ぷよを下に移動する.
+    /// </summary>
+    /// <returns>移動できたかどうか.</returns>
+    [JSInvokable]
+    public bool MoveDown()
+    {
+        return game.Player.MoveDown();
+    }
+
+    /// <summary>
     /// コンポーネント破棄時の処理.
     /// </summary>
     public void Dispose()

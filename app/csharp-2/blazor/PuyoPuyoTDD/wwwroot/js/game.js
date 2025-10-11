@@ -1,6 +1,7 @@
 // ゲームループの実装
 let animationId = null;
 let lastFrameTime = 0;
+let lastDropTime = 0;
 const FPS = 60;
 const FRAME_DURATION = 1000 / FPS;
 let dotNetHelper = null;
@@ -75,7 +76,7 @@ function gameLoop(ctx, canvas) {
 
     if (deltaTime >= FRAME_DURATION) {
         // ゲームの更新と描画
-        updateGame();
+        updateGame(currentTime);
         drawGame(ctx, canvas);
         lastFrameTime = currentTime;
     }
@@ -84,11 +85,26 @@ function gameLoop(ctx, canvas) {
 }
 
 /**
- * ゲームの状態を更新します（将来の実装用）
+ * ゲームの状態を更新します
+ * @param {number} currentTime - 現在時刻
  */
-function updateGame() {
-    // TODO: ゲームロジックの更新処理
-    // 将来的にここでぷよの落下、消去などの処理を実装
+async function updateGame(currentTime) {
+    if (!dotNetHelper) return;
+
+    // 落下速度を取得
+    const dropSpeed = await dotNetHelper.invokeMethodAsync('GetDropSpeed');
+
+    // 落下間隔を計算 (dropSpeedが大きいほど速く落ちる)
+    const dropInterval = 1000 / dropSpeed;
+
+    // 最後の落下から dropInterval 経過していれば落下
+    if (currentTime - lastDropTime >= dropInterval) {
+        const canMove = await dotNetHelper.invokeMethodAsync('MoveDown');
+
+        if (canMove) {
+            lastDropTime = currentTime;
+        }
+    }
 }
 
 /**
