@@ -13,9 +13,6 @@ version = "1.0.0"
 kotlin {
     jvm {
         withJava()
-        compilations.all {
-            kotlinOptions.jvmTarget = "21"
-        }
     }
 
     sourceSets {
@@ -87,23 +84,30 @@ ktlint {
 
 // JaCoCo configuration
 tasks.withType<Test> {
-    finalizedBy(tasks.jacocoTestReport)
+    finalizedBy("jacocoTestReport")
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("jvmTest")
     reports {
         xml.required.set(true)
         html.required.set(true)
         csv.required.set(false)
     }
+    classDirectories.setFrom(
+        files(
+            fileTree("build/classes/kotlin/jvm/main"),
+        ),
+    )
+    sourceDirectories.setFrom(files("src/commonMain/kotlin"))
+    executionData.setFrom(files("build/jacoco/jvmTest.exec"))
 }
 
 // Custom tasks
 tasks.register("checkAll") {
     description = "全てのチェックを実行"
     group = "verification"
-    dependsOn("ktlintCheck", "detekt", "test")
+    dependsOn("ktlintCheck", "detekt", "jvmTest")
 }
 
 tasks.register("fixAll") {
