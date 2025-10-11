@@ -143,8 +143,11 @@ public partial class GameViewModel : ObservableObject
         OnPropertyChanged(nameof(SubPuyoY));
         OnPropertyChanged(nameof(SubPuyoColor));
         OnPropertyChanged(nameof(Game)); // スコア表示更新のため
+        OnPropertyChanged(nameof(IsGameOver));
         UpdateStagePuyos();
     }
+
+    public bool IsGameOver => Game.Mode == GameMode.GameOver;
 
     private void UpdateStagePuyos()
     {

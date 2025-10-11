@@ -10,6 +10,10 @@
         <viewmodels:GameViewModel />
     </Window.DataContext>
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -59,6 +63,18 @@
                          Canvas.Left="{Binding SubPuyoX}"
                          Canvas.Top="{Binding SubPuyoY}"
                          Fill="{Binding SubPuyoColor}"/>
+
+                <!-- ゲームオーバー表示 -->
+                <Border Width="300" Height="480"
+                        Background="#CC000000"
+                        Visibility="{Binding IsGameOver, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="GAME OVER"
+                               Foreground="White"
+                               FontSize="48"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
             </Canvas>
         </Border>
 
