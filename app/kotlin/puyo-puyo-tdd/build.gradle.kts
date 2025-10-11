@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform") version "2.1.0"
     id("org.jetbrains.compose") version "1.7.1"
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
+    id("com.android.application") version "8.2.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.7"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     jacoco
@@ -11,18 +12,23 @@ group = "com.example"
 version = "1.0.1"
 
 kotlin {
-    jvm {
-        withJava()
+    jvm()
+
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "11"
+            }
+        }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.desktop.currentOs)
+                implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.ui)
-                implementation(compose.runtime)
             }
         }
 
@@ -31,6 +37,13 @@ kotlin {
                 implementation(kotlin("test"))
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.uiTest)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation("androidx.activity:activity-compose:1.8.2")
+                implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
             }
         }
 
@@ -81,6 +94,38 @@ compose.desktop {
             macOS {
                 iconFile.set(project.file("src/jvmMain/resources/icon.icns"))
             }
+        }
+    }
+}
+
+android {
+    namespace = "com.example.puyopuyo"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.example.puyopuyo"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0.1"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.8"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
