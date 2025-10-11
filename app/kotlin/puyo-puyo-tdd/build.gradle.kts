@@ -155,3 +155,102 @@ tasks.register("qualityCheck") {
     group = "verification"
     dependsOn("ktlintCheck", "detekt")
 }
+
+// Release tasks
+tasks.register("prepareRelease") {
+    description = "リリース用ドキュメントと起動スクリプトを準備"
+    group = "release"
+
+    doLast {
+        val releaseDir = file("release")
+        releaseDir.mkdirs()
+
+        // 起動スクリプトをコピー
+        copy {
+            from("release")
+            include("*.bat", "*.sh", "README.txt")
+            into(releaseDir)
+        }
+
+        // ドキュメントをコピー
+        copy {
+            from(".")
+            include("README.md", "RELEASE.md")
+            into(releaseDir)
+        }
+
+        println("✅ リリース用ファイルを release/ ディレクトリに準備しました")
+    }
+}
+
+tasks.register<Copy>("copyReleaseScripts") {
+    description = "起動スクリプトを JAR 出力先にコピー"
+    group = "release"
+    dependsOn("packageUberJarForCurrentOS")
+
+    from("release") {
+        include("*.bat", "*.sh", "README.txt")
+    }
+    into("build/compose/jars")
+
+    doLast {
+        // シェルスクリプトに実行権限を付与
+        val shellScript = file("build/compose/jars/puyo-puyo-tdd.sh")
+        if (shellScript.exists()) {
+            shellScript.setExecutable(true)
+        }
+        println("✅ 起動スクリプトを build/compose/jars/ にコピーしました")
+    }
+}
+
+tasks.register<Zip>("createReleasePackage") {
+    description = "リリースパッケージ（ZIP）を作成"
+    group = "release"
+    dependsOn("copyReleaseScripts")
+
+    archiveFileName.set("puyo-puyo-tdd-v${project.version}.zip")
+    destinationDirectory.set(file("build/release"))
+
+    from("build/compose/jars") {
+        include("*.jar", "*.bat", "*.sh", "README.txt")
+    }
+
+    from(".") {
+        include("README.md", "RELEASE.md")
+    }
+
+    doLast {
+        val zipFile = file("build/release/puyo-puyo-tdd-v${project.version}.zip")
+        println("✅ リリースパッケージを作成しました: ${zipFile.absolutePath}")
+        println("   サイズ: ${zipFile.length() / 1024 / 1024} MB")
+    }
+}
+
+tasks.register("release") {
+    description = "完全なリリースパッケージをビルド"
+    group = "release"
+    dependsOn("checkAll", "createReleasePackage")
+
+    doLast {
+        println("")
+        println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        println("  🎉 リリース v${project.version} の準備が完了しました！")
+        println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        println("")
+        println("📦 リリースパッケージ:")
+        println("   build/release/puyo-puyo-tdd-v${project.version}.zip")
+        println("")
+        println("📝 パッケージ内容:")
+        println("   - puyo-puyo-tdd-windows-x64-${project.version}.jar")
+        println("   - puyo-puyo-tdd.bat (Windows 起動スクリプト)")
+        println("   - puyo-puyo-tdd.sh (Linux/macOS 起動スクリプト)")
+        println("   - README.txt (クイックスタートガイド)")
+        println("   - README.md (プロジェクトドキュメント)")
+        println("   - RELEASE.md (リリースノート)")
+        println("")
+        println("✅ 品質チェック: 合格")
+        println("✅ テスト: 全て合格")
+        println("✅ ビルド: 成功")
+        println("")
+    }
+}
