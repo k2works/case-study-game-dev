@@ -16,6 +16,7 @@ fun GameApp() {
         remember {
             Game().apply {
                 initialize()
+                player.createNewPuyo()
             }
         }
 
@@ -34,6 +35,11 @@ fun GameApp() {
                     text = "ぷよぷよ",
                     style = MaterialTheme.typography.h3,
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ゲームステージ
+                GameStage(game)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
