@@ -67,4 +67,44 @@ class StageTest {
         // Assert
         assertEquals(2, stage.getPuyo(2, 10))
     }
+
+    @Test
+    fun 隣接する同じ色のぷよを探索できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 縦に4つ並べる
+        stage.setPuyo(2, 9, 1)
+        stage.setPuyo(2, 10, 1)
+        stage.setPuyo(2, 11, 1)
+        stage.setPuyo(2, 12, 1)
+
+        // Act
+        val connectedPuyos = stage.searchConnectedPuyo(2, 9, 1)
+
+        // Assert
+        assertEquals(4, connectedPuyos.size)
+    }
+
+    @Test
+    fun L字型につながったぷよを探索できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // L字型に配置
+        stage.setPuyo(2, 11, 1)
+        stage.setPuyo(2, 12, 1)
+        stage.setPuyo(3, 12, 1)
+        stage.setPuyo(4, 12, 1)
+
+        // Act
+        val connectedPuyos = stage.searchConnectedPuyo(2, 11, 1)
+
+        // Assert
+        assertEquals(4, connectedPuyos.size)
+    }
 }
