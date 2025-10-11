@@ -152,4 +152,120 @@ class PlayerTest {
         // Assert
         assertEquals(puyoType, stage.getPuyo(finalX, finalY))
     }
+
+    @Test
+    fun ぷよを左に移動できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+        val initialX = player.puyoX
+
+        // Act
+        player.moveLeft()
+
+        // Assert
+        assertEquals(initialX - 1, player.puyoX)
+    }
+
+    @Test
+    fun ぷよを右に移動できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+        val initialX = player.puyoX
+
+        // Act
+        player.moveRight()
+
+        // Assert
+        assertEquals(initialX + 1, player.puyoX)
+    }
+
+    @Test
+    fun ぷよが左端にある場合は左に移動できない() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // ぷよを左端まで移動
+        while (player.puyoX > 0) {
+            player.moveLeft()
+        }
+
+        // Act
+        player.moveLeft()
+
+        // Assert
+        assertEquals(0, player.puyoX) // 左端から動かない
+    }
+
+    @Test
+    fun ぷよが右端にある場合は右に移動できない() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // ぷよを右端まで移動
+        while (player.puyoX < config.stageWidth - 1) {
+            player.moveRight()
+        }
+
+        // Act
+        player.moveRight()
+
+        // Assert
+        assertEquals(config.stageWidth - 1, player.puyoX) // 右端から動かない
+    }
+
+    @Test
+    fun 左に他のぷよがある場合は左に移動できない() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // 左側にぷよを配置
+        stage.setPuyo(player.puyoX - 1, player.puyoY, 1)
+        val initialX = player.puyoX
+
+        // Act
+        player.moveLeft()
+
+        // Assert
+        assertEquals(initialX, player.puyoX) // 移動しない
+    }
+
+    @Test
+    fun 右に他のぷよがある場合は右に移動できない() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // 右側にぷよを配置
+        stage.setPuyo(player.puyoX + 1, player.puyoY, 1)
+        val initialX = player.puyoX
+
+        // Act
+        player.moveRight()
+
+        // Assert
+        assertEquals(initialX, player.puyoX) // 移動しない
+    }
 }

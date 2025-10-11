@@ -48,4 +48,22 @@ class Player(private val config: Config, private val stage: Stage) {
     fun placePuyoOnStage() {
         stage.setPuyo(puyoX, puyoY, puyoType)
     }
+
+    fun moveLeft() {
+        if (puyoX > 0) {
+            // 移動先にぷよがないかチェック
+            if (stage.getPuyo(puyoX - 1, puyoY) == 0) {
+                puyoX--
+            }
+        }
+    }
+
+    fun moveRight() {
+        if (puyoX < config.stageWidth - 1) {
+            // 移動先にぷよがないかチェック
+            if (stage.getPuyo(puyoX + 1, puyoY) == 0) {
+                puyoX++
+            }
+        }
+    }
 }
