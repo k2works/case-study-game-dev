@@ -52,6 +52,11 @@ fun GameApp() {
                         // 連鎖処理を実行
                         val chainResult = game.stage.processChain()
 
+                        // 連鎖が発生しなかった場合でも重力を適用
+                        if (chainResult.chainCount == 0) {
+                            game.stage.applyGravity()
+                        }
+
                         if (chainResult.chainCount > 0) {
                             // 各連鎖のスコアを計算
                             chainResult.chainInfoList.forEachIndexed { index, chainInfo ->
