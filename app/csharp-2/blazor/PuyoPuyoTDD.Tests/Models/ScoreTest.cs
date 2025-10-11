@@ -57,4 +57,18 @@ public class ScoreTest
         // 4個消去 × 10 × 2連鎖ボーナス(8倍) = 320点
         Assert.Equal(320, points);
     }
+
+    /// <summary>
+    /// 全消しボーナスが正しく計算されるかテスト.
+    /// </summary>
+    [Fact]
+    public void 全消しボーナスが正しく計算される()
+    {
+        // Arrange & Act
+        int bonus = Score.CalculateAllClearBonus();
+
+        // Assert
+        // 全消しボーナスは固定3600点
+        Assert.Equal(3600, bonus);
+    }
 }

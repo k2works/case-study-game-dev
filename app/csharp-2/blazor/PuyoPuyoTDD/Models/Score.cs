@@ -42,6 +42,15 @@ public class Score
     }
 
     /// <summary>
+    /// 全消しボーナスを計算します.
+    /// </summary>
+    /// <returns>全消しボーナスのポイント.</returns>
+    public static int CalculateAllClearBonus()
+    {
+        return 3600;
+    }
+
+    /// <summary>
     /// スコアをリセットします.
     /// </summary>
     public void Reset()
