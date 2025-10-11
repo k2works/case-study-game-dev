@@ -268,4 +268,36 @@ class PlayerTest {
         // Assert
         assertEquals(initialX, player.puyoX) // 移動しない
     }
+
+    @Test
+    fun 新しいぷよを生成すると子ぷよの種類も設定される() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+
+        // Act
+        player.createNewPuyo()
+
+        // Assert
+        assertTrue(player.childPuyoType in 1..4)
+    }
+
+    @Test
+    fun 子ぷよの初期位置は軸ぷよの上() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // Act
+        val (childX, childY) = player.getChildPuyoPosition()
+
+        // Assert
+        assertEquals(player.puyoX, childX)
+        assertEquals(player.puyoY - 1, childY) // 軸ぷよの上
+    }
 }

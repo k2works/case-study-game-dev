@@ -9,6 +9,8 @@ class Player(private val config: Config, private val stage: Stage) {
         private set
     var puyoType: Int = 0
         private set
+    var childPuyoType: Int = 0
+        private set
     var nextPuyoType: Int = 0
         private set
     var rotation: Int = 0
@@ -18,6 +20,7 @@ class Player(private val config: Config, private val stage: Stage) {
         puyoX = 2 // ステージの中央
         puyoY = 0 // 一番上
         puyoType = Random.nextInt(1, 5) // 1〜4のランダムな値
+        childPuyoType = Random.nextInt(1, 5) // 子ぷよの種類を設定
         nextPuyoType = Random.nextInt(1, 5)
         rotation = 0 // 回転状態を0（上向き）にリセット
     }
@@ -64,6 +67,16 @@ class Player(private val config: Config, private val stage: Stage) {
             if (stage.getPuyo(puyoX + 1, puyoY) == 0) {
                 puyoX++
             }
+        }
+    }
+
+    fun getChildPuyoPosition(): Pair<Int, Int> {
+        return when (rotation) {
+            0 -> Pair(puyoX, puyoY - 1) // 上
+            1 -> Pair(puyoX + 1, puyoY) // 右
+            2 -> Pair(puyoX, puyoY + 1) // 下
+            3 -> Pair(puyoX - 1, puyoY) // 左
+            else -> Pair(puyoX, puyoY - 1)
         }
     }
 }
