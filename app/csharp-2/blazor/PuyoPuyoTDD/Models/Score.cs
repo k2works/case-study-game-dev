@@ -15,6 +15,33 @@ public class Score
     public int Value { get; private set; }
 
     /// <summary>
+    /// スコアを計算します.
+    /// </summary>
+    /// <param name="erasedCount">消去したぷよの数.</param>
+    /// <param name="chainCount">連鎖数.</param>
+    /// <returns>計算されたスコア.</returns>
+    public static int Calculate(int erasedCount, int chainCount)
+    {
+        // 基本点: 消去数 × 10
+        int basePoints = erasedCount * 10;
+
+        // 連鎖ボーナス倍率
+        int chainBonus = chainCount switch
+        {
+            1 => 1,   // 1連鎖: ×1
+            2 => 8,   // 2連鎖: ×8
+            3 => 16,  // 3連鎖: ×16
+            4 => 32,  // 4連鎖: ×32
+            5 => 64,  // 5連鎖: ×64
+            6 => 96,  // 6連鎖: ×96
+            7 => 128, // 7連鎖: ×128
+            _ => 160, // 8連鎖以上: ×160
+        };
+
+        return basePoints * chainBonus;
+    }
+
+    /// <summary>
     /// スコアをリセットします.
     /// </summary>
     public void Reset()
