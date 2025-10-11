@@ -136,4 +136,55 @@ public class PlayerTest
         // Assert
         Assert.Equal(this.config.StageWidth - 1, this.player.PuyoX);
     }
+
+    /// <summary>
+    /// 時計回りに回転すると回転状態が1増えるかテスト.
+    /// </summary>
+    [Fact]
+    public void 時計回りに回転すると回転状態が1増える()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        var initialRotation = this.player.Rotation;
+
+        // Act
+        this.player.RotateRight();
+
+        // Assert
+        Assert.Equal((initialRotation + 1) % 4, this.player.Rotation);
+    }
+
+    /// <summary>
+    /// 反時計回りに回転すると回転状態が1減るかテスト.
+    /// </summary>
+    [Fact]
+    public void 反時計回りに回転すると回転状態が1減る()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        var initialRotation = this.player.Rotation;
+
+        // Act
+        this.player.RotateLeft();
+
+        // Assert
+        Assert.Equal((initialRotation + 3) % 4, this.player.Rotation);
+    }
+
+    /// <summary>
+    /// 回転状態が4になると0に戻るかテスト.
+    /// </summary>
+    [Fact]
+    public void 回転状態が4になると0に戻る()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        this.player.SetRotation(3);
+
+        // Act
+        this.player.RotateRight();
+
+        // Assert
+        Assert.Equal(0, this.player.Rotation);
+    }
 }

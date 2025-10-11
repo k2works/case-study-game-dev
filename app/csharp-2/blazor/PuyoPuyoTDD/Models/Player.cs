@@ -152,4 +152,29 @@ public class Player
             this.puyoX++;
         }
     }
+
+    /// <summary>
+    /// ぷよを時計回りに回転します.
+    /// </summary>
+    public void RotateRight()
+    {
+        this.rotation = (this.rotation + 1) % 4;
+    }
+
+    /// <summary>
+    /// ぷよを反時計回りに回転します.
+    /// </summary>
+    public void RotateLeft()
+    {
+        this.rotation = (this.rotation + 3) % 4;
+    }
+
+    /// <summary>
+    /// 回転状態を設定します.
+    /// </summary>
+    /// <param name="rotation">回転状態.</param>
+    public void SetRotation(int rotation)
+    {
+        this.rotation = rotation;
+    }
 }
