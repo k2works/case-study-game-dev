@@ -159,4 +159,63 @@ public class StageTest
         Assert.Equal(0, this.stage.GetPuyo(1, 9));
         Assert.Equal(0, this.stage.GetPuyo(1, 8));
     }
+
+    /// <summary>
+    /// 盤面が空の場合は全消し判定がtrueになるかテスト.
+    /// </summary>
+    [Fact]
+    public void 盤面が空の場合は全消し判定がtrueになる()
+    {
+        // Arrange
+        this.stage.Initialize();
+
+        // Act
+        var isAllClear = this.stage.IsAllClear();
+
+        // Assert
+        Assert.True(isAllClear);
+    }
+
+    /// <summary>
+    /// 盤面にぷよが残っている場合は全消し判定がfalseになるかテスト.
+    /// </summary>
+    [Fact]
+    public void 盤面にぷよが残っている場合は全消し判定がfalseになる()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(2, 10, 1); // 1つでもぷよがあれば全消しではない
+
+        // Act
+        var isAllClear = this.stage.IsAllClear();
+
+        // Assert
+        Assert.False(isAllClear);
+    }
+
+    /// <summary>
+    /// すべてのぷよを消去すると全消し判定がtrueになるかテスト.
+    /// </summary>
+    [Fact]
+    public void すべてのぷよを消去すると全消し判定がtrueになる()
+    {
+        // Arrange
+        this.stage.Initialize();
+
+        // ぷよを配置
+        this.stage.SetPuyo(1, 11, 1);
+        this.stage.SetPuyo(2, 11, 1);
+        this.stage.SetPuyo(3, 11, 1);
+        this.stage.SetPuyo(4, 11, 1);
+
+        // 消去
+        var eraseInfo = this.stage.CheckErase();
+        this.stage.ExecuteErase(eraseInfo.eraseList);
+
+        // Act
+        var isAllClear = this.stage.IsAllClear();
+
+        // Assert
+        Assert.True(isAllClear);
+    }
 }

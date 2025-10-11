@@ -166,6 +166,27 @@ public class Stage
     }
 
     /// <summary>
+    /// 全消し判定を行います.
+    /// </summary>
+    /// <returns>盤面が空の場合true.</returns>
+    public bool IsAllClear()
+    {
+        // 盤面上のすべてのマスをチェック
+        for (int x = 0; x < this.config.StageWidth; x++)
+        {
+            for (int y = 0; y < this.config.StageHeight; y++)
+            {
+                if (this.board[x, y] != 0)
+                {
+                    return false; // ぷよが1つでも残っていれば全消しではない
+                }
+            }
+        }
+
+        return true; // すべてのマスが空なら全消し
+    }
+
+    /// <summary>
     /// 接続されたぷよを探索します.
     /// </summary>
     /// <param name="x">X座標.</param>
