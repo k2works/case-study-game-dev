@@ -89,4 +89,38 @@ public class StageTest
         Assert.Equal(0, this.stage.GetPuyo(1, 11));
         Assert.Equal(0, this.stage.GetPuyo(2, 11));
     }
+
+    /// <summary>
+    /// ぷよ消去後に上のぷよが落下するかテスト.
+    /// </summary>
+    [Fact]
+    public void ぷよ消去後に上のぷよが落下する()
+    {
+        // Arrange
+        this.stage.Initialize();
+
+        // 下段に消去対象のぷよを配置
+        this.stage.SetPuyo(1, 10, 1);
+        this.stage.SetPuyo(2, 10, 1);
+        this.stage.SetPuyo(1, 11, 1);
+        this.stage.SetPuyo(2, 11, 1);
+
+        // 上段に別の色のぷよを配置
+        this.stage.SetPuyo(1, 9, 2);
+        this.stage.SetPuyo(2, 8, 3);
+
+        // Act
+        var eraseInfo = this.stage.CheckErase();
+        this.stage.ExecuteErase(eraseInfo.eraseList);
+        this.stage.ApplyGravity();
+
+        // Assert
+        // 上にあったぷよが落下している
+        Assert.Equal(2, this.stage.GetPuyo(1, 11)); // Y=9 -> Y=11
+        Assert.Equal(3, this.stage.GetPuyo(2, 11)); // Y=8 -> Y=11
+
+        // 元の位置は空
+        Assert.Equal(0, this.stage.GetPuyo(1, 9));
+        Assert.Equal(0, this.stage.GetPuyo(2, 8));
+    }
 }

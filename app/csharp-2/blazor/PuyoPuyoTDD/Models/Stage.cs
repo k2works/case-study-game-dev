@@ -107,6 +107,35 @@ public class Stage
     }
 
     /// <summary>
+    /// 重力を適用してぷよを落下させます.
+    /// </summary>
+    public void ApplyGravity()
+    {
+        // 下から上に向かって各列を処理
+        for (int x = 0; x < this.config.StageWidth; x++)
+        {
+            // 下から詰めていく位置
+            int writeY = this.config.StageHeight - 1;
+
+            // 下から上に向かってぷよを探索
+            for (int readY = this.config.StageHeight - 1; readY >= 0; readY--)
+            {
+                if (this.board[x, readY] != 0)
+                {
+                    // ぷよがある場合、下に詰める
+                    if (readY != writeY)
+                    {
+                        this.board[x, writeY] = this.board[x, readY];
+                        this.board[x, readY] = 0;
+                    }
+
+                    writeY--;
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// 接続されたぷよを探索します.
     /// </summary>
     /// <param name="x">X座標.</param>
