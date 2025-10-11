@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.example"
-version = "1.0.0"
+version = "1.0.1"
 
 kotlin {
     jvm {
@@ -59,7 +59,7 @@ compose.desktop {
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
             )
             packageName = "puyo-puyo-tdd"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.1"
             description = "ぷよぷよ TDD - Test Driven Development で作るぷよぷよゲーム"
             vendor = "Example Inc."
 
