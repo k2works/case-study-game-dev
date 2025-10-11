@@ -21,21 +21,19 @@ fun GameApp() {
         }
 
     // 再描画をトリガーするための状態
-    var tick by remember { mutableStateOf(0) }
+    var updateTrigger by remember { mutableStateOf(0) }
 
     // ゲームループ：500ms ごとにぷよを下に移動
-    LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(500)
-            if (!game.player.moveDown()) {
-                // 移動できなかった場合は着地
-                if (game.player.hasLanded()) {
-                    game.player.placePuyoOnStage()
-                    game.player.createNewPuyo()
-                }
+    LaunchedEffect(updateTrigger) {
+        kotlinx.coroutines.delay(500)
+        if (!game.player.moveDown()) {
+            // 移動できなかった場合は着地
+            if (game.player.hasLanded()) {
+                game.player.placePuyoOnStage()
+                game.player.createNewPuyo()
             }
-            tick++ // 再描画をトリガー
         }
+        updateTrigger++ // 再描画をトリガー
     }
 
     MaterialTheme {
