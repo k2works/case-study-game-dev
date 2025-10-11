@@ -44,4 +44,67 @@ public class GameTest
         // Assert
         Assert.Equal(GameMode.Start, game.Mode);
     }
+
+    /// <summary>
+    /// リスタートするとゲームモードがStartに戻るかテスト.
+    /// </summary>
+    [Fact]
+    public void リスタートするとゲームモードがStartに戻る()
+    {
+        // Arrange
+        var game = new Game();
+        game.Initialize();
+
+        // ゲームオーバー状態にする
+        game.Stage.SetPuyo(2, 0, 1);
+        game.Player.CreateNewPuyo();
+
+        // Act
+        game.Restart();
+
+        // Assert
+        Assert.Equal(GameMode.Start, game.Mode);
+    }
+
+    /// <summary>
+    /// リスタートするとステージが初期化されるかテスト.
+    /// </summary>
+    [Fact]
+    public void リスタートするとステージが初期化される()
+    {
+        // Arrange
+        var game = new Game();
+        game.Initialize();
+
+        // ステージにぷよを配置
+        game.Stage.SetPuyo(2, 10, 1);
+        game.Stage.SetPuyo(3, 10, 2);
+
+        // Act
+        game.Restart();
+
+        // Assert
+        Assert.Equal(0, game.Stage.GetPuyo(2, 10));
+        Assert.Equal(0, game.Stage.GetPuyo(3, 10));
+    }
+
+    /// <summary>
+    /// リスタートするとスコアがリセットされるかテスト.
+    /// </summary>
+    [Fact]
+    public void リスタートするとスコアがリセットされる()
+    {
+        // Arrange
+        var game = new Game();
+        game.Initialize();
+
+        // スコアを加算
+        game.Score.Add(1000);
+
+        // Act
+        game.Restart();
+
+        // Assert
+        Assert.Equal(0, game.Score.Value);
+    }
 }

@@ -109,4 +109,21 @@ public class Game
     {
         // TODO: ゲームループの実装
     }
+
+    /// <summary>
+    /// ゲームをリスタートします.
+    /// </summary>
+    public void Restart()
+    {
+        // ステージを初期化
+        this.Stage.Initialize();
+
+        // スコアをリセット
+        this.Score.Reset();
+
+        // ゲームモードをStartに戻す
+        this.Mode = GameMode.Start;
+        this.frame = 0;
+        this.combinationCount = 0;
+    }
 }
