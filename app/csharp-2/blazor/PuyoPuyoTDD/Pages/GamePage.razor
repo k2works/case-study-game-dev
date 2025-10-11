@@ -166,6 +166,25 @@
     }
 
     /// <summary>
+    /// 連鎖処理を実行してスコアを更新する.
+    /// </summary>
+    [JSInvokable]
+    public void ProcessChainAndUpdateScore()
+    {
+        int chainCount = game.Stage.ProcessChain();
+
+        if (chainCount > 0)
+        {
+            // 連鎖が発生した場合、各連鎖のスコアを計算
+            // 簡易実装: 最後の連鎖のみスコア加算
+            // 実際のゲームでは各連鎖ごとにスコアを計算する必要がある
+            var eraseInfo = game.Stage.CheckErase();
+            int points = Score.Calculate(eraseInfo.erasePuyoCount, chainCount);
+            game.Score.Add(points);
+        }
+    }
+
+    /// <summary>
     /// ステージのぷよデータを取得する.
     /// </summary>
     /// <returns>ステージのぷよデータ.</returns>

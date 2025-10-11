@@ -104,8 +104,13 @@ async function updateGame(currentTime) {
         if (canMove) {
             lastDropTime = currentTime;
         } else {
-            // 着地したのでステージに配置して新しいぷよを生成
+            // 着地したのでステージに配置
             await dotNetHelper.invokeMethodAsync('PlacePuyoOnStage');
+
+            // 連鎖処理を実行してスコアを更新
+            await dotNetHelper.invokeMethodAsync('ProcessChainAndUpdateScore');
+
+            // 新しいぷよを生成
             await dotNetHelper.invokeMethodAsync('CreateNewPuyo');
             lastDropTime = currentTime;
         }
