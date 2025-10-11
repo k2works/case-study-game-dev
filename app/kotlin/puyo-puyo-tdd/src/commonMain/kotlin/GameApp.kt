@@ -55,7 +55,9 @@ fun GameApp() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // ゲームステージ
-                GameStage(game)
+                key(updateTrigger) {
+                    GameStage(game)
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
