@@ -28,6 +28,30 @@ public class Game
     {
         Mode = GameMode.Playing;
     }
+
+    public bool CheckGameOver()
+    {
+        // ぷよの出現位置（中央上部）に既にぷよが配置されているかチェック
+        if (Stage == null || Player == null)
+            return false;
+
+        // Playerの初期位置を使用
+        int spawnX = 2; // Player()コンストラクタで設定される初期X位置
+        int spawnY = 0; // Player()コンストラクタで設定される初期Y位置
+
+        // 出現位置に既にぷよがあるかチェック
+        bool isBlocked = Stage.GetCell(spawnX, spawnY) != 0;
+
+        return isBlocked;
+    }
+
+    public void CheckAndSetGameOver()
+    {
+        if (CheckGameOver())
+        {
+            Mode = GameMode.GameOver;
+        }
+    }
 }
 
 public class Config
@@ -333,6 +357,37 @@ public class Puyo
 
 public class Score
 {
-    public int CurrentScore { get; set; }
-    public int ChainCount { get; set; }
+    public int CurrentScore { get; private set; }
+    public int ChainCount { get; private set; }
+
+    public void AddScore(int erasedCount, int chainCount)
+    {
+        // 基本スコア: 消去ぷよ数 × 10点
+        int baseScore = erasedCount * 10;
+
+        // 連鎖ボーナスの計算
+        // チェーン1: ボーナスなし
+        // チェーン2: 2倍
+        // チェーン3: 4倍
+        // チェーン4以降: 8倍
+        int multiplier = chainCount switch
+        {
+            1 => 1,
+            2 => 3, // 基本スコア + 2倍ボーナス = 3倍
+            3 => 5, // 基本スコア + 4倍ボーナス = 5倍
+            _ => 9  // 基本スコア + 8倍ボーナス = 9倍
+        };
+
+        CurrentScore += baseScore * multiplier;
+    }
+
+    public void UpdateChainCount(int count)
+    {
+        ChainCount = count;
+    }
+
+    public void ResetChainCount()
+    {
+        ChainCount = 0;
+    }
 }

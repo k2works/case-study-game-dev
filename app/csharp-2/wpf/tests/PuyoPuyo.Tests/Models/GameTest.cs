@@ -31,4 +31,61 @@ public class GameTest
         // Assert
         Assert.Equal(GameMode.Start, game.Mode);
     }
+
+    [Fact]
+    public void 新しいぷよが出現位置に配置できない場合ゲームオーバーになる()
+    {
+        // Arrange
+        var game = new Game();
+        game.Initialize();
+        game.Start();
+
+        // ステージの出現位置（中央上部）をぷよで埋める
+        if (game.Stage != null)
+        {
+            game.Stage.SetCell(2, 0, 1); // 出現位置を塞ぐ
+        }
+
+        // Act
+        bool isGameOver = game.CheckGameOver();
+
+        // Assert
+        Assert.True(isGameOver);
+    }
+
+    [Fact]
+    public void 新しいぷよが出現位置に配置できる場合ゲームオーバーにならない()
+    {
+        // Arrange
+        var game = new Game();
+        game.Initialize();
+        game.Start();
+
+        // Act
+        bool isGameOver = game.CheckGameOver();
+
+        // Assert
+        Assert.False(isGameOver);
+    }
+
+    [Fact]
+    public void ゲームオーバー時にゲームモードがGameOverになる()
+    {
+        // Arrange
+        var game = new Game();
+        game.Initialize();
+        game.Start();
+
+        // ステージの出現位置を塞ぐ
+        if (game.Stage != null)
+        {
+            game.Stage.SetCell(2, 0, 1);
+        }
+
+        // Act
+        game.CheckAndSetGameOver();
+
+        // Assert
+        Assert.Equal(GameMode.GameOver, game.Mode);
+    }
 }

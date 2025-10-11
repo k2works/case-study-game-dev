@@ -75,6 +75,9 @@ public partial class GameViewModel : ObservableObject
                     // 着地した場合の処理
                     Game.Player.PlacePuyoOnStage(Game.Stage);
 
+                    // 連鎖カウントのリセット
+                    int chainCount = 0;
+
                     // 消去判定と落下処理をループ（連鎖対応）
                     bool hasErased;
                     do
@@ -87,14 +90,36 @@ public partial class GameViewModel : ObservableObject
                         {
                             Game.Stage.Erase(eraseInfo);
                             hasErased = true;
+                            chainCount++;
+
+                            // スコア加算
+                            if (Game.Score != null)
+                            {
+                                Game.Score.AddScore(eraseInfo.ErasePuyoCount, chainCount);
+                                Game.Score.UpdateChainCount(chainCount);
+                            }
 
                             // 消去後に重力適用
                             Game.Stage.ApplyGravity();
                         }
                     } while (hasErased); // 消去が発生した場合は再度判定
 
+                    // 連鎖カウントをリセット
+                    if (Game.Score != null && chainCount > 0)
+                    {
+                        // 次のぷよのために連鎖カウントをリセット
+                        // （表示用のChainCountは維持）
+                    }
+
                     // 新しいぷよを生成
                     Game.Player.Reset();
+
+                    // ゲームオーバー判定
+                    Game.CheckAndSetGameOver();
+                    if (Game.Mode == GameMode.GameOver)
+                    {
+                        _gameTimer?.Stop();
+                    }
                 }
                 UpdatePuyoDisplay();
             }
@@ -117,6 +142,7 @@ public partial class GameViewModel : ObservableObject
         OnPropertyChanged(nameof(SubPuyoX));
         OnPropertyChanged(nameof(SubPuyoY));
         OnPropertyChanged(nameof(SubPuyoColor));
+        OnPropertyChanged(nameof(Game)); // スコア表示更新のため
         UpdateStagePuyos();
     }
 
