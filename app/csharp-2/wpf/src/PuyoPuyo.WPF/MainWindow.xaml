@@ -1,11 +1,12 @@
-﻿<Window x:Class="PuyoPuyo.WPF.MainWindow"
+<Window x:Class="PuyoPuyo.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:PuyoPuyo.WPF.ViewModels"
         mc:Ignorable="d"
-        Title="ぷよぷよ TDD" Height="600" Width="400">
+        Title="ぷよぷよゲーム" Height="690" Width="500"
+        Focusable="True">
     <Window.DataContext>
         <viewmodels:GameViewModel />
     </Window.DataContext>
@@ -14,77 +15,87 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Window.InputBindings>
+        <KeyBinding Key="Left" Command="{Binding MoveLeftCommand}" />
+        <KeyBinding Key="Right" Command="{Binding MoveRightCommand}" />
+        <KeyBinding Key="Down" Command="{Binding MoveDownCommand}" />
+        <KeyBinding Key="Up" Command="{Binding RotateCommand}" />
+        <KeyBinding Key="Z" Command="{Binding RotateCommand}" />
+        <KeyBinding Key="A" Command="{Binding RotateCommand}" />
+        <KeyBinding Key="X" Command="{Binding RotateRightCommand}" />
+        <KeyBinding Key="S" Command="{Binding RotateRightCommand}" />
+    </Window.InputBindings>
 
-        <!-- スコア表示 -->
-        <StackPanel Grid.Row="0" Margin="10">
-            <TextBlock Text="{Binding Game.Score.CurrentScore, StringFormat='スコア: {0}'}"
-                       FontSize="20" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Game.Score.ChainCount, StringFormat='チェーン: {0}'}"
-                       FontSize="16"/>
+    <StackPanel Orientation="Vertical">
+        <!-- タイトル -->
+        <TextBlock Text="ぷよぷよゲーム" FontSize="24" HorizontalAlignment="Center" Margin="10"/>
+
+        <!-- ゲームエリア（ボードと情報パネルを横に並べる） -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <!-- ゲームボード -->
+            <Border BorderBrush="Black" BorderThickness="2" Margin="10">
+                <Grid Width="240" Height="520">
+                    <Canvas Background="WhiteSmoke">
+                        <!-- ステージに配置されたぷよ -->
+                        <ItemsControl ItemsSource="{Binding StagePuyos}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Ellipse Width="36" Height="36" Fill="{Binding Color}" Stroke="Black" StrokeThickness="1"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- 軸ぷよ -->
+                        <Ellipse Width="36" Height="36"
+                                 Canvas.Left="{Binding CurrentPuyoX}"
+                                 Canvas.Top="{Binding CurrentPuyoY}"
+                                 Fill="{Binding CurrentPuyoColor}"
+                                 Stroke="Black" StrokeThickness="1"/>
+
+                        <!-- 副ぷよ -->
+                        <Ellipse Width="36" Height="36"
+                                 Canvas.Left="{Binding SubPuyoX}"
+                                 Canvas.Top="{Binding SubPuyoY}"
+                                 Fill="{Binding SubPuyoColor}"
+                                 Stroke="Black" StrokeThickness="1"/>
+                    </Canvas>
+
+                    <!-- ゲームオーバー表示 -->
+                    <Border Background="#CC000000" Visibility="{Binding IsGameOver, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="GAME OVER" FontSize="32" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                            <TextBlock Text="{Binding Game.Score.CurrentScore, StringFormat='Score: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding Game.Score.ChainCount, StringFormat='Chain: {0}'}" FontSize="20" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                            <Button Command="{Binding ResetCommand}" Content="もう一度プレイ" Width="150" Height="40" FontSize="16"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- 情報パネル -->
+            <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top">
+                <!-- スコア表示 -->
+                <TextBlock Text="Score" FontSize="14" FontWeight="Bold" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding Game.Score.CurrentScore}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <!-- 連鎖数表示 -->
+                <TextBlock Text="Chain" FontSize="14" FontWeight="Bold" Margin="0,5,0,5"/>
+                <TextBlock Text="{Binding Game.Score.ChainCount}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+            </StackPanel>
         </StackPanel>
 
-        <!-- ゲームエリア -->
-        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2" Margin="10">
-            <Canvas x:Name="GameCanvas" Background="White" Width="300" Height="480">
-                <!-- ステージに配置されたぷよ -->
-                <ItemsControl ItemsSource="{Binding StagePuyos}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Ellipse Width="40" Height="40" Fill="{Binding Color}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <!-- 軸ぷよ -->
-                <Ellipse Width="40" Height="40"
-                         Canvas.Left="{Binding CurrentPuyoX}"
-                         Canvas.Top="{Binding CurrentPuyoY}"
-                         Fill="{Binding CurrentPuyoColor}"/>
-
-                <!-- 副ぷよ -->
-                <Ellipse Width="40" Height="40"
-                         Canvas.Left="{Binding SubPuyoX}"
-                         Canvas.Top="{Binding SubPuyoY}"
-                         Fill="{Binding SubPuyoColor}"/>
-
-                <!-- ゲームオーバー表示 -->
-                <Border Width="300" Height="480"
-                        Background="#CC000000"
-                        Visibility="{Binding IsGameOver, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <TextBlock Text="GAME OVER"
-                               Foreground="White"
-                               FontSize="48"
-                               FontWeight="Bold"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-                </Border>
-            </Canvas>
-        </Border>
-
-        <!-- ボタンエリア -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal"
-                    HorizontalAlignment="Center" Margin="10">
-            <Button Content="スタート" Command="{Binding StartCommand}"
-                    Width="100" Height="40" Margin="5"/>
-            <Button Content="リセット" Command="{Binding ResetCommand}"
-                    Width="100" Height="40" Margin="5"/>
-        </StackPanel>
-    </Grid>
+        <!-- コントロールボタン -->
+        <Button Command="{Binding StartCommand}" Content="ゲーム開始" Width="120" Height="40" Margin="10"/>
+    </StackPanel>
 </Window>

@@ -137,6 +137,46 @@ public partial class GameViewModel : ObservableObject
         InitializeGame();
     }
 
+    [RelayCommand]
+    private void MoveLeft()
+    {
+        if (Game.Mode != GameMode.Playing) return;
+        Game.Player?.MoveLeft(Game.Stage!);
+        UpdatePuyoDisplay();
+    }
+
+    [RelayCommand]
+    private void MoveRight()
+    {
+        if (Game.Mode != GameMode.Playing) return;
+        Game.Player?.MoveRight(Game.Stage!);
+        UpdatePuyoDisplay();
+    }
+
+    [RelayCommand]
+    private void MoveDown()
+    {
+        if (Game.Mode != GameMode.Playing) return;
+        Game.Player?.MoveDown(Game.Stage!);
+        UpdatePuyoDisplay();
+    }
+
+    [RelayCommand]
+    private void Rotate()
+    {
+        if (Game.Mode != GameMode.Playing) return;
+        Game.Player?.RotateLeft(Game.Stage!);
+        UpdatePuyoDisplay();
+    }
+
+    [RelayCommand]
+    private void RotateRight()
+    {
+        if (Game.Mode != GameMode.Playing) return;
+        Game.Player?.RotateRight(Game.Stage!);
+        UpdatePuyoDisplay();
+    }
+
     private void UpdatePuyoDisplay()
     {
         OnPropertyChanged(nameof(CurrentPuyoX));
@@ -229,54 +269,5 @@ public partial class GameViewModel : ObservableObject
             PuyoColor.Yellow => Brushes.Yellow,
             _ => Brushes.Gray
         };
-    }
-
-    public void HandleKeyDown(System.Windows.Input.Key key)
-    {
-        if (Game.Mode != GameMode.Playing)
-            return;
-
-        switch (key)
-        {
-            case System.Windows.Input.Key.Left:
-                Game.Player?.SetInputLeft(true);
-                Game.Player?.MoveLeft(Game.Stage!);
-                break;
-            case System.Windows.Input.Key.Right:
-                Game.Player?.SetInputRight(true);
-                Game.Player?.MoveRight(Game.Stage!);
-                break;
-            case System.Windows.Input.Key.Down:
-                Game.Player?.SetInputDown(true);
-                Game.Player?.MoveDown(Game.Stage!);
-                break;
-            case System.Windows.Input.Key.Up:
-            case System.Windows.Input.Key.Z:
-            case System.Windows.Input.Key.A:
-                Game.Player?.RotateLeft(Game.Stage!);
-                break;
-            case System.Windows.Input.Key.X:
-            case System.Windows.Input.Key.S:
-                Game.Player?.RotateRight(Game.Stage!);
-                break;
-        }
-
-        UpdatePuyoDisplay();
-    }
-
-    public void HandleKeyUp(System.Windows.Input.Key key)
-    {
-        switch (key)
-        {
-            case System.Windows.Input.Key.Left:
-                Game.Player?.SetInputLeft(false);
-                break;
-            case System.Windows.Input.Key.Right:
-                Game.Player?.SetInputRight(false);
-                break;
-            case System.Windows.Input.Key.Down:
-                Game.Player?.SetInputDown(false);
-                break;
-        }
     }
 }
