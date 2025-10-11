@@ -185,6 +185,13 @@
             var eraseInfo = game.Stage.CheckErase();
             int points = Score.Calculate(eraseInfo.erasePuyoCount, chainCount);
             game.Score.Add(points);
+
+            // 全消し判定を行い、全消しならボーナスを加算
+            if (game.Stage.IsAllClear())
+            {
+                int allClearBonus = Score.CalculateAllClearBonus();
+                game.Score.Add(allClearBonus);
+            }
         }
     }
 
