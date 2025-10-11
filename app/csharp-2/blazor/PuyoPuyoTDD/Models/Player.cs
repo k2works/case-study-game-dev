@@ -208,7 +208,45 @@ public class Player
 
         if (this.puyoY < maxY)
         {
-            this.puyoY++;
+            // 移動後の位置を計算
+            int nextY = this.puyoY + 1;
+
+            // 軸ぷよの衝突判定
+            if (this.stage.GetPuyo(this.puyoX, nextY) != 0)
+            {
+                return false;
+            }
+
+            // 子ぷよの位置を計算
+            int childX = this.puyoX;
+            int childY = this.puyoY;
+
+            switch (this.rotation)
+            {
+                case 0: // 上
+                    childY = this.puyoY - 1;
+                    break;
+                case 1: // 右
+                    childX = this.puyoX + 1;
+                    break;
+                case 2: // 下
+                    childY = this.puyoY + 1;
+                    break;
+                case 3: // 左
+                    childX = this.puyoX - 1;
+                    break;
+            }
+
+            // 子ぷよの移動後の位置
+            int nextChildY = childY + 1;
+
+            // 子ぷよの衝突判定
+            if (this.stage.GetPuyo(childX, nextChildY) != 0)
+            {
+                return false;
+            }
+
+            this.puyoY = nextY;
             return true;
         }
 

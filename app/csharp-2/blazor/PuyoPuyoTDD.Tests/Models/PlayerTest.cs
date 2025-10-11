@@ -334,4 +334,47 @@ public class PlayerTest
         Assert.Equal(puyoType, this.stage.GetPuyo(1, 11));
         Assert.Equal(puyoType, this.stage.GetPuyo(1, 10));
     }
+
+    /// <summary>
+    /// ステージのぷよと衝突する場合は下に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void ステージのぷよと衝突する場合は下に移動できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(2, 10, 1); // ステージにぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(2);
+        this.player.SetPuyoY(9);
+        this.player.SetRotation(0); // 上向き
+
+        // Act
+        var canMove = this.player.MoveDown();
+
+        // Assert
+        Assert.False(canMove);
+    }
+
+    /// <summary>
+    /// 子ぷよがステージのぷよと衝突する場合は下に移動できないかテスト.
+    /// </summary>
+    [Fact]
+    public void 子ぷよがステージのぷよと衝突する場合は下に移動できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(2, 9, 1); // ステージにぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(2);
+        this.player.SetPuyoY(9);
+        this.player.SetRotation(0); // 上向き（子ぷよが y=8 にある）
+
+        // Act
+        var canMove = this.player.MoveDown();
+
+        // Assert
+        // 下に移動すると子ぷよが (2, 9) に衝突するので移動できない
+        Assert.False(canMove);
+    }
 }
