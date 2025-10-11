@@ -81,9 +81,9 @@ public class Game
     public Score Score { get; private set; } = null!;
 
     /// <summary>
-    /// Gets ゲームモードを取得します.
+    /// Gets or sets ゲームモードを取得または設定します.
     /// </summary>
-    public GameMode Mode { get; private set; }
+    public GameMode Mode { get; set; }
 
     /// <summary>
     /// ゲームを初期化します.
