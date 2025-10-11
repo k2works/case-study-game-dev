@@ -8,6 +8,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 
@@ -26,8 +28,14 @@ fun GameApp() {
     var updateTrigger by remember { mutableStateOf(0) }
     var frameCount by remember { mutableStateOf(0) }
 
+    // フォーカス制御
+    val focusRequester = remember { FocusRequester() }
+
     // ゲームループ：約60FPSで動作
     LaunchedEffect(Unit) {
+        // 起動時にフォーカスを要求
+        focusRequester.requestFocus()
+
         while (true) {
             kotlinx.coroutines.delay(16) // 約60FPS
             frameCount++
@@ -50,6 +58,7 @@ fun GameApp() {
         modifier =
             Modifier
                 .fillMaxSize()
+                .focusRequester(focusRequester)
                 .onKeyEvent { event ->
                     if (event.type == KeyEventType.KeyDown) {
                         when (event.key) {
