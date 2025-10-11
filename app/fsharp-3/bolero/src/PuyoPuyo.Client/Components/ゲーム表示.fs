@@ -81,7 +81,7 @@ module ゲーム画面 =
 
                 div {
                     attr.``class`` "score-display"
-                    p { $"スコア: {モデル.スコア}" }
+                    p { $"スコア: {モデル.スコア.値}" }
                 }
 
                 div {
