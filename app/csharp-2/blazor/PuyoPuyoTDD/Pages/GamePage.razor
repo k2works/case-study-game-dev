@@ -138,6 +138,25 @@
     }
 
     /// <summary>
+    /// ぷよが着地したかどうかを判定する.
+    /// </summary>
+    /// <returns>着地しているかどうか.</returns>
+    [JSInvokable]
+    public bool HasLanded()
+    {
+        return game.Player.HasLanded();
+    }
+
+    /// <summary>
+    /// 新しいぷよを生成する.
+    /// </summary>
+    [JSInvokable]
+    public void CreateNewPuyo()
+    {
+        game.Player.CreateNewPuyo();
+    }
+
+    /// <summary>
     /// コンポーネント破棄時の処理.
     /// </summary>
     public void Dispose()

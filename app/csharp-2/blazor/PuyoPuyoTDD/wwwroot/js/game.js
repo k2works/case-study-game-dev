@@ -103,6 +103,10 @@ async function updateGame(currentTime) {
 
         if (canMove) {
             lastDropTime = currentTime;
+        } else {
+            // 着地したので新しいぷよを生成
+            await dotNetHelper.invokeMethodAsync('CreateNewPuyo');
+            lastDropTime = currentTime;
         }
     }
 }
