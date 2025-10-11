@@ -7,6 +7,13 @@ data class EraseInfo(
     val eraseList: List<PuyoPosition>,
 )
 
+data class ChainInfo(val erasedPuyoCount: Int)
+
+data class ChainResult(
+    val chainCount: Int,
+    val chainInfoList: List<ChainInfo>,
+)
+
 class Stage(private val config: Config) {
     private lateinit var field: Array<IntArray>
 
@@ -118,5 +125,49 @@ class Stage(private val config: Config) {
                 }
             }
         }
+    }
+
+    /**
+     * 連鎖処理を実行します
+     */
+    fun processChain(): ChainResult {
+        var chainCount = 0
+        val chainInfoList = mutableListOf<ChainInfo>()
+
+        while (true) {
+            // 消去判定
+            val eraseInfo = checkErase()
+
+            if (eraseInfo.erasePuyoCount == 0) {
+                // 消去するぷよがなければ終了
+                break
+            }
+
+            // 連鎖情報を記録
+            chainInfoList.add(ChainInfo(eraseInfo.erasePuyoCount))
+
+            // 消去実行
+            executeErase(eraseInfo.eraseList)
+            chainCount++
+
+            // 重力適用
+            applyGravity()
+        }
+
+        return ChainResult(chainCount, chainInfoList)
+    }
+
+    /**
+     * 全消し判定を行います
+     */
+    fun isAllClear(): Boolean {
+        for (x in 0 until config.stageWidth) {
+            for (y in 0 until config.stageHeight) {
+                if (field[y][x] != 0) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 }

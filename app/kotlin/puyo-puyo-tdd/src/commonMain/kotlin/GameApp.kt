@@ -48,17 +48,26 @@ fun GameApp() {
                     if (game.player.hasLanded()) {
                         game.player.placePuyoOnStage()
 
-                        // 消去処理を実行
-                        var eraseInfo = game.stage.checkErase()
-                        while (eraseInfo.erasePuyoCount > 0) {
-                            // 消去実行
-                            game.stage.executeErase(eraseInfo.eraseList)
+                        // 連鎖処理を実行
+                        val chainResult = game.stage.processChain()
 
-                            // 重力適用
-                            game.stage.applyGravity()
+                        if (chainResult.chainCount > 0) {
+                            // 各連鎖のスコアを計算
+                            chainResult.chainInfoList.forEachIndexed { index, chainInfo ->
+                                val chainNumber = index + 1 // 連鎖数は1から始まる
+                                val points =
+                                    Score.calculate(
+                                        chainInfo.erasedPuyoCount,
+                                        chainNumber,
+                                    )
+                                game.score.add(points)
+                            }
 
-                            // 再度消去判定（連鎖のため）
-                            eraseInfo = game.stage.checkErase()
+                            // 全消し判定を行い、全消しならボーナスを加算
+                            if (game.stage.isAllClear()) {
+                                val bonus = Score.calculateAllClearBonus()
+                                game.score.add(bonus)
+                            }
                         }
 
                         game.player.createNewPuyo()
