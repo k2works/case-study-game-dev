@@ -147,24 +147,7 @@ public class Player
             }
 
             // 子ぷよの位置を計算
-            int childX = this.puyoX;
-            int childY = this.puyoY;
-
-            switch (this.rotation)
-            {
-                case 0: // 上
-                    childY = this.puyoY - 1;
-                    break;
-                case 1: // 右
-                    childX = this.puyoX + 1;
-                    break;
-                case 2: // 下
-                    childY = this.puyoY + 1;
-                    break;
-                case 3: // 左
-                    childX = this.puyoX - 1;
-                    break;
-            }
+            var (childX, childY) = this.GetChildPuyoPosition(this.rotation);
 
             // 子ぷよの移動後の位置
             int nextChildX = childX - 1;
@@ -199,24 +182,7 @@ public class Player
             }
 
             // 子ぷよの位置を計算
-            int childX = this.puyoX;
-            int childY = this.puyoY;
-
-            switch (this.rotation)
-            {
-                case 0: // 上
-                    childY = this.puyoY - 1;
-                    break;
-                case 1: // 右
-                    childX = this.puyoX + 1;
-                    break;
-                case 2: // 下
-                    childY = this.puyoY + 1;
-                    break;
-                case 3: // 左
-                    childX = this.puyoX - 1;
-                    break;
-            }
+            var (childX, childY) = this.GetChildPuyoPosition(this.rotation);
 
             // 子ぷよの移動後の位置
             int nextChildX = childX + 1;
@@ -243,24 +209,7 @@ public class Player
         int newRotation = (this.rotation + 1) % 4;
 
         // 回転後の子ぷよの位置を計算
-        int childX = this.puyoX;
-        int childY = this.puyoY;
-
-        switch (newRotation)
-        {
-            case 0: // 上
-                childY = this.puyoY - 1;
-                break;
-            case 1: // 右
-                childX = this.puyoX + 1;
-                break;
-            case 2: // 下
-                childY = this.puyoY + 1;
-                break;
-            case 3: // 左
-                childX = this.puyoX - 1;
-                break;
-        }
+        var (childX, childY) = this.GetChildPuyoPosition(newRotation);
 
         // 境界チェックとがべキック処理
         if (childX < 0)
@@ -280,24 +229,7 @@ public class Player
         }
 
         // 再計算した子ぷよの位置
-        childX = this.puyoX;
-        childY = this.puyoY;
-
-        switch (newRotation)
-        {
-            case 0: // 上
-                childY = this.puyoY - 1;
-                break;
-            case 1: // 右
-                childX = this.puyoX + 1;
-                break;
-            case 2: // 下
-                childY = this.puyoY + 1;
-                break;
-            case 3: // 左
-                childX = this.puyoX - 1;
-                break;
-        }
+        (childX, childY) = this.GetChildPuyoPosition(newRotation);
 
         // 衝突判定
         if (this.stage.GetPuyo(this.puyoX, this.puyoY) != 0 ||
@@ -318,24 +250,7 @@ public class Player
         int newRotation = (this.rotation + 3) % 4;
 
         // 回転後の子ぷよの位置を計算
-        int childX = this.puyoX;
-        int childY = this.puyoY;
-
-        switch (newRotation)
-        {
-            case 0: // 上
-                childY = this.puyoY - 1;
-                break;
-            case 1: // 右
-                childX = this.puyoX + 1;
-                break;
-            case 2: // 下
-                childY = this.puyoY + 1;
-                break;
-            case 3: // 左
-                childX = this.puyoX - 1;
-                break;
-        }
+        var (childX, childY) = this.GetChildPuyoPosition(newRotation);
 
         // 境界チェックとがべキック処理
         if (childX < 0)
@@ -355,24 +270,7 @@ public class Player
         }
 
         // 再計算した子ぷよの位置
-        childX = this.puyoX;
-        childY = this.puyoY;
-
-        switch (newRotation)
-        {
-            case 0: // 上
-                childY = this.puyoY - 1;
-                break;
-            case 1: // 右
-                childX = this.puyoX + 1;
-                break;
-            case 2: // 下
-                childY = this.puyoY + 1;
-                break;
-            case 3: // 左
-                childX = this.puyoX - 1;
-                break;
-        }
+        (childX, childY) = this.GetChildPuyoPosition(newRotation);
 
         // 衝突判定
         if (this.stage.GetPuyo(this.puyoX, this.puyoY) != 0 ||
@@ -434,24 +332,7 @@ public class Player
             }
 
             // 子ぷよの位置を計算
-            int childX = this.puyoX;
-            int childY = this.puyoY;
-
-            switch (this.rotation)
-            {
-                case 0: // 上
-                    childY = this.puyoY - 1;
-                    break;
-                case 1: // 右
-                    childX = this.puyoX + 1;
-                    break;
-                case 2: // 下
-                    childY = this.puyoY + 1;
-                    break;
-                case 3: // 左
-                    childX = this.puyoX - 1;
-                    break;
-            }
+            var (childX, childY) = this.GetChildPuyoPosition(this.rotation);
 
             // 子ぷよの移動後の位置
             int nextChildY = childY + 1;
@@ -489,10 +370,22 @@ public class Player
         this.stage.SetPuyo(this.puyoX, this.puyoY, this.puyoType);
 
         // 子ぷよの位置を計算して配置
+        var (childX, childY) = this.GetChildPuyoPosition(this.rotation);
+
+        this.stage.SetPuyo(childX, childY, this.puyoType);
+    }
+
+    /// <summary>
+    /// 子ぷよの位置を計算します.
+    /// </summary>
+    /// <param name="rotation">回転状態.</param>
+    /// <returns>子ぷよの位置（X, Y）.</returns>
+    private (int X, int Y) GetChildPuyoPosition(int rotation)
+    {
         int childX = this.puyoX;
         int childY = this.puyoY;
 
-        switch (this.rotation)
+        switch (rotation)
         {
             case 0: // 上
                 childY = this.puyoY - 1;
@@ -508,6 +401,6 @@ public class Player
                 break;
         }
 
-        this.stage.SetPuyo(childX, childY, this.puyoType);
+        return (childX, childY);
     }
 }
