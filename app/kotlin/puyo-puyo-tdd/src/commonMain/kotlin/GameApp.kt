@@ -2,6 +2,7 @@ package com.example.puyopuyo
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -133,6 +134,16 @@ fun GameApp() {
                         text = "モード: ${game.mode}",
                         style = MaterialTheme.typography.body1,
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // リセットボタン
+                    Button(onClick = {
+                        game.reset()
+                        updateTrigger++
+                    }) {
+                        Text("リセット")
+                    }
                 }
             }
         }
