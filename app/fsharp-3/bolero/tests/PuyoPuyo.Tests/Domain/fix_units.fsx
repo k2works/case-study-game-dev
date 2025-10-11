@@ -1,7 +1,9 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let filePath = @"C:\Users\PC202411-1\RiderProjects\case-study-game-dev\app\fsharp-3\bolero\tests\PuyoPuyo.Tests\Domain\盤面テスト.fs"
+let filePath =
+    @"C:\Users\PC202411-1\RiderProjects\case-study-game-dev\app\fsharp-3\bolero\tests\PuyoPuyo.Tests\Domain\盤面テスト.fs"
+
 let mutable content = File.ReadAllText(filePath)
 
 // セル設定とセル取得の呼び出しを測定単位型に変換

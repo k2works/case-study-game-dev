@@ -8,7 +8,8 @@ type セル =
     | 埋まっている of ぷよの色
 
 /// ゲームボード
-type 盤面 = { 列数: int<列>; 行数: int<行>; セル配列: セル[][] }
+type 盤面 =
+    { 列数: int<列>; 行数: int<行>; セル配列: セル[][] }
 
 module 盤面 =
     /// 空のボードを作成
@@ -21,6 +22,7 @@ module 盤面 =
     let セル取得 (盤面: 盤面) (列: int<列>) (行: int<行>) : セル =
         let 列値 = int 列
         let 行値 = int 行
+
         if 行値 >= 0 && 行値 < (int 盤面.行数) && 列値 >= 0 && 列値 < (int 盤面.列数) then
             盤面.セル配列.[行値].[列値]
         else
@@ -30,6 +32,7 @@ module 盤面 =
     let セル設定 (盤面: 盤面) (設定列: int<列>) (設定行: int<行>) (設定セル: セル) : 盤面 =
         let 設定列値 = int 設定列
         let 設定行値 = int 設定行
+
         if 設定行値 >= 0 && 設定行値 < (int 盤面.行数) && 設定列値 >= 0 && 設定列値 < (int 盤面.列数) then
             let 新しいセル配列 =
                 盤面.セル配列
@@ -72,19 +75,28 @@ module 盤面 =
 
                 for (隣列, 隣行) in 隣接セル do
                     if 隣行 >= 0 && 隣行 < (int 盤面.行数) && 隣列 >= 0 && 隣列 < (int 盤面.列数) && not 訪問済み.[隣行].[隣列] then
-                        match セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 隣列) (LanguagePrimitives.Int32WithMeasure<行> 隣行) with
+                        match
+                            セル取得
+                                盤面
+                                (LanguagePrimitives.Int32WithMeasure<列> 隣列)
+                                (LanguagePrimitives.Int32WithMeasure<行> 隣行)
+                        with
                         | 埋まっている 色 when 色 = 対象色 ->
                             訪問済み.[隣行].[隣列] <- true
                             キュー.Enqueue((隣列, 隣行))
                         | _ -> ()
 
-            グループ |> List.map (fun (列, 行) -> (LanguagePrimitives.Int32WithMeasure<列> 列, LanguagePrimitives.Int32WithMeasure<行> 行))
+            グループ
+            |> List.map (fun (列, 行) ->
+                (LanguagePrimitives.Int32WithMeasure<列> 列, LanguagePrimitives.Int32WithMeasure<行> 行))
 
         // すべてのセルをスキャン
         for 行 in 0 .. (int 盤面.行数) - 1 do
             for 列 in 0 .. (int 盤面.列数) - 1 do
                 if not 訪問済み.[行].[列] then
-                    match セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行) with
+                    match
+                        セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行)
+                    with
                     | 埋まっている 色 ->
                         let グループ = BFS探索 列 行 色
 

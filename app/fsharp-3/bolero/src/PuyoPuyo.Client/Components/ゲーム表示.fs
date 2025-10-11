@@ -2,8 +2,8 @@ namespace PuyoPuyo.Components
 
 open Bolero.Html
 open Microsoft.AspNetCore.Components.Web
-open PuyoPuyo.Elmish
 open PuyoPuyo.Domain
+open PuyoPuyo.Elmish
 
 module ゲーム画面 =
     let private セルを描画 (セル: セル) =
@@ -19,7 +19,12 @@ module ゲーム画面 =
 
     let private ボードを描画 (盤面: 盤面) (現在のぷよペア: ぷよペア option) =
         let ボードのコピー =
-            Array.init (int 盤面.行数) (fun 行 -> Array.init (int 盤面.列数) (fun 列 -> PuyoPuyo.Domain.盤面.セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行)))
+            Array.init (int 盤面.行数) (fun 行 ->
+                Array.init (int 盤面.列数) (fun 列 ->
+                    PuyoPuyo.Domain.盤面.セル取得
+                        盤面
+                        (LanguagePrimitives.Int32WithMeasure<列> 列)
+                        (LanguagePrimitives.Int32WithMeasure<行> 行)))
 
         // 現在のぷよを重ねて表示
         match 現在のぷよペア with

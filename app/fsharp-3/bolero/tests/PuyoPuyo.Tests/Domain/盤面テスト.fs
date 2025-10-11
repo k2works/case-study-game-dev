@@ -21,7 +21,8 @@ let ``作成直後のボードはすべて空である`` () =
     // Assert
     for 行 in 0 .. (int _盤面.行数) - 1 do
         for 列 in 0 .. (int _盤面.列数) - 1 do
-            盤面.セル取得 _盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行) |> should equal 空
+            盤面.セル取得 _盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行)
+            |> should equal 空
 
 [<Fact>]
 let ``ボードにぷよを配置できる`` () =
@@ -50,7 +51,7 @@ let ``ボードにぷよを配置しても元のボードは変更されない``
 let ``ぷよペアをボードに固定できる`` () =
     // Arrange
     let _盤面 = 盤面.作成 6<列> 13<行>
-    let ペア = ぷよペア.作成 3<列> 10<行> 赤 緑 0
+    let ペア = ぷよペア.作成 3<列> 10<行> 赤 緑 0<回転>
 
     // Act
     let 新しい盤面 = 盤面操作.ぷよペア固定 _盤面 ペア
@@ -66,7 +67,7 @@ let ``ぷよペアをボードに固定できる`` () =
 let ``ぷよペアを固定しても元のボードは変更されない`` () =
     // Arrange
     let _盤面 = 盤面.作成 6<列> 13<行>
-    let ペア = ぷよペア.作成 3<列> 10<行> 赤 緑 0
+    let ペア = ぷよペア.作成 3<列> 10<行> 赤 緑 0<回転>
 
     // Act
     let 新しい盤面 = 盤面操作.ぷよペア固定 _盤面 ペア
@@ -470,7 +471,8 @@ let ``統合テスト_全消しの場合は全消し判定がtrueになる`` () 
     // すべてのセルが空であることを確認
     for 行 in 0..11 do
         for 列 in 0..5 do
-            盤面.セル取得 最終盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行) |> should equal 空
+            盤面.セル取得 最終盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行)
+            |> should equal 空
 
 [<Fact>]
 let ``統合テスト_全消しでない場合は全消し判定がfalseになる`` () =
@@ -529,4 +531,5 @@ let ``統合テスト_2連鎖後に全消しになるケース`` () =
     // すべてのセルが空であることを確認
     for 行 in 0..11 do
         for 列 in 0..5 do
-            盤面.セル取得 最終盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行) |> should equal 空
+            盤面.セル取得 最終盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行)
+            |> should equal 空
