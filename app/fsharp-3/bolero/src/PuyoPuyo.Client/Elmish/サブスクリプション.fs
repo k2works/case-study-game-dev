@@ -5,14 +5,16 @@ open System.Threading
 open Elmish
 
 module サブスクリプション =
-    /// タイマーサブスクリプション
-    let タイマー (_: モデル) : Sub<メッセージ> =
+    /// タイマーサブスクリプション（高速落下時は速度を上げる）
+    let タイマー (モデル: モデル) : Sub<メッセージ> =
         let startTimer dispatch =
             let cts = new CancellationTokenSource()
+            // 高速落下中は100ms、通常時は500ms
+            let interval = if モデル.高速落下中 then 100 else 500
 
             let rec loop () =
                 async {
-                    do! Async.Sleep(500)
+                    do! Async.Sleep(interval)
                     dispatch タイマー刻み
                     return! loop ()
                 }

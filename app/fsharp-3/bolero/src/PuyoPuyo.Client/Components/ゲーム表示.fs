@@ -47,14 +47,23 @@ module ゲーム画面 =
                 }
         }
 
-    /// キーボードイベントハンドラー
-    let private キー入力処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
+    /// キーボード押下イベントハンドラー
+    let private キー押下処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
         match e.Key with
         | "ArrowLeft" -> ディスパッチ 左移動
         | "ArrowRight" -> ディスパッチ 右移動
         | "ArrowUp"
         | "z"
         | "Z" -> ディスパッチ 回転
+        | "ArrowDown" ->
+            ディスパッチ 下移動
+            ディスパッチ 高速落下開始
+        | _ -> ()
+
+    /// キーボード解放イベントハンドラー
+    let private キー解放処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
+        match e.Key with
+        | "ArrowDown" -> ディスパッチ 高速落下停止
         | _ -> ()
 
     /// メインView
@@ -62,7 +71,8 @@ module ゲーム画面 =
         div {
             attr.``class`` "game-container"
             attr.tabindex 0
-            on.keydown (キー入力処理 ディスパッチ)
+            on.keydown (キー押下処理 ディスパッチ)
+            on.keyup (キー解放処理 ディスパッチ)
             h1 { "ぷよぷよゲーム" }
 
             ボードを描画 モデル.盤面 モデル.現在のぷよ
@@ -87,6 +97,7 @@ module ゲーム画面 =
                         attr.``class`` "instructions"
                         p { "← → : 移動" }
                         p { "↑ / Z : 回転" }
+                        p { "↓ : 高速落下" }
                     }
 
                 | ゲームオーバー ->
