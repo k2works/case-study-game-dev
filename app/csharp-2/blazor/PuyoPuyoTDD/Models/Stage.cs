@@ -95,6 +95,18 @@ public class Stage
     }
 
     /// <summary>
+    /// 消去対象のぷよを消去します.
+    /// </summary>
+    /// <param name="eraseList">消去対象のぷよのリスト.</param>
+    public void ExecuteErase(List<(int X, int Y, int Type)> eraseList)
+    {
+        foreach (var puyo in eraseList)
+        {
+            this.board[puyo.X, puyo.Y] = 0;
+        }
+    }
+
+    /// <summary>
     /// 接続されたぷよを探索します.
     /// </summary>
     /// <param name="x">X座標.</param>

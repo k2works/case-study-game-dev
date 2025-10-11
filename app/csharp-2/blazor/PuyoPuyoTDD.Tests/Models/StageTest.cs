@@ -65,4 +65,28 @@ public class StageTest
         Assert.Equal(0, eraseInfo.erasePuyoCount);
         Assert.Empty(eraseInfo.eraseList);
     }
+
+    /// <summary>
+    /// 消去対象のぷよを実際に消去するかテスト.
+    /// </summary>
+    [Fact]
+    public void 消去対象のぷよを実際に消去する()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(1, 10, 1);
+        this.stage.SetPuyo(2, 10, 1);
+        this.stage.SetPuyo(1, 11, 1);
+        this.stage.SetPuyo(2, 11, 1);
+
+        // Act
+        var eraseInfo = this.stage.CheckErase();
+        this.stage.ExecuteErase(eraseInfo.eraseList);
+
+        // Assert
+        Assert.Equal(0, this.stage.GetPuyo(1, 10));
+        Assert.Equal(0, this.stage.GetPuyo(2, 10));
+        Assert.Equal(0, this.stage.GetPuyo(1, 11));
+        Assert.Equal(0, this.stage.GetPuyo(2, 11));
+    }
 }
