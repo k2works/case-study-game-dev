@@ -37,14 +37,29 @@ class Player(private val config: Config, private val stage: Stage) {
     }
 
     fun hasLanded(): Boolean {
-        // ステージの底に到達したか
+        // 軸ぷよの着地判定
         if (puyoY >= config.stageHeight - 1) {
             return true
         }
-        // 下にぷよがあるか
         if (stage.getPuyo(puyoX, puyoY + 1) != 0) {
             return true
         }
+
+        // 子ぷよの着地判定
+        val (childX, childY) = getChildPuyoPosition()
+
+        // 子ぷよが範囲内の場合のみチェック
+        if (childY >= 0 && childY < config.stageHeight) {
+            // 子ぷよが底に到達したか
+            if (childY >= config.stageHeight - 1) {
+                return true
+            }
+            // 子ぷよの下にぷよがあるか
+            if (childY + 1 < config.stageHeight && stage.getPuyo(childX, childY + 1) != 0) {
+                return true
+            }
+        }
+
         return false
     }
 

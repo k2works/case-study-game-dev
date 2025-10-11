@@ -381,4 +381,55 @@ class PlayerTest {
         // 壁蹴りで左にずれる
         assertTrue(player.puyoX < config.stageWidth - 1)
     }
+
+    @Test
+    fun 子ぷよが下にある状態で地面に着地する() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // 子ぷよを下にする（2回右回転）
+        player.rotateRight()
+        player.rotateRight()
+        assertEquals(2, player.rotation) // 子ぷよが下
+
+        // 底の1つ上まで移動
+        while (player.puyoY < config.stageHeight - 2) {
+            player.moveDown()
+        }
+
+        // Act & Assert
+        // この時点で子ぷよ(puyoY + 1)が底(stageHeight - 1)に到達
+        assertTrue(player.hasLanded())
+    }
+
+    @Test
+    fun 子ぷよが下にある状態で他のぷよの上に着地する() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+        val player = Player(config, stage)
+        player.createNewPuyo()
+
+        // 底にぷよを配置
+        stage.setPuyo(2, 12, 1)
+
+        // 子ぷよを下にする（2回右回転）
+        player.rotateRight()
+        player.rotateRight()
+        assertEquals(2, player.rotation) // 子ぷよが下
+
+        // 底から2つ上まで移動
+        while (player.puyoY < config.stageHeight - 3) {
+            player.moveDown()
+        }
+
+        // Act & Assert
+        // この時点で子ぷよ(puyoY + 1)が配置済みぷよの上に到達
+        assertTrue(player.hasLanded())
+    }
 }
