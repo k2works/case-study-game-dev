@@ -171,6 +171,10 @@
     [JSInvokable]
     public void ProcessChainAndUpdateScore()
     {
+        // 着地後、まず重力を適用（浮いているぷよを落下させる）
+        game.Stage.ApplyGravity();
+
+        // 連鎖処理を実行
         int chainCount = game.Stage.ProcessChain();
 
         if (chainCount > 0)
