@@ -66,7 +66,11 @@ class GameAppTest {
 
         // 主要なUIコンポーネントが表示されることを確認
         composeTestRule.onNodeWithText("ぷよぷよ").assertExists()
+
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("スコア: 0").assertExists()
+
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("リセット").assertExists()
     }
 }
