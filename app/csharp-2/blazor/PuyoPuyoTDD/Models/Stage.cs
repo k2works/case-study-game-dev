@@ -136,6 +136,36 @@ public class Stage
     }
 
     /// <summary>
+    /// 連鎖処理を実行します.
+    /// </summary>
+    /// <returns>連鎖数.</returns>
+    public int ProcessChain()
+    {
+        int chainCount = 0;
+
+        while (true)
+        {
+            // 消去判定
+            var eraseInfo = this.CheckErase();
+
+            if (eraseInfo.erasePuyoCount == 0)
+            {
+                // 消去するぷよがなければ終了
+                break;
+            }
+
+            // 消去実行
+            this.ExecuteErase(eraseInfo.eraseList);
+            chainCount++;
+
+            // 重力適用
+            this.ApplyGravity();
+        }
+
+        return chainCount;
+    }
+
+    /// <summary>
     /// 接続されたぷよを探索します.
     /// </summary>
     /// <param name="x">X座標.</param>

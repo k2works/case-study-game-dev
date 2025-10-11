@@ -123,4 +123,40 @@ public class StageTest
         Assert.Equal(0, this.stage.GetPuyo(1, 9));
         Assert.Equal(0, this.stage.GetPuyo(2, 8));
     }
+
+    /// <summary>
+    /// 連鎖が発生するかテスト.
+    /// </summary>
+    [Fact]
+    public void 連鎖が発生する()
+    {
+        // Arrange
+        this.stage.Initialize();
+
+        // 最下段: 赤4つ（横に配置、消去対象）
+        this.stage.SetPuyo(0, 11, 1);
+        this.stage.SetPuyo(1, 11, 1);
+        this.stage.SetPuyo(2, 11, 1);
+        this.stage.SetPuyo(3, 11, 1);
+
+        // 青3つを横に配置（赤の上）+ 青1つを離れた位置に配置
+        // 赤が消去されると、青3つが落下してY=11に並び、さらに上の青1つも落下してY=8に来て縦4つになる
+        this.stage.SetPuyo(1, 10, 2); // 赤の上
+        this.stage.SetPuyo(2, 10, 2); // 赤の上
+        this.stage.SetPuyo(3, 10, 2); // 赤の上
+        this.stage.SetPuyo(1, 7, 2);  // 離れた位置
+
+        // Act
+        int chainCount = this.stage.ProcessChain();
+
+        // Assert
+        // 1連鎖: 赤4つ消去 -> 落下後、2連鎖: 青4つ消去
+        Assert.Equal(2, chainCount);
+
+        // すべてのぷよが消えている
+        Assert.Equal(0, this.stage.GetPuyo(1, 11));
+        Assert.Equal(0, this.stage.GetPuyo(1, 10));
+        Assert.Equal(0, this.stage.GetPuyo(1, 9));
+        Assert.Equal(0, this.stage.GetPuyo(1, 8));
+    }
 }
