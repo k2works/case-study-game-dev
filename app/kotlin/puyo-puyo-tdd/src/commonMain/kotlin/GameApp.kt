@@ -24,18 +24,26 @@ fun GameApp() {
 
     // 再描画をトリガーするための状態
     var updateTrigger by remember { mutableStateOf(0) }
+    var frameCount by remember { mutableStateOf(0) }
 
-    // ゲームループ：500ms ごとにぷよを下に移動
-    LaunchedEffect(updateTrigger) {
-        kotlinx.coroutines.delay(500)
-        if (!game.player.moveDown()) {
-            // 移動できなかった場合は着地
-            if (game.player.hasLanded()) {
-                game.player.placePuyoOnStage()
-                game.player.createNewPuyo()
+    // ゲームループ：約60FPSで動作
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(16) // 約60FPS
+            frameCount++
+
+            // 約1秒ごとに落下
+            if (frameCount % 60 == 0) {
+                if (!game.player.moveDown()) {
+                    // 移動できなかった場合は着地
+                    if (game.player.hasLanded()) {
+                        game.player.placePuyoOnStage()
+                        game.player.createNewPuyo()
+                    }
+                }
+                updateTrigger++ // 再描画をトリガー
             }
         }
-        updateTrigger++ // 再描画をトリガー
     }
 
     Box(
