@@ -202,7 +202,11 @@ public class Player
     /// <returns>移動できたかどうか.</returns>
     public bool MoveDown()
     {
-        if (this.puyoY < this.config.StageHeight - 1)
+        // 回転状態によって子ぷよの位置が変わるため、境界チェックを調整
+        // rotation 2 (下向き) の場合、子ぷよが軸ぷよの下にあるため、1マス手前で停止
+        int maxY = this.rotation == 2 ? this.config.StageHeight - 2 : this.config.StageHeight - 1;
+
+        if (this.puyoY < maxY)
         {
             this.puyoY++;
             return true;

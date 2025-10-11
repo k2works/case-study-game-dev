@@ -239,4 +239,42 @@ public class PlayerTest
         Assert.False(canMove);
         Assert.Equal(this.config.StageHeight - 1, this.player.PuyoY);
     }
+
+    /// <summary>
+    /// 回転が下向き(2)の場合子ぷよが地面にめり込まないかテスト.
+    /// </summary>
+    [Fact]
+    public void 回転が下向きの場合子ぷよが地面にめり込まない()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        this.player.SetRotation(2); // 下向き
+        this.player.SetPuyoY(this.config.StageHeight - 2);
+
+        // Act
+        var canMove = this.player.MoveDown();
+
+        // Assert
+        Assert.False(canMove);
+        Assert.Equal(this.config.StageHeight - 2, this.player.PuyoY);
+    }
+
+    /// <summary>
+    /// 回転が上向き(0)の場合は最下段まで移動できるかテスト.
+    /// </summary>
+    [Fact]
+    public void 回転が上向きの場合は最下段まで移動できる()
+    {
+        // Arrange
+        this.player.CreateNewPuyo();
+        this.player.SetRotation(0); // 上向き
+        this.player.SetPuyoY(this.config.StageHeight - 2);
+
+        // Act
+        var canMove = this.player.MoveDown();
+
+        // Assert
+        Assert.True(canMove);
+        Assert.Equal(this.config.StageHeight - 1, this.player.PuyoY);
+    }
 }
