@@ -107,4 +107,69 @@ class StageTest {
         // Assert
         assertEquals(4, connectedPuyos.size)
     }
+
+    @Test
+    fun 消去判定で4つ以上つながったぷよが見つかる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 縦に4つ並べる（消える）
+        stage.setPuyo(2, 9, 1)
+        stage.setPuyo(2, 10, 1)
+        stage.setPuyo(2, 11, 1)
+        stage.setPuyo(2, 12, 1)
+
+        // Act
+        val eraseInfo = stage.checkErase()
+
+        // Assert
+        assertEquals(4, eraseInfo.erasePuyoCount)
+    }
+
+    @Test
+    fun 消去判定で3つ以下のぷよは消えない() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 縦に3つだけ並べる（消えない）
+        stage.setPuyo(2, 10, 1)
+        stage.setPuyo(2, 11, 1)
+        stage.setPuyo(2, 12, 1)
+
+        // Act
+        val eraseInfo = stage.checkErase()
+
+        // Assert
+        assertEquals(0, eraseInfo.erasePuyoCount)
+    }
+
+    @Test
+    fun 複数の色のぷよが混在していても正しく消去判定できる() {
+        // Arrange
+        val config = Config()
+        val stage = Stage(config)
+        stage.initialize()
+
+        // 赤4つ（消える）
+        stage.setPuyo(2, 9, 1)
+        stage.setPuyo(2, 10, 1)
+        stage.setPuyo(2, 11, 1)
+        stage.setPuyo(2, 12, 1)
+
+        // 青3つ（消えない）
+        stage.setPuyo(3, 10, 2)
+        stage.setPuyo(3, 11, 2)
+        stage.setPuyo(3, 12, 2)
+
+        // Act
+        val eraseInfo = stage.checkErase()
+
+        // Assert
+        // 赤の4つだけが消去対象
+        assertEquals(4, eraseInfo.erasePuyoCount)
+    }
 }

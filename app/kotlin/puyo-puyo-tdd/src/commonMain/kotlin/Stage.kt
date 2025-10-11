@@ -2,6 +2,11 @@ package com.example.puyopuyo
 
 data class PuyoPosition(val x: Int, val y: Int, val type: Int)
 
+data class EraseInfo(
+    val erasePuyoCount: Int,
+    val eraseList: List<PuyoPosition>,
+)
+
 class Stage(private val config: Config) {
     private lateinit var field: Array<IntArray>
 
@@ -58,5 +63,28 @@ class Stage(private val config: Config) {
         searchConnectedPuyo(x, y + 1, type, visited, result) // 下
 
         return result
+    }
+
+    /**
+     * 消去可能なぷよをチェックします
+     */
+    fun checkErase(): EraseInfo {
+        val eraseList = mutableListOf<PuyoPosition>()
+        val visited = Array(config.stageHeight) { BooleanArray(config.stageWidth) }
+
+        for (y in 0 until config.stageHeight) {
+            for (x in 0 until config.stageWidth) {
+                if (field[y][x] != 0 && !visited[y][x]) {
+                    val connectedPuyos = searchConnectedPuyo(x, y, field[y][x], visited)
+
+                    // 4つ以上つながっていたら消去対象
+                    if (connectedPuyos.size >= 4) {
+                        eraseList.addAll(connectedPuyos)
+                    }
+                }
+            }
+        }
+
+        return EraseInfo(eraseList.size, eraseList)
     }
 }
