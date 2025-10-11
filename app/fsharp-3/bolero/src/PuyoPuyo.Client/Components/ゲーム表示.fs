@@ -75,6 +75,21 @@ module ゲーム画面 =
             on.keyup (キー解放処理 ディスパッチ)
             h1 { "ぷよぷよゲーム" }
 
+            // スコアと連鎖数の表示
+            div {
+                attr.``class`` "game-info"
+
+                div {
+                    attr.``class`` "score-display"
+                    p { $"スコア: {モデル.スコア.値}" }
+                }
+
+                div {
+                    attr.``class`` "chain-display"
+                    p { $"連鎖数: {モデル.最後の連鎖数}" }
+                }
+            }
+
             ボードを描画 モデル.盤面 モデル.現在のぷよ
 
             div {

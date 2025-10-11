@@ -44,7 +44,7 @@ let ``初期化するとスコアは0`` () =
     let モデル = PuyoPuyo.Elmish.モデル.初期化 ()
 
     // Assert
-    モデル.スコア |> should equal 0
+    モデル.スコア.値 |> should equal 0
 
 [<Fact>]
 let ``初期化するとレベルは1`` () =
