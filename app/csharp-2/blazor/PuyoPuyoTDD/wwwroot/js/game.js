@@ -104,7 +104,8 @@ async function updateGame(currentTime) {
         if (canMove) {
             lastDropTime = currentTime;
         } else {
-            // 着地したので新しいぷよを生成
+            // 着地したのでステージに配置して新しいぷよを生成
+            await dotNetHelper.invokeMethodAsync('PlacePuyoOnStage');
             await dotNetHelper.invokeMethodAsync('CreateNewPuyo');
             lastDropTime = currentTime;
         }
@@ -124,11 +125,35 @@ async function drawGame(ctx, canvas) {
     // グリッド線を描画
     drawGrid(ctx, canvas);
 
-    // ぷよを描画
     if (dotNetHelper) {
+        // ステージのぷよを描画
+        const stageData = await dotNetHelper.invokeMethodAsync('GetStageData');
+        drawStagePuyos(ctx, stageData);
+
+        // 落下中のぷよを描画
         const puyoData = await dotNetHelper.invokeMethodAsync('GetPuyoData');
         drawPuyo(ctx, puyoData);
     }
+}
+
+/**
+ * ステージのぷよを描画します
+ * @param {CanvasRenderingContext2D} ctx - Canvas の 2D コンテキスト
+ * @param {Array} stageData - ステージのぷよデータ
+ */
+function drawStagePuyos(ctx, stageData) {
+    const cellSize = 32;
+    const colors = {
+        1: '#ff0000', // 赤
+        2: '#0000ff', // 青
+        3: '#00ff00', // 緑
+        4: '#ffff00', // 黄
+    };
+
+    stageData.forEach(puyo => {
+        const color = colors[puyo.type] || '#cccccc';
+        drawSinglePuyo(ctx, puyo.x, puyo.y, color, cellSize);
+    });
 }
 
 /**

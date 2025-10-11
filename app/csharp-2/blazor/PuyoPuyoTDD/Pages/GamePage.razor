@@ -157,6 +157,38 @@
     }
 
     /// <summary>
+    /// 着地したぷよをステージに配置する.
+    /// </summary>
+    [JSInvokable]
+    public void PlacePuyoOnStage()
+    {
+        game.Player.PlacePuyoOnStage();
+    }
+
+    /// <summary>
+    /// ステージのぷよデータを取得する.
+    /// </summary>
+    /// <returns>ステージのぷよデータ.</returns>
+    [JSInvokable]
+    public object GetStageData()
+    {
+        var stagePuyos = new List<object>();
+        for (int y = 0; y < game.Config.StageHeight; y++)
+        {
+            for (int x = 0; x < game.Config.StageWidth; x++)
+            {
+                int puyoType = game.Stage.GetPuyo(x, y);
+                if (puyoType != 0)
+                {
+                    stagePuyos.Add(new { x, y, type = puyoType });
+                }
+            }
+        }
+
+        return stagePuyos;
+    }
+
+    /// <summary>
     /// コンポーネント破棄時の処理.
     /// </summary>
     public void Dispose()
