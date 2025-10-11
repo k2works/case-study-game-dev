@@ -3,6 +3,45 @@ let animationId = null;
 let lastFrameTime = 0;
 const FPS = 60;
 const FRAME_DURATION = 1000 / FPS;
+let dotNetHelper = null;
+
+/**
+ * ゲームを初期化します
+ * @param {object} helper - .NET オブジェクト参照
+ */
+window.initializeGame = function(helper) {
+    dotNetHelper = helper;
+
+    // キーボードイベントのリスナーを追加
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+};
+
+/**
+ * キーが押されたときの処理
+ * @param {KeyboardEvent} event - キーボードイベント
+ */
+function handleKeyDown(event) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        event.preventDefault();
+        if (dotNetHelper) {
+            dotNetHelper.invokeMethodAsync('OnKeyDown', event.key);
+        }
+    }
+}
+
+/**
+ * キーが離されたときの処理
+ * @param {KeyboardEvent} event - キーボードイベント
+ */
+function handleKeyUp(event) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        event.preventDefault();
+        if (dotNetHelper) {
+            dotNetHelper.invokeMethodAsync('OnKeyUp', event.key);
+        }
+    }
+}
 
 /**
  * ゲームループを開始します
@@ -56,13 +95,54 @@ function updateGame() {
  * @param {CanvasRenderingContext2D} ctx - Canvas の 2D コンテキスト
  * @param {HTMLCanvasElement} canvas - Canvas 要素
  */
-function drawGame(ctx, canvas) {
+async function drawGame(ctx, canvas) {
     // 背景をクリア
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // グリッド線を描画
     drawGrid(ctx, canvas);
+
+    // ぷよを描画
+    if (dotNetHelper) {
+        const puyoData = await dotNetHelper.invokeMethodAsync('GetPuyoData');
+        drawPuyo(ctx, puyoData);
+    }
+}
+
+/**
+ * ぷよを描画します
+ * @param {CanvasRenderingContext2D} ctx - Canvas の 2D コンテキスト
+ * @param {object} puyoData - ぷよのデータ
+ */
+function drawPuyo(ctx, puyoData) {
+    const cellSize = 32;
+    const { x, y, type } = puyoData;
+
+    // ぷよの色を決定 (type: 1=赤, 2=青, 3=緑, 4=黄)
+    const colors = {
+        1: '#ff0000', // 赤
+        2: '#0000ff', // 青
+        3: '#00ff00', // 緑
+        4: '#ffff00', // 黄
+    };
+
+    const color = colors[type] || '#cccccc';
+
+    // ぷよを円形で描画
+    const centerX = x * cellSize + cellSize / 2;
+    const centerY = y * cellSize + cellSize / 2;
+    const radius = cellSize / 2 - 2; // 少し余白を持たせる
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // ぷよの縁を描画
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.stroke();
 }
 
 /**

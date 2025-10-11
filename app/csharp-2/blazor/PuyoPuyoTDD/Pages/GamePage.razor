@@ -18,6 +18,7 @@
     private Game game = new();
     private int canvasWidth;
     private int canvasHeight;
+    private DotNetObjectReference<GamePage>? dotNetHelper;
 
     /// <summary>
     /// コンポーネント初期化時の処理.
@@ -25,6 +26,7 @@
     protected override void OnInitialized()
     {
         game.Initialize();
+        game.Player.CreateNewPuyo(); // 最初のぷよを生成
         canvasWidth = game.Config.StageWidth * game.Config.PuyoSize;
         canvasHeight = game.Config.StageHeight * game.Config.PuyoSize;
     }
@@ -37,7 +39,85 @@
     {
         if (firstRender)
         {
+            dotNetHelper = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("initializeGame", dotNetHelper);
             await JSRuntime.InvokeVoidAsync("startGameLoop");
         }
+    }
+
+    /// <summary>
+    /// JavaScript からキーが押されたときに呼ばれる.
+    /// </summary>
+    /// <param name="key">押されたキー.</param>
+    [JSInvokable]
+    public void OnKeyDown(string key)
+    {
+        switch (key)
+        {
+            case "ArrowLeft":
+                game.Player.SetInputLeft(true);
+                game.Player.MoveLeft();
+                break;
+            case "ArrowRight":
+                game.Player.SetInputRight(true);
+                game.Player.MoveRight();
+                break;
+            case "ArrowUp":
+                game.Player.SetInputUp(true);
+                break;
+            case "ArrowDown":
+                game.Player.SetInputDown(true);
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// JavaScript からキーが離されたときに呼ばれる.
+    /// </summary>
+    /// <param name="key">離されたキー.</param>
+    [JSInvokable]
+    public void OnKeyUp(string key)
+    {
+        switch (key)
+        {
+            case "ArrowLeft":
+                game.Player.SetInputLeft(false);
+                break;
+            case "ArrowRight":
+                game.Player.SetInputRight(false);
+                break;
+            case "ArrowUp":
+                game.Player.SetInputUp(false);
+                break;
+            case "ArrowDown":
+                game.Player.SetInputDown(false);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// ぷよの描画情報を JavaScript に渡す.
+    /// </summary>
+    /// <returns>ぷよの描画情報.</returns>
+    [JSInvokable]
+    public object GetPuyoData()
+    {
+        return new
+        {
+            x = game.Player.PuyoX,
+            y = game.Player.PuyoY,
+            type = game.Player.PuyoType,
+            rotation = game.Player.Rotation,
+        };
+    }
+
+    /// <summary>
+    /// コンポーネント破棄時の処理.
+    /// </summary>
+    public void Dispose()
+    {
+        dotNetHelper?.Dispose();
     }
 }
