@@ -132,6 +132,44 @@ Task("Coverage")
     Information("カバレッジレポート: ./tests/PuyoPuyo.Tests/coverage/coverage.opencover.xml");
 });
 
+Task("Publish")
+    .Description("WebAssembly アプリケーションを公開用にビルド")
+    .IsDependentOn("Test")
+    .Does(() =>
+{
+    DotNetPublish("./src/PuyoPuyo.Client/PuyoPuyo.Client.fsproj", new DotNetPublishSettings
+    {
+        Configuration = "Release",
+        OutputDirectory = "./publish/",
+        MSBuildSettings = new DotNetMSBuildSettings()
+            .SetConfiguration("Release")
+    });
+
+    Information("公開ファイル: ./publish/wwwroot/");
+    Information("デプロイ準備完了");
+});
+
+Task("Release")
+    .Description("リリース用の完全なビルドとパッケージング")
+    .IsDependentOn("Clean")
+    .IsDependentOn("Format-Check")
+    .IsDependentOn("Lint")
+    .IsDependentOn("Test")
+    .IsDependentOn("Publish")
+    .Does(() =>
+{
+    Information("========================================");
+    Information("リリースビルド完了");
+    Information("========================================");
+    Information($"Configuration: {configuration}");
+    Information("公開ディレクトリ: ./publish/wwwroot/");
+    Information("");
+    Information("次のステップ:");
+    Information("1. ./publish/wwwroot/ の内容を Web サーバーにデプロイ");
+    Information("2. または GitHub Pages / Netlify / Vercel などにデプロイ");
+    Information("========================================");
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット
 ///////////////////////////////////////////////////////////////////////////////
