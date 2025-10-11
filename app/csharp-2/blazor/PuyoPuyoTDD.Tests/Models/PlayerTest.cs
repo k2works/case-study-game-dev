@@ -144,7 +144,9 @@ public class PlayerTest
     public void 時計回りに回転すると回転状態が1増える()
     {
         // Arrange
+        this.stage.Initialize();
         this.player.CreateNewPuyo();
+        this.player.SetPuyoY(5); // 安全な位置に配置
         var initialRotation = this.player.Rotation;
 
         // Act
@@ -161,7 +163,9 @@ public class PlayerTest
     public void 反時計回りに回転すると回転状態が1減る()
     {
         // Arrange
+        this.stage.Initialize();
         this.player.CreateNewPuyo();
+        this.player.SetPuyoY(5); // 安全な位置に配置
         var initialRotation = this.player.Rotation;
 
         // Act
@@ -178,7 +182,9 @@ public class PlayerTest
     public void 回転状態が4になると0に戻る()
     {
         // Arrange
+        this.stage.Initialize();
         this.player.CreateNewPuyo();
+        this.player.SetPuyoY(5); // 安全な位置に配置
         this.player.SetRotation(3);
 
         // Act
@@ -460,5 +466,71 @@ public class PlayerTest
 
         // Assert
         Assert.Equal(2, this.player.PuyoX); // 移動できないので位置は変わらない
+    }
+
+    /// <summary>
+    /// 右端で右回転した時に左にがべキックされるかテスト.
+    /// </summary>
+    [Fact]
+    public void 右端で右回転した時に左にがべキックされる()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(this.config.StageWidth - 1); // 右端に配置
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(0); // 上向き
+        var initialX = this.player.PuyoX;
+
+        // Act
+        this.player.RotateRight(); // 右回転すると子ぷよが右端を超える
+
+        // Assert
+        Assert.Equal(1, this.player.Rotation); // 回転は成功
+        Assert.Equal(initialX - 1, this.player.PuyoX); // 左に1マスずれる
+    }
+
+    /// <summary>
+    /// 左端で左回転した時に右にがべキックされるかテスト.
+    /// </summary>
+    [Fact]
+    public void 左端で左回転した時に右にがべキックされる()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(0); // 左端に配置
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(0); // 上向き
+        var initialX = this.player.PuyoX;
+
+        // Act
+        this.player.RotateLeft(); // 左回転すると子ぷよが左端を超える
+
+        // Assert
+        Assert.Equal(3, this.player.Rotation); // 回転は成功
+        Assert.Equal(initialX + 1, this.player.PuyoX); // 右に1マスずれる
+    }
+
+    /// <summary>
+    /// 回転時に他のぷよと衝突する場合は回転できないかテスト.
+    /// </summary>
+    [Fact]
+    public void 回転時に他のぷよと衝突する場合は回転できない()
+    {
+        // Arrange
+        this.stage.Initialize();
+        this.stage.SetPuyo(3, 5, 1); // 回転先にぷよを配置
+        this.player.CreateNewPuyo();
+        this.player.SetPuyoX(2);
+        this.player.SetPuyoY(5);
+        this.player.SetRotation(0); // 上向き
+        var initialRotation = this.player.Rotation;
+
+        // Act
+        this.player.RotateRight(); // 右回転すると子ぷよが (3, 5) に衝突
+
+        // Assert
+        Assert.Equal(initialRotation, this.player.Rotation); // 回転できない
     }
 }

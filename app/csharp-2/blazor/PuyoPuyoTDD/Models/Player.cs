@@ -240,7 +240,74 @@ public class Player
     /// </summary>
     public void RotateRight()
     {
-        this.rotation = (this.rotation + 1) % 4;
+        int newRotation = (this.rotation + 1) % 4;
+
+        // 回転後の子ぷよの位置を計算
+        int childX = this.puyoX;
+        int childY = this.puyoY;
+
+        switch (newRotation)
+        {
+            case 0: // 上
+                childY = this.puyoY - 1;
+                break;
+            case 1: // 右
+                childX = this.puyoX + 1;
+                break;
+            case 2: // 下
+                childY = this.puyoY + 1;
+                break;
+            case 3: // 左
+                childX = this.puyoX - 1;
+                break;
+        }
+
+        // 境界チェックとがべキック処理
+        if (childX < 0)
+        {
+            // 左端を超える場合、右に1マスずらす
+            this.puyoX++;
+        }
+        else if (childX >= this.config.StageWidth)
+        {
+            // 右端を超える場合、左に1マスずらす
+            this.puyoX--;
+        }
+        else if (childY < 0 || childY >= this.config.StageHeight)
+        {
+            // 上下の境界を超える場合は回転できない
+            return;
+        }
+
+        // 再計算した子ぷよの位置
+        childX = this.puyoX;
+        childY = this.puyoY;
+
+        switch (newRotation)
+        {
+            case 0: // 上
+                childY = this.puyoY - 1;
+                break;
+            case 1: // 右
+                childX = this.puyoX + 1;
+                break;
+            case 2: // 下
+                childY = this.puyoY + 1;
+                break;
+            case 3: // 左
+                childX = this.puyoX - 1;
+                break;
+        }
+
+        // 衝突判定
+        if (this.stage.GetPuyo(this.puyoX, this.puyoY) != 0 ||
+            this.stage.GetPuyo(childX, childY) != 0)
+        {
+            // がべキックでずらした後も衝突する場合は回転できない
+            return;
+        }
+
+        this.rotation = newRotation;
     }
 
     /// <summary>
@@ -248,7 +315,74 @@ public class Player
     /// </summary>
     public void RotateLeft()
     {
-        this.rotation = (this.rotation + 3) % 4;
+        int newRotation = (this.rotation + 3) % 4;
+
+        // 回転後の子ぷよの位置を計算
+        int childX = this.puyoX;
+        int childY = this.puyoY;
+
+        switch (newRotation)
+        {
+            case 0: // 上
+                childY = this.puyoY - 1;
+                break;
+            case 1: // 右
+                childX = this.puyoX + 1;
+                break;
+            case 2: // 下
+                childY = this.puyoY + 1;
+                break;
+            case 3: // 左
+                childX = this.puyoX - 1;
+                break;
+        }
+
+        // 境界チェックとがべキック処理
+        if (childX < 0)
+        {
+            // 左端を超える場合、右に1マスずらす
+            this.puyoX++;
+        }
+        else if (childX >= this.config.StageWidth)
+        {
+            // 右端を超える場合、左に1マスずらす
+            this.puyoX--;
+        }
+        else if (childY < 0 || childY >= this.config.StageHeight)
+        {
+            // 上下の境界を超える場合は回転できない
+            return;
+        }
+
+        // 再計算した子ぷよの位置
+        childX = this.puyoX;
+        childY = this.puyoY;
+
+        switch (newRotation)
+        {
+            case 0: // 上
+                childY = this.puyoY - 1;
+                break;
+            case 1: // 右
+                childX = this.puyoX + 1;
+                break;
+            case 2: // 下
+                childY = this.puyoY + 1;
+                break;
+            case 3: // 左
+                childX = this.puyoX - 1;
+                break;
+        }
+
+        // 衝突判定
+        if (this.stage.GetPuyo(this.puyoX, this.puyoY) != 0 ||
+            this.stage.GetPuyo(childX, childY) != 0)
+        {
+            // がべキックでずらした後も衝突する場合は回転できない
+            return;
+        }
+
+        this.rotation = newRotation;
     }
 
     /// <summary>
