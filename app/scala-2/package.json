@@ -7,10 +7,12 @@
     "build": "sbt fullOptJS",
     "test": "sbt test",
     "serve": "npx http-server . -p 8083 -o",
-    "dev": "npm run compile && npm run serve",
+    "watch": "sbt ~fastOptJS",
+    "dev": "concurrently \"npm run watch\" \"npm run serve\"",
     "clean": "sbt clean"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "http-server": "^14.1.1"
   }
 }
