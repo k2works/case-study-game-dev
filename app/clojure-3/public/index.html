@@ -18,14 +18,25 @@
         #app {
             text-align: center;
         }
-        canvas {
+        #stage {
             border: 2px solid #333;
             background-color: #fff;
+        }
+        .info {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app">
+        <h1>ぷよぷよゲーム</h1>
+        <div id="score" class="info">Score: 0</div>
+        <canvas id="stage" width="320" height="480"></canvas>
+        <div id="next" class="info">Next:</div>
+        <div id="next2" class="info">Next2:</div>
+    </div>
     <script src="/js/main.js"></script>
 </body>
 </html>
