@@ -7,6 +7,10 @@ project/project/
 *.class
 *.log
 
+# Node
+node_modules/
+package-lock.json
+
 # IDE
 .idea/
 .bsp/

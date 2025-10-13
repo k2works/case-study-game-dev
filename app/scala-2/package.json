@@ -1,0 +1,16 @@
+{
+  "name": "puyo-scala-2",
+  "version": "1.0.0",
+  "description": "Puyo Puyo game implemented in Scala.js (Japanese code version)",
+  "scripts": {
+    "compile": "sbt fastOptJS",
+    "build": "sbt fullOptJS",
+    "test": "sbt test",
+    "serve": "npx http-server . -p 8083 -o",
+    "dev": "npm run compile && npm run serve",
+    "clean": "sbt clean"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
