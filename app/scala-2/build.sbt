@@ -13,14 +13,14 @@ lazy val root = (project in file("."))
       "org.scalatest" %%% "scalatest" % "3.2.18" % Test
     ),
 
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
+    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0"
 
     // wartremoverWarnings ++= Warts.unsafe,
 
-    coverageEnabled := true,
-    coverageMinimumStmtTotal := 80,
-    coverageFailOnMinimum := false,
-    coverageHighlighting := true
+    // coverageEnabled := true,
+    // coverageMinimumStmtTotal := 80,
+    // coverageFailOnMinimum := false,
+    // coverageHighlighting := true
   )
 
 // カスタムタスクの定義
