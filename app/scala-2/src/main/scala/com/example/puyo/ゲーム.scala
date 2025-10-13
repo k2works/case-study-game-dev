@@ -9,6 +9,7 @@ class ゲーム {
   private var _mode: ゲームモード = ゲームモード.Start
   private var フレーム: Int = 0
   private var 連鎖数: Int = 0
+  private var 前回のタイムスタンプ: Double = 0.0
 
   var 設定情報: 設定情報 = _
   var ぷよ画像: ぷよ画像 = _
@@ -30,13 +31,17 @@ class ゲーム {
     _mode = ゲームモード.NewPuyo
   }
 
-  def loop(): Unit = {
-    更新()
+  def loop(timestamp: Double = 0.0): Unit = {
+    // デルタ時間を計算（初回は0）
+    val デルタ時間 = if (前回のタイムスタンプ == 0.0) 0.0 else timestamp - 前回のタイムスタンプ
+    前回のタイムスタンプ = timestamp
+
+    更新(デルタ時間)
     描画()
-    dom.window.requestAnimationFrame(_ => loop())
+    dom.window.requestAnimationFrame(newTimestamp => loop(newTimestamp))
   }
 
-  private def 更新(): Unit = {
+  private def 更新(デルタ時間: Double): Unit = {
     フレーム += 1
 
     _mode match {
@@ -45,7 +50,7 @@ class ゲーム {
         _mode = ゲームモード.Playing
 
       case ゲームモード.Playing =>
-        プレイヤー.更新()
+        プレイヤー.デルタ時間で更新(デルタ時間)
 
       case _ => // その他の状態は今後実装
     }
