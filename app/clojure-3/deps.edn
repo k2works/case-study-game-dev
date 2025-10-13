@@ -1,0 +1,32 @@
+{:paths ["src" "test"]
+ :deps {org.clojure/clojure       {:mvn/version "1.12.0"}
+        org.clojure/clojurescript {:mvn/version "1.11.60"}
+        thheller/shadow-cljs      {:mvn/version "2.28.20"}
+        org.clojure/spec.alpha    {:mvn/version "0.3.218"}
+        org.clojure/test.check    {:mvn/version "1.1.1"}}
+
+ :aliases
+ {:dev {:extra-deps {binaryage/devtools {:mvn/version "1.0.7"}}}
+
+  :lint {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
+         :main-opts   ["-m" "clj-kondo.main" "--lint" "src:テスト"]}
+
+  :complexity {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
+               :main-opts    ["-m" "clj-kondo.main" "--lint" "src:テスト" "--config" "{:output {:analysis true}}"]}
+
+  :bikeshed {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
+             :main-opts    ["-m" "clj-kondo.main" "--lint" "src:テスト" "--config" "{:linters {:line-length {:level :warning :max 100}}}"]}
+
+  :metrics {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
+            :main-opts    ["-m" "clj-kondo.main" "--lint" "src:テスト" "--config" "{:output {:analysis true} :linters {:line-length {:level :warning :max 100}}}"]}
+
+  :format-check {:replace-deps {lein-cljfmt/lein-cljfmt {:mvn/version "0.9.2"}}
+                 :main-opts    ["-m" "cljfmt.main" "check"]}
+
+  :format-fix {:replace-deps {lein-cljfmt/lein-cljfmt {:mvn/version "0.9.2"}}
+               :main-opts    ["-m" "cljfmt.main" "fix"]}
+
+  :coverage {:replace-deps {}
+             :exec-fn clojure.core/println
+             :exec-args ["ClojureScript カバレッジ測定は shadow-cljs の :coverage ビルドを使用してください"
+                        "実行コマンド: npx shadow-cljs compile coverage && node public/js/coverage.js"]}}}

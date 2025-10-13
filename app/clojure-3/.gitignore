@@ -1,0 +1,33 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# shadow-cljs
+.shadow-cljs/
+public/js/
+*.js.map
+
+# Clojure
+target/
+.cpcache/
+.nrepl-port
+.lein-*
+.cljs_node_repl/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+out/
+resources/public/js/

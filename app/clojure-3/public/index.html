@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ぷよぷよゲーム - ClojureScript版</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #app {
+            text-align: center;
+        }
+        #stage {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+        .info {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>ぷよぷよゲーム</h1>
+        <div id="score" class="info">Score: 0</div>
+        <div id="stage"></div>
+        <div id="next" class="info">Next:</div>
+        <div id="next2" class="info">Next2:</div>
+    </div>
+    <script src="/js/main.js"></script>
+</body>
+</html>
