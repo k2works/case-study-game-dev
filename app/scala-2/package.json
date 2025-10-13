@@ -3,16 +3,13 @@
   "version": "1.0.0",
   "description": "Puyo Puyo game implemented in Scala.js (Japanese code version)",
   "scripts": {
-    "compile": "sbt fastOptJS",
-    "build": "sbt fullOptJS",
+    "compile": "sbt fastLinkJS",
+    "build": "sbt fullLinkJS",
     "test": "sbt test",
     "serve": "npx http-server . -p 8083 -o",
-    "watch": "sbt ~fastOptJS",
-    "dev": "concurrently \"npm run watch\" \"npm run serve\"",
-    "clean": "sbt clean"
+    "dev": "npm run compile && npm run serve"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
     "http-server": "^14.1.1"
   }
 }

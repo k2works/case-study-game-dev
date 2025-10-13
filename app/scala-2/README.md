@@ -21,7 +21,7 @@ npm install
 ```bash
 npm run compile
 # または
-sbt fastOptJS
+sbt fastLinkJS
 ```
 
 ### ビルド（本番用・最適化）
@@ -29,7 +29,7 @@ sbt fastOptJS
 ```bash
 npm run build
 # または
-sbt fullOptJS
+sbt fullLinkJS
 ```
 
 ### テスト実行
@@ -40,8 +40,6 @@ npm test
 sbt test
 ```
 
-注: テストは Node.js 環境で実行されるため、DOM が存在せず一部のテストが失敗します。これは既知の制約です。
-
 ### 開発サーバー起動
 
 ```bash
@@ -50,23 +48,17 @@ npm run serve
 
 ブラウザが自動的に開き、`http://localhost:8083` でゲームが起動します。
 
-### 開発モード（自動再コンパイル + サーバー起動）
+### 開発モード（コンパイル + サーバー起動）
 
 ```bash
 npm run dev
 ```
 
-このコマンドは以下を並行実行します：
-- ファイル変更を監視して自動再コンパイル（`sbt ~fastOptJS`）
-- 開発サーバー起動とブラウザ自動オープン
-
-ファイルを編集して保存すると、自動的に再コンパイルされます。ブラウザで F5 キーを押して変更を確認してください。
+コンパイル後、自動的にブラウザでゲームが開きます。
 
 ### クリーン
 
 ```bash
-npm run clean
-# または
 sbt clean
 ```
 
@@ -81,16 +73,8 @@ sbt clean
 app/scala-2/
 ├── src/
 │   ├── main/scala/com/example/puyo/  # メインコード
-│   │   ├── Main.scala                 # エントリーポイント
-│   │   ├── ゲーム.scala               # ゲームループ
-│   │   ├── プレイヤー.scala           # プレイヤー操作
-│   │   ├── ステージ.scala             # ゲームステージ
-│   │   ├── ぷよ画像.scala             # ぷよの描画
-│   │   ├── スコア.scala               # スコア管理
-│   │   └── 設定情報.scala             # ゲーム設定
-│   └── test/scala/com/example/puyo/  # テストコード
-│       ├── ゲームSpec.scala
-│       └── プレイヤーSpec.scala
+│   │   └── Main.scala                 # 全てのコード
+│   └── test/scala/com/example/puyo/  # テストコード（未実装）
 ├── index.html                         # エントリーHTML
 ├── build.sbt                          # sbt ビルド設定
 └── package.json                       # npm スクリプト
@@ -103,96 +87,15 @@ app/scala-2/
 - ✅ イテレーション 2: ぷよの移動
 - ✅ イテレーション 3: ぷよの回転
 - ✅ イテレーション 4: ぷよの落下
-- ⬜ イテレーション 5: ぷよの固定と積み上げ
+- ⬜ イテレーション 5: ぷよの固定と積み上げ（実装済み）
 - ⬜ イテレーション 6: ぷよの消去
 - ⬜ イテレーション 7: 連鎖とスコア
 
-## IntelliJ IDEA での実行
+## 実装の特徴
 
-### ⚠️ 重要な制約
-
-Scala.js プロジェクトは JVM 上で直接実行できません。IntelliJ IDEA から以下を実行しようとするとエラーになります：
-
-- ❌ `Main.scala` の右クリック → 実行
-- ❌ テストファイルの右クリック → テスト実行
-
-### ✅ 正しい実行方法（超簡単！）
-
-#### 事前設定済み Run Configuration を使用（推奨）
-
-IntelliJ IDEA の右上の Run Configuration ドロップダウンから以下を選択して実行できます：
-
-- **Test (sbt)** - テスト実行
-- **Compile (fastOptJS)** - 開発用コンパイル
-- **Auto Compile (~fastOptJS)** - 自動再コンパイル（ファイル変更を監視）
-- **Build (fullOptJS)** - 本番用ビルド
-- **Clean (sbt)** - クリーン
-
-**使い方：**
-1. IntelliJ IDEA 右上の Run Configuration ドロップダウンをクリック
-2. 実行したい設定を選択（例: `Test (sbt)`）
-3. 緑の再生ボタン（▶）をクリック
-
-#### 手動で Run Configuration を作成する場合
-
-1. Run → Edit Configurations
-2. 「+」→ sbt Task
-3. Name: 任意の名前（例: `Test`）
-4. Tasks: `test`（または `fastOptJS`, `clean` など）
-5. Working directory: `$PROJECT_DIR$/app/scala-2`
-6. OK
-
-#### npm script から実行
-
-```bash
-npm run dev    # コンパイル + サーバー起動
-npm test       # テスト実行
-npm run serve  # サーバーのみ起動
-```
-
-### 推奨ワークフロー
-
-#### 方法 1: npm コマンド（推奨）
-
-1. **開発モード起動：**
-
-   ```bash
-   npm run dev
-   ```
-
-   これで自動再コンパイルとサーバーが起動し、ブラウザが自動的に開きます。
-
-2. **コード変更 → 保存 → ブラウザでリロード（F5）：**
-
-   コードを変更して保存すると、自動的にコンパイルが走ります。
-   ブラウザで F5 キーを押して変更を確認
-
-3. **終了：**
-
-   Ctrl+C で終了
-
-#### 方法 2: IntelliJ IDEA Run Configuration
-
-1. **開発サーバー起動：**
-
-   ターミナルで：
-   ```bash
-   npm run serve
-   ```
-   ブラウザが `http://localhost:8083` で自動的に開きます
-
-2. **自動再コンパイル開始：**
-
-   IntelliJ IDEA 右上で Run Configuration `Auto Compile (~fastOptJS)` を選択して実行
-
-3. **コード変更 → 保存 → ブラウザでリロード（F5）：**
-
-   コードを変更して保存すると、自動的にコンパイルが走ります。
-   ブラウザで F5 キーを押して変更を確認
-
-4. **テスト実行：**
-
-   Run Configuration `Test (sbt)` を選択して実行
+- **setInterval を使用した確実な落下**: requestAnimationFrame ではなく、setInterval(1000) でシンプルに1秒ごとの落下を実現
+- **日本語識別子**: コード内の変数名・関数名・クラス名を全て日本語にしてドメイン知識を明確化
+- **シンプルな構造**: 全てのコードを Main.scala に集約
 
 ## ドキュメント
 
