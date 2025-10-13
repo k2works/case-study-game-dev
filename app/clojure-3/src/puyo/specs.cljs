@@ -3,7 +3,7 @@
             [puyo.config :as config]))
 
 ;; ゲームモードの定義
-(s/def ::モード #{:開始 :新規ぷよ :プレイ中 :check-消去 :重力適用 :ゲーム-over})
+(s/def ::モード #{:開始 :新規ぷよ :プレイ中 :消去判定 :重力適用 :ゲーム-over})
 
 ;; フレーム数
 (s/def ::フレーム nat-int?)
@@ -34,6 +34,18 @@
 ;; フィールド全体
 (s/def ::盤面 (s/coll-of ::行 :kind vector? :count config/ステージ行数))
 
+;; 座標のペア
+(s/def ::位置 (s/tuple ::y座標 ::x座標))
+
+;; 座標のセット（connected component）
+(s/def ::接続グループ (s/coll-of ::位置 :kind set? :min-count 1))
+
+;; 消去可能なグループのコレクション
+(s/def ::消去可能グループ (s/coll-of ::接続グループ :kind vector?))
+
+;; 落下カウンター
+(s/def ::落下カウンター nat-int?)
+
 ;; ゲーム状態の基本構造
 (s/def ::ゲーム-状態-basic
-  (s/keys :req-un [::モード ::フレーム ::連鎖カウント]))
+  (s/keys :req-un [::モード ::フレーム ::連鎖カウント ::落下カウンター]))
