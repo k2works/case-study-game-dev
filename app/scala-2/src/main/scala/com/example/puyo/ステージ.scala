@@ -2,14 +2,22 @@ package com.example.puyo
 
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement, document}
+import scala.scalajs.js
 
 class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
   private var canvas: HTMLCanvasElement = _
   private var ctx: Option[CanvasRenderingContext2D] = None
   private var field: Array[Array[Int]] = _
 
-  initializeCanvas()
+  // テスト環境ではdocumentが存在しないため、条件付き初期化
+  if (isDocumentAvailable) {
+    initializeCanvas()
+  }
   initializeField()
+
+  private def isDocumentAvailable: Boolean = {
+    !js.isUndefined(js.Dynamic.global.selectDynamic("document"))
+  }
 
   private def initializeCanvas(): Unit = {
     canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]

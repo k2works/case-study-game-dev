@@ -2,6 +2,7 @@ package com.example.puyo
 
 import org.scalajs.dom
 import org.scalajs.dom.{KeyboardEvent, document}
+import scala.scalajs.js
 
 class プレイヤー(
     設定情報: 設定情報,
@@ -37,13 +38,21 @@ class プレイヤー(
   def ぷよのX座標: Int = _ぷよのX座標
   def ぷよのY座標: Int = _ぷよのY座標
   def ぷよの種類: Int = _ぷよの種類
+  def 回転状態: Int = _回転状態
 
   // テスト用のセッター
   def ぷよのX座標を設定(x: Int): Unit = _ぷよのX座標 = x
+  def 回転状態を設定(r: Int): Unit = _回転状態 = r
 
-  // キーボードイベントの登録
-  document.addEventListener("keydown", onKeyDown _)
-  document.addEventListener("keyup", onKeyUp _)
+  // キーボードイベントの登録（テスト環境ではdocumentが存在しない場合がある）
+  if (isDocumentAvailable) {
+    document.addEventListener("keydown", onKeyDown _)
+    document.addEventListener("keyup", onKeyUp _)
+  }
+
+  private def isDocumentAvailable: Boolean = {
+    !js.isUndefined(js.Dynamic.global.selectDynamic("document"))
+  }
 
   private def onKeyDown(e: KeyboardEvent): Unit = {
     setKeyState(e.key, pressed = true)
