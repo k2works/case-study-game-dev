@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
 
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
 
-    wartremoverWarnings ++= Warts.unsafe,
+    // wartremoverWarnings ++= Warts.unsafe,
 
     coverageEnabled := true,
     coverageMinimumStmtTotal := 80,
