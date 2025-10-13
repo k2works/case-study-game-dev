@@ -1014,3 +1014,608 @@ python -m http.server 8000
    - `scalajs-dom` による DOM 操作
 
 次のイテレーションでは、ゲームループの実装とぷよの移動機能を実装していきます。
+
+## イテレーション2: ぷよの移動の実装
+
+さて、前回のイテレーションでゲームの基本的な構造ができましたね。「ゲームが始まったけど、ぷよが動かないと面白くないよね？」と思いませんか？そこで次は、ぷよを左右に移動できるようにしていきましょう！
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、落ちてくるぷよを左右に移動できる
+
+「ぷよぷよって、落ちてくるぷよを左右に動かして、うまく積み上げるゲームですよね？」そうです！今回はその基本操作である「左右の移動」を実装していきます。
+
+### TODOリスト
+
+さて、このユーザーストーリーを実現するために、どんなタスクが必要でしょうか？一緒に考えてみましょう。
+「ぷよを左右に移動する」という機能を実現するためには、以下のようなタスクが必要そうですね：
+
+- プレイヤーの入力を検出する（キーボードの左右キーが押されたことを検知する）
+- ぷよを左右に移動する処理を実装する（実際にぷよの位置を変更する）
+- 移動可能かどうかのチェックを実装する（画面の端や他のぷよにぶつかる場合は移動できないようにする）
+- 移動後の表示を更新する（画面上でぷよの位置が変わったことを表示する）
+
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
+
+### テスト: プレイヤーの入力検出
+
+「最初に何をテストすればいいんでしょうか？」まずは、プレイヤーの入力を検出する部分からテストしていきましょう。キーボードの左右キーが押されたときに、それを正しく検知できるかどうかをテストします。
+
+> テストファースト
+>
+> いつテストを書くべきだろうか——それはテスト対象のコードを書く前だ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+```scala
+// src/test/scala/com/example/puyo/PlayerSpec.scala
+package com.example.puyo
+
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.BeforeAndAfterEach
+
+class PlayerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
+  var config: Config = _
+  var puyoImage: PuyoImage = _
+  var stage: Stage = _
+  var player: Player = _
+
+  override def beforeEach(): Unit = {
+    config = new Config()
+    puyoImage = new PuyoImage(config)
+    stage = new Stage(config, puyoImage)
+    player = new Player(config, stage, puyoImage)
+  }
+
+  "Player" should "set left flag when left key is pressed" in {
+    // キー入力をシミュレート（テスト用のメソッドを呼び出す）
+    player.setKeyState("ArrowLeft", pressed = true)
+
+    player.inputKeyLeft shouldBe true
+  }
+
+  it should "set right flag when right key is pressed" in {
+    player.setKeyState("ArrowRight", pressed = true)
+
+    player.inputKeyRight shouldBe true
+  }
+
+  it should "clear flag when key is released" in {
+    player.setKeyState("ArrowLeft", pressed = true)
+    player.inputKeyLeft shouldBe true
+
+    player.setKeyState("ArrowLeft", pressed = false)
+    player.inputKeyLeft shouldBe false
+  }
+}
+```
+
+「このテストは何をしているんですか？」このテストでは、キーボードの左右キーが押されたときと離されたときに、`Player`クラスの中の対応するフラグが正しく設定されるかどうかを確認しています。
+
+Scala.js では DOM イベントのシミュレートがテスト環境で難しいため、テスト用の`setKeyState`メソッドを用意してキー入力をテストします。これにより、ビジネスロジックを独立してテストできます。
+
+### 実装: プレイヤーの入力検出
+
+「失敗するテストができたので、次は実装ですね！」そうです！テストが通るように、最小限のコードを実装していきましょう。
+
+```scala
+// src/main/scala/com/example/puyo/Player.scala
+package com.example.puyo
+
+import org.scalajs.dom
+import org.scalajs.dom.{KeyboardEvent, document}
+
+class Player(
+    config: Config,
+    stage: Stage,
+    puyoImage: PuyoImage
+) {
+  private var _inputKeyLeft: Boolean = false
+  private var _inputKeyRight: Boolean = false
+  private var _inputKeyUp: Boolean = false
+  private var _inputKeyDown: Boolean = false
+
+  // テスト用のアクセサ
+  def inputKeyLeft: Boolean = _inputKeyLeft
+  def inputKeyRight: Boolean = _inputKeyRight
+  def inputKeyUp: Boolean = _inputKeyUp
+  def inputKeyDown: Boolean = _inputKeyDown
+
+  // キーボードイベントの登録
+  document.addEventListener("keydown", onKeyDown _)
+  document.addEventListener("keyup", onKeyUp _)
+
+  private def onKeyDown(e: KeyboardEvent): Unit = {
+    setKeyState(e.key, pressed = true)
+  }
+
+  private def onKeyUp(e: KeyboardEvent): Unit = {
+    setKeyState(e.key, pressed = false)
+  }
+
+  // テスト用のメソッド（実装からも呼び出す）
+  def setKeyState(key: String, pressed: Boolean): Unit = {
+    key match {
+      case "ArrowLeft"  => _inputKeyLeft = pressed
+      case "ArrowRight" => _inputKeyRight = pressed
+      case "ArrowUp"    => _inputKeyUp = pressed
+      case "ArrowDown"  => _inputKeyDown = pressed
+      case _            => // 何もしない
+    }
+  }
+}
+```
+
+「なるほど！キーが押されたり離されたりしたときのイベントを検知して、フラグを設定しているんですね。」そうです！ここでは、`document.addEventListener`を使って、キーボードのイベントをリッスンしています。
+
+Scala.js では、イベントハンドラの登録も型安全に行えます。`onKeyDown _` の `_` は、メソッドを関数値に変換するための記法です。
+
+また、`setKeyState` メソッドを public にすることで、テストからも呼び出せるようにし、実際のイベントハンドラからも共通のロジックを使うようにしています。これは「テスタビリティ」を高めるための設計です。
+
+### テスト: ぷよの移動
+
+「次は何をテストしますか？」次は、ぷよを左右に移動する機能をテストしましょう。ぷよが左右に移動できるか、そして画面の端に到達したときに移動が制限されるかをテストします。
+
+```scala
+// src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
+"Player movement" should "move left when possible" in {
+  player.createNewPuyo()
+  val initialX = player.puyoX
+
+  player.moveLeft()
+
+  player.puyoX shouldBe initialX - 1
+}
+
+it should "move right when possible" in {
+  player.createNewPuyo()
+  val initialX = player.puyoX
+
+  player.moveRight()
+
+  player.puyoX shouldBe initialX + 1
+}
+
+it should "not move left at left edge" in {
+  player.createNewPuyo()
+  player.setPuyoX(0) // 左端に設定
+
+  player.moveLeft()
+
+  player.puyoX shouldBe 0
+}
+
+it should "not move right at right edge" in {
+  player.createNewPuyo()
+  player.setPuyoX(config.stageCols - 1) // 右端に設定
+
+  player.moveRight()
+
+  player.puyoX shouldBe config.stageCols - 1
+}
+```
+
+このテストでは、以下の4つのケースを確認しています：
+
+1. 通常の状態で左に移動できるか
+2. 通常の状態で右に移動できるか
+3. 左端にいるときに左に移動しようとしても位置が変わらないか
+4. 右端にいるときに右に移動しようとしても位置が変わらないか
+
+### 実装: ぷよの移動
+
+「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、ぷよを移動させる機能を実装していきましょう。
+
+```scala
+// src/main/scala/com/example/puyo/Player.scala（続き）
+private val InitialPuyoX = 2
+private val InitialPuyoY = 0
+private val MinPuyoType = 1
+private val MaxPuyoType = 4
+
+private var _puyoX: Int = InitialPuyoX
+private var _puyoY: Int = InitialPuyoY
+private var _puyoType: Int = 0
+private var _nextPuyoType: Int = 0
+private var rotation: Int = 0
+
+// テスト用のアクセサ
+def puyoX: Int = _puyoX
+def puyoY: Int = _puyoY
+def puyoType: Int = _puyoType
+
+// テスト用のセッター
+def setPuyoX(x: Int): Unit = _puyoX = x
+
+def createNewPuyo(): Unit = {
+  _puyoX = InitialPuyoX
+  _puyoY = InitialPuyoY
+  _puyoType = getRandomPuyoType()
+  _nextPuyoType = getRandomPuyoType()
+  rotation = 0
+}
+
+private def getRandomPuyoType(): Int = {
+  MinPuyoType + scala.util.Random.nextInt(MaxPuyoType - MinPuyoType + 1)
+}
+
+def moveLeft(): Unit = {
+  if (_puyoX > 0) {
+    _puyoX -= 1
+  }
+}
+
+def moveRight(): Unit = {
+  if (_puyoX < config.stageCols - 1) {
+    _puyoX += 1
+  }
+}
+```
+
+「ぷよの位置や種類を管理するプロパティがたくさんありますね！」そうですね。ぷよの状態を管理するために、いくつかのプロパティを定義しています。
+
+Scala では、`private var` でプライベートな可変変数を定義し、`def` で公開するアクセサメソッドを定義します。これにより、カプセル化を保ちながらテストからもアクセスできるようにしています。
+
+また、マジックナンバーを定数として定義することで、コードの可読性と保守性を高めています。Scala では `val` を使って定数を定義します。
+
+「これでテストは通りましたか？」はい、これでテストは通るはずです！
+
+### 実装: Config クラスの拡張
+
+次に、画面表示に必要な設定を Config クラスに追加します：
+
+```scala
+// src/main/scala/com/example/puyo/Config.scala
+package com.example.puyo
+
+class Config {
+  val stageCols: Int = 6            // ステージの列数
+  val stageRows: Int = 12           // ステージの行数
+  val puyoSize: Int = 32            // ぷよのサイズ（ピクセル）
+  val stageBackgroundColor: String = "#2a2a2a"  // ステージの背景色
+  val stageBorderColor: String = "#444"         // ステージの枠線色
+}
+```
+
+Scala では、コンストラクタの引数なしでフィールドを定義する場合は、クラス本体に直接 `val` で定義します。
+
+### 実装: PuyoImage クラス
+
+ぷよを描画するための PuyoImage クラスを実装します：
+
+```scala
+// src/main/scala/com/example/puyo/PuyoImage.scala
+package com.example.puyo
+
+import org.scalajs.dom.CanvasRenderingContext2D
+import scala.scalajs.js
+
+class PuyoImage(config: Config) {
+  private val colors: js.Array[String] = js.Array(
+    "#888",    // 0: 空
+    "#ff0000", // 1: 赤
+    "#00ff00", // 2: 緑
+    "#0000ff", // 3: 青
+    "#ffff00"  // 4: 黄色
+  )
+
+  def draw(ctx: CanvasRenderingContext2D, puyoType: Int, x: Int, y: Int): Unit = {
+    val size = config.puyoSize
+    val color = if (puyoType >= 0 && puyoType < colors.length) {
+      colors(puyoType)
+    } else {
+      colors(0)
+    }
+
+    // 円の中心座標と半径を計算
+    val centerX = x * size + size / 2.0
+    val centerY = y * size + size / 2.0
+    val radius = size / 2.0 - 2.0
+
+    // ぷよを円形で描画
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
+    ctx.fill()
+
+    // 枠線を描画
+    ctx.strokeStyle = "#000"
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
+    ctx.stroke()
+  }
+}
+```
+
+Scala.js では、JavaScript の配列を扱う場合は `scala.scalajs.js.Array` を使用します。これにより、JavaScript の配列と互換性のあるデータ構造を使えます。
+
+また、Canvas API は `org.scalajs.dom` パッケージから利用できます。Scala の型システムにより、型安全に Canvas API を使用できます。
+
+### 実装: Stage クラス
+
+ゲームのステージを管理する Stage クラスを実装します：
+
+```scala
+// src/main/scala/com/example/puyo/Stage.scala
+package com.example.puyo
+
+import org.scalajs.dom
+import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement, document}
+
+class Stage(config: Config, puyoImage: PuyoImage) {
+  private var canvas: HTMLCanvasElement = _
+  private var ctx: Option[CanvasRenderingContext2D] = None
+  private var field: Array[Array[Int]] = _
+
+  initializeCanvas()
+  initializeField()
+
+  private def initializeCanvas(): Unit = {
+    canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+    canvas.width = config.stageCols * config.puyoSize
+    canvas.height = config.stageRows * config.puyoSize
+    canvas.style.border = s"2px solid ${config.stageBorderColor}"
+    canvas.style.backgroundColor = config.stageBackgroundColor
+
+    val stageElement = document.getElementById("stage")
+    if (stageElement != null) {
+      stageElement.appendChild(canvas)
+    }
+
+    // 描画コンテキストを取得
+    val context = canvas.getContext("2d")
+    if (context != null) {
+      ctx = Some(context.asInstanceOf[CanvasRenderingContext2D])
+    }
+  }
+
+  private def initializeField(): Unit = {
+    field = Array.fill(config.stageRows, config.stageCols)(0)
+  }
+
+  def draw(): Unit = {
+    ctx.foreach { context =>
+      // キャンバスをクリア
+      context.clearRect(0, 0, canvas.width, canvas.height)
+
+      // フィールドのぷよを描画
+      for {
+        y <- 0 until config.stageRows
+        x <- 0 until config.stageCols
+        puyoType = field(y)(x)
+        if puyoType > 0
+      } {
+        puyoImage.draw(context, puyoType, x, y)
+      }
+    }
+  }
+
+  def drawPuyo(x: Int, y: Int, puyoType: Int): Unit = {
+    ctx.foreach { context =>
+      puyoImage.draw(context, puyoType, x, y)
+    }
+  }
+
+  def setPuyo(x: Int, y: Int, puyoType: Int): Unit = {
+    if (y >= 0 && y < config.stageRows && x >= 0 && x < config.stageCols) {
+      field(y)(x) = puyoType
+    }
+  }
+
+  def getPuyo(x: Int, y: Int): Int = {
+    if (y < 0 || y >= config.stageRows || x < 0 || x >= config.stageCols) {
+      -1 // 範囲外
+    } else {
+      field(y)(x)
+    }
+  }
+}
+```
+
+Scala では、`Option` 型を使って null 安全にコンテキストを管理します。`ctx.foreach` により、コンテキストが存在する場合のみ処理を実行できます。
+
+`Array.fill` は、指定されたサイズの配列を指定された値で初期化する便利なメソッドです。
+
+`for` 内包表記を使うことで、ネストしたループを簡潔に書けます。`if` ガードを使って、特定の条件を満たす要素だけを処理できます。
+
+### 実装: Player クラスの拡張
+
+Player クラスに描画と更新のメソッドを追加します：
+
+```scala
+// src/main/scala/com/example/puyo/Player.scala（追加部分）
+def draw(): Unit = {
+  stage.drawPuyo(_puyoX, _puyoY, _puyoType)
+}
+
+def update(): Unit = {
+  // キー入力に応じて移動
+  if (_inputKeyLeft) {
+    moveLeft()
+    _inputKeyLeft = false
+  }
+  if (_inputKeyRight) {
+    moveRight()
+    _inputKeyRight = false
+  }
+}
+```
+
+### 実装: Game クラスの更新
+
+Game クラスのゲームループで描画と更新を行うようにします：
+
+```scala
+// src/main/scala/com/example/puyo/Game.scala
+package com.example.puyo
+
+import org.scalajs.dom
+
+class Game {
+  private var _mode: GameMode = GameMode.Start
+  private var frame: Int = 0
+  private var combinationCount: Int = 0
+
+  var config: Config = _
+  var puyoImage: PuyoImage = _
+  var stage: Stage = _
+  var player: Player = _
+  var score: Score = _
+
+  def mode: GameMode = _mode
+
+  def initialize(): Unit = {
+    config = new Config()
+    puyoImage = new PuyoImage(config)
+    stage = new Stage(config, puyoImage)
+    player = new Player(config, stage, puyoImage)
+    score = new Score()
+
+    _mode = GameMode.NewPuyo
+  }
+
+  def loop(): Unit = {
+    update()
+    draw()
+    dom.window.requestAnimationFrame(_ => loop())
+  }
+
+  private def update(): Unit = {
+    frame += 1
+
+    _mode match {
+      case GameMode.NewPuyo =>
+        player.createNewPuyo()
+        _mode = GameMode.Playing
+
+      case GameMode.Playing =>
+        player.update()
+
+      case _ => // その他の状態は今後実装
+    }
+  }
+
+  private def draw(): Unit = {
+    stage.draw()
+
+    if (_mode == GameMode.Playing) {
+      player.draw()
+    }
+  }
+}
+```
+
+Scala のパターンマッチを使って、ゲームモードに応じた処理を分岐しています。`match` 式は、TypeScript の `switch` 文よりも強力で、型安全にパターンマッチができます。
+
+### 実装: Main.scala の更新
+
+エントリーポイントを更新してゲームループを開始します：
+
+```scala
+// src/main/scala/com/example/puyo/Main.scala
+package com.example.puyo
+
+import scala.scalajs.js.annotation.JSExportTopLevel
+import org.scalajs.dom
+
+@JSExportTopLevel("PuyoPuyoGame")
+object Main {
+  def main(args: Array[String]): Unit = {
+    val game = new Game()
+    game.initialize()
+    game.loop()
+
+    dom.console.log("Puyo Puyo Game Started!")
+  }
+}
+```
+
+### テストの確認
+
+すべての実装が完了したら、テストを実行して確認しましょう：
+
+```bash
+sbt test
+```
+
+以下のような結果が表示されれば成功です：
+
+```
+[info] PlayerSpec:
+[info] Player
+[info] - should set left flag when left key is pressed
+[info] - should set right flag when right key is pressed
+[info] - should clear flag when key is released
+[info] Player movement
+[info] - should move left when possible
+[info] - should move right when possible
+[info] - should not move left at left edge
+[info] - should not move right at right edge
+[info] Run completed in 456 milliseconds.
+[info] Total number of tests run: 7
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 7, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+```
+
+### 動作確認
+
+実際にブラウザで動作を確認してみましょう：
+
+```bash
+# JavaScript へのコンパイル
+sbt fastLinkJS
+
+# ファイルサーバーの起動
+python -m http.server 8000
+```
+
+ブラウザで `http://localhost:8000` にアクセスすると、ステージが表示され、円形のぷよが表示されます。左右の矢印キーを押すと、ぷよが左右に移動します！
+
+### イテレーション2のまとめ
+
+このイテレーションで実装した内容：
+
+1. **Player クラスのキー入力検出**
+   - キー入力フラグの実装
+   - `setKeyState` メソッドによるテスタビリティの向上
+   - Scala.js の DOM イベントリスナー登録
+
+2. **Player クラスのぷよ移動機能**
+   - ぷよの状態管理（位置、種類、回転）
+   - `createNewPuyo`、`moveLeft`、`moveRight` メソッド
+   - 境界チェックによる移動制限
+   - 定数による設定値の管理
+
+3. **Config クラスの拡張**
+   - ステージサイズとぷよサイズの定義
+   - 色設定の追加
+
+4. **PuyoImage クラスの実装**
+   - `js.Array` による色定義
+   - Canvas API を使った円形描画
+   - 型安全な Canvas 操作
+
+5. **Stage クラスの実装**
+   - Canvas 要素の生成と DOM への追加
+   - `Option` 型による null 安全な Context 管理
+   - `Array.fill` による2次元配列の初期化
+   - for 内包表記による簡潔なループ処理
+
+6. **Game クラスのゲームループ**
+   - パターンマッチによる状態管理
+   - `requestAnimationFrame` による継続的な更新
+   - `update` と `draw` の分離
+
+7. **Scala.js の特徴的な実装**
+   - `Option` 型による null 安全性
+   - パターンマッチによる型安全な分岐
+   - for 内包表記による簡潔なコード
+   - `asInstanceOf` による型キャスト（最小限の使用）
+   - `js.Array` による JavaScript 互換配列
+
+次のイテレーションでは、ぷよの回転機能を実装していきます。
