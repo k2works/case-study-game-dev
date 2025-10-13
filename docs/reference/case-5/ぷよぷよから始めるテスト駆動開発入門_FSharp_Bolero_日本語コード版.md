@@ -417,9 +417,6 @@ type メッセージ =
     | 左移動
     | 右移動
     | 回転
-    | Drop
-    | タイマー刻み
-    | ゲームオーバー
 ```
 
 **Update（更新関数）**
@@ -518,97 +515,6 @@ dotnet add package FsUnit.xUnit
 cd ../..
 ```
 
-#### プロジェクト構造
-
-作成されたプロジェクトの構造は以下のようになります：
-
-```
-ぷよ-ぷよ-bolero/
-├── src/
-│   └── PuyoPuyo.Client/
-│       ├── Domain/
-│       │   ├── Types.fs           # 型定義
-│       │   ├── 盤面.fs           # ボード管理
-│       │   └── ゲームロジック.fs       # ゲームロジック
-│       ├── Elmish/
-│       │   ├── モデル.fs           # Elmish モデル
-│       │   └── 更新.fs          # Elmish 更新
-│       ├── Components/
-│       │   ├── 盤面表示.fs       # ボード描画
-│       │   └── ゲーム表示.fs        # メインビュー
-│       ├── wwwroot/
-│       │   └── index.html
-│       └── Main.fs                # エントリーポイント
-├── tests/
-│   └── PuyoPuyo.Tests/
-│       ├── Domain/
-│       │   ├── 盤面テスト.fs
-│       │   └── ゲームロジックテスト.fs
-│       ├── Elmish/
-│       │   └── 更新テスト.fs
-│       └── Program.fs
-└── PuyoPuyo.sln
-```
-
-#### テストの書き方
-
-F#でのテストは、xUnitとFsUnitを組み合わせて書きます。例を見てみましょう：
-
-```fsharp
-// tests/PuyoPuyo.Tests/Domain/盤面テスト.fs
-module PuyoPuyo.Tests.Domain.盤面テスト
-
-open Xunit
-open FsUnit.Xunit
-open PuyoPuyo.Client.Domain.Types
-open PuyoPuyo.Client.Domain.盤面
-
-[<Fact>]
-let ``空のボードを作成できる`` () =
-    // Arrange & Act
-    let 盤面 = 盤面.作成 6 13
-
-    // Assert
-    盤面.列数 |> should equal 6
-    盤面.行数 |> should equal 13
-
-[<Fact>]
-let ``ぷよを配置できる`` () =
-    // Arrange
-    let 盤面 = 盤面.作成 6 13
-
-    // Act
-    let 新しい盤面 = 盤面 |> 盤面.ぷよ設定 2 5 ぷよの色.赤
-
-    // Assert
-    新しい盤面 |> 盤面.ぷよ取得 2 5 |> should equal ぷよの色.赤
-
-[<Fact>]
-let ``範囲外のぷよは配置できない`` () =
-    // Arrange
-    let 盤面 = 盤面.作成 6 13
-
-    // Act & Assert
-    (fun () -> 盤面 |> 盤面.ぷよ設定 10 5 ぷよの色.赤 |> ignore)
-    |> should throw typeof<System.IndexOutOfRangeException>
-```
-
-「`should` って何？」と思われるかもしれませんね。`should` はFsUnitが提供する、F#らしい読みやすいアサーション構文です。`盤面.Cols |> should equal 6` は「boardのColsは6であるべき」という意味になります。
-
-#### テストの実行
-
-テストを実行するには、以下のコマンドを使用します：
-
-```bash
-# すべてのテストを実行
-dotnet test
-
-# 詳細な出力で実行
-dotnet test --logger "console;verbosity=detailed"
-
-# 特定のテストのみ実行
-dotnet test --filter "FullyQualifiedName~盤面テスト"
-```
 
 ### 自動化: ビルドとタスク管理
 
@@ -1174,34 +1080,34 @@ git commit -m "feat: initialize F# Bolero Puyo Puyo project with test setup"
 このイテレーションで準備した環境：
 
 1. **バージョン管理**
-   - Gitリポジトリの初期化
-   - .gitignoreの設定
-   - Conventional Commitsの規約
+    - Gitリポジトリの初期化
+    - .gitignoreの設定
+    - Conventional Commitsの規約
 
 2. **テスティング**
-   - xUnitのセットアップ
-   - FsUnitの導入
-   - テストプロジェクトの作成
+    - xUnitのセットアップ
+    - FsUnitの導入
+    - テストプロジェクトの作成
 
 3. **自動化**
-   - dotnet watch によるホットリロード
-   - Cakeによるビルド自動化（型安全なC#スクリプト）
-   - タスク依存関係の管理
-   - クロスプラットフォーム対応（build.ps1 / build.sh）
-   - Fantomasによるコードフォーマット自動化
-   - FSharpLintによる静的コード解析
-   - coverletによるテストカバレッジ測定
-   - CI環境での品質チェック自動化
+    - dotnet watch によるホットリロード
+    - Cakeによるビルド自動化（型安全なC#スクリプト）
+    - タスク依存関係の管理
+    - クロスプラットフォーム対応（build.ps1 / build.sh）
+    - Fantomasによるコードフォーマット自動化
+    - FSharpLintによる静的コード解析
+    - coverletによるテストカバレッジ測定
+    - CI環境での品質チェック自動化
 
 4. **Boleroの理解**
-   - Elmishアーキテクチャの基本
-   - モデル-ビュー-更新パターン
-   - 型安全な状態管理
+    - Elmishアーキテクチャの基本
+    - モデル-ビュー-更新パターン
+    - 型安全な状態管理
 
 5. **プロジェクト構造**
-   - ドメインロジックの分離
-   - Elmish層の分離
-   - UIコンポーネントの分離
+    - ドメインロジックの分離
+    - Elmish層の分離
+    - UIコンポーネントの分離
 
 「環境構築って面倒だな...」と思われたかもしれませんが、ここで準備したツールがこれからの開発を助けてくれます。テスト駆動開発では、テストを頻繁に実行し、小さな変更を積み重ねていきます。そのため、自動化されたテスト環境とバージョン管理が不可欠なのです。
 
@@ -1254,7 +1160,7 @@ let ``ぷよの色は4種類定義されている`` () =
     let 色リスト = [ 赤; 緑; 青; 黄 ]
 
     // Assert
-    色リスト.Length |> should equal 4
+    色リスト.長さ |> should equal 4
 
 [<Fact>]
 let ``赤色のぷよが作成できる`` () =
@@ -1329,35 +1235,34 @@ module PuyoPuyo.Tests.Domain.盤面テスト
 
 open Xunit
 open FsUnit.Xunit
-open PuyoPuyo.Domain.盤面
-open PuyoPuyo.Domain.ぷよ
+open PuyoPuyo.Domain
 
 [<Fact>]
 let ``空のボードを作成できる`` () =
     // Arrange & Act
-    let 盤面 = 盤面.作成 6 13
+    let board = 盤面.作成 6 13
 
     // Assert
-    盤面.列数 |> should equal 6
-    盤面.行数 |> should equal 13
+    board.列数 |> should equal 6
+    board.行数 |> should equal 13
 
 [<Fact>]
 let ``作成直後のボードはすべて空である`` () =
     // Arrange & Act
-    let 盤面 = 盤面.作成 6 13
+    let _盤面 = 盤面.作成 6 13
 
     // Assert
-    for y in 0 .. 盤面.行数 - 1 do
-        for x in 0 .. 盤面.列数 - 1 do
-            盤面.セル取得 盤面 x y |> should equal 空
+    for 行 in 0 .. _盤面.行数 - 1 do
+        for 列 in 0 .. _盤面.列数 - 1 do
+            盤面.セル取得 _盤面 列 行 |> should equal 空
 
 [<Fact>]
 let ``ボードにぷよを配置できる`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
+    let _盤面 = 盤面.作成 6 13
 
     // Act
-    let 新しい盤面 = 盤面.セル設定 盤面 2 10 (埋まっている 赤)
+    let 新しい盤面 = 盤面.セル設定 _盤面 2 10 (埋まっている 赤)
 
     // Assert
     盤面.セル取得 新しい盤面 2 10 |> should equal (埋まっている 赤)
@@ -1365,14 +1270,15 @@ let ``ボードにぷよを配置できる`` () =
 [<Fact>]
 let ``ボードにぷよを配置しても元のボードは変更されない`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
+    let _盤面 = 盤面.作成 6 13
 
     // Act
-    let 新しい盤面 = 盤面.セル設定 盤面 2 10 (埋まっている 赤)
+    let 新しい盤面 = 盤面.セル設定 _盤面 2 10 (埋まっている 赤)
 
     // Assert
-    盤面.セル取得 盤面 2 10 |> should equal 空
+    盤面.セル取得 _盤面 2 10 |> should equal 空
     盤面.セル取得 新しい盤面 2 10 |> should equal (埋まっている 赤)
+
 ```
 
 「イミュータブルなデータ構造のテストもあるんですね！」そうです！F#ではデフォルトでデータ構造がイミュータブルなので、`セル設定`を呼び出しても元のボードは変更されず、新しいボードが返されます。これが最後のテストで確認している内容です。
@@ -1385,7 +1291,7 @@ let ``ボードにぷよを配置しても元のボードは変更されない``
 // src/PuyoPuyo.Client/Domain/盤面.fs
 namespace PuyoPuyo.Domain
 
-open PuyoPuyo.Domain.ぷよ
+open PuyoPuyo.Domain
 
 /// セルの状態
 type セル =
@@ -1403,22 +1309,22 @@ module 盤面 =
           セル配列 = Array.init 行数 (fun _ -> Array.create 列数 空) }
 
     /// セルの取得
-    let セル取得 (盤面: 盤面) (列インデックス: int) (行インデックス: int) : セル =
-        if 行インデックス >= 0 && 行インデックス < 盤面.行数 && 列インデックス >= 0 && 列インデックス < 盤面.列数 then
-            盤面.セル配列.[行インデックス].[列インデックス]
+    let セル取得 (盤面: 盤面) (列: int) (行: int) : セル =
+        if 行 >= 0 && 行 < 盤面.行数 && 列 >= 0 && 列 < 盤面.列数 then
+            盤面.セル配列.[行].[列]
         else
             空
 
     /// セルの設定（イミュータブル）
-    let セル設定 (盤面: 盤面) (列インデックス: int) (行インデックス: int) (セル: セル) : 盤面 =
-        if 行インデックス >= 0 && 行インデックス < 盤面.行数 && 列インデックス >= 0 && 列インデックス < 盤面.列数 then
+    let セル設定 (盤面: 盤面) (設定列: int) (設定行: int) (設定セル: セル) : 盤面 =
+        if 設定行 >= 0 && 設定行 < 盤面.行数 && 設定列 >= 0 && 設定列 < 盤面.列数 then
             let 新しいセル配列 =
                 盤面.セル配列
-                |> Array.mapi (fun y 行 ->
-                    if y = 行インデックス then
-                        行 |> Array.mapi (fun x c -> if x = 列インデックス then セル else c)
+                |> Array.mapi (fun 行 列内セル配列 ->
+                    if 行 = 設定行 then
+                        列内セル配列 |> Array.mapi (fun 列 セル -> if 列 = 設定列 then 設定セル else セル)
                     else
-                        行)
+                        列内セル配列)
 
             { 盤面 with セル配列 = 新しいセル配列 }
         else
@@ -1427,7 +1333,7 @@ module 盤面 =
 
 「`Array.mapi`を使って新しい配列を作成しているんですね！」そうです！F#では元のデータを変更せず、新しいデータを作成して返すのが基本です。`mapi`は`map`にインデックスが追加されたバージョンで、各要素の位置を確認しながら変換できます。
 
-注意: パラメータ名を `列インデックス` と `行インデックス` にすることで、x/y 座標との混同を避け、可読性を向上させています。
+> **💡 ポイント**: `セル設定` の引数順序を `(x: int) (y: int) (セル: セル) (盤面: 盤面)` にすることで、F# のパイプライン演算子 `|>` との相性が良くなります。`盤面 |> セル設定 2 10 (埋まっている 赤)` のように自然に記述できます。
 
 テストを実行して、すべて通ることを確認しましょう：
 
@@ -1517,22 +1423,21 @@ let ``回転状態3のとき2つ目のぷよは左にある`` () =
 // src/PuyoPuyo.Client/Domain/ぷよペア.fs
 namespace PuyoPuyo.Domain
 
-open PuyoPuyo.Domain.ぷよ
+open PuyoPuyo.Domain
 
 /// ぷよペア
-type ぷよペア = {
-    X座標: int
-    Y座標: int
-    ぷよ1の色: ぷよの色  // 軸ぷよ
-    ぷよ2の色: ぷよの色  // 2つ目のぷよ
-    回転状態: int          // 0: 上, 1: 右, 2: 下, 3: 左
-}
+type ぷよペア =
+    { X座標: int
+      Y座標: int
+      ぷよ1の色: ぷよの色 // 軸ぷよ
+      ぷよ2の色: ぷよの色 // 2つ目のぷよ
+      回転状態: int } // 0: 上, 1: 右, 2: 下, 3: 左
 
 module ぷよペア =
     /// ぷよペアを作成
-    let 作成 (x: int) (y: int) (色1: ぷよの色) (色2: ぷよの色) (回転: int) : ぷよペア =
-        { X座標 = x
-          Y座標 = y
+    let 作成 (列: int) (行: int) (色1: ぷよの色) (色2: ぷよの色) (回転: int) : ぷよペア =
+        { X座標 = 列
+          Y座標 = 行
           ぷよ1の色 = 色1
           ぷよ2の色 = 色2
           回転状態 = 回転 }
@@ -1540,22 +1445,24 @@ module ぷよペア =
     /// ぷよペアの各ぷよの位置を取得
     let 位置取得 (ぷよペア: ぷよペア) : (int * int) * (int * int) =
         let 位置1 = (ぷよペア.X座標, ぷよペア.Y座標)
+
         let 位置2 =
             match ぷよペア.回転状態 with
-            | 0 -> (ぷよペア.X座標, ぷよペア.Y座標 - 1)      // 上
-            | 1 -> (ぷよペア.X座標 + 1, ぷよペア.Y座標)      // 右
-            | 2 -> (ぷよペア.X座標, ぷよペア.Y座標 + 1)      // 下
-            | 3 -> (ぷよペア.X座標 - 1, ぷよペア.Y座標)      // 左
-            | _ -> (ぷよペア.X座標, ぷよペア.Y座標 - 1)      // デフォルトは上
+            | 0 -> (ぷよペア.X座標, ぷよペア.Y座標 - 1) // 上
+            | 1 -> (ぷよペア.X座標 + 1, ぷよペア.Y座標) // 右
+            | 2 -> (ぷよペア.X座標, ぷよペア.Y座標 + 1) // 下
+            | 3 -> (ぷよペア.X座標 - 1, ぷよペア.Y座標) // 左
+            | _ -> (ぷよペア.X座標, ぷよペア.Y座標 - 1) // デフォルトは上
+
         (位置1, 位置2)
 
     /// ランダムなぷよペアを生成
-    let ランダム作成 (x: int) (y: int) (回転: int) : ぷよペア =
-        let random = System.Random()
+    let ランダム作成 (列: int) (行: int) (回転: int) : ぷよペア =
+        let 乱数 = System.Random()
         let 色リスト = [| 赤; 緑; 青; 黄 |]
-        let 色1 = 色リスト.[random.Next(色リスト.Length)]
-        let 色2 = 色リスト.[random.Next(色リスト.Length)]
-        作成 x y 色1 色2 回転
+        let 色1 = 色リスト.[乱数.Next(色リスト.Length)]
+        let 色2 = 色リスト.[乱数.Next(色リスト.Length)]
+        作成 列 行 色1 色2 回転
 ```
 
 「パターンマッチングで回転状態に応じた位置を計算しているんですね！」そうです！F#のパターンマッチングを使うことで、回転状態に応じた処理を明確に書けます。
@@ -1574,7 +1481,8 @@ dotnet cake --target=Test
 // src/PuyoPuyo.Client/Elmish/モデル.fs
 namespace PuyoPuyo.Elmish
 
-open PuyoPuyo.Domain
+open PuyoPuyo.Domain.盤面
+open PuyoPuyo.Domain.ぷよペア
 
 /// ゲームの状態
 type ゲーム状態 =
@@ -1583,27 +1491,30 @@ type ゲーム状態 =
     | ゲームオーバー
 
 /// ゲームのModel
-type モデル =
-    { 盤面: 盤面
-      現在のぷよ: ぷよペア option
-      次のぷよ: ぷよペア option
-      スコア: int
-      レベル: int
-      ゲーム時間: int
-      最後の連鎖数: int
-      状態: ゲーム状態 }
+type モデル = {
+    盤面: 盤面
+    現在のぷよ: ぷよペア option
+    次のぷよ: ぷよペア option
+    スコア: int
+    レベル: int
+    ゲーム時間: int
+    最後の連鎖数: int
+    状態: ゲーム状態
+}
 
 module モデル =
     /// 初期状態
     let 初期化 () : モデル =
-        { 盤面 = 盤面.作成 6 13
-          現在のぷよ = None
-          次のぷよ = None
-          スコア = 0
-          レベル = 1
-          ゲーム時間 = 0
-          最後の連鎖数 = 0
-          状態 = 未開始 }
+        {
+            盤面 = 盤面.作成 6 13
+            現在のピース = None
+            NextPiece = None
+            スコア = 0
+            Level = 1
+            GameTime = 0
+            LastChainCount = 0
+            Status = 未開始
+        }
 ```
 
 「`option`型を使っているのはなぜですか？」良い質問ですね！`option`型は「値があるかもしれないし、ないかもしれない」を表現する型です。ゲーム開始前や、ぷよが固定された直後は`現在のピース`が`None`になり、ぷよが落下中は`Some puyoPair`になります。これにより、nullチェックが不要になり、安全にコードが書けます。
@@ -1615,9 +1526,6 @@ module モデル =
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs
 namespace PuyoPuyo.Elmish
-
-open Elmish
-open PuyoPuyo.Domain
 
 /// ゲームのメッセージ
 type メッセージ =
@@ -1663,7 +1571,8 @@ module 更新 =
 
         | ゲームリセット -> PuyoPuyo.Elmish.モデル.初期化 (), Cmd.none
 
-        | _ -> モデル, Cmd.none
+        | _ ->
+            モデル, Cmd.none
 ```
 
 「`with`キーワードを使っているのはなぜですか？」F#のレコード型には「レコードコピー式」という機能があり、`{ モデル with スコア = 0 }`のように書くことで、一部のフィールドだけを変更した新しいレコードを作成できます。元の`モデル`は変更されません。
@@ -1676,14 +1585,12 @@ module 更新 =
 // src/PuyoPuyo.Client/Components/ゲーム表示.fs
 namespace PuyoPuyo.Components
 
-open Bolero
 open Bolero.Html
 open PuyoPuyo.Elmish
 open PuyoPuyo.Domain
 
 module ゲーム画面 =
-    /// セルを描画
-    let private viewCell (セル: セル) =
+    let private セルを描画 (セル: セル) =
         let 色 =
             match セル with
             | 空 -> "#CCCCCC"
@@ -1694,35 +1601,33 @@ module ゲーム画面 =
             attr.style $"background-color: {色}"
         }
 
-    /// ボードを描画
-    let private viewBoard (盤面: 盤面) (currentPiece: ぷよペア option) =
-        // ボードのコピーを作成
-        let displayBoard =
-            Array.init 盤面.行数 (fun y -> Array.init 盤面.列数 (fun x -> PuyoPuyo.Domain.盤面.セル取得 盤面 x y))
+    let private ボードを描画 (盤面: 盤面) (現在のぷよペア: ぷよペア option) =
+        let ボードのコピー =
+            Array.init 盤面.行数 (fun 行 -> Array.init 盤面.列数 (fun 列 -> PuyoPuyo.Domain.盤面.セル取得 盤面 列 行))
 
         // 現在のぷよを重ねて表示
-        match currentPiece with
+        match 現在のぷよペア with
         | Some ピース ->
             let (位置1, 位置2) = ぷよペア.位置取得 ピース
-            let (x1, y1) = 位置1
-            let (x2, y2) = 位置2
+            let (列1, 行1) = 位置1
+            let (列2, 行2) = 位置2
 
-            if y1 >= 0 && y1 < 盤面.行数 && x1 >= 0 && x1 < 盤面.列数 then
-                displayBoard.[y1].[x1] <- 埋まっている ピース.ぷよ1の色
+            if 行1 >= 0 && 行1 < 盤面.行数 && 列1 >= 0 && 列1 < 盤面.列数 then
+                ボードのコピー.[行1].[列1] <- 埋まっている ピース.ぷよ1の色
 
-            if y2 >= 0 && y2 < 盤面.行数 && x2 >= 0 && x2 < 盤面.列数 then
-                displayBoard.[y2].[x2] <- 埋まっている ピース.ぷよ2の色
+            if 行2 >= 0 && 行2 < 盤面.行数 && 列2 >= 0 && 列2 < 盤面.列数 then
+                ボードのコピー.[行2].[列2] <- 埋まっている ピース.ぷよ2の色
         | None -> ()
 
         div {
             attr.``class`` "board"
 
-            for row in displayBoard do
+            for row in ボードのコピー do
                 div {
                     attr.``class`` "board-row"
 
                     for cell in row do
-                        viewCell cell
+                        セルを描画 cell
                 }
         }
 
@@ -1732,7 +1637,7 @@ module ゲーム画面 =
             attr.``class`` "game-container"
             h1 { "ぷよぷよゲーム" }
 
-            viewBoard モデル.盤面 モデル.現在のぷよ
+            ボードを描画 モデル.盤面 モデル.現在のぷよ
 
             div {
                 attr.``class`` "game-controls"
@@ -1760,10 +1665,10 @@ module ゲーム画面 =
                         }
                     }
             }
-        }
+        
 ```
 
-「Computation Expression構文で`for`ループを使っているんですね！」そうです。Boleroでは、配列やリストの要素を描画するときに、Computation Expression内で`for`ループを使うことができます。これにより、より自然な構文でコレクションを描画できます。
+「`forEach`を使っているのはなぜですか？」Boleroでは、配列やリストの要素を描画するときに`forEach`関数を使います。これは、各要素に対して指定した関数を適用してHTML要素のリストを作成します。
 
 ### CSS スタイルの追加
 
@@ -1771,13 +1676,6 @@ module ゲーム画面 =
 
 ```css
 /* wwwroot/css/main.css */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f0f0;
-}
-
 .game-container {
     max-width: 800px;
     margin: 0 auto;
@@ -1785,27 +1683,22 @@ body {
     font-family: Arial, sans-serif;
 }
 
-h1 {
-    color: #333;
-}
-
-.board {
+.盤面 {
     border: 2px solid #333;
-    background-color: #f0f0f0;
+    background-色: #f0f0f0;
     display: inline-block;
     margin: 20px 0;
 }
 
-.board-row {
+.盤面-row {
     display: flex;
 }
 
-.cell {
+.セル {
     width: 30px;
     height: 30px;
     border: 1px solid #ddd;
     box-sizing: border-box;
-    border-radius: 50%;
 }
 
 .game-controls {
@@ -1816,14 +1709,6 @@ h1 {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-}
-
-.game-controls button:hover {
-    background-color: #45a049;
 }
 ```
 
@@ -1860,33 +1745,33 @@ git commit -m "feat: implement basic game 盤面 and ぷよ display
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `ぷよの色`：判別共用体を使った型安全な色定義
-   - `セル`：セルの状態（空 or 色付き）
-   - `盤面`：ゲームボード（イミュータブルな操作）
-   - `ぷよペア`：2つのぷよのペア（回転状態を含む）
+    - `ぷよの色`：判別共用体を使った型安全な色定義
+    - `セル`：セルの状態（空 or 色付き）
+    - `盤面`：ゲームボード（イミュータブルな操作）
+    - `ぷよペア`：2つのぷよのペア（回転状態を含む）
 
 2. **Elmish層**
-   - `モデル`：ゲーム状態の定義（Board、現在のピース、スコアなど）
-   - `Message`：イベントの定義（ゲーム開始、ResetGameなど）
-   - `Update`：状態遷移ロジック
+    - `モデル`：ゲーム状態の定義（Board、現在のピース、スコアなど）
+    - `Message`：イベントの定義（ゲーム開始、ResetGameなど）
+    - `Update`：状態遷移ロジック
 
 3. **View層**
-   - ボードの描画
-   - セルの色表示
-   - ゲーム開始/リセットボタン
+    - ボードの描画
+    - セルの色表示
+    - ゲーム開始/リセットボタン
 
 4. **TDDサイクルの実践**
-   - 赤：失敗するテストを先に作成
-   - 緑：テストを通す実装
-   - Refactor：コードの整理
+    - 赤：失敗するテストを先に作成
+    - 緑：テストを通す実装
+    - Refactor：コードの整理
 
 5. **学んだ重要な概念**
-   - 判別共用体による型安全な定義
-   - イミュータブルなデータ構造
-   - レコードコピー式（`with`キーワード）
-   - Option型による安全なnull処理
-   - パターンマッチング
-   - Elmishの基本（モデル-ビュー-更新）
+    - 判別共用体による型安全な定義
+    - イミュータブルなデータ構造
+    - レコードコピー式（`with`キーワード）
+    - Option型による安全なnull処理
+    - パターンマッチング
+    - Elmishの基本（モデル-ビュー-更新）
 
 次のイテレーションでは、ぷよの移動機能を実装していきます。
 
@@ -1996,42 +1881,37 @@ let ``右端では右に移動できない`` () =
 // src/PuyoPuyo.Client/Domain/ゲームロジック.fs
 namespace PuyoPuyo.Domain
 
-open PuyoPuyo.Domain.盤面
-open PuyoPuyo.Domain.ぷよペア
-
 /// 移動方向
 type 方向 =
     | 左
     | 右
-    | 下
 
 module ゲームロジック =
+    open PuyoPuyo.Domain
+
     /// ぷよペアが指定位置に配置可能かチェック
-    let private isValidPosition (盤面: 盤面) (x: int) (y: int) : bool =
-        y >= 0 && y < 盤面.行数 && x >= 0 && x < 盤面.列数 &&
-        盤面.セル取得 盤面 x y = 空
+    let private 位置が有効 (盤面: 盤面) (列: int) (行: int) : bool =
+        行 >= 0 && 行 < 盤面.行数 && 列 >= 0 && 列 < 盤面.列数 && PuyoPuyo.Domain.盤面.セル取得 盤面 列 行 = 空
 
     /// ぷよペアが配置可能かチェック
     let ぷよペア配置可能 (盤面: 盤面) (ぷよペア: ぷよペア) : bool =
-        let (位置1, 位置2) = ぷよペア.位置取得 ぷよペア
-        let (x1, y1) = 位置1
-        let (x2, y2) = 位置2
-        isValidPosition 盤面 x1 y1 && isValidPosition 盤面 x2 y2
+        let (位置1, 位置2) = PuyoPuyo.Domain.ぷよペア.位置取得 ぷよペア
+        let (列1, 行1) = 位置1
+        let (列2, 行2) = 位置2
+        位置が有効 盤面 列1 行1 && 位置が有効 盤面 列2 行2
 
-    /// ぷよペアを指定方向に移動（可能な場合のみ）
-    let ぷよペア移動試行 (盤面: 盤面) (ぷよペア: ぷよペア) (direction: Direction) : ぷよペア option =
-        let (dx, dy) =
-            match direction with
-            | 左 -> (-1, 0)
-            | 右 -> (1, 0)
-            | 下 -> (0, 1)
+    /// ぷよペアを指定方向に移動試行
+    let ぷよペア移動を試行 (盤面: 盤面) (ぷよペア: ぷよペア) (方向: 方向) : ぷよペア option =
+        let 列差分 =
+            match 方向 with
+            | 左 -> -1
+            | 右 -> 1
 
-        let 新しいぷよペア = { ぷよペア with X座標 = ぷよペア.X座標 + dx; Y座標 = ぷよペア.Y座標 + dy }
+        let 新しいX座標 = ぷよペア.X座標 + 列差分
 
-        if canPlacePuyoPair 盤面 新しいペア then
-            Some 新しいペア
-        else
-            None
+        let 新しいぷよペア = { ぷよペア with X座標 = 新しいX座標 }
+
+        if ぷよペア配置可能 盤面 新しいぷよペア then Some 新しいぷよペア else None
 ```
 
 「`ぷよペア移動を試行`が`option`型を返しているのはなぜですか？」良い質問ですね！移動できる場合は`Some 新しいペア`を返し、移動できない場合（壁や障害物がある）は`None`を返します。これにより、呼び出し側で移動の成功/失敗を安全に判定できます。
@@ -2085,11 +1965,8 @@ dotnet cake --target=Test
 
 ```fsharp
 // src/PuyoPuyo.Client/Components/ゲーム表示.fs（viewの更新）
-module ゲーム画面 =
-    // ... 既存のコード ...
-
-    /// キーボードイベントハンドラ
-    let private handleKeyDown (ディスパッチ: メッセージ -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
+ /// キーボードイベントハンドラー
+    let private キー入力処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
         match e.Key with
         | "ArrowLeft" -> ディスパッチ 左移動
         | "ArrowRight" -> ディスパッチ 右移動
@@ -2097,39 +1974,45 @@ module ゲーム画面 =
 
     /// メインView
     let ビュー (モデル: モデル) (ディスパッチ: メッセージ -> unit) =
-        div [
-            attr.classes ["game-container"]
-            attr.tabindex 0  // キーボードフォーカスを受け取れるようにする
-            on.keydown (handleKeyDown ディスパッチ)
-        ] [
-            h1 [] [text "ぷよぷよゲーム"]
+        div {
+            attr.``class`` "game-container"
+            attr.tabindex 0
+            on.keydown (キー入力処理 ディスパッチ)
+            h1 { "ぷよぷよゲーム" }
 
-            viewBoard モデル.盤面 モデル.現在のピース
+            ボードを描画 モデル.盤面 モデル.現在のぷよ
 
-            div [attr.classes ["game-controls"]] [
-                match モデル.ステータス with
+            div {
+                attr.``class`` "game-controls"
+
+                match モデル.状態 with
                 | 未開始 ->
-                    button [
+                    button {
                         on.click (fun _ -> ディスパッチ ゲーム開始)
-                    ] [text "ゲーム開始"]
+                        "ゲーム開始"
+                    }
 
                 | プレイ中 ->
-                    div [] [
-                        p [] [text "矢印キー: 左右移動"]
-                        button [
-                            on.click (fun _ -> ディスパッチ ゲームリセット)
-                        ] [text "リセット"]
-                    ]
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲームリセット)
+                        "リセット"
+                    }
+                    div {
+                        attr.``class`` "instructions"
+                        p { "← → : 移動" }
+                    }
 
                 | ゲームオーバー ->
-                    div [] [
-                        h2 [] [text "ゲームオーバー"]
-                        button [
+                    div {
+                        h2 { "ゲームオーバー" }
+
+                        button {
                             on.click (fun _ -> ディスパッチ ゲームリセット)
-                        ] [text "もう一度プレイ"]
-                    ]
-            ]
-        ]
+                            "もう一度プレイ"
+                        }
+                    }
+            }
+        }
 ```
 
 「`attr.tabindex 0`は何ですか？」これは、HTML要素がキーボードフォーカスを受け取れるようにする属性です。通常、`div`要素はキーボードイベントを受け取れませんが、`tabindex`を設定することで可能になります。
@@ -2257,43 +2140,43 @@ git commit -m "feat: implement ぷよ movement with keyboard input
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `Direction` 判別共用体（左, 右, Down）
-   - `ゲームロジック` モジュール：
-     - `isValidPosition`：位置の有効性チェック
-     - `canPlacePuyoPair`：ぷよペアの配置可能性チェック
-     - `ぷよペア移動を試行`：移動試行（Option型を返す）
+    - `Direction` 判別共用体（左, 右, Down）
+    - `ゲームロジック` モジュール：
+        - `isValidPosition`：位置の有効性チェック
+        - `canPlacePuyoPair`：ぷよペアの配置可能性チェック
+        - `ぷよペア移動を試行`：移動試行（Option型を返す）
 
 2. **Elmish層**
-   - `左移動` / `右移動` メッセージの処理
-   - ゲーム状態のガード（`when モデル.ステータス = プレイ中`）
-   - パターンマッチによる安全な状態遷移
+    - `左移動` / `右移動` メッセージの処理
+    - ゲーム状態のガード（`when モデル.ステータス = プレイ中`）
+    - パターンマッチによる安全な状態遷移
 
 3. **View層**
-   - キーボードイベントハンドラ（`handleKeyDown`）
-   - `attr.tabindex` でフォーカス可能に
-   - キー操作説明の追加
+    - キーボードイベントハンドラ（`handleKeyDown`）
+    - `attr.tabindex` でフォーカス可能に
+    - キー操作説明の追加
 
 4. **テスト**
-   - ドメインロジックのテスト（4テスト）
-     - 左右移動の成功ケース
-     - 境界でのエラーケース
-   - Elmish統合テスト（4テスト）
-     - メッセージによる状態遷移
-     - ゲーム状態による動作制御
+    - ドメインロジックのテスト（4テスト）
+        - 左右移動の成功ケース
+        - 境界でのエラーケース
+    - Elmish統合テスト（4テスト）
+        - メッセージによる状態遷移
+        - ゲーム状態による動作制御
 
 5. **学んだ重要な概念**
-   - Option型による安全なエラーハンドリング
-   - 関数型プログラミングの純粋関数（副作用なし）
-   - Elmishにおける関心の分離（Domain/Elmish/View）
-   - パターンマッチングによる網羅的な処理
-   - `when`ガードによる条件付きパターンマッチ
-   - タプルによる座標の表現
+    - Option型による安全なエラーハンドリング
+    - 関数型プログラミングの純粋関数（副作用なし）
+    - Elmishにおける関心の分離（Domain/Elmish/View）
+    - パターンマッチングによる網羅的な処理
+    - `when`ガードによる条件付きパターンマッチ
+    - タプルによる座標の表現
 
 6. **TypeScript版との違い**
-   - キー入力検出をViewで処理（Domainは純粋関数）
-   - private フィールドアクセスの代わりにOption型
-   - イベントハンドラのバインド不要（関数型）
-   - nullチェックの代わりにパターンマッチ
+    - キー入力検出をViewで処理（Domainは純粋関数）
+    - private フィールドアクセスの代わりにOption型
+    - イベントハンドラのバインド不要（関数型）
+    - nullチェックの代わりにパターンマッチ
 
 次のイテレーションでは、ぷよの回転機能を実装していきます。
 
@@ -2332,37 +2215,37 @@ git commit -m "feat: implement ぷよ movement with keyboard input
 [<Fact>]
 let ``時計回りに回転すると回転状態が1増える`` () =
     // Arrange
-    let ぷよペア = ぷよペア.作成 2 5 赤 緑 0
+    let ペア = ぷよペア.作成 2 5 赤 緑 0
 
     // Act
-    let rotated = ぷよペア.回転Clockwise ぷよペア
+    let 回転後 = ぷよペア.時計回り回転 ペア
 
     // Assert
-    rotated.回転 |> should equal 1
+    回転後.回転状態 |> should equal 1
 
 [<Fact>]
 let ``回転状態3から時計回りに回転すると0に戻る`` () =
     // Arrange
-    let ぷよペア = ぷよペア.作成 2 5 赤 緑 3
+    let ペア = ぷよペア.作成 2 5 赤 緑 3
 
     // Act
-    let rotated = ぷよペア.回転Clockwise ぷよペア
+    let 回転後 = ぷよペア.時計回り回転 ペア
 
     // Assert
-    rotated.回転 |> should equal 0
+    回転後.回転状態 |> should equal 0
 
 [<Fact>]
 let ``回転すると2つ目のぷよの位置が変わる`` () =
     // Arrange
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0  // 回転状態0（上）
+    let ペア = ぷよペア.作成 3 5 赤 緑 0 // 回転状態0（上）
 
     // Act
-    let rotated = ぷよペア.回転Clockwise ぷよペア  // 回転状態1（右）
-    let (位置1, 位置2) = ぷよペア.位置取得 rotated
+    let 回転後 = ぷよペア.時計回り回転 ペア // 回転状態1（右）
+    let (位置1, 位置2) = ぷよペア.位置取得 回転後
 
     // Assert
-    位置1 |> should equal (3, 5)  // 軸ぷよは変わらない
-    位置2 |> should equal (4, 5)  // 2つ目のぷよは右に
+    位置1 |> should equal (3, 5) // 軸ぷよは変わらない
+    位置2 |> should equal (4, 5) // 2つ目のぷよは右に
 ```
 
 「このテストは何を確認しているんですか？」このテストでは、以下の点を確認しています：
@@ -2389,11 +2272,11 @@ module ぷよペア =
 
     /// 時計回りに回転
     let 時計回り回転 (ぷよペア: ぷよペア) : ぷよペア =
-        { ぷよペア with 回転 = (ぷよペア.回転 + 1) % 4 }
+        { ぷよペア with 回転状態 = (ぷよペア.回転状態 + 1) % 4 }
 
     /// 反時計回りに回転
     let 反時計回り回転 (ぷよペア: ぷよペア) : ぷよペア =
-        { ぷよペア with 回転 = (ぷよペア.回転 + 3) % 4 }
+        { ぷよペア with 回転状態 = (ぷよペア.回転状態 + 3) % 4 }
 ```
 
 「シンプルですね！」そうです！回転処理自体はとてもシンプルです。`rotateClockwise`では回転状態を1増やし、`rotateCounterClockwise`では回転状態を3増やしています（これは1減らすのと同じ効果があります）。
@@ -2414,53 +2297,64 @@ dotnet cake --target=Test
 // tests/PuyoPuyo.Tests/Domain/ゲームロジックテスト.fs（続き）
 
 [<Fact>]
-let ``右端で回転すると左にキックされる`` () =
+let ``空いている位置では回転できる`` () =
     // Arrange
     let 盤面 = 盤面.作成 6 13
-    let ぷよペア = ぷよペア.作成 5 5 赤 緑 0  // 右端、回転状態0（上）
+    let ペア = ぷよペア.作成 2 5 赤 緑 0 // 回転状態0（上）
 
     // Act
-    let result = ゲームロジック.tryRotatePuyoPair 盤面 ぷよペア
+    let 回転後 = ぷよペア.時計回り回転 ペア
+    let 結果 = ゲームロジック.ぷよペア回転を試行 盤面 ペア 回転後
 
     // Assert
-    match result with
-    | Some rotated ->
-        rotated.回転 |> should equal 1  // 回転成功
-        rotated.X |> should equal 4  // 左に1マスキック
-    | None ->
-        failwith "回転できるはずです"
+    match 結果 with
+    | Some 回転後のペア -> 回転後のペア.回転状態 |> should equal 1
+    | None -> failwith "回転できるはずです"
 
 [<Fact>]
-let ``左端で回転すると右にキックされる`` () =
+let ``壁に当たる位置では回転できない`` () =
     // Arrange
     let 盤面 = 盤面.作成 6 13
-    let ぷよペア = ぷよペア.作成 0 5 赤 緑 0  // 左端、回転状態0（上）
+    let ペア = ぷよペア.作成 5 5 赤 緑 0 // 回転状態0（上）
 
     // Act
-    let rotated = ぷよペア.回転Clockwise ぷよペア
-    let rotated = { rotated with 回転 = 3 }  // 左向き
-    let result = ゲームロジック.tryRotatePuyoPair 盤面 rotated
+    let 回転後 = ぷよペア.時計回り回転 ペア // 回転状態1（右）になると列6になり範囲外
+    let 結果 = ゲームロジック.ぷよペア回転を試行 盤面 ペア 回転後
 
     // Assert
-    match result with
-    | Some kicked ->
-        kicked.X |> should equal 1  // 右に1マスキック
-    | None ->
-        failwith "回転できるはずです"
+    結果 |> should equal None
 
 [<Fact>]
-let ``壁キックできない場合は回転しない`` () =
+let ``右端で右向き回転のとき左にずらして回転できる`` () =
     // Arrange
     let 盤面 = 盤面.作成 6 13
-    // 右端にぷよを配置（壁キックできない状況を作る）
-    let 盤面 = 盤面.セル設定 盤面 4 5 (埋まっている 青)
-    let ぷよペア = ぷよペア.作成 5 5 赤 緑 0
+    let ペア = ぷよペア.作成 5 5 赤 緑 0 // 回転状態0（上）、列5（右端）
 
     // Act
-    let result = ゲームロジック.tryRotatePuyoPair 盤面 ぷよペア
+    let 結果 = ゲームロジック.ぷよペア壁キック回転 盤面 ペア ぷよペア.時計回り回転
 
     // Assert
-    result |> should equal None
+    match 結果 with
+    | Some 回転後のペア ->
+        回転後のペア.回転状態 |> should equal 1 // 回転状態1（右）
+        回転後のペア.X座標 |> should equal 4 // 左に1マスずらす
+    | None -> failwith "壁キックで回転できるはずです"
+
+[<Fact>]
+let ``左端で左向き回転のとき右にずらして回転できる`` () =
+    // Arrange
+    let 盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 0 5 赤 緑 2 // 回転状態2（下）、列0（左端）
+
+    // Act
+    let 結果 = ゲームロジック.ぷよペア壁キック回転 盤面 ペア ぷよペア.時計回り回転
+
+    // Assert
+    match 結果 with
+    | Some 回転後のペア ->
+        回転後のペア.回転状態 |> should equal 3 // 回転状態3（左）
+        回転後のペア.X座標 |> should equal 1 // 右に1マスずらす
+    | None -> failwith "壁キックで回転できるはずです"
 ```
 
 「このテストでは何を確認しているんですか？」このテストでは、以下のケースを確認しています：
@@ -2476,29 +2370,28 @@ let ``壁キックできない場合は回転しない`` () =
 ```fsharp
 // src/PuyoPuyo.Client/Domain/ゲームロジック.fs（続き）
 
-module ゲームロジック =
-    // ... 既存のコード ...
+    /// ぷよペアの回転を試行
+    let ぷよペア回転を試行 (盤面: 盤面) (元のぷよペア: ぷよペア) (回転後のぷよペア: ぷよペア) : ぷよペア option =
+        if ぷよペア配置可能 盤面 回転後のぷよペア then Some 回転後のぷよペア else None
 
-    /// ぷよペアを回転（壁キック処理付き）
-    let ぷよペア回転試行 (盤面: 盤面) (ぷよペア: ぷよペア) : ぷよペア option =
-        // 通常回転を試す
-        let rotated = ぷよペア.回転Clockwise ぷよペア
+    /// ぷよペアの壁キック回転を試行
+    let ぷよペア壁キック回転 (盤面: 盤面) (元のぷよペア: ぷよペア) (回転関数: ぷよペア -> ぷよペア) : ぷよペア option =
+        let 回転後 = 回転関数 元のぷよペア
 
-        if canPlacePuyoPair 盤面 rotated then
-            Some rotated
-        else
-            // 壁キックを試す（左に1マス）
-            let kickedLeft = { rotated with X座標 = rotated.X - 1 }
-            if canPlacePuyoPair 盤面 kickedLeft then
-                Some kickedLeft
-            else
-                // 壁キックを試す（右に1マス）
-                let kickedRight = { rotated with X座標 = rotated.X + 1 }
-                if canPlacePuyoPair 盤面 kickedRight then
-                    Some kickedRight
-                else
-                    // 回転できない
-                    None
+        // まず通常の回転を試す
+        match ぷよペア回転を試行 盤面 元のぷよペア 回転後 with
+        | Some _ as 結果 -> 結果
+        | None ->
+            // 左に1マスずらして回転を試す
+            let 左にずらした回転後 = { 回転後 with X座標 = 回転後.X座標 - 1 }
+
+            match ぷよペア回転を試行 盤面 元のぷよペア 左にずらした回転後 with
+            | Some _ as 結果 -> 結果
+            | None ->
+                // 右に1マスずらして回転を試す
+                let 右にずらした回転後 = { 回転後 with X座標 = 回転後.X座標 + 1 }
+
+                ぷよペア回転を試行 盤面 元のぷよペア 右にずらした回転後
 ```
 
 「段階的にチェックしているんですね！」そうです！この実装では、以下のことを行っています：
@@ -2516,16 +2409,15 @@ module ゲームロジック =
 
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（Update関数の続き）
-    | 回転 when モデル.ステータス = プレイ中 ->
-        match モデル.現在のピース with
-        | Some ピース ->
-            match ゲームロジック.tryRotatePuyoPair モデル.盤面 ピース with
-            | Some rotatedPiece ->
-                { モデル with 現在のピース = Some rotatedPiece }, Cmd.none
-            | None ->
-                モデル, Cmd.none
-        | None ->
-            モデル, Cmd.none
+        | 回転 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア壁キック回転 モデル.盤面 ぷよペア PuyoPuyo.Domain.ぷよペア.時計回り回転 with
+                | Some 回転後のぷよペア -> { モデル with 現在のぷよ = Some 回転後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+
 ```
 
 「移動の処理と同じパターンですね！」そうです！以下の点をチェックしています：
@@ -2540,11 +2432,13 @@ module ゲームロジック =
 
 ```fsharp
 // src/PuyoPuyo.Client/Components/ゲーム表示.fs（handleKeyDownの更新）
-    let private handleKeyDown (ディスパッチ: メッセージ -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
+    let private キー入力処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
         match e.Key with
         | "ArrowLeft" -> ディスパッチ 左移動
         | "ArrowRight" -> ディスパッチ 右移動
-        | "ArrowUp" -> ディスパッチ 回転
+        | "ArrowUp"
+        | "z"
+        | "Z" -> ディスパッチ 回転
         | _ -> ()
 ```
 
@@ -2555,13 +2449,16 @@ module ゲームロジック =
 ```fsharp
 // src/PuyoPuyo.Client/Components/ゲーム表示.fs（viewの更新）
                 | プレイ中 ->
-                    div [] [
-                        p [] [text "← →: 左右移動"]
-                        p [] [text "↑: 回転"]
-                        button [
-                            on.click (fun _ -> ディスパッチ ゲームリセット)
-                        ] [text "リセット"]
-                    ]
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲームリセット)
+                        "リセット"
+                    }
+
+                    div {
+                        attr.``class`` "instructions"
+                        p { "← → : 移動" }
+                        p { "↑ / Z : 回転" }
+                    }
 ```
 
 ### テスト: Update関数の統合テスト
@@ -2572,58 +2469,47 @@ module ゲームロジック =
 // tests/PuyoPuyo.Tests/Elmish/更新テスト.fs（続き）
 
 [<Fact>]
-let ``Rotateメッセージでぷよが回転する`` () =
+let ``回転メッセージでぷよペアが回転する`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = プレイ中 }
+    let 盤面 = 盤面.作成 6 13
+    let ぷよペア = ぷよペア.作成 2 5 赤 緑 0 // 回転状態0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 盤面
+            現在のぷよ = Some ぷよペア
+            状態 = プレイ中 }
 
     // Act
     let (新しいモデル, _) = 更新.更新 回転 モデル
 
     // Assert
-    match 新しいモデル.現在のピース with
-    | Some 新しいペア ->
-        新しいペア.回転 |> should equal 1
-    | None ->
-        failwith "ぷよが存在するはずです"
+    match 新しいモデル.現在のぷよ with
+    | Some 回転後のぷよペア -> 回転後のぷよペア.回転状態 |> should equal 1
+    | None -> failwith "ぷよペアが存在するはずです"
 
 [<Fact>]
-let ``回転時に壁キックが発生する`` () =
+let ``右端の回転メッセージで壁キックが発動する`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 5 5 赤 緑 0  // 右端
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = プレイ中 }
+    let 盤面 = 盤面.作成 6 13
+    let ぷよペア = ぷよペア.作成 5 5 赤 緑 0 // 右端、回転状態0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 盤面
+            現在のぷよ = Some ぷよペア
+            状態 = プレイ中 }
 
     // Act
     let (新しいモデル, _) = 更新.更新 回転 モデル
 
     // Assert
-    match 新しいモデル.現在のピース with
-    | Some 新しいペア ->
-        新しいペア.回転 |> should equal 1
-        新しいペア.X |> should equal 4  // 左にキック
-    | None ->
-        failwith "ぷよが存在するはずです"
+    match 新しいモデル.現在のぷよ with
+    | Some 回転後のぷよペア ->
+        回転後のぷよペア.回転状態 |> should equal 1
+        回転後のぷよペア.X座標 |> should equal 4 // 壁キックで左にずれる
+    | None -> failwith "ぷよペアが存在するはずです"
 
-[<Fact>]
-let ``回転できない場合は状態が変わらない`` () =
-    // Arrange
-    let モデル = モデル.初期化 ()
-    let 盤面 = 盤面.セル設定 モデル.盤面 4 5 (埋まっている 青)
-    let ぷよペア = ぷよペア.作成 5 5 赤 緑 0
-    let モデル = { モデル with 盤面 = 盤面; 現在のピース = Some ぷよペア; Status = プレイ中 }
-
-    // Act
-    let (新しいモデル, _) = 更新.更新 回転 モデル
-
-    // Assert
-    match 新しいモデル.現在のピース with
-    | Some 新しいペア ->
-        新しいペア.回転 |> should equal 0  // 回転していない
-        新しいペア.X |> should equal 5  // 位置も変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
 ```
 
 ### 動作確認
@@ -2659,51 +2545,51 @@ git commit -m "feat: implement ぷよ 回転 with wall kick
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `ぷよペア.回転Clockwise`：時計回り回転（回転状態を+1）
-   - `ぷよペア.回転CounterClockwise`：反時計回り回転（回転状態を+3）
-   - `ゲームロジック.tryRotatePuyoPair`：回転試行（壁キック処理付き）
-   - 壁キックロジック：左、右の順に1マスずらして配置可能性をチェック
+    - `ぷよペア.回転Clockwise`：時計回り回転（回転状態を+1）
+    - `ぷよペア.回転CounterClockwise`：反時計回り回転（回転状態を+3）
+    - `ゲームロジック.tryRotatePuyoPair`：回転試行（壁キック処理付き）
+    - 壁キックロジック：左、右の順に1マスずらして配置可能性をチェック
 
 2. **Elmish層**
-   - `回転` メッセージの処理
-   - 回転失敗時の状態維持
-   - パターンマッチによる安全な処理
+    - `回転` メッセージの処理
+    - 回転失敗時の状態維持
+    - パターンマッチによる安全な処理
 
 3. **View層**
-   - 上矢印キーで回転
-   - 操作説明の更新
+    - 上矢印キーで回転
+    - 操作説明の更新
 
 4. **テスト**
-   - 回転ロジックの単体テスト（3テスト）
-     - 通常回転
-     - 回転状態の循環
-     - 位置の変化
-   - 壁キックのテスト（3テスト）
-     - 右端での左キック
-     - 左端での右キック
-     - キック不可の場合
-   - Elmish統合テスト（3テスト）
-     - 通常回転
-     - 壁キック発生
-     - 回転失敗
+    - 回転ロジックの単体テスト（3テスト）
+        - 通常回転
+        - 回転状態の循環
+        - 位置の変化
+    - 壁キックのテスト（3テスト）
+        - 右端での左キック
+        - 左端での右キック
+        - キック不可の場合
+    - Elmish統合テスト（3テスト）
+        - 通常回転
+        - 壁キック発生
+        - 回転失敗
 
 5. **学んだ重要な概念**
-   - 剰余演算による循環処理（`(n + k) % m`）
-   - 段階的なフォールバック処理（通常→左キック→右キック）
-   - Option型による連続的な試行
-   - イミュータブルなレコード更新（`{ ぷよペア with ... }`）
+    - 剰余演算による循環処理（`(n + k) % m`）
+    - 段階的なフォールバック処理（通常→左キック→右キック）
+    - Option型による連続的な試行
+    - イミュータブルなレコード更新（`{ ぷよペア with ... }`）
 
 6. **壁キック処理の工夫**
-   - まず通常回転を試す
-   - 失敗したら左に1マスずらす
-   - さらに失敗したら右に1マスずらす
-   - すべて失敗したら`None`を返す
-   - これにより、プレイヤーの意図を最大限尊重
+    - まず通常回転を試す
+    - 失敗したら左に1マスずらす
+    - さらに失敗したら右に1マスずらす
+    - すべて失敗したら`None`を返す
+    - これにより、プレイヤーの意図を最大限尊重
 
 7. **TypeScript版との違い**
-   - 壁キック処理を`tryRotatePuyoPair`に統合
-   - Option型による段階的な試行
-   - 重複コードなし（関数型のコンポジション）
+    - 壁キック処理を`tryRotatePuyoPair`に統合
+    - Option型による段階的な試行
+    - 重複コードなし（関数型のコンポジション）
 
 次のイテレーションでは、ぷよの自由落下機能を実装していきます。
 
@@ -2741,42 +2627,43 @@ git commit -m "feat: implement ぷよ 回転 with wall kick
 let ``ぷよペアを下に移動できる`` () =
     // Arrange
     let 盤面 = 盤面.作成 6 13
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0
+    let ペア = ぷよペア.作成 3 5 赤 緑 0
 
     // Act
-    let result = ゲームロジック.ぷよペア移動を試行 盤面 ぷよペア Down
+    let 結果 = ゲームロジック.ぷよペア移動を試行 盤面 ペア 下
 
     // Assert
-    match result with
-    | Some movedPair ->
-        movedPair.Y |> should equal 6
-    | None ->
-        failwith "下に移動できるはずです"
+    match 結果 with
+    | Some 移動後のペア ->
+        移動後のペア.X座標 |> should equal 3
+        移動後のペア.Y座標 |> should equal 6
+    | None -> failwith "下に移動できるはずです"
 
 [<Fact>]
 let ``下端では下に移動できない`` () =
     // Arrange
     let 盤面 = 盤面.作成 6 13
-    let ぷよペア = ぷよペア.作成 3 11 赤 緑 0  // 回転状態0（上）なので2つ目のぷよは y=10
+    let ペア = ぷよペア.作成 3 12 赤 緑 0 // 回転状態0（上）、軸ぷよが y=12（下端）
 
     // Act
-    let result = ゲームロジック.ぷよペア移動を試行 盤面 ぷよペア Down
+    let 結果 = ゲームロジック.ぷよペア移動を試行 盤面 ペア 下
 
     // Assert
-    result |> should equal None
+    結果 |> should equal None
 
 [<Fact>]
 let ``下にぷよがある場合は移動できない`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 = 盤面.セル設定 盤面 3 7 (埋まっている 青)  // 下に障害物
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0
+    let 初期盤面 = 盤面.作成 6 13
+    let 盤面 = 盤面.セル設定 初期盤面 3 6 (埋まっている 青) // 軸ぷよの下（y=6）に障害物
+    let ペア = ぷよペア.作成 3 5 赤 緑 0 // 軸ぷよ (3,5)、2つ目 (3,4)
 
     // Act
-    let result = ゲームロジック.ぷよペア移動を試行 盤面 ぷよペア Down
+    let 結果 = ゲームロジック.ぷよペア移動を試行 盤面 ペア 下
 
     // Assert
-    result |> should equal None
+    結果 |> should equal None
+
 ```
 
 「これらのテストは既に`ぷよペア移動を試行`で実装済みですね！」そうです！イテレーション2で`Direction.Down`を定義していたので、下方向の移動も既に対応済みです。テストを実行して確認しましょう。
@@ -2791,14 +2678,14 @@ let ``下にぷよがある場合は移動できない`` () =
 [<Fact>]
 let ``ぷよペアをボードに固定できる`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let ぷよペア = ぷよペア.作成 3 10 赤 緑 0
+    let _盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 3 10 赤 緑 0
 
     // Act
-    let 新しい盤面 = 盤面.fixPuyoPair 盤面 ぷよペア
+    let 新しい盤面 = 盤面操作.ぷよペア固定 _盤面 ペア
 
     // Assert
-    let (位置1, 位置2) = ぷよペア.位置取得 ぷよペア
+    let (位置1, 位置2) = ぷよペア.位置取得 ペア
     let (x1, y1) = 位置1
     let (x2, y2) = 位置2
     盤面.セル取得 新しい盤面 x1 y1 |> should equal (埋まっている 赤)
@@ -2807,17 +2694,17 @@ let ``ぷよペアをボードに固定できる`` () =
 [<Fact>]
 let ``ぷよペアを固定しても元のボードは変更されない`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let ぷよペア = ぷよペア.作成 3 10 赤 緑 0
+    let _盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 3 10 赤 緑 0
 
     // Act
-    let 新しい盤面 = 盤面.fixPuyoPair 盤面 ぷよペア
+    let 新しい盤面 = 盤面操作.ぷよペア固定 _盤面 ペア
 
     // Assert
-    let (位置1, 位置2) = ぷよペア.位置取得 ぷよペア
+    let (位置1, _) = ぷよペア.位置取得 ペア
     let (x1, y1) = 位置1
-    盤面.セル取得 盤面 x1 y1 |> should equal 空  // 元のボードは空のまま
-    盤面.セル取得 新しい盤面 x1 y1 |> should equal (埋まっている 赤)  // 新しいボードには固定
+    盤面.セル取得 _盤面 x1 y1 |> should equal 空 // 元のボードは空のまま
+    盤面.セル取得 新しい盤面 x1 y1 |> should equal (埋まっている 赤) // 新しいボードには固定
 ```
 
 「イミュータブルなデータ構造のテストですね！」そうです！F#では、`fixPuyoPair`は新しいボードを返し、元のボードは変更されません。
@@ -2832,15 +2719,13 @@ let ``ぷよペアを固定しても元のボードは変更されない`` () =
 module 盤面 =
     // ... 既存のコード ...
 
-    /// ぷよペアをボードに固定
-    let ぷよペア固定 (盤面: 盤面) (ぷよペア: ぷよペア) : 盤面 =
-        let (位置1, 位置2) = ぷよペア.位置取得 ぷよペア
+    /// 2つの位置にぷよを固定（ぷよペア用のヘルパー関数）
+    let ぷよ2つ固定 (盤面: 盤面) (位置1: int * int) (色1: ぷよの色) (位置2: int * int) (色2: ぷよの色) : 盤面 =
         let (x1, y1) = 位置1
         let (x2, y2) = 位置2
 
-        盤面
-        |> セル設定 x1 y1 (埋まっている ぷよペア.ぷよ1の色)
-        |> セル設定 x2 y2 (埋まっている ぷよペア.ぷよ2の色)
+        盤面 |> (fun 盤 -> セル設定 盤 x1 y1 (埋まっている 色1)) |> (fun 盤 -> セル設定 盤 x2 y2 (埋まっている 色2))
+
 ```
 
 「パイプライン演算子を使って連鎖的に処理していますね！」そうです！`盤面`に対して、まず1つ目のぷよを配置し、その結果に対して2つ目のぷよを配置しています。これが関数型プログラミングのスタイルです。
@@ -2901,24 +2786,27 @@ module サブスクリプション =
 
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（Update関数の続き）
-    | タイマー刻み when モデル.ステータス = プレイ中 ->
-        match モデル.現在のピース with
-        | Some ピース ->
-            // 下に移動を試みる
-            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-            | Some 移動後のピース ->
-                // 移動成功
-                { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let 新しい盤面 = 盤面.fixPuyoPair モデル.盤面 ピース
-                let nextPiece = ぷよペア.作成Random 2 1 0
-                {
-                    モデル with 盤面 = 新しい盤面
-                        現在のピース = Some nextPiece
-                }, Cmd.none
-        | None ->
-            モデル, Cmd.none
+        | タイマー刻み when モデル.状態 = プレイ中 ->
+            match モデル.現在のぷよ with
+            | Some ペア ->
+                // 下に移動を試みる
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+                | Some 移動後のペア ->
+                    // 移動成功
+                    { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
+                | None ->
+                    // 移動できない（着地）
+                    let 新しい盤面 = 盤面操作.ぷよペア固定 モデル.盤面 ペア
+                    let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                    { モデル with
+                        盤面 = 新しい盤面
+                        現在のぷよ = モデル.次のぷよ
+                        次のぷよ = Some 次のペア },
+                    Cmd.none
+            | None -> モデル, Cmd.none
+
+        | _ -> モデル, Cmd.none
 ```
 
 「着地したら新しいぷよを生成するんですね！」そうです！以下の処理を行っています：
@@ -2926,9 +2814,9 @@ module サブスクリプション =
 1. 下に移動できるか試す
 2. 移動できたら新しい位置に更新
 3. 移動できない（着地）場合：
-   - 現在のぷよをボードに固定
-   - 新しいぷよを生成
-   - Modelを更新
+    - 現在のぷよをボードに固定
+    - 新しいぷよを生成
+    - Modelを更新
 
 ### テスト: Update関数の統合テスト
 
@@ -2938,61 +2826,55 @@ module サブスクリプション =
 // tests/PuyoPuyo.Tests/Elmish/更新テスト.fs（続き）
 
 [<Fact>]
-let ``Tickメッセージでぷよが下に移動する`` () =
+let ``タイマー刻みメッセージでぷよが下に移動する`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = プレイ中 }
+    let 盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 3 5 赤 緑 0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 盤面
+            現在のぷよ = Some ペア
+            状態 = プレイ中 }
 
     // Act
     let (新しいモデル, _) = 更新.更新 タイマー刻み モデル
 
     // Assert
-    match 新しいモデル.現在のピース with
-    | Some 新しいペア ->
-        新しいペア.Y |> should equal 6
-    | None ->
-        failwith "ぷよが存在するはずです"
+    match 新しいモデル.現在のぷよ with
+    | Some 新しいペア -> 新しいペア.Y座標 |> should equal 6
+    | None -> failwith "ぷよが存在するはずです"
 
 [<Fact>]
-let ``着地したぷよはボードに固定され新しいぷよが生成される`` () =
+let ``着地したぷよはボードに固定され次のぷよが生成される`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 3 11 赤 緑 0  // 下端近く
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = プレイ中 }
+    let 盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 3 12 赤 緑 0 // 下端
+    let 次のぷよ = ぷよペア.作成 2 1 青 黄 0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 盤面
+            現在のぷよ = Some ペア
+            次のぷよ = Some 次のぷよ
+            状態 = プレイ中 }
 
     // Act
     let (新しいモデル, _) = 更新.更新 タイマー刻み モデル
 
     // Assert
     // 着地したぷよがボードに固定されている
-    盤面.セル取得 新しいモデル.盤面 3 11 |> should equal (埋まっている 赤)
-    盤面.セル取得 新しいモデル.盤面 3 10 |> should equal (埋まっている 緑)
+    PuyoPuyo.Domain.盤面.セル取得 新しいモデル.盤面 3 12 |> should equal (埋まっている 赤)
+    PuyoPuyo.Domain.盤面.セル取得 新しいモデル.盤面 3 11 |> should equal (埋まっている 緑)
 
-    // 新しいぷよが生成されている
-    match 新しいモデル.現在のピース with
+    // 次のぷよが現在のぷよになっている
+    match 新しいモデル.現在のぷよ with
     | Some 新しいペア ->
-        新しいペア.X |> should equal 2
-        新しいペア.Y |> should equal 1
-    | None ->
-        failwith "新しいぷよが生成されるはずです"
+        新しいペア.X座標 |> should equal 2
+        新しいペア.Y座標 |> should equal 1
+        新しいペア.ぷよ1の色 |> should equal 青
+    | None -> failwith "次のぷよが現在のぷよになるはずです"
 
-[<Fact>]
-let ``ゲーム中でない場合は落下しない`` () =
-    // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = 未開始 }
-
-    // Act
-    let (新しいモデル, _) = 更新.更新 タイマー刻み モデル
-
-    // Assert
-    match 新しいモデル.現在のピース with
-    | Some 新しいペア ->
-        新しいペア.Y |> should equal 5  // 位置が変わらない
-    | None ->
-        failwith "ぷよが存在するはずです"
 ```
 
 ### Program の設定
@@ -3001,30 +2883,20 @@ let ``ゲーム中でない場合は落下しない`` () =
 
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs（更新）
-module PuyoGame.Main
+module PuyoPuyo.Client.Main
 
 open Elmish
 open Bolero
-open Bolero.Html
-open PuyoPuyo.Elmish.モデル
-open PuyoPuyo.Elmish.Update
-open PuyoPuyo.Elmish.Subscription
-open PuyoPuyo.Components.ゲーム表示
+open PuyoPuyo.Elmish
+open PuyoPuyo.Components
 
-type マイアプリ() =
-    inherit ProgramComponent<モデル, Message>()
+type MyApp() =
+    inherit ProgramComponent<モデル, メッセージ>()
 
     override this.Program =
-        let 初期化 () = モデル.初期化 (), Cmd.none
+        Program.mkProgram (fun _ -> モデル.初期化 (), Cmd.none) 更新.更新 ゲーム画面.ビュー
+        |> Program.withSubscription サブスクリプション.タイマー
 
-        let 更新 msg モデル =
-            更新.更新 msg モデル
-
-        let ビュー モデル ディスパッチ =
-            ゲーム表示.view モデル ディスパッチ
-
-        Program.mkProgram init update view
-        |> Program.withSubscription (fun モデル -> Subscription.gameTimer モデル)
 ```
 
 「`Program.withSubscription`でタイマーを登録するんですね！」そうです！これにより、ゲームがPlaying状態のときのみタイマーが動作し、定期的に`タイマー刻み`メッセージが発行されます。
@@ -3062,48 +2934,48 @@ git commit -m "feat: implement auto-falling ぷよ with gravity
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `盤面.fixPuyoPair`：ぷよペアをボードに固定（イミュータブル）
-   - パイプライン演算子による連鎖的な処理
+    - `盤面.fixPuyoPair`：ぷよペアをボードに固定（イミュータブル）
+    - パイプライン演算子による連鎖的な処理
 
 2. **Elmish層**
-   - `タイマー刻み` メッセージ：タイマーイベント
-   - 自動落下ロジック：
-     - 下に移動を試みる
-     - 移動できたら位置を更新
-     - 着地したらボードに固定し新しいぷよを生成
-   - Subscription：ゲームタイマーの実装
+    - `タイマー刻み` メッセージ：タイマーイベント
+    - 自動落下ロジック：
+        - 下に移動を試みる
+        - 移動できたら位置を更新
+        - 着地したらボードに固定し新しいぷよを生成
+    - Subscription：ゲームタイマーの実装
 
 3. **Program設定**
-   - `Program.withSubscription`でタイマーを登録
-   - ゲームのライフサイクル管理
+    - `Program.withSubscription`でタイマーを登録
+    - ゲームのライフサイクル管理
 
 4. **テスト**
-   - ボードへの固定テスト（2テスト）
-     - 固定の成功
-     - イミュータビリティの確認
-   - 自動落下の統合テスト（3テスト）
-     - 通常の落下
-     - 着地と新ぷよ生成
-     - ゲーム状態による制御
+    - ボードへの固定テスト（2テスト）
+        - 固定の成功
+        - イミュータビリティの確認
+    - 自動落下の統合テスト（3テスト）
+        - 通常の落下
+        - 着地と新ぷよ生成
+        - ゲーム状態による制御
 
 5. **学んだ重要な概念**
-   - Elmish Subscription：外部イベントの統合
-   - IDisposable：リソースの適切な解放
-   - パイプライン演算子による関数合成
-   - タイマーのライフサイクル管理
-   - ゲーム状態による動作制御
+    - Elmish Subscription：外部イベントの統合
+    - IDisposable：リソースの適切な解放
+    - パイプライン演算子による関数合成
+    - タイマーのライフサイクル管理
+    - ゲーム状態による動作制御
 
 6. **Subscription の仕組み**
-   - `Sub<Message>`型：サブスクリプションの定義
-   - タプル：`[ [ "id" ], sub ]`形式でサブスクリプションを識別
-   - IDisposable：タイマーの停止とリソース解放
-   - モデル依存：`モデル.ステータス`に応じて動的に切り替え
+    - `Sub<Message>`型：サブスクリプションの定義
+    - タプル：`[ [ "id" ], sub ]`形式でサブスクリプションを識別
+    - IDisposable：タイマーの停止とリソース解放
+    - モデル依存：`モデル.ステータス`に応じて動的に切り替え
 
 7. **TypeScript版との違い**
-   - タイマーをSubscriptionとして宣言的に定義
-   - `requestAnimationFrame`の代わりに`System.Timers.Timer`
-   - コールバック地獄なし（メッセージベース）
-   - リソース管理が明確（IDisposable）
+    - タイマーをSubscriptionとして宣言的に定義
+    - `requestAnimationFrame`の代わりに`System.Timers.Timer`
+    - コールバック地獄なし（メッセージベース）
+    - リソース管理が明確（IDisposable）
 
 次のイテレーションでは、ぷよの高速落下機能を実装していきます。
 
@@ -3137,41 +3009,76 @@ git commit -m "feat: implement auto-falling ぷよ with gravity
 // tests/PuyoPuyo.Tests/Elmish/更新テスト.fs（続き）
 
 [<Fact>]
-let ``MoveDownメッセージでぷよが下に移動する`` () =
+let ``高速落下開始メッセージで高速落下モードになる`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 3 5 赤 緑 0
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = プレイ中 }
+    let モデル =
+        { モデル.初期化 () with
+            状態 = プレイ中
+            高速落下中 = false }
 
     // Act
-    let (新しいモデル, _) = 更新.更新 下移動 モデル
+    let (新しいモデル, _) = 更新.更新 高速落下開始 モデル
 
     // Assert
-    match 新しいモデル.現在のピース with
-    | Some 新しいペア ->
-        新しいペア.Y |> should equal 6
-    | None ->
-        failwith "ぷよが存在するはずです"
+    新しいモデル.高速落下中 |> should equal true
 
 [<Fact>]
-let ``下端に到達した場合は着地する`` () =
+let ``高速落下停止メッセージで高速落下モードが解除される`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let ぷよペア = ぷよペア.作成 3 11 赤 緑 0  // 下端近く
-    let モデル = { モデル with 現在のピース = Some ぷよペア; Status = プレイ中 }
+    let モデル =
+        { モデル.初期化 () with
+            状態 = プレイ中
+            高速落下中 = true }
+
+    // Act
+    let (新しいモデル, _) = 更新.更新 高速落下停止 モデル
+
+    // Assert
+    新しいモデル.高速落下中 |> should equal false
+
+[<Fact>]
+let ``ゲーム中でない場合は高速落下開始メッセージが無視される`` () =
+    // Arrange
+    let モデル =
+        { モデル.初期化 () with
+            状態 = 未開始
+            高速落下中 = false }
+
+    // Act
+    let (新しいモデル, _) = 更新.更新 高速落下開始 モデル
+
+    // Assert
+    新しいモデル.高速落下中 |> should equal false
+
+[<Fact>]
+let ``下移動メッセージで下端に到達した場合はぷよが固定される`` () =
+    // Arrange
+    let 盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 3 12 赤 緑 0 // 下端
+    let 次のぷよ = ぷよペア.作成 2 1 青 黄 0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 盤面
+            現在のぷよ = Some ペア
+            次のぷよ = Some 次のぷよ
+            状態 = プレイ中 }
 
     // Act
     let (新しいモデル, _) = 更新.更新 下移動 モデル
 
     // Assert
-    // 着地してボードに固定
-    盤面.セル取得 新しいモデル.盤面 3 11 |> should equal (埋まっている 赤)
-    盤面.セル取得 新しいモデル.盤面 3 10 |> should equal (埋まっている 緑)
+    // 着地したぷよがボードに固定されている
+    PuyoPuyo.Domain.盤面.セル取得 新しいモデル.盤面 3 12 |> should equal (埋まっている 赤)
+    PuyoPuyo.Domain.盤面.セル取得 新しいモデル.盤面 3 11 |> should equal (埋まっている 緑)
 
-    // 新しいぷよが生成
-    match 新しいモデル.現在のピース with
-    | Some _ -> ()
-    | None -> failwith "新しいぷよが生成されるはずです"
+    // 次のぷよが現在のぷよになっている
+    match 新しいモデル.現在のぷよ with
+    | Some 新しいペア ->
+        新しいペア.X座標 |> should equal 2
+        新しいペア.Y座標 |> should equal 1
+    | None -> failwith "次のぷよが現在のぷよになるはずです"
+
 ```
 
 「Tickメッセージと同じ処理になりそうですね！」そうです！下に移動を試みて、着地したらボードに固定して新しいぷよを生成する、という処理は共通です。
@@ -3182,24 +3089,19 @@ let ``下端に到達した場合は着地する`` () =
 
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（Update関数の続き）
-    | 下移動 when モデル.ステータス = プレイ中 ->
-        match モデル.現在のピース with
-        | Some ピース ->
-            // 下に移動を試みる
-            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-            | Some 移動後のピース ->
-                // 移動成功
-                { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
-            | None ->
-                // 移動できない（着地）
-                let 新しい盤面 = 盤面.fixPuyoPair モデル.盤面 ピース
-                let nextPiece = ぷよペア.作成Random 2 1 0
-                {
-                    モデル with 盤面 = 新しい盤面
-                        現在のピース = Some nextPiece
-                }, Cmd.none
-        | None ->
-            モデル, Cmd.none
+        | 下移動 when モデル.状態 = プレイ中 ->
+            ぷよを落下 モデル
+
+        | 高速落下開始 when モデル.状態 = プレイ中 ->
+            { モデル with 高速落下中 = true }, Cmd.none
+
+        | 高速落下停止 when モデル.状態 = プレイ中 ->
+            { モデル with 高速落下中 = false }, Cmd.none
+
+        | タイマー刻み when モデル.状態 = プレイ中 ->
+            ぷよを落下 モデル
+
+        | _ -> モデル, Cmd.none
 ```
 
 「Tickメッセージの処理と全く同じですね！」そうです！重複していますね。後でリファクタリングして共通化することもできますが、今は動作を優先しましょう。
@@ -3224,14 +3126,27 @@ let ``下端に到達した場合は着地する`` () =
 ```fsharp
 // src/PuyoPuyo.Client/Components/ゲーム表示.fs（viewの更新）
                 | プレイ中 ->
-                    div [] [
-                        p [] [text "← →: 左右移動"]
-                        p [] [text "↑: 回転"]
-                        p [] [text "↓: 高速落下"]
-                        button [
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲームリセット)
+                        "リセット"
+                    }
+
+                    div {
+                        attr.``class`` "instructions"
+                        p { "← → : 移動" }
+                        p { "↑ / Z : 回転" }
+                        p { "↓ : 高速落下" }
+                    }
+
+                | ゲームオーバー ->
+                    div {
+                        h2 { "ゲームオーバー" }
+
+                        button {
                             on.click (fun _ -> ディスパッチ ゲームリセット)
-                        ] [text "リセット"]
-                    ]
+                            "もう一度プレイ"
+                        }
+                    
 ```
 
 ### 高速落下タイマーの実装
@@ -3242,31 +3157,29 @@ let ``下端に到達した場合は着地する`` () =
 
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/モデル.fs（Modelの更新）
-type モデル = {
-    盤面: 盤面
-    現在のぷよ: ぷよペア option
-    次のぷよ: ぷよペア option
-    スコア: int
-    レベル: int
-    ゲーム時間: int
-    最後の連鎖数: int
-    状態: ゲーム状態
-    高速落下中: bool  // 高速落下モード
-}
+type モデル =
+    { 盤面: 盤面
+      現在のぷよ: ぷよペア option
+      次のぷよ: ぷよペア option
+      スコア: int
+      レベル: int
+      ゲーム時間: int
+      最後の連鎖数: int
+      状態: ゲーム状態
+      高速落下中: bool }
 
 module モデル =
+    /// 初期状態
     let 初期化 () : モデル =
-        {
-            盤面 = 盤面.作成 6 13
-            現在のピース = None
-            NextPiece = None
-            スコア = 0
-            Level = 1
-            GameTime = 0
-            LastChainCount = 0
-            Status = 未開始
-            高速落下中か = false
-        }
+        { 盤面 = 盤面.作成 6 13
+          現在のぷよ = None
+          次のぷよ = None
+          スコア = 0
+          レベル = 1
+          ゲーム時間 = 0
+          最後の連鎖数 = 0
+          状態 = 未開始
+          高速落下中 = false }
 ```
 
 次に、高速落下の開始/終了メッセージを追加します：
@@ -3289,42 +3202,44 @@ type メッセージ =
 
 ```fsharp
 // src/PuyoPuyo.Client/Components/ゲーム表示.fs（イベントハンドラの更新）
-    let private handleKeyDown (ディスパッチ: メッセージ -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
+    /// キーボード押下イベントハンドラー
+    let private キー押下処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
         match e.Key with
         | "ArrowLeft" -> ディスパッチ 左移動
         | "ArrowRight" -> ディスパッチ 右移動
-        | "ArrowUp" -> ディスパッチ 回転
+        | "ArrowUp"
+        | "z"
+        | "Z" -> ディスパッチ 回転
         | "ArrowDown" ->
             ディスパッチ 下移動
             ディスパッチ 高速落下開始
         | _ -> ()
 
-    let private handleKeyUp (ディスパッチ: メッセージ -> unit) (e: Microsoft.AspNetCore.Components.Web.KeyboardEventArgs) =
+    /// キーボード解放イベントハンドラー
+    let private キー解放処理 (ディスパッチ: メッセージ -> unit) (e: KeyboardEventArgs) =
         match e.Key with
         | "ArrowDown" -> ディスパッチ 高速落下停止
         | _ -> ()
 
     /// メインView
     let ビュー (モデル: モデル) (ディスパッチ: メッセージ -> unit) =
-        div [
-            attr.classes ["game-container"]
+        div {
+            attr.``class`` "game-container"
             attr.tabindex 0
-            on.keydown (handleKeyDown ディスパッチ)
-            on.keyup (handleKeyUp ディスパッチ)  // keyupイベントを追加
-        ] [
+            on.keydown (キー押下処理 ディスパッチ)
+            on.keyup (キー解放処理 ディスパッチ)
+            h1 { "ぷよぷよゲーム" }
             // ... 既存のコード ...
-        ]
+       
 ```
 
 Update関数で高速落下モードを切り替えます：
 
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（Update関数の続き）
-    | 高速落下開始 when モデル.ステータス = プレイ中 ->
-        { モデル with 高速落下中か = true }, Cmd.none
+        | 高速落下開始 when モデル.状態 = プレイ中 -> { モデル with 高速落下中 = true }, Cmd.none
 
-    | 高速落下停止 when モデル.ステータス = プレイ中 ->
-        { モデル with 高速落下中か = false }, Cmd.none
+        | 高速落下停止 when モデル.状態 = プレイ中 -> { モデル with 高速落下中 = false }, Cmd.none
 ```
 
 最後に、Subscriptionでタイマーの速度を切り替えます：
@@ -3332,19 +3247,26 @@ Update関数で高速落下モードを切り替えます：
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/Subscription.fs（更新）
 module サブスクリプション =
-    /// ゲームタイマー（高速落下時は速く）
-    let ゲームタイマー (モデル: モデル) : Sub<Message> =
-        if モデル.ステータス = プレイ中 then
-            let interval = if モデル.高速落下中か then 100.0 else 1000.0
-            let sub ディスパッチ =
-                let timer = new System.Timers.Timer(interval)
-                timer.Elapsed.Add(fun _ -> ディスパッチ タイマー刻み)
-                timer.Start()
-                { new IDisposable with
-                    member _.Dispose() = timer.Stop(); timer.Dispose() }
-            [ [ "gameTimer" ], sub ]
-        else
-            []
+    /// タイマーサブスクリプション（高速落下時は速度を上げる）
+    let タイマー (モデル: モデル) : Sub<メッセージ> =
+        let startTimer dispatch =
+            let cts = new CancellationTokenSource()
+            // 高速落下中は100ms、通常時は500ms
+            let interval = if モデル.高速落下中 then 100 else 500
+
+            let rec loop () =
+                async {
+                    do! Async.Sleep(interval)
+                    dispatch タイマー刻み
+                    return! loop ()
+                }
+
+            Async.Start(loop (), cts.Token)
+
+            { new IDisposable with
+                member _.Dispose() = cts.Cancel() }
+
+        [ [ "timer" ], startTimer ]
 ```
 
 「高速落下モードのときは100msごと、通常時は1000msごとにTickが発行されるんですね！」そうです！これにより、下キーを押している間は10倍速く落ちるようになります。
@@ -3357,40 +3279,75 @@ module サブスクリプション =
 // tests/PuyoPuyo.Tests/Elmish/更新テスト.fs（続き）
 
 [<Fact>]
-let ``StartFastFallメッセージで高速落下モードになる`` () =
+let ``高速落下開始メッセージで高速落下モードになる`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let モデル = { モデル with Status = プレイ中; 高速落下中か = false }
+    let モデル =
+        { モデル.初期化 () with
+            状態 = プレイ中
+            高速落下中 = false }
 
     // Act
     let (新しいモデル, _) = 更新.更新 高速落下開始 モデル
 
     // Assert
-    新しいモデル.高速落下中か |> should equal true
+    新しいモデル.高速落下中 |> should equal true
 
 [<Fact>]
-let ``StopFastFallメッセージで高速落下モードが解除される`` () =
+let ``高速落下停止メッセージで高速落下モードが解除される`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let モデル = { モデル with Status = プレイ中; 高速落下中か = true }
+    let モデル =
+        { モデル.初期化 () with
+            状態 = プレイ中
+            高速落下中 = true }
 
     // Act
     let (新しいモデル, _) = 更新.更新 高速落下停止 モデル
 
     // Assert
-    新しいモデル.高速落下中か |> should equal false
+    新しいモデル.高速落下中 |> should equal false
 
 [<Fact>]
-let ``ゲーム中でない場合は高速落下モードにならない`` () =
+let ``ゲーム中でない場合は高速落下開始メッセージが無視される`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    let モデル = { モデル with Status = 未開始; 高速落下中か = false }
+    let モデル =
+        { モデル.初期化 () with
+            状態 = 未開始
+            高速落下中 = false }
 
     // Act
     let (新しいモデル, _) = 更新.更新 高速落下開始 モデル
 
     // Assert
-    新しいモデル.高速落下中か |> should equal false
+    新しいモデル.高速落下中 |> should equal false
+
+[<Fact>]
+let ``下移動メッセージで下端に到達した場合はぷよが固定される`` () =
+    // Arrange
+    let 盤面 = 盤面.作成 6 13
+    let ペア = ぷよペア.作成 3 12 赤 緑 0 // 下端
+    let 次のぷよ = ぷよペア.作成 2 1 青 黄 0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 盤面
+            現在のぷよ = Some ペア
+            次のぷよ = Some 次のぷよ
+            状態 = プレイ中 }
+
+    // Act
+    let (新しいモデル, _) = 更新.更新 下移動 モデル
+
+    // Assert
+    // 着地したぷよがボードに固定されている
+    PuyoPuyo.Domain.盤面.セル取得 新しいモデル.盤面 3 12 |> should equal (埋まっている 赤)
+    PuyoPuyo.Domain.盤面.セル取得 新しいモデル.盤面 3 11 |> should equal (埋まっている 緑)
+
+    // 次のぷよが現在のぷよになっている
+    match 新しいモデル.現在のぷよ with
+    | Some 新しいペア ->
+        新しいペア.X座標 |> should equal 2
+        新しいペア.Y座標 |> should equal 1
+    | None -> failwith "次のぷよが現在のぷよになるはずです"
 ```
 
 ### リファクタリング: 落下処理の共通化
@@ -3400,39 +3357,67 @@ let ``ゲーム中でない場合は高速落下モードにならない`` () =
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（ヘルパー関数の追加）
 module 更新 =
-    // ... 既存のコード ...
-
     /// ぷよを下に移動させる（共通処理）
-    let private ぷよを落下(モデル: モデル) : モデル * Cmd<Message> =
-        match モデル.現在のピース with
-        | Some ピース ->
-            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-            | Some 移動後のピース ->
-                // 移動成功
-                { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
+    let private ぷよを落下 (モデル: モデル) : モデル * Cmd<メッセージ> =
+        match モデル.現在のぷよ with
+        | Some ペア ->
+            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+            | Some 移動後のペア -> { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
             | None ->
                 // 移動できない（着地）
-                let 新しい盤面 = 盤面.fixPuyoPair モデル.盤面 ピース
-                let nextPiece = ぷよペア.作成Random 2 1 0
-                {
-                    モデル with 盤面 = 新しい盤面
-                        現在のピース = Some nextPiece
-                }, Cmd.none
-        | None ->
-            モデル, Cmd.none
+                let 新しい盤面 = 盤面操作.ぷよペア固定 モデル.盤面 ペア
+                let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                { モデル with
+                    盤面 = 新しい盤面
+                    現在のぷよ = モデル.次のぷよ
+                    次のぷよ = Some 次のペア },
+                Cmd.none
+        | None -> モデル, Cmd.none
 
     /// Update 関数
-    let 更新 (メッセージ: メッセージ) (モデル: モデル) : モデル * Cmd<Message> =
+    let 更新 (メッセージ: メッセージ) (モデル: モデル) : モデル * Cmd<メッセージ> =
         match メッセージ with
-        // ... 既存のコード ...
+        | ゲーム開始 ->
+            let firstPiece = ぷよペア.ランダム作成 2 1 0
+            let nextPiece = ぷよペア.ランダム作成 2 1 0
 
-        | タイマー刻み when モデル.ステータス = プレイ中 ->
-            dropPuyo モデル
+            { モデル with
+                盤面 = 盤面.作成 6 13
+                現在のぷよ = Some firstPiece
+                次のぷよ = Some nextPiece
+                スコア = 0
+                ゲーム時間 = 0
+                状態 = プレイ中 },
+            Cmd.none
 
-        | 下移動 when モデル.ステータス = プレイ中 ->
-            dropPuyo モデル
+        | ゲームリセット -> PuyoPuyo.Elmish.モデル.初期化 (), Cmd.none
 
-        // ... その他のメッセージ ...
+        | 左移動 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ぷよペア 左 with
+                | Some 移動後のぷよペア -> { モデル with 現在のぷよ = Some 移動後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | 右移動 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ぷよペア 右 with
+                | Some 移動後のぷよペア -> { モデル with 現在のぷよ = Some 移動後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | 回転 ->
+            match モデル.現在のぷよ with
+            | Some ぷよペア ->
+                match ゲームロジック.ぷよペア壁キック回転 モデル.盤面 ぷよペア PuyoPuyo.Domain.ぷよペア.時計回り回転 with
+                | Some 回転後のぷよペア -> { モデル with 現在のぷよ = Some 回転後のぷよペア }, Cmd.none
+                | None -> モデル, Cmd.none
+            | None -> モデル, Cmd.none
+
+        | 下移動 when モデル.状態 = プレイ中 -> ぷよを落下 モデ
 ```
 
 「重複がなくなってスッキリしましたね！」そうです！これで、落下処理のロジックが一箇所にまとまりました。
@@ -3470,46 +3455,46 @@ git commit -m "feat: implement fast falling with down arrow key
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - 既存の`ぷよペア移動を試行`を活用（Down方向）
+    - 既存の`ぷよペア移動を試行`を活用（Down方向）
 
 2. **Elmish層**
-   - `高速落下中か`：高速落下モードの状態
-   - `高速落下開始` / `高速落下停止` メッセージ
-   - `下移動` メッセージの処理
-   - `dropPuyo`：落下処理の共通化（リファクタリング）
+    - `高速落下中か`：高速落下モードの状態
+    - `高速落下開始` / `高速落下停止` メッセージ
+    - `下移動` メッセージの処理
+    - `dropPuyo`：落下処理の共通化（リファクタリング）
 
 3. **View層**
-   - `handleKeyDown`：下矢印キーでMoveDownとStartFastFall
-   - `handleKeyUp`：キーを離したときにStopFastFall
-   - 操作説明の更新
+    - `handleKeyDown`：下矢印キーでMoveDownとStartFastFall
+    - `handleKeyUp`：キーを離したときにStopFastFall
+    - 操作説明の更新
 
 4. **Subscription**
-   - タイマー速度の動的切り替え（1000ms → 100ms）
-   - `モデル.高速落下中か`に応じて速度を変更
+    - タイマー速度の動的切り替え（1000ms → 100ms）
+    - `モデル.高速落下中か`に応じて速度を変更
 
 5. **テスト**
-   - MoveDownメッセージのテスト（2テスト）
-   - 高速落下モードの切り替えテスト（3テスト）
-   - ゲーム状態による制御
+    - MoveDownメッセージのテスト（2テスト）
+    - 高速落下モードの切り替えテスト（3テスト）
+    - ゲーム状態による制御
 
 6. **学んだ重要な概念**
-   - keydownとkeyupイベントの組み合わせ
-   - Subscriptionのモデル依存による動的な振る舞い
-   - リファクタリング：重複コードの関数抽出
-   - 状態フラグによる動作切り替え
-   - タイマー速度の動的変更
+    - keydownとkeyupイベントの組み合わせ
+    - Subscriptionのモデル依存による動的な振る舞い
+    - リファクタリング：重複コードの関数抽出
+    - 状態フラグによる動作切り替え
+    - タイマー速度の動的変更
 
 7. **リファクタリングの実践**
-   - Before：TickとMoveDownで重複コード
-   - After：`dropPuyo`関数に共通処理を抽出
-   - DRY原則（Don't Repeat Yourself）の実践
-   - 保守性の向上
+    - Before：TickとMoveDownで重複コード
+    - After：`dropPuyo`関数に共通処理を抽出
+    - DRY原則（Don't Repeat Yourself）の実践
+    - 保守性の向上
 
 8. **TypeScript版との違い**
-   - キー状態管理をModelで一元化
-   - keyup/keydownイベントを別々のメッセージに変換
-   - タイマー速度の宣言的な切り替え
-   - イベントリスナーの手動管理不要
+    - キー状態管理をModelで一元化
+    - keyup/keydownイベントを別々のメッセージに変換
+    - タイマー速度の宣言的な切り替え
+    - イベントリスナーの手動管理不要
 
 次のイテレーションでは、ぷよの消去機能を実装していきます。
 
@@ -3546,73 +3531,77 @@ git commit -m "feat: implement fast falling with down arrow key
 [<Fact>]
 let ``横に4つ並んだぷよを検出できる`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 0 12 (埋まっている 赤)
-        |> 盤面.セル設定 1 12 (埋まっている 赤)
-        |> 盤面.セル設定 2 12 (埋まっている 赤)
-        |> 盤面.セル設定 3 12 (埋まっている 赤)
+    let _盤面 = 盤面.作成 6 13
+
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 0 12 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 12 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 12 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 3 12 (埋まっている 赤))
 
     // Act
-    let グループ = 盤面.findConnectedGroups 盤面
+    let グループ = 盤面.つながったグループ検出 _盤面
 
     // Assert
-    groups |> List.length |> should equal 1
-    groups |> List.head |> List.length |> should equal 4
+    グループ |> List.length |> should equal 1
+    グループ |> List.head |> List.length |> should equal 4
 
 [<Fact>]
 let ``縦に4つ並んだぷよを検出できる`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 2 9 (埋まっている 緑)
-        |> 盤面.セル設定 2 10 (埋まっている 緑)
-        |> 盤面.セル設定 2 11 (埋まっている 緑)
-        |> 盤面.セル設定 2 12 (埋まっている 緑)
+    let _盤面 = 盤面.作成 6 13
+
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 9 (埋まっている 緑))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 緑))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 緑))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 12 (埋まっている 緑))
 
     // Act
-    let グループ = 盤面.findConnectedGroups 盤面
+    let グループ = 盤面.つながったグループ検出 _盤面
 
     // Assert
-    groups |> List.length |> should equal 1
-    groups |> List.head |> List.length |> should equal 4
+    グループ |> List.length |> should equal 1
+    グループ |> List.head |> List.length |> should equal 4
 
 [<Fact>]
 let ``L字型につながった5つのぷよを検出できる`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 1 10 (埋まっている 青)
-        |> 盤面.セル設定 1 11 (埋まっている 青)
-        |> 盤面.セル設定 1 12 (埋まっている 青)
-        |> 盤面.セル設定 2 12 (埋まっている 青)
-        |> 盤面.セル設定 3 12 (埋まっている 青)
+    let _盤面 = 盤面.作成 6 13
+
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 12 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 12 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 3 12 (埋まっている 青))
 
     // Act
-    let グループ = 盤面.findConnectedGroups 盤面
+    let グループ = 盤面.つながったグループ検出 _盤面
 
     // Assert
-    groups |> List.length |> should equal 1
-    groups |> List.head |> List.length |> should equal 5
+    グループ |> List.length |> should equal 1
+    グループ |> List.head |> List.length |> should equal 5
 
 [<Fact>]
 let ``3つ以下のぷよは検出されない`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 0 12 (埋まっている 黄)
-        |> 盤面.セル設定 1 12 (埋まっている 黄)
-        |> 盤面.セル設定 2 12 (埋まっている 黄)
+    let _盤面 = 盤面.作成 6 13
+
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 0 12 (埋まっている 黄))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 12 (埋まっている 黄))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 12 (埋まっている 黄))
 
     // Act
-    let グループ = 盤面.findConnectedGroups 盤面
+    let グループ = 盤面.つながったグループ検出 _盤面
 
     // Assert
-    groups |> List.length |> should equal 0
+    グループ |> List.length |> should equal 0
 ```
 
 「つながっているぷよをどうやって検出するんですか？」良い質問ですね！幅優先探索（BFS）や深さ優先探索（DFS）というアルゴリズムを使って、同じ色のぷよをたどっていきます。
@@ -3624,56 +3613,57 @@ let ``3つ以下のぷよは検出されない`` () =
 ```fsharp
 // src/PuyoPuyo.Client/Domain/盤面.fs（続き）
 
-module 盤面 =
-    // ... 既存のコード ...
+    /// 2つの位置にぷよを固定（ぷよペア用のヘルパー関数）
+    let ぷよ2つ固定 (盤面: 盤面) (位置1: int * int) (色1: ぷよの色) (位置2: int * int) (色2: ぷよの色) : 盤面 =
+        let (x1, y1) = 位置1
+        let (x2, y2) = 位置2
 
-    /// 隣接するセルの座標を取得
-    let private getNeighbors (x: int) (y: int) : (int * int) list =
-        [
-            (x - 1, y座標)  // 左
-            (x + 1, y座標)  // 右
-            (x座標, y - 1)  // 上
-            (x座標, y + 1)  // 下
-        ]
+        盤面 |> (fun 盤 -> セル設定 盤 x1 y1 (埋まっている 色1)) |> (fun 盤 -> セル設定 盤 x2 y2 (埋まっている 色2))
 
-    /// 指定位置から同じ色のつながったぷよを探索（BFS）
-    let private findConnectedPuyos (盤面: 盤面) (startX: int) (startY: int) (色: ぷよの色) (visited: Set<int * int>) : (int * int) list =
-        let rec bfs (queue: (int * int) list) (visited: Set<int * int>) (result: (int * int) list) =
-            match queue with
-            | [] -> result
-            | (x座標, y座標) :: rest ->
-                if Set.contains (x座標, y座標) visited then
-                    bfs rest visited result
-                else
-                    let newVisited = Set.add (x座標, y座標) visited
-                    let neighbors =
-                        getNeighbors x y座標
-                        |> List.filter (fun (nx, ny) ->
-                            not (Set.contains (nx, ny) newVisited) &&
-                            match セル取得 盤面 nx ny with
-                            | 埋まっている c when c = 色 -> true
-                            | _ -> false)
-                    bfs (rest @ neighbors) newVisited ((x座標, y座標) :: result)
+    /// つながったぷよグループを検出（BFS アルゴリズム）
+    let つながったグループ検出 (盤面: 盤面) : (int * int) list list =
+        let 訪問済み = Array.init 盤面.行数 (fun _ -> Array.create 盤面.列数 false)
+        let mutable グループリスト = []
 
-        bfs [(startX, startY)] visited []
+        /// BFS で同じ色のつながったぷよを探索
+        let BFS探索 (開始列: int) (開始行: int) (対象色: ぷよの色) : (int * int) list =
+            let キュー = System.Collections.Generic.Queue<int * int>()
+            let mutable グループ = []
 
-    /// 4つ以上つながっているぷよのグループを検出
-    let つながったグループ検出 (盤面: 盤面) : ((int * int) list) list =
-        let mutable visited = Set.empty
-        let mutable groups = []
+            キュー.Enqueue((開始列, 開始行))
+            訪問済み.[開始行].[開始列] <- true
 
-        for y in 0 .. 盤面.行数 - 1 do
-            for x in 0 .. 盤面.列数 - 1 do
-                if not (Set.contains (x座標, y座標) visited) then
-                    match セル取得 盤面 x y with
+            while キュー.Count > 0 do
+                let (現在列, 現在行) = キュー.Dequeue()
+                グループ <- (現在列, 現在行) :: グループ
+
+                // 上下左右の隣接セルをチェック
+                let 隣接セル = [ (現在列 - 1, 現在行); (現在列 + 1, 現在行); (現在列, 現在行 - 1); (現在列, 現在行 + 1) ]
+
+                for (隣列, 隣行) in 隣接セル do
+                    if 隣行 >= 0 && 隣行 < 盤面.行数 && 隣列 >= 0 && 隣列 < 盤面.列数 && not 訪問済み.[隣行].[隣列] then
+                        match セル取得 盤面 隣列 隣行 with
+                        | 埋まっている 色 when 色 = 対象色 ->
+                            訪問済み.[隣行].[隣列] <- true
+                            キュー.Enqueue((隣列, 隣行))
+                        | _ -> ()
+
+            グループ
+
+        // すべてのセルをスキャン
+        for 行 in 0 .. 盤面.行数 - 1 do
+            for 列 in 0 .. 盤面.列数 - 1 do
+                if not 訪問済み.[行].[列] then
+                    match セル取得 盤面 列 行 with
                     | 埋まっている 色 ->
-                        let group = findConnectedPuyos 盤面 x y 色 visited
-                        if List.length group >= 4 then
-                            groups <- group :: groups
-                        visited <- visited + Set.ofList group
-                    | 空 -> ()
+                        let グループ = BFS探索 列 行 色
 
-        groups
+                        // 4つ以上つながっている場合のみリストに追加
+                        if List.length グループ >= 4 then
+                            グループリスト <- グループ :: グループリスト
+                    | 空 -> 訪問済み.[行].[列] <- true
+
+        グループリスト
 ```
 
 「BFS（幅優先探索）を使っているんですね！」そうです！キューを使って、同じ色のぷよを順番にたどっていきます。F#の再帰関数とパターンマッチングを使って、綺麗に書けますね。
@@ -3692,25 +3682,21 @@ dotnet cake --target=Test
 // tests/PuyoPuyo.Tests/Domain/盤面テスト.fs（続き）
 
 [<Fact>]
-let ``指定した位置のぷよを消去できる`` () =
+let ``指定位置のぷよを消去できる`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 0 12 (埋まっている 赤)
-        |> 盤面.セル設定 1 12 (埋まっている 赤)
-        |> 盤面.セル設定 2 12 (埋まっている 赤)
-        |> 盤面.セル設定 3 12 (埋まっている 赤)
+    let _盤面 = 盤面.作成 6 13
+
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
 
     // Act
-    let 位置リスト = [(0, 12); (1, 12); (2, 12); (3, 12)]
-    let 新しい盤面 = 盤面 |> 盤面.clearPuyos positions
+    let 消去後の盤面 = 盤面.ぷよ消去 _盤面 [ (2, 10); (2, 11) ]
 
     // Assert
-    盤面.セル取得 新しい盤面 0 12 |> should equal 空
-    盤面.セル取得 新しい盤面 1 12 |> should equal 空
-    盤面.セル取得 新しい盤面 2 12 |> should equal 空
-    盤面.セル取得 新しい盤面 3 12 |> should equal 空
+    盤面.セル取得 消去後の盤面 2 10 |> should equal 空
+    盤面.セル取得 消去後の盤面 2 11 |> should equal 空
 ```
 
 ### 実装: ぷよの消去
@@ -3722,9 +3708,8 @@ module 盤面 =
     // ... 既存のコード ...
 
     /// 指定位置のぷよを消去
-    let ぷよ消去 (positions: (int * int) list) (盤面: 盤面) : 盤面 =
-        positions
-        |> List.fold (fun b (x座標, y座標) -> セル設定 x y 空 b) 盤面
+    let ぷよ消去 (盤面: 盤面) (消去位置リスト: (int * int) list) : 盤面 =
+        List.fold (fun 現在の盤面 (列, 行) -> セル設定 現在の盤面 列 行 空) 盤面 消去位置リスト
 ```
 
 「`List.fold`を使って連鎖的に消去しているんですね！」そうです！関数型プログラミングの典型的なパターンです。また、`セル設定` の引数順序を変更したことで、パイプライン演算子と組み合わせて使いやすくなりました。
@@ -3737,41 +3722,44 @@ module 盤面 =
 // tests/PuyoPuyo.Tests/Domain/盤面テスト.fs（続き）
 
 [<Fact>]
-let ``重力を適用すると浮いているぷよが落ちる`` () =
+let ``重力適用で浮いているぷよが落下する`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 2 8 (埋まっている 緑)   // 浮いているぷよ
-        |> 盤面.セル設定 2 12 (埋まっている 赤)    // 下にあるぷよ
+    let _盤面 = 盤面.作成 6 13
 
-    // Act
-    let 新しい盤面 = 盤面.重力を適用 盤面
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 12 (埋まっている 青))
+
+    // Act - 赤を消去すると青が落下する
+    let 消去後 = 盤面.ぷよ消去 _盤面 [ (2, 10) ]
+    let 重力適用後 = 盤面.重力適用 消去後
 
     // Assert
-    盤面.セル取得 新しい盤面 2 8 |> should equal 空
-    盤面.セル取得 新しい盤面 2 11 |> should equal (埋まっている 緑)  // 落ちた
-    盤面.セル取得 新しい盤面 2 12 |> should equal (埋まっている 赤)
+    盤面.セル取得 重力適用後 2 12 |> should equal (埋まっている 青)
+    盤面.セル取得 重力適用後 2 11 |> should equal 空
+    盤面.セル取得 重力適用後 2 10 |> should equal 空
 
 [<Fact>]
-let ``重力を適用すると複数のぷよが落ちる`` () =
+let ``重力適用で複数のぷよが正しく落下する`` () =
     // Arrange
-    let 盤面 = 盤面.作成 6 13
-    let 盤面 =
-        盤面
-        |> 盤面.セル設定 1 5 (埋まっている 青)
-        |> 盤面.セル設定 1 6 (埋まっている 黄)
-        |> 盤面.セル設定 1 12 (埋まっている 赤)
+    let _盤面 = 盤面.作成 6 13
 
-    // Act
-    let 新しい盤面 = 盤面.重力を適用 盤面
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 8 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 緑))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 青))
+
+    // Act - 緑を消去すると赤が落下
+    let 消去後 = 盤面.ぷよ消去 _盤面 [ (2, 10) ]
+    let 重力適用後 = 盤面.重力適用 消去後
 
     // Assert
-    盤面.セル取得 新しい盤面 1 5 |> should equal 空
-    盤面.セル取得 新しい盤面 1 6 |> should equal 空
-    盤面.セル取得 新しい盤面 1 10 |> should equal (埋まっている 青)
-    盤面.セル取得 新しい盤面 1 11 |> should equal (埋まっている 黄)
-    盤面.セル取得 新しい盤面 1 12 |> should equal (埋まっている 赤)
+    盤面.セル取得 重力適用後 2 12 |> should equal (埋まっている 青)
+    盤面.セル取得 重力適用後 2 11 |> should equal (埋まっている 赤)
+    盤面.セル取得 重力適用後 2 10 |> should equal 空
+    盤面.セル取得 重力適用後 2 8 |> should equal 空
 ```
 
 ### 実装: 重力による落下
@@ -3779,25 +3767,39 @@ let ``重力を適用すると複数のぷよが落ちる`` () =
 ```fsharp
 // src/PuyoPuyo.Client/Domain/盤面.fs（続き）
 
-module 盤面 =
-    // ... 既存のコード ...
-
-    /// 重力を適用（浮いているぷよを落とす）
+    /// 重力を適用（浮いているぷよを落下させる）
     let 重力適用 (盤面: 盤面) : 盤面 =
-        let mutable newCells = Array.init 盤面.行数 (fun _ -> Array.create 盤面.列数 空)
+        // 各列に対して重力を適用
+        let rec 列を処理 (現在の盤面: 盤面) (列: int) : 盤面 =
+            if 列 >= 盤面.列数 then
+                現在の盤面
+            else
+                // 下から順に空でないセルを集める（現在の盤面から読み取る）
+                let mutable ぷよリスト = []
 
-        // 各列ごとに処理
-        for x in 0 .. 盤面.列数 - 1 do
-            let column =
-                [| for y in 0 .. 盤面.行数 - 1 -> 盤面.セル配列.[y座標].[x座標] |]
-                |> Array.filter (fun セル -> セル <> 空)
+                for 行 in 0 .. 盤面.行数 - 1 do
+                    match セル取得 現在の盤面 列 行 with
+                    | 埋まっている 色 -> ぷよリスト <- 色 :: ぷよリスト
+                    | 空 -> ()
 
-            // 下から詰める
-            let startY = 盤面.行数 - column.長さ
-            for i in 0 .. column.長さ - 1 do
-                newCells.[startY + i].[x座標] <- column.[i]
+                // 列全体をクリア
+                let mutable 列クリア後 = 現在の盤面
 
-        { 盤面 with セル配列 = newCells }
+                for 行 in 0 .. 盤面.行数 - 1 do
+                    列クリア後 <- セル設定 列クリア後 列 行 空
+
+                // 下から順にぷよを配置
+                let mutable 現在行 = 盤面.行数 - 1
+                let mutable 列処理後 = 列クリア後
+
+                for 色 in ぷよリスト do
+                    列処理後 <- セル設定 列処理後 列 現在行 (埋まっている 色)
+                    現在行 <- 現在行 - 1
+
+                列を処理 列処理後 (列 + 1)
+
+        列を処理 盤面 0
+
 ```
 
 「各列ごとに空でないセルを集めて、下から詰め直しているんですね！」そうです！これで、消去後に上のぷよが正しく落ちてきます。
@@ -3808,35 +3810,37 @@ module 盤面 =
 
 ```fsharp
 // src/PuyoPuyo.Client/Elmish/更新.fs（dropPuyoの更新）
-    let private ぷよを落下(モデル: モデル) : モデル * Cmd<Message> =
-        match モデル.現在のピース with
-        | Some ピース ->
-            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-            | Some 移動後のピース ->
-                // 移動成功
-                { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
+    let private ぷよを落下 (モデル: モデル) : モデル * Cmd<メッセージ> =
+        match モデル.現在のぷよ with
+        | Some ペア ->
+            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+            | Some 移動後のペア -> { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
             | None ->
                 // 移動できない（着地）
-                let boardWithPuyo = 盤面.fixPuyoPair モデル.盤面 ピース
+                let 固定後の盤面 = 盤面操作.ぷよペア固定 モデル.盤面 ペア
 
-                // 消去処理
-                let グループ = 盤面.findConnectedGroups boardWithPuyo
-                let boardAfterClear =
-                    if List.空か groups then
-                        盤面.重力を適用 boardWithPuyo
+                // つながっているぷよを検出して消去
+                let グループリスト = 盤面.つながったグループ検出 固定後の盤面
+
+                let 最終盤面 =
+                    if List.isEmpty グループリスト then
+                        // 消去がない場合も重力を適用
+                        盤面.重力適用 固定後の盤面
                     else
-                        let 位置リスト = groups |> List.concat
-                        boardWithPuyo
-                        |> 盤面.clearPuyos positions
-                        |> 盤面.重力を適用
+                        // すべてのグループを消去
+                        let 消去位置リスト = グループリスト |> List.concat
+                        let 消去後の盤面 = 盤面.ぷよ消去 固定後の盤面 消去位置リスト
+                        // 重力を適用
+                        盤面.重力適用 消去後の盤面
 
-                let nextPiece = ぷよペア.作成Random 2 1 0
-                {
-                    モデル with 盤面 = boardAfterClear
-                        現在のピース = Some nextPiece
-                }, Cmd.none
-        | None ->
-            モデル, Cmd.none
+                let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                { モデル with
+                    盤面 = 最終盤面
+                    現在のぷよ = モデル.次のぷよ
+                    次のぷよ = Some 次のペア },
+                Cmd.none
+        | None -> モデル, Cmd.none
 ```
 
 「着地→消去→重力の順に処理しているんですね！」そうです！以下の流れで処理されます：
@@ -3857,58 +3861,100 @@ module 盤面 =
 // tests/PuyoPuyo.Tests/Elmish/更新テスト.fs（続き）
 
 [<Fact>]
-let ``着地時に4つ以上つながったぷよが消える`` () =
+let ``着地後に4つ以上つながったぷよが消去される`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    // 下に3つ並べておく
-    let 盤面 =
-        モデル.盤面
-        |> 盤面.セル設定 0 12 (埋まっている 赤)
-        |> 盤面.セル設定 1 12 (埋まっている 赤)
-        |> 盤面.セル設定 2 12 (埋まっている 赤)
+    let 初期盤面 = 盤面.作成 6 13
 
-    // 4つ目のぷよを落とす（1回のTickで着地する位置に配置）
-    let ぷよペア = ぷよペア.作成 3 12 赤 緑 0
-    let モデル = { モデル with 盤面 = 盤面; 現在のピース = Some ぷよペア; Status = プレイ中 }
+    // 下に2つの赤いぷよを配置
+    let 配置後の盤面 =
+        初期盤面
+        |> (fun 盤 -> PuyoPuyo.Domain.盤面.セル設定 盤 2 11 (埋まっている 赤))
+        |> (fun 盤 -> PuyoPuyo.Domain.盤面.セル設定 盤 2 12 (埋まっている 赤))
 
-    // Act
-    let (新しいモデル, _) = 更新.更新 タイマー刻み モデル  // 着地
+    // 赤いぷよペア（縦向き、ぷよ2が下）を配置して着地させる
+    let ペア = ぷよペア.作成 2 9 赤 赤 2 // 回転状態2: ぷよ1が(2,9)、ぷよ2が(2,10)
+    let 次のぷよ = ぷよペア.作成 2 1 青 黄 0
 
-    // Assert
-    // 4つつながったので消えている
-    盤面.セル取得 新しいモデル.盤面 0 12 |> should equal 空
-    盤面.セル取得 新しいモデル.盤面 1 12 |> should equal 空
-    盤面.セル取得 新しいモデル.盤面 2 12 |> should equal 空
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 配置後の盤面
+            現在のぷよ = Some ペア
+            次のぷよ = Some 次のぷよ
+            状態 = プレイ中 }
 
-    // 緑のぷよは重力で落ちて下端に残っている
-    盤面.セル取得 新しいモデル.盤面 3 12 |> should equal (埋まっている 緑)
+    // Act - 下移動で着地させる（赤が4つ揃う）
+    let (モデル2, _) = 更新.更新 下移動 モデル
+
+    // Assert - 4つの赤いぷよが消去されている
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 12 |> should equal 空
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 11 |> should equal 空
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 10 |> should equal 空
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 9 |> should equal 空
 
 [<Fact>]
-let ``着地時に消去されなくても重力が適用される`` () =
+let ``消去後に重力が適用されて浮いたぷよが落下する`` () =
     // Arrange
-    let モデル = モデル.初期化 ()
-    // 縦向きのぷよペアを配置（下端）
-    let 盤面 =
-        モデル.盤面
-        |> 盤面.セル設定 3 12 (埋まっている 赤)   // 軸ぷよ
-        |> 盤面.セル設定 3 11 (埋まっている 緑) // 子ぷよ
+    let 初期盤面 = 盤面.作成 6 13
 
-    // 横向きのぷよペアを重ねる（回転=3で左向き、軸ぷよが右）
-    let ぷよペア = ぷよペア.作成 3 10 青 黄 3
-    let モデル = { モデル with 盤面 = 盤面; 現在のピース = Some ぷよペア; Status = プレイ中 }
+    // 以下の配置を作成：
+    // 列2: 行7に青、行11-12に赤2つ
+    // 赤いぷよペアを落として赤4つを消去すると、青が落下するはず
+    let 配置後の盤面 =
+        初期盤面
+        |> (fun 盤 -> PuyoPuyo.Domain.盤面.セル設定 盤 2 7 (埋まっている 青))
+        |> (fun 盤 -> PuyoPuyo.Domain.盤面.セル設定 盤 2 11 (埋まっている 赤))
+        |> (fun 盤 -> PuyoPuyo.Domain.盤面.セル設定 盤 2 12 (埋まっている 赤))
 
-    // Act
-    let (新しいモデル, _) = 更新.更新 タイマー刻み モデル  // 着地
+    // 赤いぷよペアを落とす (2,9)と(2,10)に配置
+    let ペア = ぷよペア.作成 2 9 赤 赤 2
+    let 次のぷよ = ぷよペア.作成 2 1 青 黄 0
 
-    // Assert
-    // 軸ぷよ（青）は縦ぷよの上に着地
-    盤面.セル取得 新しいモデル.盤面 3 10 |> should equal (埋まっている 青)
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 配置後の盤面
+            現在のぷよ = Some ペア
+            次のぷよ = Some 次のぷよ
+            状態 = プレイ中 }
 
-    // 子ぷよ（黄）は重力で(2,12)に落ちる
-    盤面.セル取得 新しいモデル.盤面 2 12 |> should equal (埋まっている 黄)
+    // Act - 下移動で着地させる
+    let (モデル2, _) = 更新.更新 下移動 モデル
 
-    // (2,10)は空になっている
-    盤面.セル取得 新しいモデル.盤面 2 10 |> should equal 空
+    // Assert - 赤が消去され、青が下端に落下している
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 12 |> should equal (埋まっている 青)
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 11 |> should equal 空
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 10 |> should equal 空
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 9 |> should equal 空
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 7 |> should equal 空
+
+[<Fact>]
+let ``消去がない場合も重力が適用される`` () =
+    // Arrange
+    let 初期盤面 = 盤面.作成 6 13
+
+    // 列2の行12に赤を配置
+    let 配置後の盤面 = 初期盤面 |> (fun 盤 -> PuyoPuyo.Domain.盤面.セル設定 盤 2 12 (埋まっている 赤))
+
+    // 縦向きのぷよペア（回転状態0: ぷよ2が上）を落とす
+    // ペアが着地したとき、下のぷよ(2,11)は固定されるが、上のぷよ(2,10)は浮いている
+    // 重力適用後、上のぷよも(2,11)に詰められるはず
+    let ペア = ぷよペア.作成 2 11 青 緑 0 // ぷよ1:(2,11), ぷよ2:(2,10)
+    let 次のぷよ = ぷよペア.作成 2 1 青 黄 0
+
+    let モデル =
+        { モデル.初期化 () with
+            盤面 = 配置後の盤面
+            現在のぷよ = Some ペア
+            次のぷよ = Some 次のぷよ
+            状態 = プレイ中 }
+
+    // Act - 下移動で着地させる
+    let (モデル2, _) = 更新.更新 下移動 モデル
+
+    // Assert - 重力が適用され、両方のぷよが詰まっている
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 12 |> should equal (埋まっている 赤)
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 11 |> should equal (埋まっている 青)
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 10 |> should equal (埋まっている 緑)
+    PuyoPuyo.Domain.盤面.セル取得 モデル2.盤面 2 9 |> should equal 空
 ```
 
 「浮遊ぷよのテストを追加したんですね！」そうです！横向きのぷよペアの片方が縦向きのぷよに重なり、もう片方が空中に浮く状況を再現しています。着地後は常に重力が適用されるため、浮いているぷよは正しく落下します。
@@ -3947,56 +3993,56 @@ git commit -m "feat: implement ぷよ clearing and gravity
 このイテレーションで実装した内容：
 
 1. **ドメイン層**
-   - `findConnectedGroups`：BFSでつながったぷよを検出
-     - `getNeighbors`：隣接セルの取得
-     - `findConnectedPuyos`：再帰的BFS探索
-   - `clearPuyos`：指定位置のぷよを消去
-   - `重力を適用`：浮いているぷよを落とす
+    - `findConnectedGroups`：BFSでつながったぷよを検出
+        - `getNeighbors`：隣接セルの取得
+        - `findConnectedPuyos`：再帰的BFS探索
+    - `clearPuyos`：指定位置のぷよを消去
+    - `重力を適用`：浮いているぷよを落とす
 
 2. **アルゴリズム**
-   - BFS（幅優先探索）：つながったぷよの検出
-   - 訪問済み管理：`Set<int * int>`で重複探索を防止
-   - 列ごとの再配置：重力処理
+    - BFS（幅優先探索）：つながったぷよの検出
+    - 訪問済み管理：`Set<int * int>`で重複探索を防止
+    - 列ごとの再配置：重力処理
 
 3. **Elmish層**
-   - `dropPuyo`の拡張：着地→消去→**常に重力を適用**
-   - 消去の有無にかかわらず重力を適用することで浮遊ぷよを防止
+    - `dropPuyo`の拡張：着地→消去→**常に重力を適用**
+    - 消去の有無にかかわらず重力を適用することで浮遊ぷよを防止
 
 4. **テスト**
-   - つながったぷよの検出テスト（4テスト）
-     - 横に4つ
-     - 縦に4つ
-     - L字型に5つ
-     - 3つ以下は検出されない
-   - 消去処理のテスト（1テスト）
-   - 重力処理のテスト（2テスト）
-   - 統合テスト（2テスト）
-     - 着地時の消去処理
-     - **浮遊ぷよの重力適用**（重要なエッジケース）
+    - つながったぷよの検出テスト（4テスト）
+        - 横に4つ
+        - 縦に4つ
+        - L字型に5つ
+        - 3つ以下は検出されない
+    - 消去処理のテスト（1テスト）
+    - 重力処理のテスト（2テスト）
+    - 統合テスト（2テスト）
+        - 着地時の消去処理
+        - **浮遊ぷよの重力適用**（重要なエッジケース）
 
 5. **学んだ重要な概念**
-   - BFS（幅優先探索）アルゴリズム
-   - 再帰関数とパターンマッチング
-   - `Set`型による訪問済み管理
-   - `List.fold`による連鎖的な更新
-   - ミュータブルな配列の局所的な使用（重力処理）
-   - 列ごとのフィルタと再配置
-   - **パイプライン対応の関数設計**（引数順序の工夫）
+    - BFS（幅優先探索）アルゴリズム
+    - 再帰関数とパターンマッチング
+    - `Set`型による訪問済み管理
+    - `List.fold`による連鎖的な更新
+    - ミュータブルな配列の局所的な使用（重力処理）
+    - 列ごとのフィルタと再配置
+    - **パイプライン対応の関数設計**（引数順序の工夫）
 
 6. **F#らしい実装**
-   - 再帰関数によるBFS
-   - パターンマッチングによる分岐
-   - パイプライン演算子 `|>` を活用した可読性の高いコード
-   - データを最後の引数に配置する関数設計
-   - イミュータブルな設計（Set、List）
-   - パイプライン演算子による連鎖
-   - `List.fold`による集約
+    - 再帰関数によるBFS
+    - パターンマッチングによる分岐
+    - パイプライン演算子 `|>` を活用した可読性の高いコード
+    - データを最後の引数に配置する関数設計
+    - イミュータブルな設計（Set、List）
+    - パイプライン演算子による連鎖
+    - `List.fold`による集約
 
 7. **TypeScript版との違い**
-   - BFSの実装が再帰的で宣言的
-   - Setによる訪問済み管理（mutationなし）
-   - パイプライン演算子による可読性
-   - パターンマッチングによる安全な分岐
+    - BFSの実装が再帰的で宣言的
+    - Setによる訪問済み管理（mutationなし）
+    - パイプライン演算子による可読性
+    - パターンマッチングによる安全な分岐
 
 次のイテレーションでは、連鎖反応を実装していきます。
 
@@ -4033,46 +4079,48 @@ git commit -m "feat: implement ぷよ clearing and gravity
 
 [<Fact>]
 let ``ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する`` () =
-    // ゲームの盤面にぷよを配置
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 0 0 0 0
-    // 0 0 2 0 0 0
-    // 0 0 2 0 0 0
-    // 0 0 2 0 0 0
-    // 0 1 1 2 0 0
-    // 0 1 1 0 0 0
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 1 10 (埋まっている 赤)
-        |> 盤面.セル設定 2 10 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 赤)
-        |> 盤面.セル設定 2 11 (埋まっている 赤)
-        |> 盤面.セル設定 3 10 (埋まっている 青)
-        |> 盤面.セル設定 2 7 (埋まっている 青)
-        |> 盤面.セル設定 2 8 (埋まっている 青)
-        |> 盤面.セル設定 2 9 (埋まっている 青)
+    // Arrange - 連鎖が発生する盤面を作成
+    // 盤面配置:
+    // 0 0 0 0 0 0 (行0-6)
+    // ...
+    // 0 0 2 0 0 0 (行7)  青
+    // 0 0 2 0 0 0 (行8)  青
+    // 0 0 2 0 0 0 (行9)  青
+    // 0 1 1 2 0 0 (行10) 赤赤青
+    // 0 1 1 0 0 0 (行11) 赤赤
+    let _盤面 = 盤面.作成 6 12
 
-    // 最初の消去判定
-    let groups1 = 盤面.findConnectedGroups 盤面
-    groups1 |> should not' (be 空)
+    let _盤面 =
+        _盤面
+        // 赤ぷよの2×2正方形（消去対象）
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+        // 青ぷよ（赤消去後に落ちて4つつながる）
+        |> (fun 盤 -> 盤面.セル設定 盤 3 10 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 7 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 8 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 9 (埋まっている 青))
 
-    // 消去実行
+    // Act - 最初の消去判定
+    let groups1 = 盤面.つながったグループ検出 _盤面
+
+    // Assert - 赤ぷよが検出される
+    groups1 |> List.isEmpty |> should equal false
+
+    // Act - 消去実行
     let positions1 = groups1 |> List.concat
-    let boardAfterClear1 = 盤面.clearPuyos 盤面 positions1
+    let boardAfterClear1 = 盤面.ぷよ消去 _盤面 positions1
 
-    // 落下処理
-    let boardAfterGravity = 盤面.重力を適用 boardAfterClear1
+    // Act - 落下処理
+    let boardAfterGravity = 盤面.重力適用 boardAfterClear1
 
-    // 連鎖判定（2回目の消去判定）
-    let groups2 = 盤面.findConnectedGroups boardAfterGravity
+    // Act - 連鎖判定（2回目の消去判定）
+    let groups2 = 盤面.つながったグループ検出 boardAfterGravity
 
-    // 連鎖が発生していることを確認（青ぷよが4つつながっている）
-    groups2 |> should not' (be 空)
+    // Assert - 連鎖が発生していることを確認（青ぷよが4つつながっている）
+    groups2 |> List.isEmpty |> should equal false
 ```
 
 「このテストでは何を確認しているんですか？」このテストでは、以下のシナリオを確認しています：
@@ -4092,37 +4140,27 @@ let ``ぷよの消去と落下後、新たな消去パターンがあれば連�
 
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs の update 関数（抜粋）
-let 更新 メッセージ モデル =
-    match メッセージ with
-    // ...
-
-    | タイマー刻み when モデル.ステータス = プレイ中 ->
-        match モデル.現在のピース with
-        | Some ピース ->
-            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-            | Some 移動後のピース ->
-                { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
+    let private ぷよを落下 (モデル: モデル) : モデル * Cmd<メッセージ> =
+        match モデル.現在のぷよ with
+        | Some ペア ->
+            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+            | Some 移動後のペア -> { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
             | None ->
-                // 着地処理
-                let boardWithPuyo = 盤面.fixPuyoPair モデル.盤面 ピース
+                // 移動できない（着地）
+                let 固定後の盤面 = 盤面操作.ぷよペア固定 モデル.盤面 ペア
 
-                // 消去判定と処理
-                let グループ = 盤面.findConnectedGroups boardWithPuyo
-                let boardAfterClear =
-                    if List.空か groups then
-                        boardWithPuyo
-                    else
-                        let 位置リスト = groups |> List.concat
-                        let clearedBoard = 盤面.clearPuyos boardWithPuyo positions
-                        盤面.重力を適用 clearedBoard  // ← ここで重力適用
+                // 連鎖処理（消去と重力を繰り返し適用）
+                let 最終盤面 = 盤面.消去と重力を繰り返し適用 固定後の盤面
 
-                let nextPiece = ぷよペア.作成Random 2 1 0
-                {
-                    モデル with 盤面 = boardAfterClear
-                        現在のピース = Some nextPiece
-                }, Cmd.none
-        | None ->
-            モデル, Cmd.none
+                let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                { モデル with
+                    盤面 = 最終盤面
+                    現在のぷよ = モデル.次のぷよ
+                    次のぷよ = Some 次のペア },
+                Cmd.none
+        | None -> モデル, Cmd.none
+
 ```
 
 「この実装の何が連鎖反応を実現しているんですか？」現在の実装では、1回の着地で1回だけ消去と重力を適用していますが、連鎖を実現するには、消去後に再度消去判定を繰り返す必要があります。
@@ -4159,19 +4197,21 @@ module 盤面 =
     // ... 既存のコード ...
 
     /// 消去と重力を繰り返し適用（連鎖処理）
-    let rec 消去と重力を繰り返し適用(盤面: 盤面) : 盤面 =
-        let グループ = findConnectedGroups 盤面
-        if List.空か groups then
+    let rec 消去と重力を繰り返し適用 (盤面: 盤面) : 盤面 =
+        // まず重力を適用（浮いているぷよを落とす）
+        let 重力適用後の盤面 = 重力適用 盤面
+        let グループ = つながったグループ検出 重力適用後の盤面
+
+        if List.isEmpty グループ then
             // 消去対象がない場合は終了
-            盤面
+            重力適用後の盤面
         else
-            // 消去して重力を適用
-            let 位置リスト = groups |> List.concat
-            let clearedBoard = clearPuyos 盤面 positions
-            let boardAfterGravity = 重力を適用 clearedBoard
+            // 消去して再帰的に処理
+            let 位置リスト = グループ |> List.concat
+            let 消去後の盤面 = ぷよ消去 重力適用後の盤面 位置リスト
 
             // 再帰的に消去判定を繰り返す
-            clearAndApplyGravityRepeatedly boardAfterGravity
+            消去と重力を繰り返し適用 消去後の盤面
 ```
 
 「この関数は何をしているんですか？」この関数は、再帰的に消去と重力を適用し続けます：
@@ -4186,26 +4226,26 @@ module 盤面 =
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs の dropPuyo 関数を修正
 
-let private ぷよを落下(モデル: モデル) : モデル * Cmd<Message> =
-    match モデル.現在のピース with
-    | Some ピース ->
-        match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-        | Some 移動後のピース ->
-            { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
-        | None ->
-            // 着地処理
-            let boardWithPuyo = 盤面.fixPuyoPair モデル.盤面 ピース
+    let private ぷよを落下 (モデル: モデル) : モデル * Cmd<メッセージ> =
+        match モデル.現在のぷよ with
+        | Some ペア ->
+            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+            | Some 移動後のペア -> { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
+            | None ->
+                // 移動できない（着地）
+                let 固定後の盤面 = 盤面操作.ぷよペア固定 モデル.盤面 ペア
 
-            // 連鎖処理（消去と重力を繰り返し適用）
-            let boardAfterChain = 盤面.消去と重力を繰り返し適用 boardWithPuyo
+                // 連鎖処理（消去と重力を繰り返し適用）
+                let 最終盤面 = 盤面.消去と重力を繰り返し適用 固定後の盤面
 
-            let nextPiece = ぷよペア.作成Random 2 1 0
-            {
-                モデル with 盤面 = boardAfterChain
-                    現在のピース = Some nextPiece
-            }, Cmd.none
-    | None ->
-        モデル, Cmd.none
+                let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                { モデル with
+                    盤面 = 最終盤面
+                    現在のぷよ = モデル.次のぷよ
+                    次のぷよ = Some 次のペア },
+                Cmd.none
+        | None -> モデル, Cmd.none
 ```
 
 「これで連鎖が動くようになりましたか？」はい！`clearAndApplyGravityRepeatedly` 関数が、消去対象がなくなるまで自動的に繰り返し処理を行うため、連鎖が実現されます。
@@ -4226,37 +4266,46 @@ F# で連鎖処理を実装する際のポイントを見ていきましょう�
 
 1. **再帰関数の活用**
    ```fsharp
-   let rec 消去と重力を繰り返し適用(盤面: 盤面) : 盤面 =
-       let グループ = findConnectedGroups 盤面
-       if List.空か groups then
-           盤面
-       else
-           // 処理して再帰呼び出し
-           clearAndApplyGravityRepeatedly boardAfterGravity
+    let rec 消去と重力を繰り返し適用 (盤面: 盤面) : 盤面 =
+        // まず重力を適用（浮いているぷよを落とす）
+        let 重力適用後の盤面 = 重力適用 盤面
+        let グループ = つながったグループ検出 重力適用後の盤面
+
+        if List.isEmpty グループ then
+            // 消去対象がない場合は終了
+            重力適用後の盤面
+        else
+            // 消去して再帰的に処理
+            let 位置リスト = グループ |> List.concat
+            let 消去後の盤面 = ぷよ消去 重力適用後の盤面 位置リスト
+
+            // 再帰的に消去判定を繰り返す
+            消去と重力を繰り返し適用 消去後の盤面
    ```
-   - `rec` キーワードで再帰関数を定義
-   - 終了条件（消去グループなし）で再帰を止める
-   - 末尾再帰最適化により、スタックオーバーフローを防ぐ
+    - `rec` キーワードで再帰関数を定義
+    - 終了条件（消去グループなし）で再帰を止める
+    - 末尾再帰最適化により、スタックオーバーフローを防ぐ
 
 2. **不変性の維持**
    ```fsharp
-   let clearedBoard = clearPuyos 盤面 positions
-   let boardAfterGravity = 重力を適用 clearedBoard
-   clearAndApplyGravityRepeatedly boardAfterGravity
+            // 消去して再帰的に処理
+            let 位置リスト = グループ |> List.concat
+            let 消去後の盤面 = ぷよ消去 重力適用後の盤面 位置リスト
    ```
-   - 各ステップで新しい Board を返す
-   - 元の 盤面 は変更されない
-   - パイプライン処理で順次適用
+    - 各ステップで新しい Board を返す
+    - 元の 盤面 は変更されない
+    - パイプライン処理で順次適用
 
 3. **パターンマッチングによる分岐**
    ```fsharp
-   if List.空か groups then
-       盤面
-   else
+    if List.isEmpty グループ then
+       // 消去対象がない場合は終了
+       (現在の盤面, 連鎖数)
+    else
        // 消去処理
    ```
-   - リストが空かどうかで処理を分岐
-   - F# の表現力豊かな条件分岐
+    - リストが空かどうかで処理を分岐
+    - F# の表現力豊かな条件分岐
 
 ### TypeScript版との違い
 
@@ -4283,15 +4332,21 @@ case 'erasing':
 
 ```fsharp
 // F#版の再帰的処理
-let rec 消去と重力を繰り返し適用(盤面: 盤面) : 盤面 =
-    let グループ = findConnectedGroups 盤面
-    if List.空か groups then
-        盤面
-    else
-        let 位置リスト = groups |> List.concat
-        let clearedBoard = clearPuyos 盤面 positions
-        let boardAfterGravity = 重力を適用 clearedBoard
-        clearAndApplyGravityRepeatedly boardAfterGravity
+    let rec 消去と重力を繰り返し適用 (盤面: 盤面) : 盤面 =
+        // まず重力を適用（浮いているぷよを落とす）
+        let 重力適用後の盤面 = 重力適用 盤面
+        let グループ = つながったグループ検出 重力適用後の盤面
+
+        if List.isEmpty グループ then
+            // 消去対象がない場合は終了
+            重力適用後の盤面
+        else
+            // 消去して再帰的に処理
+            let 位置リスト = グループ |> List.concat
+            let 消去後の盤面 = ぷよ消去 重力適用後の盤面 位置リスト
+
+            // 再帰的に消去判定を繰り返す
+            消去と重力を繰り返し適用 消去後の盤面
 ```
 
 **主な違い**：
@@ -4313,66 +4368,76 @@ let rec 消去と重力を繰り返し適用(盤面: 盤面) : 盤面 =
 // tests/PuyoPuyo.Tests/盤面テスト.fs（続き）
 
 [<Fact>]
-let ``連鎖処理で消去対象がない場合は盤面がそのまま返される`` () =
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 0 11 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 青)
+let ``消去と重力を繰り返し適用で連鎖が自動的に処理される`` () =
+    // Arrange - 連鎖が発生する盤面を作成
+    let _盤面 = 盤面.作成 6 12
 
-    let result = 盤面.消去と重力を繰り返し適用 盤面
+    let _盤面 =
+        _盤面
+        // 赤ぷよの2×2正方形（最初の消去対象）
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+        // 青ぷよ（赤消去後に落ちて4つつながる）
+        |> (fun 盤 -> 盤面.セル設定 盤 3 10 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 7 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 8 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 9 (埋まっている 青))
 
-    // 消去対象がないため、盤面は変わらない
-    盤面.セル取得 result 0 11 |> should equal (埋まっている 赤)
-    盤面.セル取得 result 1 11 |> should equal (埋まっている 青)
+    // Act - 連鎖処理を一度に実行
+    let 連鎖処理後の盤面 = 盤面.消去と重力を繰り返し適用 _盤面
 
-[<Fact>]
-let ``連鎖処理で2連鎖が正しく動作する`` () =
-    // 1連鎖目で赤が消え、2連鎖目で青が消えるパターン
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 1 10 (埋まっている 赤)
-        |> 盤面.セル設定 2 10 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 赤)
-        |> 盤面.セル設定 2 11 (埋まっている 赤)
-        |> 盤面.セル設定 3 10 (埋まっている 青)
-        |> 盤面.セル設定 2 7 (埋まっている 青)
-        |> 盤面.セル設定 2 8 (埋まっている 青)
-        |> 盤面.セル設定 2 9 (埋まっている 青)
-
-    let result = 盤面.消去と重力を繰り返し適用 盤面
-
-    // すべてのぷよが消えている（2連鎖が発生）
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            盤面.セル取得 result x y座標 |> should equal 空
+    // Assert - 赤と青がすべて消去されていることを確認
+    盤面.セル取得 連鎖処理後の盤面 1 10 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 2 10 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 1 11 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 2 11 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 3 10 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 2 7 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 2 8 |> should equal 空
+    盤面.セル取得 連鎖処理後の盤面 2 9 |> should equal 空
 
 [<Fact>]
-let ``連鎖処理で3連鎖が正しく動作する`` () =
-    // 3連鎖が発生するパターン
-    let 盤面 =
-        盤面.作成 6 12
-        // 1連鎖目: 赤ぷよ（下部）
-        |> 盤面.セル設定 0 10 (埋まっている 赤)
-        |> 盤面.セル設定 1 10 (埋まっている 赤)
-        |> 盤面.セル設定 0 11 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 赤)
-        // 2連鎖目: 青ぷよ（中部）
-        |> 盤面.セル設定 0 6 (埋まっている 青)
-        |> 盤面.セル設定 0 7 (埋まっている 青)
-        |> 盤面.セル設定 0 8 (埋まっている 青)
-        |> 盤面.セル設定 1 8 (埋まっている 青)
-        // 3連鎖目: 緑ぷよ（上部）
-        |> 盤面.セル設定 0 2 (埋まっている 緑)
-        |> 盤面.セル設定 0 3 (埋まっている 緑)
-        |> 盤面.セル設定 0 4 (埋まっている 緑)
-        |> 盤面.セル設定 1 4 (埋まっている 緑)
+let ``連鎖数を正しくカウントできる`` () =
+    // Arrange - 2連鎖が発生する盤面を作成
+    let _盤面 = 盤面.作成 6 12
 
-    let result = 盤面.消去と重力を繰り返し適用 盤面
+    let _盤面 =
+        _盤面
+        // 赤ぷよの2×2正方形（1連鎖目）
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+        // 青ぷよ（2連鎖目）
+        |> (fun 盤 -> 盤面.セル設定 盤 3 10 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 7 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 8 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 9 (埋まっている 青))
 
-    // すべてのぷよが消えている（3連鎖が発生）
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            盤面.セル取得 result x y座標 |> should equal 空
+    // Act
+    let (_, 連鎖数) = 盤面.連鎖数を数えながら処理 _盤面
+
+    // Assert - 2連鎖が発生する
+    連鎖数 |> should equal 2
+
+[<Fact>]
+let ``連鎖が発生しない場合は連鎖数が0`` () =
+    // Arrange - 消去対象がない盤面
+    let _盤面 = 盤面.作成 6 12
+
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 0 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 緑))
+
+    // Act
+    let (_, 連鎖数) = 盤面.連鎖数を数えながら処理 _盤面
+
+    // Assert
+    連鎖数 |> should equal 0
 ```
 
 「これらのテストは何を確認しているんですか？」これらのテストでは、以下を確認しています：
@@ -4410,25 +4475,25 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **再帰関数による連鎖処理**：
-   - `rec` キーワードで再帰関数を定義
-   - 終了条件を明確にする
-   - 末尾再帰最適化によるパフォーマンス
+    - `rec` キーワードで再帰関数を定義
+    - 終了条件を明確にする
+    - 末尾再帰最適化によるパフォーマンス
 
 2. **宣言的なコード**：
-   - TypeScript 版の状態遷移と比較してシンプル
-   - 関数型プログラミングの利点を活用
-   - 不変性により安全な処理
+    - TypeScript 版の状態遷移と比較してシンプル
+    - 関数型プログラミングの利点を活用
+    - 不変性により安全な処理
 
 3. **テスト駆動開発の継続**：
-   - 連鎖が発生するケースをテスト
-   - 消去なしのケースもテスト
-   - 複数連鎖のケースで動作確認
-   - テストで仕様を明確化
+    - 連鎖が発生するケースをテスト
+    - 消去なしのケースもテスト
+    - 複数連鎖のケースで動作確認
+    - テストで仕様を明確化
 
 4. **F# の表現力**：
-   - 再帰による自然な連鎖表現
-   - パターンマッチングによる分岐
-   - パイプライン演算子での処理の流れ
+    - 再帰による自然な連鎖表現
+    - パターンマッチングによる分岐
+    - パイプライン演算子での処理の流れ
 
 このイテレーションで、ぷよぷよの醍醐味である連鎖反応が実装できました。次のイテレーションでは、全消しボーナスを実装して、プレイヤーに特別な達成感を提供します！
 
@@ -4465,44 +4530,51 @@ EOF
 
 [<Fact>]
 let ``盤面上のぷよがすべて消えると全消しになる`` () =
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 1 10 (埋まっている 赤)
-        |> 盤面.セル設定 2 10 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 赤)
-        |> 盤面.セル設定 2 11 (埋まっている 赤)
+    // Arrange - 4つの赤ぷよのみ配置（すべて消去可能）
+    let _盤面 = 盤面.作成 6 12
 
-    // 消去判定と実行
-    let グループ = 盤面.findConnectedGroups 盤面
-    let 位置リスト = groups |> List.concat
-    let clearedBoard = 盤面.clearPuyos 盤面 positions
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+
+    // Act - 消去処理
+    let グループ = 盤面.つながったグループ検出 _盤面
+    let 位置リスト = グループ |> List.concat
+    let 消去後の盤面 = 盤面.ぷよ消去 _盤面 位置リスト
 
     // 全消し判定
-    let 全消しか = 盤面.checkZenkeshi clearedBoard
+    let 全消しか = 盤面.全消し判定 消去後の盤面
 
-    // 全消しになっていることを確認
-    isZenkeshi |> should equal true
+    // Assert - 全消しになっていることを確認
+    全消しか |> should equal true
 
 [<Fact>]
 let ``盤面上にぷよが残っていると全消しにならない`` () =
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 1 10 (埋まっている 赤)
-        |> 盤面.セル設定 2 10 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 赤)
-        |> 盤面.セル設定 2 11 (埋まっている 赤)
-        |> 盤面.セル設定 3 11 (埋まっている 青)  // 消えないぷよ
+    // Arrange - 赤ぷよ4つと青ぷよ1つ（青は残る）
+    let _盤面 = 盤面.作成 6 12
 
-    // 消去判定と実行
-    let グループ = 盤面.findConnectedGroups 盤面
-    let 位置リスト = groups |> List.concat
-    let clearedBoard = 盤面.clearPuyos 盤面 positions
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 3 11 (埋まっている 青)) // 消えないぷよ
+
+    // Act - 消去処理（赤のみ消える）
+    let グループ = 盤面.つながったグループ検出 _盤面
+    let 位置リスト = グループ |> List.concat
+    let 消去後の盤面 = 盤面.ぷよ消去 _盤面 位置リスト
 
     // 全消し判定
-    let 全消しか = 盤面.checkZenkeshi clearedBoard
+    let 全消しか = 盤面.全消し判定 消去後の盤面
 
-    // 全消しになっていないことを確認
-    isZenkeshi |> should equal false
+    // Assert - 全消しになっていないことを確認
+    全消しか |> should equal false
+
 ```
 
 「このテストでは何を確認しているんですか？」このテストでは、以下の2つのケースを確認しています：
@@ -4528,9 +4600,7 @@ module 盤面 =
 
     /// 全消し判定（盤面上にぷよがあるかチェック）
     let 全消し判定 (盤面: 盤面) : bool =
-        盤面.セル配列
-        |> Array.forall (fun row ->
-            row |> Array.forall (fun セル -> セル = 空))
+        盤面.セル配列 |> Array.forall (fun row -> row |> Array.forall (fun セル -> セル = 空))
 ```
 
 「シンプルですね！」そうですね。全消し判定の実装自体はとてもシンプルです。盤面上のすべてのセルをチェックし、全てが `空` であれば `true` を返します。
@@ -4554,30 +4624,33 @@ module 盤面 =
 ```fsharp
 // tests/PuyoPuyo.Tests/スコアTests.fs（新規作成）
 
-module PuyoPuyo.Tests.スコアTests
-
-open Xunit
-open FsUnit.Xunit
-open PuyoPuyo.Client.Domain.スコア
-
 [<Fact>]
 let ``初期スコアは0である`` () =
-    let スコア = スコア.作成 ()
-    スコア.Value |> should equal 0
+    // Arrange & Act
+    let 現在のスコア = スコア.作成 ()
+
+    // Assert
+    現在のスコア.値 |> should equal 0
 
 [<Fact>]
 let ``スコアを加算できる`` () =
-    let スコア = スコア.作成 ()
-    let 更新されたスコア = スコア.addスコア スコア 100
-    updatedスコア.Value |> should equal 100
+    // Arrange
+    let 現在のスコア = スコア.作成 ()
+
+    // Act
+    let 更新スコア = スコア.スコア加算 現在のスコア 100
+
+    // Assert
+    更新スコア.値 |> should equal 100
 
 [<Fact>]
 let ``スコアを複数回加算できる`` () =
-    let スコア =
-        スコア.作成 ()
-        |> スコア.addスコア 100
-        |> スコア.addスコア 200
-    スコア.Value |> should equal 300
+    // Arrange & Act
+    let 現在のスコア = スコア.作成 () |> (fun s -> スコア.スコア加算 s 100) |> (fun s -> スコア.スコア加算 s 200)
+
+    // Assert
+    現在のスコア.値 |> should equal 300
+
 ```
 
 「スコア管理のテストでは何を確認しているんですか？」これらのテストでは、以下を確認しています：
@@ -4593,26 +4666,22 @@ let ``スコアを複数回加算できる`` () =
 ```fsharp
 // src/PuyoPuyo.Client/Domain/スコア.fs（新規作成）
 
-namespace PuyoPuyo.Client.Domain
+namespace PuyoPuyo.Domain
 
 /// スコアを表す型
-type スコア = {
-    値: int
-}
+type スコア = { 値: int }
 
 module スコア =
     /// スコアを作成
-    let 作成 () : スコア =
-        { Value = 0 }
+    let 作成 () : スコア = { 値 = 0 }
 
     /// スコアを加算
-    let スコア加算 (スコア: スコア) (points: int) : スコア =
-        { スコア with Value = スコア.Value + points }
+    let スコア加算 (スコア: スコア) (points: int) : スコア = { スコア with 値 = スコア.値 + points }
 
     /// 全消しボーナスを加算
     let 全消しボーナス加算 (スコア: スコア) : スコア =
         let 全消しボーナス = 3600
-        addスコア スコア 全消しボーナス
+        スコア加算 スコア 全消しボーナス
 ```
 
 「スコアはレコード型で表現するんですね！」そうです。F# のレコード型は不変で、コピー式 (`{ スコア with Value = ... }`) で簡単に新しいスコアを作成できます。
@@ -4628,17 +4697,23 @@ module スコア =
 
 [<Fact>]
 let ``全消しボーナスを加算できる`` () =
-    let スコア = スコア.作成 ()
-    let 更新されたスコア = スコア.addZenkeshiBonus スコア
-    updatedスコア.Value |> should equal 3600
+    // Arrange
+    let 現在のスコア = スコア.作成 ()
+
+    // Act
+    let 更新スコア = スコア.全消しボーナス加算 現在のスコア
+
+    // Assert
+    更新スコア.値 |> should equal 3600
 
 [<Fact>]
 let ``通常スコアと全消しボーナスを組み合わせて加算できる`` () =
-    let スコア =
-        スコア.作成 ()
-        |> スコア.addスコア 1000
-        |> スコア.addZenkeshiBonus
-    スコア.Value |> should equal 4600
+    // Arrange & Act
+    let 現在のスコア = スコア.作成 () |> (fun s -> スコア.スコア加算 s 1000) |> スコア.全消しボーナス加算
+
+    // Assert
+    現在のスコア.値 |> should equal 4600
+
 ```
 
 ### Model への統合
@@ -4679,27 +4754,44 @@ let 初期化 () =
 連鎖処理に全消し判定を組み込みます。連鎖処理が完了した後のボード状態を返すだけでなく、全消しだったかどうかも返すように修正します。
 
 ```fsharp
-// src/PuyoPuyo.Client/Domain/盤面.fs の clearAndApplyGravityRepeatedly を修正
+// src/PuyoPuyo.Client/Domain/盤面.fs の 消去と重力を繰り返し適用 を修正
 
-module 盤面 =
-    // ... 既存のコード ...
+    /// 消去と重力を繰り返し適用（連鎖処理）
+    let rec 消去と重力を繰り返し適用 (盤面: 盤面) : 盤面 =
+        // まず重力を適用（浮いているぷよを落とす）
+        let 重力適用後の盤面 = 重力適用 盤面
+        let グループ = つながったグループ検出 重力適用後の盤面
 
-    /// 消去と重力を繰り返し適用（連鎖処理）、全消しかどうかも返す
-    let rec private clearAndApplyGravityRepeatedlyImpl (盤面: 盤面) : 盤面 =
-        let グループ = findConnectedGroups 盤面
-        if List.空か groups then
-            盤面
+        if List.isEmpty グループ then
+            // 消去対象がない場合は終了
+            重力適用後の盤面
         else
-            let 位置リスト = groups |> List.concat
-            let clearedBoard = clearPuyos 盤面 positions
-            let boardAfterGravity = 重力を適用 clearedBoard
-            clearAndApplyGravityRepeatedlyImpl boardAfterGravity
+            // 消去して再帰的に処理
+            let 位置リスト = グループ |> List.concat
+            let 消去後の盤面 = ぷよ消去 重力適用後の盤面 位置リスト
 
-    /// 消去と重力を繰り返し適用し、最終状態と全消しフラグを返す
-    let 消去と重力を繰り返し適用 (盤面: 盤面) : 盤面 * bool =
-        let finalBoard = clearAndApplyGravityRepeatedlyImpl 盤面
-        let 全消しか = checkZenkeshi finalBoard
-        (finalBoard, isZenkeshi)
+            // 再帰的に消去判定を繰り返す
+            消去と重力を繰り返し適用 消去後の盤面
+
+    /// 連鎖数をカウントしながら消去と重力を繰り返し適用
+    let 連鎖数を数えながら処理 (盤面: 盤面) : 盤面 * int =
+        let rec 処理 (現在の盤面: 盤面) (連鎖数: int) : 盤面 * int =
+            // まず重力を適用（浮いているぷよを落とす）
+            let 重力適用後の盤面 = 重力適用 現在の盤面
+            let グループ = つながったグループ検出 重力適用後の盤面
+
+            if List.isEmpty グループ then
+                // 消去対象がない場合は終了
+                (重力適用後の盤面, 連鎖数)
+            else
+                // 消去して再帰的に処理（連鎖数をインクリメント）
+                let 位置リスト = グループ |> List.concat
+                let 消去後の盤面 = ぷよ消去 重力適用後の盤面 位置リスト
+
+                // 再帰的に消去判定を繰り返す
+                処理 消去後の盤面 (連鎖数 + 1)
+
+        処理 盤面 0
 ```
 
 「戻り値がタプルになったんですね！」そうです。F# では複数の値を返す場合、タプルを使うのが一般的です。
@@ -4711,34 +4803,38 @@ dropPuyo 関数を修正して、全消しボーナスを加算するように�
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs の dropPuyo 関数を修正
 
-let private ぷよを落下(モデル: モデル) : モデル * Cmd<Message> =
-    match モデル.現在のピース with
-    | Some ピース ->
-        match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-        | Some 移動後のピース ->
-            { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
-        | None ->
-            // 着地処理
-            let boardWithPuyo = 盤面.fixPuyoPair モデル.盤面 ピース
+    let private ぷよを落下 (モデル: モデル) : モデル * Cmd<メッセージ> =
+        match モデル.現在のぷよ with
+        | Some ペア ->
+            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+            | Some 移動後のペア -> { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
+            | None ->
+                // 移動できない（着地）
+                let 固定後の盤面 =
+                    盤面.ぷよ2つ固定 モデル.盤面 (ぷよペア.位置取得 ペア |> fst) ペア.ぷよ1の色 (ぷよペア.位置取得 ペア |> snd) ペア.ぷよ2の色
 
-            // 連鎖処理（消去と重力を繰り返し適用）
-            let (boardAfterChain, isZenkeshi) = 盤面.消去と重力を繰り返し適用 boardWithPuyo
+                // 連鎖処理（消去と重力を繰り返し適用、連鎖数をカウント）
+                let (最終盤面, 連鎖数) = 盤面.連鎖数を数えながら処理 固定後の盤面
 
-            // 全消しの場合はボーナス加算
-            let 新しいスコア =
-                if isZenkeshi then
-                    スコア.addZenkeshiBonus モデル.スコア
-                else
-                    モデル.スコア
+                // スコア計算
+                let 連鎖スコア = if 連鎖数 > 0 then ゲームロジック.連鎖スコア計算 連鎖数 else 0
 
-            let nextPiece = ぷよペア.作成Random 2 1 0
-            {
-                モデル with 盤面 = boardAfterChain
-                    現在のピース = Some nextPiece
-                    スコア = newスコア
-            }, Cmd.none
-    | None ->
-        モデル, Cmd.none
+                // スコア更新
+                let 更新されたスコア = スコア.スコア加算 モデル.スコア 連鎖スコア
+
+                // 全消し判定とボーナス加算
+                let 最終スコア = if 盤面.全消し判定 最終盤面 then スコア.全消しボーナス加算 更新されたスコア else 更新されたスコア
+
+                let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                { モデル with
+                    盤面 = 最終盤面
+                    現在のぷよ = モデル.次のぷよ
+                    次のぷよ = Some 次のペア
+                    スコア = 最終スコア
+                    最後の連鎖数 = 連鎖数 },
+                Cmd.none
+        | None -> モデル, Cmd.none
 ```
 
 「全消しのときだけボーナスが加算されるんですね！」そうです。if 式を使って、全消しの場合はボーナスを加算し、そうでない場合は現在のスコアをそのまま使います。
@@ -4750,75 +4846,65 @@ let private ぷよを落下(モデル: モデル) : モデル * Cmd<Message> =
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs の view 関数を修正
 
-let ビュー モデル ディスパッチ =
-    div [ attr.style "font-family: monospace; text-align: center; padding: 20px;" ] [
-        h1 [] [ text "ぷよぷよ" ]
+    let ビュー (モデル: モデル) (ディスパッチ: メッセージ -> unit) =
+        div {
+            attr.``class`` "game-container"
+            attr.tabindex 0
+            on.keydown (キー押下処理 ディスパッチ)
+            on.keyup (キー解放処理 ディスパッチ)
+            h1 { "ぷよぷよゲーム" }
 
-        // スコア表示
-        div [ attr.style "margin-bottom: 10px; font-size: 20px;" ] [
-            text $"スコア: {モデル.スコア.Value}"
-        ]
+            // スコアと連鎖数の表示
+            div {
+                attr.``class`` "game-info"
 
-        // ゲームボード
-        div [ attr.style "display: inline-block; border: 2px solid black; background-色: #f0f0f0;" ] [
-            for y in 0 .. モデル.盤面.行数 - 1 do
-                div [ attr.style "display: flex;" ] [
-                    for x in 0 .. モデル.盤面.列数 - 1 do
-                        let セル = 盤面.セル取得 モデル.盤面 x y
-                        let 色 =
-                            match セル with
-                            | 空 -> "white"
-                            | 埋まっている puyoColor ->
-                                match puyoColor with
-                                | 赤 -> "red"
-                                | 緑 -> "green"
-                                | 青 -> "blue"
-                                | 黄 -> "yellow"
+                div {
+                    attr.``class`` "score-display"
+                    p { $"スコア: {モデル.スコア.値}" }
+                }
 
-                        // 現在のぷよペアを描画
-                        let isPuyoPair =
-                            match モデル.現在のピース with
-                            | Some ピース ->
-                                let (位置1, 位置2) = ぷよペア.位置取得 ピース
-                                (x座標, y座標) = 位置1 || (x座標, y座標) = 位置2
-                            | None -> false
+                div {
+                    attr.``class`` "chain-display"
+                    p { $"連鎖数: {モデル.最後の連鎖数}" }
+                }
+            }
 
-                        let finalColor =
-                            if isPuyoPair then
-                                match モデル.現在のピース with
-                                | Some ピース ->
-                                    let (位置1, 位置2) = ぷよペア.位置取得 ピース
-                                    if (x座標, y座標) = 位置1 then
-                                        match ピース.ぷよ1の色 with
-                                        | 赤 -> "red"
-                                        | 緑 -> "green"
-                                        | 青 -> "blue"
-                                        | 黄 -> "yellow"
-                                    elif (x座標, y座標) = 位置2 then
-                                        match ピース.ぷよ2の色 with
-                                        | 赤 -> "red"
-                                        | 緑 -> "green"
-                                        | 青 -> "blue"
-                                        | 黄 -> "yellow"
-                                    else
-                                        色
-                                | None -> 色
-                            else
-                                色
+            ボードを描画 モデル.盤面 モデル.現在のぷよ
 
-                        div [
-                            attr.style $"width: 30px; height: 30px; border: 1px solid #ccc; background-色: {finalColor};"
-                        ] []
-                ]
-        ]
+            div {
+                attr.``class`` "game-controls"
 
-        // 操作説明
-        div [ attr.style "margin-top: 20px;" ] [
-            p [] [ text "← → : 移動" ]
-            p [] [ text "↑ : 回転" ]
-            p [] [ text "↓ : 高速落下" ]
-        ]
-    ]
+                match モデル.状態 with
+                | 未開始 ->
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲーム開始)
+                        "ゲーム開始"
+                    }
+
+                | プレイ中 ->
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲームリセット)
+                        "リセット"
+                    }
+
+                    div {
+                        attr.``class`` "instructions"
+                        p { "← → : 移動" }
+                        p { "↑ / Z : 回転" }
+                        p { "↓ : 高速落下" }
+                    }
+
+                | ゲームオーバー ->
+                    div {
+                        h2 { "ゲームオーバー" }
+
+                        button {
+                            on.click (fun _ -> ディスパッチ ゲームリセット)
+                            "もう一度プレイ"
+                        }
+                    }
+            }
+        }
 ```
 
 「スコアが画面の上部に表示されるんですね！」そうです。プレイヤーは現在のスコアをいつでも確認できるようになります。
@@ -4841,39 +4927,91 @@ dotnet cake --target=Test
 // tests/PuyoPuyo.Tests/盤面テスト.fs（続き）
 
 [<Fact>]
-let ``全消しの場合はフラグがtrueになる`` () =
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 1 10 (埋まっている 赤)
-        |> 盤面.セル設定 2 10 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 赤)
-        |> 盤面.セル設定 2 11 (埋まっている 赤)
+let ``統合テスト_全消しの場合は全消し判定がtrueになる`` () =
+    // Arrange - 4つの赤ぷよのみ配置（連鎖処理後すべて消去可能）
+    let _盤面 = 盤面.作成 6 12
 
-    let (finalBoard, isZenkeshi) = 盤面.消去と重力を繰り返し適用 盤面
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
 
-    // 全消しフラグがtrueであることを確認
-    isZenkeshi |> should equal true
+    // Act - 連鎖処理を実行
+    let (最終盤面, 連鎖数) = 盤面.連鎖数を数えながら処理 _盤面
+
+    // Assert - 1連鎖が発生
+    連鎖数 |> should equal 1
+
+    // 全消し判定がtrueであることを確認
+    let 全消しか = 盤面.全消し判定 最終盤面
+    全消しか |> should equal true
 
     // すべてのセルが空であることを確認
-    for y in 0 .. 11 do
-        for x in 0 .. 5 do
-            盤面.セル取得 finalBoard x y座標 |> should equal 空
+    for 行 in 0..11 do
+        for 列 in 0..5 do
+            盤面.セル取得 最終盤面 列 行 |> should equal 空
 
 [<Fact>]
-let ``全消しでない場合はフラグがfalseになる`` () =
-    let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 0 11 (埋まっている 赤)
-        |> 盤面.セル設定 1 11 (埋まっている 青)
+let ``統合テスト_全消しでない場合は全消し判定がfalseになる`` () =
+    // Arrange - 赤ぷよ4つ（消去可能）と青ぷよ1つ（残る）
+    let _盤面 = 盤面.作成 6 12
 
-    let (finalBoard, isZenkeshi) = 盤面.消去と重力を繰り返し適用 盤面
+    let _盤面 =
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 0 11 (埋まっている 青)) // 消えないぷよ
 
-    // 全消しフラグがfalseであることを確認
-    isZenkeshi |> should equal false
+    // Act - 連鎖処理を実行
+    let (最終盤面, 連鎖数) = 盤面.連鎖数を数えながら処理 _盤面
 
-    // ぷよが残っていることを確認
-    盤面.セル取得 finalBoard 0 11 |> should equal (埋まっている 赤)
-    盤面.セル取得 finalBoard 1 11 |> should equal (埋まっている 青)
+    // Assert - 1連鎖が発生（赤のみ消える）
+    連鎖数 |> should equal 1
+
+    // 全消し判定がfalseであることを確認
+    let 全消しか = 盤面.全消し判定 最終盤面
+    全消しか |> should equal false
+
+    // 青ぷよが残っていることを確認
+    盤面.セル取得 最終盤面 0 11 |> should equal (埋まっている 青)
+
+[<Fact>]
+let ``統合テスト_2連鎖後に全消しになるケース`` () =
+    // Arrange - 2連鎖が発生し、最終的に全消しになる盤面
+    let _盤面 = 盤面.作成 6 12
+
+    let _盤面 =
+        _盤面
+        // 赤ぷよの2×2正方形（1連鎖目）
+        |> (fun 盤 -> 盤面.セル設定 盤 1 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 10 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 1 11 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
+        // 青ぷよ（2連鎖目で消える）
+        |> (fun 盤 -> 盤面.セル設定 盤 3 10 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 7 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 8 (埋まっている 青))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 9 (埋まっている 青))
+
+    // Act - 連鎖処理を実行
+    let (最終盤面, 連鎖数) = 盤面.連鎖数を数えながら処理 _盤面
+
+    // Assert - 2連鎖が発生
+    連鎖数 |> should equal 2
+
+    // 全消し判定がtrueであることを確認
+    let 全消しか = 盤面.全消し判定 最終盤面
+    全消しか |> should equal true
+
+    // すべてのセルが空であることを確認
+    for 行 in 0..11 do
+        for 列 in 0..5 do
+            盤面.セル取得 最終盤面 列 行 |> should equal 空
+
 ```
 
 ### コミット
@@ -4908,39 +5046,39 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **全消し判定の実装**：
-   - `Array.forall` による全要素チェック
-   - 二重の `forall` で2次元配列を処理
-   - シンプルなロジックで確実な判定を実現
+    - `Array.forall` による全要素チェック
+    - 二重の `forall` で2次元配列を処理
+    - シンプルなロジックで確実な判定を実現
 
 2. **スコア管理の設計**：
-   - レコード型による不変なスコア表現
-   - モジュールによる操作の抽出
-   - コピー式による安全な更新
+    - レコード型による不変なスコア表現
+    - モジュールによる操作の抽出
+    - コピー式による安全な更新
 
 3. **タプルによる複数戻り値**：
-   - `Board * bool` で最終盤面と全消しフラグを返す
-   - パターンマッチングで分解して利用
-   - F# の簡潔な複数値の扱い
+    - `Board * bool` で最終盤面と全消しフラグを返す
+    - パターンマッチングで分解して利用
+    - F# の簡潔な複数値の扱い
 
 4. **条件分岐によるボーナス加算**：
-   - if 式による全消しチェック
-   - 全消しの場合のみボーナス加算
-   - 不変性を保ちながら状態更新
+    - if 式による全消しチェック
+    - 全消しの場合のみボーナス加算
+    - 不変性を保ちながら状態更新
 
 5. **View への統合**：
-   - スコア表示の追加
-   - リアルタイムなスコア更新
-   - プレイヤーへのフィードバック
+    - スコア表示の追加
+    - リアルタイムなスコア更新
+    - プレイヤーへのフィードバック
 
 6. **テスト駆動開発の継続**：
-   - 全消しになるケースとならないケースの両方をテスト
-   - スコア管理の基本機能をテスト
-   - 統合テストで全体の動作を保証
+    - 全消しになるケースとならないケースの両方をテスト
+    - スコア管理の基本機能をテスト
+    - 統合テストで全体の動作を保証
 
 7. **F# の表現力**：
-   - `Array.forall` による宣言的な全要素チェック
-   - タプルによる複数戻り値の簡潔な表現
-   - パターンマッチングによる値の取り出し
+    - `Array.forall` による宣言的な全要素チェック
+    - タプルによる複数戻り値の簡潔な表現
+    - パターンマッチングによる値の取り出し
 
 このイテレーションで、全消しボーナスという特別な報酬システムが実装できました。次のイテレーションでは、ゲームの終了条件となるゲームオーバー判定を実装していきます！
 
@@ -4976,44 +5114,38 @@ EOF
 ```fsharp
 // tests/PuyoPuyo.Tests/ゲームロジックテスト.fs（新規作成）
 
-module PuyoPuyo.Tests.ゲームロジックテスト
-
-open Xunit
-open FsUnit.Xunit
-open PuyoPuyo.Client.Domain.盤面
-open PuyoPuyo.Client.Domain.ぷよペア
-open PuyoPuyo.Client.Domain.GameLogic
-
 [<Fact>]
 let ``新しいぷよを配置できない場合、ゲームオーバーになる`` () =
-    // ボードの上部（新しいぷよが配置される位置）にぷよを配置
+    // Arrange - ボードの上部（新しいぷよが配置される位置）にぷよを配置
+    let _盤面 = 盤面.作成 6 13
+
     let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 2 0 (埋まっている 赤)
-        |> 盤面.セル設定 3 0 (埋まっている 赤)
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 0 (埋まっている 赤))
+        |> (fun 盤 -> 盤面.セル設定 盤 2 1 (埋まっている 赤))
 
-    // 新しいぷよペア（通常は x=2, y=0 と x=2, y=1 に配置される）
-    let newPiece = { X座標 = 2; Y座標 = 0; Puyo1Color = 青; Puyo2Color = 緑; Rotation = 0 }
+    // 新しいぷよペア（回転状態0: 軸ぷよ(2,1)、ぷよ2(2,0)）
+    let newPiece = ぷよペア.作成 2 1 青 緑 0
 
-    // ゲームオーバー判定
+    // Act - ゲームオーバー判定
     let ゲームオーバーか = ゲームロジック.ゲームオーバー判定 盤面 newPiece
 
-    // ゲームオーバーになっていることを確認
-    isGameOver |> should equal true
+    // Assert - ゲームオーバーになっていることを確認
+    ゲームオーバーか |> should equal true
 
 [<Fact>]
 let ``新しいぷよを配置できる場合、ゲームオーバーにならない`` () =
-    // 空のボード
-    let 盤面 = 盤面.作成 6 12
+    // Arrange - 空のボード
+    let 盤面 = 盤面.作成 6 13
 
-    // 新しいぷよペア
-    let newPiece = { X座標 = 2; Y座標 = 0; Puyo1Color = 青; Puyo2Color = 緑; Rotation = 0 }
+    // 新しいぷよペア（回転状態0: 軸ぷよ(2,1)、ぷよ2(2,0)）
+    let newPiece = ぷよペア.作成 2 1 青 緑 0
 
-    // ゲームオーバー判定
+    // Act - ゲームオーバー判定
     let ゲームオーバーか = ゲームロジック.ゲームオーバー判定 盤面 newPiece
 
-    // ゲームオーバーにならないことを確認
-    isGameOver |> should equal false
+    // Assert - ゲームオーバーにならないことを確認
+    ゲームオーバーか |> should equal false
 ```
 
 「このテストでは何を確認しているんですか？」このテストでは、以下の2つのケースを確認しています：
@@ -5032,13 +5164,10 @@ let ``新しいぷよを配置できる場合、ゲームオーバーになら�
 ```fsharp
 // src/PuyoPuyo.Client/Domain/ゲームロジック.fs（続き）
 
-module ゲームロジック =
-    // ... 既存のコード ...
-
     /// ゲームオーバー判定（新しいぷよを配置できるかチェック）
-    let ゲームオーバー判定 (盤面: 盤面) (newPiece: ぷよペア) : bool =
+    let ゲームオーバー判定 (盤面: 盤面) (ぷよペア: ぷよペア) : bool =
         // 新しいぷよが配置できない場合はゲームオーバー
-        not (canPlacePuyoPair 盤面 newPiece)
+        not (ぷよペア配置可能 盤面 ぷよペア)
 ```
 
 「シンプルですね！」そうですね。ゲームオーバー判定の実装自体はとてもシンプルです。既存の `canPlacePuyoPair` 関数を利用して、新しいぷよが配置できるかをチェックし、配置できない場合はゲームオーバーと判定します。
@@ -5085,62 +5214,57 @@ type メッセージ =
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs の update 関数を修正
 
-let 更新 メッセージ モデル =
-    match メッセージ with
-    | ゲーム開始 ->
-        { モデル with Status = プレイ中 }, Cmd.none
-
-    | 再開 ->
-        // ゲームを初期状態に戻す
-        init ()
-
-    | タイマー刻み when モデル.ステータス = プレイ中 ->
-        match モデル.現在のピース with
-        | Some ピース ->
-            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ピース Down with
-            | Some 移動後のピース ->
-                { モデル with 現在のピース = Some 移動後のピース }, Cmd.none
+module 更新 =
+    /// ぷよを下に移動させる（共通処理）
+    let private ぷよを落下 (モデル: モデル) : モデル * Cmd<メッセージ> =
+        match モデル.現在のぷよ with
+        | Some ペア ->
+            match ゲームロジック.ぷよペア移動を試行 モデル.盤面 ペア 下 with
+            | Some 移動後のペア -> { モデル with 現在のぷよ = Some 移動後のペア }, Cmd.none
             | None ->
-                // 着地処理
-                let boardWithPuyo = 盤面.fixPuyoPair モデル.盤面 ピース
+                // 移動できない（着地）
+                let 固定後の盤面 =
+                    盤面.ぷよ2つ固定 モデル.盤面 (ぷよペア.位置取得 ペア |> fst) ペア.ぷよ1の色 (ぷよペア.位置取得 ペア |> snd) ペア.ぷよ2の色
 
-                // 連鎖処理（消去と重力を繰り返し適用）
-                let (boardAfterChain, isZenkeshi) = 盤面.消去と重力を繰り返し適用 boardWithPuyo
+                // 連鎖処理（消去と重力を繰り返し適用、連鎖数をカウント）
+                let (最終盤面, 連鎖数) = 盤面.連鎖数を数えながら処理 固定後の盤面
 
-                // 全消しの場合はボーナス加算
-                let 新しいスコア =
-                    if isZenkeshi then
-                        スコア.addZenkeshiBonus モデル.スコア
-                    else
-                        モデル.スコア
+                // スコア計算
+                let 連鎖スコア = if 連鎖数 > 0 then ゲームロジック.連鎖スコア計算 連鎖数 else 0
 
-                // 新しいぷよを生成
-                let nextPiece = ぷよペア.作成Random 2 1 0
+                // スコア更新
+                let 更新されたスコア = スコア.スコア加算 モデル.スコア 連鎖スコア
 
-                // ゲームオーバー判定
-                let ゲームオーバーか = ゲームロジック.ゲームオーバー判定 boardAfterChain nextPiece
+                // 全消し判定とボーナス加算
+                let 最終スコア = if 盤面.全消し判定 最終盤面 then スコア.全消しボーナス加算 更新されたスコア else 更新されたスコア
 
-                if isGameOver then
+                let 次のペア = ぷよペア.ランダム作成 2 1 0
+
+                // ゲームオーバー判定（次のぷよを配置できるか）
+                let ゲームオーバーか =
+                    match モデル.次のぷよ with
+                    | Some ぷよ -> ゲームロジック.ゲームオーバー判定 最終盤面 ぷよ
+                    | None -> false
+
+                if ゲームオーバーか then
                     // ゲームオーバー
-                    {
-                        モデル with 盤面 = boardAfterChain
-                            現在のピース = None
-                            スコア = newスコア
-                            Status = ゲームオーバー
-                    }, Cmd.none
+                    { モデル with
+                        盤面 = 最終盤面
+                        現在のぷよ = None
+                        スコア = 最終スコア
+                        最後の連鎖数 = 連鎖数
+                        状態 = ゲームオーバー },
+                    Cmd.none
                 else
                     // ゲーム続行
-                    {
-                        モデル with 盤面 = boardAfterChain
-                            現在のピース = Some nextPiece
-                            スコア = newスコア
-                    }, Cmd.none
-        | None ->
-            モデル, Cmd.none
-
-    | タイマー刻み when モデル.ステータス = ゲームオーバー ->
-        // ゲームオーバー時は何もしない
-        モデル, Cmd.none
+                    { モデル with
+                        盤面 = 最終盤面
+                        現在のぷよ = モデル.次のぷよ
+                        次のぷよ = Some 次のペア
+                        スコア = 最終スコア
+                        最後の連鎖数 = 連鎖数 },
+                    Cmd.none
+        | None -> モデル, Cmd.none
 
     // ... 既存のコード（左移動, 右移動, 回転, 下移動, 高速落下開始, 高速落下停止）...
 ```
@@ -5155,18 +5279,30 @@ let 更新 メッセージ モデル =
 // src/PuyoPuyo.Client/Main.fs の Subscription.gameTimer を修正
 
 module サブスクリプション =
-    let ゲームタイマー (モデル: モデル) : Sub<Message> =
-        if モデル.ステータス = プレイ中 then
-            let interval = if モデル.高速落下中か then 100.0 else 1000.0
-            let sub ディスパッチ =
-                let timer = new System.Timers.Timer(interval)
-                timer.Elapsed.Add(fun _ -> ディスパッチ タイマー刻み)
-                timer.Start()
+    /// タイマーサブスクリプション（高速落下時は速度を上げる、ゲームオーバー時は停止）
+    let タイマー (モデル: モデル) : Sub<メッセージ> =
+        // ゲームオーバー時はタイマーを停止
+        match モデル.状態 with
+        | ゲームオーバー -> []
+        | _ ->
+            let startTimer dispatch =
+                let cts = new CancellationTokenSource()
+                // 高速落下中は100ms、通常時は500ms
+                let interval = if モデル.高速落下中 then 100 else 500
+
+                let rec loop () =
+                    async {
+                        do! Async.Sleep(interval)
+                        dispatch タイマー刻み
+                        return! loop ()
+                    }
+
+                Async.Start(loop (), cts.Token)
+
                 { new IDisposable with
-                    member _.Dispose() = timer.Stop(); timer.Dispose() }
-            [ [ "gameTimer" ], sub ]
-        else
-            []  // ゲームオーバー 時はタイマーなし
+                    member _.Dispose() = cts.Cancel() }
+
+            [ [ "timer" ], startTimer ]
 ```
 
 「Status が プレイ中 のときだけタイマーが動くんですね！」そうです。ゲームオーバー時は、Status が `ゲームオーバー` になるため、タイマーが停止し、タイマー刻み メッセージが送られなくなります。
@@ -5178,90 +5314,65 @@ module サブスクリプション =
 ```fsharp
 // src/PuyoPuyo.Client/Main.fs の view 関数を修正
 
-let ビュー モデル ディスパッチ =
-    div [ attr.style "font-family: monospace; text-align: center; padding: 20px;" ] [
-        h1 [] [ text "ぷよぷよ" ]
+    let ビュー (モデル: モデル) (ディスパッチ: メッセージ -> unit) =
+        div {
+            attr.``class`` "game-container"
+            attr.tabindex 0
+            on.keydown (キー押下処理 ディスパッチ)
+            on.keyup (キー解放処理 ディスパッチ)
+            h1 { "ぷよぷよゲーム" }
 
-        // スコア表示
-        div [ attr.style "margin-bottom: 10px; font-size: 20px;" ] [
-            text $"スコア: {モデル.スコア.Value}"
-        ]
+            // スコアと連鎖数の表示
+            div {
+                attr.``class`` "game-info"
 
-        // ゲームオーバー表示
-        if モデル.ステータス = ゲームオーバー then
-            div [ attr.style "margin-bottom: 20px; font-size: 30px; 色: red; font-weight: bold;" ] [
-                text "GAME OVER"
-            ]
+                div {
+                    attr.``class`` "score-display"
+                    p { $"スコア: {モデル.スコア.値}" }
+                }
 
-        // ゲームボード
-        div [ attr.style "display: inline-block; border: 2px solid black; background-色: #f0f0f0;" ] [
-            for y in 0 .. モデル.盤面.行数 - 1 do
-                div [ attr.style "display: flex;" ] [
-                    for x in 0 .. モデル.盤面.列数 - 1 do
-                        let セル = 盤面.セル取得 モデル.盤面 x y
-                        let 色 =
-                            match セル with
-                            | 空 -> "white"
-                            | 埋まっている puyoColor ->
-                                match puyoColor with
-                                | 赤 -> "red"
-                                | 緑 -> "green"
-                                | 青 -> "blue"
-                                | 黄 -> "yellow"
+                div {
+                    attr.``class`` "chain-display"
+                    p { $"連鎖数: {モデル.最後の連鎖数}" }
+                }
+            }
 
-                        // 現在のぷよペアを描画（ゲームオーバー時は表示しない）
-                        let isPuyoPair =
-                            match モデル.ステータス, モデル.現在のピース with
-                            | プレイ中, Some ピース ->
-                                let (位置1, 位置2) = ぷよペア.位置取得 ピース
-                                (x座標, y座標) = 位置1 || (x座標, y座標) = 位置2
-                            | _ -> false
+            ボードを描画 モデル.盤面 モデル.現在のぷよ
 
-                        let finalColor =
-                            if isPuyoPair then
-                                match モデル.現在のピース with
-                                | Some ピース ->
-                                    let (位置1, 位置2) = ぷよペア.位置取得 ピース
-                                    if (x座標, y座標) = 位置1 then
-                                        match ピース.ぷよ1の色 with
-                                        | 赤 -> "red"
-                                        | 緑 -> "green"
-                                        | 青 -> "blue"
-                                        | 黄 -> "yellow"
-                                    elif (x座標, y座標) = 位置2 then
-                                        match ピース.ぷよ2の色 with
-                                        | 赤 -> "red"
-                                        | 緑 -> "green"
-                                        | 青 -> "blue"
-                                        | 黄 -> "yellow"
-                                    else
-                                        色
-                                | None -> 色
-                            else
-                                色
+            div {
+                attr.``class`` "game-controls"
 
-                        div [
-                            attr.style $"width: 30px; height: 30px; border: 1px solid #ccc; background-色: {finalColor};"
-                        ] []
-                ]
-        ]
+                match モデル.状態 with
+                | 未開始 ->
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲーム開始)
+                        "ゲーム開始"
+                    }
 
-        // リスタートボタン（ゲームオーバー時のみ表示）
-        if モデル.ステータス = ゲームオーバー then
-            div [ attr.style "margin-top: 20px;" ] [
-                button [
-                    on.click (fun _ -> ディスパッチ 再開)
-                    attr.style "padding: 10px 20px; font-size: 16px; cursor: pointer;"
-                ] [ text "再開" ]
-            ]
+                | プレイ中 ->
+                    button {
+                        on.click (fun _ -> ディスパッチ ゲームリセット)
+                        "リセット"
+                    }
 
-        // 操作説明
-        div [ attr.style "margin-top: 20px;" ] [
-            p [] [ text "← → : 移動" ]
-            p [] [ text "↑ : 回転" ]
-            p [] [ text "↓ : 高速落下" ]
-        ]
-    ]
+                    div {
+                        attr.``class`` "instructions"
+                        p { "← → : 移動" }
+                        p { "↑ / Z : 回転" }
+                        p { "↓ : 高速落下" }
+                    }
+
+                | ゲームオーバー ->
+                    div {
+                        h2 { "ゲームオーバー" }
+
+                        button {
+                            on.click (fun _ -> ディスパッチ ゲームリセット)
+                            "もう一度プレイ"
+                        }
+                    }
+            }
+        }
 ```
 
 「ゲームオーバー時には "GAME OVER" と表示されて、リスタートボタンが出るんですね！」そうです。プレイヤーにゲームが終了したことを明確に伝え、新しいゲームを始めるためのボタンを提供します。
@@ -5285,35 +5396,40 @@ dotnet cake --target=Test
 
 [<Fact>]
 let ``ぷよペアの回転位置も考慮してゲームオーバー判定する`` () =
-    // ボードの上部にぷよを配置
+    // Arrange - ボードの上部にぷよを配置
+    let _盤面 = 盤面.作成 6 13
+
     let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 2 1 (埋まっている 赤)  // 回転後の位置にぷよがある
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 1 (埋まっている 赤)) // 回転後の位置にぷよがある
 
-    // 縦向きのぷよペア（Rotation = 0 なら y=0 と y=1 に配置される）
-    let newPiece = { X座標 = 2; Y座標 = 0; Puyo1Color = 青; Puyo2Color = 緑; Rotation = 0 }
+    // 新しいぷよペア（回転状態0: 軸ぷよ(2,1)、ぷよ2(2,0)）
+    let newPiece = ぷよペア.作成 2 1 青 緑 0
 
-    // ゲームオーバー判定
+    // Act - ゲームオーバー判定
     let ゲームオーバーか = ゲームロジック.ゲームオーバー判定 盤面 newPiece
 
-    // ゲームオーバーになっていることを確認
-    isGameOver |> should equal true
+    // Assert - ゲームオーバーになっていることを確認
+    ゲームオーバーか |> should equal true
 
 [<Fact>]
 let ``ぷよが盤面の上部ギリギリでもゲームオーバーにならない`` () =
-    // ボードの下の方にぷよを配置
+    // Arrange - ボードの下の方にぷよを配置
+    let _盤面 = 盤面.作成 6 13
+
     let 盤面 =
-        盤面.作成 6 12
-        |> 盤面.セル設定 2 11 (埋まっている 赤)
+        _盤面
+        |> (fun 盤 -> 盤面.セル設定 盤 2 11 (埋まっている 赤))
 
-    // 新しいぷよペア（上部に配置される）
-    let newPiece = { X座標 = 2; Y座標 = 0; Puyo1Color = 青; Puyo2Color = 緑; Rotation = 0 }
+    // 新しいぷよペア（上部に配置される: 軸ぷよ(2,1)、ぷよ2(2,0)）
+    let newPiece = ぷよペア.作成 2 1 青 緑 0
 
-    // ゲームオーバー判定
+    // Act - ゲームオーバー判定
     let ゲームオーバーか = ゲームロジック.ゲームオーバー判定 盤面 newPiece
 
-    // ゲームオーバーにならないことを確認
-    isGameOver |> should equal false
+    // Assert - ゲームオーバーにならないことを確認
+    ゲームオーバーか |> should equal false
+
 ```
 
 「これらのテストは何を確認しているんですか？」これらのテストでは、以下を確認しています：
@@ -5354,39 +5470,39 @@ EOF
 このイテレーションでは、以下を学びました：
 
 1. **ゲームオーバー判定の実装**：
-   - 既存の `canPlacePuyoPair` 関数を再利用
-   - シンプルなロジックで確実な判定を実現
-   - 回転状態も自動的に考慮される
+    - 既存の `canPlacePuyoPair` 関数を再利用
+    - シンプルなロジックで確実な判定を実現
+    - 回転状態も自動的に考慮される
 
 2. **ゲーム状態 の拡張**：
-   - `ゲームオーバー` 状態を追加
-   - 判別共用体による安全な状態管理
-   - パターンマッチングで状態に応じた処理
+    - `ゲームオーバー` 状態を追加
+    - 判別共用体による安全な状態管理
+    - パターンマッチングで状態に応じた処理
 
 3. **Elmish のメッセージ追加**：
-   - `再開` メッセージでゲームリセット
-   - `init ()` を呼び出して初期状態に戻す
-   - シンプルなリスタート実装
+    - `再開` メッセージでゲームリセット
+    - `init ()` を呼び出して初期状態に戻す
+    - シンプルなリスタート実装
 
 4. **Subscription の制御**：
-   - Status に応じてタイマーを制御
-   - ゲームオーバー 時はタイマーを停止
-   - リソースの適切な管理
+    - Status に応じてタイマーを制御
+    - ゲームオーバー 時はタイマーを停止
+    - リソースの適切な管理
 
 5. **View の条件分岐**：
-   - if 式によるゲームオーバー表示
-   - Status に応じた UI の切り替え
-   - リスタートボタンの表示制御
+    - if 式によるゲームオーバー表示
+    - Status に応じた UI の切り替え
+    - リスタートボタンの表示制御
 
 6. **テスト駆動開発の継続**：
-   - ゲームオーバーになるケースとならないケースをテスト
-   - 回転位置を考慮したテスト
-   - 境界条件のテスト
+    - ゲームオーバーになるケースとならないケースをテスト
+    - 回転位置を考慮したテスト
+    - 境界条件のテスト
 
 7. **F# の表現力**：
-   - 判別共用体による状態管理
-   - パターンマッチングによる分岐
-   - if 式による条件付き View 要素
+    - 判別共用体による状態管理
+    - パターンマッチングによる分岐
+    - if 式による条件付き View 要素
 
 このイテレーションで、ゲームオーバー判定とリスタート機能が実装できました。これで、ぷよぷよゲームの基本的な機能が完成しました！
 
@@ -5804,40 +5920,40 @@ type 二人プレイモデル = {
 #### F# について
 
 - **F# for Fun and Profit** (https://fsharpforfunandprofit.com/)
-  - F# の基礎から応用まで網羅的に学べる
-  - 関数型プログラミングの考え方を理解できる
+    - F# の基礎から応用まで網羅的に学べる
+    - 関数型プログラミングの考え方を理解できる
 
 - **Get Programming with F#** by Isaac Abraham
-  - 初心者向けの実践的な F# 入門書
-  - 実例を通じて学べる
+    - 初心者向けの実践的な F# 入門書
+    - 実例を通じて学べる
 
 #### Bolero について
 
 - **Bolero 公式ドキュメント** (https://fsbolero.io/)
-  - 最新の情報と豊富なサンプル
-  - Elmish アーキテクチャの詳細
+    - 最新の情報と豊富なサンプル
+    - Elmish アーキテクチャの詳細
 
 - **Awesome Bolero** (https://github.com/fsbolero/awesome-bolero)
-  - Bolero のリソースやサンプルプロジェクト集
+    - Bolero のリソースやサンプルプロジェクト集
 
 #### テスト駆動開発について
 
 - **テスト駆動開発** by Kent Beck
-  - TDD のバイブル
-  - 考え方の根底を理解できる
+    - TDD のバイブル
+    - 考え方の根底を理解できる
 
 - **Clean Craftsmanship 規律、基準、倫理** by Robert C. Martin
-  - プロフェッショナルなソフトウェア開発の規律
-  - TDD の実践的なアドバイス
+    - プロフェッショナルなソフトウェア開発の規律
+    - TDD の実践的なアドバイス
 
 #### 関数型プログラミングについて
 
 - **関数プログラミング実践入門** by 大川徳之
-  - 関数型プログラミングの基礎を日本語で学べる
+    - 関数型プログラミングの基礎を日本語で学べる
 
 - **Domain Modeling Made Functional** by Scott Wlaschin
-  - F# でのドメイン駆動設計
-  - 実践的な設計パターン
+    - F# でのドメイン駆動設計
+    - 実践的な設計パターン
 
 ### おわりに
 
