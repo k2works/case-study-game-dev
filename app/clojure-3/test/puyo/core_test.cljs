@@ -1,40 +1,26 @@
 (ns puyo.core-test
   (:require [cljs.test :refer-macros [deftest is testing run-tests]]
-            [puyo.core :as game]))
+            [puyo.core :as game]
+            [puyo.stage :as stage]
+            [puyo.player :as player]))
 
-(deftest ゲームの初期化テスト
-  (testing "ゲームを初期化すると、初期状態が設定される"
-    (let [ゲーム状態 (game/初期化)]
-      (is (map? ゲーム状態) "ゲーム状態はマップである")
-      (is (= :開始 (:モード ゲーム状態)) "ゲームモードは:開始である")
-      (is (number? (:フレーム ゲーム状態)) "フレーム数は数値である")
-      (is (zero? (:フレーム ゲーム状態)) "初期フレーム数は0である")
-      (is (number? (:連鎖カウント ゲーム状態)) "連鎖カウントは数値である")
-      (is (zero? (:連鎖カウント ゲーム状態)) "初期連鎖カウントは0である")))
+(deftest ゲーム状態の構造テスト
+  (testing "ゲーム状態に必要なコンポーネントが含まれる"
+    (let [状態 @game/ゲーム状態]
+      (is (map? 状態) "ゲーム状態はマップである")
+      (is (contains? 状態 :モード) "モードが含まれる")
+      (is (contains? 状態 :フレーム) "フレームが含まれる")
+      (is (contains? 状態 :盤面) "盤面が含まれる")
+      (is (contains? 状態 :ぷよ) "ぷよが含まれる")
+      (is (contains? 状態 :入力状態) "入力状態が含まれる")
+      (is (number? (:フレーム 状態)) "フレーム数は数値である"))))
 
-  (testing "ゲームを初期化すると、必要なコンポーネントが含まれる"
-    (let [ゲーム状態 (game/初期化)]
-      (is (contains? ゲーム状態 :設定) "設定が含まれる")
-      (is (contains? ゲーム状態 :ステージ) "ステージが含まれる")
-      (is (contains? ゲーム状態 :プレイヤー) "プレイヤーが含まれる")
-      (is (contains? ゲーム状態 :スコア) "スコアが含まれる"))))
-
-(deftest ゲームループテスト
-  (testing "ゲームループを開始すると、requestAnimationFrameが呼ばれる"
-    (let [called (atom false)
-          original-raf (.-requestAnimationFrame js/global)]
-      ;; requestAnimationFrameをモック
-      (set! (.-requestAnimationFrame js/global)
-            (fn [callback]
-              (reset! called true)
-              callback))
-
-      (try
-        (game/ループ開始 (game/初期化))
-        (is @called "requestAnimationFrameが呼ばれた")
-        (finally
-          ;; 元に戻す（存在しない場合は undefined をセット）
-          (set! (.-requestAnimationFrame js/global) original-raf))))))
+(deftest ゲーム更新テスト
+  (testing "ゲーム更新でフレーム数が増加する"
+    (let [初期フレーム (:フレーム @game/ゲーム状態)]
+      (game/ゲーム更新)
+      (let [更新後フレーム (:フレーム @game/ゲーム状態)]
+        (is (= (inc 初期フレーム) 更新後フレーム) "フレーム数が1増加する")))))
 
 ;; テスト実行
 (run-tests)
