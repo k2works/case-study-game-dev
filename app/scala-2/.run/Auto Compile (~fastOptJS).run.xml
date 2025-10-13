@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Auto Compile (~fastOptJS)" type="SbtRunConfiguration" factoryName="sbt">
+    <option name="tasks">
+      <list>
+        <option value="~fastOptJS" />
+      </list>
+    </option>
+    <option name="vmParameters" value="" />
+    <option name="workingDirectory" value="$PROJECT_DIR$/app/scala-2" />
+    <method v="2" />
+  </configuration>
+</component>

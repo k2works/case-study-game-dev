@@ -13,9 +13,13 @@ package-lock.json
 
 # IDE
 .idea/
+!.idea/runConfigurations/
 .bsp/
 .metals/
 .vscode/
+
+# IntelliJ IDEA Run Configurations (shared)
+!.run/
 
 # OS
 .DS_Store

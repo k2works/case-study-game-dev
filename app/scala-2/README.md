@@ -110,61 +110,64 @@ Scala.js プロジェクトは JVM 上で直接実行できません。IntelliJ 
 - ❌ `Main.scala` の右クリック → 実行
 - ❌ テストファイルの右クリック → テスト実行
 
-### ✅ 正しい実行方法
+### ✅ 正しい実行方法（超簡単！）
 
-#### 1. アプリケーション実行
+#### 事前設定済み Run Configuration を使用（推奨）
 
-**sbt シェルから実行：**
-1. IntelliJ IDEA 下部の「sbt」タブを開く
-2. sbt シェルで以下を実行：
-   ```
-   fastOptJS
-   ```
-3. ブラウザで `index.html` を開く
+IntelliJ IDEA の右上の Run Configuration ドロップダウンから以下を選択して実行できます：
 
-**または npm script から：**
-```bash
-npm run dev
-```
+- **Test (sbt)** - テスト実行
+- **Compile (fastOptJS)** - 開発用コンパイル
+- **Auto Compile (~fastOptJS)** - 自動再コンパイル（ファイル変更を監視）
+- **Build (fullOptJS)** - 本番用ビルド
+- **Clean (sbt)** - クリーン
 
-#### 2. テスト実行
+**使い方：**
+1. IntelliJ IDEA 右上の Run Configuration ドロップダウンをクリック
+2. 実行したい設定を選択（例: `Test (sbt)`）
+3. 緑の再生ボタン（▶）をクリック
 
-**sbt シェルから実行：**
-```
-test
-```
+#### 手動で Run Configuration を作成する場合
 
-**または npm script から：**
-```bash
-npm test
-```
-
-**または IntelliJ IDEA の Run Configuration を作成：**
 1. Run → Edit Configurations
 2. 「+」→ sbt Task
-3. Tasks: `test`
-4. Working directory: `app/scala-2`
-5. 実行
+3. Name: 任意の名前（例: `Test`）
+4. Tasks: `test`（または `fastOptJS`, `clean` など）
+5. Working directory: `$PROJECT_DIR$/app/scala-2`
+6. OK
 
-### 推奨ワークフロー
+#### npm script から実行
 
-1. **開発サーバー起動（初回のみ）：**
+```bash
+npm run dev    # コンパイル + サーバー起動
+npm test       # テスト実行
+npm run serve  # サーバーのみ起動
+```
+
+### 推奨ワークフロー（IntelliJ IDEA）
+
+1. **開発サーバー起動：**
+
+   ターミナルで：
    ```bash
    npm run serve
    ```
-   ブラウザが `http://localhost:8083` で開きます
+   ブラウザが `http://localhost:8083` で自動的に開きます
 
-2. **コード変更時の再コンパイル：**
+2. **自動再コンパイル開始：**
 
-   sbt シェルで以下を実行して自動再コンパイルを有効化：
-   ```
-   ~fastOptJS
-   ```
-   `~` プレフィックスにより、ファイル変更を検知して自動的に再コンパイルされます
+   IntelliJ IDEA 右上で Run Configuration `Auto Compile (~fastOptJS)` を選択して実行
 
-3. **ブラウザでリロード：**
+   これにより、ファイルを保存するたびに自動的に再コンパイルされます
 
+3. **コード変更 → 保存 → ブラウザでリロード（F5）：**
+
+   コードを変更して保存すると、自動的にコンパイルが走ります。
    ブラウザで F5 キーを押して変更を確認
+
+4. **テスト実行：**
+
+   Run Configuration `Test (sbt)` を選択して実行
 
 ## ドキュメント
 
