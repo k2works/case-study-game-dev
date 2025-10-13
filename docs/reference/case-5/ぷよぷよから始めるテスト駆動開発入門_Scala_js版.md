@@ -1619,3 +1619,210 @@ python -m http.server 8000
    - `js.Array` による JavaScript 互換配列
 
 次のイテレーションでは、ぷよの回転機能を実装していきます。
+
+## イテレーション3以降: 残りの機能実装
+
+このドキュメントでは、イテレーション0から2までのテスト駆動開発の基本的な流れと Scala.js の特徴的な実装を詳しく解説しました。
+
+イテレーション3以降では、以下の機能を順次実装していきます：
+
+### イテレーション3: ぷよの回転
+
+**ユーザーストーリー**: プレイヤーとして、落ちてくるぷよを回転できる
+
+**実装のポイント**:
+- 回転状態の管理（0:上、1:右、2:下、3:左）
+- 時計回り・反時計回りの回転メソッド
+- 壁キック処理（壁際での自動位置調整）
+- 2つ目のぷよを考慮した移動制限
+
+```scala
+// 回転状態のオフセット定義
+private val offsetX = Array(0, 1, 0, -1)
+private val offsetY = Array(-1, 0, 1, 0)
+
+def rotateRight(): Unit = {
+  rotation = (rotation + 1) % 4
+  performWallKick()
+}
+
+def rotateLeft(): Unit = {
+  rotation = (rotation + 3) % 4
+  performWallKick()
+}
+
+private def performWallKick(): Unit = {
+  val nextX = _puyoX + offsetX(rotation)
+
+  if (nextX < 0) {
+    _puyoX += 1  // 左壁キック
+  } else if (nextX >= config.stageCols) {
+    _puyoX -= 1  // 右壁キック
+  }
+}
+```
+
+### イテレーション4: ぷよの自由落下
+
+**ユーザーストーリー**: システムとしてぷよを自由落下させることができる
+
+**実装のポイント**:
+- 落下タイマーの実装
+- フレームカウントによる時間管理
+- 落下可能判定
+- 着地処理とフィールドへの固定
+
+```scala
+private val FallInterval = 30  // 30フレームごとに落下
+
+def update(): Unit = {
+  frame += 1
+
+  // 移動処理
+  if (_inputKeyLeft) {
+    moveLeft()
+    _inputKeyLeft = false
+  }
+  if (_inputKeyRight) {
+    moveRight()
+    _inputKeyRight = false
+  }
+  if (_inputKeyUp) {
+    rotateRight()
+    _inputKeyUp = false
+  }
+
+  // 自由落下処理
+  if (frame % FallInterval == 0) {
+    if (canMoveDown()) {
+      _puyoY += 1
+    } else {
+      // 着地処理
+      fixPuyo()
+      createNewPuyo()
+    }
+  }
+}
+
+private def canMoveDown(): Boolean = {
+  val nextY = _puyoY + 1
+  val next2Y = nextY + offsetY(rotation)
+
+  // 画面下端チェック
+  if (nextY >= config.stageRows || next2Y >= config.stageRows) {
+    return false
+  }
+
+  // フィールドとの衝突チェック
+  if (stage.getPuyo(_puyoX, nextY) > 0) {
+    return false
+  }
+
+  val next2X = _puyoX + offsetX(rotation)
+  if (stage.getPuyo(next2X, next2Y) > 0) {
+    return false
+  }
+
+  true
+}
+
+private def fixPuyo(): Unit = {
+  // 軸ぷよを固定
+  stage.setPuyo(_puyoX, _puyoY, _puyoType)
+
+  // 2つ目のぷよを固定
+  val next2X = _puyoX + offsetX(rotation)
+  val next2Y = _puyoY + offsetY(rotation)
+  stage.setPuyo(next2X, next2Y, _nextPuyoType)
+}
+```
+
+### イテレーション5: ぷよの高速落下
+
+**ユーザーストーリー**: プレイヤーとして、ぷよを素早く落下させることができる
+
+**実装のポイント**:
+- 下キー押下時の高速落下
+- 落下タイマーの短縮
+
+```scala
+def update(): Unit = {
+  // ...既存の処理...
+
+  // 高速落下
+  val interval = if (_inputKeyDown) FallInterval / 10 else FallInterval
+
+  if (frame % interval == 0) {
+    if (canMoveDown()) {
+      _puyoY += 1
+    } else {
+      fixPuyo()
+      createNewPuyo()
+    }
+  }
+}
+```
+
+### イテレーション6以降
+
+さらに以下の機能を実装していきます：
+
+- **イテレーション6**: ぷよの消去（4つ以上の同色ぷよの連結判定と消去）
+- **イテレーション7**: 連鎖反応（消去後の落下と再消去判定）
+- **イテレーション8**: 全消しボーナス
+- **イテレーション9**: ゲームオーバー判定と演出
+- **イテレーション10以降**: スコア表示、サウンド、エフェクトなど
+
+## まとめ
+
+この Scala.js 版ドキュメントでは、テスト駆動開発の基本的な流れと、Scala.js を使ったブラウザゲーム開発の実践的な方法を学びました。
+
+### 学んだ Scala.js の特徴
+
+1. **型安全性**
+   - `enum` による型安全な状態管理
+   - `Option` 型による null 安全性
+   - パターンマッチによる網羅的な分岐処理
+
+2. **関数型プログラミング**
+   - イミュータブルな設計
+   - for 内包表記による簡潔なループ
+   - メソッド参照による関数値の生成
+
+3. **JavaScript との相互運用**
+   - `js.Array` による JavaScript 互換配列
+   - `scalajs-dom` による DOM API アクセス
+   - `@JSExportTopLevel` による JavaScript からの呼び出し
+
+4. **テスタビリティ**
+   - public メソッドによるテスト用インターフェース
+   - 依存性注入による疎結合な設計
+   - ScalaTest による BDD スタイルのテスト
+
+### テスト駆動開発のサイクル
+
+1. **Red（赤）**: 失敗するテストを書く
+   - 実装する機能を明確にする
+   - テストを先に書くことで設計を改善
+
+2. **Green（緑）**: テストを通す最小限の実装
+   - とにかく動くことを優先
+   - 完璧さより進捗を重視
+
+3. **Refactor（リファクタリング）**: コードの品質を改善
+   - テストが通る状態を保ちながら改善
+   - 重複の排除、意図の明確化
+
+### 次のステップ
+
+このドキュメントで学んだ基礎をもとに、以下のような発展的なトピックにも挑戦できます：
+
+- **アーキテクチャパターン**: MVC、MVVM などの適用
+- **状態管理**: 関数型の State モナドや Cats Effect の利用
+- **非同期処理**: Future や IO モナドによる非同期ゲームループ
+- **最適化**: fullLinkJS による本番ビルド、コードサイズの最適化
+- **デプロイ**: GitHub Pages や Netlify へのデプロイ
+
+Scala.js を使えば、型安全で保守性の高いブラウザアプリケーションを開発できます。テスト駆動開発と組み合わせることで、継続的に改善可能な高品質なコードを書き続けることができます。
+
+楽しいゲーム開発を！
