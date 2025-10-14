@@ -22,6 +22,17 @@ kotlin {
         }
     }
 
+    js(IR) {
+        browser {
+            commonWebpackConfig {
+                cssSupport {
+                    enabled.set(true)
+                }
+            }
+        }
+        binaries.executable()
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -56,6 +67,12 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                // Compose Multiplatform の Web サポート (Canvas ベース)
             }
         }
     }
