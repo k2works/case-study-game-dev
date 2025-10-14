@@ -224,3 +224,31 @@ class プレイヤーSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     ステージ.ぷよを取得(2, 設定情報.ステージ行数 - 3) should be > 0
     ステージ.ぷよを取得(2, 設定情報.ステージ行数 - 2) should be > 0
   }
+
+  "プレイヤー fast drop" should "下キーが押されていると、落下速度が上がる" in {
+    プレイヤー.新しいぷよを作成()
+
+    // 下キーを押す
+    プレイヤー.キー状態を設定("ArrowDown", pressed = true)
+
+    // 通常の落下速度
+    val normalDropSpeed = 1.0
+    val fastDropSpeed = プレイヤー.落下速度を取得()
+
+    // 高速落下の速度が通常より速いことを確認
+    fastDropSpeed should be > normalDropSpeed
+  }
+
+  it should "下キーが押されていると、タイマーが速く進む" in {
+    プレイヤー.新しいぷよを作成()
+    val initialY = プレイヤー.ぷよのY座標
+
+    // 下キーを押す
+    プレイヤー.キー状態を設定("ArrowDown", pressed = true)
+
+    // 通常の落下間隔の1/10の時間で落下するはず（速度10倍）
+    プレイヤー.デルタ時間で更新(100.0) // 100ms
+
+    // 1マス下に落ちていることを確認
+    プレイヤー.ぷよのY座標 shouldBe initialY + 1
+  }
