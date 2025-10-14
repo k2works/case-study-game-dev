@@ -475,3 +475,400 @@ puyo_puyo/
 - [Phoenix LiveView入門](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#module-bindings)
 
 Elixir Phoenix LiveViewの世界で「動作するきれいなコード」を書き始める準備が整いました。開発を楽しんでください！
+
+---
+
+## イテレーション1: ゲームの初期化とLiveViewの基本構造
+
+さあ、いよいよコードを書き始めましょう！テスト駆動開発では、小さなイテレーション（反復）で機能を少しずつ追加していきます。最初のイテレーションでは、最も基本的な機能である「ゲームの初期化」とLiveViewの基本構造を実装します。
+
+> イテレーション開発とは、ソフトウェアを小さな機能単位で繰り返し開発していく手法です。各イテレーションで計画、設計、実装、テスト、評価のサイクルを回すことで、リスクを早期に発見し、フィードバックを得ながら開発を進めることができます。
+>
+> — Craig Larman 『アジャイル開発とスクラム』
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、新しいゲームを開始できる
+
+このシンプルなストーリーから始めることで、ゲームの基本的な構造を作り、後続の機能追加の土台を築くことができます。では、テスト駆動開発のサイクルに従って、まずはテストから書いていきましょう！
+
+### TODOリスト
+
+さて、ユーザーストーリーを実装するために、まずはTODOリストを作成しましょう。TODOリストは、大きな機能を小さなタスクに分解するのに役立ちます。
+
+> TODOリストは、テスト駆動開発の重要なプラクティスの一つです。実装前に必要なタスクを明確にすることで、開発の方向性を保ち、何も見落とさないようにします。
+>
+> — Kent Beck 『テスト駆動開発』
+
+私たちの「新しいゲームを開始できる」というユーザーストーリーを実現するためには、どのようなタスクが必要でしょうか？考えてみましょう：
+
+- LiveViewモジュールを作成する（ゲームの状態を管理するLiveViewモジュール）
+- ゲームの初期状態を定義する（ゲームモード、スコア、ステージ情報など）
+- テンプレートを作成する（プレイヤーが視覚的にゲームを認識できるようにする）
+- ルーティングを設定する（`/game`パスでゲームにアクセスできるようにする）
+
+これらのタスクを一つずつ実装していきましょう。テスト駆動開発では、各タスクに対してテスト→実装→リファクタリングのサイクルを回します。まずは「LiveViewモジュールの作成」から始めましょう！
+
+### テスト: LiveViewモジュールの作成
+
+さて、TODOリストの最初のタスク「LiveViewモジュールを作成する」に取り掛かりましょう。テスト駆動開発では、まずテストを書くことから始めます。
+
+> テストファースト
+>
+> いつテストを書くべきだろうか——それはテスト対象のコードを書く前だ。
+>
+> — Kent Beck 『テスト駆動開発』
+
+では、LiveViewモジュールの初期化をテストするコードを書いてみましょう。LiveViewテストでは、`mount/3`コールバックが正しく動作し、必要な状態が設定されることを確認します。
+
+```elixir
+# test/puyo_puyo_web/live/game_live_test.exs
+defmodule PuyoPuyoWeb.GameLiveTest do
+  use PuyoPuyoWeb.ConnCase
+
+  import Phoenix.LiveViewTest
+
+  describe "GameLive" do
+    test "mounts successfully", %{conn: conn} do
+      {:ok, _view, html} = live(conn, "/game")
+      assert html =~ "ぷよぷよゲーム"
+    end
+
+    test "initializes game state on mount", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/game")
+
+      # LiveViewの状態を取得
+      assert has_element?(view, "#game-container")
+
+      # 初期状態の確認
+      # mode: :start (ゲーム開始状態)
+      # score: 0 (スコアは0)
+      # chain: 0 (連鎖数は0)
+    end
+
+    test "displays game board", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/game")
+
+      # ゲームボードが表示されていることを確認
+      assert has_element?(view, "#game-board")
+    end
+
+    test "displays score information", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/game")
+
+      # スコア情報が表示されていることを確認
+      assert has_element?(view, "#score")
+      assert has_element?(view, "#chain")
+    end
+  end
+end
+```
+
+このテストでは、`GameLive`モジュールが正しくマウントされ、必要な初期状態が設定されることを確認しています。
+
+### 実装: LiveViewモジュールの作成
+
+テストを書いたら、次に実行してみましょう。どうなるでしょうか？
+
+```bash
+mix test test/puyo_puyo_web/live/game_live_test.exs
+```
+
+```
+Error: cannot find module PuyoPuyoWeb.GameLive
+```
+
+おっと！まだ`GameLive`モジュールを実装していないので、当然エラーになりますね。これがテスト駆動開発の「Red（赤）」の状態です。テストが失敗することを確認できました。
+
+> 失敗するテスト
+>
+> テストが失敗することを確認してから実装に取り掛かろう。そうすれば、テストが正しく機能していることがわかる。
+>
+> — Kent Beck 『テスト駆動開発』
+
+では、テストが通るように最小限のコードを実装していきましょう。「最小限」というのがポイントです。この段階では、テストが通ることだけを目指して、必要最低限のコードを書きます。
+
+```elixir
+# lib/puyo_puyo_web/live/game_live.ex
+defmodule PuyoPuyoWeb.GameLive do
+  use PuyoPuyoWeb, :live_view
+
+  @moduledoc """
+  ぷよぷよゲームのLiveViewモジュール
+  """
+
+  # ゲームモードの定義
+  @type game_mode :: :start | :check_fall | :fall | :check_erase | :erasing | :new_puyo | :playing | :game_over
+
+  # ゲーム設定
+  @stage_rows 12
+  @stage_cols 6
+  @puyo_size 32
+
+  @impl true
+  def mount(_params, _session, socket) do
+    # ゲームの初期状態を設定
+    socket =
+      socket
+      |> assign(:mode, :start)
+      |> assign(:score, 0)
+      |> assign(:chain, 0)
+      |> assign(:stage_rows, @stage_rows)
+      |> assign(:stage_cols, @stage_cols)
+      |> assign(:puyo_size, @puyo_size)
+      |> assign(:board, init_board())
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div id="game-container" class="flex gap-8 p-8">
+      <div id="game-board" class="relative bg-gray-100 border-2 border-gray-800 rounded-lg">
+        <div class="grid" style={"grid-template-columns: repeat(#{@stage_cols}, #{@puyo_size}px);"}>
+          <%= for row <- 0..(@stage_rows - 1) do %>
+            <%= for col <- 0..(@stage_cols - 1) do %>
+              <div
+                class="border border-gray-300"
+                style={"width: #{@puyo_size}px; height: #{@puyo_size}px;"}
+              >
+                <%= render_puyo(@board[row][col]) %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div id="info-panel" class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">ぷよぷよゲーム</h2>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">スコア</h3>
+          <p id="score" class="text-3xl font-bold text-blue-600"><%= @score %></p>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">連鎖数</h3>
+          <p id="chain" class="text-3xl font-bold text-red-600"><%= @chain %></p>
+        </div>
+
+        <div class="mt-6 text-sm text-gray-600">
+          <h3 class="font-semibold mb-2">操作方法</h3>
+          <ul class="space-y-1">
+            <li>← →: 移動</li>
+            <li>↑: 回転</li>
+            <li>↓: 高速落下</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  # プライベート関数
+
+  # 空のボードを初期化
+  defp init_board do
+    for row <- 0..(@stage_rows - 1), into: %{} do
+      {row, for(col <- 0..(@stage_cols - 1), into: %{}, do: {col, 0})}
+    end
+  end
+
+  # ぷよの描画（0は空、1-4はぷよの種類）
+  defp render_puyo(0), do: nil
+  defp render_puyo(type) when type in 1..4 do
+    color = puyo_color(type)
+    assigns = %{color: color}
+
+    ~H"""
+    <div class="w-full h-full rounded-full" style={"background-color: #{@color}; border: 2px solid rgba(0,0,0,0.2);"}></div>
+    """
+  end
+
+  # ぷよの色を返す
+  defp puyo_color(1), do: "#FF0000"  # 赤
+  defp puyo_color(2), do: "#00FF00"  # 緑
+  defp puyo_color(3), do: "#0000FF"  # 青
+  defp puyo_color(4), do: "#FFFF00"  # 黄
+end
+```
+
+### ルーティングの設定
+
+LiveViewモジュールを作成したら、ルーティングを設定して、`/game`パスでアクセスできるようにします。
+
+```elixir
+# lib/puyo_puyo_web/router.ex
+defmodule PuyoPuyoWeb.Router do
+  use PuyoPuyoWeb, :router
+
+  # 既存のパイプライン...
+
+  scope "/", PuyoPuyoWeb do
+    pipe_through :browser
+
+    get "/", PageController, :home
+
+    # ぷよぷよゲームのルート
+    live "/game", GameLive
+  end
+
+  # 既存のスコープ...
+end
+```
+
+### 解説: LiveViewの初期化
+
+テストが通りましたね！おめでとうございます。これがテスト駆動開発の「Green（緑）」の状態です。
+
+> テストが通ったら、次はリファクタリングだ。でも、その前に少し立ち止まって、今書いたコードについて考えてみよう。
+>
+> — Martin Fowler 『リファクタリング』
+
+実装したLiveViewモジュールについて、少し解説しておきましょう。
+
+#### Phoenix LiveViewの仕組み
+
+Phoenix LiveViewは、サーバーサイドでHTMLをレンダリングし、WebSocketを通じてクライアントに差分だけを送信する仕組みです。主な特徴は：
+
+1. **サーバー側で状態管理**: `socket.assigns`に状態を保存
+2. **自動的な差分更新**: 状態が変わると、変更された部分だけがクライアントに送信される
+3. **リアルタイム通信**: WebSocketによる双方向通信
+
+#### mount/3コールバック
+
+```elixir
+def mount(_params, _session, socket) do
+  socket =
+    socket
+    |> assign(:mode, :start)
+    |> assign(:score, 0)
+    |> assign(:chain, 0)
+    # ...
+  {:ok, socket}
+end
+```
+
+`mount/3`は、LiveViewが初期化されるときに呼ばれるコールバックです。ここで：
+
+- **ゲームモード**: `:start`（ゲーム開始状態）
+- **スコア**: `0`
+- **連鎖数**: `0`
+- **ボード**: 空のボード（12行 × 6列）
+
+を初期化しています。
+
+#### render/1関数
+
+```elixir
+def render(assigns) do
+  ~H"""
+  <div id="game-container">
+    ...
+  </div>
+  """
+end
+```
+
+`render/1`関数は、LiveViewのUIを定義します。`~H`シジルは、HEExテンプレート（HTML + Elixir）を表します。
+
+このテンプレートでは：
+
+- **ゲームボード**: グリッドレイアウトで6×12のセルを表示
+- **情報パネル**: スコア、連鎖数、操作方法を表示
+
+#### 状態の管理
+
+LiveViewでは、`assign/3`関数を使って状態を管理します：
+
+```elixir
+socket = assign(socket, :score, 100)
+```
+
+状態が変更されると、LiveViewは自動的に`render/1`を再実行し、変更された部分だけをクライアントに送信します。これにより、効率的なリアルタイム更新が実現されます。
+
+### テスト実行と確認
+
+実装が完了したので、テストを実行してみましょう：
+
+```bash
+mix test test/puyo_puyo_web/live/game_live_test.exs
+```
+
+すべてのテストが通ることを確認します。また、サーバーを起動して、ブラウザで確認してみましょう：
+
+```bash
+mix phx.server
+```
+
+ブラウザで `http://localhost:4000/game` にアクセスすると、ゲームボードとスコア情報が表示されるはずです。
+
+### コミット
+
+機能が完成したので、コミットしましょう：
+
+```bash
+git add -A
+git commit -m "feat: ゲームの初期化とLiveViewの基本構造を実装
+
+- GameLiveモジュールの作成
+- mount/3コールバックでの初期状態設定
+- HEExテンプレートの作成（ゲームボード、情報パネル）
+- ルーティングの設定（/game）
+- LiveViewテストの作成
+- 空のボード（12行 × 6列）の表示
+- スコアと連鎖数の表示
+
+イテレーション1完了"
+```
+
+## まとめ
+
+イテレーション1で以下を達成しました：
+
+### 得られたもの
+
+1. **LiveViewの基本構造**
+   - GameLiveモジュールの作成
+   - mount/3コールバックでの初期化
+   - HEExテンプレートによる画面表示
+
+2. **ゲームの初期状態**
+   - ゲームモード（:start）
+   - スコア（0）
+   - 連鎖数（0）
+   - 空のボード（12行 × 6列）
+
+3. **画面表示**
+   - グリッドレイアウトのゲームボード
+   - スコアと連鎖数の情報パネル
+   - 操作方法の表示
+
+4. **ルーティング**
+   - `/game`パスでゲームにアクセス可能
+
+5. **テストの作成**
+   - LiveViewテストによる動作確認
+   - マウント、初期化、表示のテスト
+
+### Phoenix LiveViewの利点
+
+今回の実装で、Phoenix LiveViewの以下の利点を体感できました：
+
+1. **シンプルな状態管理**: サーバー側で状態を管理するため、クライアント側の複雑な状態管理が不要
+2. **自動的な更新**: 状態が変わると、自動的に画面が更新される
+3. **統一的なテスト**: サーバーサイドロジックとして統一的にテスト可能
+4. **少ないJavaScript**: JavaScriptをほとんど書かずにインタラクティブなUIを実装
+
+### 次のステップ
+
+基本的な構造ができました。次のイテレーションでは、以下を実装していきます：
+
+- **イテレーション2**: ステージの実装（ぷよの配置と管理）
+- **イテレーション3**: プレイヤーの実装（ぷよの移動と回転）
+- **イテレーション4**: ゲームループの実装（重力と落下）
+
+これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
