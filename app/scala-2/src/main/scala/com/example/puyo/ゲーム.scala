@@ -1,10 +1,12 @@
 package com.example.puyo
 
+import org.scalajs.dom
+
 enum ゲームモード:
-  case Start, CheckFall, Fall, CheckErase, Erasing, NewPuyo, Playing, GameOver
+  case 開始, 落下確認, 落下中, 消去確認, 消去中, 新ぷよ, プレイ中, ゲームオーバー
 
 class ゲーム:
-  private var _mode: ゲームモード = ゲームモード.Start
+  private var _mode: ゲームモード = ゲームモード.開始
   private var フレーム: Int = 0
   private var 連鎖数: Int = 0
 
@@ -25,4 +27,26 @@ class ゲーム:
     スコア = new スコア()
 
     // ゲームモードを設定
-    _mode = ゲームモード.Start
+    _mode = ゲームモード.新ぷよ
+
+  def ループ(): Unit =
+    更新()
+    描画()
+    dom.window.requestAnimationFrame(_ => ループ())
+
+  private def 更新(): Unit =
+    フレーム += 1
+
+    _mode match
+      case ゲームモード.新ぷよ =>
+        プレイヤー.新しいぷよを作成()
+        _mode = ゲームモード.プレイ中
+
+      case ゲームモード.プレイ中 =>
+        プレイヤー.更新()
+
+      case _ => // その他の状態は今後実装
+  private def 描画(): Unit =
+    ステージ.描画()
+
+    if _mode == ゲームモード.プレイ中 then プレイヤー.描画()

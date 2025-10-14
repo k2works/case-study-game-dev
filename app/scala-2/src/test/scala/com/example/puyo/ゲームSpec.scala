@@ -20,8 +20,8 @@ class ゲームSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
     ゲーム.スコア should not be null
   }
 
-  it should "初期化時にゲームモードをStartに設定する" in {
+  it should "初期化時にゲームモードを新ぷよに設定する" in {
     ゲーム.初期化()
 
-    ゲーム.モード shouldBe ゲームモード.Start
+    ゲーム.モード shouldBe ゲームモード.新ぷよ
   }
