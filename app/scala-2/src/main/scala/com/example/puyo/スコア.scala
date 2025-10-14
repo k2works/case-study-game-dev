@@ -35,13 +35,10 @@ class スコア:
         val scoreElement = document.getElementById("score")
         val chainElement = document.getElementById("chain")
 
-        if scoreElement != null then
-          scoreElement.textContent = _現在スコア.toString
+        if scoreElement != null then scoreElement.textContent = _現在スコア.toString
 
-        if chainElement != null then
-          chainElement.textContent = _現在連鎖数.toString
-      catch
-        case _: Throwable => () // テスト環境ではdocumentが存在しない場合がある
+        if chainElement != null then chainElement.textContent = _現在連鎖数.toString
+      catch case _: Throwable => () // テスト環境ではdocumentが存在しない場合がある
 
   def リセット(): Unit =
     _現在スコア = 0

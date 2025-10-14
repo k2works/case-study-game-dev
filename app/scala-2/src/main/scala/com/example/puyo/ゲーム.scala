@@ -37,16 +37,18 @@ class ゲーム:
 
     // 初回時刻を設定（ブラウザ環境のみ）
     try 前回の時刻 = dom.window.performance.now()
-    catch case _: Throwable => 前回の時刻 = 0.0
+    catch
+      case _: Throwable => 前回の時刻 = 0.0
 
-    // キーボードイベントの登録
+      // キーボードイベントの登録
     キーボードイベントを登録()
 
   private def キーボードイベントを登録(): Unit =
     if scala.scalajs.LinkingInfo.developmentMode || scala.scalajs.LinkingInfo.productionMode then
       try
-        dom.document.addEventListener("keydown", (e: dom.KeyboardEvent) =>
-          if e.key == "Enter" then _入力キーEnter = true
+        dom.document.addEventListener(
+          "keydown",
+          (e: dom.KeyboardEvent) => if e.key == "Enter" then _入力キーEnter = true
         )
       catch case _: Throwable => ()
 
@@ -76,8 +78,7 @@ class ゲーム:
         if gameOverElement != null then
           gameOverElement.asInstanceOf[dom.html.Div].style.display = "block"
 
-        if finalScoreElement != null then
-          finalScoreElement.textContent = スコア.現在スコア.toString
+        if finalScoreElement != null then finalScoreElement.textContent = スコア.現在スコア.toString
       catch case _: Throwable => ()
 
   private def ゲームオーバー画面を非表示(): Unit =
@@ -131,16 +132,16 @@ class ゲーム:
 
           _mode = ゲームモード.落下確認
         else
-          // 消去対象がない場合
-          if 連鎖数 == 0 then
-            // 着地直後で消去なし→落下確認（浮いているぷよを落とす）
-            _mode = ゲームモード.落下確認
-          else
-            // 連鎖後で消去なし→連鎖終了
-            dom.console.log(s"連鎖終了: 連鎖数=$連鎖数")
-            スコア.連鎖終了()
-            連鎖数 = 0
-            _mode = ゲームモード.新ぷよ
+        // 消去対象がない場合
+        if 連鎖数 == 0 then
+          // 着地直後で消去なし→落下確認（浮いているぷよを落とす）
+          _mode = ゲームモード.落下確認
+        else
+          // 連鎖後で消去なし→連鎖終了
+          dom.console.log(s"連鎖終了: 連鎖数=$連鎖数")
+          スコア.連鎖終了()
+          連鎖数 = 0
+          _mode = ゲームモード.新ぷよ
 
       case ゲームモード.落下確認 =>
         // 重力を適用
@@ -149,13 +150,13 @@ class ゲーム:
           // ぷよが落下した場合、落下中モードへ
           _mode = ゲームモード.落下中
         else
-          // 落下するぷよがない場合
-          if 連鎖数 == 0 then
-            // 着地後の初回落下で落下なし→新ぷよへ
-            _mode = ゲームモード.新ぷよ
-          else
-            // 連鎖中の落下で落下なし→消去確認で最後のチェック
-            _mode = ゲームモード.消去確認
+        // 落下するぷよがない場合
+        if 連鎖数 == 0 then
+          // 着地後の初回落下で落下なし→新ぷよへ
+          _mode = ゲームモード.新ぷよ
+        else
+          // 連鎖中の落下で落下なし→消去確認で最後のチェック
+          _mode = ゲームモード.消去確認
 
       case ゲームモード.落下中 =>
         // 落下アニメーション用（一定フレーム待機）
