@@ -3036,3 +3036,865 @@ git commit -m "feat: プレイヤーモジュールの実装
 
 これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
 
+---
+
+## イテレーション4: ゲームループの実装
+
+イテレーション3でプレイヤーの操作が完成しました。次は、「ゲームが自動的に進行する」機能の実装です。このイテレーションでは、ゲームループ、重力による自動落下、ゲームモードの状態遷移を実装します。
+
+> ゲームループ
+>
+> ゲームループは、ゲームの心臓部です。時間の経過とともにゲームの状態を更新し、画面を再描画する処理を繰り返すことで、動きのあるゲームを実現します。
+>
+> — Robert Nystrom 『Game Programming Patterns』
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、ぷよペアが自動的に落下し、着地後は自動的に次のぷよペアが生成される
+
+このストーリーには、以下の機能が含まれています：
+
+1. 定期的な更新処理（ゲームループ）
+2. 重力による自動落下
+3. 着地判定と着地処理
+4. 新しいぷよペアの自動生成
+5. ゲームモードの状態遷移
+
+それでは、これらの機能を一つずつテスト駆動開発で実装していきましょう！
+
+### TODOリスト
+
+「ゲームループの実装」というユーザーストーリーを実現するために、以下のタスクが必要です：
+
+- ゲームモードを定義する（新ぷよ、プレイ中、消去確認など）
+- Gameモジュールを作成する（ゲームの状態管理）
+- Process.send_afterを使ったゲームループを実装する
+- handle_info/2コールバックで定期更新を実装する
+- デルタ時間ベースの更新を実装する
+- 重力を適用する処理を実装する（1フレームで1マス落下）
+- 着地後の処理を実装する
+- GameLiveと統合する
+
+これらのタスクを一つずつ実装していきます。まずは「ゲームモードの定義」から始めましょう！
+
+### ゲームモードの設計
+
+まず、ゲームの状態を表すゲームモードを設計します。ぷよぷよのゲームは、以下のような状態遷移を持ちます：
+
+```
+新ぷよ → プレイ中 → 消去確認 → 落下確認 → 落下中 → 消去確認 → ... → 新ぷよ
+                                  ↓
+                             ゲームオーバー
+```
+
+#### ゲームモードの種類
+
+- **`:new_puyo`（新ぷよ）**: 新しいぷよペアを生成する状態
+- **`:playing`（プレイ中）**: プレイヤーがぷよを操作している状態
+- **`:check_erase`（消去確認）**: ぷよの消去判定を行う状態
+- **`:check_fall`（落下確認）**: 浮いているぷよがあるかチェックする状態
+- **`:falling`（落下中）**: ぷよが落下している状態
+- **`:game_over`（ゲームオーバー）**: ゲーム終了状態
+
+### テスト: Gameモジュールの初期化
+
+まず、ゲームの状態を管理するGameモジュールをテストします。
+
+```elixir
+# test/puyo_puyo/game_test.exs
+defmodule PuyoPuyo.GameTest do
+  use ExUnit.Case, async: true
+
+  alias PuyoPuyo.Game
+
+  describe "Game.new/0" do
+    test "creates a new game with initial state" do
+      game = Game.new()
+
+      # 初期モードは:new_puyo
+      assert game.mode == :new_puyo
+      # 連鎖数は0
+      assert game.chain == 0
+      # ステージが初期化されている
+      assert game.stage != nil
+    end
+  end
+
+  describe "Game.update/2" do
+    test "spawns new puyo in :new_puyo mode" do
+      game = Game.new()
+
+      # 更新を実行
+      game = Game.update(game, 16.0)
+
+      # プレイ中モードに移行
+      assert game.mode == :playing
+      # プレイヤーが生成されている
+      assert game.player != nil
+    end
+
+    test "transitions to :game_over when cannot spawn" do
+      game = Game.new()
+
+      # 初期位置(2, 0)にぷよを配置してゲームオーバーを引き起こす
+      stage = PuyoPuyo.Stage.set_puyo(game.stage, 2, 0, 1)
+      game = %{game | stage: stage}
+
+      # 更新を実行
+      game = Game.update(game, 16.0)
+
+      # ゲームオーバーモードに移行
+      assert game.mode == :game_over
+    end
+  end
+end
+```
+
+### 実装: Gameモジュールの基本構造
+
+テストを実行すると失敗します（Red）。では、テストが通るように最小限のコードを実装しましょう（Green）。
+
+```elixir
+# lib/puyo_puyo/game.ex
+defmodule PuyoPuyo.Game do
+  @moduledoc """
+  ぷよぷよゲームの状態を管理するモジュール
+
+  ゲームモード、連鎖数、各コンポーネントの状態を管理します。
+  """
+
+  alias PuyoPuyo.{Stage, Player}
+
+  @type game_mode :: :new_puyo | :playing | :check_erase | :check_fall | :falling | :game_over
+
+  @type t :: %__MODULE__{
+          mode: game_mode(),
+          chain: non_neg_integer(),
+          stage: Stage.t(),
+          player: Player.t() | nil,
+          last_update: integer()
+        }
+
+  defstruct [
+    :mode,
+    :chain,
+    :stage,
+    :player,
+    :last_update
+  ]
+
+  @doc """
+  新しいゲームを作成します
+
+  ## Examples
+
+      iex> game = PuyoPuyo.Game.new()
+      iex> game.mode
+      :new_puyo
+
+  """
+  @spec new() :: t()
+  def new do
+    %__MODULE__{
+      mode: :new_puyo,
+      chain: 0,
+      stage: Stage.new([]),
+      player: nil,
+      last_update: System.monotonic_time(:millisecond)
+    }
+  end
+
+  @doc """
+  ゲームの状態を更新します
+
+  デルタ時間（ミリ秒）を受け取り、ゲームモードに応じて処理を実行します。
+
+  ## Examples
+
+      iex> game = PuyoPuyo.Game.new()
+      iex> game = PuyoPuyo.Game.update(game, 16.0)
+      iex> game.mode
+      :playing
+
+  """
+  @spec update(t(), float()) :: t()
+  def update(%__MODULE__{mode: mode} = game, delta_time) do
+    case mode do
+      :new_puyo ->
+        handle_new_puyo(game)
+
+      :playing ->
+        handle_playing(game, delta_time)
+
+      :check_erase ->
+        handle_check_erase(game)
+
+      :check_fall ->
+        handle_check_fall(game)
+
+      :falling ->
+        handle_falling(game)
+
+      :game_over ->
+        game
+    end
+  end
+
+  # 新ぷよモードの処理
+  @spec handle_new_puyo(t()) :: t()
+  defp handle_new_puyo(%__MODULE__{stage: stage} = game) do
+    player = Player.new(stage)
+
+    if Player.can_spawn?(player, stage) do
+      # ぷよペアを生成できる場合
+      %{game | mode: :playing, player: player}
+    else
+      # ゲームオーバー
+      %{game | mode: :game_over}
+    end
+  end
+
+  # プレイ中モードの処理
+  @spec handle_playing(t(), float()) :: t()
+  defp handle_playing(%__MODULE__{player: player, stage: stage} = game, delta_time) do
+    # プレイヤーを更新（重力を適用）
+    {player, landed} = update_player_gravity(player, stage, delta_time)
+
+    if landed do
+      # 着地した場合、ぷよをステージに配置
+      stage = Player.land(player, stage)
+      %{game | mode: :check_erase, stage: stage, player: nil}
+    else
+      %{game | player: player}
+    end
+  end
+
+  # プレイヤーに重力を適用
+  @spec update_player_gravity(Player.t(), Stage.t(), float()) :: {Player.t(), boolean()}
+  defp update_player_gravity(player, stage, delta_time) do
+    # 簡易的な実装：一定時間ごとに1マス落下
+    # 実際はプレイヤーに落下タイマーを持たせるべき
+    if Player.can_move_down?(player, stage) do
+      # 下に移動できる場合、Y座標を1増やす
+      player = %{player | puyo_y: player.puyo_y + 1}
+      {player, false}
+    else
+      # 下に移動できない場合、着地
+      {player, true}
+    end
+  end
+
+  # 消去確認モードの処理
+  @spec handle_check_erase(t()) :: t()
+  defp handle_check_erase(%__MODULE__{stage: stage, chain: chain} = game) do
+    {erase_count, positions} = Stage.check_erase(stage)
+
+    if erase_count > 0 do
+      # 消去対象がある場合
+      stage = Stage.erase_puyos(stage, positions)
+      chain = chain + 1
+
+      %{game | stage: stage, chain: chain, mode: :check_fall}
+    else
+      # 消去対象がない場合
+      if chain == 0 do
+        # 着地直後で消去なし→落下確認（浮いているぷよを落とす）
+        %{game | mode: :check_fall}
+      else
+        # 連鎖後で消去なし→連鎖終了
+        %{game | mode: :new_puyo, chain: 0}
+      end
+    end
+  end
+
+  # 落下確認モードの処理
+  @spec handle_check_fall(t()) :: t()
+  defp handle_check_fall(%__MODULE__{stage: stage, chain: chain} = game) do
+    {has_fallen, stage} = Stage.apply_gravity(stage)
+
+    if has_fallen do
+      # ぷよが落下した場合、落下中モードへ
+      %{game | stage: stage, mode: :falling}
+    else
+      # 落下するぷよがない場合
+      if chain == 0 do
+        # 着地後の初回落下で落下なし→新ぷよへ
+        %{game | mode: :new_puyo}
+      else
+        # 連鎖中の落下で落下なし→消去確認で最後のチェック
+        %{game | mode: :check_erase}
+      end
+    end
+  end
+
+  # 落下中モードの処理
+  @spec handle_falling(t()) :: t()
+  defp handle_falling(game) do
+    # 落下アニメーション用（簡略化のため、すぐに落下確認に戻る）
+    %{game | mode: :check_fall}
+  end
+end
+```
+
+### 解説: ゲームモードの状態遷移
+
+実装したGameモジュールについて、重要なポイントを解説します。
+
+#### ゲームモードによる処理の分岐
+
+```elixir
+def update(%__MODULE__{mode: mode} = game, delta_time) do
+  case mode do
+    :new_puyo -> handle_new_puyo(game)
+    :playing -> handle_playing(game, delta_time)
+    :check_erase -> handle_check_erase(game)
+    # ...
+  end
+end
+```
+
+`case`式でゲームモードに応じた処理を振り分けます。各モードは独立した関数として実装されており、単一責任の原則に従っています。
+
+#### 状態遷移の例
+
+```elixir
+defp handle_new_puyo(%__MODULE__{stage: stage} = game) do
+  player = Player.new(stage)
+
+  if Player.can_spawn?(player, stage) do
+    %{game | mode: :playing, player: player}
+  else
+    %{game | mode: :game_over}
+  end
+end
+```
+
+新ぷよモードでは：
+1. 新しいプレイヤーを生成
+2. 生成可能なら`:playing`モードへ移行
+3. 生成不可能なら`:game_over`モードへ移行
+
+#### 連鎖数の管理
+
+```elixir
+defp handle_check_erase(%__MODULE__{stage: stage, chain: chain} = game) do
+  {erase_count, positions} = Stage.check_erase(stage)
+
+  if erase_count > 0 do
+    chain = chain + 1
+    %{game | stage: stage, chain: chain, mode: :check_fall}
+  else
+    if chain == 0 do
+      %{game | mode: :check_fall}
+    else
+      %{game | mode: :new_puyo, chain: 0}
+    end
+  end
+end
+```
+
+連鎖数は、消去が発生するたびに増加します。消去がなくなったら連鎖終了として連鎖数を0にリセットします。
+
+### テスト実行
+
+実装が完了したので、テストを実行してみましょう：
+
+```bash
+mix test test/puyo_puyo/game_test.exs
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### LiveViewとの統合: ゲームループ
+
+Gameモジュールが完成したので、GameLiveと統合してゲームループを実装します。
+
+Phoenix LiveViewでは、`Process.send_after/3`を使ってサーバーサイドでゲームループを実装できます。
+
+```elixir
+# lib/puyo_puyo_web/live/game_live.ex（更新）
+defmodule PuyoPuyoWeb.GameLive do
+  use PuyoPuyoWeb, :live_view
+
+  alias PuyoPuyo.{Stage, Player, Game}
+
+  # ゲームループの更新間隔（ミリ秒）
+  @game_tick_interval 16
+
+  @impl true
+  def mount(_params, _session, socket) do
+    # ゲームを初期化
+    game = Game.new()
+
+    socket =
+      socket
+      |> assign(:game, game)
+      |> assign(:score, 0)
+
+    # ゲームループを開始（LiveView接続完了後に開始）
+    if connected?(socket) do
+      schedule_game_tick()
+    end
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div
+      id="game-container"
+      class="flex gap-8 p-8"
+      phx-window-keydown="keydown"
+      phx-throttle="100"
+    >
+      <div id="game-board" class="relative bg-gray-100 border-2 border-gray-800 rounded-lg">
+        <div class="grid" style={"grid-template-columns: repeat(#{@game.stage.cols}, 32px);"}>
+          <%= for row <- 0..(@game.stage.rows - 1) do %>
+            <%= for col <- 0..(@game.stage.cols - 1) do %>
+              <div
+                class="border border-gray-300"
+                style="width: 32px; height: 32px;"
+              >
+                <%= render_puyo(Stage.get_puyo(@game.stage, col, row)) %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+
+        <!-- プレイヤーのぷよペアを描画 -->
+        <%= if @game.mode == :playing && @game.player do %>
+          <%= render_player_puyo(@game.player, 0) %>
+          <%= render_player_puyo(@game.player, 1) %>
+        <% end %>
+
+        <!-- ゲームオーバー画面 -->
+        <%= if @game.mode == :game_over do %>
+          <div class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center">
+            <div class="bg-white p-8 rounded-lg text-center">
+              <h2 class="text-3xl font-bold mb-4">ゲームオーバー</h2>
+              <p class="text-xl mb-4">スコア: <%= @score %></p>
+              <button
+                phx-click="restart"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                もう一度プレイ
+              </button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div id="info-panel" class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">ぷよぷよゲーム</h2>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">スコア</h3>
+          <p id="score" class="text-3xl font-bold text-blue-600"><%= @score %></p>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">連鎖数</h3>
+          <p id="chain" class="text-3xl font-bold text-red-600"><%= @game.chain %></p>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">モード</h3>
+          <p class="text-sm text-gray-600"><%= format_mode(@game.mode) %></p>
+        </div>
+
+        <div class="mt-6 text-sm text-gray-600">
+          <h3 class="font-semibold mb-2">操作方法</h3>
+          <ul class="space-y-1">
+            <li>← →: 移動</li>
+            <li>↑: 回転</li>
+            <li>↓: 高速落下</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  # ゲームループのティック
+  @impl true
+  def handle_info(:game_tick, socket) do
+    game = socket.assigns.game
+
+    # ゲームを更新
+    game = Game.update(game, @game_tick_interval)
+
+    socket = assign(socket, :game, game)
+
+    # 次のティックをスケジュール
+    schedule_game_tick()
+
+    {:noreply, socket}
+  end
+
+  # キーボードイベントの処理
+  @impl true
+  def handle_event("keydown", %{"key" => key}, socket) do
+    game = socket.assigns.game
+
+    # プレイ中のみキー入力を処理
+    game =
+      if game.mode == :playing && game.player do
+        player = handle_key_input(game.player, game.stage, key)
+        %{game | player: player}
+      else
+        game
+      end
+
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  # リスタートイベントの処理
+  @impl true
+  def handle_event("restart", _params, socket) do
+    game = Game.new()
+    socket = assign(socket, game: game, score: 0)
+    {:noreply, socket}
+  end
+
+  # プライベート関数
+
+  # ゲームループをスケジュール
+  defp schedule_game_tick do
+    Process.send_after(self(), :game_tick, @game_tick_interval)
+  end
+
+  # キー入力の処理
+  defp handle_key_input(player, stage, "ArrowLeft") do
+    Player.move_left(player, stage)
+  end
+
+  defp handle_key_input(player, stage, "ArrowRight") do
+    Player.move_right(player, stage)
+  end
+
+  defp handle_key_input(player, stage, "ArrowUp") do
+    Player.rotate_right(player, stage)
+  end
+
+  defp handle_key_input(player, _stage, _key) do
+    player
+  end
+
+  # ゲームモードのフォーマット
+  defp format_mode(:new_puyo), do: "新ぷよ生成中"
+  defp format_mode(:playing), do: "プレイ中"
+  defp format_mode(:check_erase), do: "消去確認中"
+  defp format_mode(:check_fall), do: "落下確認中"
+  defp format_mode(:falling), do: "落下中"
+  defp format_mode(:game_over), do: "ゲームオーバー"
+
+  # プレイヤーのぷよを描画
+  defp render_player_puyo(player, index) do
+    {x, y, type} =
+      case index do
+        0 ->
+          {player.puyo_x, player.puyo_y, player.puyo_type}
+
+        1 ->
+          offset_x = Enum.at([0, 1, 0, -1], player.rotation)
+          offset_y = Enum.at([-1, 0, 1, 0], player.rotation)
+          {player.puyo_x + offset_x, player.puyo_y + offset_y, player.next_puyo_type}
+      end
+
+    color = puyo_color(type)
+
+    assigns = %{x: x, y: y, color: color}
+
+    ~H"""
+    <div
+      class="absolute rounded-full"
+      style={"
+        left: #{@x * 32}px;
+        top: #{@y * 32}px;
+        width: 32px;
+        height: 32px;
+        background-color: #{@color};
+        border: 2px solid rgba(0,0,0,0.2);
+        z-index: 10;
+      "}
+    >
+    </div>
+    """
+  end
+
+  # ぷよの描画（0は空、1-4はぷよの種類）
+  defp render_puyo(0), do: nil
+
+  defp render_puyo(type) when type in 1..4 do
+    color = puyo_color(type)
+    assigns = %{color: color}
+
+    ~H"""
+    <div class="w-full h-full rounded-full" style={"background-color: #{@color}; border: 2px solid rgba(0,0,0,0.2);"}></div>
+    """
+  end
+
+  # ぷよの色を返す
+  defp puyo_color(1), do: "#FF0000"  # 赤
+  defp puyo_color(2), do: "#00FF00"  # 緑
+  defp puyo_color(3), do: "#0000FF"  # 青
+  defp puyo_color(4), do: "#FFFF00"  # 黄
+end
+```
+
+### 解説: Phoenix LiveViewのゲームループ
+
+#### Process.send_after/3を使ったループ
+
+```elixir
+defp schedule_game_tick do
+  Process.send_after(self(), :game_tick, @game_tick_interval)
+end
+```
+
+`Process.send_after/3`を使って、一定間隔（16ms ≈ 60FPS）で`:game_tick`メッセージを自分自身に送信します。
+
+#### handle_info/2コールバック
+
+```elixir
+def handle_info(:game_tick, socket) do
+  game = socket.assigns.game
+  game = Game.update(game, @game_tick_interval)
+  socket = assign(socket, :game, game)
+  schedule_game_tick()
+  {:noreply, socket}
+end
+```
+
+`:game_tick`メッセージを受け取ったら：
+1. ゲームを更新
+2. 状態をsocketに設定
+3. 次のティックをスケジュール
+4. LiveViewが自動的に画面を更新
+
+#### connected?/1による遅延開始
+
+```elixir
+if connected?(socket) do
+  schedule_game_tick()
+end
+```
+
+`connected?/1`は、LiveViewがWebSocket接続を確立したかをチェックします。初回レンダリング時は`false`で、WebSocket接続後に`true`になります。これにより、サーバーサイドレンダリング時にゲームループが開始されるのを防ぎます。
+
+#### ゲームモードによる描画制御
+
+```elixir
+<%= if @game.mode == :playing && @game.player do %>
+  <%= render_player_puyo(@game.player, 0) %>
+  <%= render_player_puyo(@game.player, 1) %>
+<% end %>
+```
+
+プレイ中モードでプレイヤーが存在する場合のみ、ぷよペアを描画します。
+
+### テスト: 連鎖反応
+
+次に、連鎖反応が正しく動作するかをテストします。
+
+```elixir
+# test/puyo_puyo/game_test.exs（続き）
+describe "Game chain reaction" do
+  test "chain reaction occurs when erasable puyos fall" do
+    game = Game.new()
+    stage = game.stage
+
+    # 赤ぷよを2×2の正方形に配置（消去対象）
+    stage =
+      stage
+      |> Stage.set_puyo(1, 10, 1)
+      |> Stage.set_puyo(2, 10, 1)
+      |> Stage.set_puyo(1, 11, 1)
+      |> Stage.set_puyo(2, 11, 1)
+
+    # 青ぷよを配置（赤ぷよ消去後に落下して連鎖を起こす）
+    stage =
+      stage
+      |> Stage.set_puyo(3, 10, 2)  # 横に1つ
+      |> Stage.set_puyo(2, 7, 2)   # 上から縦に3つ
+      |> Stage.set_puyo(2, 8, 2)
+      |> Stage.set_puyo(2, 9, 2)
+
+    game = %{game | stage: stage, mode: :check_erase}
+
+    # 1回目の更新：消去確認（赤ぷよが消去される）
+    game = Game.update(game, 16.0)
+    assert game.mode == :check_fall
+    assert game.chain == 1
+
+    # 2回目の更新：落下確認（青ぷよが落下）
+    game = Game.update(game, 16.0)
+    assert game.mode == :falling
+
+    # 落下が完了するまで更新を繰り返す
+    game = repeat_update_until_mode(game, :check_erase, 10)
+
+    # 3回目の消去確認（青ぷよが4つ揃って消去）
+    assert game.chain == 1
+    game = Game.update(game, 16.0)
+
+    # 連鎖が発生したことを確認
+    assert game.chain == 2
+  end
+end
+
+# ヘルパー関数
+defp repeat_update_until_mode(game, target_mode, max_iterations) do
+  Enum.reduce_while(1..max_iterations, game, fn _, game_acc ->
+    if game_acc.mode == target_mode do
+      {:halt, game_acc}
+    else
+      {:cont, Game.update(game_acc, 16.0)}
+    end
+  end)
+end
+```
+
+### テスト実行（統合テスト）
+
+最後に、すべてのテストを実行して、統合が正しく動作することを確認します：
+
+```bash
+mix test
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### 動作確認
+
+サーバーを起動して、ブラウザで確認してみましょう：
+
+```bash
+mix phx.server
+```
+
+ブラウザで `http://localhost:4000/game` にアクセスし、以下を確認します：
+
+- ぷよペアが自動的に落下する
+- 矢印キーでぷよペアを操作できる
+- 着地後、自動的に次のぷよペアが生成される
+- 同じ色のぷよが4つつながると消去される
+- 消去後に上のぷよが落下する
+- 連鎖が発生する
+
+### コミット
+
+機能が完成したので、コミットしましょう：
+
+```bash
+git add -A
+git commit -m "feat: ゲームループとゲームモードの実装
+
+- Gameモジュールの作成（lib/puyo_puyo/game.ex）
+- ゲームモードの定義（:new_puyo, :playing, :check_erase, :check_fall, :falling, :game_over）
+- 状態遷移の実装
+  - 新ぷよ生成
+  - プレイ中の処理
+  - 消去確認と実行
+  - 落下確認と実行
+- Process.send_afterを使ったゲームループ
+  - handle_info/2コールバック
+  - 16ms間隔の定期更新（60FPS）
+- デルタ時間ベースの更新
+- 重力の自動適用
+- 連鎖反応の実装
+- GameLiveとの統合
+  - ゲームループの開始
+  - モード表示
+  - ゲームオーバー画面
+  - リスタート機能
+- 包括的なテストカバレッジ（連鎖テストを含む）
+
+イテレーション4完了"
+```
+
+### まとめ
+
+イテレーション4で以下を達成しました：
+
+#### 得られたもの
+
+1. **Gameモジュール**
+   - ゲームの状態管理
+   - ゲームモードによる処理の分岐
+   - 連鎖数の管理
+
+2. **ゲームモード**
+   - `:new_puyo`: 新しいぷよペア生成
+   - `:playing`: プレイヤー操作
+   - `:check_erase`: 消去判定
+   - `:check_fall`: 落下確認
+   - `:falling`: 落下中
+   - `:game_over`: ゲーム終了
+
+3. **ゲームループ**
+   - `Process.send_after/3`による定期更新
+   - `handle_info/2`コールバック
+   - 16ms間隔の更新（60FPS）
+   - `connected?/1`による遅延開始
+
+4. **状態遷移**
+   - 新ぷよ → プレイ中 → 消去確認 → 落下確認 → ...
+   - 連鎖反応の実装
+   - ゲームオーバー判定
+
+5. **LiveViewとの統合**
+   - サーバーサイドゲームループ
+   - 自動的な画面更新
+   - モード表示
+   - リスタート機能
+
+#### 学んだこと
+
+1. **Process.send_after/3**
+   ```elixir
+   Process.send_after(self(), :game_tick, @game_tick_interval)
+   ```
+   自分自身に遅延メッセージを送信することで、定期的な処理を実現
+
+2. **handle_info/2コールバック**
+   ```elixir
+   def handle_info(:game_tick, socket) do
+     # ゲームを更新
+     schedule_game_tick()
+     {:noreply, socket}
+   end
+   ```
+   メッセージを受け取って処理するコールバック
+
+3. **ゲームループのパターン**
+   - 更新（Update）: 状態の変更
+   - 描画（Render）: LiveViewが自動的に実行
+   - ループ（Loop）: Process.send_afterで実現
+
+4. **状態遷移パターン**
+   ```elixir
+   case mode do
+     :new_puyo -> handle_new_puyo(game)
+     :playing -> handle_playing(game, delta_time)
+     # ...
+   end
+   ```
+   パターンマッチングによる状態遷移の実装
+
+5. **connected?/1による制御**
+   - 初回レンダリングとWebSocket接続後の処理を分離
+   - サーバーサイドレンダリング時の不要な処理を防ぐ
+
+#### 次のステップ
+
+ゲームの基本的な流れが完成しました。次のイテレーションでは、以下を実装していきます：
+
+- **イテレーション5**: スコアシステムの実装（スコア計算、連鎖ボーナス）
+- **イテレーション6**: UI/UXの改善（アニメーション、エフェクト）
+
+これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
+
