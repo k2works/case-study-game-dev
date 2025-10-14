@@ -88,41 +88,106 @@ class プレイヤー(
   def 左に移動(): Unit =
     val nextX = _ぷよのX座標 - 1
     val secondPuyoNextX = nextX + オフセットX(_回転状態)
+    val secondPuyoNextY = _ぷよのY座標 + オフセットY(_回転状態)
 
-    // 軸ぷよと2つ目のぷよが範囲内かチェック
-    if nextX >= 0 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数 then _ぷよのX座標 = nextX
+    // X座標の範囲チェック
+    if nextX >= 0 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数 then
+      // 既存のぷよとの衝突チェック（範囲内のぷよのみ）
+      val 軸ぷよ衝突なし = if _ぷよのY座標 >= 0 && _ぷよのY座標 < 設定情報.ステージ行数 then
+        ステージ.ぷよを取得(nextX, _ぷよのY座標) == 0
+      else
+        true // 範囲外なら衝突なし
+
+      val 次ぷよ衝突なし = if secondPuyoNextY >= 0 && secondPuyoNextY < 設定情報.ステージ行数 then
+        ステージ.ぷよを取得(secondPuyoNextX, secondPuyoNextY) == 0
+      else
+        true // 範囲外なら衝突なし
+
+      if 軸ぷよ衝突なし && 次ぷよ衝突なし then
+        _ぷよのX座標 = nextX
 
   def 右に移動(): Unit =
     val nextX = _ぷよのX座標 + 1
     val secondPuyoNextX = nextX + オフセットX(_回転状態)
+    val secondPuyoNextY = _ぷよのY座標 + オフセットY(_回転状態)
 
-    // 軸ぷよと2つ目のぷよが範囲内かチェック
+    // X座標の範囲チェック
     if nextX < 設定情報.ステージ列数 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数 then
-      _ぷよのX座標 = nextX
+      // 既存のぷよとの衝突チェック（範囲内のぷよのみ）
+      val 軸ぷよ衝突なし = if _ぷよのY座標 >= 0 && _ぷよのY座標 < 設定情報.ステージ行数 then
+        ステージ.ぷよを取得(nextX, _ぷよのY座標) == 0
+      else
+        true // 範囲外なら衝突なし
+
+      val 次ぷよ衝突なし = if secondPuyoNextY >= 0 && secondPuyoNextY < 設定情報.ステージ行数 then
+        ステージ.ぷよを取得(secondPuyoNextX, secondPuyoNextY) == 0
+      else
+        true // 範囲外なら衝突なし
+
+      if 軸ぷよ衝突なし && 次ぷよ衝突なし then
+        _ぷよのX座標 = nextX
 
   def 右に回転(): Unit =
+    // 回転前の状態を保存
+    val 元の回転状態 = _回転状態
+
     // 時計回りに回転（0→1→2→3→0）
     _回転状態 = (_回転状態 + 1) % 4
 
-    // 壁キック処理
-    壁キック処理()
+    // 壁キック処理と衝突チェック
+    if !回転可能かチェック() then
+      // 回転できない場合は元に戻す
+      _回転状態 = 元の回転状態
 
   def 左に回転(): Unit =
+    // 回転前の状態を保存
+    val 元の回転状態 = _回転状態
+
     // 反時計回りに回転（0→3→2→1→0）
     _回転状態 = (_回転状態 + 3) % 4
 
-    // 壁キック処理
-    壁キック処理()
+    // 壁キック処理と衝突チェック
+    if !回転可能かチェック() then
+      // 回転できない場合は元に戻す
+      _回転状態 = 元の回転状態
 
-  private def 壁キック処理(): Unit =
+  private def 回転可能かチェック(): Boolean =
     // 2つ目のぷよの位置を計算
-    val nextX = _ぷよのX座標 + オフセットX(_回転状態)
+    var 軸X = _ぷよのX座標
+    val 次X = 軸X + オフセットX(_回転状態)
+    val 次Y = _ぷよのY座標 + オフセットY(_回転状態)
 
+    // 壁キック処理
     // 右端で右回転した場合（2つ目のぷよが右にくる場合）
-    if nextX >= 設定情報.ステージ列数 then _ぷよのX座標 -= 1 // 左に移動（壁キック）
+    if 次X >= 設定情報.ステージ列数 then 軸X -= 1 // 左に移動（壁キック）
 
     // 左端で左回転した場合（2つ目のぷよが左にくる場合）
-    if nextX < 0 then _ぷよのX座標 += 1 // 右に移動（壁キック）
+    if 次X < 0 then 軸X += 1 // 右に移動（壁キック）
+
+    // 壁キック後の位置を再計算
+    val キック後の次X = 軸X + オフセットX(_回転状態)
+
+    // X座標の範囲チェック
+    if 軸X < 0 || 軸X >= 設定情報.ステージ列数 then return false
+    if キック後の次X < 0 || キック後の次X >= 設定情報.ステージ列数 then return false
+
+    // 既存のぷよとの衝突チェック（範囲内のぷよのみ）
+    val 軸ぷよ衝突なし = if _ぷよのY座標 >= 0 && _ぷよのY座標 < 設定情報.ステージ行数 then
+      ステージ.ぷよを取得(軸X, _ぷよのY座標) == 0
+    else
+      true // 範囲外なら衝突なし
+
+    val 次ぷよ衝突なし = if 次Y >= 0 && 次Y < 設定情報.ステージ行数 then
+      ステージ.ぷよを取得(キック後の次X, 次Y) == 0
+    else
+      true // 範囲外なら衝突なし
+
+    // 回転可能な場合は、壁キック後の位置を適用
+    if 軸ぷよ衝突なし && 次ぷよ衝突なし then
+      _ぷよのX座標 = 軸X
+      true
+    else
+      false
 
   def 描画(): Unit =
     // 軸ぷよを描画
