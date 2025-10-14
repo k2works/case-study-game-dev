@@ -1272,3 +1272,910 @@ git commit -m "feat: ゲーム構造体と初期化機能を実装
 - スコア管理の専用モジュール化
 
 それでは、Red-Green-Refactorのリズムで、「動作するきれいなコード」を書いていきましょう！
+
+---
+
+## イテレーション2: ゲームコンポーネントの型安全なモジュール化
+
+### イテレーション2の目標
+
+イテレーション1では、ゲームの基本的な構造を作成しました。しかし、`config`、`stage`、`score`を単なる`map()`として扱っていましたね。このイテレーションでは、これらを専用の構造体に分割し、**型安全性を高め、責任を明確にする**リファクタリングを行います。
+
+> リファクタリングとは、外部から見た振る舞いを変えずに、内部構造を改善することです。テストが通っている状態で行うことで、安全に品質を向上できます。
+>
+> — Martin Fowler 『リファクタリング』
+
+このイテレーションで実現すること：
+
+1. **Config構造体**: ゲーム設定情報の専用モジュール
+2. **Stage構造体**: ステージ（フィールド）の専用モジュール
+3. **Score構造体**: スコア管理の専用モジュール
+4. **型安全性の向上**: 各コンポーネントに明確な型を持たせる
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリー：
+
+> 開発者として、ゲームの各コンポーネントが明確に分離されており、型安全な操作ができるようにしたい
+
+### TODOリスト
+
+- [x] Config構造体を作成し、テストを書く
+- [x] Stage構造体を作成し、テストを書く
+- [x] Score構造体を作成し、テストを書く
+- [x] Game構造体を更新して型安全な構造体を使用する
+- [ ] ぷよの生成と表示機能を追加する
+
+それでは、テスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
+
+### ステップ1: Config構造体の作成
+
+まず、ゲーム設定情報を管理する`Config`構造体を作成します。
+
+#### テスト: Config構造体（Red）
+
+`test/puyo_puyo/config_test.exs` を作成：
+
+```elixir
+defmodule PuyoPuyo.ConfigTest do
+  use ExUnit.Case
+  alias PuyoPuyo.Config
+
+  describe "new/0" do
+    test "デフォルト設定でConfig構造体を作成する" do
+      config = Config.new()
+
+      assert %Config{} = config
+      assert config.rows == 12
+      assert config.cols == 6
+      assert config.puyo_size == 32
+    end
+  end
+
+  describe "new/1" do
+    test "カスタム設定でConfig構造体を作成する" do
+      config = Config.new(rows: 16, cols: 8)
+
+      assert config.rows == 16
+      assert config.cols == 8
+      assert config.puyo_size == 32  # デフォルト値
+    end
+
+    test "一部の設定だけをカスタマイズできる" do
+      config = Config.new(puyo_size: 48)
+
+      assert config.rows == 12       # デフォルト値
+      assert config.cols == 6        # デフォルト値
+      assert config.puyo_size == 48
+    end
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/config_test.exs
+```
+
+エラー：
+```
+** (CompileError) test/puyo_puyo/config_test.exs:2: module PuyoPuyo.Config is not loaded
+```
+
+#### 実装: Config構造体（Green）
+
+`lib/puyo_puyo/config.ex` を作成：
+
+```elixir
+defmodule PuyoPuyo.Config do
+  @moduledoc """
+  ぷよぷよゲームの設定情報を管理するモジュールです。
+
+  ステージのサイズやぷよのサイズなど、ゲーム全体の設定を保持します。
+  """
+
+  @type t :: %__MODULE__{
+          rows: pos_integer(),
+          cols: pos_integer(),
+          puyo_size: pos_integer()
+        }
+
+  defstruct rows: 12,
+            cols: 6,
+            puyo_size: 32
+
+  @doc """
+  デフォルト設定でConfig構造体を作成します。
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new()
+      iex> config.rows
+      12
+
+  """
+  @spec new() :: t()
+  def new do
+    %__MODULE__{}
+  end
+
+  @doc """
+  カスタム設定でConfig構造体を作成します。
+
+  ## Parameters
+
+    - opts: キーワードリスト形式の設定オプション
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new(rows: 16, cols: 8)
+      iex> {config.rows, config.cols}
+      {16, 8}
+
+  """
+  @spec new(keyword()) :: t()
+  def new(opts) when is_list(opts) do
+    struct(__MODULE__, opts)
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/config_test.exs
+```
+
+結果：
+```
+...
+
+Finished in 0.03 seconds
+3 tests, 0 failures
+```
+
+#### 解説: struct/2関数とキーワードリスト
+
+新しく使用したElixirの機能について解説します：
+
+**struct/2関数**：
+```elixir
+struct(__MODULE__, opts)
+```
+
+`struct/2`関数は、構造体とキーワードリストを受け取り、指定されたフィールドを更新した新しい構造体を作成します。`defstruct`で定義されていないキーがあるとエラーになるため、型安全です。
+
+**キーワードリスト**：
+```elixir
+Config.new(rows: 16, cols: 8)
+```
+
+Elixirのキーワードリストは`[{:rows, 16}, {:cols, 8}]`のシンタックスシュガーです。関数のオプション引数として広く使われています。
+
+**ガード句 when is_list(opts)**：
+```elixir
+def new(opts) when is_list(opts) do
+```
+
+ガード句は、関数が実行される条件を指定します。`is_list(opts)`により、引数がリストでない場合はこの関数にマッチしません。
+
+### ステップ2: Stage構造体の作成
+
+次に、ゲームフィールドを管理する`Stage`構造体を作成します。
+
+#### テスト: Stage構造体（Red）
+
+`test/puyo_puyo/stage_test.exs` を作成：
+
+```elixir
+defmodule PuyoPuyo.StageTest do
+  use ExUnit.Case
+  alias PuyoPuyo.{Config, Stage}
+
+  setup do
+    config = Config.new()
+    {:ok, config: config}
+  end
+
+  describe "new/1" do
+    test "Config構造体からStage構造体を作成する", %{config: config} do
+      stage = Stage.new(config)
+
+      assert %Stage{} = stage
+      assert stage.rows == config.rows
+      assert stage.cols == config.cols
+      assert length(stage.grid) == config.rows
+    end
+
+    test "グリッドはすべて0で初期化される", %{config: config} do
+      stage = Stage.new(config)
+
+      # すべてのセルが0であることを確認
+      for row <- stage.grid do
+        assert length(row) == config.cols
+        assert Enum.all?(row, &(&1 == 0))
+      end
+    end
+  end
+
+  describe "get_puyo/3" do
+    test "指定位置のぷよを取得できる", %{config: config} do
+      stage = Stage.new(config)
+      stage = Stage.set_puyo(stage, 5, 10, 1)
+
+      assert Stage.get_puyo(stage, 5, 10) == 1
+    end
+
+    test "範囲外の位置はnilを返す", %{config: config} do
+      stage = Stage.new(config)
+
+      assert Stage.get_puyo(stage, -1, 0) == nil
+      assert Stage.get_puyo(stage, 0, -1) == nil
+      assert Stage.get_puyo(stage, 100, 0) == nil
+      assert Stage.get_puyo(stage, 0, 100) == nil
+    end
+  end
+
+  describe "set_puyo/4" do
+    test "指定位置にぷよを設定できる", %{config: config} do
+      stage = Stage.new(config)
+      updated_stage = Stage.set_puyo(stage, 3, 5, 2)
+
+      assert Stage.get_puyo(updated_stage, 3, 5) == 2
+      # 元のstageは変更されていない（イミュータブル）
+      assert Stage.get_puyo(stage, 3, 5) == 0
+    end
+
+    test "範囲外の位置には設定されない", %{config: config} do
+      stage = Stage.new(config)
+      updated_stage = Stage.set_puyo(stage, -1, 0, 1)
+
+      # stageは変更されない
+      assert updated_stage == stage
+    end
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/stage_test.exs
+```
+
+エラー：
+```
+** (CompileError) test/puyo_puyo/stage_test.exs:2: module PuyoPuyo.Stage is not loaded
+```
+
+#### 実装: Stage構造体（Green）
+
+`lib/puyo_puyo/stage.ex` を作成：
+
+```elixir
+defmodule PuyoPuyo.Stage do
+  @moduledoc """
+  ぷよぷよゲームのステージ（フィールド）を管理するモジュールです。
+
+  2次元グリッドとしてぷよの配置を管理し、ぷよの取得・設定操作を提供します。
+  """
+
+  alias PuyoPuyo.Config
+
+  @type t :: %__MODULE__{
+          rows: pos_integer(),
+          cols: pos_integer(),
+          grid: [[non_neg_integer()]]
+        }
+
+  defstruct [:rows, :cols, :grid]
+
+  @doc """
+  Config構造体からStage構造体を作成します。
+
+  グリッドはすべて0（空）で初期化されます。
+
+  ## Parameters
+
+    - config: ゲーム設定情報
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new()
+      iex> stage = PuyoPuyo.Stage.new(config)
+      iex> {stage.rows, stage.cols}
+      {12, 6}
+
+  """
+  @spec new(Config.t()) :: t()
+  def new(%Config{} = config) do
+    # 2次元グリッドを作成（すべて0で初期化）
+    grid =
+      for _row <- 1..config.rows do
+        for _col <- 1..config.cols, do: 0
+      end
+
+    %__MODULE__{
+      rows: config.rows,
+      cols: config.cols,
+      grid: grid
+    }
+  end
+
+  @doc """
+  指定位置のぷよを取得します。
+
+  ## Parameters
+
+    - stage: ステージ構造体
+    - col: 列番号（0始まり）
+    - row: 行番号（0始まり）
+
+  ## Returns
+
+    ぷよの種類（0は空）。範囲外の場合はnil。
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new()
+      iex> stage = PuyoPuyo.Stage.new(config)
+      iex> PuyoPuyo.Stage.get_puyo(stage, 0, 0)
+      0
+
+  """
+  @spec get_puyo(t(), integer(), integer()) :: non_neg_integer() | nil
+  def get_puyo(%__MODULE__{} = stage, col, row) do
+    with true <- row >= 0 and row < stage.rows,
+         true <- col >= 0 and col < stage.cols,
+         row_data <- Enum.at(stage.grid, row),
+         puyo when not is_nil(puyo) <- Enum.at(row_data, col) do
+      puyo
+    else
+      _ -> nil
+    end
+  end
+
+  @doc """
+  指定位置にぷよを設定します。
+
+  ## Parameters
+
+    - stage: ステージ構造体
+    - col: 列番号（0始まり）
+    - row: 行番号（0始まり）
+    - puyo_type: ぷよの種類（0は空）
+
+  ## Returns
+
+    更新されたステージ構造体。範囲外の場合は元のステージをそのまま返す。
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new()
+      iex> stage = PuyoPuyo.Stage.new(config)
+      iex> updated = PuyoPuyo.Stage.set_puyo(stage, 3, 5, 1)
+      iex> PuyoPuyo.Stage.get_puyo(updated, 3, 5)
+      1
+
+  """
+  @spec set_puyo(t(), integer(), integer(), non_neg_integer()) :: t()
+  def set_puyo(%__MODULE__{} = stage, col, row, puyo_type) do
+    if row >= 0 and row < stage.rows and col >= 0 and col < stage.cols do
+      new_grid =
+        stage.grid
+        |> List.update_at(row, fn row_data ->
+          List.replace_at(row_data, col, puyo_type)
+        end)
+
+      %{stage | grid: new_grid}
+    else
+      stage
+    end
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/stage_test.exs
+```
+
+結果：
+```
+.....
+
+Finished in 0.05 seconds
+5 tests, 0 failures
+```
+
+#### 解説: with式とイミュータブルなリスト操作
+
+新しく使用したElixirの機能について解説します：
+
+**with式**：
+```elixir
+with true <- row >= 0 and row < stage.rows,
+     true <- col >= 0 and col < stage.cols,
+     row_data <- Enum.at(stage.grid, row),
+     puyo when not is_nil(puyo) <- Enum.at(row_data, col) do
+  puyo
+else
+  _ -> nil
+end
+```
+
+`with`式は、複数の条件チェックを連鎖させるための構文です。いずれかの条件が失敗すると`else`節に移ります。ネストを減らし、可読性を向上させます。
+
+**List.update_at/3**：
+```elixir
+List.update_at(stage.grid, row, fn row_data ->
+  List.replace_at(row_data, col, puyo_type)
+end)
+```
+
+`List.update_at/3`は、リストの指定位置の要素を更新関数で変換した新しいリストを返します。元のリストは変更されません（イミュータブル）。
+
+**List.replace_at/3**：
+```elixir
+List.replace_at(row_data, col, puyo_type)
+```
+
+`List.replace_at/3`は、リストの指定位置の要素を新しい値で置き換えた新しいリストを返します。
+
+**パイプ演算子 |>**：
+```elixir
+stage.grid
+|> List.update_at(row, fn row_data -> ... end)
+```
+
+パイプ演算子は、左辺の値を右辺の関数の第1引数として渡します。複数の関数呼び出しを読みやすく連鎖できます。
+
+### ステップ3: Score構造体の作成
+
+最後に、スコアを管理する`Score`構造体を作成します。
+
+#### テスト: Score構造体（Red）
+
+`test/puyo_puyo/score_test.exs` を作成：
+
+```elixir
+defmodule PuyoPuyo.ScoreTest do
+  use ExUnit.Case
+  alias PuyoPuyo.Score
+
+  describe "new/0" do
+    test "Score構造体を作成する" do
+      score = Score.new()
+
+      assert %Score{} = score
+      assert score.current == 0
+      assert score.chain == 0
+    end
+  end
+
+  describe "add/2" do
+    test "消去したぷよの数に応じてスコアが加算される" do
+      score = Score.new()
+      updated_score = Score.add(score, erase_count: 4, chain: 1)
+
+      # 基本点 = 4 × 10 = 40
+      assert updated_score.current == 40
+      assert updated_score.chain == 1
+    end
+
+    test "連鎖数に応じてボーナスが加算される" do
+      score = Score.new()
+      updated_score = Score.add(score, erase_count: 4, chain: 2)
+
+      # 基本点 = 4 × 10 = 40
+      # 連鎖ボーナス = 2 × 2 × 50 = 200
+      # 合計 = 40 + 200 = 240
+      assert updated_score.current == 240
+      assert updated_score.chain == 2
+    end
+
+    test "1連鎖の場合はボーナスなし" do
+      score = Score.new()
+      updated_score = Score.add(score, erase_count: 4, chain: 1)
+
+      # 基本点のみ
+      assert updated_score.current == 40
+    end
+
+    test "複数回加算できる" do
+      score = Score.new()
+
+      score = Score.add(score, erase_count: 4, chain: 1)  # 40点
+      score = Score.add(score, erase_count: 5, chain: 2)  # 50 + 200 = 250点
+
+      # 合計290点
+      assert score.current == 290
+    end
+  end
+
+  describe "reset_chain/1" do
+    test "連鎖数をリセットする" do
+      score = Score.new()
+      score = Score.add(score, erase_count: 4, chain: 3)
+
+      reset_score = Score.reset_chain(score)
+
+      assert reset_score.chain == 0
+      assert reset_score.current == score.current  # スコアは維持
+    end
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/score_test.exs
+```
+
+エラー：
+```
+** (CompileError) test/puyo_puyo/score_test.exs:2: module PuyoPuyo.Score is not loaded
+```
+
+#### 実装: Score構造体（Green）
+
+`lib/puyo_puyo/score.ex` を作成：
+
+```elixir
+defmodule PuyoPuyo.Score do
+  @moduledoc """
+  ぷよぷよゲームのスコアを管理するモジュールです。
+
+  スコア計算のロジックと連鎖数の管理を行います。
+  """
+
+  @type t :: %__MODULE__{
+          current: non_neg_integer(),
+          chain: non_neg_integer()
+        }
+
+  defstruct current: 0,
+            chain: 0
+
+  @doc """
+  新しいScore構造体を作成します。
+
+  ## Examples
+
+      iex> score = PuyoPuyo.Score.new()
+      iex> score.current
+      0
+
+  """
+  @spec new() :: t()
+  def new do
+    %__MODULE__{}
+  end
+
+  @doc """
+  消去したぷよの数と連鎖数に応じてスコアを加算します。
+
+  スコア計算式：
+  - 基本点 = 消去数 × 10
+  - 連鎖ボーナス = 連鎖数 × 連鎖数 × 50 （2連鎖以上）
+  - 獲得点 = 基本点 + 連鎖ボーナス
+
+  ## Parameters
+
+    - score: Score構造体
+    - opts: キーワードリスト
+      - erase_count: 消去したぷよの数
+      - chain: 現在の連鎖数
+
+  ## Examples
+
+      iex> score = PuyoPuyo.Score.new()
+      iex> updated = PuyoPuyo.Score.add(score, erase_count: 4, chain: 2)
+      iex> updated.current
+      240
+
+  """
+  @spec add(t(), keyword()) :: t()
+  def add(%__MODULE__{} = score, opts) do
+    erase_count = Keyword.fetch!(opts, :erase_count)
+    chain = Keyword.fetch!(opts, :chain)
+
+    base_points = erase_count * 10
+    chain_bonus = if chain > 1, do: chain * chain * 50, else: 0
+    earned_points = base_points + chain_bonus
+
+    %{score | current: score.current + earned_points, chain: chain}
+  end
+
+  @doc """
+  連鎖数をリセットします。
+
+  連鎖が終了したときに呼び出されます。
+
+  ## Parameters
+
+    - score: Score構造体
+
+  ## Examples
+
+      iex> score = PuyoPuyo.Score.new()
+      iex> score = PuyoPuyo.Score.add(score, erase_count: 4, chain: 3)
+      iex> reset = PuyoPuyo.Score.reset_chain(score)
+      iex> reset.chain
+      0
+
+  """
+  @spec reset_chain(t()) :: t()
+  def reset_chain(%__MODULE__{} = score) do
+    %{score | chain: 0}
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/score_test.exs
+```
+
+結果：
+```
+.....
+
+Finished in 0.04 seconds
+5 tests, 0 failures
+```
+
+#### 解説: Keyword.fetch!/2
+
+新しく使用したElixirの機能について解説します：
+
+**Keyword.fetch!/2**：
+```elixir
+erase_count = Keyword.fetch!(opts, :erase_count)
+chain = Keyword.fetch!(opts, :chain)
+```
+
+`Keyword.fetch!/2`は、キーワードリストから指定されたキーの値を取得します。キーが存在しない場合は例外を発生させます。これにより、必須パラメータの存在を保証できます。
+
+`!`が付いている関数は、エラー時に例外を発生させる慣習があります。
+
+### ステップ4: Game構造体の更新
+
+これで3つの構造体が完成しました。最後に、`Game`構造体を更新して型安全な構造体を使用するようにします。
+
+#### テスト: 型安全なGame構造体（Red）
+
+`test/puyo_puyo/game_test.exs` に新しいテストを追加：
+
+```elixir
+# 既存のテストの後に追加
+
+describe "initialize/1 with type-safe structs" do
+  test "型安全な構造体で初期化される" do
+    game = Game.new()
+    initialized_game = Game.initialize(game)
+
+    # Config構造体であることを確認
+    assert %PuyoPuyo.Config{} = initialized_game.config
+    assert initialized_game.config.rows == 12
+    assert initialized_game.config.cols == 6
+
+    # Stage構造体であることを確認
+    assert %PuyoPuyo.Stage{} = initialized_game.stage
+    assert initialized_game.stage.rows == 12
+    assert initialized_game.stage.cols == 6
+
+    # Score構造体であることを確認
+    assert %PuyoPuyo.Score{} = initialized_game.score
+    assert initialized_game.score.current == 0
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/game_test.exs
+```
+
+エラー：
+```
+1) test initialize/1 with type-safe structs 型安全な構造体で初期化される (PuyoPuyo.GameTest)
+```
+
+#### 実装: 型安全なGame構造体（Green）
+
+`lib/puyo_puyo/game.ex` を更新：
+
+```elixir
+defmodule PuyoPuyo.Game do
+  @moduledoc """
+  ぷよぷよゲームのメインモジュールです。
+
+  ゲーム全体の状態を管理し、ゲームループの制御を行います。
+  """
+
+  alias PuyoPuyo.{Config, Stage, Score}
+
+  @type game_mode ::
+          :start
+          | :check_fall
+          | :fall
+          | :check_erase
+          | :erasing
+          | :new_puyo
+          | :playing
+          | :game_over
+
+  @type t :: %__MODULE__{
+          mode: game_mode(),
+          frame: non_neg_integer(),
+          chain_count: non_neg_integer(),
+          config: Config.t() | nil,
+          stage: Stage.t() | nil,
+          score: Score.t() | nil
+        }
+
+  defstruct mode: :start,
+            frame: 0,
+            chain_count: 0,
+            config: nil,
+            stage: nil,
+            score: nil
+
+  @doc """
+  新しいゲーム構造体を作成します。
+
+  ## Examples
+
+      iex> game = PuyoPuyo.Game.new()
+      iex> game.mode
+      :start
+
+  """
+  @spec new() :: t()
+  def new do
+    %__MODULE__{}
+  end
+
+  @doc """
+  ゲームを初期化します。
+
+  必要なコンポーネント（設定、ステージ、スコア）を作成し、
+  ゲームモードを `:new_puyo` に設定します。
+
+  ## Parameters
+
+    - game: 初期化するゲーム構造体
+
+  ## Returns
+
+    初期化されたゲーム構造体
+
+  ## Examples
+
+      iex> game = PuyoPuyo.Game.new()
+      iex> initialized = PuyoPuyo.Game.initialize(game)
+      iex> initialized.mode
+      :new_puyo
+
+  """
+  @spec initialize(t()) :: t()
+  def initialize(%__MODULE__{} = game) do
+    # 型安全な構造体で初期化
+    config = Config.new()
+    stage = Stage.new(config)
+    score = Score.new()
+
+    %{game | config: config, stage: stage, score: score, mode: :new_puyo}
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test
+```
+
+結果：
+```
+...............
+
+Finished in 0.12 seconds
+16 tests, 0 failures
+```
+
+全テストが通りました！
+
+#### 解説: aliasによるモジュール名の短縮
+
+**alias**：
+```elixir
+alias PuyoPuyo.{Config, Stage, Score}
+```
+
+`alias`は、長いモジュール名を短縮するための機能です。これにより、`PuyoPuyo.Config`を単に`Config`として参照できます。
+
+中括弧`{}`を使うことで、複数のモジュールを一度にエイリアスできます。
+
+### コミット
+
+では、ここまでの実装をコミットしましょう：
+
+```bash
+# テストを実行して確認
+mix test
+
+# フォーマットと品質チェック
+mix format
+mix check
+
+# コミット
+git add lib/puyo_puyo/ test/puyo_puyo/
+git commit -m "feat: ゲームコンポーネントを型安全な構造体に分割
+
+- Config構造体を作成（ゲーム設定情報の管理）
+- Stage構造体を作成（2次元グリッドによるフィールド管理）
+- Score構造体を作成（スコア計算と連鎖管理）
+- Game構造体を更新（型安全な構造体を使用）
+- 各構造体に対応するテストを実装
+- Elixirの関数型プログラミング機能を活用
+  - struct/2による柔軟な構造体作成
+  - withによる条件チェックの連鎖
+  - イミュータブルなリスト操作
+
+イテレーション2の型安全なリファクタリングが完了"
+```
+
+### イテレーション2の振り返り
+
+このイテレーションで達成したこと：
+
+✅ Config構造体の作成とテスト
+✅ Stage構造体の作成とテスト
+✅ Score構造体の作成とテスト
+✅ Game構造体の型安全な更新
+✅ 16個のテストすべてパス
+
+#### プロジェクト構造
+
+```
+puyo_puyo/
+├── lib/
+│   └── puyo_puyo/
+│       ├── game.ex          # ゲーム全体の管理
+│       ├── config.ex        # 設定情報
+│       ├── stage.ex         # ステージ（フィールド）
+│       └── score.ex         # スコア管理
+├── test/
+│   └── puyo_puyo/
+│       ├── game_test.exs    # ゲームのテスト
+│       ├── config_test.exs  # 設定のテスト
+│       ├── stage_test.exs   # ステージのテスト
+│       └── score_test.exs   # スコアのテスト
+```
+
+#### 学んだこと
+
+1. **struct/2関数**: キーワードリストから構造体を柔軟に作成
+2. **with式**: 複数の条件チェックを読みやすく連鎖
+3. **ガード句**: 関数の実行条件を型レベルで制約
+4. **イミュータブルなリスト操作**: List.update_at/3とList.replace_at/3
+5. **alias**: モジュール名を短縮して可読性向上
+6. **Keyword.fetch!/2**: 必須パラメータの存在を保証
+
+#### 次のステップ
+
+次のイテレーションでは、以下を実装します：
+
+- プレイヤーモジュールの作成（ぷよの生成と操作）
+- ぷよの移動と回転機能
+- キーボード入力の処理
+- ぷよの自由落下
+
+それでは、Red-Green-Refactorのリズムで、「動作するきれいなコード」を書いていきましょう！
