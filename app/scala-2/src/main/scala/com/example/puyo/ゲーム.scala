@@ -69,6 +69,10 @@ class ゲーム:
           ステージ.ボードを消去(消去情報.eraseInfo)
           連鎖数 += 1
           dom.console.log(s"連鎖数: $連鎖数, 消去数: ${消去情報.erasePuyoCount}")
+
+          // スコアを記録
+          スコア.消去を記録(消去情報.erasePuyoCount, 連鎖数)
+
           _mode = ゲームモード.落下確認
         else
           // 消去対象がない場合
@@ -78,6 +82,7 @@ class ゲーム:
           else
             // 連鎖後で消去なし→連鎖終了
             dom.console.log(s"連鎖終了: 連鎖数=$連鎖数")
+            スコア.連鎖終了()
             連鎖数 = 0
             _mode = ゲームモード.新ぷよ
 

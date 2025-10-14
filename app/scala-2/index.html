@@ -4,9 +4,64 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ぷよぷよゲーム</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      #game-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      #info-panel {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 200px;
+      }
+      #info-panel h2 {
+        margin-top: 0;
+        color: #333;
+        font-size: 18px;
+      }
+      .info-item {
+        margin: 15px 0;
+      }
+      .info-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+      .info-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2196F3;
+      }
+      .chain-value {
+        color: #FF9800;
+      }
+    </style>
   </head>
   <body>
-    <div id="ステージ"></div>
+    <div id="game-container">
+      <div id="ステージ"></div>
+    </div>
+    <div id="info-panel">
+      <h2>ゲーム情報</h2>
+      <div class="info-item">
+        <div class="info-label">スコア</div>
+        <div class="info-value" id="score">0</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">連鎖数</div>
+        <div class="info-value chain-value" id="chain">0</div>
+      </div>
+    </div>
     <script type="text/javascript" src="./target/scala-3.3.3/puyo-puyo-game-fastopt/main.js"></script>
     <script type="text/javascript">
       PuyoPuyoGame.main();
