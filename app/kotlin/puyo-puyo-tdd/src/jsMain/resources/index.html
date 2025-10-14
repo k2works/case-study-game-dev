@@ -9,6 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* 日本語フォントを強制的に読み込む */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+        * {
+            font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -17,22 +24,18 @@
             align-items: center;
             min-height: 100vh;
             background-color: #f0f0f0;
-            font-family: 'Noto Sans JP', sans-serif;
+            font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
         }
         #root {
             display: flex;
             justify-content: center;
             align-items: center;
+            font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
         }
         canvas {
             border: 1px solid #ccc;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Skiko が使用するフォントを指定 */
-        @font-face {
-            font-family: 'sans-serif';
-            src: local('Noto Sans JP'), local('Meiryo'), local('MS Gothic'), local('Yu Gothic');
+            font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
         }
     </style>
 </head>
@@ -77,16 +80,102 @@
             });
         }
 
+        // フォントのロードを待つ
+        function waitForFonts() {
+            if (document.fonts && document.fonts.ready) {
+                return document.fonts.ready.then(() => {
+                    console.log('Fonts loaded successfully');
+                });
+            }
+            // フォールバック: 一定時間待つ
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log('Font loading timeout, proceeding anyway');
+                    resolve();
+                }, 2000);
+            });
+        }
+
+        // Canvas API を完全にパッチして日本語フォントを強制適用
+        function patchCanvasFonts() {
+            // 日本語フォントスタック
+            const japaneseFonts = "'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', 'MS Gothic', sans-serif";
+
+            // デフォルトフォント
+            const defaultFont = `14px ${japaneseFonts}`;
+
+            // font プロパティのパッチ
+            const originalFontDescriptor = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'font');
+
+            Object.defineProperty(CanvasRenderingContext2D.prototype, 'font', {
+                get: function() {
+                    return this._customFont || defaultFont;
+                },
+                set: function(value) {
+                    if (value && typeof value === 'string') {
+                        // フォントサイズを抽出
+                        const sizeMatch = value.match(/(\d+(?:\.\d+)?(?:px|pt|em|rem|%))/);
+                        const weightMatch = value.match(/(normal|bold|bolder|lighter|\d{3})/);
+                        const styleMatch = value.match(/(normal|italic|oblique)/);
+
+                        let newFont = '';
+                        if (styleMatch) newFont += styleMatch[1] + ' ';
+                        if (weightMatch) newFont += weightMatch[1] + ' ';
+                        if (sizeMatch) newFont += sizeMatch[1] + ' ';
+                        else newFont += '14px ';
+
+                        newFont += japaneseFonts;
+                        this._customFont = newFont;
+
+                        console.log('Font set to:', newFont);
+                    } else {
+                        this._customFont = defaultFont;
+                    }
+
+                    // 元の setter も呼ぶ
+                    if (originalFontDescriptor && originalFontDescriptor.set) {
+                        originalFontDescriptor.set.call(this, this._customFont);
+                    }
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            // テキスト描画メソッドのパッチ
+            const originalFillText = CanvasRenderingContext2D.prototype.fillText;
+            const originalStrokeText = CanvasRenderingContext2D.prototype.strokeText;
+
+            CanvasRenderingContext2D.prototype.fillText = function(text, x, y, maxWidth) {
+                if (!this._customFont) {
+                    this.font = defaultFont;
+                }
+                return originalFillText.call(this, text, x, y, maxWidth);
+            };
+
+            CanvasRenderingContext2D.prototype.strokeText = function(text, x, y, maxWidth) {
+                if (!this._customFont) {
+                    this.font = defaultFont;
+                }
+                return originalStrokeText.call(this, text, x, y, maxWidth);
+            };
+
+            console.log('Canvas fully patched for Japanese text support with font:', defaultFont);
+        }
+
+        // Canvas のフォントパッチを早期に適用
+        patchCanvasFonts();
+
         // 初期化を待ってからアプリケーションを読み込む
-        waitForSkiko().then(() => {
-            console.log('Skiko ready, loading application...');
+        Promise.all([waitForSkiko(), waitForFonts()]).then(() => {
+            console.log('Skiko and fonts ready, loading application...');
+
             const script = document.createElement('script');
             script.src = './puyo-puyo-tdd.js';
             script.onload = () => console.log('Application loaded');
             script.onerror = (err) => console.error('Failed to load application:', err);
             document.body.appendChild(script);
         }).catch(err => {
-            console.error('Skiko initialization failed:', err);
+            console.error('Initialization failed:', err);
             document.getElementById('root').innerHTML = '<div style="padding: 20px; color: red;">Failed to initialize: ' + err.message + '</div>';
         });
     </script>
