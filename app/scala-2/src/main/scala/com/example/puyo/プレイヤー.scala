@@ -23,6 +23,7 @@ class プレイヤー(
   private var _ぷよの種類: Int = 0
   private var _nextPuyoType: Int = 0
   private var _回転状態: Int = 0
+  private var _着地済み: Boolean = false
   private var 落下タイマー: Double = 0.0
   private val 落下間隔: Double = 1000.0 // 1秒ごとに落下
 
@@ -40,6 +41,7 @@ class プレイヤー(
   def ぷよのY座標: Int = _ぷよのY座標
   def ぷよの種類: Int = _ぷよの種類
   def 回転状態: Int = _回転状態
+  def 着地した(): Boolean = _着地済み
 
   // テスト用のセッター
   def ぷよのX座標を設定(x: Int): Unit = _ぷよのX座標 = x
@@ -73,6 +75,8 @@ class プレイヤー(
     _ぷよの種類 = getRandomPuyoType()
     _nextPuyoType = getRandomPuyoType()
     _回転状態 = 0
+    _着地済み = false // 着地フラグをリセット
+    落下タイマー = 0.0 // タイマーもリセット
 
   private def getRandomPuyoType(): Int =
     MinPuyoType + scala.util.Random.nextInt(MaxPuyoType - MinPuyoType + 1)
@@ -158,24 +162,37 @@ class プレイヤー(
       着地時()
 
   private def 下に移動できる(): Boolean =
-    // 下端チェック
-    if _ぷよのY座標 >= 設定情報.ステージ行数 - 1 then return false
-
     // 2つ目のぷよの位置を計算
     val secondPuyoX = _ぷよのX座標 + オフセットX(_回転状態)
     val secondPuyoY = _ぷよのY座標 + オフセットY(_回転状態)
 
-    // 軸ぷよの下にぷよがあるかチェック
-    if ステージ.ぷよを取得(_ぷよのX座標, _ぷよのY座標 + 1) > 0 then return false
-
-    // 2つ目のぷよの下にぷよがあるかチェック
-    // ただし、2つ目のぷよが下向き（rotation == 2）の場合はスキップ
-    if オフセットY(_回転状態) != 1 then
+    // 2つ目のぷよが下向き（offsetY == 1）の場合
+    if オフセットY(_回転状態) == 1 then
+      // 2つ目のぷよの下端チェック
+      if secondPuyoY >= 設定情報.ステージ行数 - 1 then return false
+      // 2つ目のぷよの下にぷよがあるかチェック
+      if ステージ.ぷよを取得(secondPuyoX, secondPuyoY + 1) > 0 then return false
+    else
+      // 軸ぷよの下端チェック
+      if _ぷよのY座標 >= 設定情報.ステージ行数 - 1 then return false
+      // 軸ぷよの下にぷよがあるかチェック
+      if ステージ.ぷよを取得(_ぷよのX座標, _ぷよのY座標 + 1) > 0 then return false
+      // 2つ目のぷよの下端と衝突チェック
       if secondPuyoY >= 設定情報.ステージ行数 - 1 then return false
       if ステージ.ぷよを取得(secondPuyoX, secondPuyoY + 1) > 0 then return false
 
     true
 
   private def 着地時(): Unit =
-    // 着地処理（後で実装）
+    // 軸ぷよをステージに固定
+    ステージ.ぷよを設定(_ぷよのX座標, _ぷよのY座標, _ぷよの種類)
+
+    // 2つ目のぷよをステージに固定
+    val secondPuyoX = _ぷよのX座標 + オフセットX(_回転状態)
+    val secondPuyoY = _ぷよのY座標 + オフセットY(_回転状態)
+    ステージ.ぷよを設定(secondPuyoX, secondPuyoY, _nextPuyoType)
+
+    // 着地フラグを立てる
+    _着地済み = true
+
     dom.console.log("ぷよが着地しました")
