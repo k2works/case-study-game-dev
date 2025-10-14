@@ -23,6 +23,8 @@ class プレイヤー(
   private var _ぷよの種類: Int = 0
   private var _nextPuyoType: Int = 0
   private var _回転状態: Int = 0
+  private var 落下タイマー: Double = 0.0
+  private val 落下間隔: Double = 1000.0 // 1秒ごとに落下
 
   // 2つ目のぷよのオフセット（回転状態に応じた相対位置）
   private val オフセットX: Array[Int] = Array(0, 1, 0, -1) // 上、右、下、左のX方向オフセット
@@ -41,6 +43,7 @@ class プレイヤー(
 
   // テスト用のセッター
   def ぷよのX座標を設定(x: Int): Unit = _ぷよのX座標 = x
+  def ぷよのY座標を設定(y: Int): Unit = _ぷよのY座標 = y
   def 回転状態を設定(r: Int): Unit = _回転状態 = r
 
   // キーボードイベントの登録（ブラウザ環境でのみ実行）
@@ -122,6 +125,18 @@ class プレイヤー(
     val secondPuyoY = _ぷよのY座標 + オフセットY(_回転状態)
     ステージ.ぷよを描画(secondPuyoX, secondPuyoY, _nextPuyoType)
 
+  def デルタ時間で更新(デルタ時間: Double): Unit =
+    // タイマーを進める
+    落下タイマー += デルタ時間
+
+    // 落下間隔を超えたら落下処理を実行
+    if 落下タイマー >= 落下間隔 then
+      重力を適用()
+      落下タイマー = 0.0 // タイマーをリセット
+
+    // 既存の update 処理も実行（キー入力処理）
+    更新()
+
   def 更新(): Unit =
     // キー入力に応じて移動
     if _入力キー左 then
@@ -134,3 +149,33 @@ class プレイヤー(
     if _入力キー上 then
       右に回転()
       _入力キー上 = false
+
+  private def 重力を適用(): Unit =
+    // 下に移動できるかチェック
+    if 下に移動できる() then _ぷよのY座標 += 1
+    else
+      // 着地した場合の処理（後で実装）
+      着地時()
+
+  private def 下に移動できる(): Boolean =
+    // 下端チェック
+    if _ぷよのY座標 >= 設定情報.ステージ行数 - 1 then return false
+
+    // 2つ目のぷよの位置を計算
+    val secondPuyoX = _ぷよのX座標 + オフセットX(_回転状態)
+    val secondPuyoY = _ぷよのY座標 + オフセットY(_回転状態)
+
+    // 軸ぷよの下にぷよがあるかチェック
+    if ステージ.ぷよを取得(_ぷよのX座標, _ぷよのY座標 + 1) > 0 then return false
+
+    // 2つ目のぷよの下にぷよがあるかチェック
+    // ただし、2つ目のぷよが下向き（rotation == 2）の場合はスキップ
+    if オフセットY(_回転状態) != 1 then
+      if secondPuyoY >= 設定情報.ステージ行数 - 1 then return false
+      if ステージ.ぷよを取得(secondPuyoX, secondPuyoY + 1) > 0 then return false
+
+    true
+
+  private def 着地時(): Unit =
+    // 着地処理（後で実装）
+    dom.console.log("ぷよが着地しました")

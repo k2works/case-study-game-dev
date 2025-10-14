@@ -9,6 +9,7 @@ class ゲーム:
   private var _mode: ゲームモード = ゲームモード.開始
   private var フレーム: Int = 0
   private var 連鎖数: Int = 0
+  private var 前回の時刻: Double = 0.0
 
   var 設定情報: 設定情報 = _
   var ぷよ画像: ぷよ画像 = _
@@ -29,12 +30,20 @@ class ゲーム:
     // ゲームモードを設定
     _mode = ゲームモード.新ぷよ
 
+    // 初回時刻を設定（ブラウザ環境のみ）
+    try 前回の時刻 = dom.window.performance.now()
+    catch case _: Throwable => 前回の時刻 = 0.0
+
   def ループ(): Unit =
-    更新()
+    val 現在時刻 = dom.window.performance.now()
+    val デルタ時間 = 現在時刻 - 前回の時刻
+    前回の時刻 = 現在時刻
+
+    更新(デルタ時間)
     描画()
     dom.window.requestAnimationFrame(_ => ループ())
 
-  private def 更新(): Unit =
+  private def 更新(デルタ時間: Double): Unit =
     フレーム += 1
 
     _mode match
@@ -43,7 +52,7 @@ class ゲーム:
         _mode = ゲームモード.プレイ中
 
       case ゲームモード.プレイ中 =>
-        プレイヤー.更新()
+        プレイヤー.デルタ時間で更新(デルタ時間)
 
       case _ => // その他の状態は今後実装
   private def 描画(): Unit =
