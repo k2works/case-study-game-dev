@@ -722,7 +722,7 @@ class ゲームSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
     ゲーム = new ゲーム()
   }
 
-  "ゲーム" should "create necessary components when initialized" in {
+  "ゲーム" should "初期化時に必要なコンポーネントを作成する" in {
     ゲーム.初期化()
 
     ゲーム.設定情報 should not be null
@@ -732,7 +732,7 @@ class ゲームSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
     ゲーム.スコア should not be null
   }
 
-  it should "set game mode to Start when initialized" in {
+  it should "初期化時にゲームモードをStartに設定する" in {
     ゲーム.初期化()
 
     ゲーム.モード shouldBe ゲームモード.Start
@@ -778,7 +778,7 @@ class ゲーム {
   var プレイヤー: プレイヤー = _
   var スコア: スコア = _
 
-  def mode: ゲームモード = _mode
+  def モード: ゲームモード = _mode
 
   def 初期化(): Unit = {
     // 各コンポーネントの初期化
@@ -890,8 +890,8 @@ sbt test
 ```
 [info] GameSpec:
 [info] ゲーム
-[info] - should create necessary components when initialized
-[info] - should set game mode to Start when initialized
+[info] - 初期化時に必要なコンポーネントを作成する
+[info] - 初期化時にゲームモードをStartに設定する
 [info] Run completed in 234 milliseconds.
 [info] Total number of tests run: 2
 [info] Suites: completed 1, aborted 0
@@ -1076,32 +1076,32 @@ class プレイヤーSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     プレイヤー = new プレイヤー(設定情報, ステージ, ぷよ画像)
   }
 
-  "プレイヤー" should "set left flag when left key is pressed" in {
+  "プレイヤー" should "左キーが押されたときに左フラグを設定する" in {
     // キー入力をシミュレート（テスト用のメソッドを呼び出す）
-    player.setKeyState("ArrowLeft", pressed = true)
+    プレイヤー.キー状態を設定("ArrowLeft", pressed = true)
 
-    player.inputKeyLeft shouldBe true
+    プレイヤー.入力キー左 shouldBe true
   }
 
-  it should "set right flag when right key is pressed" in {
-    player.setKeyState("ArrowRight", pressed = true)
+  it should "右キーが押されたときに右フラグを設定する" in {
+    プレイヤー.キー状態を設定("ArrowRight", pressed = true)
 
-    player.inputKeyRight shouldBe true
+    プレイヤー.入力キー右 shouldBe true
   }
 
-  it should "clear flag when key is released" in {
-    player.setKeyState("ArrowLeft", pressed = true)
-    player.inputKeyLeft shouldBe true
+  it should "キーが離されたときにフラグをクリアする" in {
+    プレイヤー.キー状態を設定("ArrowLeft", pressed = true)
+    プレイヤー.入力キー左 shouldBe true
 
-    player.setKeyState("ArrowLeft", pressed = false)
-    player.inputKeyLeft shouldBe false
+    プレイヤー.キー状態を設定("ArrowLeft", pressed = false)
+    プレイヤー.入力キー左 shouldBe false
   }
 }
 ```
 
 「このテストは何をしているんですか？」このテストでは、キーボードの左右キーが押されたときと離されたときに、`プレイヤー`クラスの中の対応するフラグが正しく設定されるかどうかを確認しています。
 
-Scala.js では DOM イベントのシミュレートがテスト環境で難しいため、テスト用の`setKeyState`メソッドを用意してキー入力をテストします。これにより、ビジネスロジックを独立してテストできます。
+Scala.js では DOM イベントのシミュレートがテスト環境で難しいため、テスト用の`キー状態を設定`メソッドを用意してキー入力をテストします。これにより、ビジネスロジックを独立してテストできます。
 
 ### 実装: プレイヤーの入力検出
 
@@ -1119,36 +1119,36 @@ class プレイヤー(
     ステージ: ステージ,
     ぷよ画像: ぷよ画像
 ) {
-  private var _inputKeyLeft: Boolean = false
-  private var _inputKeyRight: Boolean = false
-  private var _inputKeyUp: Boolean = false
-  private var _inputKeyDown: Boolean = false
+  private var _入力キー左: Boolean = false
+  private var _入力キー右: Boolean = false
+  private var _入力キー上: Boolean = false
+  private var _入力キー下: Boolean = false
 
   // テスト用のアクセサ
-  def inputKeyLeft: Boolean = _inputKeyLeft
-  def inputKeyRight: Boolean = _inputKeyRight
-  def inputKeyUp: Boolean = _inputKeyUp
-  def inputKeyDown: Boolean = _inputKeyDown
+  def 入力キー左: Boolean = _入力キー左
+  def 入力キー右: Boolean = _入力キー右
+  def 入力キー上: Boolean = _入力キー上
+  def 入力キー下: Boolean = _入力キー下
 
   // キーボードイベントの登録
   document.addEventListener("keydown", onKeyDown _)
   document.addEventListener("keyup", onKeyUp _)
 
   private def onKeyDown(e: KeyboardEvent): Unit = {
-    setKeyState(e.key, pressed = true)
+    キー状態を設定(e.key, pressed = true)
   }
 
   private def onKeyUp(e: KeyboardEvent): Unit = {
-    setKeyState(e.key, pressed = false)
+    キー状態を設定(e.key, pressed = false)
   }
 
   // テスト用のメソッド（実装からも呼び出す）
-  def setKeyState(key: String, pressed: Boolean): Unit = {
+  def キー状態を設定(key: String, pressed: Boolean): Unit = {
     key match {
-      case "ArrowLeft"  => _inputKeyLeft = pressed
-      case "ArrowRight" => _inputKeyRight = pressed
-      case "ArrowUp"    => _inputKeyUp = pressed
-      case "ArrowDown"  => _inputKeyDown = pressed
+      case "ArrowLeft"  => _入力キー左 = pressed
+      case "ArrowRight" => _入力キー右 = pressed
+      case "ArrowUp"    => _入力キー上 = pressed
+      case "ArrowDown"  => _入力キー下 = pressed
       case _            => // 何もしない
     }
   }
@@ -1159,7 +1159,7 @@ class プレイヤー(
 
 Scala.js では、イベントハンドラの登録も型安全に行えます。`onKeyDown _` の `_` は、メソッドを関数値に変換するための記法です。
 
-また、`setKeyState` メソッドを public にすることで、テストからも呼び出せるようにし、実際のイベントハンドラからも共通のロジックを使うようにしています。これは「テスタビリティ」を高めるための設計です。
+また、`キー状態を設定` メソッドを public にすることで、テストからも呼び出せるようにし、実際のイベントハンドラからも共通のロジックを使うようにしています。これは「テスタビリティ」を高めるための設計です。
 
 ### テスト: ぷよの移動
 
@@ -1167,40 +1167,40 @@ Scala.js では、イベントハンドラの登録も型安全に行えます�
 
 ```scala
 // src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
-"プレイヤー movement" should "move left when possible" in {
-  player.新しいぷよを作成()
-  val initialX = player.ぷよのX座標
+"プレイヤー movement" should "可能な場合に左に移動する" in {
+  プレイヤー.新しいぷよを作成()
+  val initialX = プレイヤー.ぷよのX座標
 
-  player.左に移動()
+  プレイヤー.左に移動()
 
-  player.ぷよのX座標 shouldBe initialX - 1
+  プレイヤー.ぷよのX座標 shouldBe initialX - 1
 }
 
-it should "move right when possible" in {
-  player.新しいぷよを作成()
-  val initialX = player.ぷよのX座標
+it should "可能な場合に右に移動する" in {
+  プレイヤー.新しいぷよを作成()
+  val initialX = プレイヤー.ぷよのX座標
 
-  player.右に移動()
+  プレイヤー.右に移動()
 
-  player.ぷよのX座標 shouldBe initialX + 1
+  プレイヤー.ぷよのX座標 shouldBe initialX + 1
 }
 
-it should "not move left at left edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのX座標を設定(0) // 左端に設定
+it should "左端では左に移動しない" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.ぷよのX座標を設定(0) // 左端に設定
 
-  player.左に移動()
+  プレイヤー.左に移動()
 
-  player.ぷよのX座標 shouldBe 0
+  プレイヤー.ぷよのX座標 shouldBe 0
 }
 
-it should "not move right at right edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのX座標を設定(設定情報.stageCols - 1) // 右端に設定
+it should "右端では右に移動しない" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.ぷよのX座標を設定(設定情報.ステージ列数 - 1) // 右端に設定
 
-  player.右に移動()
+  プレイヤー.右に移動()
 
-  player.ぷよのX座標 shouldBe 設定情報.stageCols - 1
+  プレイヤー.ぷよのX座標 shouldBe 設定情報.ステージ列数 - 1
 }
 ```
 
@@ -1226,7 +1226,7 @@ private var _ぷよのX座標: Int = InitialPuyoX
 private var _ぷよのY座標: Int = InitialPuyoY
 private var _ぷよの種類: Int = 0
 private var _nextPuyoType: Int = 0
-private var rotation: Int = 0
+private var 回転: Int = 0
 
 // テスト用のアクセサ
 def ぷよのX座標: Int = _ぷよのX座標
@@ -1255,7 +1255,7 @@ def 左に移動(): Unit = {
 }
 
 def 右に移動(): Unit = {
-  if (_ぷよのX座標 < 設定情報.stageCols - 1) {
+  if (_ぷよのX座標 < 設定情報.ステージ列数 - 1) {
     _ぷよのX座標 += 1
   }
 }
@@ -1278,11 +1278,11 @@ Scala では、`private var` でプライベートな可変変数を定義し、
 package com.example.puyo
 
 class 設定情報 {
-  val stageCols: Int = 6            // ステージの列数
-  val stageRows: Int = 12           // ステージの行数
-  val puyoSize: Int = 32            // ぷよのサイズ（ピクセル）
-  val stageBackgroundColor: String = "#2a2a2a"  // ステージの背景色
-  val stageBorderColor: String = "#444"         // ステージの枠線色
+  val ステージ列数: Int = 6            // ステージの列数
+  val ステージ行数: Int = 12           // ステージの行数
+  val ぷよサイズ: Int = 32            // ぷよのサイズ（ピクセル）
+  val ステージ背景色: String = "#2a2a2a"  // ステージの背景色
+  val ステージ枠線色: String = "#444"         // ステージの枠線色
 }
 ```
 
@@ -1300,7 +1300,7 @@ import org.scalajs.dom.CanvasRenderingContext2D
 import scala.scalajs.js
 
 class ぷよ画像(設定情報: 設定情報) {
-  private val colors: js.Array[String] = js.Array(
+  private val 色配列: js.Array[String] = js.Array(
     "#888",    // 0: 空
     "#ff0000", // 1: 赤
     "#00ff00", // 2: 緑
@@ -1309,7 +1309,7 @@ class ぷよ画像(設定情報: 設定情報) {
   )
 
   def 描画(ctx: CanvasRenderingContext2D, puyoType: Int, x: Int, y: Int): Unit = {
-    val size = 設定情報.puyoSize
+    val size = 設定情報.ぷよサイズ
     val color = if (puyoType >= 0 && puyoType < colors.length) {
       colors(puyoType)
     } else {
@@ -1353,34 +1353,34 @@ import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement, document}
 
 class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
-  private var canvas: HTMLCanvasElement = _
-  private var ctx: Option[CanvasRenderingContext2D] = None
-  private var field: Array[Array[Int]] = _
+  private var キャンバス: HTMLCanvasElement = _
+  private var コンテキスト: Option[CanvasRenderingContext2D] = None
+  private var フィールド: Array[Array[Int]] = _
 
   initializeCanvas()
   initializeField()
 
   private def initializeCanvas(): Unit = {
-    canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
-    canvas.width = 設定情報.stageCols * 設定情報.puyoSize
-    canvas.height = 設定情報.stageRows * 設定情報.puyoSize
-    canvas.style.border = s"2px solid ${設定情報.stageBorderColor}"
-    canvas.style.backgroundColor = 設定情報.stageBackgroundColor
+    キャンバス = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+    キャンバス.width = 設定情報.ステージ列数 * 設定情報.ぷよサイズ
+    キャンバス.height = 設定情報.ステージ行数 * 設定情報.ぷよサイズ
+    キャンバス.style.border = s"2px solid ${設定情報.ステージ枠線色}"
+    キャンバス.style.backgroundColor = 設定情報.ステージ背景色
 
     val stageElement = document.getElementById("ステージ")
     if (stageElement != null) {
-      stageElement.appendChild(canvas)
+      stageElement.appendChild(キャンバス)
     }
 
     // 描画コンテキストを取得
     val context = canvas.getContext("2d")
     if (context != null) {
-      ctx = Some(context.asInstanceOf[CanvasRenderingContext2D])
+      コンテキスト = Some(context.asInstanceOf[CanvasRenderingContext2D])
     }
   }
 
   private def initializeField(): Unit = {
-    field = Array.fill(設定情報.stageRows, 設定情報.stageCols)(0)
+    フィールド = Array.fill(設定情報.ステージ行数, 設定情報.ステージ列数)(0)
   }
 
   def 描画(): Unit = {
@@ -1390,8 +1390,8 @@ class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
 
       // フィールドのぷよを描画
       for {
-        y <- 0 until 設定情報.stageRows
-        x <- 0 until 設定情報.stageCols
+        y <- 0 until 設定情報.ステージ行数
+        x <- 0 until 設定情報.ステージ列数
         puyoType = field(y)(x)
         if puyoType > 0
       } {
@@ -1400,20 +1400,20 @@ class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
     }
   }
 
-  def drawPuyo(x: Int, y: Int, puyoType: Int): Unit = {
+  def ぷよを描画(x: Int, y: Int, puyoType: Int): Unit = {
     ctx.foreach { context =>
       ぷよ画像.描画(context, puyoType, x, y)
     }
   }
 
-  def setPuyo(x: Int, y: Int, puyoType: Int): Unit = {
-    if (y >= 0 && y < 設定情報.stageRows && x >= 0 && x < 設定情報.stageCols) {
+  def ぷよを設定(x: Int, y: Int, puyoType: Int): Unit = {
+    if (y >= 0 && y < 設定情報.ステージ行数 && x >= 0 && x < 設定情報.ステージ列数) {
       field(y)(x) = puyoType
     }
   }
 
-  def getPuyo(x: Int, y: Int): Int = {
-    if (y < 0 || y >= 設定情報.stageRows || x < 0 || x >= 設定情報.stageCols) {
+  def ぷよを取得(x: Int, y: Int): Int = {
+    if (y < 0 || y >= 設定情報.ステージ行数 || x < 0 || x >= 設定情報.ステージ列数) {
       -1 // 範囲外
     } else {
       field(y)(x)
@@ -1440,13 +1440,13 @@ def 描画(): Unit = {
 
 def 更新(): Unit = {
   // キー入力に応じて移動
-  if (_inputKeyLeft) {
+  if (_入力キー左) {
     moveLeft()
-    _inputKeyLeft = false
+    _入力キー左 = false
   }
-  if (_inputKeyRight) {
+  if (_入力キー右) {
     moveRight()
-    _inputKeyRight = false
+    _入力キー右 = false
   }
 }
 ```
@@ -1472,7 +1472,7 @@ class ゲーム {
   var プレイヤー: プレイヤー = _
   var スコア: スコア = _
 
-  def mode: ゲームモード = _mode
+  def モード: ゲームモード = _mode
 
   def 初期化(): Unit = {
     設定情報 = new 設定情報()
@@ -1484,7 +1484,7 @@ class ゲーム {
     _mode = ゲームモード.NewPuyo
   }
 
-  def loop(): Unit = {
+  def ループ(): Unit = {
     update()
     draw()
     dom.window.requestAnimationFrame(_ => loop())
@@ -1495,11 +1495,11 @@ class ゲーム {
 
     _mode match {
       case ゲームモード.NewPuyo =>
-        player.新しいぷよを作成()
+        プレイヤー.新しいぷよを作成()
         _mode = ゲームモード.Playing
 
       case ゲームモード.Playing =>
-        player.更新()
+        プレイヤー.更新()
 
       case _ => // その他の状態は今後実装
     }
@@ -1509,7 +1509,7 @@ class ゲーム {
     ステージ.描画()
 
     if (_mode == ゲームモード.Playing) {
-      player.描画()
+      プレイヤー.描画()
     }
   }
 }
@@ -1553,14 +1553,14 @@ sbt test
 ```
 [info] PlayerSpec:
 [info] プレイヤー
-[info] - should set left flag when left key is pressed
-[info] - should set right flag when right key is pressed
-[info] - should clear flag when key is released
+[info] - 左キーが押されたときに左フラグを設定する
+[info] - 右キーが押されたときに右フラグを設定する
+[info] - キーが離されたときにフラグをクリアする
 [info] プレイヤー movement
-[info] - should move left when possible
-[info] - should move right when possible
-[info] - should not move left at left edge
-[info] - should not move right at right edge
+[info] - 可能な場合に左に移動する
+[info] - 可能な場合に右に移動する
+[info] - 左端では左に移動しない
+[info] - 右端では右に移動しない
 [info] Run completed in 456 milliseconds.
 [info] Total number of tests run: 7
 [info] Suites: completed 1, aborted 0
@@ -1588,7 +1588,7 @@ python -m http.server 8000
 
 1. **プレイヤー クラスのキー入力検出**
    - キー入力フラグの実装
-   - `setKeyState` メソッドによるテスタビリティの向上
+   - `キー状態を設定` メソッドによるテスタビリティの向上
    - Scala.js の DOM イベントリスナー登録
 
 2. **プレイヤー クラスのぷよ移動機能**
@@ -1657,31 +1657,31 @@ python -m http.server 8000
 
 ```scala
 // src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
-"プレイヤー rotation" should "rotate clockwise and increment rotation state" in {
-  player.新しいぷよを作成()
-  val initialRotation = player.回転状態
+"プレイヤー rotation" should "時計回りに回転して回転状態をインクリメントする" in {
+  プレイヤー.新しいぷよを作成()
+  val initialRotation = プレイヤー.回転状態
 
-  player.右に回転()
+  プレイヤー.右に回転()
 
-  player.回転状態 shouldBe ((initialRotation + 1) % 4)
+  プレイヤー.回転状態 shouldBe ((initialRotation + 1) % 4)
 }
 
-it should "rotate counter-clockwise and decrement rotation state" in {
-  player.新しいぷよを作成()
-  val initialRotation = player.回転状態
+it should "反時計回りに回転して回転状態をデクリメントする" in {
+  プレイヤー.新しいぷよを作成()
+  val initialRotation = プレイヤー.回転状態
 
-  player.左に回転()
+  プレイヤー.左に回転()
 
-  player.回転状態 shouldBe ((initialRotation + 3) % 4)
+  プレイヤー.回転状態 shouldBe ((initialRotation + 3) % 4)
 }
 
-it should "wrap rotation state from 3 to 0 when rotating right" in {
-  player.新しいぷよを作成()
-  player.回転状態を設定(3)
+it should "右回転時に回転状態を3から0にラップする" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.回転状態を設定(3)
 
-  player.右に回転()
+  プレイヤー.右に回転()
 
-  player.回転状態 shouldBe 0
+  プレイヤー.回転状態 shouldBe 0
 }
 ```
 
@@ -1712,8 +1712,8 @@ def 回転状態: Int = _回転状態
 def 回転状態を設定(r: Int): Unit = _回転状態 = r
 
 // 2つ目のぷよのオフセット（回転状態に応じた相対位置）
-private val offsetX: Array[Int] = Array(0, 1, 0, -1)  // 右、下、左、上のX方向オフセット
-private val offsetY: Array[Int] = Array(-1, 0, 1, 0)  // 右、下、左、上のY方向オフセット
+private val オフセットX: Array[Int] = Array(0, 1, 0, -1)  // 右、下、左、上のX方向オフセット
+private val オフセットY: Array[Int] = Array(-1, 0, 1, 0)  // 右、下、左、上のY方向オフセット
 
 def 右に回転(): Unit = {
   // 時計回りに回転（0→1→2→3→0）
@@ -1742,30 +1742,30 @@ def 左に回転(): Unit = {
 
 ```scala
 // src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
-"Wall kick" should "move left when rotating right at right edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのX座標を設定(設定情報.stageCols - 1)  // 右端に配置
-  player.回転状態を設定(0)  // 上向き
+"Wall kick" should "右端で右回転時に左に移動する" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.ぷよのX座標を設定(設定情報.ステージ列数 - 1)  // 右端に配置
+  プレイヤー.回転状態を設定(0)  // 上向き
 
   // 右回転（2つ目のぷよが右にくる）
-  player.右に回転()
+  プレイヤー.右に回転()
 
   // 壁キックにより左に移動していることを確認
-  player.ぷよのX座標 shouldBe (設定情報.stageCols - 2)
-  player.回転状態 shouldBe 1
+  プレイヤー.ぷよのX座標 shouldBe (設定情報.ステージ列数 - 2)
+  プレイヤー.回転状態 shouldBe 1
 }
 
-it should "move right when rotating left at left edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのX座標を設定(0)  // 左端に配置
-  player.回転状態を設定(0)  // 上向き
+it should "左端で左回転時に右に移動する" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.ぷよのX座標を設定(0)  // 左端に配置
+  プレイヤー.回転状態を設定(0)  // 上向き
 
   // 左回転（2つ目のぷよが左にくる）
-  player.左に回転()
+  プレイヤー.左に回転()
 
   // 壁キックにより右に移動していることを確認
-  player.ぷよのX座標 shouldBe 1
-  player.回転状態 shouldBe 3
+  プレイヤー.ぷよのX座標 shouldBe 1
+  プレイヤー.回転状態 shouldBe 3
 }
 ```
 
@@ -1803,7 +1803,7 @@ private def performWallKick(): Unit = {
   val nextX = _ぷよのX座標 + offsetX(_回転状態)
 
   // 右端で右回転した場合（2つ目のぷよが右にくる場合）
-  if (nextX >= 設定情報.stageCols) {
+  if (nextX >= 設定情報.ステージ列数) {
     _ぷよのX座標 -= 1  // 左に移動（壁キック）
   }
 
@@ -1832,26 +1832,26 @@ private def performWallKick(): Unit = {
 
 ```scala
 // src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
-"プレイヤー movement with rotation" should "not move right when 2nd puyo would go out of right edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのX座標を設定(設定情報.stageCols - 1)  // 右端に配置
-  player.回転状態を設定(1)  // 2つ目のぷよが右にある状態
+"プレイヤー movement with rotation" should "2つ目のぷよが右端を超える場合は右に移動しない" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.ぷよのX座標を設定(設定情報.ステージ列数 - 1)  // 右端に配置
+  プレイヤー.回転状態を設定(1)  // 2つ目のぷよが右にある状態
 
-  player.右に移動()
+  プレイヤー.右に移動()
 
   // 移動していないことを確認
-  player.ぷよのX座標 shouldBe (設定情報.stageCols - 1)
+  プレイヤー.ぷよのX座標 shouldBe (設定情報.ステージ列数 - 1)
 }
 
-it should "not move left when 2nd puyo would go out of left edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのX座標を設定(0)  // 左端に配置
-  player.回転状態を設定(3)  // 2つ目のぷよが左にある状態
+it should "2つ目のぷよが左端を超える場合は左に移動しない" in {
+  プレイヤー.新しいぷよを作成()
+  プレイヤー.ぷよのX座標を設定(0)  // 左端に配置
+  プレイヤー.回転状態を設定(3)  // 2つ目のぷよが左にある状態
 
-  player.左に移動()
+  プレイヤー.左に移動()
 
   // 移動していないことを確認
-  player.ぷよのX座標 shouldBe 0
+  プレイヤー.ぷよのX座標 shouldBe 0
 }
 ```
 
@@ -1864,7 +1864,7 @@ def 左に移動(): Unit = {
   val secondPuyoNextX = nextX + offsetX(_回転状態)
 
   // 軸ぷよと2つ目のぷよが範囲内かチェック
-  if (nextX >= 0 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.stageCols) {
+  if (nextX >= 0 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数) {
     _ぷよのX座標 = nextX
   }
 }
@@ -1874,7 +1874,7 @@ def 右に移動(): Unit = {
   val secondPuyoNextX = nextX + offsetX(_回転状態)
 
   // 軸ぷよと2つ目のぷよが範囲内かチェック
-  if (nextX < 設定情報.stageCols && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.stageCols) {
+  if (nextX < 設定情報.ステージ列数 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数) {
     _ぷよのX座標 = nextX
   }
 }
@@ -1922,10 +1922,10 @@ class プレイヤー(
   private val MinPuyoType = 1
   private val MaxPuyoType = 4
 
-  private var _inputKeyLeft: Boolean = false
-  private var _inputKeyRight: Boolean = false
-  private var _inputKeyUp: Boolean = false
-  private var _inputKeyDown: Boolean = false
+  private var _入力キー左: Boolean = false
+  private var _入力キー右: Boolean = false
+  private var _入力キー上: Boolean = false
+  private var _入力キー下: Boolean = false
 
   private var _ぷよのX座標: Int = InitialPuyoX
   private var _ぷよのY座標: Int = InitialPuyoY
@@ -1934,14 +1934,14 @@ class プレイヤー(
   private var _回転状態: Int = 0
 
   // 2つ目のぷよのオフセット（回転状態に応じた相対位置）
-  private val offsetX: Array[Int] = Array(0, 1, 0, -1)
-  private val offsetY: Array[Int] = Array(-1, 0, 1, 0)
+  private val オフセットX: Array[Int] = Array(0, 1, 0, -1)
+  private val オフセットY: Array[Int] = Array(-1, 0, 1, 0)
 
   // テスト用のアクセサ
-  def inputKeyLeft: Boolean = _inputKeyLeft
-  def inputKeyRight: Boolean = _inputKeyRight
-  def inputKeyUp: Boolean = _inputKeyUp
-  def inputKeyDown: Boolean = _inputKeyDown
+  def 入力キー左: Boolean = _入力キー左
+  def 入力キー右: Boolean = _入力キー右
+  def 入力キー上: Boolean = _入力キー上
+  def 入力キー下: Boolean = _入力キー下
   def ぷよのX座標: Int = _ぷよのX座標
   def ぷよのY座標: Int = _ぷよのY座標
   def ぷよの種類: Int = _ぷよの種類
@@ -1956,19 +1956,19 @@ class プレイヤー(
   document.addEventListener("keyup", onKeyUp _)
 
   private def onKeyDown(e: KeyboardEvent): Unit = {
-    setKeyState(e.key, pressed = true)
+    キー状態を設定(e.key, pressed = true)
   }
 
   private def onKeyUp(e: KeyboardEvent): Unit = {
-    setKeyState(e.key, pressed = false)
+    キー状態を設定(e.key, pressed = false)
   }
 
-  def setKeyState(key: String, pressed: Boolean): Unit = {
+  def キー状態を設定(key: String, pressed: Boolean): Unit = {
     key match {
-      case "ArrowLeft"  => _inputKeyLeft = pressed
-      case "ArrowRight" => _inputKeyRight = pressed
-      case "ArrowUp"    => _inputKeyUp = pressed
-      case "ArrowDown"  => _inputKeyDown = pressed
+      case "ArrowLeft"  => _入力キー左 = pressed
+      case "ArrowRight" => _入力キー右 = pressed
+      case "ArrowUp"    => _入力キー上 = pressed
+      case "ArrowDown"  => _入力キー下 = pressed
       case _            => // 何もしない
     }
   }
@@ -1989,7 +1989,7 @@ class プレイヤー(
     val nextX = _ぷよのX座標 - 1
     val secondPuyoNextX = nextX + offsetX(_回転状態)
 
-    if (nextX >= 0 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.stageCols) {
+    if (nextX >= 0 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数) {
       _ぷよのX座標 = nextX
     }
   }
@@ -1998,7 +1998,7 @@ class プレイヤー(
     val nextX = _ぷよのX座標 + 1
     val secondPuyoNextX = nextX + offsetX(_回転状態)
 
-    if (nextX < 設定情報.stageCols && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.stageCols) {
+    if (nextX < 設定情報.ステージ列数 && secondPuyoNextX >= 0 && secondPuyoNextX < 設定情報.ステージ列数) {
       _ぷよのX座標 = nextX
     }
   }
@@ -2016,7 +2016,7 @@ class プレイヤー(
   private def performWallKick(): Unit = {
     val nextX = _ぷよのX座標 + offsetX(_回転状態)
 
-    if (nextX >= 設定情報.stageCols) {
+    if (nextX >= 設定情報.ステージ列数) {
       _ぷよのX座標 -= 1
     }
 
@@ -2037,18 +2037,18 @@ class プレイヤー(
 
   def 更新(): Unit = {
     // キー入力に応じて移動
-    if (_inputKeyLeft) {
+    if (_入力キー左) {
       moveLeft()
-      _inputKeyLeft = false
+      _入力キー左 = false
     }
-    if (_inputKeyRight) {
+    if (_入力キー右) {
       moveRight()
-      _inputKeyRight = false
+      _入力キー右 = false
     }
     // キー入力に応じて回転
-    if (_inputKeyUp) {
+    if (_入力キー上) {
       rotateRight()
-      _inputKeyUp = false
+      _入力キー上 = false
     }
   }
 }
@@ -2067,24 +2067,24 @@ sbt test
 ```
 [info] PlayerSpec:
 [info] プレイヤー
-[info] - should set left flag when left key is pressed
-[info] - should set right flag when right key is pressed
-[info] - should clear flag when key is released
+[info] - 左キーが押されたときに左フラグを設定する
+[info] - 右キーが押されたときに右フラグを設定する
+[info] - キーが離されたときにフラグをクリアする
 [info] プレイヤー movement
-[info] - should move left when possible
-[info] - should move right when possible
-[info] - should not move left at left edge
-[info] - should not move right at right edge
+[info] - 可能な場合に左に移動する
+[info] - 可能な場合に右に移動する
+[info] - 左端では左に移動しない
+[info] - 右端では右に移動しない
 [info] プレイヤー rotation
-[info] - should rotate clockwise and increment rotation state
-[info] - should rotate counter-clockwise and decrement rotation state
-[info] - should wrap rotation state from 3 to 0 when rotating right
+[info] - 時計回りに回転して回転状態をインクリメントする
+[info] - 反時計回りに回転して回転状態をデクリメントする
+[info] - 右回転時に回転状態を3から0にラップする
 [info] Wall kick
-[info] - should move left when rotating right at right edge
-[info] - should move right when rotating left at left edge
+[info] - 右端で右回転時に左に移動する
+[info] - 左端で左回転時に右に移動する
 [info] プレイヤー movement with rotation
-[info] - should not move right when 2nd puyo would go out of right edge
-[info] - should not move left when 2nd puyo would go out of left edge
+[info] - 2つ目のぷよが右端を超える場合は右に移動しない
+[info] - 2つ目のぷよが左端を超える場合は左に移動しない
 [info] Run completed in 678 milliseconds.
 [info] Total number of tests run: 14
 [info] Suites: completed 1, aborted 0
@@ -2122,7 +2122,7 @@ python -m http.server 8000
 3. **壁キック処理**
    - 回転後に2つ目のぷよが壁外に出る場合、軸ぷよの位置を自動調整
    - 左壁キック：`nextX < 0` のとき `puyoX` を +1
-   - 右壁キック：`nextX >= stageCols` のとき `puyoX` を -1
+   - 右壁キック：`nextX >= ステージ列数` のとき `puyoX` を -1
 
 4. **2つ目のぷよを考慮した移動制限**
    - `moveLeft`/`moveRight` の改善：回転状態に応じて2つ目のぷよの位置も計算
@@ -2133,7 +2133,7 @@ python -m http.server 8000
    - 軸ぷよと2つ目のぷよを両方描画
 
 6. **キー入力の統合**
-   - `update` メソッドで上キー（`inputKeyUp`）による回転処理
+   - `update` メソッドで上キー（`入力キー上`）による回転処理
    - 回転後フラグをクリア
 
 7. **テストの作成**
@@ -2204,7 +2204,7 @@ python -m http.server 8000
 ```scala
 // src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
 "プレイヤー auto drop" should "drop one row after drop interval" in {
-  player.新しいぷよを作成()
+  プレイヤー.新しいぷよを作成()
   val initialY = player.ぷよのY座標
   val dropInterval = 1000.0  // 1000ミリ秒 = 1秒
 
@@ -2216,7 +2216,7 @@ python -m http.server 8000
 }
 
 it should "not drop before drop interval" in {
-  player.新しいぷよを作成()
+  プレイヤー.新しいぷよを作成()
   val initialY = player.ぷよのY座標
   val dropInterval = 1000.0
 
@@ -2228,14 +2228,14 @@ it should "not drop before drop interval" in {
 }
 
 it should "not drop beyond bottom edge" in {
-  player.新しいぷよを作成()
-  player.ぷよのY座標を設定(設定情報.stageRows - 1)  // 下端に配置
+  プレイヤー.新しいぷよを作成()
+  player.ぷよのY座標を設定(設定情報.ステージ行数 - 1)  // 下端に配置
 
   // 落下処理を実行
   player.デルタ時間で更新(1000.0)
 
   // 位置が変わっていないことを確認（下端を超えない）
-  player.ぷよのY座標 shouldBe 設定情報.stageRows - 1
+  player.ぷよのY座標 shouldBe 設定情報.ステージ行数 - 1
 }
 ```
 
@@ -2253,8 +2253,8 @@ it should "not drop beyond bottom edge" in {
 
 ```scala
 // src/main/scala/com/example/puyo/プレイヤー.scala（続き）
-private var dropTimer: Double = 0.0
-private val dropInterval: Double = 1000.0  // 1秒ごとに落下
+private var 落下タイマー: Double = 0.0
+private val 落下間隔: Double = 1000.0  // 1秒ごとに落下
 
 // テスト用のアクセサ
 def ぷよのY座標を設定(y: Int): Unit = _ぷよのY座標 = y
@@ -2285,7 +2285,7 @@ private def 重力を適用(): Unit = {
 
 private def 下に移動できる(): Boolean = {
   // 下端チェック
-  if (_ぷよのY座標 >= 設定情報.stageRows - 1) {
+  if (_ぷよのY座標 >= 設定情報.ステージ行数 - 1) {
     return false
   }
 
@@ -2301,7 +2301,7 @@ private def 下に移動できる(): Boolean = {
   // 2つ目のぷよの下にぷよがあるかチェック
   // ただし、2つ目のぷよが下向き（rotation == 2）の場合はスキップ
   if (offsetY(_回転状態) != 1) {
-    if (secondPuyoY >= 設定情報.stageRows - 1) {
+    if (secondPuyoY >= 設定情報.ステージ行数 - 1) {
       return false
     }
     if (ステージ.getPuyo(secondPuyoX, secondPuyoY + 1) > 0) {
@@ -2334,22 +2334,22 @@ private def onLanded(): Unit = {
 ```scala
 // src/test/scala/com/example/puyo/PlayerSpec.scala（続き）
 "プレイヤー landing" should "fix puyo to ステージ when landed" in {
-  player.新しいぷよを作成()
-  player.ぷよのY座標を設定(設定情報.stageRows - 2)  // 下端の1つ上に配置
-  player.回転状態を設定(2)  // 2つ目のぷよが下にある状態
+  プレイヤー.新しいぷよを作成()
+  player.ぷよのY座標を設定(設定情報.ステージ行数 - 2)  // 下端の1つ上に配置
+  プレイヤー.回転状態を設定(2)  // 2つ目のぷよが下にある状態
 
   // 落下処理を実行（着地する）
   player.デルタ時間で更新(1000.0)
 
   // ステージにぷよが固定されていることを確認
-  ステージ.getPuyo(player.ぷよのX座標, 設定情報.stageRows - 2) should be > 0
-  ステージ.getPuyo(player.ぷよのX座標, 設定情報.stageRows - 1) should be > 0
+  ステージ.getPuyo(player.ぷよのX座標, 設定情報.ステージ行数 - 2) should be > 0
+  ステージ.getPuyo(player.ぷよのX座標, 設定情報.ステージ行数 - 1) should be > 0
 }
 
 it should "set landed flag when puyo lands" in {
-  player.新しいぷよを作成()
-  player.ぷよのY座標を設定(設定情報.stageRows - 2)
-  player.回転状態を設定(2)
+  プレイヤー.新しいぷよを作成()
+  player.ぷよのY座標を設定(設定情報.ステージ行数 - 2)
+  プレイヤー.回転状態を設定(2)
 
   // 落下処理を実行（着地する）
   player.デルタ時間で更新(1000.0)
@@ -2360,19 +2360,19 @@ it should "set landed flag when puyo lands" in {
 
 it should "land on top of existing puyo" in {
   // ステージの底に既存のぷよを配置
-  ステージ.setPuyo(2, 設定情報.stageRows - 1, 1)
+  ステージ.setPuyo(2, 設定情報.ステージ行数 - 1, 1)
 
-  player.新しいぷよを作成()
-  player.ぷよのY座標を設定(設定情報.stageRows - 3)
-  player.回転状態を設定(2)  // 2つ目のぷよが下
+  プレイヤー.新しいぷよを作成()
+  player.ぷよのY座標を設定(設定情報.ステージ行数 - 3)
+  プレイヤー.回転状態を設定(2)  // 2つ目のぷよが下
 
   // 2回落下（着地するまで）
   player.デルタ時間で更新(1000.0)
   player.デルタ時間で更新(1000.0)
 
   // 既存のぷよの上に着地していることを確認
-  ステージ.getPuyo(2, 設定情報.stageRows - 3) should be > 0
-  ステージ.getPuyo(2, 設定情報.stageRows - 2) should be > 0
+  ステージ.getPuyo(2, 設定情報.ステージ行数 - 3) should be > 0
+  ステージ.getPuyo(2, 設定情報.ステージ行数 - 2) should be > 0
 }
 ```
 
@@ -2448,9 +2448,9 @@ class ステージSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach
     // 浮いている青ぷよを配置（下に空きがある）
     ステージ.setPuyo(4, 2, 2)
     // 下端に黄色ぷよの積み重ね
-    ステージ.setPuyo(3, 設定情報.stageRows - 3, 1)
-    ステージ.setPuyo(3, 設定情報.stageRows - 2, 1)
-    ステージ.setPuyo(3, 設定情報.stageRows - 1, 1)
+    ステージ.setPuyo(3, 設定情報.ステージ行数 - 3, 1)
+    ステージ.setPuyo(3, 設定情報.ステージ行数 - 2, 1)
+    ステージ.setPuyo(3, 設定情報.ステージ行数 - 1, 1)
 
     // 重力を適用
     val hasFallen = ステージ.重力を適用()
@@ -2461,15 +2461,15 @@ class ステージSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach
     hasFallen shouldBe true
 
     // 黄色ぷよは変わらない（下端に積み重なっているので動かない）
-    ステージ.getPuyo(3, 設定情報.stageRows - 3) shouldBe 1
-    ステージ.getPuyo(3, 設定情報.stageRows - 2) shouldBe 1
-    ステージ.getPuyo(3, 設定情報.stageRows - 1) shouldBe 1
+    ステージ.getPuyo(3, 設定情報.ステージ行数 - 3) shouldBe 1
+    ステージ.getPuyo(3, 設定情報.ステージ行数 - 2) shouldBe 1
+    ステージ.getPuyo(3, 設定情報.ステージ行数 - 1) shouldBe 1
   }
 
   it should "return false when no puyo falls" in {
     // 全てのぷよが支えられている状態
-    ステージ.setPuyo(2, 設定情報.stageRows - 1, 1)
-    ステージ.setPuyo(3, 設定情報.stageRows - 1, 2)
+    ステージ.setPuyo(2, 設定情報.ステージ行数 - 1, 1)
+    ステージ.setPuyo(3, 設定情報.ステージ行数 - 1, 2)
 
     // 重力を適用
     val hasFallen = ステージ.重力を適用()
@@ -2510,15 +2510,15 @@ def 重力を適用(): Boolean = {
   var hasFallen = false
 
   // 下から上に向かって各列をスキャン（列ごとに処理）
-  for (x <- 0 until 設定情報.stageCols) {
-    for (y <- 設定情報.stageRows - 2 to 0 by -1) {
+  for (x <- 0 until 設定情報.ステージ列数) {
+    for (y <- 設定情報.ステージ行数 - 2 to 0 by -1) {
       val puyoType = originalField(y)(x)
       if (puyoType > 0) {
         // 元のフィールドで下に空きがあるかチェック
         if (originalField(y + 1)(x) == 0) {
           // 1マス下に移動
-          field(y + 1)(x) = puyoType
-          field(y)(x) = 0
+          フィールド(y + 1)(x) = puyoType
+          フィールド(y)(x) = 0
           hasFallen = true
         }
       }
@@ -2547,7 +2547,7 @@ class ゲーム {
   private var _mode: ゲームモード = ゲームモード.Start
   private var フレーム: Int = 0
   private var 連鎖数: Int = 0
-  private var lastTime: Double = 0.0
+  private var 最終時刻: Double = 0.0
 
   var 設定情報: 設定情報 = _
   var ぷよ画像: ぷよ画像 = _
@@ -2555,7 +2555,7 @@ class ゲーム {
   var プレイヤー: プレイヤー = _
   var スコア: スコア = _
 
-  def mode: ゲームモード = _mode
+  def モード: ゲームモード = _mode
 
   def 初期化(): Unit = {
     設定情報 = new 設定情報()
@@ -2567,7 +2567,7 @@ class ゲーム {
     _mode = ゲームモード.NewPuyo
   }
 
-  def loop(currentTime: Double = 0.0): Unit = {
+  def ループ(currentTime: Double = 0.0): Unit = {
     // 経過時間を計算（ミリ秒）
     val デルタ時間 = currentTime - lastTime
     lastTime = currentTime
@@ -2583,7 +2583,7 @@ class ゲーム {
     _mode match {
       case ゲームモード.NewPuyo =>
         // 新しいぷよを作成
-        player.新しいぷよを作成()
+        プレイヤー.新しいぷよを作成()
         _mode = ゲームモード.Playing
 
       case ゲームモード.Playing =>
@@ -2620,7 +2620,7 @@ class ゲーム {
     ステージ.描画()
 
     if (_mode == ゲームモード.Playing) {
-      player.描画()
+      プレイヤー.描画()
     }
   }
 }
@@ -2641,24 +2641,24 @@ sbt test
 ```
 [info] PlayerSpec:
 [info] プレイヤー
-[info] - should set left flag when left key is pressed
-[info] - should set right flag when right key is pressed
-[info] - should clear flag when key is released
+[info] - 左キーが押されたときに左フラグを設定する
+[info] - 右キーが押されたときに右フラグを設定する
+[info] - キーが離されたときにフラグをクリアする
 [info] プレイヤー movement
-[info] - should move left when possible
-[info] - should move right when possible
-[info] - should not move left at left edge
-[info] - should not move right at right edge
+[info] - 可能な場合に左に移動する
+[info] - 可能な場合に右に移動する
+[info] - 左端では左に移動しない
+[info] - 右端では右に移動しない
 [info] プレイヤー rotation
-[info] - should rotate clockwise and increment rotation state
-[info] - should rotate counter-clockwise and decrement rotation state
-[info] - should wrap rotation state from 3 to 0 when rotating right
+[info] - 時計回りに回転して回転状態をインクリメントする
+[info] - 反時計回りに回転して回転状態をデクリメントする
+[info] - 右回転時に回転状態を3から0にラップする
 [info] Wall kick
-[info] - should move left when rotating right at right edge
-[info] - should move right when rotating left at left edge
+[info] - 右端で右回転時に左に移動する
+[info] - 左端で左回転時に右に移動する
 [info] プレイヤー movement with rotation
-[info] - should not move right when 2nd puyo would go out of right edge
-[info] - should not move left when 2nd puyo would go out of left edge
+[info] - 2つ目のぷよが右端を超える場合は右に移動しない
+[info] - 2つ目のぷよが左端を超える場合は左に移動しない
 [info] プレイヤー auto drop
 [info] - should drop one row after drop interval
 [info] - should not drop before drop interval
@@ -2706,7 +2706,7 @@ python -m http.server 8000
 
 2. **着地判定**
    - `canMoveDown` メソッド：下に移動できるかチェック
-   - 下端チェック：`puyoY >= stageRows - 1`
+   - 下端チェック：`puyoY >= ステージ行数 - 1`
    - 軸ぷよの下にぷよがあるかチェック
    - 2つ目のぷよの下にぷよがあるかチェック
 
@@ -2800,7 +2800,7 @@ python -m http.server 8000
 // src/test/scala/puyopuyo/PlayerSpec.scala（続き）
 "高速落下" should "下キーが押されていると、落下速度が上がる" in {
   // 新しいぷよを作成
-  player.新しいぷよを作成()
+  プレイヤー.新しいぷよを作成()
 
   // 下キーを押す（キーボードイベントのシミュレーション）
   player.下キー入力を設定(true)
@@ -2815,7 +2815,7 @@ python -m http.server 8000
 
 it should "下に移動できる場合、下に移動する" in {
   // 新しいぷよを作成
-  player.新しいぷよを作成()
+  プレイヤー.新しいぷよを作成()
 
   // 初期位置を記録
   val initialY = player.ぷよのY座標
@@ -2829,17 +2829,17 @@ it should "下に移動できる場合、下に移動する" in {
 
 it should "下に障害物がある場合、下に移動できない" in {
   // 新しいぷよを作成
-  player.新しいぷよを作成()
+  プレイヤー.新しいぷよを作成()
 
   // ステージの一番下に移動
-  player.ぷよのY座標を設定(設定情報.stageRows - 1)
+  player.ぷよのY座標を設定(設定情報.ステージ行数 - 1)
 
   // 下に移動を試みる
   val canMove = player.下に移動()
 
   // 移動できないことを確認
   canMove shouldBe false
-  player.ぷよのY座標 shouldBe (設定情報.stageRows - 1)
+  player.ぷよのY座標 shouldBe (設定情報.ステージ行数 - 1)
 }
 ```
 
@@ -2859,15 +2859,15 @@ it should "下に障害物がある場合、下に移動できない" in {
 // src/main/scala/puyopuyo/プレイヤー.scala（続き）
 
 // 下キーが押されているかのフラグを追加
-private var inputKeyDown: Boolean = false
+private var 入力キー下: Boolean = false
 
 def 下キー入力を設定(isDown: Boolean): Unit = {
-  inputKeyDown = isDown
+  入力キー下 = isDown
 }
 
 def 落下速度を取得(): Double = {
   // 下キーが押されていれば高速落下
-  if (inputKeyDown) 10.0 else 1.0
+  if (入力キー下) 10.0 else 1.0
 }
 
 def 下に移動(): Boolean = {
@@ -2958,7 +2958,7 @@ def 初期化(): Unit = {
 
   // プレイヤーの初期化
   player.キーボードを設定() // キーボード設定を追加
-  player.新しいぷよを作成()
+  プレイヤー.新しいぷよを作成()
 
   // ゲームモードの初期化
   mode = ゲームモード.Playing
@@ -3013,7 +3013,7 @@ sbt test
 4. **キー入力の検出**
    - `setupKeyboard` メソッドで `keydown` と `keyup` イベントを設定
    - パターンマッチングで `ArrowDown` キーを判定
-   - キーが押されている間だけ `inputKeyDown` フラグが `true`
+   - キーが押されている間だけ `入力キー下` フラグが `true`
 
 5. **テストの作成**
    - 高速落下のテスト（3 テスト）
@@ -3040,7 +3040,7 @@ sbt test
    - ラムダ式 `(e: dom.KeyboardEvent) => {...}` でイベントハンドラ定義
 
 9. **設計の改善点**
-   - フラグ管理による状態の明示化（`inputKeyDown`）
+   - フラグ管理による状態の明示化（`入力キー下`）
    - 速度倍率による柔軟な時間制御
    - メソッド分割による責任の明確化（`getDropSpeed`、`moveDown`）
 
@@ -3200,28 +3200,28 @@ case class 消去情報(
 case class ぷよの位置(x: Int, y: Int, puyoType: Int)
 
 class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
-  private var board: Array[Array[Int]] = Array.ofDim[Int](設定情報.stageRows, 設定情報.stageCols)
-  private val stageElement: dom.Element = dom.document.getElementById("ステージ")
+  private var 盤面: Array[Array[Int]] = Array.ofDim[Int](設定情報.ステージ行数, 設定情報.ステージ列数)
+  private val ステージ要素: dom.Element = dom.document.getElementById("ステージ")
 
   def 初期化(): Unit = {
     // ボードの初期化
-    board = Array.ofDim[Int](設定情報.stageRows, 設定情報.stageCols)
+    board = Array.ofDim[Int](設定情報.ステージ行数, 設定情報.ステージ列数)
     for {
-      y <- 0 until 設定情報.stageRows
-      x <- 0 until 設定情報.stageCols
+      y <- 0 until 設定情報.ステージ行数
+      x <- 0 until 設定情報.ステージ列数
     } {
       board(y)(x) = 0
     }
   }
 
-  def setPuyo(x: Int, y: Int, puyoType: Int): Unit = {
+  def ぷよを設定(x: Int, y: Int, puyoType: Int): Unit = {
     // ぷよをボードに設定
     board(y)(x) = puyoType
   }
 
-  def getPuyo(x: Int, y: Int): Int = {
+  def ぷよを取得(x: Int, y: Int): Int = {
     // ボード外の場合は0（空）を返す
-    if (x < 0 || x >= 設定情報.stageCols || y < 0 || y >= 設定情報.stageRows) {
+    if (x < 0 || x >= 設定情報.ステージ列数 || y < 0 || y >= 設定情報.ステージ行数) {
       0
     } else {
       board(y)(x)
@@ -3233,18 +3233,18 @@ class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
     val erasePositions = ArrayBuffer[ぷよの位置]()
 
     // 一時的なチェック用ボード
-    val checked = Array.ofDim[Boolean](設定情報.stageRows, 設定情報.stageCols)
+    val checked = Array.ofDim[Boolean](設定情報.ステージ行数, 設定情報.ステージ列数)
     for {
-      y <- 0 until 設定情報.stageRows
-      x <- 0 until 設定情報.stageCols
+      y <- 0 until 設定情報.ステージ行数
+      x <- 0 until 設定情報.ステージ列数
     } {
       checked(y)(x) = false
     }
 
     // 全マスをチェック
     for {
-      y <- 0 until 設定情報.stageRows
-      x <- 0 until 設定情報.stageCols
+      y <- 0 until 設定情報.ステージ行数
+      x <- 0 until 設定情報.ステージ列数
     } {
       // ぷよがあり、まだチェックしていない場合
       if (board(y)(x) != 0 && !checked(y)(x)) {
@@ -3290,8 +3290,8 @@ class ステージ(設定情報: 設定情報, ぷよ画像: ぷよ画像) {
 
       // ボード内かつ同じ色のぷよがあり、まだチェックしていない場合
       if (
-        nextX >= 0 && nextX < 設定情報.stageCols &&
-        nextY >= 0 && nextY < 設定情報.stageRows &&
+        nextX >= 0 && nextX < 設定情報.ステージ列数 &&
+        nextY >= 0 && nextY < 設定情報.ステージ行数 &&
         board(nextY)(nextX) == puyoType &&
         !checked(nextY)(nextX)
       ) {
@@ -3397,12 +3397,12 @@ def ボードを消去(eraseInfo: Array[ぷよの位置]): Unit = {
 
 def 落下(): Unit = {
   // 下から上に向かって処理
-  for (y <- 設定情報.stageRows - 2 to 0 by -1) {
-    for (x <- 0 until 設定情報.stageCols) {
+  for (y <- 設定情報.ステージ行数 - 2 to 0 by -1) {
+    for (x <- 0 until 設定情報.ステージ列数) {
       if (board(y)(x) != 0) {
         // 現在のぷよの下が空いている場合、落下させる
         var fallY = y
-        while (fallY + 1 < 設定情報.stageRows && board(fallY + 1)(x) == 0) {
+        while (fallY + 1 < 設定情報.ステージ行数 && board(fallY + 1)(x) == 0) {
           board(fallY + 1)(x) = board(fallY)(x)
           board(fallY)(x) = 0
           fallY += 1
@@ -3424,7 +3424,7 @@ def 落下(): Unit = {
 
 「Scala での落下処理の実装で注意すべき点は？」良い質問ですね。以下の点が重要です：
 
-1. **to と by の組み合わせ**: `設定情報.stageRows - 2 to 0 by -1` で逆順に反復処理
+1. **to と by の組み合わせ**: `設定情報.ステージ行数 - 2 to 0 by -1` で逆順に反復処理
 2. **foreach の活用**: `eraseInfo.foreach { info => ... }` で配列を反復処理
 3. **可変変数 var の使用**: `var fallY = y` で落下位置を追跡（Scala では可変性を明示的にマーク）
 
@@ -3723,7 +3723,7 @@ private def 更新(デルタ時間: Double): Unit = {
   mode match {
     case ゲームモード.NewPuyo =>
       // 新しいぷよを作成
-      player.新しいぷよを作成()
+      プレイヤー.新しいぷよを作成()
       mode = ゲームモード.Playing
 
     case ゲームモード.Playing =>
