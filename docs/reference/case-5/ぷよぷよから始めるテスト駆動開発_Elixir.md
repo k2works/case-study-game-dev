@@ -2923,6 +2923,622 @@ puyo_puyo/
 @offset_y [-1, 0, 1, 0]  # Y方向のオフセット
 ```
 
+### ステップ4: 画面表示とゲームループの実装
+
+ぷよの回転機能が実装できました。次に、ゲームを実際に動かすための**画面表示とゲームループ**を実装します。
+
+> ゲームループは、ゲームの心臓部です。継続的に更新と描画を繰り返すことで、滑らかなゲーム体験を提供します。
+
+Elixirでのゲーム開発では、従来のクライアントサイドJavaScriptとは異なるアプローチを取ります。
+
+#### アーキテクチャの選択
+
+Elixirでゲームを実装する場合、以下の2つのアプローチがあります：
+
+**アプローチ1: 完全クライアントサイド**
+- JavaScriptでゲームループと描画
+- Elixirはビルドとサーブのみ
+
+**アプローチ2: Phoenix LiveView**
+- サーバーサイドで状態管理
+- クライアントサイドで描画
+- WebSocketで双方向通信
+
+このチュートリアルでは、**アプローチ1（完全クライアントサイド）** を採用します。理由は：
+
+1. リアルタイム性が重要なゲームに適している
+2. ネットワーク遅延の影響を受けない
+3. Elixirで書いたロジックを学習目的で保持
+
+#### Nervesを使ったWebアプリケーション化
+
+まず、Elixirプロジェクトを簡易Webサーバーとして動作させます。
+
+`mix.exs` にPlug依存関係を追加：
+
+```elixir
+defp deps do
+  [
+    # 既存の依存関係
+    {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+    {:excoveralls, "~> 0.18", only: :test},
+    {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+    {:ex_doc, "~> 0.31", only: :dev, runtime: false},
+
+    # Webサーバー
+    {:plug_cowboy, "~> 2.6"},
+    {:jason, "~> 1.4"}
+  ]
+end
+```
+
+依存関係を取得：
+
+```bash
+mix deps.get
+```
+
+#### HTMLファイルの作成
+
+`priv/static/index.html` を作成：
+
+```html
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ぷよぷよゲーム (Elixir版)</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        background-color: #f0f0f0;
+        margin: 0;
+      }
+
+      #game-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #game-canvas {
+        border: 2px solid #333;
+        background-color: #fff;
+      }
+
+      #info-panel {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 200px;
+      }
+
+      #info-panel h2 {
+        margin-top: 0;
+        color: #333;
+        font-size: 18px;
+      }
+
+      .info-item {
+        margin: 15px 0;
+      }
+
+      .info-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .info-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2196F3;
+      }
+
+      .chain-value {
+        color: #FF9800;
+      }
+
+      .controls {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+      }
+
+      .controls h3 {
+        margin-top: 0;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .controls p {
+        margin: 5px 0;
+        font-size: 12px;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <canvas id="game-canvas" width="192" height="384"></canvas>
+    </div>
+    <div id="info-panel">
+      <h2>ゲーム情報</h2>
+      <div class="info-item">
+        <div class="info-label">スコア</div>
+        <div class="info-value" id="score">0</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">連鎖数</div>
+        <div class="info-value chain-value" id="chain">0</div>
+      </div>
+      <div class="controls">
+        <h3>操作方法</h3>
+        <p>← →: 移動</p>
+        <p>↑: 回転</p>
+        <p>↓: 高速落下</p>
+      </div>
+    </div>
+    <script src="/game.js"></script>
+  </body>
+</html>
+```
+
+#### JavaScriptでのゲームループ
+
+`priv/static/game.js` を作成：
+
+```javascript
+// ゲーム設定
+const PUYO_SIZE = 32
+const COLS = 6
+const ROWS = 12
+const CANVAS_WIDTH = COLS * PUYO_SIZE
+const CANVAS_HEIGHT = ROWS * PUYO_SIZE
+
+// ぷよの色定義
+const PUYO_COLORS = [
+  '#FFFFFF', // 0: 空
+  '#FF0000', // 1: 赤
+  '#00FF00', // 2: 緑
+  '#0000FF', // 3: 青
+  '#FFFF00'  // 4: 黄
+]
+
+// Canvas要素を取得
+const canvas = document.getElementById('game-canvas')
+const ctx = canvas.getContext('2d')
+
+// ゲーム状態
+let gameState = {
+  player: {
+    puyo_x: 2,
+    puyo_y: 0,
+    puyo_type: 1,
+    next_puyo_type: 2,
+    rotation: 0,
+    landed: false
+  },
+  stage: {
+    grid: Array(ROWS).fill(null).map(() => Array(COLS).fill(0))
+  },
+  score: {
+    current: 0,
+    chain: 0
+  },
+  inputKeys: {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+  }
+}
+
+// オフセット配列（回転状態に応じた2つ目のぷよの相対位置）
+const OFFSET_X = [0, 1, 0, -1] // 上、右、下、左
+const OFFSET_Y = [-1, 0, 1, 0]
+
+// キー入力の処理
+document.addEventListener('keydown', (e) => {
+  switch(e.key) {
+    case 'ArrowLeft':
+      gameState.inputKeys.left = true
+      break
+    case 'ArrowRight':
+      gameState.inputKeys.right = true
+      break
+    case 'ArrowUp':
+      gameState.inputKeys.up = true
+      break
+    case 'ArrowDown':
+      gameState.inputKeys.down = true
+      break
+  }
+})
+
+document.addEventListener('keyup', (e) => {
+  switch(e.key) {
+    case 'ArrowLeft':
+      gameState.inputKeys.left = false
+      break
+    case 'ArrowRight':
+      gameState.inputKeys.right = false
+      break
+    case 'ArrowUp':
+      gameState.inputKeys.up = false
+      break
+    case 'ArrowDown':
+      gameState.inputKeys.down = false
+      break
+  }
+})
+
+// 更新処理
+function update(deltaTime) {
+  // キー入力に応じた処理（将来的に実装）
+  if (gameState.inputKeys.up) {
+    // 回転処理
+    gameState.player.rotation = (gameState.player.rotation + 1) % 4
+    gameState.inputKeys.up = false
+  }
+
+  // 将来的にここでゲームロジックを実装
+}
+
+// 描画処理
+function render() {
+  // キャンバスをクリア
+  ctx.fillStyle = '#F0F0F0'
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+  // グリッドとステージのぷよを描画
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const x = col * PUYO_SIZE
+      const y = row * PUYO_SIZE
+
+      // グリッド線
+      ctx.strokeStyle = '#E0E0E0'
+      ctx.strokeRect(x, y, PUYO_SIZE, PUYO_SIZE)
+
+      // ステージ上のぷよを描画
+      const puyoType = gameState.stage.grid[row][col]
+      if (puyoType > 0) {
+        drawPuyo(ctx, col, row, puyoType)
+      }
+    }
+  }
+
+  // プレイヤーのぷよペアを描画
+  if (!gameState.player.landed) {
+    // 軸ぷよ
+    drawPuyo(ctx, gameState.player.puyo_x, gameState.player.puyo_y, gameState.player.puyo_type)
+
+    // 2つ目のぷよ
+    const offset_x = OFFSET_X[gameState.player.rotation]
+    const offset_y = OFFSET_Y[gameState.player.rotation]
+    const next_x = gameState.player.puyo_x + offset_x
+    const next_y = gameState.player.puyo_y + offset_y
+
+    if (next_y >= 0 && next_y < ROWS && next_x >= 0 && next_x < COLS) {
+      drawPuyo(ctx, next_x, next_y, gameState.player.next_puyo_type)
+    }
+  }
+
+  // スコア表示を更新
+  document.getElementById('score').textContent = gameState.score.current
+  document.getElementById('chain').textContent = gameState.score.chain
+}
+
+// ぷよを描画
+function drawPuyo(ctx, col, row, puyoType) {
+  const x = col * PUYO_SIZE
+  const y = row * PUYO_SIZE
+
+  // ぷよの本体（円）
+  ctx.fillStyle = PUYO_COLORS[puyoType]
+  ctx.beginPath()
+  ctx.arc(x + PUYO_SIZE/2, y + PUYO_SIZE/2, PUYO_SIZE/2 - 2, 0, Math.PI * 2)
+  ctx.fill()
+
+  // ぷよの縁取り
+  ctx.strokeStyle = '#333'
+  ctx.lineWidth = 2
+  ctx.stroke()
+
+  // ぷよの目（ハイライト）
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+  ctx.beginPath()
+  ctx.arc(x + PUYO_SIZE/2 - 5, y + PUYO_SIZE/2 - 5, 4, 0, Math.PI * 2)
+  ctx.fill()
+}
+
+// ゲームループ
+let lastTime = 0
+function gameLoop(currentTime) {
+  const deltaTime = currentTime - lastTime
+  lastTime = currentTime
+
+  update(deltaTime)
+  render()
+
+  requestAnimationFrame(gameLoop)
+}
+
+// ゲーム開始
+requestAnimationFrame(gameLoop)
+```
+
+#### Webサーバーの設定
+
+`lib/puyo_puyo/web_server.ex` を作成：
+
+```elixir
+defmodule PuyoPuyo.WebServer do
+  @moduledoc """
+  ゲーム画面を提供するWebサーバーです。
+  """
+
+  use Plug.Router
+
+  plug(Plug.Static,
+    at: "/",
+    from: {:puyo_puyo, "priv/static"}
+  )
+
+  plug(:match)
+  plug(:dispatch)
+
+  get "/" do
+    send_file(conn, 200, Path.join(:code.priv_dir(:puyo_puyo), "static/index.html"))
+  end
+
+  match _ do
+    send_resp(conn, 404, "Not found")
+  end
+end
+```
+
+#### アプリケーション起動設定
+
+`lib/puyo_puyo/application.ex` を作成：
+
+```elixir
+defmodule PuyoPuyo.Application do
+  @moduledoc false
+
+  use Application
+
+  @impl true
+  def start(_type, _args) do
+    children = [
+      # Webサーバーの起動
+      {Plug.Cowboy, scheme: :http, plug: PuyoPuyo.WebServer, options: [port: 4000]}
+    ]
+
+    opts = [strategy: :one_for_one, name: PuyoPuyo.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
+end
+```
+
+`mix.exs` の `application` セクションを更新：
+
+```elixir
+def application do
+  [
+    mod: {PuyoPuyo.Application, []},
+    extra_applications: [:logger]
+  ]
+end
+```
+
+#### 開発サーバーの起動
+
+```bash
+# サーバーを起動
+mix run --no-halt
+
+# または iex で起動
+iex -S mix
+```
+
+ブラウザで `http://localhost:4000` にアクセスすると、ゲーム画面が表示されます！
+
+#### 解説: ゲームループの仕組み
+
+**requestAnimationFrameとは**：
+
+ブラウザの描画サイクルに合わせてコールバックを実行する関数です：
+
+```javascript
+function gameLoop(currentTime) {
+  // 1. デルタ時間の計算
+  const deltaTime = currentTime - lastTime
+  lastTime = currentTime
+
+  // 2. ゲーム状態の更新
+  update(deltaTime)
+
+  // 3. 画面の描画
+  render()
+
+  // 4. 次のフレームをリクエスト
+  requestAnimationFrame(gameLoop)
+}
+
+// ゲームループ開始
+requestAnimationFrame(gameLoop)
+```
+
+**デルタ時間（Delta Time）**：
+
+前回のフレームからの経過時間（ミリ秒）です。これを使うことで：
+
+- フレームレートに依存しない動き
+- 異なるデバイスでも同じ速度
+- 滑らかなアニメーション
+
+**更新と描画の分離**：
+
+```
+ゲームループ
+│
+├─ update(deltaTime)   ← ゲームロジック（状態変更）
+│  ├─ 入力処理
+│  ├─ 物理演算
+│  ├─ 衝突判定
+│  └─ AI処理
+│
+└─ render()            ← 描画処理（状態を画面に反映）
+   ├─ Canvas クリア
+   ├─ 背景描画
+   ├─ オブジェクト描画
+   └─ UI描画
+```
+
+この分離により：
+- ロジックと描画を独立してテスト可能
+- パフォーマンス最適化がしやすい
+- コードの可読性向上
+
+#### Canvas描画の基本
+
+**Canvas APIの主な操作**：
+
+```javascript
+// 矩形を描画
+ctx.fillRect(x, y, width, height)
+ctx.strokeRect(x, y, width, height)
+
+// 円を描画
+ctx.beginPath()
+ctx.arc(x, y, radius, 0, Math.PI * 2)
+ctx.fill()
+ctx.stroke()
+
+// 色の設定
+ctx.fillStyle = '#FF0000'    // 塗りつぶし色
+ctx.strokeStyle = '#000000'  // 線の色
+ctx.lineWidth = 2            // 線の太さ
+
+// Canvas全体をクリア
+ctx.clearRect(0, 0, width, height)
+```
+
+**座標系**：
+
+```
+(0,0) ────────► X軸
+  │
+  │
+  │
+  ▼
+ Y軸
+```
+
+左上が原点(0,0)で、右と下が正の方向です。
+
+### コミット (画面表示とゲームループ)
+
+画面表示とゲームループの基盤ができたので、コミットします：
+
+```bash
+# 新規ファイルを追加
+git add mix.exs
+git add lib/puyo_puyo/web_server.ex
+git add lib/puyo_puyo/application.ex
+git add priv/static/
+
+# コミット
+git commit -m "feat: 画面表示とゲームループを実装
+
+- Plug/Cowboyによる簡易Webサーバー
+- HTMLファイル（Canvas + 情報パネル）
+- JavaScriptゲームループ（requestAnimationFrame）
+- Canvas描画処理（グリッド、ぷよ）
+- キー入力処理の基盤
+- デルタ時間による滑らかな更新
+
+イテレーション3の画面表示とゲームループが完成"
+```
+
+### イテレーション3の最終振り返り
+
+このイテレーションで達成したこと：
+
+✅ Player構造体の作成
+✅ ぷよペアの生成機能
+✅ 回転機能（時計回り・反時計回り）
+✅ 壁キック処理
+✅ 回転時の衝突判定
+✅ **Webサーバーの構築**
+✅ **ゲームループの実装**
+✅ **Canvas描画の実装**
+✅ **キー入力処理の基盤**
+✅ 11個のテストすべてパス
+
+#### プロジェクト構造（最終）
+
+```
+puyo_puyo/
+├── lib/
+│   └── puyo_puyo/
+│       ├── game.ex              # ゲーム全体の管理
+│       ├── config.ex            # 設定情報
+│       ├── stage.ex             # ステージ
+│       ├── score.ex             # スコア管理
+│       ├── player.ex            # プレイヤー操作
+│       ├── application.ex       # アプリケーション起動（NEW）
+│       └── web_server.ex        # Webサーバー（NEW）
+├── priv/
+│   └── static/
+│       ├── index.html           # ゲーム画面（NEW）
+│       └── game.js              # ゲームループ（NEW）
+└── test/
+    └── puyo_puyo/
+        ├── game_test.exs
+        ├── config_test.exs
+        ├── stage_test.exs
+        ├── score_test.exs
+        └── player_test.exs
+```
+
+#### 学んだこと（追加）
+
+8. **Plug/Cowboy**: ElixirでのWebサーバー構築
+9. **requestAnimationFrame**: ブラウザの描画サイクルに同期
+10. **デルタ時間**: フレームレート非依存の動き
+11. **Canvas API**: 2D描画の基本
+12. **ゲームループパターン**: 更新と描画の分離
+13. **Supervisor**: Elixirのプロセス監視
+
+#### ゲーム開発のベストプラクティス
+
+**1. 状態と描画の分離**：
+```
+State (Elixir) ←→ View (JavaScript)
+    ↓                   ↓
+純粋関数           Canvas描画
+イミュータブル     副作用
+```
+
+**2. ゲームループの原則**：
+- 更新頻度は一定に保つ
+- デルタ時間を活用
+- 描画はできるだけ軽量に
+
+**3. テスト戦略**：
+- ビジネスロジック：ExUnit
+- 描画処理：手動テスト
+- 統合テスト：E2Eフレームワーク
+
 #### 次のステップ
 
 次のイテレーションでは、以下を実装します：
@@ -2931,5 +3547,6 @@ puyo_puyo/
 - ぷよの自動落下機能
 - 高速落下機能（下キー）
 - 着地判定と固定処理
+- ElixirロジックとJavaScriptの統合
 
 それでは、Red-Green-Refactorのリズムで、「動作するきれいなコード」を書いていきましょう！
