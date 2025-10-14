@@ -73,6 +73,10 @@ class プレイヤー(
       case "ArrowUp"    => _入力キー上 = pressed
       case "ArrowDown"  => _入力キー下 = pressed
       case _            => // 何もしない
+  def 新しいぷよを生成できるか(): Boolean =
+    // 初期位置にぷよが存在しないかチェック
+    ステージ.ぷよを取得(InitialPuyoX, InitialPuyoY) == 0
+
   def 新しいぷよを作成(): Unit =
     _ぷよのX座標 = InitialPuyoX
     _ぷよのY座標 = InitialPuyoY

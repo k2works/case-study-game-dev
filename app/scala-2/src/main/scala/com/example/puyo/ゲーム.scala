@@ -10,6 +10,7 @@ class ゲーム:
   private var フレーム: Int = 0
   private var 連鎖数: Int = 0
   private var 前回の時刻: Double = 0.0
+  private var _入力キーEnter: Boolean = false
 
   var 設定情報: 設定情報 = _
   var ぷよ画像: ぷよ画像 = _
@@ -38,6 +39,55 @@ class ゲーム:
     try 前回の時刻 = dom.window.performance.now()
     catch case _: Throwable => 前回の時刻 = 0.0
 
+    // キーボードイベントの登録
+    キーボードイベントを登録()
+
+  private def キーボードイベントを登録(): Unit =
+    if scala.scalajs.LinkingInfo.developmentMode || scala.scalajs.LinkingInfo.productionMode then
+      try
+        dom.document.addEventListener("keydown", (e: dom.KeyboardEvent) =>
+          if e.key == "Enter" then _入力キーEnter = true
+        )
+      catch case _: Throwable => ()
+
+  def リスタート(): Unit =
+    // ゲーム状態をリセット
+    連鎖数 = 0
+    フレーム = 0
+    _入力キーEnter = false
+
+    // コンポーネントを再初期化
+    ステージ = new ステージ(設定情報, ぷよ画像)
+    プレイヤー = new プレイヤー(設定情報, ステージ, ぷよ画像)
+    スコア.リセット()
+
+    // ゲームオーバー画面を非表示
+    ゲームオーバー画面を非表示()
+
+    // ゲームモードを新ぷよに設定
+    _mode = ゲームモード.新ぷよ
+
+  private def ゲームオーバー画面を表示(): Unit =
+    if scala.scalajs.LinkingInfo.developmentMode || scala.scalajs.LinkingInfo.productionMode then
+      try
+        val gameOverElement = dom.document.getElementById("game-over")
+        val finalScoreElement = dom.document.getElementById("final-score")
+
+        if gameOverElement != null then
+          gameOverElement.asInstanceOf[dom.html.Div].style.display = "block"
+
+        if finalScoreElement != null then
+          finalScoreElement.textContent = スコア.現在スコア.toString
+      catch case _: Throwable => ()
+
+  private def ゲームオーバー画面を非表示(): Unit =
+    if scala.scalajs.LinkingInfo.developmentMode || scala.scalajs.LinkingInfo.productionMode then
+      try
+        val gameOverElement = dom.document.getElementById("game-over")
+        if gameOverElement != null then
+          gameOverElement.asInstanceOf[dom.html.Div].style.display = "none"
+      catch case _: Throwable => ()
+
   def ループ(): Unit =
     val 現在時刻 = dom.window.performance.now()
     val デルタ時間 = 現在時刻 - 前回の時刻
@@ -52,8 +102,14 @@ class ゲーム:
 
     _mode match
       case ゲームモード.新ぷよ =>
-        プレイヤー.新しいぷよを作成()
-        _mode = ゲームモード.プレイ中
+        // 新しいぷよを生成できるかチェック
+        if プレイヤー.新しいぷよを生成できるか() then
+          プレイヤー.新しいぷよを作成()
+          _mode = ゲームモード.プレイ中
+        else
+          // ゲームオーバー
+          dom.console.log("ゲームオーバー")
+          _mode = ゲームモード.ゲームオーバー
 
       case ゲームモード.プレイ中 =>
         プレイヤー.デルタ時間で更新(デルタ時間)
@@ -105,6 +161,15 @@ class ゲーム:
         // 落下アニメーション用（一定フレーム待機）
         // 簡略化のため、すぐに落下確認に戻る（すべてのぷよが落ち切るまで繰り返す）
         _mode = ゲームモード.落下確認
+
+      case ゲームモード.ゲームオーバー =>
+        // ゲームオーバー画面を表示
+        ゲームオーバー画面を表示()
+
+        // Enterキーが押されたらリスタート
+        if _入力キーEnter then
+          _入力キーEnter = false
+          リスタート()
 
       case _ => // その他の状態は今後実装
   private def 描画(): Unit =
