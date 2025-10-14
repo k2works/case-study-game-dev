@@ -1,0 +1,25 @@
+# sbt
+target/
+project/target/
+project/project/
+
+# Scala.js
+*.sjsir
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.bsp/
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Coverage
+.scoverage/
+scoverage-report/
+
+# OS
+.DS_Store
+Thumbs.db
