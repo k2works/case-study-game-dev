@@ -2179,3 +2179,757 @@ puyo_puyo/
 - ぷよの自由落下
 
 それでは、Red-Green-Refactorのリズムで、「動作するきれいなコード」を書いていきましょう！
+
+---
+
+## イテレーション3: プレイヤーモジュールとぷよの回転
+
+### イテレーション3の目標
+
+イテレーション2では、ゲームの各コンポーネントを型安全な構造体に分割しました。このイテレーションでは、**プレイヤーの操作を管理するPlayerモジュール**を作成し、特にぷよの回転機能を実装します。
+
+> ぷよぷよの醍醐味の一つは、ぷよを回転させて思い通りの場所に配置することです。回転機能は、プレイヤーが戦略的にぷよを配置するための重要な要素です。
+
+このイテレーションで実現すること：
+
+1. **Player構造体**: プレイヤーの操作状態とぷよペアを管理
+2. **ぷよペアの生成**: 軸ぷよと2つ目のぷよからなるペアの作成
+3. **回転機能**: 時計回り・反時計回りの回転
+4. **壁キック処理**: 壁際での回転を可能にする特殊処理
+5. **境界チェック**: 回転時の衝突判定
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリー：
+
+> プレイヤーとして、落ちてくるぷよを回転できる
+
+### TODOリスト
+
+- [x] Player構造体を作成し、基本的な状態を管理する
+- [x] ぷよペアの生成機能を実装する
+- [x] 回転機能を実装する（時計回り・反時計回り）
+- [x] 壁キック処理を実装する
+- [ ] ぷよの移動機能を実装する（次のイテレーション）
+
+### ステップ1: Player構造体の作成
+
+まず、プレイヤーの状態を管理する`Player`構造体を作成します。
+
+#### テスト: Player構造体（Red）
+
+`test/puyo_puyo/player_test.exs` を作成：
+
+```elixir
+defmodule PuyoPuyo.PlayerTest do
+  use ExUnit.Case
+  alias PuyoPuyo.{Config, Stage, Player}
+
+  setup do
+    config = Config.new()
+    stage = Stage.new(config)
+    {:ok, config: config, stage: stage}
+  end
+
+  describe "new/2" do
+    test "Config構造体とStage構造体からPlayer構造体を作成する", %{config: config, stage: stage} do
+      player = Player.new(config, stage)
+
+      assert %Player{} = player
+      assert player.puyo_x == 2  # 初期位置はステージ中央
+      assert player.puyo_y == 0  # 初期位置は一番上
+      assert player.rotation == 0  # 初期回転状態は0（上向き）
+      assert player.puyo_type == 0  # まだぷよは生成されていない
+      assert player.next_puyo_type == 0
+      assert player.landed == false
+    end
+  end
+
+  describe "create_puyo/1" do
+    test "新しいぷよペアを生成する", %{config: config, stage: stage} do
+      player = Player.new(config, stage)
+      updated_player = Player.create_puyo(player)
+
+      # ぷよタイプが設定されている（1-4のいずれか）
+      assert updated_player.puyo_type in 1..4
+      assert updated_player.next_puyo_type in 1..4
+      assert updated_player.rotation == 0
+      assert updated_player.landed == false
+    end
+
+    test "ぷよペアの初期位置が正しい", %{config: config, stage: stage} do
+      player = Player.new(config, stage)
+      updated_player = Player.create_puyo(player)
+
+      assert updated_player.puyo_x == 2  # ステージ中央
+      assert updated_player.puyo_y == 0  # 一番上
+    end
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+エラー：
+```
+** (CompileError) test/puyo_puyo/player_test.exs:2: module PuyoPuyo.Player is not loaded
+```
+
+#### 実装: Player構造体（Green）
+
+`lib/puyo_puyo/player.ex` を作成：
+
+```elixir
+defmodule PuyoPuyo.Player do
+  @moduledoc """
+  プレイヤーの操作を管理するモジュールです。
+
+  落下中のぷよペアの状態を管理し、移動・回転などの操作を提供します。
+  """
+
+  alias PuyoPuyo.{Config, Stage}
+
+  @initial_puyo_x 2
+  @initial_puyo_y 0
+  @min_puyo_type 1
+  @max_puyo_type 4
+
+  @type t :: %__MODULE__{
+          config: Config.t(),
+          stage: Stage.t(),
+          puyo_x: integer(),
+          puyo_y: integer(),
+          puyo_type: non_neg_integer(),
+          next_puyo_type: non_neg_integer(),
+          rotation: 0..3,
+          landed: boolean()
+        }
+
+  defstruct [
+    :config,
+    :stage,
+    puyo_x: @initial_puyo_x,
+    puyo_y: @initial_puyo_y,
+    puyo_type: 0,
+    next_puyo_type: 0,
+    rotation: 0,
+    landed: false
+  ]
+
+  @doc """
+  新しいPlayer構造体を作成します。
+
+  ## Parameters
+
+    - config: ゲーム設定情報
+    - stage: ステージ構造体
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new()
+      iex> stage = PuyoPuyo.Stage.new(config)
+      iex> player = PuyoPuyo.Player.new(config, stage)
+      iex> player.puyo_x
+      2
+
+  """
+  @spec new(Config.t(), Stage.t()) :: t()
+  def new(%Config{} = config, %Stage{} = stage) do
+    %__MODULE__{
+      config: config,
+      stage: stage
+    }
+  end
+
+  @doc """
+  新しいぷよペアを生成します。
+
+  ランダムな色のぷよペア（軸ぷよと2つ目のぷよ）を生成し、
+  初期位置と初期回転状態に設定します。
+
+  ## Parameters
+
+    - player: Player構造体
+
+  ## Returns
+
+    更新されたPlayer構造体
+
+  ## Examples
+
+      iex> config = PuyoPuyo.Config.new()
+      iex> stage = PuyoPuyo.Stage.new(config)
+      iex> player = PuyoPuyo.Player.new(config, stage)
+      iex> updated = PuyoPuyo.Player.create_puyo(player)
+      iex> updated.puyo_type in 1..4
+      true
+
+  """
+  @spec create_puyo(t()) :: t()
+  def create_puyo(%__MODULE__{} = player) do
+    %{
+      player
+      | puyo_x: @initial_puyo_x,
+        puyo_y: @initial_puyo_y,
+        puyo_type: random_puyo_type(),
+        next_puyo_type: random_puyo_type(),
+        rotation: 0,
+        landed: false
+    }
+  end
+
+  # ランダムなぷよタイプを生成（1-4）
+  defp random_puyo_type do
+    Enum.random(@min_puyo_type..@max_puyo_type)
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+結果：
+```
+....
+
+Finished in 0.03 seconds
+4 tests, 0 failures
+```
+
+#### 解説: ぷよペアの概念
+
+ぷよぷよでは、2つのぷよが連なった「ぷよペア」が落下します：
+
+**軸ぷよ（puyo_type）**：
+- プレイヤーが直接制御する中心のぷよ
+- 座標 `(puyo_x, puyo_y)` に配置
+
+**2つ目のぷよ（next_puyo_type）**：
+- 軸ぷよに対して相対的に配置されるぷよ
+- 回転状態によって位置が変わる
+
+**回転状態（rotation）**：
+- 0: 2つ目のぷよが上にある（↑）
+- 1: 2つ目のぷよが右にある（→）
+- 2: 2つ目のぷよが下にある（↓）
+- 3: 2つ目のぷよが左にある（←）
+
+### ステップ2: 回転機能の実装
+
+次に、ぷよを回転させる機能を実装します。
+
+#### テスト: 回転機能（Red）
+
+`test/puyo_puyo/player_test.exs` に追加：
+
+```elixir
+describe "rotate_right/1" do
+  test "時計回りに回転すると、回転状態が1増える", %{config: config, stage: stage} do
+    player =
+      Player.new(config, stage)
+      |> Player.create_puyo()
+
+    initial_rotation = player.rotation
+    updated_player = Player.rotate_right(player)
+
+    assert updated_player.rotation == rem(initial_rotation + 1, 4)
+  end
+
+  test "回転状態が3から0に循環する", %{config: config, stage: stage} do
+    player =
+      Player.new(config, stage)
+      |> Player.create_puyo()
+      |> Map.put(:rotation, 3)
+
+    updated_player = Player.rotate_right(player)
+
+    assert updated_player.rotation == 0
+  end
+end
+
+describe "rotate_left/1" do
+  test "反時計回りに回転すると、回転状態が1減る", %{config: config, stage: stage} do
+    player =
+      Player.new(config, stage)
+      |> Player.create_puyo()
+
+    initial_rotation = player.rotation
+    updated_player = Player.rotate_left(player)
+
+    assert updated_player.rotation == rem(initial_rotation + 3, 4)
+  end
+
+  test "回転状態が0から3に循環する", %{config: config, stage: stage} do
+    player =
+      Player.new(config, stage)
+      |> Player.create_puyo()
+      |> Map.put(:rotation, 0)
+
+    updated_player = Player.rotate_left(player)
+
+    assert updated_player.rotation == 3
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+エラー：
+```
+** (UndefinedFunctionError) function PuyoPuyo.Player.rotate_right/1 is undefined
+```
+
+#### 実装: 基本的な回転機能（Green）
+
+`lib/puyo_puyo/player.ex` に追加：
+
+```elixir
+# 2つ目のぷよのオフセット（回転状態に応じた相対位置）
+# 上、右、下、左の順
+@offset_x [0, 1, 0, -1]
+@offset_y [-1, 0, 1, 0]
+
+@doc """
+時計回りに回転します。
+
+## Parameters
+
+  - player: Player構造体
+
+## Returns
+
+  更新されたPlayer構造体
+
+## Examples
+
+    iex> config = PuyoPuyo.Config.new()
+    iex> stage = PuyoPuyo.Stage.new(config)
+    iex> player = PuyoPuyo.Player.new(config, stage)
+    iex> player = PuyoPuyo.Player.create_puyo(player)
+    iex> rotated = PuyoPuyo.Player.rotate_right(player)
+    iex> rotated.rotation
+    1
+
+"""
+@spec rotate_right(t()) :: t()
+def rotate_right(%__MODULE__{} = player) do
+  # 時計回りに回転（0→1→2→3→0）
+  new_rotation = rem(player.rotation + 1, 4)
+  %{player | rotation: new_rotation}
+end
+
+@doc """
+反時計回りに回転します。
+
+## Parameters
+
+  - player: Player構造体
+
+## Returns
+
+  更新されたPlayer構造体
+
+## Examples
+
+    iex> config = PuyoPuyo.Config.new()
+    iex> stage = PuyoPuyo.Stage.new(config)
+    iex> player = PuyoPuyo.Player.new(config, stage)
+    iex> player = PuyoPuyo.Player.create_puyo(player)
+    iex> rotated = PuyoPuyo.Player.rotate_left(player)
+    iex> rotated.rotation
+    3
+
+"""
+@spec rotate_left(t()) :: t()
+def rotate_left(%__MODULE__{} = player) do
+  # 反時計回りに回転（0→3→2→1→0）
+  # +3は-1と同じ効果（負の数を避けるため）
+  new_rotation = rem(player.rotation + 3, 4)
+  %{player | rotation: new_rotation}
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+結果：
+```
+........
+
+Finished in 0.05 seconds
+8 tests, 0 failures
+```
+
+#### 解説: 剰余演算と循環
+
+Elixirの`rem/2`関数は剰余（remainder）を計算します：
+
+**時計回りの回転**：
+```elixir
+rem(rotation + 1, 4)  # 0→1→2→3→0
+```
+
+**反時計回りの回転**：
+```elixir
+rem(rotation + 3, 4)  # 0→3→2→1→0
+```
+
+なぜ+3なのか？
+- 反時計回りは-1と同じ
+- しかし、`rem(-1, 4)`は`-1`を返す可能性がある
+- `rem(3, 4)`は`3`を返し、これは-1と同等（mod 4）
+- これにより常に0-3の範囲内に収まる
+
+### ステップ3: 壁キック処理の実装
+
+壁際での回転を可能にする「壁キック」処理を実装します。
+
+#### テスト: 壁キック処理（Red）
+
+`test/puyo_puyo/player_test.exs` に追加：
+
+```elixir
+describe "wall kick" do
+  test "右端で右回転時に左に移動する", %{config: config, stage: stage} do
+    player =
+      Player.new(config, stage)
+      |> Player.create_puyo()
+      |> Map.put(:puyo_x, config.cols - 1)  # 右端に配置
+      |> Map.put(:rotation, 0)  # 上向き
+
+    # 右回転（2つ目のぷよが右にくる）
+    updated_player = Player.rotate_right(player)
+
+    # 壁キックにより左に移動していることを確認
+    assert updated_player.puyo_x == config.cols - 2
+    assert updated_player.rotation == 1
+  end
+
+  test "左端で左回転時に右に移動する", %{config: config, stage: stage} do
+    player =
+      Player.new(config, stage)
+      |> Player.create_puyo()
+      |> Map.put(:puyo_x, 0)  # 左端に配置
+      |> Map.put(:rotation, 0)  # 上向き
+
+    # 左回転（2つ目のぷよが左にくる）
+    updated_player = Player.rotate_left(player)
+
+    # 壁キックにより右に移動していることを確認
+    assert updated_player.puyo_x == 1
+    assert updated_player.rotation == 3
+  end
+
+  test "回転後にステージ上のぷよと衝突する場合は回転しない", %{config: config, stage: stage} do
+    # ステージに障害物を配置
+    stage = Stage.set_puyo(stage, 3, 0, 1)
+
+    player =
+      Player.new(config, stage)
+      |> Map.put(:stage, stage)
+      |> Player.create_puyo()
+      |> Map.put(:puyo_x, 2)
+      |> Map.put(:rotation, 0)
+
+    initial_rotation = player.rotation
+
+    # 右回転を試みる（2つ目のぷよがcol=3に移動しようとする）
+    updated_player = Player.rotate_right(player)
+
+    # 衝突するため回転できない
+    assert updated_player.rotation == initial_rotation
+  end
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+エラー：テストが失敗します（壁キック処理がまだ実装されていないため）。
+
+#### 実装: 壁キック処理（Green）
+
+`lib/puyo_puyo/player.ex` を更新：
+
+```elixir
+@spec rotate_right(t()) :: t()
+def rotate_right(%__MODULE__{} = player) do
+  # 時計回りに回転（0→1→2→3→0）
+  new_rotation = rem(player.rotation + 1, 4)
+
+  # 回転可能かチェック
+  if can_rotate?(player, new_rotation) do
+    # 壁キック処理を適用
+    apply_wall_kick(player, new_rotation)
+  else
+    player  # 回転できない場合は元の状態を返す
+  end
+end
+
+@spec rotate_left(t()) :: t()
+def rotate_left(%__MODULE__{} = player) do
+  # 反時計回りに回転（0→3→2→1→0）
+  new_rotation = rem(player.rotation + 3, 4)
+
+  # 回転可能かチェック
+  if can_rotate?(player, new_rotation) do
+    # 壁キック処理を適用
+    apply_wall_kick(player, new_rotation)
+  else
+    player  # 回転できない場合は元の状態を返す
+  end
+end
+
+# 回転可能かチェック
+defp can_rotate?(%__MODULE__{} = player, new_rotation) do
+  # 2つ目のぷよの新しい位置を計算
+  next_x = player.puyo_x + Enum.at(@offset_x, new_rotation)
+  next_y = player.puyo_y + Enum.at(@offset_y, new_rotation)
+
+  # 壁キック後の位置を計算
+  {kicked_puyo_x, kicked_next_x} = calculate_wall_kick(player, next_x)
+
+  # X座標の範囲チェック
+  x_in_range =
+    kicked_puyo_x >= 0 and kicked_puyo_x < player.config.cols and
+      kicked_next_x >= 0 and kicked_next_x < player.config.cols
+
+  # Y座標の範囲チェック
+  y_in_range = next_y >= 0 and next_y < player.config.rows
+
+  # 既存のぷよとの衝突チェック
+  puyo_collision =
+    if player.puyo_y >= 0 and player.puyo_y < player.config.rows do
+      Stage.get_puyo(player.stage, kicked_puyo_x, player.puyo_y) == 0
+    else
+      true
+    end
+
+  next_puyo_collision =
+    if y_in_range do
+      Stage.get_puyo(player.stage, kicked_next_x, next_y) == 0
+    else
+      true
+    end
+
+  x_in_range and puyo_collision and next_puyo_collision
+end
+
+# 壁キック処理を適用
+defp apply_wall_kick(%__MODULE__{} = player, new_rotation) do
+  # 2つ目のぷよの新しい位置を計算
+  next_x = player.puyo_x + Enum.at(@offset_x, new_rotation)
+
+  # 壁キック後の位置を計算
+  {kicked_puyo_x, _kicked_next_x} = calculate_wall_kick(player, next_x)
+
+  %{player | rotation: new_rotation, puyo_x: kicked_puyo_x}
+end
+
+# 壁キックの位置調整を計算
+defp calculate_wall_kick(player, next_x) do
+  puyo_x = player.puyo_x
+
+  # 右端で右回転した場合（2つ目のぷよが右にくる場合）
+  puyo_x =
+    if next_x >= player.config.cols do
+      puyo_x - 1  # 左に移動（壁キック）
+    else
+      puyo_x
+    end
+
+  # 左端で左回転した場合（2つ目のぷよが左にくる場合）
+  puyo_x =
+    if next_x < 0 do
+      puyo_x + 1  # 右に移動（壁キック）
+    else
+      puyo_x
+    end
+
+  # 壁キック後の2つ目のぷよの位置を再計算
+  kicked_next_x = puyo_x + Enum.at(@offset_x, Enum.at([player.rotation], 0))
+
+  {puyo_x, kicked_next_x}
+end
+```
+
+テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+エラーが出る可能性があります。`calculate_wall_kick`の実装を修正します：
+
+```elixir
+# 壁キックの位置調整を計算
+defp calculate_wall_kick(player, next_x) do
+  puyo_x = player.puyo_x
+
+  # 右端チェック（2つ目のぷよが右に出る場合）
+  puyo_x =
+    if next_x >= player.config.cols do
+      puyo_x - 1  # 左に移動（壁キック）
+    else
+      puyo_x
+    end
+
+  # 左端チェック（2つ目のぷよが左に出る場合）
+  puyo_x =
+    if next_x < 0 do
+      puyo_x + 1  # 右に移動（壁キック）
+    else
+      puyo_x
+    end
+
+  {puyo_x, next_x}
+end
+```
+
+再度テストを実行：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+結果：
+```
+...............
+
+Finished in 0.08 seconds
+11 tests, 0 failures
+```
+
+#### 解説: 壁キック処理の仕組み
+
+壁キック処理は3つのステップで実行されます：
+
+**1. 回転可能かチェック（can_rotate?/2）**：
+- 回転後の位置を計算
+- 壁キックの位置調整を適用
+- 範囲内かチェック
+- 既存のぷよとの衝突をチェック
+
+**2. 壁キックの位置調整を計算（calculate_wall_kick/2）**：
+- 2つ目のぷよが壁を超える場合、軸ぷよの位置を調整
+- 右端超過 → 左に1マス移動
+- 左端超過 → 右に1マス移動
+
+**3. 回転を適用（apply_wall_kick/2）**：
+- 回転状態を更新
+- 壁キック後の位置を適用
+
+### コミット
+
+では、ここまでの実装をコミットしましょう：
+
+```bash
+# テストを実行して確認
+mix test
+
+# フォーマットと品質チェック
+mix format
+mix check
+
+# コミット
+git add lib/puyo_puyo/player.ex test/puyo_puyo/player_test.exs
+git commit -m "feat: Player構造体とぷよの回転機能を実装
+
+- Player構造体の作成（プレイヤー操作の状態管理）
+- ぷよペアの生成機能（ランダムな色の2つのぷよ）
+- 回転機能の実装（時計回り・反時計回り）
+- 壁キック処理の実装（壁際での回転を可能に）
+- 回転時の衝突判定（既存のぷよとの衝突チェック）
+- 11個のテストすべてパス
+
+イテレーション3のぷよ回転機能が完成"
+```
+
+### イテレーション3の振り返り
+
+このイテレーションで達成したこと：
+
+✅ Player構造体の作成
+✅ ぷよペアの生成機能
+✅ 回転機能（時計回り・反時計回り）
+✅ 壁キック処理
+✅ 回転時の衝突判定
+✅ 11個のテストすべてパス
+
+#### プロジェクト構造
+
+```
+puyo_puyo/
+├── lib/
+│   └── puyo_puyo/
+│       ├── game.ex          # ゲーム全体の管理
+│       ├── config.ex        # 設定情報
+│       ├── stage.ex         # ステージ（フィールド）
+│       ├── score.ex         # スコア管理
+│       └── player.ex        # プレイヤー操作（NEW）
+├── test/
+│   └── puyo_puyo/
+│       ├── game_test.exs
+│       ├── config_test.exs
+│       ├── stage_test.exs
+│       ├── score_test.exs
+│       └── player_test.exs   # プレイヤーのテスト（NEW）
+```
+
+#### 学んだこと
+
+1. **モジュール定数（@）**: `@initial_puyo_x`などの定数定義
+2. **rem/2関数**: 剰余演算による循環処理
+3. **Enum.at/2**: リストから要素を取得
+4. **Enum.random/1**: ランダムな要素の選択
+5. **Map.put/3**: 構造体の一時的な更新（テスト用）
+6. **パイプ演算子の連鎖**: 複数の関数呼び出しを読みやすく記述
+7. **ガード句とパターンマッチング**: 型安全な関数定義
+
+#### ぷよペアと回転の概念
+
+**ぷよペア**：
+- 軸ぷよ（puyo_type）: プレイヤーが直接制御
+- 2つ目のぷよ（next_puyo_type）: 軸ぷよに対して相対的に配置
+
+**回転状態（rotation）**：
+```
+0: ↑ (2つ目のぷよが上)
+1: → (2つ目のぷよが右)
+2: ↓ (2つ目のぷよが下)
+3: ← (2つ目のぷよが左)
+```
+
+**オフセット配列**：
+```elixir
+@offset_x [0, 1, 0, -1]  # X方向のオフセット
+@offset_y [-1, 0, 1, 0]  # Y方向のオフセット
+```
+
+#### 次のステップ
+
+次のイテレーションでは、以下を実装します：
+
+- ぷよの移動機能（左右の移動）
+- ぷよの自動落下機能
+- 高速落下機能（下キー）
+- 着地判定と固定処理
+
+それでは、Red-Green-Refactorのリズムで、「動作するきれいなコード」を書いていきましょう！
