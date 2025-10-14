@@ -395,11 +395,11 @@ mix check
 
 すべてのチェックが通ることを確認します。
 
-## まとめ
+### まとめ
 
 イテレーション0で以下を達成しました：
 
-### 得られたもの
+#### 得られたもの
 
 1. **Phoenix LiveViewプロジェクトのセットアップ**
    - LiveView対応のPhoenix 1.7プロジェクト
@@ -423,7 +423,7 @@ mix check
    - LiveViewテストのサポート
    - カバレッジ測定環境
 
-### プロジェクト構成
+#### プロジェクト構成
 
 ```
 puyo_puyo/
@@ -442,7 +442,7 @@ puyo_puyo/
 └── README.md                     # プロジェクト説明
 ```
 
-### 次のステップ
+#### 次のステップ
 
 開発環境が整いました。次のイテレーションでは、以下を実装していきます：
 
@@ -455,24 +455,6 @@ puyo_puyo/
 - **イテレーション7**: ゲームオーバーの実装（終了判定と演出）
 
 これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
-
-## 参考資料
-
-### 公式ドキュメント
-- [Phoenix Framework](https://www.phoenixframework.org/)
-- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html)
-- [Elixir公式ドキュメント](https://elixir-lang.org/docs.html)
-- [Mix documentation](https://hexdocs.pm/mix/Mix.html)
-
-### 使用ツール
-- [Credo](https://github.com/rrrene/credo) - 静的コード解析
-- [ExCoveralls](https://github.com/parroty/excoveralls) - コードカバレッジ
-- [mix_test_watch](https://github.com/lpil/mix-test.watch) - ファイル監視
-- [Dialyxir](https://github.com/jeremyjh/dialyxir) - 型解析
-
-### 参考記事
-- [Angularコミットメッセージ規約](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit)
-- [Phoenix LiveView入門](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#module-bindings)
 
 Elixir Phoenix LiveViewの世界で「動作するきれいなコード」を書き始める準備が整いました。開発を楽しんでください！
 
@@ -825,11 +807,11 @@ git commit -m "feat: ゲームの初期化とLiveViewの基本構造を実装
 イテレーション1完了"
 ```
 
-## まとめ
+### まとめ
 
 イテレーション1で以下を達成しました：
 
-### 得られたもの
+#### 得られたもの
 
 1. **LiveViewの基本構造**
    - GameLiveモジュールの作成
@@ -854,7 +836,7 @@ git commit -m "feat: ゲームの初期化とLiveViewの基本構造を実装
    - LiveViewテストによる動作確認
    - マウント、初期化、表示のテスト
 
-### Phoenix LiveViewの利点
+#### Phoenix LiveViewの利点
 
 今回の実装で、Phoenix LiveViewの以下の利点を体感できました：
 
@@ -863,7 +845,7 @@ git commit -m "feat: ゲームの初期化とLiveViewの基本構造を実装
 3. **統一的なテスト**: サーバーサイドロジックとして統一的にテスト可能
 4. **少ないJavaScript**: JavaScriptをほとんど書かずにインタラクティブなUIを実装
 
-### 次のステップ
+#### 次のステップ
 
 基本的な構造ができました。次のイテレーションでは、以下を実装していきます：
 
@@ -1822,11 +1804,11 @@ git commit -m "feat: ステージモジュールの実装
 イテレーション2完了"
 ```
 
-## まとめ
+### まとめ
 
 イテレーション2で以下を達成しました：
 
-### 得られたもの
+#### 得られたもの
 
 1. **Stageモジュール**
    - ビジネスロジック層の分離
@@ -1852,7 +1834,7 @@ git commit -m "feat: ステージモジュールの実装
    - GameLiveでStageモジュールを使用
    - サーバーサイドでのステージ状態管理
 
-### 学んだこと
+#### 学んだこと
 
 1. **不変データ構造**
    - Elixirのすべてのデータは不変
@@ -1879,7 +1861,7 @@ git commit -m "feat: ステージモジュールの実装
    - 小さなステップで確実に
    - 包括的なテストケース
 
-### 次のステップ
+#### 次のステップ
 
 ステージの基本機能が完成しました。次のイテレーションでは、以下を実装していきます：
 
@@ -1889,3 +1871,1168 @@ git commit -m "feat: ステージモジュールの実装
 - **イテレーション6**: ゲームオーバーの実装
 
 これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
+
+## 参考資料
+
+### 公式ドキュメント
+- [Phoenix Framework](https://www.phoenixframework.org/)
+- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html)
+- [Elixir公式ドキュメント](https://elixir-lang.org/docs.html)
+- [Mix documentation](https://hexdocs.pm/mix/Mix.html)
+
+### 使用ツール
+- [Credo](https://github.com/rrrene/credo) - 静的コード解析
+- [ExCoveralls](https://github.com/parroty/excoveralls) - コードカバレッジ
+- [mix_test_watch](https://github.com/lpil/mix-test.watch) - ファイル監視
+- [Dialyxir](https://github.com/jeremyjh/dialyxir) - 型解析
+
+### 参考記事
+- [Angularコミットメッセージ規約](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit)
+- [Phoenix LiveView入門](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#module-bindings)
+
+---
+
+## イテレーション3: プレイヤーの実装
+
+イテレーション2でステージの実装が完了しました。次は、プレイヤーが操作する「落ちてくるぷよペア」の実装です。このイテレーションでは、プレイヤーの移動、回転、着地といった操作に関するロジックを実装します。
+
+> 単一責任の原則
+>
+> クラスを変更する理由は1つ以上存在してはならない。
+>
+> — Robert C. Martin 『Clean Architecture』
+
+今回実装するPlayerモジュールは、「プレイヤーが操作するぷよペアの状態と振る舞い」という単一の責任を持ちます。ステージの管理はStageモジュールが、スコアの管理はScoreモジュールが担当し、それぞれが明確に分離されています。
+
+### ユーザーストーリー
+
+このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、落ちてくるぷよペアを左右に移動し、回転できる
+
+このストーリーには、以下の機能が含まれています：
+
+1. ぷよペアの生成（軸ぷよと次ぷよの2つ）
+2. 左右への移動
+3. 回転（壁キック処理を含む）
+4. 着地判定と着地処理
+
+それでは、これらの機能を一つずつテスト駆動開発で実装していきましょう！
+
+### TODOリスト
+
+「プレイヤーの実装」というユーザーストーリーを実現するために、以下のタスクが必要です：
+
+- Playerモジュールを作成する（ビジネスロジック層）
+- ぷよペアの生成機能を実装する
+- 左右移動機能を実装する（境界チェック、衝突判定）
+- 回転機能を実装する（壁キック処理）
+- 着地判定と着地処理を実装する
+- GameLiveと統合する（キーボード入力）
+- ゲームループと統合する
+
+これらのタスクを一つずつ実装していきます。まずは「ぷよペアの生成」から始めましょう！
+
+### テスト: ぷよペアの生成
+
+まず、プレイヤーが操作する「ぷよペア」を生成する機能をテストします。ぷよペアは、軸ぷよ（回転の中心）と次ぷよ（軸ぷよに対して相対位置を持つ）の2つで構成されます。
+
+```elixir
+# test/puyo_puyo/player_test.exs
+defmodule PuyoPuyo.PlayerTest do
+  use ExUnit.Case, async: true
+
+  alias PuyoPuyo.{Player, Stage}
+
+  describe "Player.new/1" do
+    test "creates a new player with default position" do
+      stage = Stage.new([])
+      player = Player.new(stage)
+
+      # 初期位置はx=2, y=0
+      assert player.puyo_x == 2
+      assert player.puyo_y == 0
+      # 初期回転状態は0（上向き）
+      assert player.rotation == 0
+      # 未着地
+      assert player.landed == false
+    end
+
+    test "creates a player with random puyo types" do
+      stage = Stage.new([])
+      player = Player.new(stage)
+
+      # ぷよの種類は1-4の範囲
+      assert player.puyo_type in 1..4
+      assert player.next_puyo_type in 1..4
+    end
+  end
+
+  describe "Player.can_spawn?/1" do
+    test "returns true when spawn position is empty" do
+      stage = Stage.new([])
+      player = Player.new(stage)
+
+      assert Player.can_spawn?(player, stage) == true
+    end
+
+    test "returns false when spawn position is occupied" do
+      stage = Stage.new([])
+      # 初期位置(2, 0)にぷよを配置
+      stage = Stage.set_puyo(stage, 2, 0, 1)
+
+      player = Player.new(stage)
+
+      assert Player.can_spawn?(player, stage) == false
+    end
+  end
+end
+```
+
+### 実装: Player モジュールの基本構造
+
+テストを実行すると失敗します（Red）。では、テストが通るように最小限のコードを実装しましょう（Green）。
+
+```elixir
+# lib/puyo_puyo/player.ex
+defmodule PuyoPuyo.Player do
+  @moduledoc """
+  ぷよぷよゲームのプレイヤー（操作するぷよペア）を管理するモジュール
+
+  プレイヤーは、軸ぷよと次ぷよの2つのぷよで構成されます。
+  軸ぷよを中心に回転し、左右に移動できます。
+  """
+
+  alias PuyoPuyo.Stage
+
+  @type t :: %__MODULE__{
+          puyo_x: non_neg_integer(),
+          puyo_y: integer(),
+          puyo_type: non_neg_integer(),
+          next_puyo_type: non_neg_integer(),
+          rotation: 0..3,
+          landed: boolean()
+        }
+
+  defstruct [
+    :puyo_x,
+    :puyo_y,
+    :puyo_type,
+    :next_puyo_type,
+    :rotation,
+    :landed
+  ]
+
+  # 初期位置
+  @initial_x 2
+  @initial_y 0
+
+  # ぷよの種類の範囲
+  @min_puyo_type 1
+  @max_puyo_type 4
+
+  # 回転状態ごとの2つ目のぷよのオフセット
+  # 0: 上, 1: 右, 2: 下, 3: 左
+  @offset_x [0, 1, 0, -1]
+  @offset_y [-1, 0, 1, 0]
+
+  @doc """
+  新しいプレイヤーを作成します
+
+  ## Examples
+
+      iex> stage = PuyoPuyo.Stage.new([])
+      iex> player = PuyoPuyo.Player.new(stage)
+      iex> player.puyo_x
+      2
+
+  """
+  @spec new(Stage.t()) :: t()
+  def new(_stage) do
+    %__MODULE__{
+      puyo_x: @initial_x,
+      puyo_y: @initial_y,
+      puyo_type: random_puyo_type(),
+      next_puyo_type: random_puyo_type(),
+      rotation: 0,
+      landed: false
+    }
+  end
+
+  @doc """
+  プレイヤーが生成可能かチェックします
+
+  初期位置にぷよが存在しないかを確認します。
+
+  ## Examples
+
+      iex> stage = PuyoPuyo.Stage.new([])
+      iex> player = PuyoPuyo.Player.new(stage)
+      iex> PuyoPuyo.Player.can_spawn?(player, stage)
+      true
+
+  """
+  @spec can_spawn?(t(), Stage.t()) :: boolean()
+  def can_spawn?(%__MODULE__{puyo_x: x, puyo_y: y}, stage) do
+    Stage.get_puyo(stage, x, y) == 0
+  end
+
+  # ランダムなぷよの種類を生成
+  @spec random_puyo_type() :: non_neg_integer()
+  defp random_puyo_type do
+    Enum.random(@min_puyo_type..@max_puyo_type)
+  end
+end
+```
+
+### 解説: ぷよペアの設計
+
+実装したPlayerモジュールについて、いくつか重要なポイントを解説します。
+
+#### ぷよペアの構成
+
+```elixir
+defstruct [
+  :puyo_x,           # 軸ぷよのX座標
+  :puyo_y,           # 軸ぷよのY座標
+  :puyo_type,        # 軸ぷよの種類
+  :next_puyo_type,   # 次ぷよの種類
+  :rotation,         # 回転状態（0-3）
+  :landed            # 着地フラグ
+]
+```
+
+ぷよペアは、以下の情報を持ちます：
+
+- **軸ぷよ**: 回転の中心となるぷよ
+- **次ぷよ**: 軸ぷよに対して相対的な位置を持つぷよ
+- **回転状態**: 0（上）、1（右）、2（下）、3（左）の4つの状態
+
+#### オフセット配列
+
+```elixir
+@offset_x [0, 1, 0, -1]
+@offset_y [-1, 0, 1, 0]
+```
+
+回転状態に応じた2つ目のぷよの相対位置を定義します：
+
+- **回転0（上）**: (0, -1) - 軸ぷよの上
+- **回転1（右）**: (1, 0) - 軸ぷよの右
+- **回転2（下）**: (0, 1) - 軸ぷよの下
+- **回転3（左）**: (-1, 0) - 軸ぷよの左
+
+#### ランダムなぷよの生成
+
+```elixir
+defp random_puyo_type do
+  Enum.random(@min_puyo_type..@max_puyo_type)
+end
+```
+
+`Enum.random/1`を使って、1-4のランダムなぷよの種類を生成します。
+
+### テスト実行
+
+実装が完了したので、テストを実行してみましょう：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### テスト: 左右移動
+
+次に、プレイヤーのぷよペアを左右に移動する機能をテストします。
+
+```elixir
+# test/puyo_puyo/player_test.exs（続き）
+describe "Player.move_left/2" do
+  setup do
+    stage = Stage.new([])
+    player = Player.new(stage)
+    {:ok, stage: stage, player: player}
+  end
+
+  test "moves player left", %{stage: stage, player: player} do
+    initial_x = player.puyo_x
+    player = Player.move_left(player, stage)
+
+    assert player.puyo_x == initial_x - 1
+  end
+
+  test "does not move left beyond left boundary", %{stage: stage, player: player} do
+    # 左端まで移動
+    player = %{player | puyo_x: 0}
+
+    # さらに左に移動しようとする
+    player = Player.move_left(player, stage)
+
+    # 位置が変わらないことを確認
+    assert player.puyo_x == 0
+  end
+
+  test "does not move left when collision with puyo", %{stage: stage, player: player} do
+    # 左隣にぷよを配置
+    stage = Stage.set_puyo(stage, player.puyo_x - 1, player.puyo_y, 1)
+
+    initial_x = player.puyo_x
+    player = Player.move_left(player, stage)
+
+    # 位置が変わらないことを確認
+    assert player.puyo_x == initial_x
+  end
+
+  test "does not move left when second puyo would collide", %{stage: stage, player: player} do
+    # 横向き（回転状態1）にする
+    player = %{player | rotation: 1}
+
+    # 2つ目のぷよの左隣（軸ぷよの位置）にぷよを配置
+    stage = Stage.set_puyo(stage, player.puyo_x, player.puyo_y, 1)
+
+    # 左に移動しようとする
+    player = Player.move_left(player, stage)
+
+    # 移動できないことを確認（2つ目のぷよの位置に既にぷよがある）
+    assert player.puyo_x == @initial_x
+  end
+end
+
+describe "Player.move_right/2" do
+  setup do
+    stage = Stage.new([])
+    player = Player.new(stage)
+    {:ok, stage: stage, player: player}
+  end
+
+  test "moves player right", %{stage: stage, player: player} do
+    initial_x = player.puyo_x
+    player = Player.move_right(player, stage)
+
+    assert player.puyo_x == initial_x + 1
+  end
+
+  test "does not move right beyond right boundary", %{stage: stage, player: player} do
+    # 右端まで移動（列数は6なので、x=5が右端）
+    player = %{player | puyo_x: 5}
+
+    # さらに右に移動しようとする
+    player = Player.move_right(player, stage)
+
+    # 位置が変わらないことを確認
+    assert player.puyo_x == 5
+  end
+
+  test "does not move right when collision with puyo", %{stage: stage, player: player} do
+    # 右隣にぷよを配置
+    stage = Stage.set_puyo(stage, player.puyo_x + 1, player.puyo_y, 1)
+
+    initial_x = player.puyo_x
+    player = Player.move_right(player, stage)
+
+    # 位置が変わらないことを確認
+    assert player.puyo_x == initial_x
+  end
+end
+```
+
+### 実装: 左右移動
+
+```elixir
+# lib/puyo_puyo/player.ex（続き）
+@doc """
+プレイヤーを左に移動します
+
+## Examples
+
+    iex> stage = PuyoPuyo.Stage.new([])
+    iex> player = PuyoPuyo.Player.new(stage)
+    iex> player = PuyoPuyo.Player.move_left(player, stage)
+    iex> player.puyo_x
+    1
+
+"""
+@spec move_left(t(), Stage.t()) :: t()
+def move_left(%__MODULE__{puyo_x: x, puyo_y: y, rotation: rotation} = player, stage) do
+  next_x = x - 1
+  second_puyo_x = next_x + Enum.at(@offset_x, rotation)
+  second_puyo_y = y + Enum.at(@offset_y, rotation)
+
+  # 範囲チェック
+  if next_x >= 0 and second_puyo_x >= 0 and second_puyo_x < stage.cols do
+    # 衝突チェック
+    axis_puyo_clear = if y >= 0 and y < stage.rows, do: Stage.get_puyo(stage, next_x, y) == 0, else: true
+    second_puyo_clear = if second_puyo_y >= 0 and second_puyo_y < stage.rows, do: Stage.get_puyo(stage, second_puyo_x, second_puyo_y) == 0, else: true
+
+    if axis_puyo_clear and second_puyo_clear do
+      %{player | puyo_x: next_x}
+    else
+      player
+    end
+  else
+    player
+  end
+end
+
+@doc """
+プレイヤーを右に移動します
+
+## Examples
+
+    iex> stage = PuyoPuyo.Stage.new([])
+    iex> player = PuyoPuyo.Player.new(stage)
+    iex> player = PuyoPuyo.Player.move_right(player, stage)
+    iex> player.puyo_x
+    3
+
+"""
+@spec move_right(t(), Stage.t()) :: t()
+def move_right(%__MODULE__{puyo_x: x, puyo_y: y, rotation: rotation} = player, stage) do
+  next_x = x + 1
+  second_puyo_x = next_x + Enum.at(@offset_x, rotation)
+  second_puyo_y = y + Enum.at(@offset_y, rotation)
+
+  # 範囲チェック
+  if next_x < stage.cols and second_puyo_x >= 0 and second_puyo_x < stage.cols do
+    # 衝突チェック
+    axis_puyo_clear = if y >= 0 and y < stage.rows, do: Stage.get_puyo(stage, next_x, y) == 0, else: true
+    second_puyo_clear = if second_puyo_y >= 0 and second_puyo_y < stage.rows, do: Stage.get_puyo(stage, second_puyo_x, second_puyo_y) == 0, else: true
+
+    if axis_puyo_clear and second_puyo_clear do
+      %{player | puyo_x: next_x}
+    else
+      player
+    end
+  else
+    player
+  end
+end
+```
+
+### 解説: 衝突判定
+
+左右移動の実装では、以下の3つのチェックを行います：
+
+1. **範囲チェック**: 移動先がステージの範囲内か
+2. **軸ぷよの衝突チェック**: 移動先に既にぷよが存在しないか
+3. **次ぷよの衝突チェック**: 次ぷよの移動先に既にぷよが存在しないか
+
+```elixir
+axis_puyo_clear = if y >= 0 and y < stage.rows, do: Stage.get_puyo(stage, next_x, y) == 0, else: true
+second_puyo_clear = if second_puyo_y >= 0 and second_puyo_y < stage.rows, do: Stage.get_puyo(stage, second_puyo_x, second_puyo_y) == 0, else: true
+```
+
+範囲外の場合は衝突なしとして扱い（`else: true`）、範囲内の場合のみ衝突チェックを行います。
+
+### テスト実行
+
+実装が完了したので、テストを実行してみましょう：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### テスト: 回転
+
+次に、プレイヤーのぷよペアを回転する機能をテストします。回転では「壁キック」という処理が重要になります。
+
+```elixir
+# test/puyo_puyo/player_test.exs（続き）
+describe "Player.rotate_right/2" do
+  setup do
+    stage = Stage.new([])
+    player = Player.new(stage)
+    {:ok, stage: stage, player: player}
+  end
+
+  test "rotates player right", %{stage: stage, player: player} do
+    # 初期状態は0（上向き）
+    assert player.rotation == 0
+
+    # 右回転
+    player = Player.rotate_right(player, stage)
+    assert player.rotation == 1
+
+    player = Player.rotate_right(player, stage)
+    assert player.rotation == 2
+
+    player = Player.rotate_right(player, stage)
+    assert player.rotation == 3
+
+    player = Player.rotate_right(player, stage)
+    assert player.rotation == 0
+  end
+
+  test "does not rotate when collision", %{stage: stage, player: player} do
+    # 右側にぷよを配置（回転すると右側に次ぷよが来る）
+    stage = Stage.set_puyo(stage, player.puyo_x + 1, player.puyo_y, 1)
+
+    initial_rotation = player.rotation
+    player = Player.rotate_right(player, stage)
+
+    # 回転できないことを確認
+    assert player.rotation == initial_rotation
+  end
+
+  test "performs wall kick when rotating at right edge", %{stage: stage, player: player} do
+    # 右端に移動
+    player = %{player | puyo_x: 5}
+
+    # 右回転すると、次ぷよが右端外になるが、壁キックで左に1マス移動
+    player = Player.rotate_right(player, stage)
+
+    # 回転成功し、軸ぷよが左に1マス移動していることを確認
+    assert player.rotation == 1
+    assert player.puyo_x == 4
+  end
+end
+```
+
+### 実装: 回転と壁キック
+
+回転機能では、「壁キック」という処理が重要になります。壁キックとは、回転した結果が壁やステージの外側に出てしまう場合に、自動的に位置を調整する処理です。
+
+```elixir
+# lib/puyo_puyo/player.ex（続き）
+@doc """
+プレイヤーを右回転します
+
+壁キック処理を含みます。回転後に壁やぷよに衝突する場合は、
+自動的に位置を調整します。
+
+## Examples
+
+    iex> stage = PuyoPuyo.Stage.new([])
+    iex> player = PuyoPuyo.Player.new(stage)
+    iex> player = PuyoPuyo.Player.rotate_right(player, stage)
+    iex> player.rotation
+    1
+
+"""
+@spec rotate_right(t(), Stage.t()) :: t()
+def rotate_right(%__MODULE__{rotation: rotation} = player, stage) do
+  # 新しい回転状態
+  new_rotation = rem(rotation + 1, 4)
+
+  # 回転可能かチェック（壁キック処理を含む）
+  case check_rotation_with_wall_kick(player, new_rotation, stage) do
+    {:ok, new_x} ->
+      %{player | rotation: new_rotation, puyo_x: new_x}
+
+    :error ->
+      player
+  end
+end
+
+# 回転可能かチェック（壁キック処理を含む）
+@spec check_rotation_with_wall_kick(t(), 0..3, Stage.t()) :: {:ok, non_neg_integer()} | :error
+defp check_rotation_with_wall_kick(%__MODULE__{puyo_x: x, puyo_y: y}, new_rotation, stage) do
+  # 2つ目のぷよの位置を計算
+  second_x = x + Enum.at(@offset_x, new_rotation)
+  second_y = y + Enum.at(@offset_y, new_rotation)
+
+  # 壁キック処理
+  adjusted_x = cond do
+    # 右端で右回転した場合（2つ目のぷよが右にくる場合）
+    second_x >= stage.cols -> x - 1
+
+    # 左端で左回転した場合（2つ目のぷよが左にくる場合）
+    second_x < 0 -> x + 1
+
+    # 壁キック不要
+    true -> x
+  end
+
+  # 壁キック後の位置を再計算
+  adjusted_second_x = adjusted_x + Enum.at(@offset_x, new_rotation)
+
+  # 範囲チェック
+  if adjusted_x >= 0 and adjusted_x < stage.cols and adjusted_second_x >= 0 and adjusted_second_x < stage.cols do
+    # 衝突チェック
+    axis_puyo_clear = if y >= 0 and y < stage.rows, do: Stage.get_puyo(stage, adjusted_x, y) == 0, else: true
+    second_puyo_clear = if second_y >= 0 and second_y < stage.rows, do: Stage.get_puyo(stage, adjusted_second_x, second_y) == 0, else: true
+
+    if axis_puyo_clear and second_puyo_clear do
+      {:ok, adjusted_x}
+    else
+      :error
+    end
+  else
+    :error
+  end
+end
+```
+
+### 解説: 壁キック処理
+
+壁キック処理は、ぷよぷよにおいて重要な操作性の改善です。
+
+#### 壁キックの目的
+
+回転した結果が壁の外に出てしまう場合でも、自動的に位置を調整することで、プレイヤーが意図した回転を実行できるようにします。
+
+#### 壁キックの処理
+
+```elixir
+adjusted_x = cond do
+  # 右端で右回転した場合（2つ目のぷよが右にくる場合）
+  second_x >= stage.cols -> x - 1
+
+  # 左端で左回転した場合（2つ目のぷよが左にくる場合）
+  second_x < 0 -> x + 1
+
+  # 壁キック不要
+  true -> x
+end
+```
+
+- **右端での回転**: 2つ目のぷよが右端外に出る場合、軸ぷよを1マス左に移動
+- **左端での回転**: 2つ目のぷよが左端外に出る場合、軸ぷよを1マス右に移動
+
+#### 結果の返し方
+
+```elixir
+case check_rotation_with_wall_kick(player, new_rotation, stage) do
+  {:ok, new_x} -> %{player | rotation: new_rotation, puyo_x: new_x}
+  :error -> player
+end
+```
+
+`{:ok, value}` | `:error` パターンを使って、回転の成功・失敗を表現します。これはElixirでよく使われる慣用的なパターンです。
+
+### テスト実行
+
+実装が完了したので、テストを実行してみましょう：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### テスト: 着地判定と着地処理
+
+次に、ぷよペアの着地判定と着地処理をテストします。
+
+```elixir
+# test/puyo_puyo/player_test.exs（続き）
+describe "Player.can_move_down?/2" do
+  setup do
+    stage = Stage.new([])
+    player = Player.new(stage)
+    {:ok, stage: stage, player: player}
+  end
+
+  test "returns true when can move down", %{stage: stage, player: player} do
+    assert Player.can_move_down?(player, stage) == true
+  end
+
+  test "returns false when at bottom", %{stage: stage, player: player} do
+    # 最下段に移動
+    player = %{player | puyo_y: 11}
+
+    assert Player.can_move_down?(player, stage) == false
+  end
+
+  test "returns false when puyo below", %{stage: stage, player: player} do
+    # 下にぷよを配置
+    stage = Stage.set_puyo(stage, player.puyo_x, player.puyo_y + 1, 1)
+
+    assert Player.can_move_down?(player, stage) == false
+  end
+
+  test "checks second puyo when it is below", %{stage: stage, player: player} do
+    # 下向き（回転状態2）にする
+    player = %{player | rotation: 2, puyo_y: 5}
+
+    # 2つ目のぷよの下にぷよを配置
+    # 2つ目のぷよは (puyo_x, puyo_y + 1) にあるので、
+    # その下 (puyo_x, puyo_y + 2) にぷよを配置
+    stage = Stage.set_puyo(stage, player.puyo_x, player.puyo_y + 2, 1)
+
+    assert Player.can_move_down?(player, stage) == false
+  end
+end
+
+describe "Player.land/2" do
+  setup do
+    stage = Stage.new([])
+    player = Player.new(stage)
+    {:ok, stage: stage, player: player}
+  end
+
+  test "places puyos on stage", %{stage: stage, player: player} do
+    player = %{player | puyo_y: 10}
+
+    stage = Player.land(player, stage)
+
+    # 軸ぷよが配置されていることを確認
+    assert Stage.get_puyo(stage, player.puyo_x, player.puyo_y) == player.puyo_type
+
+    # 2つ目のぷよが配置されていることを確認（上向きなのでy-1）
+    assert Stage.get_puyo(stage, player.puyo_x, player.puyo_y - 1) == player.next_puyo_type
+  end
+
+  test "places second puyo at correct rotated position", %{stage: stage, player: player} do
+    # 横向き（回転状態1）にする
+    player = %{player | rotation: 1, puyo_y: 10}
+
+    stage = Player.land(player, stage)
+
+    # 軸ぷよが配置されていることを確認
+    assert Stage.get_puyo(stage, player.puyo_x, player.puyo_y) == player.puyo_type
+
+    # 2つ目のぷよが配置されていることを確認（右向きなのでx+1）
+    assert Stage.get_puyo(stage, player.puyo_x + 1, player.puyo_y) == player.next_puyo_type
+  end
+end
+```
+
+### 実装: 着地判定と着地処理
+
+```elixir
+# lib/puyo_puyo/player.ex（続き）
+@doc """
+下に移動できるかチェックします
+
+## Examples
+
+    iex> stage = PuyoPuyo.Stage.new([])
+    iex> player = PuyoPuyo.Player.new(stage)
+    iex> PuyoPuyo.Player.can_move_down?(player, stage)
+    true
+
+"""
+@spec can_move_down?(t(), Stage.t()) :: boolean()
+def can_move_down?(%__MODULE__{puyo_x: x, puyo_y: y, rotation: rotation}, stage) do
+  second_puyo_x = x + Enum.at(@offset_x, rotation)
+  second_puyo_y = y + Enum.at(@offset_y, rotation)
+
+  # 2つ目のぷよが下向き（offsetY == 1）の場合
+  if Enum.at(@offset_y, rotation) == 1 do
+    # 2つ目のぷよの下端チェック
+    if second_puyo_y >= stage.rows - 1 do
+      false
+    else
+      # 2つ目のぷよの下にぷよがあるかチェック
+      Stage.get_puyo(stage, second_puyo_x, second_puyo_y + 1) == 0
+    end
+  else
+    # 軸ぷよの下端チェック
+    if y >= stage.rows - 1 do
+      false
+    else
+      # 軸ぷよの下にぷよがあるかチェック
+      axis_puyo_clear = Stage.get_puyo(stage, x, y + 1) == 0
+
+      # 2つ目のぷよの下端と衝突チェック
+      second_puyo_clear =
+        if second_puyo_y >= stage.rows - 1 do
+          false
+        else
+          Stage.get_puyo(stage, second_puyo_x, second_puyo_y + 1) == 0
+        end
+
+      axis_puyo_clear and second_puyo_clear
+    end
+  end
+end
+
+@doc """
+プレイヤーのぷよペアをステージに配置します
+
+## Examples
+
+    iex> stage = PuyoPuyo.Stage.new([])
+    iex> player = PuyoPuyo.Player.new(stage)
+    iex> player = %{player | puyo_y: 10}
+    iex> stage = PuyoPuyo.Player.land(player, stage)
+    iex> PuyoPuyo.Stage.get_puyo(stage, player.puyo_x, player.puyo_y)
+    player.puyo_type
+
+"""
+@spec land(t(), Stage.t()) :: Stage.t()
+def land(%__MODULE__{puyo_x: x, puyo_y: y, puyo_type: puyo_type, next_puyo_type: next_puyo_type, rotation: rotation}, stage) do
+  second_puyo_x = x + Enum.at(@offset_x, rotation)
+  second_puyo_y = y + Enum.at(@offset_y, rotation)
+
+  stage
+  |> Stage.set_puyo(x, y, puyo_type)
+  |> Stage.set_puyo(second_puyo_x, second_puyo_y, next_puyo_type)
+end
+```
+
+### 解説: 着地判定の複雑さ
+
+着地判定では、回転状態に応じて異なるチェックが必要になります。
+
+#### 下向きの場合
+
+```elixir
+if Enum.at(@offset_y, rotation) == 1 do
+  # 2つ目のぷよの下端チェック
+  if second_puyo_y >= stage.rows - 1 do
+    false
+  else
+    Stage.get_puyo(stage, second_puyo_x, second_puyo_y + 1) == 0
+  end
+```
+
+2つ目のぷよが下向きの場合、2つ目のぷよの下だけをチェックすればよい（軸ぷよは2つ目のぷよの上にあるため）。
+
+#### その他の方向の場合
+
+```elixir
+# 軸ぷよの下にぷよがあるかチェック
+axis_puyo_clear = Stage.get_puyo(stage, x, y + 1) == 0
+
+# 2つ目のぷよの下端と衝突チェック
+second_puyo_clear =
+  if second_puyo_y >= stage.rows - 1 do
+    false
+  else
+    Stage.get_puyo(stage, second_puyo_x, second_puyo_y + 1) == 0
+  end
+
+axis_puyo_clear and second_puyo_clear
+```
+
+上、右、左向きの場合、軸ぷよと2つ目のぷよの両方の下をチェックする必要があります。
+
+### テスト実行
+
+実装が完了したので、テストを実行してみましょう：
+
+```bash
+mix test test/puyo_puyo/player_test.exs
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### LiveViewとの統合: キーボード入力
+
+Playerモジュールが完成したので、GameLiveと統合してキーボード入力を処理できるようにします。
+
+Phoenix LiveViewでは、`phx-window-keydown`イベントを使ってキーボード入力を受け取ることができます。
+
+```elixir
+# lib/puyo_puyo_web/live/game_live.ex（更新）
+defmodule PuyoPuyoWeb.GameLive do
+  use PuyoPuyoWeb, :live_view
+
+  alias PuyoPuyo.{Stage, Player}
+
+  # ... 既存のコード ...
+
+  @impl true
+  def mount(_params, _session, socket) do
+    stage = Stage.new([])
+    player = Player.new(stage)
+
+    socket =
+      socket
+      |> assign(:mode, :playing)
+      |> assign(:score, 0)
+      |> assign(:chain, 0)
+      |> assign(:stage, stage)
+      |> assign(:player, player)
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div
+      id="game-container"
+      class="flex gap-8 p-8"
+      phx-window-keydown="keydown"
+      phx-throttle="100"
+    >
+      <div id="game-board" class="relative bg-gray-100 border-2 border-gray-800 rounded-lg">
+        <div class="grid" style={"grid-template-columns: repeat(#{@stage.cols}, 32px);"}>
+          <%= for row <- 0..(@stage.rows - 1) do %>
+            <%= for col <- 0..(@stage.cols - 1) do %>
+              <div
+                class="border border-gray-300"
+                style="width: 32px; height: 32px;"
+              >
+                <%= render_puyo(Stage.get_puyo(@stage, col, row)) %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+
+        <!-- プレイヤーのぷよペアを描画 -->
+        <%= if @mode == :playing do %>
+          <%= render_player_puyo(@player, 0) %>
+          <%= render_player_puyo(@player, 1) %>
+        <% end %>
+      </div>
+
+      <div id="info-panel" class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">ぷよぷよゲーム</h2>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">スコア</h3>
+          <p id="score" class="text-3xl font-bold text-blue-600"><%= @score %></p>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">連鎖数</h3>
+          <p id="chain" class="text-3xl font-bold text-red-600"><%= @chain %></p>
+        </div>
+
+        <div class="mt-6 text-sm text-gray-600">
+          <h3 class="font-semibold mb-2">操作方法</h3>
+          <ul class="space-y-1">
+            <li>← →: 移動</li>
+            <li>↑: 回転</li>
+            <li>↓: 高速落下</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  # キーボードイベントの処理
+  @impl true
+  def handle_event("keydown", %{"key" => key}, socket) do
+    socket = handle_key_input(socket, key)
+    {:noreply, socket}
+  end
+
+  # キー入力の処理
+  defp handle_key_input(socket, "ArrowLeft") do
+    player = socket.assigns.player
+    stage = socket.assigns.stage
+    player = Player.move_left(player, stage)
+    assign(socket, :player, player)
+  end
+
+  defp handle_key_input(socket, "ArrowRight") do
+    player = socket.assigns.player
+    stage = socket.assigns.stage
+    player = Player.move_right(player, stage)
+    assign(socket, :player, player)
+  end
+
+  defp handle_key_input(socket, "ArrowUp") do
+    player = socket.assigns.player
+    stage = socket.assigns.stage
+    player = Player.rotate_right(player, stage)
+    assign(socket, :player, player)
+  end
+
+  defp handle_key_input(socket, _key) do
+    socket
+  end
+
+  # プレイヤーのぷよを描画
+  defp render_player_puyo(player, index) do
+    {x, y, type} =
+      case index do
+        0 ->
+          {player.puyo_x, player.puyo_y, player.puyo_type}
+
+        1 ->
+          offset_x = Enum.at([0, 1, 0, -1], player.rotation)
+          offset_y = Enum.at([-1, 0, 1, 0], player.rotation)
+          {player.puyo_x + offset_x, player.puyo_y + offset_y, player.next_puyo_type}
+      end
+
+    color = puyo_color(type)
+
+    assigns = %{x: x, y: y, color: color}
+
+    ~H"""
+    <div
+      class="absolute rounded-full"
+      style={"
+        left: #{@x * 32}px;
+        top: #{@y * 32}px;
+        width: 32px;
+        height: 32px;
+        background-color: #{@color};
+        border: 2px solid rgba(0,0,0,0.2);
+        z-index: 10;
+      "}
+    >
+    </div>
+    """
+  end
+
+  # ... 既存のプライベート関数 ...
+end
+```
+
+### 解説: Phoenix LiveViewのイベント処理
+
+#### キーボードイベントのバインディング
+
+```elixir
+phx-window-keydown="keydown"
+phx-throttle="100"
+```
+
+- `phx-window-keydown="keydown"`: ウィンドウ全体のキーダウンイベントを`keydown`という名前でLiveViewに送信
+- `phx-throttle="100"`: イベントを100ms間隔でスロットル（連続入力の制御）
+
+#### イベントハンドラー
+
+```elixir
+def handle_event("keydown", %{"key" => key}, socket) do
+  socket = handle_key_input(socket, key)
+  {:noreply, socket}
+end
+```
+
+`handle_event/3`コールバックで、クライアントから送信されたイベントを処理します。
+
+#### 状態の更新
+
+```elixir
+defp handle_key_input(socket, "ArrowLeft") do
+  player = socket.assigns.player
+  stage = socket.assigns.stage
+  player = Player.move_left(player, stage)
+  assign(socket, :player, player)
+end
+```
+
+- `socket.assigns`から現在の状態を取得
+- Playerモジュールの関数を呼び出して新しい状態を取得
+- `assign/3`で新しい状態をsocketに設定
+
+Phoenix LiveViewは、状態が変更されると自動的に`render/1`を再実行し、変更された部分だけをクライアントに送信します。
+
+### テスト実行（統合テスト）
+
+最後に、すべてのテストを実行して、統合が正しく動作することを確認します：
+
+```bash
+mix test
+```
+
+すべてのテストが通ることを確認します（Green）。
+
+### 動作確認
+
+サーバーを起動して、ブラウザで確認してみましょう：
+
+```bash
+mix phx.server
+```
+
+ブラウザで `http://localhost:4000/game` にアクセスし、以下を確認します：
+
+- 画面上部にぷよペアが表示される
+- 矢印キー←→でぷよペアが左右に移動する
+- 矢印キー↑でぷよペアが回転する
+- 壁際で回転すると壁キックが動作する
+
+### コミット
+
+機能が完成したので、コミットしましょう：
+
+```bash
+git add -A
+git commit -m "feat: プレイヤーモジュールの実装
+
+- Playerモジュールの作成（lib/puyo_puyo/player.ex）
+- ぷよペアの生成（軸ぷよと次ぷよ）
+- 左右移動機能（move_left/2, move_right/2）
+  - 境界チェック
+  - 衝突判定（軸ぷよと次ぷよの両方）
+- 回転機能（rotate_right/2）
+  - 壁キック処理
+  - {:ok, value} | :error パターン
+- 着地判定（can_move_down?/2）
+  - 回転状態に応じた判定ロジック
+- 着地処理（land/2）
+- GameLiveとの統合
+  - phx-window-keydown イベントバインディング
+  - handle_event/3 コールバック
+  - プレイヤーぷよの描画
+- 包括的なテストカバレッジ（13テストケース）
+
+イテレーション3完了"
+```
+
+### まとめ
+
+イテレーション3で以下を達成しました：
+
+#### 得られたもの
+
+1. **Playerモジュール**
+   - ぷよペアの状態管理
+   - 軸ぷよと次ぷよの構成
+   - 回転状態（0-3）の管理
+
+2. **移動機能**
+   - `move_left/2`: 左移動
+   - `move_right/2`: 右移動
+   - 境界チェックと衝突判定
+   - 軸ぷよと次ぷよの両方をチェック
+
+3. **回転機能**
+   - `rotate_right/2`: 右回転
+   - 壁キック処理（自動位置調整）
+   - `{:ok, value}` | `:error` パターン
+
+4. **着地機能**
+   - `can_move_down?/2`: 下に移動可能かチェック
+   - `land/2`: ステージにぷよペアを配置
+   - 回転状態に応じた着地判定
+
+5. **LiveViewとの統合**
+   - `phx-window-keydown` イベント
+   - `handle_event/3` コールバック
+   - リアルタイムな状態更新
+   - プレイヤーぷよの描画
+
+#### 学んだこと
+
+1. **Elixirのパターンマッチング**
+   ```elixir
+   case check_rotation_with_wall_kick(player, new_rotation, stage) do
+     {:ok, new_x} -> %{player | rotation: new_rotation, puyo_x: new_x}
+     :error -> player
+   end
+   ```
+
+2. **Phoenix LiveViewのイベント処理**
+   - クライアントからサーバーへのイベント送信
+   - サーバーサイドでの状態更新
+   - 自動的な画面更新
+
+3. **壁キック処理**
+   - プレイヤー体験の向上
+   - `cond`式による条件分岐
+   - 段階的な位置調整
+
+4. **単一責任の原則**
+   - Playerモジュール: プレイヤーの操作
+   - Stageモジュール: ステージの管理
+   - GameLive: UIと統合
+
+5. **テスト駆動開発**
+   - エッジケースの洗い出し
+   - 境界条件のテスト
+   - 統合テストによる動作確認
+
+#### 次のステップ
+
+プレイヤーの基本操作が完成しました。次のイテレーションでは、以下を実装していきます：
+
+- **イテレーション4**: ゲームループの実装（重力と自動落下）
+- **イテレーション5**: スコアと連鎖の実装
+- **イテレーション6**: ゲームオーバーの実装
+
+これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
+
