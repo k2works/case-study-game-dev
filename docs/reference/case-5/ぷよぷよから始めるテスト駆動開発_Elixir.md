@@ -1872,24 +1872,6 @@ git commit -m "feat: ステージモジュールの実装
 
 これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
 
-## 参考資料
-
-### 公式ドキュメント
-- [Phoenix Framework](https://www.phoenixframework.org/)
-- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html)
-- [Elixir公式ドキュメント](https://elixir-lang.org/docs.html)
-- [Mix documentation](https://hexdocs.pm/mix/Mix.html)
-
-### 使用ツール
-- [Credo](https://github.com/rrrene/credo) - 静的コード解析
-- [ExCoveralls](https://github.com/parroty/excoveralls) - コードカバレッジ
-- [mix_test_watch](https://github.com/lpil/mix-test.watch) - ファイル監視
-- [Dialyxir](https://github.com/jeremyjh/dialyxir) - 型解析
-
-### 参考記事
-- [Angularコミットメッセージ規約](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit)
-- [Phoenix LiveView入門](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#module-bindings)
-
 ---
 
 ## イテレーション3: プレイヤーの実装
@@ -5788,3 +5770,22 @@ git commit -m "feat: UI/UXの大幅改善
 「ここまで長い道のりでしたが、楽しく学べました！」素晴らしい！これで、Elixir Phoenix LiveViewを使った本格的なWebアプリケーション開発の基礎が身につきました。この経験を活かして、さらに素晴らしいアプリケーションを作っていってください！
 
 Happy coding with Elixir and Phoenix LiveView! 🎉
+
+## 参考資料
+
+### 公式ドキュメント
+- [Phoenix Framework](https://www.phoenixframework.org/)
+- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html)
+- [Elixir公式ドキュメント](https://elixir-lang.org/docs.html)
+- [Mix documentation](https://hexdocs.pm/mix/Mix.html)
+
+### 使用ツール
+- [Credo](https://github.com/rrrene/credo) - 静的コード解析
+- [ExCoveralls](https://github.com/parroty/excoveralls) - コードカバレッジ
+- [mix_test_watch](https://github.com/lpil/mix-test.watch) - ファイル監視
+- [Dialyxir](https://github.com/jeremyjh/dialyxir) - 型解析
+
+### 参考記事
+- [Angularコミットメッセージ規約](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit)
+- [Phoenix LiveView入門](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#module-bindings)
+
