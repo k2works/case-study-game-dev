@@ -14,13 +14,14 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "complexity"],
+  "plugins": ["@typescript-eslint", "complexity", "sonarjs"],
   "rules": {
     "complexity": ["error", 7],
     "@typescript-eslint/no-unused-vars": [
       "error",
       { "argsIgnorePattern": "^_" }
     ],
+    "sonarjs/cognitive-complexity": ["error", 4],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "warn"
   },
