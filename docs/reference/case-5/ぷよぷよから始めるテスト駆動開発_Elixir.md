@@ -4852,7 +4852,939 @@ git commit -m "feat: スコアシステムの実装
 
 スコアシステムが完成しました！次のイテレーションでは、以下を実装していきます：
 
-- **イテレーション6**: UI/UXの改善（アニメーション、エフェクト、サウンド）
+- **イテレーション6**: UI/UXの改善（ゲームオーバー表示、見た目の改善）
 
-これでゲームとしての基本的な機能は全て揃いました。次は、プレイヤー体験を向上させるための演出を追加していきましょう！
+これでゲームとしての基本的な機能は全て揃いました。次は、プレイヤー体験を向上させるための改善を追加していきましょう！
 
+---
+
+## イテレーション6: UI/UXの改善
+
+ゲームの基本的な機能は全て実装できました！しかし、ゲームをより楽しく、使いやすくするためには、UI/UXの改善が重要です。このイテレーションでは、ゲームオーバー表示の改善、見た目の改善、そして全体的な仕上げを行います。
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、ゲームオーバーになったことが明確に分かり、簡単にリスタートできる
+
+「ゲームオーバーの表示が分かりやすいといいですね！」そうです！ゲームの状態が明確に分かることは、良いユーザー体験の基本です。
+
+### TODOリスト
+
+「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODOリストを作成してみましょう。
+
+UI/UXを改善するためには、以下のようなタスクが必要そうですね：
+
+- ゲームオーバー表示の実装
+- ゲームオーバー時のオーバーレイUI
+- リスタートボタンの改善
+- 見た目の改善（色、レイアウト、アニメーション）
+- レスポンシブ対応
+
+「なるほど、順番に実装していけばいいんですね！」そうです、一つずつ進めていきましょう。
+
+### ゲームオーバー表示の改善
+
+「現在のゲームオーバー表示はどうなっていますか？」現在は、モード表示に「ゲームオーバー」と表示されるだけです。これをもっと目立つように、オーバーレイで表示しましょう。
+
+#### lib/puyo_puyo_web/live/game_live.ex（更新）
+
+```elixir
+defmodule PuyoPuyoWeb.GameLive do
+  use PuyoPuyoWeb, :live_view
+  alias PuyoPuyo.{Game, Player, Stage}
+
+  @game_tick_interval 16
+
+  @impl true
+  def mount(_params, _session, socket) do
+    game = Game.new()
+
+    socket =
+      socket
+      |> assign(:game, game)
+      |> assign(:game_tick_interval, @game_tick_interval)
+
+    if connected?(socket) do
+      schedule_game_tick()
+    end
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_info(:game_tick, socket) do
+    game = socket.assigns.game
+
+    # ゲームオーバーでない場合のみ更新
+    game = if game.mode != :game_over do
+      Game.update(game, @game_tick_interval)
+    else
+      game
+    end
+
+    socket = assign(socket, :game, game)
+    schedule_game_tick()
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("restart", _params, socket) do
+    game = Game.new()
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl true
+  def handle_event("keydown", %{"key" => key}, socket) do
+    game = socket.assigns.game
+
+    # ゲームオーバー時は操作を受け付けない
+    if game.mode == :game_over do
+      {:noreply, socket}
+    else
+      player = game.player
+
+      player =
+        case key do
+          "ArrowLeft" -> Player.move_left(player)
+          "ArrowRight" -> Player.move_right(player)
+          "ArrowUp" -> Player.rotate_right(player)
+          "ArrowDown" -> Player.set_fast_fall(player, true)
+          _ -> player
+        end
+
+      game = %{game | player: player}
+      {:noreply, assign(socket, :game, game)}
+    end
+  end
+
+  @impl true
+  def handle_event("keyup", %{"key" => key}, socket) do
+    game = socket.assigns.game
+
+    # ゲームオーバー時は操作を受け付けない
+    if game.mode == :game_over do
+      {:noreply, socket}
+    else
+      player = game.player
+
+      player =
+        case key do
+          "ArrowDown" -> Player.set_fast_fall(player, false)
+          _ -> player
+        end
+
+      game = %{game | player: player}
+      {:noreply, assign(socket, :game, game)}
+    end
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="game-container" phx-window-keydown="keydown" phx-window-keyup="keyup">
+      <div class="game-header">
+        <h1>ぷよぷよ</h1>
+        <div class="game-info">
+          <div class="score-display">
+            <span class="label">スコア:</span>
+            <span class="value" id="score"><%= @game.score.current_score %></span>
+          </div>
+          <div class="chain-display">
+            <span class="label">連鎖:</span>
+            <span class="value" id="chain"><%= @game.score.current_chain %></span>
+          </div>
+          <div class="mode-display">
+            <span class="label">モード:</span>
+            <span class="value"><%= format_mode(@game.mode) %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-stage-wrapper">
+        <div class="game-stage">
+          <%= for y <- 0..(@game.stage.config.stage_rows - 1) do %>
+            <div class="stage-row">
+              <%= for x <- 0..(@game.stage.config.stage_cols - 1) do %>
+                <% puyo_type = get_puyo_at(@game, x, y) %>
+                <div class={"stage-cell puyo-#{puyo_type}"}>
+                  <%= if puyo_type > 0 do %>
+                    <div class="puyo"></div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= if @game.mode == :game_over do %>
+          <div class="game-over-overlay">
+            <div class="game-over-content">
+              <h2>GAME OVER</h2>
+              <div class="final-score">
+                <p>最終スコア</p>
+                <p class="score-value"><%= @game.score.current_score %></p>
+              </div>
+              <button phx-click="restart" class="restart-button">
+                もう一度プレイ
+              </button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="game-controls">
+        <div class="control-info">
+          <h3>操作方法</h3>
+          <ul>
+            <li><kbd>←</kbd> <kbd>→</kbd> 左右移動</li>
+            <li><kbd>↑</kbd> 回転</li>
+            <li><kbd>↓</kbd> 高速落下</li>
+          </ul>
+        </div>
+        <button phx-click="restart" class="control-button">リスタート</button>
+      </div>
+    </div>
+    """
+  end
+
+  defp format_mode(:new_puyo), do: "新ぷよ"
+  defp format_mode(:playing), do: "プレイ中"
+  defp format_mode(:check_erase), do: "消去確認"
+  defp format_mode(:check_fall), do: "落下確認"
+  defp format_mode(:falling), do: "落下中"
+  defp format_mode(:game_over), do: "ゲームオーバー"
+
+  defp get_puyo_at(game, x, y) do
+    if game.mode == :playing do
+      # プレイ中はプレイヤーのぷよも表示
+      player_puyo = Player.get_puyo_at(game.player, x, y)
+      if player_puyo > 0 do
+        player_puyo
+      else
+        Stage.get_puyo(game.stage, x, y)
+      end
+    else
+      Stage.get_puyo(game.stage, x, y)
+    end
+  end
+
+  defp schedule_game_tick do
+    Process.send_after(self(), :game_tick, @game_tick_interval)
+  end
+end
+```
+
+「どこが変更されたんですか？」主な変更点は以下の通りです：
+
+1. **ゲームオーバー時の更新停止**
+   ```elixir
+   game = if game.mode != :game_over do
+     Game.update(game, @game_tick_interval)
+   else
+     game
+   end
+   ```
+
+2. **ゲームオーバー時の操作無効化**
+   ```elixir
+   if game.mode == :game_over do
+     {:noreply, socket}
+   else
+     # 通常の操作処理
+   end
+   ```
+
+3. **ゲームオーバーオーバーレイの追加**
+   ```elixir
+   <%= if @game.mode == :game_over do %>
+     <div class="game-over-overlay">
+       <div class="game-over-content">
+         <h2>GAME OVER</h2>
+         <div class="final-score">
+           <p>最終スコア</p>
+           <p class="score-value"><%= @game.score.current_score %></p>
+         </div>
+         <button phx-click="restart" class="restart-button">
+           もう一度プレイ
+         </button>
+       </div>
+     </div>
+   <% end %>
+   ```
+
+4. **操作方法の表示**
+   ```elixir
+   <div class="control-info">
+     <h3>操作方法</h3>
+     <ul>
+       <li><kbd>←</kbd> <kbd>→</kbd> 左右移動</li>
+       <li><kbd>↑</kbd> 回転</li>
+       <li><kbd>↓</kbd> 高速落下</li>
+     </ul>
+   </div>
+   ```
+
+「なるほど、ゲームオーバー時には専用の画面が表示されるんですね！」そうです！次は、CSSを追加して見た目を改善しましょう。
+
+### CSSの大幅改善
+
+「見た目をもっとよくしたいです！」もちろんです！CSSを大幅に改善して、ゲームをもっと魅力的にしましょう。
+
+#### assets/css/app.css（更新）
+
+```css
+/* ========================================
+   ゲーム全体のレイアウト
+   ======================================== */
+
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* ========================================
+   ヘッダー
+   ======================================== */
+
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-header h1 {
+  margin: 0 0 15px 0;
+  padding: 0;
+  font-size: 2.5rem;
+  color: #333;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.score-display,
+.chain-display,
+.mode-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.score-display .label,
+.chain-display .label,
+.mode-display .label {
+  font-weight: bold;
+  color: #555;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.score-display .value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  min-width: 100px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chain-display .value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4ecdc4;
+  min-width: 60px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-display .value {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  min-width: 100px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ========================================
+   ゲームステージ
+   ======================================== */
+
+.game-stage-wrapper {
+  position: relative;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.game-stage {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border: 3px solid #fff;
+}
+
+.stage-row {
+  display: flex;
+  gap: 2px;
+}
+
+.stage-cell {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+}
+
+.puyo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow:
+    inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.puyo::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+}
+
+/* ぷよの色 */
+.puyo-1 .puyo {
+  background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+}
+
+.puyo-2 .puyo {
+  background: radial-gradient(circle at 30% 30%, #4ecdc4, #0d7377);
+}
+
+.puyo-3 .puyo {
+  background: radial-gradient(circle at 30% 30%, #ffd93d, #f6b93b);
+}
+
+.puyo-4 .puyo {
+  background: radial-gradient(circle at 30% 30%, #95e1d3, #38ada9);
+}
+
+/* ========================================
+   ゲームオーバーオーバーレイ
+   ======================================== */
+
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.game-over-content {
+  text-align: center;
+  color: white;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.game-over-content h2 {
+  font-size: 3rem;
+  margin: 0 0 20px 0;
+  color: #ff6b6b;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 4px;
+}
+
+.final-score {
+  margin: 30px 0;
+}
+
+.final-score p {
+  margin: 5px 0;
+  font-size: 1.2rem;
+  color: #f5f5f5;
+}
+
+.final-score .score-value {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ffd93d;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.restart-button {
+  margin-top: 30px;
+  padding: 15px 40px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.restart-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.restart-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   コントロール
+   ======================================== */
+
+.game-controls {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.control-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.control-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.control-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.control-info li {
+  margin: 5px 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.control-info kbd {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.9rem;
+  color: #333;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0 2px;
+  font-family: monospace;
+}
+
+.control-button {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.control-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   レスポンシブ対応
+   ======================================== */
+
+@media (max-width: 600px) {
+  .game-container {
+    padding: 10px;
+  }
+
+  .game-header h1 {
+    font-size: 2rem;
+  }
+
+  .game-info {
+    gap: 15px;
+  }
+
+  .score-display .value,
+  .chain-display .value {
+    font-size: 1.5rem;
+  }
+
+  .stage-cell {
+    width: 24px;
+    height: 24px;
+  }
+
+  .puyo {
+    width: 20px;
+    height: 20px;
+  }
+
+  .game-over-content h2 {
+    font-size: 2rem;
+  }
+
+  .final-score .score-value {
+    font-size: 2rem;
+  }
+
+  .game-controls {
+    flex-direction: column;
+  }
+}
+```
+
+「すごい！CSSが大幅に改善されましたね！」そうです！主な改善点は以下の通りです：
+
+1. **グラデーション背景**
+   - 全体の背景にグラデーション
+   - ボタンやぷよにも立体的なグラデーション
+
+2. **ぷよの立体感**
+   - `box-shadow`と`radial-gradient`で立体的に
+   - ハイライト効果の追加
+
+3. **ゲームオーバーアニメーション**
+   - フェードイン＆スライドインアニメーション
+   - 目立つオーバーレイ表示
+
+4. **ボタンのホバー効果**
+   - `transform`で浮き上がる効果
+   - スムーズなトランジション
+
+5. **レスポンシブ対応**
+   - モバイルでも快適にプレイ可能
+
+### 動作確認
+
+```bash
+mix phx.server
+```
+
+ブラウザで `http://localhost:4000` にアクセスして、以下を確認してください：
+
+1. 全体的な見た目が改善されていること
+2. ぷよが立体的に表示されること
+3. ゲームオーバー時にオーバーレイが表示されること
+4. リスタートボタンが動作すること
+5. 操作方法が表示されていること
+
+「実際に動かしてみたら、すごく綺麗になりました！」素晴らしい！ゲームの見た目が良くなると、プレイヤーの体験も大きく向上しますね。
+
+### コミット
+
+それでは、ここまでの変更をコミットしましょう。
+
+```bash
+git add .
+git commit -m "feat: UI/UXの大幅改善
+
+- ゲームオーバーオーバーレイの実装
+- ゲームオーバー時の操作無効化
+- ゲームオーバー時の更新停止
+- 最終スコア表示
+- CSSの大幅改善
+  - グラデーション背景
+  - ぷよの立体感（box-shadow, radial-gradient）
+  - アニメーション効果（fadeIn, slideIn）
+  - ボタンのホバー効果
+  - レスポンシブ対応
+- 操作方法の表示
+- リスタートボタンの改善
+"
+```
+
+### まとめ
+
+このイテレーションでは、以下を実装しました：
+
+#### 実装内容
+
+1. **ゲームオーバー表示の改善**
+   ```elixir
+   <%= if @game.mode == :game_over do %>
+     <div class="game-over-overlay">
+       <div class="game-over-content">
+         <h2>GAME OVER</h2>
+         <div class="final-score">
+           <p>最終スコア</p>
+           <p class="score-value"><%= @game.score.current_score %></p>
+         </div>
+         <button phx-click="restart" class="restart-button">
+           もう一度プレイ
+         </button>
+       </div>
+     </div>
+   <% end %>
+   ```
+
+2. **ゲームオーバー時の制御**
+   - 更新処理の停止
+   - 操作の無効化
+   - オーバーレイ表示
+
+3. **CSSアニメーション**
+   ```css
+   @keyframes fadeIn {
+     from { opacity: 0; }
+     to { opacity: 1; }
+   }
+
+   @keyframes slideIn {
+     from {
+       transform: translateY(-30px);
+       opacity: 0;
+     }
+     to {
+       transform: translateY(0);
+       opacity: 1;
+     }
+   }
+   ```
+
+4. **ぷよの立体的な表現**
+   ```css
+   .puyo {
+     box-shadow:
+       inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+       inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+       0 2px 4px rgba(0, 0, 0, 0.1);
+   }
+   ```
+
+5. **操作方法の表示**
+   - キーボード操作をわかりやすく表示
+   - `<kbd>`タグでキーを視覚化
+
+#### 学んだこと
+
+1. **LiveViewでの条件付きレンダリング**
+   ```elixir
+   <%= if @game.mode == :game_over do %>
+     <!-- ゲームオーバー表示 -->
+   <% end %>
+   ```
+
+2. **CSSアニメーションの基本**
+   - `@keyframes`でアニメーション定義
+   - `animation`プロパティで適用
+   - `transition`でスムーズな変化
+
+3. **グラデーションの活用**
+   - `linear-gradient`で線形グラデーション
+   - `radial-gradient`で放射状グラデーション
+   - 立体感の演出
+
+4. **レスポンシブデザイン**
+   ```css
+   @media (max-width: 600px) {
+     /* モバイル用のスタイル */
+   }
+   ```
+
+5. **ユーザー体験の重要性**
+   - 明確なフィードバック
+   - 直感的な操作
+   - 視覚的な魅力
+
+### 完成！
+
+おめでとうございます！Elixir Phoenix LiveViewを使ったぷよぷよゲームが完成しました！
+
+#### 実装した機能
+
+1. **イテレーション0**: プロジェクトセットアップ
+2. **イテレーション1**: Config、PuyoImage、Stageの実装
+3. **イテレーション2**: ステージの実装（消去判定、落下処理）
+4. **イテレーション3**: プレイヤーの実装（移動、回転、落下）
+5. **イテレーション4**: ゲームループの実装（状態管理、連鎖）
+6. **イテレーション5**: スコアシステムの実装
+7. **イテレーション6**: UI/UXの改善
+
+#### 技術スタック
+
+- **Elixir**: 関数型プログラミング言語
+- **Phoenix**: Webフレームワーク
+- **LiveView**: リアルタイムWebアプリケーションフレームワーク
+- **ExUnit**: テストフレームワーク
+- **CSS3**: アニメーション、グラデーション
+
+#### アーキテクチャの特徴
+
+1. **関数型プログラミング**
+   - イミュータブルなデータ構造
+   - パターンマッチング
+   - パイプライン演算子
+
+2. **Actor モデル**
+   - Process.send_after/3でのメッセージング
+   - handle_info/2でのメッセージ処理
+   - 状態の独立性
+
+3. **テスト駆動開発**
+   - Red → Green → Refactor
+   - 包括的なテストカバレッジ
+   - ドキュメントとしてのテスト
+
+4. **LiveView の強み**
+   - サーバーサイドレンダリング
+   - WebSocketによるリアルタイム更新
+   - 最小限のJavaScript
+
+### 次のステップ
+
+ゲームとしては完成しましたが、さらに改善できる点はたくさんあります：
+
+#### 機能拡張
+
+1. **ハイスコア機能**
+   - データベースへの保存
+   - ランキング表示
+   - プレイヤー名の登録
+
+2. **サウンド効果**
+   - ぷよ消去時の効果音
+   - 連鎖時の効果音
+   - BGM
+
+3. **追加のゲームモード**
+   - タイムアタック
+   - エンドレスモード
+   - 対戦モード
+
+4. **アニメーション強化**
+   - ぷよ消去時のアニメーション
+   - 連鎖時のエフェクト
+   - スコア表示時のアニメーション
+
+#### パフォーマンス最適化
+
+1. **フレームレート調整**
+   - 可変フレームレート
+   - パフォーマンスモニタリング
+
+2. **状態管理の最適化**
+   - GenServerへの移行
+   - 状態の永続化
+
+3. **テストの拡充**
+   - プロパティベーステスト
+   - パフォーマンステスト
+   - E2Eテスト
+
+### おわりに
+
+このチュートリアルでは、Elixir Phoenix LiveViewを使ってぷよぷよゲームを実装しました。テスト駆動開発のサイクルに従い、小さなステップで着実に機能を追加していきました。
+
+**学んだ主なこと：**
+
+1. **Elixirの基本**
+   - 関数型プログラミング
+   - パターンマッチング
+   - イミュータブルなデータ構造
+
+2. **Phoenix LiveView**
+   - サーバーサイドレンダリング
+   - リアルタイム更新
+   - イベントハンドリング
+
+3. **テスト駆動開発**
+   - Red → Green → Refactor
+   - 小さなステップ
+   - 継続的なリファクタリング
+
+4. **ゲーム開発**
+   - 状態管理
+   - ゲームループ
+   - ユーザー体験
+
+5. **UI/UX設計**
+   - レスポンシブデザイン
+   - アニメーション
+   - 視覚的フィードバック
+
+「ここまで長い道のりでしたが、楽しく学べました！」素晴らしい！これで、Elixir Phoenix LiveViewを使った本格的なWebアプリケーション開発の基礎が身につきました。この経験を活かして、さらに素晴らしいアプリケーションを作っていってください！
+
+Happy coding with Elixir and Phoenix LiveView! 🎉
