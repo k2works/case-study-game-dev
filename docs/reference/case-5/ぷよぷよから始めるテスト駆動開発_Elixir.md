@@ -3898,3 +3898,961 @@ git commit -m "feat: ゲームループとゲームモードの実装
 
 これらをテスト駆動開発のサイクルに従って、一つずつ実装していきましょう！
 
+---
+
+## イテレーション5: スコアシステムの実装
+
+ゲームの基本的な流れが完成しましたが、ぷよぷよの醍醐味の一つは「スコア」と「連鎖ボーナス」です！プレイヤーは高いスコアを目指してプレイするため、スコアシステムはゲームの面白さを大きく左右します。このイテレーションでは、スコア計算と連鎖ボーナスの実装に焦点を当てます。
+
+### ユーザーストーリー
+
+まずは、このイテレーションで実装するユーザーストーリーを確認しましょう：
+
+> プレイヤーとして、ぷよを消去したときにスコアが加算され、連鎖が発生すると高い連鎖ボーナスが得られる
+
+「スコアシステムがあるとゲームがもっと面白くなりますね！」そうです！スコアと連鎖ボーナスは、プレイヤーのモチベーションを高める重要な要素です。
+
+### TODOリスト
+
+「どんな作業が必要になりますか？」このユーザーストーリーを実現するために、TODOリストを作成してみましょう。
+
+> TODOリストは、実装前に必要なタスクを明確にすることで、開発の方向性を保ち、何も見落とさないようにします。
+>
+> — Kent Beck 『テスト駆動開発』
+
+スコアシステムを実現するためには、以下のようなタスクが必要そうですね：
+
+- Scoreモジュールの作成
+- スコア計算ロジックの実装（基本点 + 連鎖ボーナス）
+- Gameモジュールとの統合（消去時のスコア記録）
+- LiveViewでのスコア表示
+- スコアのテスト作成
+
+「なるほど、順番に実装していけばいいんですね！」そうです、テスト駆動開発の流れに沿って、まずはテストから書いていきますよ。
+
+### テスト: Scoreモジュール
+
+「最初に何をテストすればいいんでしょうか？」まずは、Scoreモジュールの基本的な機能をテストしましょう。スコア計算のロジックが正しく動作することを確認します。
+
+#### test/puyo_puyo/score_test.exs
+
+```elixir
+defmodule PuyoPuyo.ScoreTest do
+  use ExUnit.Case, async: true
+  alias PuyoPuyo.Score
+
+  describe "Score.new/0" do
+    test "creates a new score with zero values" do
+      score = Score.new()
+      assert score.current_score == 0
+      assert score.current_chain == 0
+    end
+  end
+
+  describe "Score.record_erase/3" do
+    test "calculates score from erase count" do
+      score = Score.new()
+      # 4個消去、連鎖なし（1連鎖目）
+      score = Score.record_erase(score, 4, 1)
+
+      # 基本点 = 4 × 10 = 40
+      assert score.current_score == 40
+      assert score.current_chain == 1
+    end
+
+    test "adds chain bonus for multiple chains" do
+      score = Score.new()
+      # 1連鎖目: 4個消去
+      score = Score.record_erase(score, 4, 1)
+      # 基本点 = 4 × 10 = 40
+      assert score.current_score == 40
+
+      # 2連鎖目: 4個消去
+      score = Score.record_erase(score, 4, 2)
+      # 基本点 = 4 × 10 = 40
+      # 連鎖ボーナス = 2 × 2 × 50 = 200
+      # 合計 = 40 + (40 + 200) = 280
+      assert score.current_score == 280
+      assert score.current_chain == 2
+    end
+
+    test "calculates higher bonus for longer chains" do
+      score = Score.new()
+      # 1連鎖目: 4個消去
+      score = Score.record_erase(score, 4, 1)
+      # 2連鎖目: 4個消去
+      score = Score.record_erase(score, 4, 2)
+      # 3連鎖目: 4個消去
+      score = Score.record_erase(score, 4, 3)
+      # 基本点 = 40 + (40 + 200) + (40 + 450) = 770
+      # 3連鎖のボーナス = 3 × 3 × 50 = 450
+      assert score.current_score == 770
+      assert score.current_chain == 3
+    end
+  end
+
+  describe "Score.end_chain/1" do
+    test "resets current chain to zero" do
+      score = Score.new()
+      score = Score.record_erase(score, 4, 2)
+      assert score.current_chain == 2
+
+      score = Score.end_chain(score)
+      assert score.current_chain == 0
+      # スコアは保持される
+      assert score.current_score > 0
+    end
+  end
+
+  describe "Score.reset/1" do
+    test "resets both score and chain to zero" do
+      score = Score.new()
+      score = Score.record_erase(score, 4, 2)
+
+      score = Score.reset(score)
+      assert score.current_score == 0
+      assert score.current_chain == 0
+    end
+  end
+end
+```
+
+「このテストでは何を確認しているんですか？」このテストでは、以下のケースを確認しています：
+
+1. **Score.new/0**: 初期化時にスコアと連鎖数が0であること
+2. **Score.record_erase/3**: 消去数からスコアを正しく計算すること
+   - 基本点 = 消去数 × 10
+   - 連鎖ボーナス = 連鎖数 × 連鎖数 × 50（2連鎖以上の場合）
+3. **Score.end_chain/1**: 連鎖終了時に連鎖数をリセットすること
+4. **Score.reset/1**: スコアと連鎖数の両方をリセットすること
+
+「スコア計算のロジックはどうなっているんですか？」良い質問ですね！スコア計算は以下のようになっています：
+
+```
+獲得点 = 基本点 + 連鎖ボーナス
+基本点 = 消去数 × 10
+連鎖ボーナス = (連鎖数 ≥ 2 の場合) 連鎖数 × 連鎖数 × 50
+```
+
+例えば、2連鎖で4個消去すると：
+- 基本点 = 4 × 10 = 40
+- 連鎖ボーナス = 2 × 2 × 50 = 200
+- 獲得点 = 40 + 200 = 240
+
+「なるほど、連鎖が長くなるほどボーナスが大きくなるんですね！」そうです！では、このテストが通るように実装していきましょう。
+
+### 実装: Scoreモジュール
+
+「テストが失敗することを確認したら、実装に進みましょう！」そうですね。では、Scoreモジュールを実装していきましょう。
+
+> 最小限の実装
+>
+> テストを通すために、どれだけのコードを書けばよいだろうか——テストが通る最小限のコードだけを書こう。
+>
+> — Kent Beck 『テスト駆動開発』
+
+#### lib/puyo_puyo/score.ex
+
+```elixir
+defmodule PuyoPuyo.Score do
+  @moduledoc """
+  スコア管理モジュール
+
+  ぷよの消去とスコア計算を行います。
+  """
+
+  @type t :: %__MODULE__{
+    current_score: non_neg_integer(),
+    current_chain: non_neg_integer()
+  }
+
+  defstruct current_score: 0,
+            current_chain: 0
+
+  @doc """
+  新しいスコアを作成します。
+
+  ## Examples
+
+      iex> score = Score.new()
+      iex> score.current_score
+      0
+      iex> score.current_chain
+      0
+  """
+  @spec new() :: t()
+  def new do
+    %__MODULE__{
+      current_score: 0,
+      current_chain: 0
+    }
+  end
+
+  @doc """
+  消去を記録してスコアを計算します。
+
+  ## スコア計算式
+
+  - 基本点 = 消去数 × 10
+  - 連鎖ボーナス = (連鎖数 ≥ 2 の場合) 連鎖数 × 連鎖数 × 50
+  - 獲得点 = 基本点 + 連鎖ボーナス
+
+  ## Examples
+
+      iex> score = Score.new()
+      iex> score = Score.record_erase(score, 4, 1)
+      iex> score.current_score
+      40
+
+      iex> score = Score.new()
+      iex> score = Score.record_erase(score, 4, 1)
+      iex> score = Score.record_erase(score, 4, 2)
+      iex> score.current_score
+      280
+  """
+  @spec record_erase(t(), non_neg_integer(), non_neg_integer()) :: t()
+  def record_erase(%__MODULE__{} = score, erase_count, chain) do
+    # スコア計算
+    base_points = erase_count * 10
+    chain_bonus = if chain >= 2, do: chain * chain * 50, else: 0
+    gained_points = base_points + chain_bonus
+
+    %{score |
+      current_score: score.current_score + gained_points,
+      current_chain: chain
+    }
+  end
+
+  @doc """
+  連鎖を終了します。
+
+  連鎖数を0にリセットしますが、スコアは保持されます。
+
+  ## Examples
+
+      iex> score = Score.new()
+      iex> score = Score.record_erase(score, 4, 2)
+      iex> score = Score.end_chain(score)
+      iex> score.current_chain
+      0
+  """
+  @spec end_chain(t()) :: t()
+  def end_chain(%__MODULE__{} = score) do
+    %{score | current_chain: 0}
+  end
+
+  @doc """
+  スコアをリセットします。
+
+  スコアと連鎖数の両方を0にリセットします。
+
+  ## Examples
+
+      iex> score = Score.new()
+      iex> score = Score.record_erase(score, 4, 2)
+      iex> score = Score.reset(score)
+      iex> score.current_score
+      0
+      iex> score.current_chain
+      0
+  """
+  @spec reset(t()) :: t()
+  def reset(%__MODULE__{}) do
+    new()
+  end
+end
+```
+
+「実装のポイントはどこですか？」良い質問ですね！以下のポイントに注目してください：
+
+1. **構造体の定義**
+   ```elixir
+   defstruct current_score: 0,
+             current_chain: 0
+   ```
+   現在のスコアと連鎖数を保持する構造体を定義しています。
+
+2. **スコア計算ロジック**
+   ```elixir
+   base_points = erase_count * 10
+   chain_bonus = if chain >= 2, do: chain * chain * 50, else: 0
+   gained_points = base_points + chain_bonus
+   ```
+   基本点と連鎖ボーナスを計算し、獲得点を算出しています。
+
+3. **イミュータブルな更新**
+   ```elixir
+   %{score |
+     current_score: score.current_score + gained_points,
+     current_chain: chain
+   }
+   ```
+   既存の構造体を変更するのではなく、新しい構造体を作成して返しています。
+
+「なるほど、Elixirのイミュータブルな特性を活かした実装なんですね！」そうです！では、テストを実行して確認しましょう。
+
+### テストの実行
+
+```bash
+mix test test/puyo_puyo/score_test.exs
+```
+
+テストが全て通ることを確認してください。
+
+```
+Compiling 1 file (.ex)
+.....
+
+Finished in 0.03 seconds (0.00s async, 0.03s sync)
+5 tests, 0 failures
+```
+
+「全てのテストが通りました！」素晴らしい！これで、Scoreモジュールの基本的な機能が完成しました。
+
+### Gameモジュールとの統合
+
+「次は何をすればいいですか？」次は、GameモジュールにScoreを統合して、消去が発生したときにスコアを記録するようにします。
+
+#### test/puyo_puyo/game_test.exs（追加）
+
+```elixir
+describe "Game with score" do
+  test "records score when puyos are erased" do
+    game = Game.new()
+    stage = game.stage
+
+    # 赤ぷよを2×2の正方形に配置（消去対象）
+    stage = stage
+      |> Stage.set_puyo(1, 10, 1)
+      |> Stage.set_puyo(2, 10, 1)
+      |> Stage.set_puyo(1, 11, 1)
+      |> Stage.set_puyo(2, 11, 1)
+
+    game = %{game | stage: stage, mode: :check_erase}
+
+    # 消去確認を実行
+    game = Game.update(game, 0)
+
+    # スコアが記録されていることを確認
+    # 基本点 = 4 × 10 = 40
+    assert game.score.current_score == 40
+    assert game.score.current_chain == 1
+  end
+
+  test "adds chain bonus when chain occurs" do
+    game = Game.new()
+    stage = game.stage
+
+    # 赤ぷよを2×2の正方形に配置（消去対象）
+    stage = stage
+      |> Stage.set_puyo(1, 10, 1)
+      |> Stage.set_puyo(2, 10, 1)
+      |> Stage.set_puyo(1, 11, 1)
+      |> Stage.set_puyo(2, 11, 1)
+
+    # 青ぷよを配置（赤ぷよ消去後に落下して連鎖を起こす）
+    stage = stage
+      |> Stage.set_puyo(3, 10, 2) # 横に1つ
+      |> Stage.set_puyo(2, 7, 2)  # 上から縦に3つ
+      |> Stage.set_puyo(2, 8, 2)
+      |> Stage.set_puyo(2, 9, 2)
+
+    game = %{game | stage: stage, mode: :check_erase}
+
+    # 連鎖が完了するまで更新を繰り返す
+    game = Enum.reduce_while(1..20, game, fn _, acc ->
+      acc = Game.update(acc, 0)
+      if acc.mode == :new_puyo do
+        {:halt, acc}
+      else
+        {:cont, acc}
+      end
+    end)
+
+    # 2連鎖分のスコアが記録されていることを確認
+    # 1連鎖目: 4 × 10 = 40
+    # 2連鎖目: 4 × 10 + 2 × 2 × 50 = 40 + 200 = 240
+    # 合計: 40 + 240 = 280
+    assert game.score.current_score == 280
+    assert game.score.current_chain == 0  # 連鎖終了でリセット
+  end
+end
+```
+
+「このテストでは何を確認しているんですか？」このテストでは、以下のケースを確認しています：
+
+1. **単純な消去**: 4個消去したときにスコアが正しく記録されること
+2. **連鎖発生**: 連鎖が発生したときに連鎖ボーナスが加算されること
+
+「連鎖終了時に連鎖数がリセットされるのはどうしてですか？」良い質問ですね！連鎖は一連の流れが終わったらリセットする必要があります。次の新しいぷよが生成されるときには、連鎖カウントは0から始まります。
+
+### 実装: Gameモジュールの更新
+
+「では、Gameモジュールを更新してスコアを統合しましょう！」そうですね。以下の変更を加えます：
+
+#### lib/puyo_puyo/game.ex（更新）
+
+```elixir
+defmodule PuyoPuyo.Game do
+  @moduledoc """
+  ゲーム全体の状態とロジックを管理するモジュール
+  """
+
+  alias PuyoPuyo.{Stage, Player, Score}
+
+  @type game_mode :: :new_puyo | :playing | :check_erase | :check_fall | :falling | :game_over
+
+  @type t :: %__MODULE__{
+    mode: game_mode(),
+    chain: non_neg_integer(),
+    stage: Stage.t(),
+    player: Player.t(),
+    score: Score.t(),
+    last_update: integer()
+  }
+
+  defstruct mode: :new_puyo,
+            chain: 0,
+            stage: nil,
+            player: nil,
+            score: nil,
+            last_update: 0
+
+  @doc """
+  新しいゲームを作成します。
+  """
+  @spec new() :: t()
+  def new do
+    stage = Stage.new()
+    player = Player.new(stage)
+    score = Score.new()
+
+    %__MODULE__{
+      mode: :new_puyo,
+      chain: 0,
+      stage: stage,
+      player: player,
+      score: score,
+      last_update: System.monotonic_time(:millisecond)
+    }
+  end
+
+  @doc """
+  ゲーム状態を更新します。
+  """
+  @spec update(t(), number()) :: t()
+  def update(%__MODULE__{mode: mode} = game, delta_time) do
+    case mode do
+      :new_puyo -> handle_new_puyo(game)
+      :playing -> handle_playing(game, delta_time)
+      :check_erase -> handle_check_erase(game)
+      :check_fall -> handle_check_fall(game)
+      :falling -> handle_falling(game)
+      :game_over -> game
+    end
+  end
+
+  # 新しいぷよを生成
+  defp handle_new_puyo(%__MODULE__{} = game) do
+    if Player.can_generate_new_puyo?(game.player) do
+      player = Player.generate_new_puyo(game.player)
+      %{game | player: player, mode: :playing}
+    else
+      %{game | mode: :game_over}
+    end
+  end
+
+  # プレイ中の処理
+  defp handle_playing(%__MODULE__{} = game, delta_time) do
+    player = Player.update(game.player, delta_time)
+
+    if Player.has_landed?(player) do
+      # プレイヤーのぷよをステージに固定
+      stage = Player.fix_puyo_to_stage(player, game.stage)
+      %{game | stage: stage, mode: :check_erase}
+    else
+      %{game | player: player}
+    end
+  end
+
+  # 消去確認
+  defp handle_check_erase(%__MODULE__{} = game) do
+    erase_result = Stage.check_erase(game.stage)
+
+    if erase_result.erase_puyo_count > 0 do
+      # 連鎖数を増加
+      chain = game.chain + 1
+
+      # スコアを記録
+      score = Score.record_erase(game.score, erase_result.erase_puyo_count, chain)
+
+      # ぷよを消去
+      stage = Stage.erase_boards(game.stage, erase_result.erase_info)
+
+      %{game | stage: stage, chain: chain, score: score, mode: :check_fall}
+    else
+      # 消去するぷよがない場合
+      if game.chain == 0 do
+        # 連鎖が発生していない場合は落下確認へ
+        %{game | mode: :check_fall}
+      else
+        # 連鎖終了
+        score = Score.end_chain(game.score)
+        %{game | chain: 0, score: score, mode: :new_puyo}
+      end
+    end
+  end
+
+  # 落下確認
+  defp handle_check_fall(%__MODULE__{} = game) do
+    if Stage.has_floating_puyo?(game.stage) do
+      %{game | mode: :falling}
+    else
+      if game.chain > 0 do
+        # 連鎖中の場合は再度消去確認へ
+        %{game | mode: :check_erase}
+      else
+        # 連鎖していない場合は新ぷよへ
+        %{game | mode: :new_puyo}
+      end
+    end
+  end
+
+  # 落下中
+  defp handle_falling(%__MODULE__{} = game) do
+    stage = Stage.apply_gravity(game.stage)
+
+    if Stage.has_floating_puyo?(stage) do
+      %{game | stage: stage, mode: :falling}
+    else
+      %{game | stage: stage, mode: :check_erase}
+    end
+  end
+end
+```
+
+「どこが変更されたんですか？」主な変更点は以下の通りです：
+
+1. **Score構造体の追加**
+   ```elixir
+   defstruct mode: :new_puyo,
+             chain: 0,
+             stage: nil,
+             player: nil,
+             score: nil,  # 追加
+             last_update: 0
+   ```
+
+2. **初期化時にScoreを作成**
+   ```elixir
+   def new do
+     stage = Stage.new()
+     player = Player.new(stage)
+     score = Score.new()  # 追加
+
+     %__MODULE__{
+       mode: :new_puyo,
+       chain: 0,
+       stage: stage,
+       player: player,
+       score: score,  # 追加
+       last_update: System.monotonic_time(:millisecond)
+     }
+   end
+   ```
+
+3. **消去確認時にスコアを記録**
+   ```elixir
+   defp handle_check_erase(%__MODULE__{} = game) do
+     erase_result = Stage.check_erase(game.stage)
+
+     if erase_result.erase_puyo_count > 0 do
+       chain = game.chain + 1
+
+       # スコアを記録（追加）
+       score = Score.record_erase(game.score, erase_result.erase_puyo_count, chain)
+
+       stage = Stage.erase_boards(game.stage, erase_result.erase_info)
+
+       %{game | stage: stage, chain: chain, score: score, mode: :check_fall}
+     else
+       if game.chain == 0 do
+         %{game | mode: :check_fall}
+       else
+         # 連鎖終了時にスコアをリセット（追加）
+         score = Score.end_chain(game.score)
+         %{game | chain: 0, score: score, mode: :new_puyo}
+       end
+     end
+   end
+   ```
+
+「なるほど、消去が発生したときにスコアを記録し、連鎖が終了したときに連鎖数をリセットしているんですね！」そうです！では、テストを実行して確認しましょう。
+
+### テストの実行
+
+```bash
+mix test test/puyo_puyo/game_test.exs
+```
+
+新しいテストが通ることを確認してください。
+
+```
+Compiling 1 file (.ex)
+.......
+
+Finished in 0.05 seconds (0.00s async, 0.05s sync)
+7 tests, 0 failures
+```
+
+「全てのテストが通りました！」素晴らしい！これで、Gameモジュールとの統合が完了しました。
+
+### LiveViewでのスコア表示
+
+「最後に、画面にスコアを表示したいです！」もちろんです！LiveViewを更新してスコアを表示しましょう。
+
+#### lib/puyo_puyo_web/live/game_live.ex（更新）
+
+```elixir
+defmodule PuyoPuyoWeb.GameLive do
+  use PuyoPuyoWeb, :live_view
+  alias PuyoPuyo.Game
+
+  @game_tick_interval 16
+
+  @impl true
+  def mount(_params, _session, socket) do
+    game = Game.new()
+
+    socket =
+      socket
+      |> assign(:game, game)
+      |> assign(:game_tick_interval, @game_tick_interval)
+
+    if connected?(socket) do
+      schedule_game_tick()
+    end
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_info(:game_tick, socket) do
+    game = socket.assigns.game
+    game = Game.update(game, @game_tick_interval)
+
+    socket = assign(socket, :game, game)
+    schedule_game_tick()
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("restart", _params, socket) do
+    game = Game.new()
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl true
+  def handle_event("keydown", %{"key" => key}, socket) do
+    game = socket.assigns.game
+    player = game.player
+
+    player =
+      case key do
+        "ArrowLeft" -> Player.move_left(player)
+        "ArrowRight" -> Player.move_right(player)
+        "ArrowUp" -> Player.rotate_right(player)
+        "ArrowDown" -> Player.set_fast_fall(player, true)
+        _ -> player
+      end
+
+    game = %{game | player: player}
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl true
+  def handle_event("keyup", %{"key" => key}, socket) do
+    game = socket.assigns.game
+    player = game.player
+
+    player =
+      case key do
+        "ArrowDown" -> Player.set_fast_fall(player, false)
+        _ -> player
+      end
+
+    game = %{game | player: player}
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="game-container" phx-window-keydown="keydown" phx-window-keyup="keyup">
+      <div class="game-header">
+        <h1>ぷよぷよ</h1>
+        <div class="game-info">
+          <div class="score-display">
+            <span class="label">スコア:</span>
+            <span class="value" id="score"><%= @game.score.current_score %></span>
+          </div>
+          <div class="chain-display">
+            <span class="label">連鎖:</span>
+            <span class="value" id="chain"><%= @game.score.current_chain %></span>
+          </div>
+          <div class="mode-display">
+            <span class="label">モード:</span>
+            <span class="value"><%= format_mode(@game.mode) %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-stage">
+        <%= for y <- 0..(@game.stage.config.stage_rows - 1) do %>
+          <div class="stage-row">
+            <%= for x <- 0..(@game.stage.config.stage_cols - 1) do %>
+              <% puyo_type = get_puyo_at(@game, x, y) %>
+              <div class={"stage-cell puyo-#{puyo_type}"}>
+                <%= if puyo_type > 0 do %>
+                  <div class="puyo"></div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="game-controls">
+        <button phx-click="restart">リスタート</button>
+      </div>
+    </div>
+    """
+  end
+
+  defp format_mode(:new_puyo), do: "新ぷよ"
+  defp format_mode(:playing), do: "プレイ中"
+  defp format_mode(:check_erase), do: "消去確認"
+  defp format_mode(:check_fall), do: "落下確認"
+  defp format_mode(:falling), do: "落下中"
+  defp format_mode(:game_over), do: "ゲームオーバー"
+
+  defp get_puyo_at(game, x, y) do
+    if game.mode == :playing do
+      # プレイ中はプレイヤーのぷよも表示
+      player_puyo = Player.get_puyo_at(game.player, x, y)
+      if player_puyo > 0 do
+        player_puyo
+      else
+        Stage.get_puyo(game.stage, x, y)
+      end
+    else
+      Stage.get_puyo(game.stage, x, y)
+    end
+  end
+end
+```
+
+「どこが変更されたんですか？」主な変更点は以下の通りです：
+
+1. **スコア表示の追加**
+   ```elixir
+   <div class="score-display">
+     <span class="label">スコア:</span>
+     <span class="value" id="score"><%= @game.score.current_score %></span>
+   </div>
+   <div class="chain-display">
+     <span class="label">連鎖:</span>
+     <span class="value" id="chain"><%= @game.score.current_chain %></span>
+   </div>
+   ```
+
+2. **レイアウトの改善**
+   ```elixir
+   <div class="game-header">
+     <h1>ぷよぷよ</h1>
+     <div class="game-info">
+       <!-- スコア、連鎖、モード表示 -->
+     </div>
+   </div>
+   ```
+
+「スコアと連鎖が表示されるようになったんですね！」そうです！これで、プレイヤーはリアルタイムでスコアと連鎖数を確認できるようになりました。
+
+### CSSの更新
+
+「スコア表示をもっと見やすくしたいです！」もちろんです！CSSを追加して、スコア表示を見やすくしましょう。
+
+#### assets/css/app.css（追加）
+
+```css
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-header h1 {
+  margin: 0;
+  padding: 10px;
+  font-size: 2rem;
+  color: #333;
+}
+
+.game-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.score-display,
+.chain-display,
+.mode-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-display .label,
+.chain-display .label,
+.mode-display .label {
+  font-weight: bold;
+  color: #555;
+}
+
+.score-display .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  min-width: 80px;
+  text-align: right;
+}
+
+.chain-display .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4ecdc4;
+  min-width: 40px;
+  text-align: right;
+}
+
+.mode-display .value {
+  font-size: 1rem;
+  color: #95a5a6;
+  min-width: 100px;
+}
+```
+
+「これで見た目もよくなりました！」そうですね！それでは、サーバーを起動して動作を確認しましょう。
+
+### 動作確認
+
+```bash
+mix phx.server
+```
+
+ブラウザで `http://localhost:4000` にアクセスして、以下を確認してください：
+
+1. 画面上部にスコアと連鎖数が表示されること
+2. ぷよを消去するとスコアが加算されること
+3. 連鎖が発生すると連鎖ボーナスが加算されること
+4. 連鎖終了後、連鎖数が0にリセットされること
+
+「実際に動かしてみたら、連鎖が発生するとスコアがどんどん上がっていきました！」素晴らしい！それがぷよぷよの面白さですね。
+
+### コミット
+
+それでは、ここまでの変更をコミットしましょう。
+
+```bash
+git add .
+git commit -m "feat: スコアシステムの実装
+
+- Scoreモジュールの作成
+- スコア計算ロジック（基本点 + 連鎖ボーナス）
+- Gameモジュールとの統合
+- LiveViewでのスコア表示
+- スコア表示のCSS追加
+- 包括的なテストケース
+"
+```
+
+### まとめ
+
+このイテレーションでは、以下を実装しました：
+
+#### 実装内容
+
+1. **Scoreモジュール**
+   ```elixir
+   defmodule PuyoPuyo.Score do
+     defstruct current_score: 0, current_chain: 0
+
+     def record_erase(score, erase_count, chain)
+     def end_chain(score)
+     def reset(score)
+   end
+   ```
+
+2. **スコア計算ロジック**
+   - 基本点 = 消去数 × 10
+   - 連鎖ボーナス = 連鎖数 × 連鎖数 × 50（2連鎖以上）
+   - 獲得点 = 基本点 + 連鎖ボーナス
+
+3. **Gameモジュールとの統合**
+   - 消去時のスコア記録
+   - 連鎖終了時の連鎖数リセット
+
+4. **LiveViewでのスコア表示**
+   - スコアと連鎖数の表示
+   - リアルタイム更新
+
+5. **包括的なテスト**
+   - Scoreモジュールの単体テスト
+   - Gameモジュールとの統合テスト
+
+#### 学んだこと
+
+1. **スコア計算のロジック**
+   ```elixir
+   base_points = erase_count * 10
+   chain_bonus = if chain >= 2, do: chain * chain * 50, else: 0
+   gained_points = base_points + chain_bonus
+   ```
+
+2. **構造体の更新パターン**
+   ```elixir
+   %{score |
+     current_score: score.current_score + gained_points,
+     current_chain: chain
+   }
+   ```
+
+3. **LiveViewでの動的な表示**
+   ```elixir
+   <span class="value" id="score"><%= @game.score.current_score %></span>
+   ```
+
+4. **連鎖ボーナスの重要性**
+   - 1連鎖: 40点
+   - 2連鎖: 40 + (40 + 200) = 280点
+   - 3連鎖: 40 + (40 + 200) + (40 + 450) = 770点
+
+   連鎖が長くなるほど、爆発的にスコアが伸びる！
+
+5. **ゲームデザインの原則**
+   - プレイヤーに明確なフィードバックを提供
+   - 高度なプレイに対して報酬を与える
+   - 視覚的に情報を伝える
+
+#### 次のステップ
+
+スコアシステムが完成しました！次のイテレーションでは、以下を実装していきます：
+
+- **イテレーション6**: UI/UXの改善（アニメーション、エフェクト、サウンド）
+
+これでゲームとしての基本的な機能は全て揃いました。次は、プレイヤー体験を向上させるための演出を追加していきましょう！
+
