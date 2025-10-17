@@ -85,4 +85,25 @@ describe('Stage', () => {
       expect(mockPuyoImage.draw).not.toHaveBeenCalled()
     })
   })
+
+  describe('消去判定', () => {
+    it('赤ぷよが縦に4つ繋がっている場合、消去対象として検出される', () => {
+      // Arrange: 赤ぷよを縦に4つ配置
+      stage.setPuyo(2, 8, PuyoType.Red)
+      stage.setPuyo(2, 9, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+
+      // Act: 消去判定を実行
+      const eraseInfo = stage.checkErase()
+
+      // Assert: 4つの赤ぷよが消去対象として検出される
+      expect(eraseInfo.erasePuyoCount).toBe(4)
+      expect(eraseInfo.eraseInfo).toHaveLength(4)
+      expect(eraseInfo.eraseInfo).toContainEqual({ x: 2, y: 8, type: PuyoType.Red })
+      expect(eraseInfo.eraseInfo).toContainEqual({ x: 2, y: 9, type: PuyoType.Red })
+      expect(eraseInfo.eraseInfo).toContainEqual({ x: 2, y: 10, type: PuyoType.Red })
+      expect(eraseInfo.eraseInfo).toContainEqual({ x: 2, y: 11, type: PuyoType.Red })
+    })
+  })
 })
