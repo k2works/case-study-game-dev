@@ -265,20 +265,24 @@ export class Game {
 
     // ゲームオーバーテキストを描画
     ctx.fillStyle = '#fff'
-    ctx.font = 'bold 48px Arial'
+    ctx.font = 'bold 28px Arial'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 40)
+    ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 30)
 
     // リスタート案内テキストを描画
-    ctx.font = '24px Arial'
-    ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 40)
+    ctx.font = '14px Arial'
+    ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 30)
   }
 
   /**
    * ゲームをリスタートする
    */
   restart(): void {
+    // ステージとスコアをリセット
+    this.stage.reset()
+    this.score.reset()
+
     // ゲーム状態をリセット
     this.mode = 'newPuyo'
     this.isDownKeyPressed = false

@@ -28,4 +28,11 @@ export class Score {
     const zenkeshiBonus = 3600
     this.value = ScoreValueSchema.parse(this.value + zenkeshiBonus)
   }
+
+  /**
+   * スコアをリセットする
+   */
+  reset(): void {
+    this.value = ScoreValueSchema.parse(0)
+  }
 }

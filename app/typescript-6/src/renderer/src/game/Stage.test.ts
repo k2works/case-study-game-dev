@@ -271,4 +271,24 @@ describe('Stage', () => {
       expect(isZenkeshi).toBe(false)
     })
   })
+
+  describe('リセット', () => {
+    it('reset()でステージが空になる', () => {
+      // Arrange: ステージにぷよを配置
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(1, 11, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+
+      // Act: リセット
+      stage.reset()
+
+      // Assert: 全てのセルが空になっている
+      for (let y = 0; y < 12; y++) {
+        for (let x = 0; x < 6; x++) {
+          expect(stage.getPuyo(x, y)).toBe(PuyoType.Empty)
+        }
+      }
+    })
+  })
 })

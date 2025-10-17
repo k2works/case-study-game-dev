@@ -328,4 +328,11 @@ export class Stage {
   private isRowEmpty(row: PuyoType[]): boolean {
     return row.every((cell) => cell === PuyoType.Empty)
   }
+
+  /**
+   * ステージをリセットする
+   */
+  reset(): void {
+    this.grid = this.createEmptyGrid()
+  }
 }

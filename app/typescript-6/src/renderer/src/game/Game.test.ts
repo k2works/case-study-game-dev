@@ -344,6 +344,14 @@ describe('Game', () => {
 
       const game = new Game(canvas, config, puyoImage, stage, player, score)
 
+      // ステージにぷよを配置
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+
+      // スコアを増やす
+      score.addZenkeshiBonus()
+      expect(score.getValue()).toBe(3600)
+
       // ゲームオーバーモードに設定
       game['mode'] = 'gameOver' as GameMode
 
@@ -352,6 +360,13 @@ describe('Game', () => {
 
       // newPuyoモードに戻っていることを確認
       expect(game['mode']).toBe('newPuyo')
+
+      // ステージがリセットされていることを確認
+      expect(stage.getPuyo(1, 10)).toBe(PuyoType.Empty)
+      expect(stage.getPuyo(2, 10)).toBe(PuyoType.Empty)
+
+      // スコアがリセットされていることを確認
+      expect(score.getValue()).toBe(0)
     })
   })
 })

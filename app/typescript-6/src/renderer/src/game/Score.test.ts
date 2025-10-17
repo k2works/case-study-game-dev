@@ -56,4 +56,20 @@ describe('Score', () => {
       expect(score.getValue()).toBeGreaterThanOrEqual(0)
     })
   })
+
+  describe('リセット', () => {
+    it('reset()でスコアが0に戻る', () => {
+      const score = new Score()
+
+      // スコアを増やす
+      score.addZenkeshiBonus()
+      expect(score.getValue()).toBe(3600)
+
+      // リセット
+      score.reset()
+
+      // スコアが0に戻っている
+      expect(score.getValue()).toBe(0)
+    })
+  })
 })
