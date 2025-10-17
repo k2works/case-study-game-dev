@@ -37,7 +37,9 @@ describe('Game', () => {
       rows: 12
     }
     mockPuyoImage = {}
-    mockStage = {}
+    mockStage = {
+      draw: vi.fn()
+    }
     mockPlayer = {
       createNewPuyoPair: vi.fn(),
       draw: vi.fn()

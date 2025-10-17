@@ -1,26 +1,39 @@
-import { z } from 'zod'
-
-/**
- * Stage のバリデーションスキーマ
- */
-const StageSchema = z.object({
-  cols: z.number().int().positive('cols must be a positive integer'),
-  rows: z.number().int().positive('rows must be a positive integer')
-})
+import type { Config } from './Config'
+import { PuyoType } from './Puyo'
 
 /**
  * Stage クラス
  * ゲームのステージ（フィールド）を管理
  */
 export class Stage {
-  private cols: number
-  private rows: number
+  private config: Config
+  private grid: PuyoType[][]
 
-  constructor(cols: number, rows: number) {
-    // バリデーション実行
-    const validated = StageSchema.parse({ cols, rows })
+  constructor(config: Config) {
+    this.config = config
+    this.grid = this.createEmptyGrid()
+  }
 
-    this.cols = validated.cols
-    this.rows = validated.rows
+  private createEmptyGrid(): PuyoType[][] {
+    return Array.from({ length: this.config.rows }, () =>
+      Array(this.config.cols).fill(PuyoType.Empty)
+    )
+  }
+
+  getPuyo(x: number, y: number): PuyoType {
+    if (y < 0 || y >= this.config.rows || x < 0 || x >= this.config.cols) {
+      return PuyoType.Empty
+    }
+    return this.grid[y][x]
+  }
+
+  setPuyo(x: number, y: number, type: PuyoType): void {
+    if (y >= 0 && y < this.config.rows && x >= 0 && x < this.config.cols) {
+      this.grid[y][x] = type
+    }
+  }
+
+  isEmpty(x: number, y: number): boolean {
+    return this.getPuyo(x, y) === PuyoType.Empty
   }
 }
