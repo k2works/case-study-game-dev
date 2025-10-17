@@ -212,7 +212,8 @@ describe('Game', () => {
 
       // スコアが増加していることを確認
       expect(score.getValue()).toBeGreaterThan(initialScore)
-      expect(score.getValue()).toBe(3600) // 全消しボーナスのみ
+      // 消去スコア(4個×10×1連鎖×1色=40) + 全消しボーナス(3600) = 3640
+      expect(score.getValue()).toBe(3640)
     })
 
     it('盤面上にぷよが残っている場合は全消しボーナスが加算されない', () => {
@@ -245,8 +246,9 @@ describe('Game', () => {
       game['update'](0) // checkFall → checkErase
       game['update'](0) // checkErase → newPuyo（全消しボーナスなし）
 
-      // スコアが0のまま（全消しボーナスが加算されていない）
-      expect(score.getValue()).toBe(0)
+      // 消去スコア(4個×10×1連鎖×1色=40)のみ加算されている
+      // 全消しボーナスは加算されていない
+      expect(score.getValue()).toBe(40)
     })
   })
 

@@ -72,4 +72,48 @@ describe('Score', () => {
       expect(score.getValue()).toBe(0)
     })
   })
+
+  describe('ぷよ消去スコア', () => {
+    it('4個消去、1連鎖、1色の場合', () => {
+      const score = new Score()
+
+      // 4個消去、1連鎖、1色
+      score.addEraseScore(4, 1, 1)
+
+      // 基本スコア: 4 × 10 = 40
+      expect(score.getValue()).toBe(40)
+    })
+
+    it('8個消去、2連鎖、2色の場合', () => {
+      const score = new Score()
+
+      // 8個消去、2連鎖、2色
+      score.addEraseScore(8, 2, 2)
+
+      // 8 × 10 × 8 × 3 = 1920
+      expect(score.getValue()).toBe(1920)
+    })
+
+    it('12個消去、3連鎖、3色の場合', () => {
+      const score = new Score()
+
+      // 12個消去、3連鎖、3色
+      score.addEraseScore(12, 3, 3)
+
+      // 12 × 10 × 16 × 6 = 11520
+      expect(score.getValue()).toBe(11520)
+    })
+
+    it('複数回消去した場合スコアが累積される', () => {
+      const score = new Score()
+
+      // 1回目: 4個消去、1連鎖、1色
+      score.addEraseScore(4, 1, 1)
+      expect(score.getValue()).toBe(40)
+
+      // 2回目: 4個消去、1連鎖、1色
+      score.addEraseScore(4, 1, 1)
+      expect(score.getValue()).toBe(80)
+    })
+  })
 })

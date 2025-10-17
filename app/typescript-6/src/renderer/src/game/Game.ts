@@ -251,8 +251,18 @@ export class Game {
   private updateCheckErase(): void {
     const eraseInfo = this.stage.checkErase()
     if (eraseInfo.erasePuyoCount > 0) {
-      this.stage.eraseBoards(eraseInfo.eraseInfo)
+      // 連鎖数をインクリメント（1連鎖目は1）
       this.chainCount++
+
+      // 消去した色の種類数をカウント
+      const colorTypes = new Set(eraseInfo.eraseInfo.map((puyo) => puyo.type))
+      const colorCount = colorTypes.size
+
+      // スコアを加算
+      this.score.addEraseScore(eraseInfo.erasePuyoCount, this.chainCount, colorCount)
+
+      // ぷよを消去
+      this.stage.eraseBoards(eraseInfo.eraseInfo)
       this.mode = 'erasing'
     } else {
       // 消去対象がない場合、全消し判定
