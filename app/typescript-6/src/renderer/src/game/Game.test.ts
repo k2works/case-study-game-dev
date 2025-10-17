@@ -38,7 +38,10 @@ describe('Game', () => {
     }
     mockPuyoImage = {}
     mockStage = {}
-    mockPlayer = {}
+    mockPlayer = {
+      createNewPuyoPair: vi.fn(),
+      draw: vi.fn()
+    }
     mockScore = {}
 
     // requestAnimationFrame のモック（コールバックは実行しない）

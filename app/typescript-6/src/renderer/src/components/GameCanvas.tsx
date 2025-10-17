@@ -28,9 +28,9 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     const rows = 12
 
     const config = new Config(cellSize, cols, rows)
-    const puyoImage = new PuyoImage()
+    const puyoImage = new PuyoImage(config)
     const stage = new Stage(cols, rows)
-    const player = new Player()
+    const player = new Player(config, puyoImage)
     const score = new Score()
 
     const game = new Game(canvas, config, puyoImage, stage, player, score)

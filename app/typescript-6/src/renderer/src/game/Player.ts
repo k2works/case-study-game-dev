@@ -58,7 +58,15 @@ export class Player {
     this.subPuyo.moveDown()
   }
 
-  draw(_context: CanvasRenderingContext2D): void {
-    // 後で実装
+  draw(context: CanvasRenderingContext2D): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // サブぷよを描画（画面内の場合のみ）
+    if (this.subPuyo.y >= 0) {
+      this.puyoImage.draw(context, this.subPuyo.type, this.subPuyo.x, this.subPuyo.y)
+    }
+
+    // メインぷよを描画
+    this.puyoImage.draw(context, this.mainPuyo.type, this.mainPuyo.x, this.mainPuyo.y)
   }
 }

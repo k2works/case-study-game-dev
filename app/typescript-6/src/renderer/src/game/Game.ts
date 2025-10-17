@@ -37,6 +37,8 @@ export class Game {
    * ゲームを開始する
    */
   start(): void {
+    // 初期のぷよペアを生成
+    this.player.createNewPuyoPair()
     this.gameLoop()
   }
 
@@ -62,6 +64,9 @@ export class Game {
 
     // グリッド線を描画
     this.drawGrid(ctx)
+
+    // プレイヤー（落下中のぷよ）を描画
+    this.player.draw(ctx)
   }
 
   /**

@@ -1,9 +1,41 @@
+import { PuyoType } from './Puyo'
+import type { Config } from './Config'
+
 /**
  * PuyoImage クラス
- * ぷよの画像を管理
+ * ぷよの描画を管理
  */
 export class PuyoImage {
-  constructor() {
-    // 画像の読み込み処理は今後実装
+  private readonly colors: Record<PuyoType, string> = {
+    [PuyoType.Empty]: '#888',
+    [PuyoType.Red]: '#ff0000',
+    [PuyoType.Green]: '#00ff00',
+    [PuyoType.Blue]: '#0000ff',
+    [PuyoType.Yellow]: '#ffff00'
+  }
+
+  constructor(private config: Config) {}
+
+  draw(context: CanvasRenderingContext2D, type: PuyoType, x: number, y: number): void {
+    const size = this.config.cellSize
+    const color = this.colors[type] || this.colors[PuyoType.Empty]
+
+    // 円の中心座標と半径を計算
+    const centerX = x * size + size / 2
+    const centerY = y * size + size / 2
+    const radius = size / 2 - 2
+
+    // ぷよを円形で描画
+    context.fillStyle = color
+    context.beginPath()
+    context.arc(centerX, centerY, radius, 0, Math.PI * 2)
+    context.fill()
+
+    // 枠線を描画
+    context.strokeStyle = '#000'
+    context.lineWidth = 2
+    context.beginPath()
+    context.arc(centerX, centerY, radius, 0, Math.PI * 2)
+    context.stroke()
   }
 }
