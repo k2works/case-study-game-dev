@@ -17,6 +17,7 @@ export class Game {
   private score: Score
   private animationId: number | null = null
   private lastTime: number = 0
+  private isDownKeyPressed: boolean = false
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -53,6 +54,14 @@ export class Game {
       cancelAnimationFrame(this.animationId)
       this.animationId = null
     }
+  }
+
+  /**
+   * 下キーの状態を設定する
+   * @param isPressed 下キーが押されているか
+   */
+  setDownKeyPressed(isPressed: boolean): void {
+    this.isDownKeyPressed = isPressed
   }
 
   /**
@@ -121,7 +130,7 @@ export class Game {
    * ゲーム状態を更新する
    */
   private update(deltaTime: number): void {
-    // プレイヤーの更新（落下処理を含む）
-    this.player.update(deltaTime)
+    // プレイヤーの更新（下キーの状態を渡す）
+    this.player.update(deltaTime, this.isDownKeyPressed)
   }
 }

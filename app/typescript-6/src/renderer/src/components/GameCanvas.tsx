@@ -19,6 +19,7 @@ interface GameCanvasProps {
 export function GameCanvas({ width, height }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const playerRef = useRef<Player | null>(null)
+  const gameRef = useRef<Game | null>(null)
   const keys = useKeyboard()
 
   useEffect(() => {
@@ -41,6 +42,9 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
 
     const game = new Game(canvas, config, puyoImage, stage, player, score)
 
+    // Game インスタンスを ref に保存
+    gameRef.current = game
+
     // ゲーム開始
     game.start()
 
@@ -48,13 +52,15 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     return () => {
       game.stop()
       playerRef.current = null
+      gameRef.current = null
     }
   }, [])
 
   // キーボード入力を処理
   useEffect(() => {
     const player = playerRef.current
-    if (!player) return
+    const game = gameRef.current
+    if (!player || !game) return
 
     const keyActions = [
       { condition: keys.left, action: () => player.moveLeft() },
@@ -64,6 +70,9 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     ]
 
     keyActions.forEach(({ condition, action }) => condition && action())
+
+    // 下キーの状態を Game に渡す
+    game.setDownKeyPressed(keys.down)
   }, [keys])
 
   return <canvas ref={canvasRef} className="game-canvas" width={width} height={height} role="img" />

@@ -182,7 +182,8 @@ venv/
 ENV/
 env/
 htmlcov
-.coveragenul
+.coverage
+nul
 
 # .NET / C#
 .vs
