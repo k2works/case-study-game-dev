@@ -416,4 +416,44 @@ describe('Player', () => {
       expect(fastTimer).toBe(normalTimer * 10)
     })
   })
+
+  describe('着地判定', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('下に移動できる場合、着地していない', () => {
+      // メインぷよを (3, 0)、サブぷよを (3, -1) に配置
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = -1
+
+      // 下に移動できる場合、着地していない
+      expect(player.hasLanded()).toBe(false)
+    })
+
+    it('下端に達した場合、着地している', () => {
+      // 下端に配置
+      player.getMainPuyo()!.y = mockConfig.rows - 1
+      player.getSubPuyo()!.y = mockConfig.rows - 2
+
+      // 下端に達した場合、着地している
+      expect(player.hasLanded()).toBe(true)
+    })
+
+    it('下にぷよがある場合、着地している', () => {
+      // フィールドの (3, 1) にぷよを配置
+      mockStage.setPuyo(3, 1, PuyoType.Red)
+
+      // メインぷよを (3, 0) に配置
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = -1
+
+      // 下にぷよがある場合、着地している
+      expect(player.hasLanded()).toBe(true)
+    })
+  })
 })

@@ -200,6 +200,13 @@ export class Player {
     return mainPuyoBelow && subPuyoBelow
   }
 
+  /**
+   * ぷよが着地したか判定する
+   */
+  hasLanded(): boolean {
+    return !this.canMoveDown()
+  }
+
   draw(context: CanvasRenderingContext2D): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
