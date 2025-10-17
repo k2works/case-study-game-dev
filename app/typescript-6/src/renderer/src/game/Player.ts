@@ -58,6 +58,11 @@ export class Player {
   rotateClockwise(): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
+    // 回転前の状態を保存
+    const prevRotation = this.rotation
+    const prevSubX = this.subPuyo.x
+    const prevSubY = this.subPuyo.y
+
     // 回転状態を更新（0→1→2→3→0）
     this.rotation = RotationSchema.parse((this.rotation + 1) % 4)
 
@@ -66,6 +71,13 @@ export class Player {
 
     // 壁キック処理
     this.applyWallKick()
+
+    // 回転後の位置にぷよがある場合、回転を取り消す
+    if (!this.stage.isEmpty(this.subPuyo.x, this.subPuyo.y)) {
+      this.rotation = prevRotation
+      this.subPuyo.x = prevSubX
+      this.subPuyo.y = prevSubY
+    }
   }
 
   private updateSubPuyoPosition(): void {

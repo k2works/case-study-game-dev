@@ -265,6 +265,33 @@ describe('Player', () => {
     })
   })
 
+  describe('回転時の接触判定', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('回転後の位置にぷよがある場合、回転できない', () => {
+      // Arrange: ステージの右にぷよを配置
+      const centerX = Math.floor(mockConfig.cols / 2)
+      mockStage.setPuyo(centerX + 1, 0, PuyoType.Red)
+
+      // メインぷよを (3, 0)、サブぷよを (3, -1) に配置（回転状態: 上）
+      player.getMainPuyo()!.x = centerX
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = centerX
+      player.getSubPuyo()!.y = -1
+
+      // Act: 右に回転しようとする（サブぷよが centerX + 1, 0 に来る）
+      const rotationBefore = player.getRotation()
+      player.rotateClockwise()
+
+      // Assert: 回転していない
+      expect(player.getRotation()).toBe(rotationBefore)
+      expect(player.getSubPuyo()!.x).toBe(centerX)
+      expect(player.getSubPuyo()!.y).toBe(-1)
+    })
+  })
+
   describe('壁キック', () => {
     beforeEach(() => {
       player.createNewPuyoPair()
