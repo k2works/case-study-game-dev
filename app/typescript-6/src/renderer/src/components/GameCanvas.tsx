@@ -66,7 +66,8 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
       { condition: keys.left, action: () => player.moveLeft() },
       { condition: keys.right, action: () => player.moveRight() },
       { condition: keys.up, action: () => player.rotateClockwise() },
-      { condition: keys.down, action: () => player.moveDown() }
+      { condition: keys.down, action: () => player.moveDown() },
+      { condition: keys.restart, action: () => game.restart() }
     ]
 
     keyActions.forEach(({ condition, action }) => condition && action())

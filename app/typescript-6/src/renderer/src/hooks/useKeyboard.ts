@@ -5,6 +5,7 @@ export interface KeyboardState {
   right: boolean
   up: boolean
   down: boolean
+  restart: boolean
 }
 
 export const useKeyboard = () => {
@@ -12,7 +13,8 @@ export const useKeyboard = () => {
     left: false,
     right: false,
     up: false,
-    down: false
+    down: false,
+    restart: false
   })
 
   useEffect(() => {
@@ -30,6 +32,10 @@ export const useKeyboard = () => {
         case 'ArrowDown':
           setKeys((prev) => ({ ...prev, down: true }))
           break
+        case 'r':
+        case 'R':
+          setKeys((prev) => ({ ...prev, restart: true }))
+          break
       }
     }
 
@@ -46,6 +52,10 @@ export const useKeyboard = () => {
           break
         case 'ArrowDown':
           setKeys((prev) => ({ ...prev, down: false }))
+          break
+        case 'r':
+        case 'R':
+          setKeys((prev) => ({ ...prev, restart: false }))
           break
       }
     }

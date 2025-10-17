@@ -31,9 +31,13 @@ describe('Game', () => {
       lineTo: vi.fn(),
       stroke: vi.fn(),
       fill: vi.fn(),
+      fillText: vi.fn(),
       strokeStyle: '',
       fillStyle: '',
-      lineWidth: 1
+      lineWidth: 1,
+      font: '',
+      textAlign: 'center',
+      textBaseline: 'middle'
     }
     vi.spyOn(mockCanvas, 'getContext').mockReturnValue(mockContext as any)
 
@@ -302,6 +306,52 @@ describe('Game', () => {
 
       // ゲームオーバーのまま変化しないことを確認
       expect(game['mode']).toBe('gameOver')
+    })
+
+    it('ゲームオーバー画面が描画される', () => {
+      // モック化されたキャンバスを使用
+      const game = new Game(mockCanvas, mockConfig, mockPuyoImage, mockStage, mockPlayer, mockScore)
+
+      // Canvas コンテキストのメソッドをスパイ
+      const ctx = mockCanvas.getContext('2d')
+      const fillTextSpy = vi.spyOn(ctx!, 'fillText')
+      const fillRectSpy = vi.spyOn(ctx!, 'fillRect')
+
+      // ゲームオーバーモードに設定
+      game['mode'] = 'gameOver' as GameMode
+
+      // 描画実行
+      game.draw()
+
+      // ゲームオーバーテキストが描画されたことを確認
+      expect(fillRectSpy).toHaveBeenCalled() // 半透明背景
+      expect(fillTextSpy).toHaveBeenCalled() // テキスト描画
+    })
+  })
+
+  describe('リスタート機能', () => {
+    it('restart()メソッドでゲーム状態がリセットされる', () => {
+      // 実際の依存オブジェクトを作成
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 800
+
+      const config = new Config()
+      const puyoImage = new PuyoImage(config)
+      const stage = new Stage(config)
+      const player = new Player(config, puyoImage, stage)
+      const score = new Score()
+
+      const game = new Game(canvas, config, puyoImage, stage, player, score)
+
+      // ゲームオーバーモードに設定
+      game['mode'] = 'gameOver' as GameMode
+
+      // リスタート実行
+      game.restart()
+
+      // newPuyoモードに戻っていることを確認
+      expect(game['mode']).toBe('newPuyo')
     })
   })
 })

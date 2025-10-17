@@ -114,6 +114,11 @@ export class Game {
 
     // プレイヤー（落下中のぷよ）を描画
     this.player.draw(ctx)
+
+    // ゲームオーバー画面を描画
+    if (this.mode === 'gameOver') {
+      this.drawGameOver(ctx)
+    }
   }
 
   /**
@@ -248,5 +253,35 @@ export class Game {
   private updateGameOver(): void {
     // ゲームオーバー演出
     // アニメーションループは継続するが、更新は停止
+  }
+
+  /**
+   * ゲームオーバー画面を描画する
+   */
+  private drawGameOver(ctx: CanvasRenderingContext2D): void {
+    // 半透明の黒い背景を描画
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+
+    // ゲームオーバーテキストを描画
+    ctx.fillStyle = '#fff'
+    ctx.font = 'bold 48px Arial'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 40)
+
+    // リスタート案内テキストを描画
+    ctx.font = '24px Arial'
+    ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 40)
+  }
+
+  /**
+   * ゲームをリスタートする
+   */
+  restart(): void {
+    // ゲーム状態をリセット
+    this.mode = 'newPuyo'
+    this.isDownKeyPressed = false
+    this.lastTime = window.performance.now()
   }
 }
