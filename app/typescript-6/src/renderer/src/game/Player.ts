@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import type { Config } from './Config'
 import type { PuyoImage } from './PuyoImage'
+import type { Stage } from './Stage'
 import { Puyo } from './Puyo'
 
 /**
@@ -16,6 +17,8 @@ export class Player {
   private mainPuyo: Puyo | null = null
   private subPuyo: Puyo | null = null
   private rotation: number = 0 // 0: 上, 1: 右, 2: 下, 3: 左
+  private fallTimer: number = 0 // 落下タイマー（ミリ秒）
+  private readonly fallInterval: number = 1000 // 落下間隔（1秒）
 
   // 回転状態のオフセット（サブぷよの相対位置）
   private readonly rotationOffsets = [
@@ -27,7 +30,8 @@ export class Player {
 
   constructor(
     private config: Config,
-    private puyoImage: PuyoImage
+    private puyoImage: PuyoImage,
+    private stage: Stage
   ) {}
 
   createNewPuyoPair(): void {
@@ -113,6 +117,54 @@ export class Player {
 
     this.mainPuyo.moveDown()
     this.subPuyo.moveDown()
+  }
+
+  /**
+   * 更新処理（自動落下）
+   * @param deltaTime 経過時間（ミリ秒）
+   */
+  update(deltaTime: number): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // 落下タイマーを更新
+    this.fallTimer += deltaTime
+
+    // 落下間隔に達したら落下処理
+    if (this.fallTimer >= this.fallInterval) {
+      this.fallTimer = 0
+      this.applyGravity()
+    }
+  }
+
+  /**
+   * 重力適用（1マス下に移動）
+   */
+  private applyGravity(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // 下に移動できるかチェック
+    if (this.canMoveDown()) {
+      this.mainPuyo.moveDown()
+      this.subPuyo.moveDown()
+    }
+  }
+
+  /**
+   * 下に移動できるかチェック
+   */
+  private canMoveDown(): boolean {
+    if (!this.mainPuyo || !this.subPuyo) return false
+
+    // 画面下端チェック
+    if (this.mainPuyo.y >= this.config.rows - 1 || this.subPuyo.y >= this.config.rows - 1) {
+      return false
+    }
+
+    // フィールドの下のマスが空かチェック
+    const mainPuyoBelow = this.stage.isEmpty(this.mainPuyo.x, this.mainPuyo.y + 1)
+    const subPuyoBelow = this.stage.isEmpty(this.subPuyo.x, this.subPuyo.y + 1)
+
+    return mainPuyoBelow && subPuyoBelow
   }
 
   draw(context: CanvasRenderingContext2D): void {

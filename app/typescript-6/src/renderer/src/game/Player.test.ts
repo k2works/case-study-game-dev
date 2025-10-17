@@ -1,23 +1,21 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { Player } from './Player'
-import type { Config } from './Config'
+import { Config } from './Config'
 import type { PuyoImage } from './PuyoImage'
+import { Stage } from './Stage'
 import { PuyoType } from './Puyo'
 
 describe('Player', () => {
   let mockConfig: Config
   let mockPuyoImage: PuyoImage
+  let mockStage: Stage
   let player: Player
 
   beforeEach(() => {
-    mockConfig = {
-      cellSize: 32,
-      cols: 6,
-      rows: 12
-    } as Config
-
+    mockConfig = new Config(32, 6, 12)
     mockPuyoImage = {} as PuyoImage
-    player = new Player(mockConfig, mockPuyoImage)
+    mockStage = new Stage(mockConfig)
+    player = new Player(mockConfig, mockPuyoImage, mockStage)
   })
 
   it('インスタンスが作成できる', () => {
@@ -208,6 +206,40 @@ describe('Player', () => {
       player.rotateClockwise()
 
       expect(player.getRotation()).toBe(0)
+    })
+  })
+
+  describe('自由落下', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('一定時間経過すると、ぷよが1マス下に落ちる', () => {
+      const initialY = player.getMainPuyo()!.y
+
+      player.update(1000)
+
+      expect(player.getMainPuyo()!.y).toBe(initialY + 1)
+    })
+
+    it('落下間隔未満では、ぷよは落ちない', () => {
+      const initialY = player.getMainPuyo()!.y
+
+      player.update(500)
+
+      expect(player.getMainPuyo()!.y).toBe(initialY)
+    })
+
+    it('下端に達した場合、それ以上落ちない', () => {
+      // 下端に配置
+      player.getMainPuyo()!.y = mockConfig.rows - 1
+      player.getSubPuyo()!.y = mockConfig.rows - 2
+
+      player.update(1000)
+
+      // ぷよペアがまだ存在することを確認
+      expect(player.getMainPuyo()).not.toBeNull()
+      expect(player.getSubPuyo()).not.toBeNull()
     })
   })
 })
