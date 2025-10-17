@@ -100,4 +100,58 @@ describe('Player', () => {
       expect(player.getSubPuyo()!.x).toBe(mockConfig.cols - 1)
     })
   })
+
+  describe('回転', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('時計回りに回転すると、回転状態が1増える', () => {
+      const initialRotation = player.getRotation()
+
+      player.rotateClockwise()
+
+      expect(player.getRotation()).toBe((initialRotation + 1) % 4)
+    })
+
+    it('回転状態が3のときに回転すると0に戻る', () => {
+      // 回転状態を3に設定
+      player.rotateClockwise()
+      player.rotateClockwise()
+      player.rotateClockwise()
+      expect(player.getRotation()).toBe(3)
+
+      // もう一度回転
+      player.rotateClockwise()
+
+      expect(player.getRotation()).toBe(0)
+    })
+
+    it('回転すると、サブぷよの位置が変わる', () => {
+      const mainPuyo = player.getMainPuyo()!
+      const subPuyo = player.getSubPuyo()!
+
+      // 初期状態：サブぷよは上（y = -1）
+      expect(subPuyo.x).toBe(mainPuyo.x)
+      expect(subPuyo.y).toBe(mainPuyo.y - 1)
+
+      // 時計回りに回転：サブぷよは右（x = +1）
+      player.rotateClockwise()
+      const subPuyoAfter1 = player.getSubPuyo()!
+      expect(subPuyoAfter1.x).toBe(mainPuyo.x + 1)
+      expect(subPuyoAfter1.y).toBe(mainPuyo.y)
+
+      // もう一度回転：サブぷよは下（y = +1）
+      player.rotateClockwise()
+      const subPuyoAfter2 = player.getSubPuyo()!
+      expect(subPuyoAfter2.x).toBe(mainPuyo.x)
+      expect(subPuyoAfter2.y).toBe(mainPuyo.y + 1)
+
+      // もう一度回転：サブぷよは左（x = -1）
+      player.rotateClockwise()
+      const subPuyoAfter3 = player.getSubPuyo()!
+      expect(subPuyoAfter3.x).toBe(mainPuyo.x - 1)
+      expect(subPuyoAfter3.y).toBe(mainPuyo.y)
+    })
+  })
 })

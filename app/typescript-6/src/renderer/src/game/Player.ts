@@ -11,6 +11,14 @@ export class Player {
   private subPuyo: Puyo | null = null
   private rotation: number = 0 // 0: 上, 1: 右, 2: 下, 3: 左
 
+  // 回転状態のオフセット（サブぷよの相対位置）
+  private readonly rotationOffsets = [
+    { x: 0, y: -1 }, // 0: 上
+    { x: 1, y: 0 }, // 1: 右
+    { x: 0, y: 1 }, // 2: 下
+    { x: -1, y: 0 } // 3: 左
+  ]
+
   constructor(
     private config: Config,
     private puyoImage: PuyoImage
@@ -29,6 +37,28 @@ export class Player {
 
   getSubPuyo(): Puyo | null {
     return this.subPuyo
+  }
+
+  getRotation(): number {
+    return this.rotation
+  }
+
+  rotateClockwise(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // 回転状態を更新（0→1→2→3→0）
+    this.rotation = (this.rotation + 1) % 4
+
+    // サブぷよの位置を更新
+    this.updateSubPuyoPosition()
+  }
+
+  private updateSubPuyoPosition(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    const offset = this.rotationOffsets[this.rotation]
+    this.subPuyo.x = this.mainPuyo.x + offset.x
+    this.subPuyo.y = this.mainPuyo.y + offset.y
   }
 
   moveLeft(): void {
