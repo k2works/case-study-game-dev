@@ -54,4 +54,50 @@ describe('Player', () => {
       )
     })
   })
+
+  describe('移動', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('左に移動できる', () => {
+      const initialX = player.getMainPuyo()!.x
+
+      player.moveLeft()
+
+      expect(player.getMainPuyo()!.x).toBe(initialX - 1)
+      expect(player.getSubPuyo()!.x).toBe(initialX - 1)
+    })
+
+    it('右に移動できる', () => {
+      const initialX = player.getMainPuyo()!.x
+
+      player.moveRight()
+
+      expect(player.getMainPuyo()!.x).toBe(initialX + 1)
+      expect(player.getSubPuyo()!.x).toBe(initialX + 1)
+    })
+
+    it('左端では左に移動できない', () => {
+      // 左端に移動
+      player.getMainPuyo()!.x = 0
+      player.getSubPuyo()!.x = 0
+
+      player.moveLeft()
+
+      expect(player.getMainPuyo()!.x).toBe(0)
+      expect(player.getSubPuyo()!.x).toBe(0)
+    })
+
+    it('右端では右に移動できない', () => {
+      // 右端に移動
+      player.getMainPuyo()!.x = mockConfig.cols - 1
+      player.getSubPuyo()!.x = mockConfig.cols - 1
+
+      player.moveRight()
+
+      expect(player.getMainPuyo()!.x).toBe(mockConfig.cols - 1)
+      expect(player.getSubPuyo()!.x).toBe(mockConfig.cols - 1)
+    })
+  })
 })

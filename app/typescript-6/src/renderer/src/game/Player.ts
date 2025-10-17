@@ -31,6 +31,33 @@ export class Player {
     return this.subPuyo
   }
 
+  moveLeft(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // 左端チェック
+    if (this.mainPuyo.x > 0 && this.subPuyo.x > 0) {
+      this.mainPuyo.moveLeft()
+      this.subPuyo.moveLeft()
+    }
+  }
+
+  moveRight(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // 右端チェック
+    if (this.mainPuyo.x < this.config.cols - 1 && this.subPuyo.x < this.config.cols - 1) {
+      this.mainPuyo.moveRight()
+      this.subPuyo.moveRight()
+    }
+  }
+
+  moveDown(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    this.mainPuyo.moveDown()
+    this.subPuyo.moveDown()
+  }
+
   draw(_context: CanvasRenderingContext2D): void {
     // 後で実装
   }

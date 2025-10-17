@@ -29,7 +29,8 @@ export default [
         HTMLCanvasElement: 'readonly',
         CanvasRenderingContext2D: 'readonly',
         requestAnimationFrame: 'readonly',
-        cancelAnimationFrame: 'readonly'
+        cancelAnimationFrame: 'readonly',
+        KeyboardEvent: 'readonly'
       }
     },
     plugins: {
