@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { Config } from './Config'
 import { PuyoType } from './Puyo'
 import type { PuyoImage } from './PuyoImage'
@@ -15,6 +16,24 @@ export class Stage {
     this.grid = this.createEmptyGrid()
   }
 
+  /**
+   * 座標のバリデーションスキーマを生成
+   */
+  private getCoordinateSchema() {
+    return z.object({
+      x: z
+        .number()
+        .int()
+        .min(0)
+        .max(this.config.cols - 1),
+      y: z
+        .number()
+        .int()
+        .min(0)
+        .max(this.config.rows - 1)
+    })
+  }
+
   private createEmptyGrid(): PuyoType[][] {
     return Array.from({ length: this.config.rows }, () =>
       Array(this.config.cols).fill(PuyoType.Empty)
@@ -29,7 +48,11 @@ export class Stage {
   }
 
   setPuyo(x: number, y: number, type: PuyoType): void {
-    if (y >= 0 && y < this.config.rows && x >= 0 && x < this.config.cols) {
+    // Zod バリデーション（範囲外は無視）
+    const coordinateSchema = this.getCoordinateSchema()
+    const result = coordinateSchema.safeParse({ x, y })
+
+    if (result.success) {
       this.grid[y][x] = type
     }
   }
