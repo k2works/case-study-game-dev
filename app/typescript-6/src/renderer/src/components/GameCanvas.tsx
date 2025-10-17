@@ -10,13 +10,14 @@ import { useKeyboard } from '../hooks/useKeyboard'
 interface GameCanvasProps {
   width: number
   height: number
+  onGameReady?: (game: Game) => void
 }
 
 /**
  * GameCanvas コンポーネント
  * ゲーム画面を描画するための Canvas 要素を提供
  */
-export function GameCanvas({ width, height }: GameCanvasProps) {
+export function GameCanvas({ width, height, onGameReady }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const playerRef = useRef<Player | null>(null)
   const gameRef = useRef<Game | null>(null)
@@ -48,13 +49,18 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     // ゲーム開始
     game.start()
 
+    // コールバックでゲームインスタンスを通知
+    if (onGameReady) {
+      onGameReady(game)
+    }
+
     // クリーンアップ：コンポーネントのアンマウント時にゲームを停止
     return () => {
       game.stop()
       playerRef.current = null
       gameRef.current = null
     }
-  }, [])
+  }, [onGameReady])
 
   // キーボード入力を処理
   useEffect(() => {

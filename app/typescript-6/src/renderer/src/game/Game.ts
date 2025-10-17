@@ -4,6 +4,7 @@ import { PuyoImage } from './PuyoImage'
 import { Stage } from './Stage'
 import { Player } from './Player'
 import { Score } from './Score'
+import { PuyoType } from './Puyo'
 
 /**
  * ゲームモードのバリデーションスキーマ
@@ -39,6 +40,7 @@ export class Game {
   private isDownKeyPressed: boolean = false
   private mode: GameMode = 'newPuyo'
   private modeHandlers: Map<GameMode, (deltaTime: number) => void>
+  private chainCount: number = 0
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -94,6 +96,27 @@ export class Game {
    */
   setDownKeyPressed(isPressed: boolean): void {
     this.isDownKeyPressed = isPressed
+  }
+
+  /**
+   * 現在の連鎖数を取得する
+   */
+  getChainCount(): number {
+    return this.chainCount
+  }
+
+  /**
+   * 現在のスコアを取得する
+   */
+  getScore(): number {
+    return this.score.getValue()
+  }
+
+  /**
+   * 次のぷよペアを取得する
+   */
+  getNextPuyoPair(): { mainType: PuyoType; subType: PuyoType } | null {
+    return this.player.getNextPuyoPair()
   }
 
   /**
@@ -229,6 +252,7 @@ export class Game {
     const eraseInfo = this.stage.checkErase()
     if (eraseInfo.erasePuyoCount > 0) {
       this.stage.eraseBoards(eraseInfo.eraseInfo)
+      this.chainCount++
       this.mode = 'erasing'
     } else {
       // 消去対象がない場合、全消し判定
@@ -236,6 +260,7 @@ export class Game {
         // 全消しボーナスを加算
         this.score.addZenkeshiBonus()
       }
+      this.chainCount = 0
       this.mode = 'newPuyo'
     }
   }
@@ -285,6 +310,7 @@ export class Game {
 
     // ゲーム状態をリセット
     this.mode = 'newPuyo'
+    this.chainCount = 0
     this.isDownKeyPressed = false
     this.lastTime = window.performance.now()
   }

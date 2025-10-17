@@ -2,7 +2,7 @@ import { z } from 'zod'
 import type { Config } from './Config'
 import type { PuyoImage } from './PuyoImage'
 import type { Stage } from './Stage'
-import { Puyo } from './Puyo'
+import { Puyo, PuyoType } from './Puyo'
 
 /**
  * 回転状態のバリデーションスキーマ
@@ -20,6 +20,8 @@ export class Player {
   private fallTimer: number = 0 // 落下タイマー（ミリ秒）
   private readonly fallInterval: number = 1000 // 落下間隔（1秒）
   private landed: boolean = false // 着地フラグ
+  private nextMainType: PuyoType | null = null // 次のメインぷよの種類
+  private nextSubType: PuyoType | null = null // 次のサブぷよの種類
 
   // 回転状態のオフセット（サブぷよの相対位置）
   private readonly rotationOffsets = [
@@ -33,14 +35,50 @@ export class Player {
     private config: Config,
     private puyoImage: PuyoImage,
     private stage: Stage
-  ) {}
+  ) {
+    // 初期化時に次のぷよペアを生成
+    this.generateNextPuyoPair()
+  }
+
+  /**
+   * 次のぷよペアを生成する
+   */
+  private generateNextPuyoPair(): void {
+    this.nextMainType = Puyo.getRandomType()
+    this.nextSubType = Puyo.getRandomType()
+  }
 
   createNewPuyoPair(): void {
     const startX = Math.floor(this.config.cols / 2)
-    this.mainPuyo = Puyo.createRandom(startX, 0)
-    this.subPuyo = Puyo.createRandom(startX, -1)
+
+    // 次のぷよペアを使って現在のぷよペアを生成
+    if (this.nextMainType !== null && this.nextSubType !== null) {
+      this.mainPuyo = new Puyo(startX, 0, this.nextMainType)
+      this.subPuyo = new Puyo(startX, -1, this.nextSubType)
+    } else {
+      // フォールバック（初回のみ）
+      this.mainPuyo = Puyo.createRandom(startX, 0)
+      this.subPuyo = Puyo.createRandom(startX, -1)
+    }
+
     this.rotation = RotationSchema.parse(0)
     this.landed = false // 着地フラグをリセット
+
+    // 次のぷよペアを生成
+    this.generateNextPuyoPair()
+  }
+
+  /**
+   * 次のぷよペアを取得する
+   */
+  getNextPuyoPair(): { mainType: PuyoType; subType: PuyoType } | null {
+    if (this.nextMainType === null || this.nextSubType === null) {
+      return null
+    }
+    return {
+      mainType: this.nextMainType,
+      subType: this.nextSubType
+    }
   }
 
   getMainPuyo(): Puyo | null {

@@ -27,9 +27,13 @@ export class Puyo {
     PuyoSchema.parse({ x, y, type })
   }
 
-  static createRandom(x: number, y: number): Puyo {
+  static getRandomType(): PuyoType {
     const types = [PuyoType.Red, PuyoType.Green, PuyoType.Blue, PuyoType.Yellow]
-    const randomType = types[Math.floor(Math.random() * types.length)]
+    return types[Math.floor(Math.random() * types.length)]
+  }
+
+  static createRandom(x: number, y: number): Puyo {
+    const randomType = Puyo.getRandomType()
     return new Puyo(x, y, randomType)
   }
 
