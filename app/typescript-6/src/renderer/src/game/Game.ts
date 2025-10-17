@@ -5,6 +5,11 @@ import { Player } from './Player'
 import { Score } from './Score'
 
 /**
+ * ゲームモード
+ */
+export type GameMode = 'newPuyo' | 'playing' | 'checkFall' | 'falling' | 'checkErase' | 'erasing'
+
+/**
  * Game クラス
  * ぷよぷよゲームのメインクラス
  */
@@ -18,6 +23,7 @@ export class Game {
   private animationId: number | null = null
   private lastTime: number = 0
   private isDownKeyPressed: boolean = false
+  private mode: GameMode = 'newPuyo'
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -39,8 +45,8 @@ export class Game {
    * ゲームを開始する
    */
   start(): void {
-    // 初期のぷよペアを生成
-    this.player.createNewPuyoPair()
+    // モードを初期化
+    this.mode = 'newPuyo'
     // 開始時刻を記録
     this.lastTime = window.performance.now()
     this.animationId = requestAnimationFrame((time) => this.gameLoop(time))
@@ -133,7 +139,83 @@ export class Game {
    * ゲーム状態を更新する
    */
   private update(deltaTime: number): void {
-    // プレイヤーの更新（下キーの状態を渡す）
+    switch (this.mode) {
+      case 'newPuyo':
+        this.updateNewPuyo()
+        break
+      case 'playing':
+        this.updatePlaying(deltaTime)
+        break
+      case 'checkFall':
+        this.updateCheckFall()
+        break
+      case 'falling':
+        this.updateFalling()
+        break
+      case 'checkErase':
+        this.updateCheckErase()
+        break
+      case 'erasing':
+        this.updateErasing()
+        break
+    }
+  }
+
+  /**
+   * newPuyo モードの更新
+   */
+  private updateNewPuyo(): void {
+    this.player.createNewPuyoPair()
+    this.mode = 'playing'
+  }
+
+  /**
+   * playing モードの更新
+   */
+  private updatePlaying(deltaTime: number): void {
     this.player.update(deltaTime, this.isDownKeyPressed)
+
+    if (this.player.hasLanded()) {
+      this.mode = 'checkFall'
+    }
+  }
+
+  /**
+   * checkFall モードの更新
+   */
+  private updateCheckFall(): void {
+    const hasFallen = this.stage.applyGravity()
+    if (hasFallen) {
+      this.mode = 'falling'
+    } else {
+      this.mode = 'checkErase'
+    }
+  }
+
+  /**
+   * falling モードの更新
+   */
+  private updateFalling(): void {
+    this.mode = 'checkFall'
+  }
+
+  /**
+   * checkErase モードの更新
+   */
+  private updateCheckErase(): void {
+    const eraseInfo = this.stage.checkErase()
+    if (eraseInfo.erasePuyoCount > 0) {
+      this.stage.eraseBoards(eraseInfo.eraseInfo)
+      this.mode = 'erasing'
+    } else {
+      this.mode = 'newPuyo'
+    }
+  }
+
+  /**
+   * erasing モードの更新
+   */
+  private updateErasing(): void {
+    this.mode = 'checkFall'
   }
 }
