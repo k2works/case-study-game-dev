@@ -1,3 +1,14 @@
+import { z } from 'zod'
+
+/**
+ * Config のバリデーションスキーマ
+ */
+const ConfigSchema = z.object({
+  cellSize: z.number().int().positive('cellSize must be a positive integer'),
+  cols: z.number().int().positive('cols must be a positive integer'),
+  rows: z.number().int().positive('rows must be a positive integer')
+})
+
 /**
  * Config クラス
  * ゲームの設定を管理
@@ -13,8 +24,11 @@ export class Config {
   rows: number
 
   constructor(cellSize: number = 32, cols: number = 6, rows: number = 12) {
-    this.cellSize = cellSize
-    this.cols = cols
-    this.rows = rows
+    // バリデーション実行
+    const validated = ConfigSchema.parse({ cellSize, cols, rows })
+
+    this.cellSize = validated.cellSize
+    this.cols = validated.cols
+    this.rows = validated.rows
   }
 }

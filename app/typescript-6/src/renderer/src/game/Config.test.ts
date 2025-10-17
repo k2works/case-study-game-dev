@@ -34,4 +34,27 @@ describe('Config', () => {
     expect(config.cols).toBe(8)
     expect(config.rows).toBe(16)
   })
+
+  describe('バリデーション', () => {
+    it('cellSizeが0以下の場合はエラーをスローする', () => {
+      expect(() => new Config(0, 6, 12)).toThrow()
+      expect(() => new Config(-1, 6, 12)).toThrow()
+    })
+
+    it('colsが0以下の場合はエラーをスローする', () => {
+      expect(() => new Config(32, 0, 12)).toThrow()
+      expect(() => new Config(32, -1, 12)).toThrow()
+    })
+
+    it('rowsが0以下の場合はエラーをスローする', () => {
+      expect(() => new Config(32, 6, 0)).toThrow()
+      expect(() => new Config(32, 6, -1)).toThrow()
+    })
+
+    it('整数でない値が渡された場合はエラーをスローする', () => {
+      expect(() => new Config(32.5, 6, 12)).toThrow()
+      expect(() => new Config(32, 6.5, 12)).toThrow()
+      expect(() => new Config(32, 6, 12.5)).toThrow()
+    })
+  })
 })
