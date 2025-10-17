@@ -45,4 +45,16 @@ describe('Puyo', () => {
       expect(puyo.y).toBe(6)
     })
   })
+
+  describe('バリデーション', () => {
+    it('座標が整数でない場合はエラーをスローする', () => {
+      expect(() => new Puyo(2.5, 5, PuyoType.Red)).toThrow()
+      expect(() => new Puyo(2, 5.5, PuyoType.Red)).toThrow()
+    })
+
+    it('無効なPuyoTypeが渡された場合はエラーをスローする', () => {
+      expect(() => new Puyo(2, 5, 99 as PuyoType)).toThrow()
+      expect(() => new Puyo(2, 5, -1 as PuyoType)).toThrow()
+    })
+  })
 })
