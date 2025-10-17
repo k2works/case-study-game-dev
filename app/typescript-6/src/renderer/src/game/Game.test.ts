@@ -245,4 +245,63 @@ describe('Game', () => {
       expect(score.getValue()).toBe(0)
     })
   })
+
+  describe('ゲームオーバー', () => {
+    it('新しいぷよを配置できない場合、ゲームオーバーになる', () => {
+      // 実際の依存オブジェクトを作成
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 800
+
+      const config = new Config()
+      const puyoImage = new PuyoImage(config)
+      const stage = new Stage(config)
+      const player = new Player(config, puyoImage, stage)
+      const score = new Score()
+
+      const game = new Game(canvas, config, puyoImage, stage, player, score)
+
+      // 初期状態でぷよを生成できるか確認（newPuyoモード）
+      game['mode'] = 'newPuyo' as GameMode
+      game['update'](0) // newPuyo → playing
+
+      expect(game['mode']).toBe('playing')
+
+      // ステージの上部にぷよを配置（新しいぷよが配置できない状態）
+      const startX = Math.floor(config.cols / 2)
+      stage.setPuyo(startX, 0, PuyoType.Red)
+      stage.setPuyo(startX, 1, PuyoType.Red)
+
+      // 新しいぷよを生成（newPuyoモード）
+      game['mode'] = 'newPuyo' as GameMode
+      game['update'](0) // newPuyo → gameOver
+
+      // ゲームオーバーになっていることを確認
+      expect(game['mode']).toBe('gameOver')
+    })
+
+    it('ゲームオーバー後は更新が停止する', () => {
+      // 実際の依存オブジェクトを作成
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 800
+
+      const config = new Config()
+      const puyoImage = new PuyoImage(config)
+      const stage = new Stage(config)
+      const player = new Player(config, puyoImage, stage)
+      const score = new Score()
+
+      const game = new Game(canvas, config, puyoImage, stage, player, score)
+
+      // ゲームオーバーモードに設定
+      game['mode'] = 'gameOver' as GameMode
+
+      // 更新を実行
+      game['update'](0)
+
+      // ゲームオーバーのまま変化しないことを確認
+      expect(game['mode']).toBe('gameOver')
+    })
+  })
 })

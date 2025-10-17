@@ -598,4 +598,33 @@ describe('Player', () => {
       expect(player.hasLanded()).toBe(true)
     })
   })
+
+  describe('ゲームオーバー判定', () => {
+    it('新しいぷよを配置できない場合、ゲームオーバーになる', () => {
+      // ステージの上部にぷよを配置
+      const startX = Math.floor(mockConfig.cols / 2)
+      mockStage.setPuyo(startX, 0, PuyoType.Red)
+      mockStage.setPuyo(startX, 1, PuyoType.Red)
+
+      // 新しいぷよペアを生成
+      player.createNewPuyoPair()
+
+      // ゲームオーバー判定
+      const isGameOver = player.checkGameOver()
+
+      // ゲームオーバーになっていることを確認
+      expect(isGameOver).toBe(true)
+    })
+
+    it('新しいぷよを配置できる場合、ゲームオーバーにならない', () => {
+      // 空のステージで新しいぷよペアを生成
+      player.createNewPuyoPair()
+
+      // ゲームオーバー判定
+      const isGameOver = player.checkGameOver()
+
+      // ゲームオーバーになっていないことを確認
+      expect(isGameOver).toBe(false)
+    })
+  })
 })

@@ -14,7 +14,8 @@ export const GameModeSchema = z.enum([
   'checkFall',
   'falling',
   'checkErase',
-  'erasing'
+  'erasing',
+  'gameOver'
 ])
 
 /**
@@ -171,6 +172,10 @@ export class Game {
       case 'erasing':
         this.updateErasing()
         break
+      case 'gameOver':
+        // ゲームオーバー演出
+        // アニメーションループは継続するが、更新は停止
+        break
     }
   }
 
@@ -179,7 +184,13 @@ export class Game {
    */
   private updateNewPuyo(): void {
     this.player.createNewPuyoPair()
-    this.mode = 'playing'
+
+    // ゲームオーバー判定
+    if (this.player.checkGameOver()) {
+      this.mode = 'gameOver'
+    } else {
+      this.mode = 'playing'
+    }
   }
 
   /**

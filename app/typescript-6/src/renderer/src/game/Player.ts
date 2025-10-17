@@ -254,6 +254,30 @@ export class Player {
     return this.landed
   }
 
+  /**
+   * ゲームオーバー判定
+   * @returns 新しいぷよを配置できない場合 true
+   */
+  checkGameOver(): boolean {
+    if (!this.mainPuyo || !this.subPuyo) return false
+
+    // メインぷよの位置にぷよがあるかチェック
+    const mainPuyoType = this.stage.getPuyo(this.mainPuyo.x, this.mainPuyo.y)
+    if (mainPuyoType !== 0) {
+      // PuyoType.Empty
+      return true
+    }
+
+    // サブぷよの位置にぷよがあるかチェック
+    const subPuyoType = this.stage.getPuyo(this.subPuyo.x, this.subPuyo.y)
+    if (subPuyoType !== 0) {
+      // PuyoType.Empty
+      return true
+    }
+
+    return false
+  }
+
   draw(context: CanvasRenderingContext2D): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
