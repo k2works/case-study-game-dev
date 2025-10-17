@@ -54,7 +54,12 @@ export default [
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       'no-var': 'error',
-      'prefer-const': 'error'
+      'prefer-const': 'error',
+      // アンダースコアで始まる未使用変数を許可（将来の実装用）
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
+      ]
     },
     settings: {
       react: {
