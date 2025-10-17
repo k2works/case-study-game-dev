@@ -19,6 +19,7 @@ export class Player {
   private rotation: number = 0 // 0: 上, 1: 右, 2: 下, 3: 左
   private fallTimer: number = 0 // 落下タイマー（ミリ秒）
   private readonly fallInterval: number = 1000 // 落下間隔（1秒）
+  private landed: boolean = false // 着地フラグ
 
   // 回転状態のオフセット（サブぷよの相対位置）
   private readonly rotationOffsets = [
@@ -39,6 +40,7 @@ export class Player {
     this.mainPuyo = Puyo.createRandom(startX, 0)
     this.subPuyo = Puyo.createRandom(startX, -1)
     this.rotation = RotationSchema.parse(0)
+    this.landed = false // 着地フラグをリセット
   }
 
   getMainPuyo(): Puyo | null {
@@ -163,23 +165,20 @@ export class Player {
       this.mainPuyo.moveDown()
       this.subPuyo.moveDown()
     } else {
-      // 着地処理
-      this.landPuyos()
+      // 着地フラグを立てる
+      this.landed = true
     }
   }
 
   /**
-   * 着地処理（ぷよをフィールドに配置して新しいペアを生成）
+   * ぷよをフィールドに配置する
    */
-  private landPuyos(): void {
+  placePuyos(): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
     // ぷよをフィールドに配置
     this.stage.setPuyo(this.mainPuyo.x, this.mainPuyo.y, this.mainPuyo.type)
     this.stage.setPuyo(this.subPuyo.x, this.subPuyo.y, this.subPuyo.type)
-
-    // 新しいぷよペアを生成
-    this.createNewPuyoPair()
   }
 
   /**
@@ -204,7 +203,7 @@ export class Player {
    * ぷよが着地したか判定する
    */
   hasLanded(): boolean {
-    return !this.canMoveDown()
+    return this.landed
   }
 
   draw(context: CanvasRenderingContext2D): void {

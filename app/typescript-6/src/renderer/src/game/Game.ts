@@ -176,6 +176,8 @@ export class Game {
     this.player.update(deltaTime, this.isDownKeyPressed)
 
     if (this.player.hasLanded()) {
+      // ぷよをフィールドに配置
+      this.player.placePuyos()
       this.mode = 'checkFall'
     }
   }

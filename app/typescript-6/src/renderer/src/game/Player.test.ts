@@ -296,8 +296,14 @@ describe('Player', () => {
       mainPuyo.y = mockConfig.rows - 1
       subPuyo.y = mockConfig.rows - 2
 
-      // 1秒経過させて着地処理を実行
+      // 1秒経過させて着地フラグを立てる
       player.update(1000)
+
+      // 着地していることを確認
+      expect(player.hasLanded()).toBe(true)
+
+      // ぷよを配置
+      player.placePuyos()
 
       // フィールドにぷよが配置されていることを確認
       expect(mockStage.getPuyo(mainPuyoX, mockConfig.rows - 1)).toBe(mainPuyoType)
@@ -309,8 +315,17 @@ describe('Player', () => {
       player.getMainPuyo()!.y = mockConfig.rows - 1
       player.getSubPuyo()!.y = mockConfig.rows - 2
 
-      // 1秒経過させて着地処理を実行
+      // 1秒経過させて着地フラグを立てる
       player.update(1000)
+
+      // 着地していることを確認
+      expect(player.hasLanded()).toBe(true)
+
+      // ぷよを配置
+      player.placePuyos()
+
+      // 新しいぷよペアを生成
+      player.createNewPuyoPair()
 
       // 新しいぷよペアが生成されていることを確認
       const newMainPuyo = player.getMainPuyo()!
@@ -336,13 +351,22 @@ describe('Player', () => {
 
       const mainPuyoType = mainPuyo.type
 
-      // 1秒経過させて落下処理を実行
+      // 1秒経過させて着地フラグを立てる
       player.update(1000)
+
+      // 着地していることを確認
+      expect(player.hasLanded()).toBe(true)
+
+      // ぷよを配置
+      player.placePuyos()
 
       // メインぷよが (3, 0) で着地していることを確認
       expect(mockStage.getPuyo(3, 0)).toBe(mainPuyoType)
       // サブぷよは画面外なので配置されない
       expect(mockStage.getPuyo(3, -1)).toBe(PuyoType.Empty)
+
+      // 新しいぷよペアを生成
+      player.createNewPuyoPair()
 
       // 新しいぷよペアが生成されていることを確認
       const newMainPuyo = player.getMainPuyo()!
@@ -365,12 +389,21 @@ describe('Player', () => {
       const mainPuyoType = mainPuyo.type
       const subPuyoType = subPuyo.type
 
-      // 1秒経過させて落下処理を実行
+      // 1秒経過させて着地フラグを立てる
       player.update(1000)
+
+      // 着地していることを確認
+      expect(player.hasLanded()).toBe(true)
+
+      // ぷよを配置
+      player.placePuyos()
 
       // メインぷよとサブぷよが着地していることを確認
       expect(mockStage.getPuyo(3, 0)).toBe(mainPuyoType)
       expect(mockStage.getPuyo(4, 0)).toBe(subPuyoType)
+
+      // 新しいぷよペアを生成
+      player.createNewPuyoPair()
 
       // 新しいぷよペアが生成されていることを確認
       const newMainPuyo = player.getMainPuyo()!
@@ -438,6 +471,9 @@ describe('Player', () => {
       player.getMainPuyo()!.y = mockConfig.rows - 1
       player.getSubPuyo()!.y = mockConfig.rows - 2
 
+      // 1秒経過させて着地フラグを立てる
+      player.update(1000)
+
       // 下端に達した場合、着地している
       expect(player.hasLanded()).toBe(true)
     })
@@ -451,6 +487,9 @@ describe('Player', () => {
       player.getMainPuyo()!.y = 0
       player.getSubPuyo()!.x = 3
       player.getSubPuyo()!.y = -1
+
+      // 1秒経過させて着地フラグを立てる
+      player.update(1000)
 
       // 下にぷよがある場合、着地している
       expect(player.hasLanded()).toBe(true)
