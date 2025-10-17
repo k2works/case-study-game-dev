@@ -106,4 +106,47 @@ describe('Stage', () => {
       expect(eraseInfo.eraseInfo).toContainEqual({ x: 2, y: 11, type: PuyoType.Red })
     })
   })
+
+  describe('ぷよの消去と落下', () => {
+    it('消去対象のぷよを消去する', () => {
+      // Arrange: 赤ぷよを4つ配置
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(1, 11, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+
+      // Act: 消去判定と消去実行
+      const eraseInfo = stage.checkErase()
+      stage.eraseBoards(eraseInfo.eraseInfo)
+
+      // Assert: ぷよが消去されている
+      expect(stage.getPuyo(1, 10)).toBe(PuyoType.Empty)
+      expect(stage.getPuyo(2, 10)).toBe(PuyoType.Empty)
+      expect(stage.getPuyo(1, 11)).toBe(PuyoType.Empty)
+      expect(stage.getPuyo(2, 11)).toBe(PuyoType.Empty)
+    })
+
+    it('消去後、上にあるぷよが落下する', () => {
+      // Arrange: 赤ぷよ4つと緑ぷよ2つを配置
+      // 0 0 2 0 0 0  (y=8) 緑
+      // 0 0 2 0 0 0  (y=9) 緑
+      // 0 1 1 0 0 0  (y=10) 赤・赤
+      // 0 1 1 0 0 0  (y=11) 赤・赤
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(1, 11, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+      stage.setPuyo(2, 8, PuyoType.Green)
+      stage.setPuyo(2, 9, PuyoType.Green)
+
+      // Act: 消去判定と消去実行、落下処理
+      const eraseInfo = stage.checkErase()
+      stage.eraseBoards(eraseInfo.eraseInfo)
+      stage.fall()
+
+      // Assert: 上にあった緑ぷよが落下している
+      expect(stage.getPuyo(2, 10)).toBe(PuyoType.Green)
+      expect(stage.getPuyo(2, 11)).toBe(PuyoType.Green)
+    })
+  })
 })

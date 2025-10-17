@@ -217,4 +217,47 @@ export class Stage {
       this.grid[y][x] === targetType
     )
   }
+
+  /**
+   * 指定されたぷよを消去する
+   * @param eraseInfo 消去するぷよの情報
+   */
+  eraseBoards(eraseInfo: { x: number; y: number; type: PuyoType }[]): void {
+    for (const puyo of eraseInfo) {
+      this.grid[puyo.y][puyo.x] = PuyoType.Empty
+    }
+  }
+
+  /**
+   * ぷよを落下させる
+   */
+  fall(): void {
+    for (let x = 0; x < this.config.cols; x++) {
+      this.fallColumn(x)
+    }
+  }
+
+  /**
+   * 指定列のぷよを落下させる
+   */
+  private fallColumn(x: number): void {
+    let writeY = this.config.rows - 1
+
+    for (let readY = this.config.rows - 1; readY >= 0; readY--) {
+      if (this.grid[readY][x] !== PuyoType.Empty) {
+        writeY = this.movePuyoDown(x, readY, writeY)
+      }
+    }
+  }
+
+  /**
+   * ぷよを下に移動する
+   */
+  private movePuyoDown(x: number, readY: number, writeY: number): number {
+    this.grid[writeY][x] = this.grid[readY][x]
+    if (writeY !== readY) {
+      this.grid[readY][x] = PuyoType.Empty
+    }
+    return writeY - 1
+  }
 }
