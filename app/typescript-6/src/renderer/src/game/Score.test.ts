@@ -14,4 +14,21 @@ describe('Score', () => {
 
     expect(score.getValue()).toBe(0)
   })
+
+  describe('全消しボーナス', () => {
+    it('全消しするとボーナスが加算される', () => {
+      const score = new Score()
+
+      // 初期スコア確認
+      const initialScore = score.getValue()
+      expect(initialScore).toBe(0)
+
+      // 全消しボーナス加算
+      score.addZenkeshiBonus()
+
+      // 全消しボーナスが加算されていることを確認
+      expect(score.getValue()).toBeGreaterThan(initialScore)
+      expect(score.getValue()).toBe(3600)
+    })
+  })
 })

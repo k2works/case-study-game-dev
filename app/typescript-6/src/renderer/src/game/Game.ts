@@ -223,6 +223,11 @@ export class Game {
       this.stage.eraseBoards(eraseInfo.eraseInfo)
       this.mode = 'erasing'
     } else {
+      // 消去対象がない場合、全消し判定
+      if (this.stage.checkZenkeshi()) {
+        // 全消しボーナスを加算
+        this.score.addZenkeshiBonus()
+      }
       this.mode = 'newPuyo'
     }
   }

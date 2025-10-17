@@ -306,4 +306,20 @@ export class Stage {
     }
     return true
   }
+
+  /**
+   * 全消し判定
+   * @returns 盤面上のぷよがすべて消えていれば true
+   */
+  checkZenkeshi(): boolean {
+    // 盤面上にぷよがあるかチェック
+    for (let y = 0; y < this.config.rows; y++) {
+      for (let x = 0; x < this.config.cols; x++) {
+        if (this.grid[y][x] !== PuyoType.Empty) {
+          return false
+        }
+      }
+    }
+    return true
+  }
 }

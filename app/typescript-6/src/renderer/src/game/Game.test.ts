@@ -114,7 +114,7 @@ describe('Game', () => {
       const puyoImage = new PuyoImage(config)
       const stage = new Stage(config)
       const player = new Player(config, puyoImage, stage)
-      const score = new Score(config)
+      const score = new Score()
 
       const game = new Game(canvas, config, puyoImage, stage, player, score)
 
@@ -164,6 +164,85 @@ describe('Game', () => {
       // 連鎖が発生していることを確認（緑ぷよが4つつながっている）
       expect(chainEraseInfo.erasePuyoCount).toBeGreaterThan(0)
       expect(chainEraseInfo.erasePuyoCount).toBe(4)
+    })
+  })
+
+  describe('全消しボーナス', () => {
+    it('盤面上のぷよをすべて消すと全消しボーナスが加算される', () => {
+      // 実際の依存オブジェクトを作成
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 800
+
+      const config = new Config()
+      const puyoImage = new PuyoImage(config)
+      const stage = new Stage(config)
+      const player = new Player(config, puyoImage, stage)
+      const score = new Score()
+
+      const game = new Game(canvas, config, puyoImage, stage, player, score)
+
+      // 初期スコア確認
+      const initialScore = score.getValue()
+
+      // 盤面に4つのぷよを配置（すべて消去される）
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(1, 11, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+
+      // checkEraseモードに設定
+      game['mode'] = 'checkErase' as GameMode
+
+      // 消去判定と処理
+      game['update'](0) // checkErase → erasing（消去実行）
+
+      // 消去後の重力チェック
+      game['update'](0) // erasing → checkFall
+
+      // 重力適用（落下なし）
+      game['update'](0) // checkFall → checkErase
+
+      // 2回目の消去判定（全消し判定が実行される）
+      game['update'](0) // checkErase → newPuyo（全消しボーナス加算）
+
+      // スコアが増加していることを確認
+      expect(score.getValue()).toBeGreaterThan(initialScore)
+      expect(score.getValue()).toBe(3600) // 全消しボーナスのみ
+    })
+
+    it('盤面上にぷよが残っている場合は全消しボーナスが加算されない', () => {
+      // 実際の依存オブジェクトを作成
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 800
+
+      const config = new Config()
+      const puyoImage = new PuyoImage(config)
+      const stage = new Stage(config)
+      const player = new Player(config, puyoImage, stage)
+      const score = new Score()
+
+      const game = new Game(canvas, config, puyoImage, stage, player, score)
+
+      // 盤面にぷよを配置（一部だけ消去される）
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(1, 11, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+      stage.setPuyo(3, 11, PuyoType.Green) // 消えないぷよ
+
+      // checkEraseモードに設定
+      game['mode'] = 'checkErase' as GameMode
+
+      // 消去判定と処理
+      game['update'](0) // checkErase → erasing（赤ぷよ消去）
+      game['update'](0) // erasing → checkFall
+      game['update'](0) // checkFall → checkErase
+      game['update'](0) // checkErase → newPuyo（全消しボーナスなし）
+
+      // スコアが0のまま（全消しボーナスが加算されていない）
+      expect(score.getValue()).toBe(0)
     })
   })
 })
