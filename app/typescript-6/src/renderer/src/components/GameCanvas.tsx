@@ -5,6 +5,7 @@ import { PuyoImage } from '../game/PuyoImage'
 import { Stage } from '../game/Stage'
 import { Player } from '../game/Player'
 import { Score } from '../game/Score'
+import { useKeyboard } from '../hooks/useKeyboard'
 
 interface GameCanvasProps {
   width: number
@@ -17,6 +18,8 @@ interface GameCanvasProps {
  */
 export function GameCanvas({ width, height }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const playerRef = useRef<Player | null>(null)
+  const keys = useKeyboard()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,6 +36,9 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     const player = new Player(config, puyoImage)
     const score = new Score()
 
+    // Player インスタンスを ref に保存
+    playerRef.current = player
+
     const game = new Game(canvas, config, puyoImage, stage, player, score)
 
     // ゲーム開始
@@ -41,8 +47,25 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     // クリーンアップ：コンポーネントのアンマウント時にゲームを停止
     return () => {
       game.stop()
+      playerRef.current = null
     }
   }, [])
+
+  // キーボード入力を処理
+  useEffect(() => {
+    const player = playerRef.current
+    if (!player) return
+
+    if (keys.left) {
+      player.moveLeft()
+    }
+    if (keys.right) {
+      player.moveRight()
+    }
+    if (keys.down) {
+      player.moveDown()
+    }
+  }, [keys])
 
   return <canvas ref={canvasRef} className="game-canvas" width={width} height={height} role="img" />
 }
