@@ -25,8 +25,11 @@ export const build = shell.task(['npm run build'])
 // 開発サーバータスク
 export const dev = shell.task(['npm run dev'])
 
+// 依存関係チェックタスク
+export const depcruise = shell.task(['npm run depcruise'])
+
 // 全体チェックタスク（自動修正付き）
-export const checkAndFix = series(lintFix, format, test)
+export const checkAndFix = series(lintFix, format, depcruise, test)
 
 // ファイル監視タスク（Guard）
 export function guard() {
