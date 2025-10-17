@@ -16,6 +16,7 @@ export class Game {
   private player: Player
   private score: Score
   private animationId: number | null = null
+  private lastTime: number = 0
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -39,7 +40,9 @@ export class Game {
   start(): void {
     // 初期のぷよペアを生成
     this.player.createNewPuyoPair()
-    this.gameLoop()
+    // 開始時刻を記録
+    this.lastTime = window.performance.now()
+    this.animationId = requestAnimationFrame((time) => this.gameLoop(time))
   }
 
   /**
@@ -99,8 +102,26 @@ export class Game {
   /**
    * ゲームループ
    */
-  private gameLoop = (): void => {
+  private gameLoop(currentTime: number): void {
+    // 経過時間を計算（ミリ秒）
+    const deltaTime = currentTime - this.lastTime
+    this.lastTime = currentTime
+
+    // ゲーム状態を更新
+    this.update(deltaTime)
+
+    // 描画
     this.draw()
-    this.animationId = requestAnimationFrame(this.gameLoop)
+
+    // 次のフレームをリクエスト
+    this.animationId = requestAnimationFrame((time) => this.gameLoop(time))
+  }
+
+  /**
+   * ゲーム状態を更新する
+   */
+  private update(deltaTime: number): void {
+    // プレイヤーの更新（落下処理を含む）
+    this.player.update(deltaTime)
   }
 }
