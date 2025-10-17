@@ -8,8 +8,9 @@ describe('App', () => {
     expect(screen.getByText('ぷよぷよゲーム')).toBeInTheDocument()
   })
 
-  it('サブタイトルが表示される', () => {
+  it('GameCanvasがレンダリングされる', () => {
     render(<App />)
-    expect(screen.getByText('Electron + React + TypeScript')).toBeInTheDocument()
+    const canvas = screen.getByRole('img')
+    expect(canvas).toBeInTheDocument()
   })
 })
