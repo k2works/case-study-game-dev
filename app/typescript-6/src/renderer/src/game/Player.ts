@@ -1,6 +1,12 @@
+import { z } from 'zod'
 import type { Config } from './Config'
 import type { PuyoImage } from './PuyoImage'
 import { Puyo } from './Puyo'
+
+/**
+ * 回転状態のバリデーションスキーマ
+ */
+const RotationSchema = z.number().int().min(0).max(3)
 
 /**
  * Player クラス
@@ -28,7 +34,7 @@ export class Player {
     const startX = Math.floor(this.config.cols / 2)
     this.mainPuyo = Puyo.createRandom(startX, 0)
     this.subPuyo = Puyo.createRandom(startX, -1)
-    this.rotation = 0
+    this.rotation = RotationSchema.parse(0)
   }
 
   getMainPuyo(): Puyo | null {
@@ -47,7 +53,7 @@ export class Player {
     if (!this.mainPuyo || !this.subPuyo) return
 
     // 回転状態を更新（0→1→2→3→0）
-    this.rotation = (this.rotation + 1) % 4
+    this.rotation = RotationSchema.parse((this.rotation + 1) % 4)
 
     // サブぷよの位置を更新
     this.updateSubPuyoPosition()

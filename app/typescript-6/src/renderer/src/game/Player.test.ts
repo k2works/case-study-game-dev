@@ -191,4 +191,23 @@ describe('Player', () => {
       expect(player.getSubPuyo()!.x).toBe(0)
     })
   })
+
+  describe('バリデーション', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('回転状態は常に0-3の範囲内である', () => {
+      // 初期状態は0
+      expect(player.getRotation()).toBe(0)
+
+      // 4回転で元に戻る
+      player.rotateClockwise()
+      player.rotateClockwise()
+      player.rotateClockwise()
+      player.rotateClockwise()
+
+      expect(player.getRotation()).toBe(0)
+    })
+  })
 })
