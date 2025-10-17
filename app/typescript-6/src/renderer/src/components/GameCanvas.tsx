@@ -56,15 +56,14 @@ export function GameCanvas({ width, height }: GameCanvasProps) {
     const player = playerRef.current
     if (!player) return
 
-    if (keys.left) {
-      player.moveLeft()
-    }
-    if (keys.right) {
-      player.moveRight()
-    }
-    if (keys.down) {
-      player.moveDown()
-    }
+    const keyActions = [
+      { condition: keys.left, action: () => player.moveLeft() },
+      { condition: keys.right, action: () => player.moveRight() },
+      { condition: keys.up, action: () => player.rotateClockwise() },
+      { condition: keys.down, action: () => player.moveDown() }
+    ]
+
+    keyActions.forEach(({ condition, action }) => condition && action())
   }, [keys])
 
   return <canvas ref={canvasRef} className="game-canvas" width={width} height={height} role="img" />
