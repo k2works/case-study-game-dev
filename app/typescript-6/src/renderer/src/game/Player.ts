@@ -115,8 +115,11 @@ export class Player {
   moveDown(): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
-    this.mainPuyo.moveDown()
-    this.subPuyo.moveDown()
+    // 下に移動できるかチェック
+    if (this.canMoveDown()) {
+      this.mainPuyo.moveDown()
+      this.subPuyo.moveDown()
+    }
   }
 
   /**

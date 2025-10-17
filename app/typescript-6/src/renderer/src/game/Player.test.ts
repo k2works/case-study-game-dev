@@ -97,6 +97,42 @@ describe('Player', () => {
       expect(player.getMainPuyo()!.x).toBe(mockConfig.cols - 1)
       expect(player.getSubPuyo()!.x).toBe(mockConfig.cols - 1)
     })
+
+    it('メインぷよの下にぷよがあるとき、下に移動できない', () => {
+      // フィールドの (3, 1) にぷよを配置
+      mockStage.setPuyo(3, 1, PuyoType.Red)
+
+      // メインぷよを (3, 0) に配置
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = -1
+
+      // 手動で下移動を試みる
+      player.moveDown()
+
+      // 移動していないことを確認
+      expect(player.getMainPuyo()!.y).toBe(0)
+      expect(player.getSubPuyo()!.y).toBe(-1)
+    })
+
+    it('サブぷよの下にぷよがあるとき、下に移動できない', () => {
+      // フィールドの (4, 1) にぷよを配置
+      mockStage.setPuyo(4, 1, PuyoType.Red)
+
+      // メインぷよを (3, 0)、サブぷよを (4, 0) に配置（回転状態: 右）
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 4
+      player.getSubPuyo()!.y = 0
+
+      // 手動で下移動を試みる
+      player.moveDown()
+
+      // 移動していないことを確認
+      expect(player.getMainPuyo()!.y).toBe(0)
+      expect(player.getSubPuyo()!.y).toBe(0)
+    })
   })
 
   describe('回転', () => {
@@ -284,6 +320,62 @@ describe('Player', () => {
       expect(newMainPuyo.y).toBe(0)
       expect(newSubPuyo.x).toBe(Math.floor(mockConfig.cols / 2))
       expect(newSubPuyo.y).toBe(-1)
+    })
+
+    it('サブぷよが画面外にいても、メインぷよの下にぷよがあれば着地する', () => {
+      // フィールドの (3, 1) にぷよを配置
+      mockStage.setPuyo(3, 1, PuyoType.Red)
+
+      // メインぷよを (3, 0)、サブぷよを (3, -1) に配置
+      const mainPuyo = player.getMainPuyo()!
+      const subPuyo = player.getSubPuyo()!
+      mainPuyo.x = 3
+      mainPuyo.y = 0
+      subPuyo.x = 3
+      subPuyo.y = -1
+
+      const mainPuyoType = mainPuyo.type
+
+      // 1秒経過させて落下処理を実行
+      player.update(1000)
+
+      // メインぷよが (3, 0) で着地していることを確認
+      expect(mockStage.getPuyo(3, 0)).toBe(mainPuyoType)
+      // サブぷよは画面外なので配置されない
+      expect(mockStage.getPuyo(3, -1)).toBe(PuyoType.Empty)
+
+      // 新しいぷよペアが生成されていることを確認
+      const newMainPuyo = player.getMainPuyo()!
+      expect(newMainPuyo.x).toBe(Math.floor(mockConfig.cols / 2))
+      expect(newMainPuyo.y).toBe(0)
+    })
+
+    it('サブぷよが右にいるとき、サブぷよの下にぷよがあれば着地する', () => {
+      // フィールドの (4, 1) にぷよを配置
+      mockStage.setPuyo(4, 1, PuyoType.Red)
+
+      // メインぷよを (3, 0)、サブぷよを (4, 0) に配置（回転状態: 右）
+      const mainPuyo = player.getMainPuyo()!
+      const subPuyo = player.getSubPuyo()!
+      mainPuyo.x = 3
+      mainPuyo.y = 0
+      subPuyo.x = 4
+      subPuyo.y = 0
+
+      const mainPuyoType = mainPuyo.type
+      const subPuyoType = subPuyo.type
+
+      // 1秒経過させて落下処理を実行
+      player.update(1000)
+
+      // メインぷよとサブぷよが着地していることを確認
+      expect(mockStage.getPuyo(3, 0)).toBe(mainPuyoType)
+      expect(mockStage.getPuyo(4, 0)).toBe(subPuyoType)
+
+      // 新しいぷよペアが生成されていることを確認
+      const newMainPuyo = player.getMainPuyo()!
+      expect(newMainPuyo.x).toBe(Math.floor(mockConfig.cols / 2))
+      expect(newMainPuyo.y).toBe(0)
     })
   })
 
