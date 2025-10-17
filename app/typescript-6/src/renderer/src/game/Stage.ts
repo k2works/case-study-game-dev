@@ -260,4 +260,50 @@ export class Stage {
     }
     return writeY - 1
   }
+
+  /**
+   * 重力を適用する
+   * @returns ぷよが落下した場合は true、そうでない場合は false
+   */
+  applyGravity(): boolean {
+    // 落下前の状態を記録
+    const before = this.copyGrid()
+
+    // 重力を適用
+    this.fall()
+
+    // 落下後の状態と比較
+    return !this.gridEquals(before, this.grid)
+  }
+
+  /**
+   * グリッドをコピーする
+   */
+  private copyGrid(): PuyoType[][] {
+    return this.grid.map((row) => [...row])
+  }
+
+  /**
+   * 2つのグリッドが等しいか判定する
+   */
+  private gridEquals(grid1: PuyoType[][], grid2: PuyoType[][]): boolean {
+    for (let y = 0; y < this.config.rows; y++) {
+      if (!this.rowEquals(grid1[y], grid2[y])) {
+        return false
+      }
+    }
+    return true
+  }
+
+  /**
+   * 2つの行が等しいか判定する
+   */
+  private rowEquals(row1: PuyoType[], row2: PuyoType[]): boolean {
+    for (let x = 0; x < this.config.cols; x++) {
+      if (row1[x] !== row2[x]) {
+        return false
+      }
+    }
+    return true
+  }
 }

@@ -149,4 +149,47 @@ describe('Stage', () => {
       expect(stage.getPuyo(2, 11)).toBe(PuyoType.Green)
     })
   })
+
+  describe('重力適用', () => {
+    it('浮いているぷよがある場合、重力適用後に true を返す', () => {
+      // Arrange: 緑ぷよを浮いた状態で配置
+      // 0 0 2 0 0 0  (y=8) 緑
+      // 0 0 0 0 0 0  (y=9) 空
+      // 0 0 0 0 0 0  (y=10) 空
+      // 0 0 0 0 0 0  (y=11) 空
+      stage.setPuyo(2, 8, PuyoType.Green)
+
+      // Act: 重力適用
+      const hasFallen = stage.applyGravity()
+
+      // Assert: 落下したので true
+      expect(hasFallen).toBe(true)
+      // ぷよが下に落下している
+      expect(stage.getPuyo(2, 8)).toBe(PuyoType.Empty)
+      expect(stage.getPuyo(2, 11)).toBe(PuyoType.Green)
+    })
+
+    it('全てのぷよが着地している場合、false を返す', () => {
+      // Arrange: 赤ぷよを下端に配置
+      stage.setPuyo(2, 11, PuyoType.Red)
+
+      // Act: 重力適用
+      const hasFallen = stage.applyGravity()
+
+      // Assert: 落下しなかったので false
+      expect(hasFallen).toBe(false)
+      // ぷよは移動していない
+      expect(stage.getPuyo(2, 11)).toBe(PuyoType.Red)
+    })
+
+    it('空のステージの場合、false を返す', () => {
+      // Arrange: 空のステージ
+
+      // Act: 重力適用
+      const hasFallen = stage.applyGravity()
+
+      // Assert: 落下しなかったので false
+      expect(hasFallen).toBe(false)
+    })
+  })
 })
