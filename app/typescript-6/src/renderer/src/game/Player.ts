@@ -146,7 +146,24 @@ export class Player {
     if (this.canMoveDown()) {
       this.mainPuyo.moveDown()
       this.subPuyo.moveDown()
+    } else {
+      // 着地処理
+      this.landPuyos()
     }
+  }
+
+  /**
+   * 着地処理（ぷよをフィールドに配置して新しいペアを生成）
+   */
+  private landPuyos(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // ぷよをフィールドに配置
+    this.stage.setPuyo(this.mainPuyo.x, this.mainPuyo.y, this.mainPuyo.type)
+    this.stage.setPuyo(this.subPuyo.x, this.subPuyo.y, this.subPuyo.type)
+
+    // 新しいぷよペアを生成
+    this.createNewPuyoPair()
   }
 
   /**

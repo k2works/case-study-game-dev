@@ -242,4 +242,48 @@ describe('Player', () => {
       expect(player.getSubPuyo()).not.toBeNull()
     })
   })
+
+  describe('着地処理', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('下端に達したとき、フィールドにぷよが配置される', () => {
+      const mainPuyo = player.getMainPuyo()!
+      const subPuyo = player.getSubPuyo()!
+      const mainPuyoType = mainPuyo.type
+      const subPuyoType = subPuyo.type
+      const mainPuyoX = mainPuyo.x
+      const subPuyoX = subPuyo.x
+
+      // 下端に配置（これ以上落ちない状態）
+      mainPuyo.y = mockConfig.rows - 1
+      subPuyo.y = mockConfig.rows - 2
+
+      // 1秒経過させて着地処理を実行
+      player.update(1000)
+
+      // フィールドにぷよが配置されていることを確認
+      expect(mockStage.getPuyo(mainPuyoX, mockConfig.rows - 1)).toBe(mainPuyoType)
+      expect(mockStage.getPuyo(subPuyoX, mockConfig.rows - 2)).toBe(subPuyoType)
+    })
+
+    it('着地したとき、新しいぷよペアが生成される', () => {
+      // 下端に配置（これ以上落ちない状態）
+      player.getMainPuyo()!.y = mockConfig.rows - 1
+      player.getSubPuyo()!.y = mockConfig.rows - 2
+
+      // 1秒経過させて着地処理を実行
+      player.update(1000)
+
+      // 新しいぷよペアが生成されていることを確認
+      const newMainPuyo = player.getMainPuyo()!
+      const newSubPuyo = player.getSubPuyo()!
+
+      expect(newMainPuyo.x).toBe(Math.floor(mockConfig.cols / 2))
+      expect(newMainPuyo.y).toBe(0)
+      expect(newSubPuyo.x).toBe(Math.floor(mockConfig.cols / 2))
+      expect(newSubPuyo.y).toBe(-1)
+    })
+  })
 })
