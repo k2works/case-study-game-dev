@@ -51,6 +51,9 @@ export class Player {
 
     // サブぷよの位置を更新
     this.updateSubPuyoPosition()
+
+    // 壁キック処理
+    this.applyWallKick()
   }
 
   private updateSubPuyoPosition(): void {
@@ -59,6 +62,24 @@ export class Player {
     const offset = this.rotationOffsets[this.rotation]
     this.subPuyo.x = this.mainPuyo.x + offset.x
     this.subPuyo.y = this.mainPuyo.y + offset.y
+  }
+
+  private applyWallKick(): void {
+    if (!this.mainPuyo || !this.subPuyo) return
+
+    // サブぷよが左の壁を超えている場合
+    if (this.subPuyo.x < 0) {
+      const shift = -this.subPuyo.x
+      this.mainPuyo.x += shift
+      this.subPuyo.x += shift
+    }
+
+    // サブぷよが右の壁を超えている場合
+    if (this.subPuyo.x >= this.config.cols) {
+      const shift = this.config.cols - 1 - this.subPuyo.x
+      this.mainPuyo.x += shift
+      this.subPuyo.x += shift
+    }
   }
 
   moveLeft(): void {

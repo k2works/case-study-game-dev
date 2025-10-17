@@ -154,4 +154,41 @@ describe('Player', () => {
       expect(subPuyoAfter3.y).toBe(mainPuyo.y)
     })
   })
+
+  describe('壁キック', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('右端で右回転すると、左にずれて回転する', () => {
+      // 右端に配置
+      player.getMainPuyo()!.x = mockConfig.cols - 1
+      player.getSubPuyo()!.x = mockConfig.cols - 1
+      player.getSubPuyo()!.y = player.getMainPuyo()!.y - 1
+
+      // 時計回りに回転（サブぷよが右に来る）
+      player.rotateClockwise()
+
+      // メインぷよが左にずれていることを確認
+      expect(player.getMainPuyo()!.x).toBe(mockConfig.cols - 2)
+      // サブぷよが画面内にあることを確認
+      expect(player.getSubPuyo()!.x).toBe(mockConfig.cols - 1)
+    })
+
+    it('左端で左回転すると、右にずれて回転する', () => {
+      // 左端に配置（回転状態を2：下向きにする）
+      player.rotateClockwise()
+      player.rotateClockwise()
+      player.getMainPuyo()!.x = 0
+      player.getSubPuyo()!.x = 0
+
+      // もう一度回転（サブぷよが左に来る）
+      player.rotateClockwise()
+
+      // メインぷよが右にずれていることを確認
+      expect(player.getMainPuyo()!.x).toBe(1)
+      // サブぷよが画面内にあることを確認
+      expect(player.getSubPuyo()!.x).toBe(0)
+    })
+  })
 })
