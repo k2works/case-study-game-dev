@@ -97,8 +97,8 @@ export class Player {
   moveLeft(): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
-    // 左端チェック
-    if (this.mainPuyo.x > 0 && this.subPuyo.x > 0) {
+    // 左に移動できるかチェック
+    if (this.canMoveLeft()) {
       this.mainPuyo.moveLeft()
       this.subPuyo.moveLeft()
     }
@@ -107,8 +107,8 @@ export class Player {
   moveRight(): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
-    // 右端チェック
-    if (this.mainPuyo.x < this.config.cols - 1 && this.subPuyo.x < this.config.cols - 1) {
+    // 右に移動できるかチェック
+    if (this.canMoveRight()) {
       this.mainPuyo.moveRight()
       this.subPuyo.moveRight()
     }
@@ -179,6 +179,42 @@ export class Player {
     // ぷよをフィールドに配置
     this.stage.setPuyo(this.mainPuyo.x, this.mainPuyo.y, this.mainPuyo.type)
     this.stage.setPuyo(this.subPuyo.x, this.subPuyo.y, this.subPuyo.type)
+  }
+
+  /**
+   * 左に移動できるかチェック
+   */
+  private canMoveLeft(): boolean {
+    if (!this.mainPuyo || !this.subPuyo) return false
+
+    // 画面左端チェック
+    if (this.mainPuyo.x <= 0 || this.subPuyo.x <= 0) {
+      return false
+    }
+
+    // フィールドの左のマスが空かチェック
+    const mainPuyoLeft = this.stage.isEmpty(this.mainPuyo.x - 1, this.mainPuyo.y)
+    const subPuyoLeft = this.stage.isEmpty(this.subPuyo.x - 1, this.subPuyo.y)
+
+    return mainPuyoLeft && subPuyoLeft
+  }
+
+  /**
+   * 右に移動できるかチェック
+   */
+  private canMoveRight(): boolean {
+    if (!this.mainPuyo || !this.subPuyo) return false
+
+    // 画面右端チェック
+    if (this.mainPuyo.x >= this.config.cols - 1 || this.subPuyo.x >= this.config.cols - 1) {
+      return false
+    }
+
+    // フィールドの右のマスが空かチェック
+    const mainPuyoRight = this.stage.isEmpty(this.mainPuyo.x + 1, this.mainPuyo.y)
+    const subPuyoRight = this.stage.isEmpty(this.subPuyo.x + 1, this.subPuyo.y)
+
+    return mainPuyoRight && subPuyoRight
   }
 
   /**

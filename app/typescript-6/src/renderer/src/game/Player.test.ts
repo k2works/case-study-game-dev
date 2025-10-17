@@ -98,6 +98,82 @@ describe('Player', () => {
       expect(player.getSubPuyo()!.x).toBe(mockConfig.cols - 1)
     })
 
+    it('メインぷよの左にぷよがあるとき、左に移動できない', () => {
+      // フィールドの (2, 0) にぷよを配置
+      mockStage.setPuyo(2, 0, PuyoType.Red)
+
+      // メインぷよを (3, 0) に配置
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = -1
+
+      // 手動で左移動を試みる
+      player.moveLeft()
+
+      // 移動していないことを確認
+      expect(player.getMainPuyo()!.x).toBe(3)
+      expect(player.getSubPuyo()!.x).toBe(3)
+    })
+
+    it('サブぷよの左にぷよがあるとき、左に移動できない', () => {
+      // フィールドの (2, 0) にぷよを配置
+      mockStage.setPuyo(2, 0, PuyoType.Red)
+
+      // メインぷよを (3, 0)、サブぷよを (3, 0) に配置（回転状態: 右 → 下に変更）
+      player.rotateClockwise() // 右
+      player.rotateClockwise() // 下
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = 1
+
+      // 手動で左移動を試みる
+      player.moveLeft()
+
+      // 移動していないことを確認
+      expect(player.getMainPuyo()!.x).toBe(3)
+      expect(player.getSubPuyo()!.x).toBe(3)
+    })
+
+    it('メインぷよの右にぷよがあるとき、右に移動できない', () => {
+      // フィールドの (4, 0) にぷよを配置
+      mockStage.setPuyo(4, 0, PuyoType.Red)
+
+      // メインぷよを (3, 0) に配置
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = -1
+
+      // 手動で右移動を試みる
+      player.moveRight()
+
+      // 移動していないことを確認
+      expect(player.getMainPuyo()!.x).toBe(3)
+      expect(player.getSubPuyo()!.x).toBe(3)
+    })
+
+    it('サブぷよの右にぷよがあるとき、右に移動できない', () => {
+      // フィールドの (4, 0) にぷよを配置
+      mockStage.setPuyo(4, 0, PuyoType.Red)
+
+      // メインぷよを (3, 0)、サブぷよを (3, 1) に配置（回転状態: 下）
+      player.rotateClockwise() // 右
+      player.rotateClockwise() // 下
+      player.getMainPuyo()!.x = 3
+      player.getMainPuyo()!.y = 0
+      player.getSubPuyo()!.x = 3
+      player.getSubPuyo()!.y = 1
+
+      // 手動で右移動を試みる
+      player.moveRight()
+
+      // 移動していないことを確認
+      expect(player.getMainPuyo()!.x).toBe(3)
+      expect(player.getSubPuyo()!.x).toBe(3)
+    })
+
     it('メインぷよの下にぷよがあるとき、下に移動できない', () => {
       // フィールドの (3, 1) にぷよを配置
       mockStage.setPuyo(3, 1, PuyoType.Red)
