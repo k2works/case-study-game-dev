@@ -4,16 +4,23 @@ import { PuyoType } from './Puyo'
 import type { PuyoImage } from './PuyoImage'
 
 /**
+ * 消去情報のバリデーションスキーマ
+ */
+const EraseInfoItemSchema = z.object({
+  x: z.number().int(),
+  y: z.number().int(),
+  type: z.nativeEnum(PuyoType)
+})
+
+const EraseInfoSchema = z.object({
+  erasePuyoCount: z.number().int().nonnegative(),
+  eraseInfo: z.array(EraseInfoItemSchema)
+})
+
+/**
  * 消去情報を表す型
  */
-export interface EraseInfo {
-  erasePuyoCount: number
-  eraseInfo: {
-    x: number
-    y: number
-    type: PuyoType
-  }[]
-}
+export type EraseInfo = z.infer<typeof EraseInfoSchema>
 
 /**
  * Stage クラス
@@ -111,10 +118,10 @@ export class Stage {
       this.checkEraseRow(y, visited, eraseInfo)
     }
 
-    return {
+    return EraseInfoSchema.parse({
       erasePuyoCount: eraseInfo.length,
       eraseInfo
-    }
+    })
   }
 
   /**

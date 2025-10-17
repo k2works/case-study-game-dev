@@ -31,4 +31,29 @@ describe('Score', () => {
       expect(score.getValue()).toBe(3600)
     })
   })
+
+  describe('スコアのバリデーション', () => {
+    it('スコアは非負整数である', () => {
+      const score = new Score()
+
+      // 初期値は0
+      expect(score.getValue()).toBe(0)
+
+      // 正の整数を加算できる
+      score.addZenkeshiBonus()
+      expect(score.getValue()).toBeGreaterThanOrEqual(0)
+    })
+
+    it('複数回ボーナスを加算しても非負整数である', () => {
+      const score = new Score()
+
+      // 複数回加算
+      score.addZenkeshiBonus()
+      score.addZenkeshiBonus()
+
+      // スコアが整数であることを確認
+      expect(Number.isInteger(score.getValue())).toBe(true)
+      expect(score.getValue()).toBeGreaterThanOrEqual(0)
+    })
+  })
 })
