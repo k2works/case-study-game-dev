@@ -192,4 +192,44 @@ describe('Stage', () => {
       expect(hasFallen).toBe(false)
     })
   })
+
+  describe('連鎖反応', () => {
+    it('ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する', () => {
+      // ステージにぷよを配置
+      // 赤ぷよの2×2と、その上に緑ぷよが縦に3つ、さらに緑ぷよが1つ横に
+      // 0 0 0 0 0 0
+      // 0 0 2 0 0 0  (y=7)
+      // 0 0 2 0 0 0  (y=8)
+      // 0 0 2 0 0 0  (y=9)
+      // 0 1 1 2 0 0  (y=10)
+      // 0 1 1 0 0 0  (y=11)
+      stage.setPuyo(1, 10, PuyoType.Red) // 赤
+      stage.setPuyo(2, 10, PuyoType.Red) // 赤
+      stage.setPuyo(1, 11, PuyoType.Red) // 赤
+      stage.setPuyo(2, 11, PuyoType.Red) // 赤
+      stage.setPuyo(3, 10, PuyoType.Green) // 緑（横）
+      stage.setPuyo(2, 7, PuyoType.Green) // 緑（上）
+      stage.setPuyo(2, 8, PuyoType.Green) // 緑（上）
+      stage.setPuyo(2, 9, PuyoType.Green) // 緑（上）
+
+      // 1回目の消去判定
+      const eraseInfo = stage.checkErase()
+
+      // 赤ぷよが消去対象になっていることを確認
+      expect(eraseInfo.erasePuyoCount).toBe(4)
+
+      // 消去実行
+      stage.eraseBoards(eraseInfo.eraseInfo)
+
+      // 落下処理
+      stage.fall()
+
+      // 2回目の消去判定（連鎖）
+      const chainEraseInfo = stage.checkErase()
+
+      // 連鎖が発生していることを確認（緑ぷよが4つつながっている）
+      expect(chainEraseInfo.erasePuyoCount).toBeGreaterThan(0)
+      expect(chainEraseInfo.erasePuyoCount).toBe(4)
+    })
+  })
 })

@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Game } from './Game'
+import { Game, GameMode } from './Game'
+import { Config } from './Config'
+import { PuyoImage } from './PuyoImage'
+import { Stage } from './Stage'
+import { Player } from './Player'
+import { Score } from './Score'
+import { PuyoType } from './Puyo'
 
 describe('Game', () => {
   let mockCanvas: HTMLCanvasElement
@@ -95,5 +101,69 @@ describe('Game', () => {
     // グリッド線が描画されたことを確認
     expect(beginPathSpy).toHaveBeenCalled()
     expect(strokeSpy).toHaveBeenCalled()
+  })
+
+  describe('連鎖反応', () => {
+    it('ぷよの消去と落下後、新たな消去パターンがあれば連鎖が発生する', () => {
+      // 実際の依存オブジェクトを作成
+      const canvas = document.createElement('canvas')
+      canvas.width = 600
+      canvas.height = 800
+
+      const config = new Config()
+      const puyoImage = new PuyoImage(config)
+      const stage = new Stage(config)
+      const player = new Player(config, puyoImage, stage)
+      const score = new Score(config)
+
+      const game = new Game(canvas, config, puyoImage, stage, player, score)
+
+      // ステージにぷよを配置
+      stage.setPuyo(1, 10, PuyoType.Red)
+      stage.setPuyo(2, 10, PuyoType.Red)
+      stage.setPuyo(1, 11, PuyoType.Red)
+      stage.setPuyo(2, 11, PuyoType.Red)
+      stage.setPuyo(3, 10, PuyoType.Green)
+      stage.setPuyo(2, 7, PuyoType.Green)
+      stage.setPuyo(2, 8, PuyoType.Green)
+      stage.setPuyo(2, 9, PuyoType.Green)
+
+      // checkEraseモードに設定
+      game['mode'] = 'checkErase' as GameMode
+
+      // 1回目の消去判定と消去実行
+      game['update'](0) // checkErase → erasing
+      expect(game['mode']).toBe('erasing')
+
+      // 消去後の重力チェック
+      game['update'](0) // erasing → checkFall
+      expect(game['mode']).toBe('checkFall')
+
+      // 重力適用（緑ぷよが落下）
+      game['update'](0) // checkFall → falling（落下あり）
+      expect(game['mode']).toBe('falling')
+
+      // 落下アニメーション
+      game['update'](0) // falling → checkFall
+      expect(game['mode']).toBe('checkFall')
+
+      // 落下完了まで繰り返し
+      let iterations = 0
+      const maxIterations = 20
+      while (game['mode'] !== 'checkErase' && iterations < maxIterations) {
+        game['update'](0)
+        iterations++
+      }
+
+      // checkEraseモードに到達している
+      expect(game['mode']).toBe('checkErase')
+
+      // 2回目の消去判定（連鎖）
+      const chainEraseInfo = stage.checkErase()
+
+      // 連鎖が発生していることを確認（緑ぷよが4つつながっている）
+      expect(chainEraseInfo.erasePuyoCount).toBeGreaterThan(0)
+      expect(chainEraseInfo.erasePuyoCount).toBe(4)
+    })
   })
 })
