@@ -2,10 +2,10 @@
 title: テスト駆動開発から始めるTypeScript入門 ~ソフトウェア開発の三種の神器を準備する~
 description: TypeScriptでのソフトウェア開発三種の神器（バージョン管理、テスティング、自動化）の準備
 published: true
-date: 2025-08-06T02:26:05.112Z
+date: 2025-10-15T03:45:05.196Z
 tags: tdd, typescript, 自動化, テスト駆動開発
 editor: markdown
-dateCreated: 2025-07-03T06:14:52.352Z
+dateCreated: 2025-09-04T01:43:57.309Z
 ---
 
 # エピソード2
@@ -157,7 +157,75 @@ found 0 vulnerabilities
 
 ### 静的コード解析
 
-良いコードを書き続けるためにはコードの品質を維持していく必要があります。エピソード1では **テスト駆動開発** によりプログラムを動かしながら品質の改善していきました。出来上がったコードに対する品質チェックの方法として **静的コード解析** があります。TypeScript用 **静的コード解析** ツール[ESLint](https://eslint.org/) を使って確認してみましょう。プログラムは先程 **npm** を使ってインストールしたので以下のコマンドを実行します。
+良いコードを書き続けるためにはコードの品質を維持していく必要があります。エピソード1では **テスト駆動開発** によりプログラムを動かしながら品質の改善していきました。出来上がったコードに対する品質チェックの方法として **静的コード解析** があります。
+
+> 静的コード解析とは、プログラムを実行することなく、ソースコードを解析してバグや脆弱性、コーディング規約違反などを検出する手法です。
+>
+> — Wikipedia
+
+TypeScript用 **静的コード解析** ツールとして [ESLint](https://eslint.org/) を使います。まず必要なパッケージをインストールしましょう。
+
+```bash
+$ npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin \
+  eslint-config-prettier eslint-plugin-prettier eslint-plugin-sonarjs
+```
+
+次に、ESLint の設定ファイル `eslint.config.js` を作成します。
+
+```javascript
+import js from '@eslint/js'
+import typescript from '@typescript-eslint/eslint-plugin'
+import typescriptParser from '@typescript-eslint/parser'
+import prettier from 'eslint-plugin-prettier'
+import prettierConfig from 'eslint-config-prettier'
+import sonarjs from 'eslint-plugin-sonarjs'
+
+export default [
+  js.configs.recommended,
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module'
+      }
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+      prettier,
+      sonarjs
+    },
+    rules: {
+      ...typescript.configs.recommended.rules,
+      ...prettierConfig.rules,
+      'prettier/prettier': 'error',
+      // 循環的複雑度の制限 - 7を超える場合はエラー
+      'complexity': ['error', { max: 7 }],
+      // 認知的複雑度の制限 - 4を超える場合はエラー
+      'sonarjs/cognitive-complexity': ['error', 4],
+      // その他の推奨ルール
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'error',
+      'no-var': 'error',
+      'prefer-const': 'error'
+    }
+  },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'no-console': 'off'
+    }
+  },
+  {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.config.js']
+  }
+]
+```
+
+設定ファイルを作成したら、以下のコマンドで静的コード解析を実行します。
 
 ```bash
 $ npm run lint
@@ -278,35 +346,43 @@ $ npm run lint
 $ # エラーなし
 ```
 
-循環的複雑度 (Cyclomatic complexity)は７で設定しておきます
+#### コード複雑度のチェック
 
-> 循環的複雑度 (Cyclomatic complexity)
-> 循環的複雑度(サイクロマティック複雑度)とは、ソフトウェア測定法の一つであり、コードがどれぐらい> 複雑であるかをメソッド単位で数値にして表す指標。
+ESLint の設定ファイルには、すでに **循環的複雑度** と **認知的複雑度** の制限が含まれています。これらの指標について説明します。
 
-ESLintの設定に循環的複雑度の制限を追加しましょう。一般的に、循環的複雑度は7以下に保つことが推奨されています。
+**循環的複雑度 (Cyclomatic Complexity)**
 
-```javascript
-// eslint.config.js
-export default [
-  // ...既存の設定...
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    rules: {
-      // ...既存のルール...
-      // 循環的複雑度の制限 - 7を超える場合はエラー
-      'complexity': ['error', { max: 7 }],
-    },
-  },
-]
-```
+> 循環的複雑度(サイクロマティック複雑度)とは、ソフトウェア測定法の一つであり、コードがどれぐらい複雑であるかをメソッド単位で数値にして表す指標。
 
-設定を追加したらESLintを実行して確認してみましょう。
+私たちの設定では、循環的複雑度を **7以下** に制限しています。
+
+| 複雑度の範囲 | 意味 |
+|------------|------|
+| 1～10 | 低複雑度：管理しやすく、問題なし。 |
+| 11～20 | 中程度の複雑度：リファクタリングを検討。 |
+| 21～50 | 高複雑度：リファクタリングが強く推奨される。 |
+| 51以上 | 非常に高い複雑度:コードを分割する必要がある。 |
+
+**認知的複雑度 (Cognitive Complexity)**
+
+> 認知的複雑度（Cognitive Complexity）
+> プログラムを読む人の認知負荷を測るための指標のこと。コードの構造が「どれだけ頭を使う必要があるか」を定量的に評価する。循環的複雑度とは異なり、制御構造のネストやコードの流れの読みやすさに重点を置いている
+
+私たちの設定では、認知的複雑度を **4以下** に制限しています。
+
+| 複雑度の範囲 | 意味 |
+|------------|------|
+| 0～4 | 理解が非常に容易：リファクタリング不要。 |
+| 5～14 | 中程度の難易度:改善が必要な場合もある。 |
+| 15以上 | 理解が困難:コードの簡素化を検討するべき。 |
+
+設定を確認したらESLintを実行してみましょう。
 
 ```bash
 $ npm run lint
 ```
 
-循環的複雑度の制限により、以下の効果が得られます：
+コード複雑度の制限により、以下の効果が得られます：
 
 - **可読性向上**: 小さなメソッドは理解しやすい
 - **保守性向上**: 変更の影響範囲が限定される
@@ -314,6 +390,104 @@ $ npm run lint
 - **自動品質管理**: 複雑なコードの混入を自動防止
 
 このように、ESLintルールを活用することで、継続的にコード品質を保つことができます。
+
+#### 循環参照の検知
+
+循環参照を検知できるようにします。
+
+> 循環参照（じゅんかんさんしょう）とは、複数の物体または情報が、相互の情報を参照し合ってループを成している状態のこと。循環参照が存在すると、コードの理解が困難になり、保守性が低下します。
+>
+> — Wikipedia
+
+**dependency-cruiser** を使って循環参照を検知します。
+
+```bash
+$ npm i -D dependency-cruiser
+$ npx depcruise --init
+```
+
+初期化コマンドを実行すると、`.dependency-cruiser.js` という設定ファイルが作成されます。以下のように編集して、循環参照の検知を有効にします。
+
+```javascript
+/** @type {import('dependency-cruiser').IConfiguration} */
+export default {
+  forbidden: [
+    {
+      name: 'no-circular',
+      severity: 'error',
+      comment: '循環参照を禁止します',
+      from: {},
+      to: {
+        circular: true
+      }
+    },
+    {
+      name: 'no-orphans',
+      severity: 'warn',
+      comment: '使用されていないファイルを警告します',
+      from: {
+        orphan: true,
+        pathNot: [
+          '(^|/)\\.[^/]+\\.(js|cjs|mjs|ts|json)$', // ドットファイル
+          '\\.d\\.ts$', // 型定義ファイル
+          '(^|/)tsconfig\\.json$', // tsconfig
+          '(^|/)(babel|webpack)\\.config\\.(js|cjs|mjs|ts|json)$' // 設定ファイル
+        ]
+      },
+      to: {}
+    }
+  ],
+  options: {
+    doNotFollow: {
+      path: 'node_modules'
+    },
+    tsPreCompilationDeps: true,
+    tsConfig: {
+      fileName: 'tsconfig.json'
+    },
+    enhancedResolveOptions: {
+      exportsFields: ['exports'],
+      conditionNames: ['import', 'require', 'node', 'default']
+    },
+    reporterOptions: {
+      dot: {
+        collapsePattern: 'node_modules/[^/]+'
+      },
+      archi: {
+        collapsePattern: '^(node_modules|packages|src|lib|app|test)/[^/]+'
+      }
+    }
+  }
+}
+```
+
+循環参照をチェックするには、以下のコマンドを実行します。
+
+```bash
+$ npx depcruise src
+```
+
+循環参照が検出された場合は、以下のようなエラーメッセージが表示されます。
+
+```bash
+  error no-circular: src/module-a.ts → src/module-b.ts → src/module-a.ts
+```
+
+このエラーが表示された場合は、モジュールの依存関係を見直し、循環参照を解消する必要があります。
+
+**循環参照を解消する一般的な方法：**
+
+1. **依存性逆転の原則を適用**: インターフェースを導入して依存関係を逆転させる
+2. **共通モジュールの抽出**: 両方が依存する部分を別のモジュールに抽出する
+3. **レイヤーアーキテクチャの導入**: 明確な依存関係の方向性を定義する
+
+可視化して依存関係を確認することもできます。
+
+```bash
+$ npx depcruise src --include-only "^src" --output-type dot | dot -T svg > dependency-graph.svg
+```
+
+これで依存関係のグラフが SVG 形式で生成されます。
 
 セットアップができたのでここでコミットしておきましょう。
 
