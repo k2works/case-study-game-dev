@@ -77,6 +77,9 @@ export class Game {
     // グリッド線を描画
     this.drawGrid(ctx)
 
+    // ステージ（配置済みのぷよ）を描画
+    this.stage.draw(ctx, this.puyoImage)
+
     // プレイヤー（落下中のぷよ）を描画
     this.player.draw(ctx)
   }

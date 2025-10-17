@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { Stage } from './Stage'
 import { Config } from './Config'
 import { PuyoType } from './Puyo'
+import type { PuyoImage } from './PuyoImage'
 
 describe('Stage', () => {
   let config: Config
@@ -45,6 +46,43 @@ describe('Stage', () => {
       expect(stage.getPuyo(6, 5)).toBe(PuyoType.Empty)
       expect(stage.getPuyo(3, -1)).toBe(PuyoType.Empty)
       expect(stage.getPuyo(3, 12)).toBe(PuyoType.Empty)
+    })
+  })
+
+  describe('描画', () => {
+    it('配置されたぷよが描画される', () => {
+      // モックの準備
+      const mockContext = {} as CanvasRenderingContext2D
+      const mockPuyoImage = {
+        draw: vi.fn()
+      } as unknown as PuyoImage
+
+      // ぷよを配置
+      stage.setPuyo(2, 5, PuyoType.Red)
+      stage.setPuyo(3, 7, PuyoType.Blue)
+      stage.setPuyo(4, 9, PuyoType.Green)
+
+      // 描画
+      stage.draw(mockContext, mockPuyoImage)
+
+      // 配置されたぷよに対して puyoImage.draw() が呼ばれたことを確認
+      expect(mockPuyoImage.draw).toHaveBeenCalledTimes(3)
+      expect(mockPuyoImage.draw).toHaveBeenCalledWith(mockContext, PuyoType.Red, 2, 5)
+      expect(mockPuyoImage.draw).toHaveBeenCalledWith(mockContext, PuyoType.Blue, 3, 7)
+      expect(mockPuyoImage.draw).toHaveBeenCalledWith(mockContext, PuyoType.Green, 4, 9)
+    })
+
+    it('空のセルは描画されない', () => {
+      const mockContext = {} as CanvasRenderingContext2D
+      const mockPuyoImage = {
+        draw: vi.fn()
+      } as unknown as PuyoImage
+
+      // 空のステージを描画
+      stage.draw(mockContext, mockPuyoImage)
+
+      // puyoImage.draw() が呼ばれないことを確認
+      expect(mockPuyoImage.draw).not.toHaveBeenCalled()
     })
   })
 })

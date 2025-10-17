@@ -1,5 +1,6 @@
 import type { Config } from './Config'
 import { PuyoType } from './Puyo'
+import type { PuyoImage } from './PuyoImage'
 
 /**
  * Stage クラス
@@ -35,5 +36,31 @@ export class Stage {
 
   isEmpty(x: number, y: number): boolean {
     return this.getPuyo(x, y) === PuyoType.Empty
+  }
+
+  /**
+   * ステージに配置されたぷよを描画する
+   * @param context Canvas の 2D コンテキスト
+   * @param puyoImage ぷよ画像
+   */
+  draw(context: CanvasRenderingContext2D, puyoImage: PuyoImage): void {
+    for (let y = 0; y < this.config.rows; y++) {
+      this.drawRow(context, puyoImage, y)
+    }
+  }
+
+  /**
+   * 指定行のぷよを描画する
+   * @param context Canvas の 2D コンテキスト
+   * @param puyoImage ぷよ画像
+   * @param y 行番号
+   */
+  private drawRow(context: CanvasRenderingContext2D, puyoImage: PuyoImage, y: number): void {
+    for (let x = 0; x < this.config.cols; x++) {
+      const puyoType = this.grid[y][x]
+      if (puyoType !== PuyoType.Empty) {
+        puyoImage.draw(context, puyoType, x, y)
+      }
+    }
   }
 }
