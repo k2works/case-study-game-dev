@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { PuyoType } from './Puyo'
 import type { Config } from './Config'
 
@@ -16,7 +17,21 @@ export class PuyoImage {
 
   constructor(private config: Config) {}
 
+  /**
+   * 描画パラメータのバリデーションスキーマを生成
+   */
+  private getDrawParamsSchema() {
+    return z.object({
+      type: z.nativeEnum(PuyoType, { errorMap: () => ({ message: 'Invalid PuyoType' }) }),
+      x: z.number().int(),
+      y: z.number().int()
+    })
+  }
+
   draw(context: CanvasRenderingContext2D, type: PuyoType, x: number, y: number): void {
+    // Zod バリデーション
+    this.getDrawParamsSchema().parse({ type, x, y })
+
     const size = this.config.cellSize
     const color = this.colors[type] || this.colors[PuyoType.Empty]
 
