@@ -38,6 +38,7 @@ export class Game {
   private lastTime: number = 0
   private isDownKeyPressed: boolean = false
   private mode: GameMode = 'newPuyo'
+  private modeHandlers: Map<GameMode, (deltaTime: number) => void>
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -53,6 +54,17 @@ export class Game {
     this.stage = stage
     this.player = player
     this.score = score
+
+    // モードハンドラーの初期化
+    this.modeHandlers = new Map([
+      ['newPuyo', () => this.updateNewPuyo()],
+      ['playing', (deltaTime) => this.updatePlaying(deltaTime)],
+      ['checkFall', () => this.updateCheckFall()],
+      ['falling', () => this.updateFalling()],
+      ['checkErase', () => this.updateCheckErase()],
+      ['erasing', () => this.updateErasing()],
+      ['gameOver', () => this.updateGameOver()]
+    ])
   }
 
   /**
@@ -153,29 +165,9 @@ export class Game {
    * ゲーム状態を更新する
    */
   private update(deltaTime: number): void {
-    switch (this.mode) {
-      case 'newPuyo':
-        this.updateNewPuyo()
-        break
-      case 'playing':
-        this.updatePlaying(deltaTime)
-        break
-      case 'checkFall':
-        this.updateCheckFall()
-        break
-      case 'falling':
-        this.updateFalling()
-        break
-      case 'checkErase':
-        this.updateCheckErase()
-        break
-      case 'erasing':
-        this.updateErasing()
-        break
-      case 'gameOver':
-        // ゲームオーバー演出
-        // アニメーションループは継続するが、更新は停止
-        break
+    const handler = this.modeHandlers.get(this.mode)
+    if (handler) {
+      handler(deltaTime)
     }
   }
 
@@ -248,5 +240,13 @@ export class Game {
    */
   private updateErasing(): void {
     this.mode = 'checkFall'
+  }
+
+  /**
+   * gameOver モードの更新
+   */
+  private updateGameOver(): void {
+    // ゲームオーバー演出
+    // アニメーションループは継続するが、更新は停止
   }
 }

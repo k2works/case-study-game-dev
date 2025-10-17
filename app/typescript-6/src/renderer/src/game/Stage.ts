@@ -319,14 +319,13 @@ export class Stage {
    * @returns 盤面上のぷよがすべて消えていれば true
    */
   checkZenkeshi(): boolean {
-    // 盤面上にぷよがあるかチェック
-    for (let y = 0; y < this.config.rows; y++) {
-      for (let x = 0; x < this.config.cols; x++) {
-        if (this.grid[y][x] !== PuyoType.Empty) {
-          return false
-        }
-      }
-    }
-    return true
+    return this.grid.every((row) => this.isRowEmpty(row))
+  }
+
+  /**
+   * 行が空かどうか判定する
+   */
+  private isRowEmpty(row: PuyoType[]): boolean {
+    return row.every((cell) => cell === PuyoType.Empty)
   }
 }
