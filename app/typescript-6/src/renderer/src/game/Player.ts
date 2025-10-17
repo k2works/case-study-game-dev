@@ -120,14 +120,27 @@ export class Player {
   }
 
   /**
+   * 落下速度を取得する
+   * @param isDownKeyPressed 下キーが押されているか
+   * @returns 落下速度（通常: 1, 高速: 10）
+   */
+  getDropSpeed(isDownKeyPressed: boolean): number {
+    return isDownKeyPressed ? 10 : 1
+  }
+
+  /**
    * 更新処理（自動落下）
    * @param deltaTime 経過時間（ミリ秒）
+   * @param isDownKeyPressed 下キーが押されているか
    */
-  update(deltaTime: number): void {
+  update(deltaTime: number, isDownKeyPressed: boolean = false): void {
     if (!this.mainPuyo || !this.subPuyo) return
 
-    // 落下タイマーを更新
-    this.fallTimer += deltaTime
+    // 落下速度を取得
+    const dropSpeed = this.getDropSpeed(isDownKeyPressed)
+
+    // 落下タイマーを更新（高速落下時は速く進む）
+    this.fallTimer += deltaTime * dropSpeed
 
     // 落下間隔に達したら落下処理
     if (this.fallTimer >= this.fallInterval) {

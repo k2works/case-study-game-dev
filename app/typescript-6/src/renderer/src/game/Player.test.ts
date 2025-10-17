@@ -286,4 +286,42 @@ describe('Player', () => {
       expect(newSubPuyo.y).toBe(-1)
     })
   })
+
+  describe('高速落下', () => {
+    beforeEach(() => {
+      player.createNewPuyoPair()
+    })
+
+    it('下キーが押されていないときは通常速度（1）を返す', () => {
+      const speed = player.getDropSpeed(false)
+
+      expect(speed).toBe(1)
+    })
+
+    it('下キーが押されているときは高速（10）を返す', () => {
+      const speed = player.getDropSpeed(true)
+
+      expect(speed).toBe(10)
+    })
+
+    it('下キーが押されていると、タイマーが速く進む', () => {
+      // タイマーを初期化
+      player['fallTimer'] = 0
+
+      // 通常速度で50ms経過（タイマーリセットされない範囲）
+      player.update(50, false)
+      const normalTimer = player['fallTimer']
+
+      // タイマーをリセット
+      player['fallTimer'] = 0
+
+      // 高速落下で50ms経過（タイマーリセットされない範囲）
+      player.update(50, true)
+      const fastTimer = player['fallTimer']
+
+      // 高速落下の方がタイマーが速く進むことを確認
+      expect(fastTimer).toBeGreaterThan(normalTimer)
+      expect(fastTimer).toBe(normalTimer * 10)
+    })
+  })
 })
