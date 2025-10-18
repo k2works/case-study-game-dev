@@ -1,0 +1,848 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Site Description">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>テスト駆動開発から始めるPython入門 ~ソフトウェア開発の三種の神器を準備する~ - Site Name</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Site Name" class="md-header__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Site Name
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              テスト駆動開発から始めるPython入門 ~ソフトウェア開発の三種の神器を準備する~
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Site Name" class="md-nav__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Site Name
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="2">エピソード2<a class="headerlink" href="#2" title="Permanent link">&para;</a></h1>
+<h2 id="_1">初めに<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>この記事は <a href="テスト駆動開発から始めるPython入門1.md">テスト駆動開発から始めるPython入門 ~2時間でTDDとリファクタリングのエッセンスを体験する~</a> の続編です。</p>
+<h2 id="_2">自動化から始めるテスト駆動開発<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>エピソード1ではテスト駆動開発のゴールが <strong>動作するきれいなコード</strong> であることを学びました。では、良いコードを書き続けるためには何が必要になるでしょうか？それは<a href="https://t-wada.hatenablog.jp/entry/clean-code-that-works">ソフトウェア開発の三種の神器</a>と呼ばれるものです。</p>
+<blockquote>
+<p>今日のソフトウェア開発の世界において絶対になければならない3つの技術的な柱があります。
+三本柱と言ったり、三種の神器と言ったりしていますが、それらは</p>
+<ul>
+<li>
+<p>バージョン管理</p>
+</li>
+<li>
+<p>テスティング</p>
+</li>
+<li>
+<p>自動化</p>
+</li>
+</ul>
+<p>の3つです。</p>
+<p>—  https://t-wada.hatenablog.jp/entry/clean-code-that-works </p>
+</blockquote>
+<p><strong>バージョン管理</strong> と <strong>テスティング</strong> に関してはエピソード1で触れました。本エピソードでは最後の <strong>自動化</strong> に関しての解説と次のエピソードに備えたセットアップ作業を実施しておきたいと思います。ですがその前に <strong>バージョン管理</strong> で1つだけ解説しておきたいことがありますのでそちらから進めて行きたいと思います。</p>
+<h3 id="_3">コミットメッセージ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>これまで作業の区切りにごとにレポジトリにコミットしていましたがその際に以下のような書式でメッセージを書いていました。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;refactor: メソッドの抽出&#39;</span>
+</code></pre></div>
+<p>この書式は
+<a href="https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#type">Angularルール</a>に従っています。具体的には、それぞれのコミットメッセージはヘッダ、ボディ、フッタで構成されています。ヘッダはタイプ、スコープ、タイトルというフォーマットで構成されています。</p>
+<div class="highlight"><pre><span></span><code>&lt;タイプ&gt;(&lt;スコープ&gt;): &lt;タイトル&gt;
+&lt;空行&gt;
+&lt;ボディ&gt;
+&lt;空行&gt;
+&lt;フッタ&gt;
+</code></pre></div>
+<p>ヘッダは必須です。 ヘッダのスコープは任意です。 コミットメッセージの長さは50文字までにしてください。</p>
+<p>(そうすることでその他のGitツールと同様にGitHub上で読みやすくなります。)</p>
+<p>コミットのタイプは次を用いて下さい。</p>
+<ul>
+<li>
+<p>feat: A new feature (新しい機能)</p>
+</li>
+<li>
+<p>fix: A bug fix (バグ修正)</p>
+</li>
+<li>
+<p>docs: Documentation only changes (ドキュメント変更のみ)</p>
+</li>
+<li>
+<p>style: Changes that do not affect the meaning of the code
+    (white-space, formatting, missing semi-colons, etc) (コードに影響を与えない変更)</p>
+</li>
+<li>
+<p>refactor: A code change that neither fixes a bug nor adds a feature
+    (機能追加でもバグ修正でもないコード変更)</p>
+</li>
+<li>
+<p>perf: A code change that improves performance (パフォーマンスを改善するコード変更)</p>
+</li>
+<li>
+<p>test: Adding missing or correcting existing tests
+    (存在しないテストの追加、または既存のテストの修正)</p>
+</li>
+<li>
+<p>chore: Changes to the build process or auxiliary tools and libraries
+    such as documentation generation
+    (ドキュメント生成のような、補助ツールやライブラリやビルドプロセスの変更)</p>
+</li>
+</ul>
+<p>コミットメッセージにつけるプリフィックスに関しては <a href="https://qiita.com/numanomanu/items/45dd285b286a1f7280ed">【今日からできる】コミットメッセージに 「プレフィックス」をつけるだけで、開発効率が上がった話</a>を参照ください。</p>
+<h3 id="_4">パッケージマネージャ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>では <strong>自動化</strong> の準備に入りたいのですがそのためにはいくつかの外部プログラムを利用する必要があります。そのためのツールが <strong>uv</strong> です。</p>
+<blockquote>
+<p>uvとは、Pythonプロジェクトの依存関係を管理し、仮想環境を自動で作成・管理する高速なPythonパッケージマネージャーです。従来のpipやpoetryよりも高速で、プロジェクトの初期化から依存関係の管理まで一元的に行えます。</p>
+<p>—  Pythonパッケージ管理 </p>
+</blockquote>
+<p><strong>uv</strong> でプロジェクトを初期化しましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>init
+Initialized<span class="w"> </span>project<span class="w"> </span><span class="sb">`</span>app<span class="sb">`</span>
+</code></pre></div>
+<p><code>pyproject.toml</code> が作成されます。これは <strong>uv</strong> がパッケージの依存関係とプロジェクト設定を管理するためのファイルです。</p>
+<div class="highlight"><pre><span></span><code><span class="k">[project]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;app&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;テスト駆動開発から始めるPython入門&quot;</span>
+<span class="n">readme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;README.md&quot;</span>
+<span class="n">requires-python</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.10&quot;</span>
+<span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+
+<span class="k">[project.optional-dependencies]</span>
+<span class="n">dev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;pytest&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;pytest-cov&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;ruff&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;mypy&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;tox&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>開発依存関係を追加してインストールします。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>pytest<span class="w"> </span>pytest-cov<span class="w"> </span>ruff<span class="w"> </span>mypy<span class="w"> </span>tox
+Using<span class="w"> </span>CPython<span class="w"> </span><span class="m">3</span>.10.12<span class="w"> </span>interpreter<span class="w"> </span>at:<span class="w"> </span>/usr/bin/python3.10
+Creating<span class="w"> </span>virtual<span class="w"> </span>environment<span class="w"> </span>at:<span class="w"> </span>.venv
+Installed<span class="w"> </span><span class="m">23</span><span class="w"> </span>packages<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">8</span>.03s
+<span class="w"> </span>+<span class="w"> </span><span class="nv">mypy</span><span class="o">==</span><span class="m">1</span>.17.0
+<span class="w"> </span>+<span class="w"> </span><span class="nv">pytest</span><span class="o">==</span><span class="m">8</span>.4.1
+<span class="w"> </span>+<span class="w"> </span>pytest-cov<span class="o">==</span><span class="m">6</span>.2.1
+<span class="w"> </span>+<span class="w"> </span><span class="nv">ruff</span><span class="o">==</span><span class="m">0</span>.12.3
+<span class="w"> </span>+<span class="w"> </span><span class="nv">tox</span><span class="o">==</span><span class="m">4</span>.27.0
+<span class="w"> </span>+<span class="w"> </span>...（その他の依存関係）
+</code></pre></div>
+<p>これで次の準備ができました。<strong>uv</strong> が仮想環境も自動で作成・管理してくれるので、環境の分離も簡単です。</p>
+<h3 id="_5">静的コード解析<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>良いコードを書き続けるためにはコードの品質を維持していく必要があります。エピソード1では <strong>テスト駆動開発</strong> によりプログラムを動かしながら品質の改善していきました。出来上がったコードに対する品質チェックの方法として <strong>静的コード解析</strong> があります。Python用 <strong>静的コード解析</strong> ツール<a href="https://github.com/astral-sh/ruff">Ruff</a> を使って確認してみましょう。Ruffは高速でモダンなPythonリンター・フォーマッターで、従来のflake8、pylint、blackなどを置き換える統合ツールです。</p>
+<p>プログラムは先程 <strong>uv</strong> を使ってインストールしたので以下のコマンドを実行します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
+test/test_fizz_buzz.py:4:20:<span class="w"> </span>F401<span class="w"> </span><span class="o">[</span>*<span class="o">]</span><span class="w"> </span><span class="sb">`</span>typing.Any<span class="sb">`</span><span class="w"> </span>imported<span class="w"> </span>but<span class="w"> </span>unused
+<span class="w">  </span><span class="p">|</span>
+<span class="m">2</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>import<span class="w"> </span>io
+<span class="m">3</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>import<span class="w"> </span>sys
+<span class="m">4</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>from<span class="w"> </span>typing<span class="w"> </span>import<span class="w"> </span>Any
+<span class="w">  </span><span class="p">|</span><span class="w">                    </span>^^^<span class="w"> </span>F401
+<span class="m">5</span><span class="w"> </span><span class="p">|</span>
+<span class="m">6</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>import<span class="w"> </span>pytest
+<span class="w">  </span><span class="p">|</span><span class="w">        </span>^^^^^^<span class="w"> </span>F401
+<span class="m">7</span><span class="w"> </span><span class="p">|</span>
+<span class="m">8</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>from<span class="w"> </span>lib.fizz_buzz<span class="w"> </span>import<span class="w"> </span>FizzBuzz
+<span class="w">  </span><span class="p">|</span>
+<span class="w">  </span><span class="o">=</span><span class="w"> </span>help:<span class="w"> </span>Remove<span class="w"> </span>unused<span class="w"> </span>import:<span class="w"> </span><span class="sb">`</span>typing.Any<span class="sb">`</span>
+
+Found<span class="w"> </span><span class="m">6</span><span class="w"> </span>errors.
+<span class="o">[</span>*<span class="o">]</span><span class="w"> </span><span class="m">6</span><span class="w"> </span>fixable<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span><span class="sb">`</span>--fix<span class="sb">`</span><span class="w"> </span>option.
+</code></pre></div>
+<p>なにかいろいろ出てきましたね。Ruffの詳細に関しては <a href="https://docs.astral.sh/ruff/">Ruffの使い方</a>を参照ください。<code>--fix</code> オプションで自動修正してみましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.<span class="w"> </span>--fix
+Found<span class="w"> </span><span class="m">7</span><span class="w"> </span>errors<span class="w"> </span><span class="o">(</span><span class="m">7</span><span class="w"> </span>fixed,<span class="w"> </span><span class="m">0</span><span class="w"> </span>remaining<span class="o">)</span>.
+</code></pre></div>
+<p>再度確認します。チェックは通りましたね。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
+All<span class="w"> </span>checks<span class="w"> </span>passed!
+</code></pre></div>
+<p>テストも実行して壊れていないかも確認しておきます。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/<span class="w"> </span>-v
+<span class="o">==========================================================</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>session<span class="w"> </span><span class="nv">starts</span><span class="w"> </span><span class="o">==========================================================</span>
+platform<span class="w"> </span>linux<span class="w"> </span>--<span class="w"> </span>Python<span class="w"> </span><span class="m">3</span>.10.12,<span class="w"> </span>pytest-8.4.1,<span class="w"> </span>pluggy-1.6.0<span class="w"> </span>--<span class="w"> </span>/workspaces/ai-programing-exercise/app/.venv/bin/python
+cachedir:<span class="w"> </span>.pytest_cache
+rootdir:<span class="w"> </span>/workspaces/ai-programing-exercise/app
+configfile:<span class="w"> </span>pyproject.toml
+plugins:<span class="w"> </span>cov-6.2.1
+collecting<span class="w"> </span>...<span class="w"> </span>collected<span class="w"> </span><span class="m">23</span><span class="w"> </span>items<span class="w">                                                                                                                      </span>
+
+test/test_fizz_buzz.py::TestFizzBuzz::test_3を渡したら文字列Fizzを返す<span class="w"> </span>PASSED<span class="w">                                                     </span><span class="o">[</span><span class="w">  </span><span class="m">4</span>%<span class="o">]</span>
+test/test_fizz_buzz.py::TestFizzBuzz::test_5を渡したら文字列Buzzを返す<span class="w"> </span>PASSED<span class="w">                                                     </span><span class="o">[</span><span class="w">  </span><span class="m">8</span>%<span class="o">]</span>
+...
+<span class="o">==========================================================</span><span class="w"> </span><span class="m">23</span><span class="w"> </span>passed<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.59s<span class="w"> </span><span class="o">===========================================================</span>
+</code></pre></div>
+<p>Ruffの設定は<code>.ruff.toml</code>ファイルで管理できます。</p>
+<div class="highlight"><pre><span></span><code><span class="n">line-length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">88</span>
+<span class="n">target-version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;py310&quot;</span>
+
+<span class="k">[lint]</span>
+<span class="n">select</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;E&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1"># pycodestyle errors</span>
+<span class="w">    </span><span class="s2">&quot;W&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1"># pycodestyle warnings</span>
+<span class="w">    </span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1"># pyflakes</span>
+<span class="w">    </span><span class="s2">&quot;I&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1"># isort</span>
+<span class="w">    </span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1"># flake8-bugbear</span>
+<span class="w">    </span><span class="s2">&quot;C4&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1"># flake8-comprehensions</span>
+<span class="w">    </span><span class="s2">&quot;UP&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1"># pyupgrade</span>
+<span class="p">]</span>
+<span class="n">ignore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+
+<span class="k">[format]</span>
+<span class="n">quote-style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;double&quot;</span>
+<span class="n">indent-style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;space&quot;</span>
+<span class="n">skip-magic-trailing-comma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="n">line-ending</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+
+<span class="k">[lint.per-file-ignores]</span>
+<span class="s2">&quot;test/**/*.py&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;E501&quot;</span><span class="p">]</span><span class="w">  </span><span class="c1"># Allow long lines in tests</span>
+</code></pre></div>
+<p>循環的複雑度 (Cyclomatic complexity)は７で設定しておきます</p>
+<blockquote>
+<p>循環的複雑度 (Cyclomatic complexity)
+循環的複雑度(サイクロマティック複雑度)とは、ソフトウェア測定法の一つであり、コードがどれぐらい&gt; 複雑であるかをメソッド単位で数値にして表す指標。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.ruff.lint.mccabe]</span>
+<span class="c1"># Flag errors (`C901`) whenever the complexity level exceeds 7.</span>
+<span class="n">max-complexity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span>
+</code></pre></div>
+<p>セットアップができたのでここでコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: 静的コード解析セットアップ&#39;</span>
+</code></pre></div>
+<h3 id="_6">コードフォーマッタ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>良いコードであるためにはフォーマットも大切な要素です。</p>
+<blockquote>
+<p>優れたソースコードは「目に優しい」ものでなければいけない。</p>
+<p>—  リーダブルコード </p>
+</blockquote>
+<p><strong>Ruff</strong> はリンターとしてだけでなく、コードフォーマッターとしても機能します。従来のblackの代替として使えます。以下のコードのフォーマットをわざと崩してみます。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FizzBuzz</span><span class="p">:</span>
+    <span class="n">MAX_NUMBER</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">is_fizz</span> <span class="o">=</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">is_buzz</span> <span class="o">=</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">is_fizz</span> <span class="ow">and</span> <span class="n">is_buzz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;FizzBuzz&quot;</span>
+        <span class="k">if</span> <span class="n">is_fizz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span>
+        <span class="k">if</span> <span class="n">is_buzz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Buzz&quot;</span>
+
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># 1から最大値までのFizzBuzz配列を1発で作る</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAX_NUMBER</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+</code></pre></div>
+<p>フォーマットをチェックしてみます。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>--check<span class="w"> </span>.
+Would<span class="w"> </span>reformat:<span class="w"> </span>lib/fizz_buzz.py
+<span class="m">1</span><span class="w"> </span>file<span class="w"> </span>would<span class="w"> </span>be<span class="w"> </span>reformatted
+</code></pre></div>
+<p>編集した部分が <code>Would reformat</code> と指摘されています。自動修正しておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>.
+<span class="m">1</span><span class="w"> </span>file<span class="w"> </span>reformatted
+</code></pre></div>
+<p>フォーマットが修正されたことが確認できましたね。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FizzBuzz</span><span class="p">:</span>
+    <span class="n">MAX_NUMBER</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">is_fizz</span> <span class="o">=</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">is_buzz</span> <span class="o">=</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">is_fizz</span> <span class="ow">and</span> <span class="n">is_buzz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;FizzBuzz&quot;</span>
+        <span class="k">if</span> <span class="n">is_fizz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span>
+        <span class="k">if</span> <span class="n">is_buzz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Buzz&quot;</span>
+
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># 1から最大値までのFizzBuzz配列を1発で作る</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAX_NUMBER</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>--check<span class="w"> </span>.
+<span class="m">5</span><span class="w"> </span>files<span class="w"> </span>already<span class="w"> </span>formatted
+</code></pre></div>
+<h3 id="_7">コードカバレッジ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>静的コードコード解析による品質の確認はできました。では動的なテストに関してはどうでしょうか？ <strong>コードカバレッジ</strong> を確認する必要あります。</p>
+<blockquote>
+<p>コード網羅率（コードもうらりつ、英: Code coverage
+）コードカバレッジは、ソフトウェアテストで用いられる尺度の1つである。プログラムのソースコードがテストされた割合を意味する。この場合のテストはコードを見ながら行うもので、ホワイトボックステストに分類される。</p>
+<p>—  ウィキペディア </p>
+</blockquote>
+<p>Python用 <strong>コードカバレッジ</strong> 検出プログラムとして <a href="https://pytest-cov.readthedocs.io/">pytest-cov</a>を使います。これは先程 <strong>uv</strong> でインストール済みです。</p>
+<p>設定は <code>pyproject.toml</code> に記載されているのでテストを実施します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/<span class="w"> </span>-v<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
+<span class="o">==========================================================</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>session<span class="w"> </span><span class="nv">starts</span><span class="w"> </span><span class="o">==========================================================</span>
+platform<span class="w"> </span>linux<span class="w"> </span>--<span class="w"> </span>Python<span class="w"> </span><span class="m">3</span>.10.12,<span class="w"> </span>pytest-8.4.1,<span class="w"> </span>pluggy-1.6.0<span class="w"> </span>--<span class="w"> </span>/workspaces/ai-programing-exercise/app/.venv/bin/python
+cachedir:<span class="w"> </span>.pytest_cache
+rootdir:<span class="w"> </span>/workspaces/ai-programing-exercise/app
+configfile:<span class="w"> </span>pyproject.toml
+plugins:<span class="w"> </span>cov-6.2.1
+collecting<span class="w"> </span>...<span class="w"> </span>collected<span class="w"> </span><span class="m">23</span><span class="w"> </span>items<span class="w">                                                                                                                      </span>
+
+test/test_fizz_buzz.py::TestFizzBuzz::test_3を渡したら文字列Fizzを返す<span class="w"> </span>PASSED<span class="w">                                                     </span><span class="o">[</span><span class="w">  </span><span class="m">4</span>%<span class="o">]</span>
+test/test_fizz_buzz.py::TestFizzBuzz::test_5を渡したら文字列Buzzを返す<span class="w"> </span>PASSED<span class="w">                                                     </span><span class="o">[</span><span class="w">  </span><span class="m">8</span>%<span class="o">]</span>
+...
+<span class="o">============================================================</span><span class="w"> </span>tests<span class="w"> </span><span class="nv">coverage</span><span class="w"> </span><span class="o">=============================================================</span>
+___________________________________________<span class="w"> </span>coverage:<span class="w"> </span>platform<span class="w"> </span>linux,<span class="w"> </span>python<span class="w"> </span><span class="m">3</span>.10.12-final-0<span class="w"> </span>____________________________________________
+
+Name<span class="w">               </span>Stmts<span class="w">   </span>Miss<span class="w">  </span>Cover<span class="w">   </span>Missing
+------------------------------------------------
+lib/__init__.py<span class="w">        </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+lib/fizz_buzz.py<span class="w">      </span><span class="m">16</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+------------------------------------------------
+TOTAL<span class="w">                 </span><span class="m">16</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+Coverage<span class="w"> </span>HTML<span class="w"> </span>written<span class="w"> </span>to<span class="w"> </span>dir<span class="w"> </span><span class="nv">htmlcov</span>
+<span class="o">==========================================================</span><span class="w"> </span><span class="m">23</span><span class="w"> </span>passed<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.59s<span class="w"> </span><span class="o">===========================================================</span>
+</code></pre></div>
+<p>テスト実行後に <code>htmlcov</code> というフォルダが作成されます。その中の <code>index.html</code> を開くとカバレッジ状況を確認できます。</p>
+<p>pyproject.tomlでpytestとカバレッジの設定を管理できます。</p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.pytest.ini_options]</span>
+<span class="n">testpaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span>
+<span class="n">python_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;test_*.py&quot;</span><span class="p">]</span>
+<span class="n">python_classes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Test*&quot;</span><span class="p">]</span>
+<span class="n">python_functions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;test_*&quot;</span><span class="p">]</span>
+<span class="n">addopts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;--cov=lib --cov-report=html --cov-report=term-missing&quot;</span>
+
+<span class="k">[tool.coverage.run]</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;lib&quot;</span><span class="p">]</span>
+
+<span class="k">[tool.coverage.report]</span>
+<span class="n">exclude_lines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;pragma: no cover&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;def __repr__&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;raise AssertionError&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;raise NotImplementedError&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>セットアップが完了したらコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: コードカバレッジセットアップ&#39;</span>
+</code></pre></div>
+<h3 id="_8">タスクランナー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>ここまででテストの実行、静的コード解析、コードフォーマット、コードカバレッジを実施することができるようになりました。でもコマンドを実行するのにそれぞれコマンドを覚えておくのは面倒ですよね。例えばテストの実行は</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/<span class="w"> </span>-v<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
+<span class="o">==========================================================</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>session<span class="w"> </span><span class="nv">starts</span><span class="w"> </span><span class="o">==========================================================</span>
+platform<span class="w"> </span>linux<span class="w"> </span>--<span class="w"> </span>Python<span class="w"> </span><span class="m">3</span>.10.12,<span class="w"> </span>pytest-8.4.1,<span class="w"> </span>pluggy-1.6.0<span class="w"> </span>--<span class="w"> </span>/workspaces/ai-programing-exercise/app/.venv/bin/python
+...
+<span class="o">==========================================================</span><span class="w"> </span><span class="m">23</span><span class="w"> </span>passed<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.59s<span class="w"> </span><span class="o">===========================================================</span>
+</code></pre></div>
+<p>このようにしていました。では静的コードの解析はどうやりましたか？フォーマットはどうやりましたか？調べるのも面倒ですよね。いちいち調べるのが面倒なことは全部 <strong>タスクランナー</strong> にやらせるようにしましょう。</p>
+<blockquote>
+<p>タスクランナーとは、アプリケーションのビルドなど、一定の手順で行う作業をコマンド一つで実行できるように予めタスクとして定義したものです。</p>
+<p>—  Pythonビルドツール </p>
+</blockquote>
+<p>Pythonの <strong>タスクランナー</strong> は <code>tox</code> です。</p>
+<blockquote>
+<p>toxはPythonにおけるタスクランナーです。toxコマンドと起点となるtox.iniというタスクを記述するファイルを用意することで、複数のPython環境でのテスト実行や、タスクの一覧表示を行えます。</p>
+<p>—  Pythonビルドツール </p>
+</blockquote>
+<p>早速、テストタスクから作成しましょう。まず <code>tox.ini</code> を作ります。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>touch<span class="w"> </span>tox.ini
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">[tox]</span>
+<span class="na">envlist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">py310,lint,type,coverage</span>
+<span class="na">skip_missing_interpreters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+
+<span class="k">[testenv]</span>
+<span class="na">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">    </span><span class="na">pytest</span>
+<span class="w">    </span><span class="na">pytest-cov</span>
+<span class="na">commands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pytest {posargs}</span>
+
+<span class="k">[testenv:test]</span>
+<span class="na">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">    </span><span class="na">pytest</span>
+<span class="w">    </span><span class="na">pytest-cov</span>
+<span class="na">commands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pytest --cov=lib --cov-report=html --cov-report=term-missing --verbose</span>
+
+<span class="k">[testenv:lint]</span>
+<span class="na">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ruff</span>
+<span class="na">commands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">    </span><span class="na">ruff check .</span>
+<span class="w">    </span><span class="na">ruff format --check .</span>
+
+<span class="k">[testenv:format]</span>
+<span class="na">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ruff</span>
+<span class="na">commands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ruff format .</span>
+
+<span class="k">[testenv:type]</span>
+<span class="na">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">    </span><span class="na">mypy</span>
+<span class="w">    </span><span class="na">pytest</span>
+<span class="na">commands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mypy lib test</span>
+
+<span class="k">[testenv:coverage]</span>
+<span class="na">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">    </span><span class="na">pytest</span>
+<span class="w">    </span><span class="na">pytest-cov</span>
+<span class="na">commands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pytest --cov=lib --cov-report=html --cov-report=term-missing</span>
+</code></pre></div>
+<p>タスクが登録されたか確認してみましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span><span class="nb">test</span>
+test:<span class="w"> </span>install_deps&gt;<span class="w"> </span>python<span class="w"> </span>-I<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span>pytest-cov
+test:<span class="w"> </span>install_package&gt;<span class="w"> </span>python<span class="w"> </span>-I<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>--no-deps<span class="w"> </span>/workspaces/ai-programing-exercise/app/.tox/.tmp/package/1/app-0.1.0.tar.gz
+test:<span class="w"> </span>commands<span class="o">[</span><span class="m">0</span><span class="o">]</span>&gt;<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> </span>--cov-report<span class="o">=</span>html<span class="w"> </span>--cov-report<span class="o">=</span>term-missing<span class="w"> </span>--verbose
+<span class="o">==========================================================</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>session<span class="w"> </span><span class="nv">starts</span><span class="w"> </span><span class="o">==========================================================</span>
+...
+<span class="o">==========================================================</span><span class="w"> </span><span class="m">23</span><span class="w"> </span>passed<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.60s<span class="w"> </span><span class="o">===========================================================</span>
+<span class="w">  </span>test:<span class="w"> </span>OK<span class="w"> </span><span class="o">(</span><span class="m">119</span>.59<span class="o">=</span>setup<span class="o">[</span><span class="m">114</span>.67<span class="o">]</span>+cmd<span class="o">[</span><span class="m">4</span>.92<span class="o">]</span><span class="w"> </span>seconds<span class="o">)</span>
+<span class="w">  </span>congratulations<span class="w"> </span>:<span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="m">124</span>.21<span class="w"> </span>seconds<span class="o">)</span>
+</code></pre></div>
+<p>タスクが実行されたことが確認できたので引き続き静的コードの解析タスクを実行してみます。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>lint
+lint:<span class="w"> </span>install_deps&gt;<span class="w"> </span>python<span class="w"> </span>-I<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>ruff
+lint:<span class="w"> </span>install_package&gt;<span class="w"> </span>python<span class="w"> </span>-I<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>--no-deps<span class="w"> </span>/workspaces/ai-programing-exercise/app/.tox/.tmp/package/2/app-0.1.0.tar.gz
+lint:<span class="w"> </span>commands<span class="o">[</span><span class="m">0</span><span class="o">]</span>&gt;<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
+All<span class="w"> </span>checks<span class="w"> </span>passed!
+lint:<span class="w"> </span>commands<span class="o">[</span><span class="m">1</span><span class="o">]</span>&gt;<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>--check<span class="w"> </span>.
+<span class="m">5</span><span class="w"> </span>files<span class="w"> </span>already<span class="w"> </span>formatted
+lint:<span class="w"> </span>OK<span class="w"> </span>✔<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">19</span>.34<span class="w"> </span>seconds
+</code></pre></div>
+<p>うまく実行されたようですね。すべてのタスクを一度に実行することもできます。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>tox
+py310:<span class="w"> </span>install_deps&gt;<span class="w"> </span>python<span class="w"> </span>-I<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span>pytest-cov
+...
+<span class="w">  </span>py310:<span class="w"> </span>OK<span class="w"> </span><span class="o">(</span><span class="m">95</span>.73<span class="o">=</span>setup<span class="o">[</span><span class="m">90</span>.39<span class="o">]</span>+cmd<span class="o">[</span><span class="m">5</span>.34<span class="o">]</span><span class="w"> </span>seconds<span class="o">)</span>
+<span class="w">  </span>lint:<span class="w"> </span>OK<span class="w"> </span><span class="o">(</span><span class="m">19</span>.34<span class="o">=</span>setup<span class="o">[</span><span class="m">19</span>.02<span class="o">]</span>+cmd<span class="o">[</span><span class="m">0</span>.16,0.16<span class="o">]</span><span class="w"> </span>seconds<span class="o">)</span>
+<span class="w">  </span>type:<span class="w"> </span>OK<span class="w"> </span><span class="o">(</span><span class="m">21</span>.88<span class="o">=</span>setup<span class="o">[</span><span class="m">20</span>.37<span class="o">]</span>+cmd<span class="o">[</span><span class="m">1</span>.51<span class="o">]</span><span class="w"> </span>seconds<span class="o">)</span>
+<span class="w">  </span>coverage:<span class="w"> </span>OK<span class="w"> </span><span class="o">(</span><span class="m">84</span>.32<span class="o">=</span>setup<span class="o">[</span><span class="m">79</span>.34<span class="o">]</span>+cmd<span class="o">[</span><span class="m">4</span>.98<span class="o">]</span><span class="w"> </span>seconds<span class="o">)</span>
+<span class="w">  </span>congratulations<span class="w"> </span>:<span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="m">223</span>.82<span class="w"> </span>seconds<span class="o">)</span>
+</code></pre></div>
+<p>セットアップができたのでコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: タスクランナーセットアップ&#39;</span>
+</code></pre></div>
+<h3 id="_9">型チェック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>Pythonは動的型付け言語ですが、型ヒントを使って静的型チェックを行うことで、より安全で保守性の高いコードを書くことができます。</p>
+<blockquote>
+<p>mypyとは、Pythonのための静的型チェッカーです。型ヒント（Type Hints）を使用してコードの型安全性を検証し、実行前に型エラーを検出できます。</p>
+<p>—  Python型チェック </p>
+</blockquote>
+<p><strong>mypy</strong> を使って型チェックを実行してみましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>lib<span class="w"> </span><span class="nb">test</span>
+Success:<span class="w"> </span>no<span class="w"> </span>issues<span class="w"> </span>found<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>files
+</code></pre></div>
+<p>エラーがないことが確認できました。mypyの設定は <code>pyproject.toml</code> で管理できます。</p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.mypy]</span>
+<span class="n">python_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3.10&quot;</span>
+<span class="n">warn_return_any</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">warn_unused_configs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">disallow_untyped_defs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</code></pre></div>
+<p>型チェック機能により、以下のようなメリットがあります：</p>
+<ul>
+<li>実行前に型エラーを検出</li>
+<li>IDEでの補完機能の向上</li>
+<li>コードの可読性と保守性の向上</li>
+<li>リファクタリング時の安全性向上</li>
+</ul>
+<p>型チェックもtoxタスクとして統合されているので、<code>uv run tox -e type</code>で実行できます。</p>
+<h3 id="_10">最終的な開発ワークフロー<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>これで <a href="https://t-wada.hatenablog.jp/entry/clean-code-that-works">ソフトウェア開発の三種の神器</a> の準備が完了しました。最終的な開発ワークフローは以下のようになります：</p>
+<ol>
+<li><strong>開発開始</strong>: <code>cd app &amp;&amp; uv run tox</code> を実行して品質チェック</li>
+<li><strong>コード作成</strong>: テスト駆動開発のサイクル（Red-Green-Refactor）</li>
+<li><strong>品質確認</strong>: 各ツールが自動で品質をチェック</li>
+<li><strong>コミット</strong>: 品質チェックを通ったコードをGitにコミット</li>
+</ol>
+<h3 id="_11">使用可能なコマンド一覧<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># すべての品質チェックとテストを実行（推奨）</span>
+uv<span class="w"> </span>run<span class="w"> </span>tox
+
+<span class="c1"># 個別タスクの実行</span>
+uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span><span class="nb">test</span><span class="w">        </span><span class="c1"># テストのみ</span>
+uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>lint<span class="w">        </span><span class="c1"># リンターのみ</span>
+uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span><span class="nb">type</span><span class="w">        </span><span class="c1"># 型チェックのみ</span>
+uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>coverage<span class="w">    </span><span class="c1"># カバレッジレポートのみ</span>
+uv<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>format<span class="w">      </span><span class="c1"># フォーマットのみ</span>
+
+<span class="c1"># 個別コマンドの実行</span>
+uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w">            </span><span class="c1"># テスト実行</span>
+uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.<span class="w">       </span><span class="c1"># リンター実行</span>
+uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>.<span class="w">      </span><span class="c1"># フォーマッター実行</span>
+uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>lib<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># 型チェック実行</span>
+</code></pre></div>
+<h3 id="_12">構築した環境の特徴<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>uv</strong>: 高速なPythonパッケージマネージャーと仮想環境管理</li>
+<li><strong>Ruff</strong>: 従来のflake8、pylint、blackを置き換える統合リンター・フォーマッター</li>
+<li><strong>mypy</strong>: 静的型チェックによる型安全性の確保</li>
+<li><strong>pytest + pytest-cov</strong>: テスト実行とカバレッジ計測</li>
+<li><strong>tox</strong>: 複数環境での品質チェックとタスク管理</li>
+</ul>
+<p>この環境により、次回の開発からは最初にコマンドラインで <code>uv run tox</code> を実行すれば良いコードを書くためのタスクを自動で実行してくれるようになるので、コードを書くことに集中できるようになりました。</p>
+<h3 id="_13">コミット履歴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p>今回のセットアップ作業で作成されたコミット：</p>
+<ol>
+<li><code>chore: パッケージマネージャーセットアップ</code> - uvとpyproject.tomlの設定</li>
+<li><code>chore: 静的コード解析セットアップ</code> - Ruffの設定と実行</li>
+<li><code>chore: コードカバレッジセットアップ</code> - pytest-covの設定</li>
+<li><code>chore: タスクランナーセットアップ</code> - tox.iniの設定</li>
+</ol>
+<p>では、次のエピソードに進むとしましょう。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works" target="_blank" rel="noopener" title="GitHub Repository/claude-code-booster" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

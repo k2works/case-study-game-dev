@@ -1,0 +1,1211 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Site Description">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>ClojureScriptで作るぷよぷよ：テスト駆動開発による実装ガイド - Site Name</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#clojurescript" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Site Name" class="md-header__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Site Name
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ClojureScriptで作るぷよぷよ：テスト駆動開発による実装ガイド
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Site Name" class="md-nav__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Site Name
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="clojurescript">ClojureScriptで作るぷよぷよ：テスト駆動開発による実装ガイド<a class="headerlink" href="#clojurescript" title="Permanent link">&para;</a></h1>
+<h2 id="_1">はじめに<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>このガイドでは、ClojureScriptとテスト駆動開発（TDD）を使用してぷよぷよゲームを実装する過程を詳しく解説します。関数型プログラミングのパラダイムとTDDの思想を組み合わせて、保守性と品質の高いゲームシステムを構築していきます。</p>
+<h2 id="_2">目次<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#プロジェクト概要">プロジェクト概要</a></li>
+<li><a href="#技術スタックと環境設定">技術スタックと環境設定</a></li>
+<li><a href="#tdd開発プロセス">TDD開発プロセス</a></li>
+<li><a href="#phase-1-基盤システム">Phase 1: 基盤システム</a></li>
+<li><a href="#phase-2-ぷよ管理システム">Phase 2: ぷよ管理システム</a></li>
+<li><a href="#phase-3-ゲームロジック">Phase 3: ゲームロジック</a></li>
+<li><a href="#phase-4-ユーザーインターフェース">Phase 4: ユーザーインターフェース</a></li>
+<li><a href="#phase-5-ゲームフロー">Phase 5: ゲームフロー</a></li>
+<li><a href="#コード品質向上の実践">コード品質向上の実践</a></li>
+<li><a href="#学んだ教訓と今後の拡張">学んだ教訓と今後の拡張</a></li>
+</ol>
+<h2 id="_3">プロジェクト概要<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">ゲーム仕様<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ボードサイズ</strong>: 8×12マス（幅8、高さ12）</li>
+<li><strong>ぷよの色</strong>: 5色（赤、緑、青、黄、紫）</li>
+<li><strong>消去ルール</strong>: 同色4つ以上の接続で消去</li>
+<li><strong>連鎖システム</strong>: 消去後の落下により新たな接続が形成される</li>
+<li><strong>スコアリング</strong>: 基本スコア + 連鎖ボーナス + 全消しボーナス</li>
+</ul>
+<h3 id="_5">操作方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>←</code> <code>→</code> : 左右移動</li>
+<li><code>↓</code> : 高速落下</li>
+<li><code>↑</code> : 回転</li>
+<li><code>スペース</code> : ハードドロップ</li>
+</ul>
+<h2 id="_6">技術スタックと環境設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_7">主要技術<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">;; package.json 設定例</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="s">&quot;dependencies&quot;</span><span class="err">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;shadow-cljs&quot;</span><span class="err">:</span><span class="w"> </span><span class="s">&quot;^2.20.1&quot;</span>
+<span class="w">  </span><span class="p">}</span>,
+<span class="w">  </span><span class="s">&quot;scripts&quot;</span><span class="err">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;dev&quot;</span><span class="err">:</span><span class="w"> </span><span class="s">&quot;shadow-cljs watch app&quot;</span>,
+<span class="w">    </span><span class="s">&quot;build&quot;</span><span class="err">:</span><span class="w"> </span><span class="s">&quot;shadow-cljs release app&quot;</span>,
+<span class="w">    </span><span class="s">&quot;test&quot;</span><span class="err">:</span><span class="w"> </span><span class="s">&quot;shadow-cljs compile test&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="_8">技術選択の理由<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>ClojureScript</strong>: 関数型プログラミングによる副作用の制御</li>
+<li><strong>shadow-cljs</strong>: モダンな開発環境とホットリロード</li>
+<li><strong>HTML5 Canvas</strong>: 高性能な2D描画</li>
+<li><strong>cljs.test</strong>: シンプルで効果的なテストフレームワーク</li>
+</ol>
+<h3 id="_9">プロジェクト構成<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>app/
+├── src/puyo/core.cljs      # メイン実装
+├── test/puyo/core_test.cljs # テストコード
+├── public/
+│   ├── index.html          # ゲームUI
+│   └── js/                 # ビルド成果物
+└── shadow-cljs.edn         # ビルド設定
+</code></pre></div>
+<h2 id="tdd">TDD開発プロセス<a class="headerlink" href="#tdd" title="Permanent link">&para;</a></h2>
+<h3 id="_10">基本サイクル<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>各機能実装で以下のRed-Green-Refactorサイクルを実行：</p>
+<ol>
+<li><strong>Red</strong>: 失敗するテストを書く</li>
+<li><strong>Green</strong>: テストを通す最小限の実装</li>
+<li><strong>Refactor</strong>: コードの品質を向上させる</li>
+</ol>
+<h3 id="_11">実際の開発例<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">;; Phase 1: テストファースト（Red）</span>
+<span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="nv">board-test</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">testing</span><span class="w"> </span><span class="s">&quot;ボード作成&quot;</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="nf">core/create-empty-board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">vector? </span><span class="nv">board</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;ボードはベクター&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">12</span><span class="w"> </span><span class="p">(</span><span class="nb">count </span><span class="nv">board</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;高さ12&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">8</span><span class="w"> </span><span class="p">(</span><span class="nb">count </span><span class="p">(</span><span class="nb">first </span><span class="nv">board</span><span class="p">)))</span><span class="w"> </span><span class="s">&quot;幅8&quot;</span><span class="p">))))</span>
+
+<span class="c1">;; Phase 2: 最小実装（Green）</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">create-empty-board</span>
+<span class="w">  </span><span class="s">&quot;空のゲームボードを作成&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">vec</span><span class="w"> </span><span class="p">(</span><span class="nb">repeat </span><span class="nv">board-height</span><span class="w"> </span><span class="p">(</span><span class="nf">vec</span><span class="w"> </span><span class="p">(</span><span class="nb">repeat </span><span class="nv">board-width</span><span class="w"> </span><span class="mi">0</span><span class="p">)))))</span>
+
+<span class="c1">;; Phase 3: リファクタリング（テスト追加）</span>
+<span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="nv">board-initialization-test</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">testing</span><span class="w"> </span><span class="s">&quot;ボード初期化の詳細&quot;</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="nf">core/create-empty-board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">every? </span><span class="o">#</span><span class="p">(</span><span class="nb">every? zero? </span><span class="nv">%</span><span class="p">)</span><span class="w"> </span><span class="nv">board</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;全セルが空&quot;</span><span class="p">))))</span>
+</code></pre></div>
+<h2 id="phase-1">Phase 1: 基盤システム<a class="headerlink" href="#phase-1" title="Permanent link">&para;</a></h2>
+<h3 id="t001">T001: ゲームボード作成<a class="headerlink" href="#t001" title="Permanent link">&para;</a></h3>
+<h4 id="_12">実装アプローチ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">board-width</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">board-height</span><span class="w"> </span><span class="mi">12</span><span class="p">)</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">create-empty-board</span>
+<span class="w">  </span><span class="s">&quot;空のゲームボードを作成</span>
+
+<span class="s">   Returns:</span>
+<span class="s">     12×8の2次元ベクター（0で初期化）&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">vec</span><span class="w"> </span><span class="p">(</span><span class="nb">repeat </span><span class="nv">board-height</span><span class="w"> </span><span class="p">(</span><span class="nf">vec</span><span class="w"> </span><span class="p">(</span><span class="nb">repeat </span><span class="nv">board-width</span><span class="w"> </span><span class="mi">0</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">valid-position?</span>
+<span class="w">  </span><span class="s">&quot;座標が有効な範囲内かチェック&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">x</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">x</span><span class="w"> </span><span class="nv">board-width</span><span class="p">)</span>
+<span class="w">       </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">y</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">y</span><span class="w"> </span><span class="nv">board-height</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">get-puyo-at</span>
+<span class="w">  </span><span class="s">&quot;指定位置のぷよ色を取得&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="nv">x</span><span class="p">])))</span>
+</code></pre></div>
+<h4 id="_13">テスト実装<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="nv">board-test</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">testing</span><span class="w"> </span><span class="s">&quot;ボード作成&quot;</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="nf">core/create-empty-board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">vector? </span><span class="nv">board</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;ボードはベクター&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">12</span><span class="w"> </span><span class="p">(</span><span class="nb">count </span><span class="nv">board</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;高さ12&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">8</span><span class="w"> </span><span class="p">(</span><span class="nb">count </span><span class="p">(</span><span class="nb">first </span><span class="nv">board</span><span class="p">)))</span><span class="w"> </span><span class="s">&quot;幅8&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">every? </span><span class="o">#</span><span class="p">(</span><span class="nb">every? zero? </span><span class="nv">%</span><span class="p">)</span><span class="w"> </span><span class="nv">board</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;全セルが空&quot;</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="nv">coordinate-validation-test</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">testing</span><span class="w"> </span><span class="s">&quot;座標検証&quot;</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">true? </span><span class="p">(</span><span class="nf">core/valid-position?</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;左上角有効&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">true? </span><span class="p">(</span><span class="nf">core/valid-position?</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="mi">11</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;右下角有効&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">false? </span><span class="p">(</span><span class="nf">core/valid-position?</span><span class="w"> </span><span class="mi">-1</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;左境界外無効&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">false? </span><span class="p">(</span><span class="nf">core/valid-position?</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;右境界外無効&quot;</span><span class="p">)))</span>
+</code></pre></div>
+<h3 id="t002">T002: ぷよの基本データ構造<a class="headerlink" href="#t002" title="Permanent link">&para;</a></h3>
+<h4 id="_14">色システムの実装<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">colors</span>
+<span class="w">  </span><span class="s">&quot;ぷよの色定義&quot;</span>
+<span class="w">  </span><span class="p">{</span><span class="mi">0</span><span class="w"> </span><span class="s">&quot;#ffffff&quot;</span><span class="w">  </span><span class="c1">; 空（白）</span>
+<span class="w">   </span><span class="mi">1</span><span class="w"> </span><span class="s">&quot;#ff4444&quot;</span><span class="w">  </span><span class="c1">; 赤</span>
+<span class="w">   </span><span class="mi">2</span><span class="w"> </span><span class="s">&quot;#44ff44&quot;</span><span class="w">  </span><span class="c1">; 緑  </span>
+<span class="w">   </span><span class="mi">3</span><span class="w"> </span><span class="s">&quot;#4444ff&quot;</span><span class="w">  </span><span class="c1">; 青</span>
+<span class="w">   </span><span class="mi">4</span><span class="w"> </span><span class="s">&quot;#ffff44&quot;</span><span class="w">  </span><span class="c1">; 黄</span>
+<span class="w">   </span><span class="mi">5</span><span class="w"> </span><span class="s">&quot;#ff44ff&quot;</span><span class="p">})</span><span class="w"> </span><span class="c1">; 紫</span>
+
+<span class="p">(</span><span class="k">def </span><span class="nv">valid-colors</span><span class="w"> </span><span class="o">#</span><span class="p">{</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="mi">5</span><span class="p">})</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">valid-color?</span>
+<span class="w">  </span><span class="s">&quot;色番号が有効かどうかチェック&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">color</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">contains? </span><span class="nv">valid-colors</span><span class="w"> </span><span class="nv">color</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">get-puyo-color</span>
+<span class="w">  </span><span class="s">&quot;色番号に対応するカラーコードを取得&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">color-num</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">get </span><span class="nv">colors</span><span class="w"> </span><span class="nv">color-num</span><span class="w"> </span><span class="s">&quot;#ffffff&quot;</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="t003-2">T003: 組ぷよ（2個セット）の実装<a class="headerlink" href="#t003-2" title="Permanent link">&para;</a></h3>
+<h4 id="_15">データ構造設計<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">valid-rotations</span><span class="w"> </span><span class="o">#</span><span class="p">{</span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">})</span><span class="w">  </span><span class="c1">; 0°、90°、180°、270°</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">create-puyo-pair</span>
+<span class="w">  </span><span class="s">&quot;組ぷよ（2個セット）を作成</span>
+
+<span class="s">   Args:</span>
+<span class="s">     color1: puyo1の色 (1-5)</span>
+<span class="s">     color2: puyo2の色 (1-5)  </span>
+<span class="s">     x: 基準位置のx座標</span>
+<span class="s">     y: 基準位置のy座標</span>
+
+<span class="s">   Returns:</span>
+<span class="s">     組ぷよマップ {:puyo1 {...} :puyo2 {...} :rotation 0}&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">color1</span><span class="w"> </span><span class="nv">color2</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-not </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-color?</span><span class="w"> </span><span class="nv">color1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">valid-color?</span><span class="w"> </span><span class="nv">color2</span><span class="p">))</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">throw</span><span class="w"> </span><span class="p">(</span><span class="nf">js/Error.</span><span class="w"> </span><span class="s">&quot;Invalid color&quot;</span><span class="p">)))</span>
+
+<span class="w">  </span><span class="p">{</span><span class="ss">:puyo1</span><span class="w"> </span><span class="p">{</span><span class="ss">:color</span><span class="w"> </span><span class="nv">color1</span><span class="w"> </span><span class="ss">:x</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">y</span><span class="p">}</span>
+<span class="w">   </span><span class="ss">:puyo2</span><span class="w"> </span><span class="p">{</span><span class="ss">:color</span><span class="w"> </span><span class="nv">color2</span><span class="w"> </span><span class="ss">:x</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">y</span><span class="w"> </span><span class="mi">1</span><span class="p">)}</span>
+<span class="w">   </span><span class="ss">:rotation</span><span class="w"> </span><span class="mi">0</span><span class="p">})</span>
+</code></pre></div>
+<h4 id="_16">回転システム<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">get-puyo-pair-positions</span>
+<span class="w">  </span><span class="s">&quot;組ぷよの2つのぷよの実際の座標を計算&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">base-x</span><span class="w"> </span><span class="nv">base-y</span><span class="w"> </span><span class="nv">rotation</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">case</span><span class="w"> </span><span class="nv">rotation</span>
+<span class="w">    </span><span class="mi">0</span><span class="w"> </span><span class="p">[{</span><span class="ss">:x</span><span class="w"> </span><span class="nv">base-x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">base-y</span><span class="p">}</span><span class="w">           </span><span class="c1">; 縦（上下）</span>
+<span class="w">       </span><span class="p">{</span><span class="ss">:x</span><span class="w"> </span><span class="nv">base-x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">base-y</span><span class="w"> </span><span class="mi">1</span><span class="p">)}]</span>
+<span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="p">[{</span><span class="ss">:x</span><span class="w"> </span><span class="nv">base-x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">base-y</span><span class="p">}</span><span class="w">           </span><span class="c1">; 右（左右）</span>
+<span class="w">       </span><span class="p">{</span><span class="ss">:x</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">base-x</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">base-y</span><span class="p">}]</span>
+<span class="w">    </span><span class="mi">2</span><span class="w"> </span><span class="p">[{</span><span class="ss">:x</span><span class="w"> </span><span class="nv">base-x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">base-y</span><span class="p">}</span><span class="w">           </span><span class="c1">; 逆縦（下上）</span>
+<span class="w">       </span><span class="p">{</span><span class="ss">:x</span><span class="w"> </span><span class="nv">base-x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="p">(</span><span class="nb">- </span><span class="nv">base-y</span><span class="w"> </span><span class="mi">1</span><span class="p">)}]</span>
+<span class="w">    </span><span class="mi">3</span><span class="w"> </span><span class="p">[{</span><span class="ss">:x</span><span class="w"> </span><span class="nv">base-x</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">base-y</span><span class="p">}</span><span class="w">           </span><span class="c1">; 左（右左）</span>
+<span class="w">       </span><span class="p">{</span><span class="ss">:x</span><span class="w"> </span><span class="p">(</span><span class="nb">- </span><span class="nv">base-x</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="nv">base-y</span><span class="p">}]))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">rotate-puyo-pair</span>
+<span class="w">  </span><span class="s">&quot;組ぷよを時計回りに90度回転&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">update</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="ss">:rotation</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">%</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="mi">4</span><span class="p">)))</span>
+</code></pre></div>
+<h4 id="_17">テスト実装<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="nv">puyo-creation-test</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">testing</span><span class="w"> </span><span class="s">&quot;ぷよ作成&quot;</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">pair</span><span class="w"> </span><span class="p">(</span><span class="nf">core/create-puyo-pair</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">0</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">map? </span><span class="nv">pair</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;組ぷよはマップ&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">pair</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:color</span><span class="p">]))</span><span class="w"> </span><span class="s">&quot;puyo1の色&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">2</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">pair</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo2</span><span class="w"> </span><span class="ss">:color</span><span class="p">]))</span><span class="w"> </span><span class="s">&quot;puyo2の色&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="ss">:rotation</span><span class="w"> </span><span class="nv">pair</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;初期回転状態&quot;</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="nf">deftest</span><span class="w"> </span><span class="nv">rotation-test</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">testing</span><span class="w"> </span><span class="s">&quot;回転機能&quot;</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">pair</span><span class="w"> </span><span class="p">(</span><span class="nf">core/create-puyo-pair</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">          </span><span class="nv">rotated</span><span class="w"> </span><span class="p">(</span><span class="nf">core/rotate-puyo-pair</span><span class="w"> </span><span class="nv">pair</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="ss">:rotation</span><span class="w"> </span><span class="nv">rotated</span><span class="p">))</span><span class="w"> </span><span class="s">&quot;回転状態が1&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">3</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">rotated</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:x</span><span class="p">]))</span><span class="w"> </span><span class="s">&quot;puyo1のx座標不変&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">is</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="mi">4</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">rotated</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo2</span><span class="w"> </span><span class="ss">:x</span><span class="p">]))</span><span class="w"> </span><span class="s">&quot;puyo2が右に移動&quot;</span><span class="p">))))</span>
+</code></pre></div>
+<h2 id="phase-2">Phase 2: ぷよ管理システム<a class="headerlink" href="#phase-2" title="Permanent link">&para;</a></h2>
+<h3 id="t005">T005: ランダムなぷよ生成<a class="headerlink" href="#t005" title="Permanent link">&para;</a></h3>
+<h4 id="_18">実装<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">generate-random-color</span>
+<span class="w">  </span><span class="s">&quot;1-5の範囲でランダムな色を生成&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="nb">rand-int </span><span class="mi">5</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">generate-random-puyo-pair</span>
+<span class="w">  </span><span class="s">&quot;ランダムな色の組ぷよを生成&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">create-puyo-pair</span><span class="w"> </span><span class="p">(</span><span class="nf">generate-random-color</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">(</span><span class="nf">generate-random-color</span><span class="p">)</span>
+<span class="w">                    </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">spawn-new-puyo-pair</span>
+<span class="w">  </span><span class="s">&quot;新しい組ぷよを画面上部に生成&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">generate-random-puyo-pair</span><span class="w"> </span><span class="p">(</span><span class="nb">quot </span><span class="nv">board-width</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="t006-t007">T006-T007: 組ぷよの移動と回転<a class="headerlink" href="#t006-t007" title="Permanent link">&para;</a></h3>
+<h4 id="_19">移動システム<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">can-move-puyo-pair?</span>
+<span class="w">  </span><span class="s">&quot;組ぷよが指定方向に移動可能かチェック&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">direction</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">positions</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-pair-positions</span>
+<span class="w">                   </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:x</span><span class="p">])</span>
+<span class="w">                   </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:y</span><span class="p">])</span>
+<span class="w">                   </span><span class="p">(</span><span class="ss">:rotation</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="p">))</span>
+<span class="w">        </span><span class="nv">offset</span><span class="w"> </span><span class="p">(</span><span class="nf">case</span><span class="w"> </span><span class="nv">direction</span>
+<span class="w">                 </span><span class="ss">:left</span><span class="w"> </span><span class="mi">-1</span>
+<span class="w">                 </span><span class="ss">:right</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="nv">new-positions</span><span class="w"> </span><span class="p">(</span><span class="nb">map </span><span class="o">#</span><span class="p">(</span><span class="nb">assoc </span><span class="nv">%</span><span class="w"> </span><span class="ss">:x</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="ss">:x</span><span class="w"> </span><span class="nv">%</span><span class="p">)</span><span class="w"> </span><span class="nv">offset</span><span class="p">))</span><span class="w"> </span><span class="nv">positions</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="p">(</span><span class="nb">every? </span><span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span><span class="w"> </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]}]</span>
+<span class="w">              </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span>
+<span class="w">                   </span><span class="p">(</span><span class="nb">= </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">))))</span>
+<span class="w">            </span><span class="nv">new-positions</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">move-puyo-pair-left</span>
+<span class="w">  </span><span class="s">&quot;組ぷよを左に移動&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">can-move-puyo-pair?</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="ss">:left</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">-&gt; </span><span class="nv">puyo-pair</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">update-in</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:x</span><span class="p">]</span><span class="w"> </span><span class="nv">dec</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">update-in</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo2</span><span class="w"> </span><span class="ss">:x</span><span class="p">]</span><span class="w"> </span><span class="nv">dec</span><span class="p">))</span>
+<span class="w">    </span><span class="nv">puyo-pair</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">move-puyo-pair-right</span>
+<span class="w">  </span><span class="s">&quot;組ぷよを右に移動&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">can-move-puyo-pair?</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="ss">:right</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">-&gt; </span><span class="nv">puyo-pair</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">update-in</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:x</span><span class="p">]</span><span class="w"> </span><span class="nv">inc</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">update-in</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo2</span><span class="w"> </span><span class="ss">:x</span><span class="p">]</span><span class="w"> </span><span class="nv">inc</span><span class="p">))</span>
+<span class="w">    </span><span class="nv">puyo-pair</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="t008">T008: 重力システム<a class="headerlink" href="#t008" title="Permanent link">&para;</a></h3>
+<h4 id="_20">落下処理<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">can-fall?</span>
+<span class="w">  </span><span class="s">&quot;組ぷよが下に落下可能かチェック&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">positions</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-pair-positions</span>
+<span class="w">                   </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:x</span><span class="p">])</span>
+<span class="w">                   </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:y</span><span class="p">])</span>
+<span class="w">                   </span><span class="p">(</span><span class="ss">:rotation</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="p">))</span>
+<span class="w">        </span><span class="nv">new-positions</span><span class="w"> </span><span class="p">(</span><span class="nb">map </span><span class="o">#</span><span class="p">(</span><span class="nb">assoc </span><span class="nv">%</span><span class="w"> </span><span class="ss">:y</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="ss">:y</span><span class="w"> </span><span class="nv">%</span><span class="p">)</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="nv">positions</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="p">(</span><span class="nb">every? </span><span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span><span class="w"> </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]}]</span>
+<span class="w">              </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span>
+<span class="w">                   </span><span class="p">(</span><span class="nb">= </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">))))</span>
+<span class="w">            </span><span class="nv">new-positions</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">move-puyo-pair-down</span>
+<span class="w">  </span><span class="s">&quot;組ぷよを下に移動&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">can-fall?</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">-&gt; </span><span class="nv">puyo-pair</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">update-in</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:y</span><span class="p">]</span><span class="w"> </span><span class="nv">inc</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">update-in</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo2</span><span class="w"> </span><span class="ss">:y</span><span class="p">]</span><span class="w"> </span><span class="nv">inc</span><span class="p">))</span>
+<span class="w">    </span><span class="nv">puyo-pair</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">hard-drop</span>
+<span class="w">  </span><span class="s">&quot;組ぷよを一気に底まで落下&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">puyo-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">current-pair</span><span class="w"> </span><span class="nv">puyo-pair</span><span class="p">]</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">next-pair</span><span class="w"> </span><span class="p">(</span><span class="nf">move-puyo-pair-down</span><span class="w"> </span><span class="nv">current-pair</span><span class="w"> </span><span class="nv">board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="nv">current-pair</span><span class="w"> </span><span class="nv">next-pair</span><span class="p">)</span>
+<span class="w">        </span><span class="nv">current-pair</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="nv">next-pair</span><span class="p">)))))</span>
+</code></pre></div>
+<h3 id="t009">T009: ぷよの固定処理<a class="headerlink" href="#t009" title="Permanent link">&para;</a></h3>
+<h4 id="_21">浮いているぷよの落下<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">drop-floating-puyos</span>
+<span class="w">  </span><span class="s">&quot;浮いているぷよを重力で落下させる&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">current-board</span><span class="w"> </span><span class="nv">board</span>
+<span class="w">         </span><span class="nv">changed?</span><span class="w"> </span><span class="nv">true</span><span class="p">]</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">if-not </span><span class="nv">changed?</span>
+<span class="w">      </span><span class="nv">current-board</span>
+<span class="w">      </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">new-board</span><span class="w"> </span>
+<span class="w">            </span><span class="p">(</span><span class="nf">reduce</span>
+<span class="w">             </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">acc-board</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">               </span><span class="p">(</span><span class="nf">reduce</span>
+<span class="w">                </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">acc-board-x</span><span class="w"> </span><span class="nv">x</span><span class="p">]</span>
+<span class="w">                  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">puyo-color</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">acc-board-x</span><span class="w"> </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="nv">x</span><span class="p">])]</span>
+<span class="w">                    </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">puyo-color</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">y</span><span class="w"> </span><span class="p">(</span><span class="nb">- </span><span class="nv">board-height</span><span class="w"> </span><span class="mi">1</span><span class="p">)))</span>
+<span class="w">                      </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">below</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">acc-board-x</span><span class="w"> </span><span class="p">[(</span><span class="nb">+ </span><span class="nv">y</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nv">x</span><span class="p">])]</span>
+<span class="w">                        </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="nv">below</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">                          </span><span class="p">(</span><span class="nb">-&gt; </span><span class="nv">acc-board-x</span>
+<span class="w">                              </span><span class="p">(</span><span class="nf">assoc-in</span><span class="w"> </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="nv">x</span><span class="p">]</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">                              </span><span class="p">(</span><span class="nf">assoc-in</span><span class="w"> </span><span class="p">[(</span><span class="nb">+ </span><span class="nv">y</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nv">x</span><span class="p">]</span><span class="w"> </span><span class="nv">puyo-color</span><span class="p">))</span>
+<span class="w">                          </span><span class="nv">acc-board-x</span><span class="p">))</span>
+<span class="w">                      </span><span class="nv">acc-board-x</span><span class="p">)))</span>
+<span class="w">                </span><span class="nv">acc-board</span>
+<span class="w">                </span><span class="p">(</span><span class="nb">range </span><span class="nv">board-width</span><span class="p">)))</span>
+<span class="w">             </span><span class="nv">current-board</span>
+<span class="w">             </span><span class="p">(</span><span class="nb">range </span><span class="p">(</span><span class="nb">- </span><span class="nv">board-height</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="mi">-1</span><span class="w"> </span><span class="mi">-1</span><span class="p">))]</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="nv">new-board</span><span class="w"> </span><span class="p">(</span><span class="nb">not= </span><span class="nv">current-board</span><span class="w"> </span><span class="nv">new-board</span><span class="p">))))))</span>
+</code></pre></div>
+<h2 id="phase-3">Phase 3: ゲームロジック<a class="headerlink" href="#phase-3" title="Permanent link">&para;</a></h2>
+<h3 id="t010">T010: 隣接ぷよの検索<a class="headerlink" href="#t010" title="Permanent link">&para;</a></h3>
+<h4 id="_22">連結成分の探索<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">find-adjacent-puyos</span>
+<span class="w">  </span><span class="s">&quot;指定位置から隣接する同色ぷよを検索（幅優先探索）&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">target-color</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&lt;= </span><span class="nv">target-color</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">      </span><span class="p">[]</span>
+<span class="w">      </span><span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">visited</span><span class="w"> </span><span class="o">#</span><span class="p">{}</span>
+<span class="w">             </span><span class="nv">queue</span><span class="w"> </span><span class="p">[[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]]</span>
+<span class="w">             </span><span class="nv">result</span><span class="w"> </span><span class="p">[]]</span>
+<span class="w">        </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">empty?</span><span class="w"> </span><span class="nv">queue</span><span class="p">)</span>
+<span class="w">          </span><span class="nv">result</span>
+<span class="w">          </span><span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">curr-x</span><span class="w"> </span><span class="nv">curr-y</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">first </span><span class="nv">queue</span><span class="p">)</span>
+<span class="w">                </span><span class="nv">remaining-queue</span><span class="w"> </span><span class="p">(</span><span class="nb">rest </span><span class="nv">queue</span><span class="p">)]</span>
+<span class="w">            </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">contains? </span><span class="nv">visited</span><span class="w"> </span><span class="p">[</span><span class="nv">curr-x</span><span class="w"> </span><span class="nv">curr-y</span><span class="p">])</span>
+<span class="w">              </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="nv">visited</span><span class="w"> </span><span class="nv">remaining-queue</span><span class="w"> </span><span class="nv">result</span><span class="p">)</span>
+<span class="w">              </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">new-visited</span><span class="w"> </span><span class="p">(</span><span class="nb">conj </span><span class="nv">visited</span><span class="w"> </span><span class="p">[</span><span class="nv">curr-x</span><span class="w"> </span><span class="nv">curr-y</span><span class="p">])</span>
+<span class="w">                    </span><span class="nv">new-result</span><span class="w"> </span><span class="p">(</span><span class="nb">conj </span><span class="nv">result</span><span class="w"> </span><span class="p">[</span><span class="nv">curr-x</span><span class="w"> </span><span class="nv">curr-y</span><span class="p">])</span>
+<span class="w">                    </span><span class="nv">neighbors</span><span class="w"> </span><span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">dx</span><span class="w"> </span><span class="p">[</span><span class="mi">-1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">                                    </span><span class="nv">dy</span><span class="w"> </span><span class="p">[</span><span class="mi">-1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">                                    </span><span class="ss">:when</span><span class="w"> </span><span class="p">(</span><span class="nb">or </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">= </span><span class="nv">dx</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">not= </span><span class="nv">dy</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+<span class="w">                                             </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">not= </span><span class="nv">dx</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">= </span><span class="nv">dy</span><span class="w"> </span><span class="mi">0</span><span class="p">)))</span>
+<span class="w">                                    </span><span class="ss">:let</span><span class="w"> </span><span class="p">[</span><span class="nv">nx</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">curr-x</span><span class="w"> </span><span class="nv">dx</span><span class="p">)</span>
+<span class="w">                                          </span><span class="nv">ny</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">curr-y</span><span class="w"> </span><span class="nv">dy</span><span class="p">)]</span>
+<span class="w">                                    </span><span class="ss">:when</span><span class="w"> </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">nx</span><span class="w"> </span><span class="nv">ny</span><span class="p">)</span>
+<span class="w">                                             </span><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">nx</span><span class="w"> </span><span class="nv">ny</span><span class="p">)</span><span class="w"> </span><span class="nv">target-color</span><span class="p">)</span>
+<span class="w">                                             </span><span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nb">contains? </span><span class="nv">new-visited</span><span class="w"> </span><span class="p">[</span><span class="nv">nx</span><span class="w"> </span><span class="nv">ny</span><span class="p">])))]</span>
+<span class="w">                                </span><span class="p">[</span><span class="nv">nx</span><span class="w"> </span><span class="nv">ny</span><span class="p">])</span>
+<span class="w">                    </span><span class="nv">new-queue</span><span class="w"> </span><span class="p">(</span><span class="nb">concat </span><span class="nv">remaining-queue</span><span class="w"> </span><span class="nv">neighbors</span><span class="p">)]</span>
+<span class="w">                </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="nv">new-visited</span><span class="w"> </span><span class="nv">new-queue</span><span class="w"> </span><span class="nv">new-result</span><span class="p">)))))))))</span>
+</code></pre></div>
+<h3 id="t011">T011: ぷよ消去の実行<a class="headerlink" href="#t011" title="Permanent link">&para;</a></h3>
+<h4 id="_23">消去処理<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">find-groups-to-clear</span>
+<span class="w">  </span><span class="s">&quot;消去すべきぷよグループを検索（4つ以上の連結成分）&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">all-positions</span><span class="w"> </span><span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="p">(</span><span class="nb">range </span><span class="nv">board-height</span><span class="p">)</span>
+<span class="w">                           </span><span class="nv">x</span><span class="w"> </span><span class="p">(</span><span class="nb">range </span><span class="nv">board-width</span><span class="p">)</span>
+<span class="w">                           </span><span class="ss">:when</span><span class="w"> </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="p">)]</span>
+<span class="w">                       </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">])</span>
+<span class="w">        </span><span class="nv">checked</span><span class="w"> </span><span class="p">(</span><span class="nf">atom</span><span class="w"> </span><span class="o">#</span><span class="p">{})]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">keep</span><span class="w"> </span><span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]]</span>
+<span class="w">            </span><span class="p">(</span><span class="nb">when-not </span><span class="p">(</span><span class="nb">contains? </span><span class="o">@</span><span class="nv">checked</span><span class="w"> </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">])</span>
+<span class="w">              </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">group</span><span class="w"> </span><span class="p">(</span><span class="nf">find-adjacent-puyos</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)]</span>
+<span class="w">                </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">checked</span><span class="w"> </span><span class="nb">into </span><span class="nv">group</span><span class="p">)</span>
+<span class="w">                </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt;= </span><span class="p">(</span><span class="nb">count </span><span class="nv">group</span><span class="p">)</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span>
+<span class="w">                  </span><span class="nv">group</span><span class="p">))))</span>
+<span class="w">          </span><span class="nv">all-positions</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">clear-puyo-groups</span>
+<span class="w">  </span><span class="s">&quot;指定されたぷよグループをボードから消去&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">groups</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">reduce </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">acc-board</span><span class="w"> </span><span class="nv">group</span><span class="p">]</span>
+<span class="w">            </span><span class="p">(</span><span class="nb">reduce </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]]</span>
+<span class="w">                      </span><span class="p">(</span><span class="nf">assoc-in</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="nv">x</span><span class="p">]</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+<span class="w">                    </span><span class="nv">acc-board</span>
+<span class="w">                    </span><span class="nv">group</span><span class="p">))</span>
+<span class="w">          </span><span class="nv">board</span>
+<span class="w">          </span><span class="nv">groups</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="t012">T012: 連鎖システム<a class="headerlink" href="#t012" title="Permanent link">&para;</a></h3>
+<h4 id="_24">連鎖処理<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">execute-chain</span>
+<span class="w">  </span><span class="s">&quot;連鎖処理を実行し、結果を返す&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">current-board</span><span class="w"> </span><span class="nv">board</span>
+<span class="w">         </span><span class="nv">chain-count</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="nv">total-score</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">groups</span><span class="w"> </span><span class="p">(</span><span class="nf">find-groups-to-clear</span><span class="w"> </span><span class="nv">current-board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">empty?</span><span class="w"> </span><span class="nv">groups</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span><span class="ss">:board</span><span class="w"> </span><span class="nv">current-board</span><span class="w"> </span>
+<span class="w">         </span><span class="ss">:chain-count</span><span class="w"> </span><span class="nv">chain-count</span><span class="w"> </span>
+<span class="w">         </span><span class="ss">:total-score</span><span class="w"> </span><span class="nv">total-score</span><span class="p">}</span>
+<span class="w">        </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">cleared-board</span><span class="w"> </span><span class="p">(</span><span class="nf">clear-puyo-groups</span><span class="w"> </span><span class="nv">current-board</span><span class="w"> </span><span class="nv">groups</span><span class="p">)</span>
+<span class="w">              </span><span class="nv">dropped-board</span><span class="w"> </span><span class="p">(</span><span class="nf">drop-floating-puyos</span><span class="w"> </span><span class="nv">cleared-board</span><span class="p">)</span>
+<span class="w">              </span><span class="nv">cleared-count</span><span class="w"> </span><span class="p">(</span><span class="nb">reduce + </span><span class="p">(</span><span class="nb">map count </span><span class="nv">groups</span><span class="p">))</span>
+<span class="w">              </span><span class="nv">chain-bonus</span><span class="w"> </span><span class="p">(</span><span class="nf">calculate-chain-bonus</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">chain-count</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">              </span><span class="nv">clear-score</span><span class="w"> </span><span class="p">(</span><span class="nf">calculate-clear-score</span><span class="w"> </span><span class="nv">cleared-count</span><span class="w"> </span><span class="nv">chain-bonus</span><span class="p">)]</span>
+<span class="w">          </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="nv">dropped-board</span>
+<span class="w">                 </span><span class="p">(</span><span class="nb">+ </span><span class="nv">chain-count</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                 </span><span class="p">(</span><span class="nb">+ </span><span class="nv">total-score</span><span class="w"> </span><span class="nv">clear-score</span><span class="p">)))))))</span>
+</code></pre></div>
+<h3 id="t013-t014">T013-T014: スコア計算システム<a class="headerlink" href="#t013-t014" title="Permanent link">&para;</a></h3>
+<h4 id="_25">スコア計算<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">calculate-chain-bonus</span>
+<span class="w">  </span><span class="s">&quot;連鎖ボーナス計算&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">chain-count</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">case</span><span class="w"> </span><span class="nv">chain-count</span>
+<span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="mi">2</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">    </span><span class="mi">3</span><span class="w"> </span><span class="mi">16</span>
+<span class="w">    </span><span class="mi">4</span><span class="w"> </span><span class="mi">32</span>
+<span class="w">    </span><span class="mi">5</span><span class="w"> </span><span class="mi">64</span>
+<span class="w">    </span><span class="mi">6</span><span class="w"> </span><span class="mi">96</span>
+<span class="w">    </span><span class="mi">7</span><span class="w"> </span><span class="mi">128</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">* </span><span class="nv">chain-count</span><span class="w"> </span><span class="mi">32</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">calculate-clear-score</span>
+<span class="w">  </span><span class="s">&quot;基本消去スコア計算&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">cleared-count</span><span class="w"> </span><span class="nv">chain-bonus</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">base-score</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="nv">cleared-count</span><span class="w"> </span><span class="mi">10</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">+ </span><span class="nv">base-score</span><span class="w"> </span><span class="nv">chain-bonus</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">is-perfect-clear?</span>
+<span class="w">  </span><span class="s">&quot;全消し判定&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">every? </span><span class="o">#</span><span class="p">(</span><span class="nb">every? zero? </span><span class="nv">%</span><span class="p">)</span><span class="w"> </span><span class="nv">board</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">calculate-perfect-clear-bonus</span>
+<span class="w">  </span><span class="s">&quot;全消しボーナス計算&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="mi">1000</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="phase-4">Phase 4: ユーザーインターフェース<a class="headerlink" href="#phase-4" title="Permanent link">&para;</a></h2>
+<h3 id="t015">T015: ゲーム画面の描画<a class="headerlink" href="#t015" title="Permanent link">&para;</a></h3>
+<h4 id="canvas">Canvas初期化<a class="headerlink" href="#canvas" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">ctx</span><span class="w"> </span><span class="p">(</span><span class="nf">atom</span><span class="w"> </span><span class="nv">nil</span><span class="p">))</span><span class="w">  </span><span class="c1">; Canvas描画コンテキスト</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">cell-size</span><span class="w"> </span><span class="mi">30</span><span class="p">)</span><span class="w">    </span><span class="c1">; セルサイズ（ピクセル）</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">init-canvas</span>
+<span class="w">  </span><span class="s">&quot;Canvasの初期化&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">canvas-id</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">if-let </span><span class="p">[</span><span class="nv">canvas</span><span class="w"> </span><span class="p">(</span><span class="nf">.getElementById</span><span class="w"> </span><span class="nv">js/document</span><span class="w"> </span><span class="nv">canvas-id</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">do</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">.setAttribute</span><span class="w"> </span><span class="nv">canvas</span><span class="w"> </span><span class="s">&quot;width&quot;</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="nv">board-width</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">))</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">.setAttribute</span><span class="w"> </span><span class="nv">canvas</span><span class="w"> </span><span class="s">&quot;height&quot;</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="nv">board-height</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">))</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">reset!</span><span class="w"> </span><span class="nv">ctx</span><span class="w"> </span><span class="p">(</span><span class="nf">.getContext</span><span class="w"> </span><span class="nv">canvas</span><span class="w"> </span><span class="s">&quot;2d&quot;</span><span class="p">))</span>
+<span class="w">      </span><span class="nv">true</span><span class="p">)</span>
+<span class="w">    </span><span class="nv">false</span><span class="p">))</span>
+</code></pre></div>
+<h4 id="_26">描画関数<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">draw-cell</span>
+<span class="w">  </span><span class="s">&quot;単一セルの描画（円形）&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="w"> </span><span class="nv">color</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when </span><span class="o">@</span><span class="nv">ctx</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">center-x</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">x</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">/ </span><span class="nv">cell-size</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span>
+<span class="w">          </span><span class="nv">center-y</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">y</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">/ </span><span class="nv">cell-size</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span>
+<span class="w">          </span><span class="nv">radius</span><span class="w"> </span><span class="p">(</span><span class="nb">/ </span><span class="nv">cell-size</span><span class="w"> </span><span class="mf">2.5</span><span class="p">)]</span>
+
+<span class="w">      </span><span class="c1">;; 背景（枠線）</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">.beginPath</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">.rect</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="nv">x</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="nv">y</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">)</span><span class="w"> </span><span class="nv">cell-size</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-strokeStyle</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;#dddddd&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-lineWidth</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">.stroke</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span>
+
+<span class="w">      </span><span class="c1">;; ぷよ（円形）</span>
+<span class="w">      </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">not= </span><span class="nv">color</span><span class="w"> </span><span class="s">&quot;#ffffff&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.beginPath</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.arc</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="w"> </span><span class="nv">center-x</span><span class="w"> </span><span class="nv">center-y</span><span class="w"> </span><span class="nv">radius</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="mi">2</span><span class="w"> </span><span class="nv">js/Math.PI</span><span class="p">))</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-fillStyle</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="nv">color</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.fill</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-strokeStyle</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;#333333&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-lineWidth</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.stroke</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">render-board</span>
+<span class="w">  </span><span class="s">&quot;ボード全体の描画&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when </span><span class="o">@</span><span class="nv">ctx</span>
+<span class="w">    </span><span class="c1">;; 背景クリア</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-fillStyle</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;#f0f0f0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">.fillRect</span><span class="w"> </span><span class="o">@</span><span class="nv">ctx</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span>
+<span class="w">               </span><span class="p">(</span><span class="nb">* </span><span class="nv">board-width</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">)</span><span class="w"> </span>
+<span class="w">               </span><span class="p">(</span><span class="nb">* </span><span class="nv">board-height</span><span class="w"> </span><span class="nv">cell-size</span><span class="p">))</span>
+
+<span class="w">    </span><span class="c1">;; 各セルを描画</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">doseq </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="p">(</span><span class="nb">range </span><span class="nv">board-height</span><span class="p">)</span>
+<span class="w">            </span><span class="nv">x</span><span class="w"> </span><span class="p">(</span><span class="nb">range </span><span class="nv">board-width</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">cell-value</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="nv">x</span><span class="p">])</span>
+<span class="w">            </span><span class="nv">color</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-color</span><span class="w"> </span><span class="nv">cell-value</span><span class="p">)]</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">draw-cell</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="w"> </span><span class="nv">color</span><span class="p">)))))</span>
+</code></pre></div>
+<h3 id="next">NEXTぷよ表示システム<a class="headerlink" href="#next" title="Permanent link">&para;</a></h3>
+<h4 id="next_1">NEXTぷよ管理<a class="headerlink" href="#next_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">setup-next-puyo</span>
+<span class="w">  </span><span class="s">&quot;NEXTぷよの生成&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">generate-random-puyo-pair</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">render-next-puyo</span>
+<span class="w">  </span><span class="s">&quot;NEXTぷよの描画&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">next-piece</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">next-canvas</span><span class="w"> </span><span class="p">(</span><span class="nf">.getElementById</span><span class="w"> </span><span class="nv">js/document</span><span class="w"> </span><span class="s">&quot;next-canvas&quot;</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">next-ctx</span><span class="w"> </span><span class="p">(</span><span class="nf">.getContext</span><span class="w"> </span><span class="nv">next-canvas</span><span class="w"> </span><span class="s">&quot;2d&quot;</span><span class="p">)</span>
+<span class="w">          </span><span class="nv">mini-size</span><span class="w"> </span><span class="mi">20</span><span class="p">]</span>
+<span class="w">      </span><span class="c1">;; 背景クリア</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-fillStyle</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;#f8f8f8&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">.fillRect</span><span class="w"> </span><span class="nv">next-ctx</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span>
+<span class="w">                 </span><span class="p">(</span><span class="nf">.-width</span><span class="w"> </span><span class="nv">next-canvas</span><span class="p">)</span><span class="w"> </span>
+<span class="w">                 </span><span class="p">(</span><span class="nf">.-height</span><span class="w"> </span><span class="nv">next-canvas</span><span class="p">))</span>
+
+<span class="w">      </span><span class="c1">;; NEXTぷよを小さく描画</span>
+<span class="w">      </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">color1</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-color</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">next-piece</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo1</span><span class="w"> </span><span class="ss">:color</span><span class="p">]))</span>
+<span class="w">            </span><span class="nv">color2</span><span class="w"> </span><span class="p">(</span><span class="nf">get-puyo-color</span><span class="w"> </span><span class="p">(</span><span class="nf">get-in</span><span class="w"> </span><span class="nv">next-piece</span><span class="w"> </span><span class="p">[</span><span class="ss">:puyo2</span><span class="w"> </span><span class="ss">:color</span><span class="p">]))]</span>
+<span class="w">        </span><span class="c1">;; puyo1を上に描画</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.beginPath</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.arc</span><span class="w"> </span><span class="nv">next-ctx</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="mi">25</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="mi">2</span><span class="w"> </span><span class="nv">js/Math.PI</span><span class="p">))</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-fillStyle</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)</span><span class="w"> </span><span class="nv">color1</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.fill</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">;; puyo2を下に描画</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.beginPath</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.arc</span><span class="w"> </span><span class="nv">next-ctx</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">(</span><span class="nb">* </span><span class="mi">2</span><span class="w"> </span><span class="nv">js/Math.PI</span><span class="p">))</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-fillStyle</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)</span><span class="w"> </span><span class="nv">color2</span><span class="p">)</span>
+<span class="w">        </span><span class="p">(</span><span class="nf">.fill</span><span class="w"> </span><span class="nv">next-ctx</span><span class="p">)))))</span>
+</code></pre></div>
+<h3 id="t016">T016: ゲーム情報の表示<a class="headerlink" href="#t016" title="Permanent link">&para;</a></h3>
+<h4 id="_27">情報表示関数<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">update-score-display</span>
+<span class="w">  </span><span class="s">&quot;スコア表示更新&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">score</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">element</span><span class="w"> </span><span class="p">(</span><span class="nf">.getElementById</span><span class="w"> </span><span class="nv">js/document</span><span class="w"> </span><span class="s">&quot;score&quot;</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-textContent</span><span class="w"> </span><span class="nv">element</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">str </span><span class="nv">score</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">update-level-display</span>
+<span class="w">  </span><span class="s">&quot;レベル表示更新&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">level</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">element</span><span class="w"> </span><span class="p">(</span><span class="nf">.getElementById</span><span class="w"> </span><span class="nv">js/document</span><span class="w"> </span><span class="s">&quot;level&quot;</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-textContent</span><span class="w"> </span><span class="nv">element</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">str </span><span class="nv">level</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">update-chain-display</span>
+<span class="w">  </span><span class="s">&quot;連鎖数表示更新&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">chain-count</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">element</span><span class="w"> </span><span class="p">(</span><span class="nf">.getElementById</span><span class="w"> </span><span class="nv">js/document</span><span class="w"> </span><span class="s">&quot;chain&quot;</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-textContent</span><span class="w"> </span><span class="nv">element</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">str </span><span class="nv">chain-count</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">format-game-time</span>
+<span class="w">  </span><span class="s">&quot;ゲーム時間のフォーマット（秒 → mm:ss）&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">seconds</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">minutes</span><span class="w"> </span><span class="p">(</span><span class="nb">quot </span><span class="nv">seconds</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span>
+<span class="w">        </span><span class="nv">remaining-seconds</span><span class="w"> </span><span class="p">(</span><span class="nf">mod</span><span class="w"> </span><span class="nv">seconds</span><span class="w"> </span><span class="mi">60</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">str </span><span class="nv">minutes</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">remaining-seconds</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span>
+<span class="w">                       </span><span class="p">(</span><span class="nb">str </span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="nv">remaining-seconds</span><span class="p">)</span><span class="w"> </span>
+<span class="w">                       </span><span class="nv">remaining-seconds</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">update-time-display</span>
+<span class="w">  </span><span class="s">&quot;時間表示更新&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">game-time</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">element</span><span class="w"> </span><span class="p">(</span><span class="nf">.getElementById</span><span class="w"> </span><span class="nv">js/document</span><span class="w"> </span><span class="s">&quot;time&quot;</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">set!</span><span class="w"> </span><span class="p">(</span><span class="nf">.-textContent</span><span class="w"> </span><span class="nv">element</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">format-game-time</span><span class="w"> </span><span class="nv">game-time</span><span class="p">))))</span>
+</code></pre></div>
+<h3 id="t017">T017: キーボード入力処理<a class="headerlink" href="#t017" title="Permanent link">&para;</a></h3>
+<h4 id="_28">入力ハンドリング<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">handle-key-input</span>
+<span class="w">  </span><span class="s">&quot;キー入力処理&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">key-code</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="ss">:game-running</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">case</span><span class="w"> </span><span class="nv">key-code</span>
+<span class="w">      </span><span class="s">&quot;ArrowLeft&quot;</span><span class="w">  </span><span class="p">(</span><span class="nf">process-left-movement!</span><span class="p">)</span>
+<span class="w">      </span><span class="s">&quot;ArrowRight&quot;</span><span class="w"> </span><span class="p">(</span><span class="nf">process-right-movement!</span><span class="p">)</span>
+<span class="w">      </span><span class="s">&quot;ArrowUp&quot;</span><span class="w">    </span><span class="p">(</span><span class="nf">process-rotation!</span><span class="p">)</span>
+<span class="w">      </span><span class="s">&quot;ArrowDown&quot;</span><span class="w">  </span><span class="p">(</span><span class="nf">process-soft-drop!</span><span class="p">)</span>
+<span class="w">      </span><span class="s">&quot; &quot;</span><span class="w">          </span><span class="p">(</span><span class="nf">process-hard-drop!</span><span class="p">)</span>
+<span class="w">      </span><span class="nv">nil</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">process-left-movement!</span>
+<span class="w">  </span><span class="s">&quot;左移動処理&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">current-piece</span><span class="w"> </span><span class="p">(</span><span class="ss">:current-piece</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="ss">:board</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)</span>
+<span class="w">          </span><span class="nv">moved-piece</span><span class="w"> </span><span class="p">(</span><span class="nf">move-puyo-pair-left</span><span class="w"> </span><span class="nv">current-piece</span><span class="w"> </span><span class="nv">board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nb">assoc </span><span class="ss">:current-piece</span><span class="w"> </span><span class="nv">moved-piece</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">process-right-movement!</span>
+<span class="w">  </span><span class="s">&quot;右移動処理&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">current-piece</span><span class="w"> </span><span class="p">(</span><span class="ss">:current-piece</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="ss">:board</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)</span>
+<span class="w">          </span><span class="nv">moved-piece</span><span class="w"> </span><span class="p">(</span><span class="nf">move-puyo-pair-right</span><span class="w"> </span><span class="nv">current-piece</span><span class="w"> </span><span class="nv">board</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nb">assoc </span><span class="ss">:current-piece</span><span class="w"> </span><span class="nv">moved-piece</span><span class="p">))))</span>
+</code></pre></div>
+<h2 id="phase-5">Phase 5: ゲームフロー<a class="headerlink" href="#phase-5" title="Permanent link">&para;</a></h2>
+<h3 id="t019">T019: ゲーム初期化<a class="headerlink" href="#t019" title="Permanent link">&para;</a></h3>
+<h4 id="_29">ゲーム状態管理<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defonce </span><span class="nv">game-state</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">atom</span><span class="w"> </span><span class="p">{</span><span class="ss">:board</span><span class="w"> </span><span class="nv">nil</span>
+<span class="w">         </span><span class="ss">:current-piece</span><span class="w"> </span><span class="nv">nil</span>
+<span class="w">         </span><span class="ss">:next-piece</span><span class="w"> </span><span class="nv">nil</span>
+<span class="w">         </span><span class="ss">:score</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="ss">:level</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">         </span><span class="ss">:chain-count</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="ss">:game-time</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="ss">:game-running</span><span class="w"> </span><span class="nv">false</span><span class="p">}))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">reset-game-state!</span>
+<span class="w">  </span><span class="s">&quot;ゲーム状態を初期値にリセット&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nv">assoc</span>
+<span class="w">         </span><span class="ss">:score</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="ss">:level</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">         </span><span class="ss">:chain-count</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="ss">:game-time</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">         </span><span class="ss">:game-running</span><span class="w"> </span><span class="nv">false</span>
+<span class="w">         </span><span class="ss">:current-piece</span><span class="w"> </span><span class="nv">nil</span>
+<span class="w">         </span><span class="ss">:next-piece</span><span class="w"> </span><span class="nv">nil</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">initialize-game-board!</span>
+<span class="w">  </span><span class="s">&quot;ゲームボードを空の状態で初期化&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nb">assoc </span><span class="ss">:board</span><span class="w"> </span><span class="p">(</span><span class="nf">create-empty-board</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">start-new-game!</span>
+<span class="w">  </span><span class="s">&quot;新しいゲームを開始&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">reset-game-state!</span><span class="p">)</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">initialize-game-board!</span><span class="p">)</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">spawn-initial-puyo-pair!</span><span class="p">)</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nb">assoc </span><span class="ss">:game-running</span><span class="w"> </span><span class="nv">true</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="t020">T020: ゲーム終了判定<a class="headerlink" href="#t020" title="Permanent link">&para;</a></h3>
+<h4 id="_30">ゲームオーバー処理<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">is-game-over?</span>
+<span class="w">  </span><span class="s">&quot;ゲームオーバー判定（上部2行にぷよがある場合）&quot;</span>
+<span class="w">  </span><span class="p">[</span><span class="nv">board</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">boolean </span>
+<span class="w">   </span><span class="p">(</span><span class="nb">some </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">y</span><span class="p">]</span>
+<span class="w">           </span><span class="p">(</span><span class="nb">some </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+<span class="w">                   </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+<span class="w">                 </span><span class="p">(</span><span class="nb">range </span><span class="nv">board-width</span><span class="p">)))</span>
+<span class="w">         </span><span class="p">[</span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="p">])))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">process-game-over!</span>
+<span class="w">  </span><span class="s">&quot;ゲームオーバー処理&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nb">assoc </span><span class="ss">:game-running</span><span class="w"> </span><span class="nv">false</span><span class="p">)</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">js/alert</span><span class="w"> </span><span class="p">(</span><span class="nb">str </span><span class="s">&quot;Game Over! Score: &quot;</span><span class="w"> </span><span class="p">(</span><span class="ss">:score</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">check-and-handle-game-over!</span>
+<span class="w">  </span><span class="s">&quot;ゲームオーバーチェックと処理&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="ss">:board</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nf">is-game-over?</span><span class="w"> </span><span class="nv">board</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">process-game-over!</span><span class="p">)</span>
+<span class="w">      </span><span class="nv">true</span><span class="p">)))</span>
+</code></pre></div>
+<h3 id="_31">ゲームループ<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h3>
+<h4 id="_32">メインゲームループ<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defonce </span><span class="nv">drop-timer</span><span class="w"> </span><span class="p">(</span><span class="nf">atom</span><span class="w"> </span><span class="nv">nil</span><span class="p">))</span>
+<span class="p">(</span><span class="kd">defonce </span><span class="nv">game-timer</span><span class="w"> </span><span class="p">(</span><span class="nf">atom</span><span class="w"> </span><span class="nv">nil</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">game-step!</span>
+<span class="w">  </span><span class="s">&quot;ゲームの1ステップ処理&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="ss">:game-running</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nb">if-let </span><span class="p">[</span><span class="nv">current-piece</span><span class="w"> </span><span class="p">(</span><span class="ss">:current-piece</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">      </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="p">(</span><span class="ss">:board</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">        </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">can-fall?</span><span class="w"> </span><span class="nv">current-piece</span><span class="w"> </span><span class="nv">board</span><span class="p">)</span>
+<span class="w">          </span><span class="c1">;; まだ落下できる場合</span>
+<span class="w">          </span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">moved-piece</span><span class="w"> </span><span class="p">(</span><span class="nf">move-puyo-pair-down</span><span class="w"> </span><span class="nv">current-piece</span><span class="w"> </span><span class="nv">board</span><span class="p">)]</span>
+<span class="w">            </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="nv">game-state</span><span class="w"> </span><span class="nb">assoc </span><span class="ss">:current-piece</span><span class="w"> </span><span class="nv">moved-piece</span><span class="p">))</span>
+<span class="w">          </span><span class="c1">;; 落下できない場合 - 固定処理</span>
+<span class="w">          </span><span class="p">(</span><span class="nf">do</span>
+<span class="w">            </span><span class="p">(</span><span class="nf">fix-puyo-pair-to-board!</span><span class="w"> </span><span class="nv">current-piece</span><span class="p">)</span>
+<span class="w">            </span><span class="p">(</span><span class="nf">process-line-clear!</span><span class="p">)</span>
+<span class="w">            </span><span class="p">(</span><span class="nf">unless</span><span class="w"> </span><span class="p">(</span><span class="nf">check-and-handle-game-over!</span><span class="p">)</span>
+<span class="w">              </span><span class="p">(</span><span class="nf">spawn-new-puyo-pair!</span><span class="p">)))))</span>
+<span class="w">      </span><span class="c1">;; 現在のピースがない場合</span>
+<span class="w">      </span><span class="p">(</span><span class="nf">spawn-new-puyo-pair!</span><span class="p">))</span>
+
+<span class="w">    </span><span class="p">(</span><span class="nf">render-game</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">start-drop-timer!</span>
+<span class="w">  </span><span class="s">&quot;落下タイマー開始&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">stop-drop-timer!</span><span class="p">)</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">reset!</span><span class="w"> </span><span class="nv">drop-timer</span>
+<span class="w">          </span><span class="p">(</span><span class="nf">js/setInterval</span><span class="w"> </span><span class="nv">game-step!</span><span class="w"> </span><span class="mi">1000</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">stop-drop-timer!</span>
+<span class="w">  </span><span class="s">&quot;落下タイマー停止&quot;</span>
+<span class="w">  </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when </span><span class="o">@</span><span class="nv">drop-timer</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">js/clearInterval</span><span class="w"> </span><span class="o">@</span><span class="nv">drop-timer</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">reset!</span><span class="w"> </span><span class="nv">drop-timer</span><span class="w"> </span><span class="nv">nil</span><span class="p">)))</span>
+</code></pre></div>
+<h2 id="_33">コード品質向上の実践<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h2>
+<h3 id="_34">テスト統計<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h3>
+<p>開発完了時点でのテスト統計：</p>
+<ul>
+<li><strong>総テスト数</strong>: 54テスト</li>
+<li><strong>総アサーション数</strong>: 280アサーション  </li>
+<li><strong>テストカバレッジ</strong>: 全主要機能カバー</li>
+<li><strong>品質チェック</strong>: 全項目パス（0エラー、0警告）</li>
+</ul>
+<h3 id="_35">品質向上のアプローチ<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h3>
+<h4 id="1">1. 関数型プログラミングの活用<a class="headerlink" href="#1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">;; 副作用のない純粋関数</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">calculate-score</span><span class="w"> </span><span class="p">[</span><span class="nv">cleared-count</span><span class="w"> </span><span class="nv">chain-bonus</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">cleared-count</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="nv">chain-bonus</span><span class="p">))</span>
+
+<span class="c1">;; 不変データ構造の活用</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">update-board</span><span class="w"> </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="w"> </span><span class="nv">value</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">assoc-in</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="p">[</span><span class="nv">y</span><span class="w"> </span><span class="nv">x</span><span class="p">]</span><span class="w"> </span><span class="nv">value</span><span class="p">))</span>
+</code></pre></div>
+<h4 id="2">2. エラーハンドリング<a class="headerlink" href="#2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">create-puyo-pair</span><span class="w"> </span><span class="p">[</span><span class="nv">color1</span><span class="w"> </span><span class="nv">color2</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-not </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-color?</span><span class="w"> </span><span class="nv">color1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">valid-color?</span><span class="w"> </span><span class="nv">color2</span><span class="p">))</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">throw</span><span class="w"> </span><span class="p">(</span><span class="nf">js/Error.</span><span class="w"> </span><span class="s">&quot;Invalid color&quot;</span><span class="p">)))</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-not </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="p">(</span><span class="nb">+ </span><span class="nv">y</span><span class="w"> </span><span class="mi">1</span><span class="p">)))</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">throw</span><span class="w"> </span><span class="p">(</span><span class="nf">js/Error.</span><span class="w"> </span><span class="s">&quot;Invalid position&quot;</span><span class="p">)))</span>
+<span class="w">  </span><span class="c1">;; 実装本体</span>
+<span class="w">  </span><span class="p">)</span>
+</code></pre></div>
+<h4 id="3">3. リファクタリングの実践<a class="headerlink" href="#3" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">;; Before: 複雑な条件分岐</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">complex-condition</span><span class="w"> </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">x</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">x</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">y</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">y</span><span class="w"> </span><span class="mi">12</span><span class="p">))</span>
+<span class="w">    </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="nf">get-cell</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">      </span><span class="nv">true</span>
+<span class="w">      </span><span class="nv">false</span><span class="p">)</span>
+<span class="w">    </span><span class="nv">false</span><span class="p">))</span>
+
+<span class="c1">;; After: 関数の分割と明確化</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">valid-position?</span><span class="w"> </span><span class="p">[</span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">x</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">x</span><span class="w"> </span><span class="nv">board-width</span><span class="p">)</span>
+<span class="w">       </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">y</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt; </span><span class="nv">y</span><span class="w"> </span><span class="nv">board-height</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">has-puyo?</span><span class="w"> </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="nf">get-puyo-at</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">is-valid-puyo-position?</span><span class="w"> </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">]</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nf">valid-position?</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span>
+<span class="w">       </span><span class="p">(</span><span class="nf">has-puyo?</span><span class="w"> </span><span class="nv">board</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">y</span><span class="p">)))</span>
+</code></pre></div>
+<h3 id="_36">パフォーマンス最適化<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h3>
+<h4 id="_37">描画最適化<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">;; 変更があった部分のみ再描画</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">render-game</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">(</span><span class="nf">render-board</span><span class="w"> </span><span class="p">(</span><span class="ss">:board</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">))</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">current-piece</span><span class="w"> </span><span class="p">(</span><span class="ss">:current-piece</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">render-puyo-pair</span><span class="w"> </span><span class="nv">current-piece</span><span class="p">))</span>
+<span class="w">  </span><span class="p">(</span><span class="nb">when-let </span><span class="p">[</span><span class="nv">next-piece</span><span class="w"> </span><span class="p">(</span><span class="ss">:next-piece</span><span class="w"> </span><span class="o">@</span><span class="nv">game-state</span><span class="p">)]</span>
+<span class="w">    </span><span class="p">(</span><span class="nf">render-next-puyo</span><span class="w"> </span><span class="nv">next-piece</span><span class="p">)))</span>
+</code></pre></div>
+<h2 id="_38">学んだ教訓と今後の拡張<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h2>
+<h3 id="_39">開発過程で学んだ教訓<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h3>
+<h4 id="1-tdd">1. TDDの効果<a class="headerlink" href="#1-tdd" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>品質向上</strong>: 早期バグ発見により品質が大幅に向上</li>
+<li><strong>設計改善</strong>: テストファーストにより自然と良い設計に導かれる</li>
+<li><strong>リファクタリング安全性</strong>: 豊富なテストにより安心してリファクタリング可能</li>
+</ul>
+<h4 id="2-clojurescript">2. ClojureScriptの利点<a class="headerlink" href="#2-clojurescript" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>関数型の恩恵</strong>: 副作用の制御により予測可能なコード</li>
+<li><strong>不変データ</strong>: バグの原因となる状態変更の問題を回避</li>
+<li><strong>REPL開発</strong>: インタラクティブな開発により効率的な実装</li>
+</ul>
+<h4 id="3_1">3. 段階的な機能実装<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Phase分割</strong>: 機能を段階的に実装することで管理可能な複雑性</li>
+<li><strong>早期統合</strong>: 各Phaseでの統合により問題の早期発見</li>
+<li><strong>継続的品質管理</strong>: 各ステップでの品質チェック</li>
+</ul>
+<h3 id="_40">今後の拡張可能性<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h3>
+<h4 id="phase-6">Phase 6: 高度な機能<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">;; T022: アニメーション演出</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">animate-puyo-clear</span><span class="w"> </span><span class="p">[</span><span class="nv">positions</span><span class="w"> </span><span class="nv">duration</span><span class="p">]</span>
+<span class="w">  </span><span class="c1">;; ぷよ消去時のフェードアウトアニメーション</span>
+<span class="w">  </span><span class="p">)</span>
+
+<span class="c1">;; T023: サウンドシステム  </span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">play-sound</span><span class="w"> </span><span class="p">[</span><span class="nv">sound-type</span><span class="p">]</span>
+<span class="w">  </span><span class="c1">;; 効果音の再生</span>
+<span class="w">  </span><span class="p">)</span>
+
+<span class="c1">;; T024: AI対戦</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">ai-move-evaluation</span><span class="w"> </span><span class="p">[</span><span class="nv">board</span><span class="w"> </span><span class="nv">current-piece</span><span class="p">]</span>
+<span class="w">  </span><span class="c1">;; AIの最適手を計算</span>
+<span class="w">  </span><span class="p">)</span>
+</code></pre></div>
+<h4 id="_41">ゲームバランスの調整<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">;; 難易度設定</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">difficulty-settings</span>
+<span class="w">  </span><span class="p">{</span><span class="ss">:easy</span><span class="w">   </span><span class="p">{</span><span class="ss">:fall-speed</span><span class="w"> </span><span class="mi">1500</span><span class="w"> </span><span class="ss">:colors</span><span class="w"> </span><span class="mi">3</span><span class="p">}</span>
+<span class="w">   </span><span class="ss">:normal</span><span class="w"> </span><span class="p">{</span><span class="ss">:fall-speed</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="ss">:colors</span><span class="w"> </span><span class="mi">4</span><span class="p">}</span><span class="w">  </span>
+<span class="w">   </span><span class="ss">:hard</span><span class="w">   </span><span class="p">{</span><span class="ss">:fall-speed</span><span class="w"> </span><span class="mi">500</span><span class="w">  </span><span class="ss">:colors</span><span class="w"> </span><span class="mi">5</span><span class="p">}})</span>
+</code></pre></div>
+<h4 id="_42">モバイル対応<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">;; タッチ操作の実装</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">handle-touch-start</span><span class="w"> </span><span class="p">[</span><span class="nv">event</span><span class="p">]</span>
+<span class="w">  </span><span class="c1">;; タッチ開始処理</span>
+<span class="w">  </span><span class="p">)</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">handle-touch-move</span><span class="w"> </span><span class="p">[</span><span class="nv">event</span><span class="p">]</span><span class="w">  </span>
+<span class="w">  </span><span class="c1">;; スワイプ処理</span>
+<span class="w">  </span><span class="p">)</span>
+</code></pre></div>
+<h3 id="_43">技術的学習ポイント<a class="headerlink" href="#_43" title="Permanent link">&para;</a></h3>
+<h4 id="1_1">1. 状態管理<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h4>
+<p>ClojureScriptの<code>atom</code>を使用した状態管理により、予測可能で管理しやすいゲーム状態を実現。</p>
+<h4 id="2_1">2. 関数合成<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h4>
+<p>小さな関数を組み合わせることで、複雑なゲームロジックを理解しやすく構築。</p>
+<h4 id="3_2">3. データ構造設計<a class="headerlink" href="#3_2" title="Permanent link">&para;</a></h4>
+<p>ベクターとマップを活用したシンプルで効率的なデータ構造設計。</p>
+<h2 id="_44">まとめ<a class="headerlink" href="#_44" title="Permanent link">&para;</a></h2>
+<p>このぷよぷよ実装プロジェクトを通じて、ClojureScriptとTDDを組み合わせた開発手法の有効性が確認できました。関数型プログラミングのパラダイムは、ゲームのような状態変化の多いアプリケーションでも、適切な設計により大きな利益をもたらします。</p>
+<p>TDDサイクルを継続することで、高品質なコードベースを維持しながら機能を段階的に構築でき、最終的に280のアサーションを持つ包括的なテストスイートにより、信頼性の高いゲームシステムを実現しました。</p>
+<p>今後も、この実装を基盤として、より高度な機能や最適化を段階的に追加していくことで、さらに魅力的なぷよぷよゲームに発展させることができるでしょう。</p>
+<hr />
+<p><em>このガイドがClojureScriptとTDDを使ったゲーム開発の参考になれば幸いです。コードの完全版は<a href=".">プロジェクトリポジトリ</a>で確認できます。</em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works" target="_blank" rel="noopener" title="GitHub Repository/claude-code-booster" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

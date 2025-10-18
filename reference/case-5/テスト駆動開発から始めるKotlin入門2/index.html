@@ -1,0 +1,954 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Site Description">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>テスト駆動開発から始めるKotlin入門2 ~ソフトウェア開発の三種の神器を準備する~ - Site Name</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Site Name" class="md-header__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Site Name
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              テスト駆動開発から始めるKotlin入門2 ~ソフトウェア開発の三種の神器を準備する~
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Site Name" class="md-nav__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Site Name
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>テスト駆動開発から始めるKotlin入門2 ~ソフトウェア開発の三種の神器を準備する~</h1>
+
+<h2 id="_1">はじめに<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>前回はKotlinとテスト駆動開発を使ってFizzBuzzプログラムを作りました。プログラムは動くものができたのですが、一人で開発していく上でまだ不便な部分があります。今回は開発していく上で便利になるツールを導入していきます。</p>
+<h3 id="_2">ソフトウェア開発の三種の神器<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>よいソフトウェアを書くのは難しい。よいソフトウェアを書くコツを覚えるのにも時間がかかる。けれども、よいソフトウェアを書くのに役立つツールを知ることはできる。</p>
+<p>「よいコードを書くコツの一つは、よいツールを使うことだ。よいツールが自分のかわりに仕事をしてくれる。」</p>
+<p>—  <a href="https://twitter.com/t_wada">和田卓人（t-wada）さん</a> </p>
+</blockquote>
+<p><a href="https://twitter.com/t_wada">和田卓人（t-wada）さん</a> が提唱されている <a href="https://t-wada.hatenablog.jp/entry/clean-code-that-works">ソフトウェア開発の三種の神器</a> を使ってよいソフトウェアを書くためのツールを準備していきます。</p>
+<p>三種の神器とは以下のとおりです。</p>
+<ol>
+<li><strong>バージョン管理システム</strong></li>
+<li><strong>テスティングフレームワーク</strong>  </li>
+<li><strong>自動化</strong></li>
+</ol>
+<p>この三種の神器について説明していきます。</p>
+<h4 id="_3">バージョン管理システム<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<p>バージョン管理システムとは、ファイルの作成日時、変更日時、変更点などの履歴を管理するシステムです。これを使うことでファイルをバックアップしなくても、以前のファイルの状態を復元できたり、ファイルの変更内容を確認できたり、バックアップとしての役目も果たします。現在の主流は <code>Git</code> です。</p>
+<h4 id="_4">テスティングフレームワーク<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<p>テスティングフレームワークとは、プログラムをテストするために使用するソフトウェアです。前回、プログラムの動作を確認するために対話的Kotlinシェル（REPL）にプログラムを入力していました。しかし、プログラムの変更を行った場合に前回実施した動作確認を再度実施するのは面倒ですよね。テスティングフレームワークを使うとテストプログラムを作成することで何度でも同じテストを自動実行できるようになります。Kotlinにはデフォルトで <strong>JUnit</strong> というテスティングフレームワークが使用できます。</p>
+<h4 id="_5">自動化<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<p>自動化とは、これまで手動で行っていた作業をツールを使って自動的に実行できるようにすることです。例えば、テストの実行、プログラムの品質をチェックしたり、プログラムのフォーマットを整えたりといった作業を自動化してくれます。Kotlinでは <strong>Gradle</strong> というビルドツールを使用して自動化を実現できます。</p>
+<h3 id="_6">今回準備するツール<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>今回はKotlinでの開発に向けて以下のツールを準備していきます：</p>
+<ul>
+<li><strong>バージョン管理システム</strong>: Git</li>
+<li><strong>テスティングフレームワーク</strong>: JUnit（前回導入済み）</li>
+<li><strong>パッケージマネージャ</strong>: Gradle</li>
+<li><strong>静的コード解析</strong>: Detekt  </li>
+<li><strong>コードフォーマッタ</strong>: ktlint</li>
+<li><strong>コードカバレッジ</strong>: JaCoCo</li>
+<li><strong>タスクランナー</strong>: Gradle</li>
+<li><strong>自動化</strong>: Gradle Watch</li>
+</ul>
+<p>それでは、ツールを一つずつ導入していきましょう。</p>
+<h2 id="_7">バージョン管理<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>バージョン管理にはGitを使用します。Gitは分散型バージョン管理システムです。前回のエピソードでプロジェクトをGitで管理するための初期化は済んでいると思いますが、改めて確認してみましょう。</p>
+<p>Gitが初期化されているかどうかを確認します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>status
+On<span class="w"> </span>branch<span class="w"> </span>main
+nothing<span class="w"> </span>to<span class="w"> </span>commit,<span class="w"> </span>working<span class="w"> </span>tree<span class="w"> </span>clean
+</code></pre></div>
+<p>上記のような出力がされればGitは初期化されています。もしも <code>fatal: not a git repository</code> のようなエラーが出力された場合は、以下のコマンドでGitを初期化してください。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>init
+</code></pre></div>
+<p>次に、リモートリポジトリの設定を確認します。GitHubなどにリポジトリを作成している場合は、リモートリポジトリの設定を行います。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>remote<span class="w"> </span>-v
+origin<span class="w">  </span>https://github.com/username/repository.git<span class="w"> </span><span class="o">(</span>fetch<span class="o">)</span>
+origin<span class="w">  </span>https://github.com/username/repository.git<span class="w"> </span><span class="o">(</span>push<span class="o">)</span>
+</code></pre></div>
+<p>リモートリポジトリが設定されていない場合は、以下のコマンドで設定します。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>https://github.com/username/repository.git
+</code></pre></div>
+<p>これでバージョン管理の準備は完了です。</p>
+<h2 id="_8">コミットメッセージ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>Gitを使ったバージョン管理では、変更をコミットする際にコミットメッセージを書きます。このコミットメッセージは後からコードの変更履歴を確認する際に重要な情報となります。</p>
+<h3 id="conventional-commits">Conventional Commits<a class="headerlink" href="#conventional-commits" title="Permanent link">&para;</a></h3>
+<p>コミットメッセージを書く際には、一定のルールに従って書くことで、後から変更履歴を確認しやすくなります。そのためのルールとして <strong>Conventional Commits</strong> という規約があります。</p>
+<blockquote>
+<p>Conventional Commits仕様は、コミットメッセージのための軽量な規約です。明確なコミット履歴を作成するための簡単なルールを提供します。この規約に従うことで、コミット履歴を元に自動化ツールを作成することが簡単になります。</p>
+<p>— <a href="https://www.conventionalcommits.org/ja/v1.0.0/">Conventional Commits</a></p>
+</blockquote>
+<p>Conventional Commitsでは、コミットメッセージを以下の形式で書きます：</p>
+<div class="highlight"><pre><span></span><code>&lt;type&gt;[optional scope]: &lt;description&gt;
+
+[optional body]
+
+[optional footer(s)]
+</code></pre></div>
+<h4 id="type">type（必須）<a class="headerlink" href="#type" title="Permanent link">&para;</a></h4>
+<p>コミットの種類を表します。主要なtypeは以下のとおりです：</p>
+<ul>
+<li><strong>feat</strong>: 新機能の追加</li>
+<li><strong>fix</strong>: バグの修正</li>
+<li><strong>docs</strong>: ドキュメントの変更</li>
+<li><strong>style</strong>: コードの意味に影響しない変更（空白、フォーマットなど）</li>
+<li><strong>refactor</strong>: バグ修正や機能追加ではないコードの変更</li>
+<li><strong>test</strong>: テストの追加や修正</li>
+<li><strong>chore</strong>: ビルドプロセスや補助ツールの変更</li>
+</ul>
+<h4 id="scope">scope（任意）<a class="headerlink" href="#scope" title="Permanent link">&para;</a></h4>
+<p>変更された範囲を表します。例：<code>api</code>, <code>ui</code>, <code>database</code>など</p>
+<h4 id="description">description（必須）<a class="headerlink" href="#description" title="Permanent link">&para;</a></h4>
+<p>変更内容の簡潔な説明</p>
+<h4 id="_9">例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>feat:<span class="w"> </span>FizzBuzzクラスに数値から文字列生成機能を追加
+
+fix:<span class="w"> </span>15の倍数の場合にFizzBuzzが返されない問題を修正
+
+docs:<span class="w"> </span>README.mdにプロジェクトの説明を追加
+
+test:<span class="w"> </span>FizzBuzzクラスの単体テストを追加
+
+chore:<span class="w"> </span>Gradleの依存関係を更新
+</code></pre></div>
+<p>このルールに従ってコミットメッセージを書くことで、変更履歴が分かりやすくなります。</p>
+<h2 id="_10">パッケージマネージャ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>ソフトウェア開発では、様々な外部ライブラリを使用することがあります。これらのライブラリを手動で管理するのは大変な作業です。そこで <strong>パッケージマネージャ</strong> を使用します。</p>
+<blockquote>
+<p>パッケージマネージャとは、ソフトウェアのパッケージの検索、インストール、アップデート、削除などを自動化するツールです。</p>
+<p>— Wikipedia</p>
+</blockquote>
+<p>Kotlinでは <strong>Gradle</strong> というビルドツールがパッケージマネージャの役割も果たします。GradleはJavaプラットフォーム向けのビルド自動化ツールです。</p>
+<h3 id="gradle">Gradleの設定<a class="headerlink" href="#gradle" title="Permanent link">&para;</a></h3>
+<p>Kotlinプロジェクトでは、<code>build.gradle.kts</code>（Kotlin DSL）または<code>build.gradle</code>（Groovy DSL）ファイルでプロジェクトの設定を行います。今回はKotlin DSLを使用します。</p>
+<p>プロジェクトのルートディレクトリに<code>build.gradle.kts</code>を作成します：</p>
+<div class="highlight"><pre><span></span><code><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;jvm&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;2.0.0&quot;</span>
+<span class="w">    </span><span class="n">application</span>
+<span class="p">}</span>
+
+<span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;com.example&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.0-SNAPSHOT&quot;</span>
+
+<span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="s">&quot;org.junit.jupiter:junit-jupiter:5.10.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">testRuntimeOnly</span><span class="p">(</span><span class="s">&quot;org.junit.platform:junit-platform-launcher&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">tasks</span><span class="p">.</span><span class="na">test</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">useJUnitPlatform</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">kotlin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">jvmToolchain</span><span class="p">(</span><span class="m">21</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">application</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mainClass</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;MainKt&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="plugins">plugins ブロック<a class="headerlink" href="#plugins" title="Permanent link">&para;</a></h4>
+<p>使用するプラグインを指定します：</p>
+<ul>
+<li><code>kotlin("jvm")</code>: KotlinでJVMアプリケーションを開発するためのプラグイン</li>
+<li><code>application</code>: アプリケーションの実行やパッケージングを行うプラグイン</li>
+</ul>
+<h4 id="repositories">repositories ブロック<a class="headerlink" href="#repositories" title="Permanent link">&para;</a></h4>
+<p>依存関係を取得するリポジトリを指定します。<code>mavenCentral()</code>は Maven Central リポジトリを使用することを意味します。</p>
+<h4 id="dependencies">dependencies ブロック<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h4>
+<p>プロジェクトで使用する外部ライブラリを指定します：</p>
+<ul>
+<li><code>testImplementation(kotlin("test"))</code>: Kotlinの標準テストライブラリ</li>
+<li><code>testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")</code>: JUnit 5テストフレームワーク</li>
+</ul>
+<h3 id="gradle_1">Gradleのタスク実行<a class="headerlink" href="#gradle_1" title="Permanent link">&para;</a></h3>
+<p>Gradleでは様々なタスクを実行できます：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># プロジェクトのビルド</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>build
+
+<span class="c1"># テストの実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span><span class="nb">test</span>
+
+<span class="c1"># アプリケーションの実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>run
+
+<span class="c1"># 利用可能なタスクの一覧表示</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>tasks
+</code></pre></div>
+<p>これでパッケージマネージャの設定は完了です。設定をコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: Gradleプロジェクトセットアップ&#39;</span>
+</code></pre></div>
+<h2 id="_11">静的コード解析<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>コードを書いていると、バグや品質の問題が混入することがあります。これらの問題を早期に発見するために <strong>静的コード解析</strong> ツールを使用します。</p>
+<blockquote>
+<p>静的コード解析とは、プログラムを実行することなく、ソースコードを解析してバグやコーディング規約違反、セキュリティ上の問題などを検出する手法です。</p>
+</blockquote>
+<p>Kotlinでは <strong>Detekt</strong> という静的コード解析ツールを使用できます。</p>
+<h3 id="detekt">Detektの導入<a class="headerlink" href="#detekt" title="Permanent link">&para;</a></h3>
+<p><code>build.gradle.kts</code>にDetektプラグインを追加します：</p>
+<div class="highlight"><pre><span></span><code><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;jvm&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;2.0.0&quot;</span>
+<span class="w">    </span><span class="n">application</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;io.gitlab.arturbosch.detekt&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;1.23.0&quot;</span>
+<span class="p">}</span>
+
+<span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;com.example&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.0-SNAPSHOT&quot;</span>
+
+<span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="s">&quot;org.junit.jupiter:junit-jupiter:5.10.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">testRuntimeOnly</span><span class="p">(</span><span class="s">&quot;org.junit.platform:junit-platform-launcher&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">detektPlugins</span><span class="p">(</span><span class="s">&quot;io.gitlab.arturbosch.detekt:detekt-formatting:1.23.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Detekt configuration</span>
+<span class="n">detekt</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">buildUponDefaultConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="n">allRules</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">config</span><span class="p">.</span><span class="na">setFrom</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$</span><span class="n">projectDir</span><span class="s">/config/detekt/detekt.yml&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// DetektタスクのJVMターゲット設定</span>
+<span class="n">tasks</span><span class="p">.</span><span class="na">withType</span><span class="o">&lt;</span><span class="n">io</span><span class="p">.</span><span class="na">gitlab</span><span class="p">.</span><span class="na">arturbosch</span><span class="p">.</span><span class="na">detekt</span><span class="p">.</span><span class="na">Detekt</span><span class="o">&gt;</span><span class="p">().</span><span class="na">configureEach</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">jvmTarget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;17&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="detekt_1">Detektの設定ファイル<a class="headerlink" href="#detekt_1" title="Permanent link">&para;</a></h3>
+<p>プロジェクトに<code>config/detekt/detekt.yml</code>ファイルを作成して、Detektのルールをカスタマイズできます：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># detekt.yml</span>
+<span class="nt">autoCorrect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">style</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MaxLineLength</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">maxLineLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120</span>
+
+<span class="nt">complexity</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">TooManyFunctions</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">active</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">formatting</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ParameterListWrapping</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">active</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+<h3 id="detekt_2">Detektの実行<a class="headerlink" href="#detekt_2" title="Permanent link">&para;</a></h3>
+<p>以下のコマンドでDetektを実行できます：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 静的解析の実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>detekt
+
+<span class="c1"># 自動修正を含む実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>detektMain<span class="w"> </span>--auto-correct
+</code></pre></div>
+<p>実行結果の例：</p>
+<div class="highlight"><pre><span></span><code>&gt; Task :detektMain
+Detekt found 3 issues.
+
+/src/main/kotlin/FizzBuzz.kt:10:1: [style] MagicNumber: This expression contains a magic number. Consider defining it to a well named constant.
+/src/main/kotlin/FizzBuzz.kt:15:1: [style] ReturnCount: Restrict the number of return statements in methods.
+
+BUILD SUCCESSFUL in 2s
+</code></pre></div>
+<p>Detektは以下のような問題を検出します：</p>
+<ul>
+<li><strong>コード品質</strong>: 複雑すぎるメソッド、長すぎる行など</li>
+<li><strong>バグの可能性</strong>: nullポインタ例外の可能性、型キャストエラーなど  </li>
+<li><strong>スタイル</strong>: コーディング規約違反、命名規則違反など</li>
+<li><strong>パフォーマンス</strong>: 非効率なコード</li>
+<li><strong>セキュリティ</strong>: セキュリティ上の問題</li>
+</ul>
+<p>設定をコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: Detekt静的コード解析セットアップ&#39;</span>
+</code></pre></div>
+<h2 id="_12">コードフォーマッタ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>コードの書き方にはスタイルがあります。インデント、改行、スペースの使い方などです。チーム開発では、メンバー全員が同じスタイルでコードを書くことが重要です。<strong>コードフォーマッタ</strong> を使用することで、コードのスタイルを自動的に統一できます。</p>
+<blockquote>
+<p>コードフォーマッタとは、ソースコードを一定のスタイルに自動的に整形するツールです。</p>
+</blockquote>
+<p>Kotlinでは <strong>ktlint</strong> というコードフォーマッタを使用できます。ktlintは、Kotlinの公式コーディング規約に準拠したフォーマッタです。</p>
+<h3 id="ktlint">ktlintの導入<a class="headerlink" href="#ktlint" title="Permanent link">&para;</a></h3>
+<p><code>build.gradle.kts</code>にktlintプラグインを追加します：</p>
+<div class="highlight"><pre><span></span><code><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;jvm&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;2.0.0&quot;</span>
+<span class="w">    </span><span class="n">application</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;io.gitlab.arturbosch.detekt&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;1.23.0&quot;</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;org.jlleitschuh.gradle.ktlint&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;11.5.1&quot;</span>
+<span class="p">}</span>
+
+<span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;com.example&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.0-SNAPSHOT&quot;</span>
+
+<span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="s">&quot;org.junit.jupiter:junit-jupiter:5.10.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">testRuntimeOnly</span><span class="p">(</span><span class="s">&quot;org.junit.platform:junit-platform-launcher&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Detekt configuration</span>
+<span class="n">detekt</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">buildUponDefaultConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="n">allRules</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">config</span><span class="p">.</span><span class="na">setFrom</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$</span><span class="n">projectDir</span><span class="s">/config/detekt/detekt.yml&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// DetektタスクのJVMターゲット設定</span>
+<span class="n">tasks</span><span class="p">.</span><span class="na">withType</span><span class="o">&lt;</span><span class="n">io</span><span class="p">.</span><span class="na">gitlab</span><span class="p">.</span><span class="na">arturbosch</span><span class="p">.</span><span class="na">detekt</span><span class="p">.</span><span class="na">Detekt</span><span class="o">&gt;</span><span class="p">().</span><span class="na">configureEach</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">jvmTarget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;17&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// Ktlint configuration</span>
+<span class="n">ktlint</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">verbose</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+<span class="w">    </span><span class="n">outputToConsole</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+<span class="w">    </span><span class="n">coloredOutput</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+<span class="w">    </span><span class="n">reporters</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">reporter</span><span class="p">(</span><span class="n">org</span><span class="p">.</span><span class="na">jlleitschuh</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">ktlint</span><span class="p">.</span><span class="na">reporter</span><span class="p">.</span><span class="na">ReporterType</span><span class="p">.</span><span class="na">CHECKSTYLE</span><span class="p">)</span>
+<span class="w">        </span><span class="n">reporter</span><span class="p">(</span><span class="n">org</span><span class="p">.</span><span class="na">jlleitschuh</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">ktlint</span><span class="p">.</span><span class="na">reporter</span><span class="p">.</span><span class="na">ReporterType</span><span class="p">.</span><span class="na">JSON</span><span class="p">)</span>
+<span class="w">        </span><span class="n">reporter</span><span class="p">(</span><span class="n">org</span><span class="p">.</span><span class="na">jlleitschuh</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">ktlint</span><span class="p">.</span><span class="na">reporter</span><span class="p">.</span><span class="na">ReporterType</span><span class="p">.</span><span class="na">HTML</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="ktlint_1">ktlintの実行<a class="headerlink" href="#ktlint_1" title="Permanent link">&para;</a></h3>
+<p>以下のコマンドでktlintを実行できます：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># コードスタイルのチェック</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>ktlintCheck
+
+<span class="c1"># コードスタイルの自動修正</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>ktlintFormat
+</code></pre></div>
+<p>実行結果の例：</p>
+<div class="highlight"><pre><span></span><code>&gt; Task :ktlintMainSourceSetCheck
+/src/main/kotlin/FizzBuzz.kt:5:1: Unexpected indentation (4) (should be 8) (indent)
+/src/main/kotlin/FizzBuzz.kt:10:17: Missing spacing after &quot;,&quot; (comma-spacing)
+
+2 problems (0 errors, 2 warnings)
+
+BUILD FAILED in 1s
+</code></pre></div>
+<p>ktlintは以下のようなスタイル問題を検出・修正します：</p>
+<ul>
+<li><strong>インデント</strong>: タブやスペースの統一</li>
+<li><strong>スペーシング</strong>: 演算子、カンマ、括弧周りのスペース</li>
+<li><strong>改行</strong>: 適切な位置での改行</li>
+<li><strong>インポート</strong>: インポート文の整理</li>
+<li><strong>命名規則</strong>: クラス名、メソッド名の規則</li>
+</ul>
+<h3 id="_13">自動修正の例<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p>修正前：
+<div class="highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">FizzBuzz</span><span class="p">{</span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="n">number</span><span class="p">:</span><span class="kt">Int</span><span class="p">):</span><span class="kt">String</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">number</span><span class="o">%</span><span class="m">15</span><span class="o">==</span><span class="m">0</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;FizzBuzz&quot;</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">number</span><span class="o">%</span><span class="m">3</span><span class="o">==</span><span class="m">0</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Fizz&quot;</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">number</span><span class="o">%</span><span class="m">5</span><span class="o">==</span><span class="m">0</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Buzz&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">number</span><span class="p">.</span><span class="na">toString</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>修正後：
+<div class="highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">FizzBuzz</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="n">number</span><span class="p">:</span><span class="w"> </span><span class="kt">Int</span><span class="p">):</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;FizzBuzz&quot;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Fizz&quot;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">number</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Buzz&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">number</span><span class="p">.</span><span class="na">toString</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>設定をコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: ktlintコードフォーマッタセットアップ&#39;</span>
+</code></pre></div>
+<h2 id="_14">コードカバレッジ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<p>テストを書いていると、「どの程度のコードがテストされているか」を知りたくなります。これを測定するのが <strong>コードカバレッジ</strong> です。</p>
+<blockquote>
+<p>コードカバレッジとは、テストによって実行されたソースコードの割合を測定する手法です。</p>
+</blockquote>
+<p>Kotlinでは <strong>JaCoCo</strong>（Java Code Coverage）というツールでコードカバレッジを測定できます。</p>
+<h3 id="jacoco">JaCoCoの導入<a class="headerlink" href="#jacoco" title="Permanent link">&para;</a></h3>
+<p><code>build.gradle.kts</code>にJaCoCoプラグインを追加します：</p>
+<div class="highlight"><pre><span></span><code><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;jvm&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;2.0.0&quot;</span>
+<span class="w">    </span><span class="n">application</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;io.gitlab.arturbosch.detekt&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;1.23.0&quot;</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;org.jlleitschuh.gradle.ktlint&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;11.5.1&quot;</span>
+<span class="w">    </span><span class="n">jacoco</span>
+<span class="p">}</span>
+
+<span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;com.example&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.0-SNAPSHOT&quot;</span>
+
+<span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">testImplementation</span><span class="p">(</span><span class="s">&quot;org.junit.jupiter:junit-jupiter:5.10.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">testRuntimeOnly</span><span class="p">(</span><span class="s">&quot;org.junit.platform:junit-platform-launcher&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">tasks</span><span class="p">.</span><span class="na">test</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">useJUnitPlatform</span><span class="p">()</span>
+<span class="w">    </span><span class="n">finalizedBy</span><span class="p">(</span><span class="n">tasks</span><span class="p">.</span><span class="na">jacocoTestReport</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">tasks</span><span class="p">.</span><span class="na">jacocoTestReport</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dependsOn</span><span class="p">(</span><span class="n">tasks</span><span class="p">.</span><span class="na">test</span><span class="p">)</span>
+<span class="w">    </span><span class="n">reports</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">xml</span><span class="p">.</span><span class="na">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="n">csv</span><span class="p">.</span><span class="na">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="n">html</span><span class="p">.</span><span class="na">outputLocation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">layout</span><span class="p">.</span><span class="na">buildDirectory</span><span class="p">.</span><span class="na">dir</span><span class="p">(</span><span class="s">&quot;jacocoHtml&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="jacoco_1">JaCoCoの実行<a class="headerlink" href="#jacoco_1" title="Permanent link">&para;</a></h3>
+<p>テストを実行すると、自動的にコードカバレッジが測定されます：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># テスト実行（カバレッジも同時に実行される）</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span><span class="nb">test</span>
+
+<span class="c1"># カバレッジレポートのみ生成</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>jacocoTestReport
+</code></pre></div>
+<p>実行結果の例：</p>
+<div class="highlight"><pre><span></span><code>&gt; Task :test
+FizzBuzzTest &gt; 3を渡したら文字列Fizzを返す() PASSED
+FizzBuzzTest &gt; 5を渡したら文字列Buzzを返す() PASSED
+FizzBuzzTest &gt; 15を渡したら文字列FizzBuzzを返す() PASSED
+
+&gt; Task :jacocoTestReport
+
+BUILD SUCCESSFUL in 3s
+</code></pre></div>
+<h3 id="_15">カバレッジレポートの確認<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<p>テスト実行後に <code>build/jacocoHtml</code> フォルダが作成されます。その中の <code>index.html</code> を開くとカバレッジ状況を確認できます。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ブラウザでレポートを開く</span>
+$<span class="w"> </span>open<span class="w"> </span>build/jacocoHtml/index.html
+</code></pre></div>
+<p>レポートには以下の情報が表示されます：</p>
+<ul>
+<li><strong>Line Coverage</strong>: 実行された行の割合</li>
+<li><strong>Branch Coverage</strong>: 実行された分岐の割合</li>
+<li><strong>Method Coverage</strong>: 実行されたメソッドの割合</li>
+<li><strong>Class Coverage</strong>: 実行されたクラスの割合</li>
+</ul>
+<h3 id="_16">カバレッジの例<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Package         Line Coverage    Branch Coverage    Method Coverage
+com.example     85% (17/20)      75% (6/8)         100% (4/4)
+</code></pre></div>
+<p>この例では：
+- 20行中17行がテストで実行された（85%）
+- 8つの分岐中6つがテストで実行された（75%）
+- 4つのメソッドすべてがテストで実行された（100%）</p>
+<p>コードカバレッジは品質の指標の一つですが、100%である必要はありません。重要なのは、重要な機能がしっかりテストされていることです。</p>
+<p>設定をコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: JaCoCoコードカバレッジセットアップ&#39;</span>
+</code></pre></div>
+<h2 id="_17">タスクランナー<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<p>ここまででテストの実行、静的コード解析、コードフォーマット、コードカバレッジを実施することができるようになりました。でもコマンドを実行するのにそれぞれのコマンドを覚えておくのは面倒ですよね。例えばテストの実行は：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./gradlew<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<p>では静的コード解析はどうやりましたか？フォーマットはどうやりましたか？調べるのも面倒ですよね。いちいち調べるのが面倒なことは全部 <strong>タスクランナー</strong> にやらせるようにしましょう。</p>
+<blockquote>
+<p>タスクランナーとは、アプリケーションのビルドなど、一定の手順で行う作業をコマンド一つで実行できるように予めタスクとして定義したものです。</p>
+</blockquote>
+<p>Kotlinの <strong>タスクランナー</strong> は <code>Gradle</code> です。Gradleは単なるパッケージマネージャではなく、強力なタスクランナーでもあります。</p>
+<h3 id="_18">カスタムタスクの定義<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>build.gradle.kts</code>にカスタムタスクを追加して、よく使うコマンドを簡単に実行できるようにします：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// カスタムタスクの定義</span>
+<span class="n">tasks</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="s">&quot;checkAll&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;全てのチェックを実行&quot;</span>
+<span class="w">    </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;verification&quot;</span>
+<span class="w">    </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;ktlintCheck&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;detekt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">tasks</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="s">&quot;fixAll&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;自動修正可能な全ての問題を修正&quot;</span>
+<span class="w">    </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;formatting&quot;</span>
+<span class="w">    </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;ktlintFormat&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">finalizedBy</span><span class="p">(</span><span class="s">&quot;detektMain&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">tasks</span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="s">&quot;qualityCheck&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;コード品質チェック&quot;</span>
+<span class="w">    </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;verification&quot;</span>
+<span class="w">    </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;ktlintCheck&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;detekt&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="_19">タスクの実行<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>定義したタスクを実行できます：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 利用可能なタスクの一覧表示</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>tasks
+
+<span class="c1"># 全てのチェックを実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>checkAll
+
+<span class="c1"># 自動修正を実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>fixAll
+
+<span class="c1"># コード品質チェックのみ実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>qualityCheck
+</code></pre></div>
+<p>実行結果の例：</p>
+<div class="highlight"><pre><span></span><code>&gt; Task :ktlintCheck
+&gt; Task :detekt
+&gt; Task :test
+
+BUILD SUCCESSFUL in 5s
+</code></pre></div>
+<h3 id="gradle-wrapper">Gradle Wrapper<a class="headerlink" href="#gradle-wrapper" title="Permanent link">&para;</a></h3>
+<p>プロジェクトには <code>gradlew</code>（Unix/Linux/Mac）と <code>gradlew.bat</code>（Windows）というファイルがあります。これは <strong>Gradle Wrapper</strong> と呼ばれ、Gradleがインストールされていない環境でも同じバージョンのGradleを使用できるようにするツールです。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Unix/Linux/Mac</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>build
+
+<span class="c1"># Windows</span>
+$<span class="w"> </span>gradlew.bat<span class="w"> </span>build
+</code></pre></div>
+<p>チーム開発では、メンバー全員が同じバージョンのGradleを使用することが重要なので、Gradle Wrapperを使用することが推奨されます。</p>
+<h2 id="_20">自動化<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<p>これまでに導入したツールを使って、開発作業を自動化しましょう。Gradleには <strong>継続的ビルド</strong> 機能があり、ファイルの変更を監視して自動的にタスクを実行できます。</p>
+<h3 id="_21">ファイル監視による自動実行<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ファイル変更を監視してテストを自動実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--continuous
+
+<span class="c1"># ファイル変更を監視して品質チェックを自動実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>qualityCheck<span class="w"> </span>--continuous
+</code></pre></div>
+<p><code>--continuous</code>オプションを使用すると、ソースファイルが変更されるたびに自動的にタスクが実行されます。</p>
+<p>実行結果の例：</p>
+<div class="highlight"><pre><span></span><code>&gt; Task :qualityCheck
+
+BUILD SUCCESSFUL in 2s
+
+Waiting for changes to input files... (ctrl-d to exit)
+&lt;-------------&gt; 0% EXECUTING
+&gt; :qualityCheck
+</code></pre></div>
+<p>この状態でKotlinファイルを編集すると、自動的に品質チェックが実行されます：</p>
+<div class="highlight"><pre><span></span><code>Change detected, executing build...
+
+&gt; Task :ktlintCheck
+&gt; Task :detekt
+
+BUILD SUCCESSFUL in 1s
+
+Waiting for changes to input files... (ctrl-d to exit)
+</code></pre></div>
+<h3 id="ide">IDEとの連携<a class="headerlink" href="#ide" title="Permanent link">&para;</a></h3>
+<p>多くのIDEはGradleと連携して、以下のような自動化を提供しています：</p>
+<ul>
+<li><strong>保存時の自動フォーマット</strong>: ファイル保存時にktlintFormatを実行</li>
+<li><strong>リアルタイム解析</strong>: Detektによる静的解析結果をエディタに表示</li>
+<li><strong>テストの自動実行</strong>: テストファイル変更時にテストを自動実行</li>
+</ul>
+<p>これらの機能により、開発中にリアルタイムでコード品質を確認できます。</p>
+<p>設定をコミットしておきましょう。</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;chore: タスクの自動化セットアップ&#39;</span>
+</code></pre></div>
+<p>これで <a href="https://t-wada.hatenablog.jp/entry/clean-code-that-works">ソフトウェア開発の三種の神器</a> の最後のアイテムの準備ができました。次回の開発からは最初にコマンドラインで <code>./gradlew checkAll</code> を実行すれば良いコードを書くためのタスクを自動で実行してくれるようになるので、コードを書くことに集中できるようになりました。</p>
+<h2 id="_22">まとめ<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
+<p>今回はKotlinでの開発に必要なツールを導入しました：</p>
+<h3 id="_23">導入したツール<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>バージョン管理システム</strong>: Git</li>
+<li><strong>テスティングフレームワーク</strong>: JUnit（前回導入済み）</li>
+<li><strong>パッケージマネージャ</strong>: Gradle</li>
+<li><strong>静的コード解析</strong>: Detekt</li>
+<li><strong>コードフォーマッタ</strong>: ktlint</li>
+<li><strong>コードカバレッジ</strong>: JaCoCo</li>
+<li><strong>タスクランナー</strong>: Gradle</li>
+<li><strong>自動化</strong>: Gradle Watch</li>
+</ol>
+<h3 id="_24">よく使うコマンド<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 全てのチェックを実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>checkAll
+
+<span class="c1"># 自動修正を実行</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>fixAll
+
+<span class="c1"># テスト実行（カバレッジ付き）</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span><span class="nb">test</span>
+
+<span class="c1"># 継続的品質チェック</span>
+$<span class="w"> </span>./gradlew<span class="w"> </span>qualityCheck<span class="w"> </span>--continuous
+</code></pre></div>
+<p>これらのツールを使うことで、以下の利点が得られます：</p>
+<ul>
+<li><strong>品質の向上</strong>: 静的解析とフォーマッタによりコードの品質が向上</li>
+<li><strong>効率の向上</strong>: 自動化により手動作業が削減</li>
+<li><strong>一貫性の確保</strong>: チーム全体で同じ品質基準を共有</li>
+<li><strong>早期発見</strong>: 問題の早期発見と修正</li>
+<li><strong>集中力の向上</strong>: コード品質管理から開放され、ロジックに集中可能</li>
+</ul>
+<p>次のエピソードでは、これらのツールを活用してより高度なプログラミング技法を学んでいきましょう。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works" target="_blank" rel="noopener" title="GitHub Repository/claude-code-booster" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>

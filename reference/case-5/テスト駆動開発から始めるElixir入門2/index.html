@@ -1,0 +1,1152 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Site Description">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>テスト駆動開発から始めるElixir入門 ~ソフトウェア開発の三種の神器を準備する~ - Site Name</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Site Name" class="md-header__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Site Name
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              テスト駆動開発から始めるElixir入門 ~ソフトウェア開発の三種の神器を準備する~
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Site Name" class="md-nav__button md-logo" aria-label="Site Name" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Site Name
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/claude-code-booster" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    claude-code-booster
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>テスト駆動開発から始めるElixir入門 ~ソフトウェア開発の三種の神器を準備する~</h1>
+
+<h2 id="_1">はじめに<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>前回の記事「テスト駆動開発から始めるElixir入門 ~2時間でTDDとリファクタリングのエッセンスを体験する~」では、Elixirの基本的な機能とテスト駆動開発の考え方を学びました。</p>
+<p>今回は、より実践的な開発環境を構築し、<strong>ソフトウェア開発の三種の神器</strong>を準備することで、「動作するきれいなコード」を継続的に書き続けられる環境を整えます。</p>
+<h3 id="_2">想定読者<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Elixir入門1を読了した方</li>
+<li>ソフトウェア開発の品質向上に興味がある方</li>
+<li>自動化による開発効率化を学びたい方</li>
+</ul>
+<h3 id="_3">学習目標<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ソフトウェア開発の三種の神器を理解する</li>
+<li>Elixirにおける開発環境の構築方法を習得する</li>
+<li>継続的品質向上の仕組みを理解する</li>
+<li>自動化による開発効率化を体験する</li>
+</ul>
+<hr />
+<h2 id="_4">ソフトウェア開発の三種の神器<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>優れたソフトウェア開発には、以下の3つの要素が不可欠です：</p>
+<h3 id="1">1. バージョン管理<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<p><strong>「いつでも安全に戻れる安心感」</strong></p>
+<p>前回の記事でGitを使用してコードの変更履歴を管理しました。これにより：
+- 変更の履歴が保存される
+- 問題が発生した時に以前の状態に戻せる
+- チーム開発での変更管理が可能</p>
+<h3 id="2">2. テスティング<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p><strong>「コードが正しく動作する保証」</strong></p>
+<p>前回の記事でExUnitを使用してテスト駆動開発を実践しました。これにより：
+- コードの動作が保証される
+- リファクタリングが安全に行える
+- 仕様が文書化される</p>
+<h3 id="3">3. 自動化<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p><strong>「人的ミスを排除し、品質を一定化」</strong></p>
+<p>今回の記事の主要テーマです。自動化により：
+- 人的ミスが削減される
+- 開発効率が向上する
+- 品質が一定化される
+- チームでの共通認識が生まれる</p>
+<hr />
+<h2 id="2-">エピソード2 - 自動化から始めるテスト駆動開発<a class="headerlink" href="#2-" title="Permanent link">&para;</a></h2>
+<p>前回作成したFizzBuzzプロジェクトを基に、実際にソフトウェア開発の三種の神器を整備していきます。</p>
+<h3 id="_5">現在のプロジェクト状況<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># プロジェクト構成</span>
+fizz_buzz/
+├──<span class="w"> </span>lib/
+│<span class="w">   </span>└──<span class="w"> </span>fizz_buzz.ex
+├──<span class="w"> </span>test/
+│<span class="w">   </span>├──<span class="w"> </span>fizz_buzz_test.exs
+│<span class="w">   </span>└──<span class="w"> </span>test_helper.exs
+├──<span class="w"> </span>mix.exs
+└──<span class="w"> </span>README.md
+</code></pre></div>
+<h3 id="_6">コミット履歴の確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>-6
+<span class="c1"># 461e0a9 feat: プリント機能の追加</span>
+<span class="c1"># c0f6be8 refactor: パターンマッチングとguardによる実装</span>
+<span class="c1"># e50f01f test: 1から100までのFizzBuzzの配列を返す</span>
+<span class="c1"># f012342 test: 15を渡したら文字列FizzBuzzを返す</span>
+<span class="c1"># eaf7081 test: 5を渡したら文字列Buzzを返す</span>
+<span class="c1"># 372a59a test: 3を渡したら文字列Fizzを返す</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-1">Phase 1: コミットメッセージの標準化<a class="headerlink" href="#phase-1" title="Permanent link">&para;</a></h2>
+<h3 id="angular">Angularコミットメッセージ規約<a class="headerlink" href="#angular" title="Permanent link">&para;</a></h3>
+<p>良いコミットメッセージは、プロジェクトの変更履歴を理解しやすくします。Angularプロジェクトで使用されている規約を採用しましょう：</p>
+<div class="highlight"><pre><span></span><code>&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
+
+&lt;body&gt;
+
+&lt;footer&gt;
+</code></pre></div>
+<h3 id="_7">主要なタイプ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>feat</strong>: 新機能の追加</li>
+<li><strong>fix</strong>: バグの修正</li>
+<li><strong>docs</strong>: ドキュメントのみの変更</li>
+<li><strong>style</strong>: コードの動作に影響しないスタイルの変更</li>
+<li><strong>refactor</strong>: バグ修正や機能追加以外のコード変更</li>
+<li><strong>perf</strong>: パフォーマンスを改善するコード変更</li>
+<li><strong>test</strong>: テストの追加や修正</li>
+<li><strong>chore</strong>: ビルドプロセスやツールの変更</li>
+</ul>
+<h3 id="_8">実践例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 良い例</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: FizzBuzz生成機能を追加&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;test: 15の場合のテストケースを追加&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;refactor: パターンマッチングによる実装改善&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: 静的解析ツールCredoを導入&quot;</span>
+
+<span class="c1"># 改善の余地がある例</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;update&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;fix bug&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add test&quot;</span>
+</code></pre></div>
+<p>今後のコミットでは、この規約に従ってメッセージを作成していきます。</p>
+<hr />
+<h2 id="phase-2-mix">Phase 2: パッケージマネージャ - Mix<a class="headerlink" href="#phase-2-mix" title="Permanent link">&para;</a></h2>
+<h3 id="mix">Mixとは<a class="headerlink" href="#mix" title="Permanent link">&para;</a></h3>
+<p>Elixirには<strong>Mix</strong>という強力なビルドツールが標準で付属しています：</p>
+<ul>
+<li><strong>依存関係管理</strong>: 外部ライブラリの管理</li>
+<li><strong>タスク実行</strong>: テスト、ビルド、カスタムタスクの実行</li>
+<li><strong>プロジェクト構成管理</strong>: 設定の一元化</li>
+</ul>
+<h3 id="mixexs">mix.exsの拡張<a class="headerlink" href="#mixexs" title="Permanent link">&para;</a></h3>
+<p>現在のプロジェクトに開発用ツールを追加します：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">defmodule</span><span class="w"> </span><span class="nc">FizzBuzz.MixProject</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Mix.Project</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">project</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="p">[</span>
+<span class="w">      </span><span class="ss">app</span><span class="p">:</span><span class="w"> </span><span class="ss">:fizz_buzz</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">elixir</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;~&gt; 1.16&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">start_permanent</span><span class="p">:</span><span class="w"> </span><span class="nc">Mix</span><span class="o">.</span><span class="n">env</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="ss">:prod</span><span class="p">,</span>
+<span class="w">      </span><span class="ss">deps</span><span class="p">:</span><span class="w"> </span><span class="n">deps</span><span class="p">(),</span>
+
+<span class="w">      </span><span class="c1"># テストカバレッジの設定</span>
+<span class="w">      </span><span class="ss">test_coverage</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="ss">tool</span><span class="p">:</span><span class="w"> </span><span class="nc">ExCoveralls</span><span class="p">],</span>
+<span class="w">      </span><span class="ss">preferred_cli_env</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="ss">coveralls</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;coveralls.detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;coveralls.html&quot;</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">application</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="p">[</span>
+<span class="w">      </span><span class="ss">extra_applications</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="ss">:logger</span><span class="p">]</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="kd">defp</span><span class="w"> </span><span class="n">deps</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="p">[</span>
+<span class="w">      </span><span class="c1"># 静的コード解析</span>
+<span class="w">      </span><span class="p">{</span><span class="ss">:credo</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;~&gt; 1.7&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="ss">:dev</span><span class="p">,</span><span class="w"> </span><span class="ss">:test</span><span class="p">],</span><span class="w"> </span><span class="ss">runtime</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">},</span>
+<span class="w">      </span><span class="c1"># コードカバレッジ</span>
+<span class="w">      </span><span class="p">{</span><span class="ss">:excoveralls</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;~&gt; 0.18&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span><span class="p">},</span>
+<span class="w">      </span><span class="c1"># ファイル監視</span>
+<span class="w">      </span><span class="p">{</span><span class="ss">:mix_test_watch</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;~&gt; 1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="ss">:dev</span><span class="p">,</span><span class="w"> </span><span class="ss">:test</span><span class="p">],</span><span class="w"> </span><span class="ss">runtime</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<h3 id="_9">依存関係のインストール<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>deps.get
+</code></pre></div>
+<p>これで、品質向上のためのツールが利用可能になりました。</p>
+<hr />
+<h2 id="phase-3-credo">Phase 3: 静的コード解析 - Credo<a class="headerlink" href="#phase-3-credo" title="Permanent link">&para;</a></h2>
+<h3 id="credo">Credoとは<a class="headerlink" href="#credo" title="Permanent link">&para;</a></h3>
+<p><strong>Credo</strong>は、Elixir専用の静的コード解析ツールです：</p>
+<ul>
+<li>コードの可読性チェック</li>
+<li>Elixirのベストプラクティス指摘</li>
+<li>コードの一貫性確保</li>
+<li>潜在的な問題の早期発見</li>
+</ul>
+<h3 id="_10">セットアップ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 設定ファイルを生成</span>
+mix<span class="w"> </span>credo<span class="w"> </span>gen.config
+
+<span class="c1"># 実行</span>
+mix<span class="w"> </span>credo
+</code></pre></div>
+<h3 id="_11">実際の問題と解決<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>初回実行時、以下のような指摘を受けました：</p>
+<div class="highlight"><pre><span></span><code>[R] → Modules should have a @moduledoc tag.
+      lib/fizz_buzz.ex:1:11 #(FizzBuzz)
+</code></pre></div>
+<p><strong>解決策</strong>: モジュールドキュメントを追加</p>
+<div class="highlight"><pre><span></span><code><span class="kd">defmodule</span><span class="w"> </span><span class="nc">FizzBuzz</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="na">@moduledoc</span><span class="w"> </span><span class="sh">&quot;&quot;&quot;</span>
+<span class="w">  </span><span class="sh">FizzBuzz問題を解くためのモジュールです。</span>
+
+<span class="sh">  数値を受け取り、以下のルールに従って文字列を返します：</span>
+<span class="sh">  - 3で割り切れる場合: &quot;Fizz&quot;</span>
+<span class="sh">  - 5で割り切れる場合: &quot;Buzz&quot;  </span>
+<span class="sh">  - 3と5の両方で割り切れる場合: &quot;FizzBuzz&quot;</span>
+<span class="sh">  - それ以外: 数値の文字列表現</span>
+<span class="w">  </span><span class="sh">&quot;&quot;&quot;</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">generate</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">rem</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FizzBuzz&quot;</span>
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">generate</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">rem</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fizz&quot;</span>
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">generate</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">rem</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Buzz&quot;</span>
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">generate</span><span class="p">(</span><span class="n">number</span><span class="p">),</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">list</span><span class="p">(</span><span class="n">max</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">..</span><span class="n">max</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="n">generate</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="n">max</span><span class="w"> </span><span class="p">\\</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="n">list</span><span class="p">(</span><span class="n">max</span><span class="p">)</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="o">&amp;</span><span class="nc">IO</span><span class="o">.</span><span class="n">puts</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p><strong>コミット</strong>:
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: 静的コード解析ツールCredoの導入とモジュールドキュメント追加&quot;</span>
+</code></pre></div></p>
+<h3 id="credo_1">Credoの結果確認<a class="headerlink" href="#credo_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>credo
+<span class="c1"># Checking 3 source files ...</span>
+<span class="c1"># Analysis took 0.1 seconds</span>
+<span class="c1"># 8 mods/funs, found no issues.</span>
+</code></pre></div>
+<p>これで、コードがElixirのベストプラクティスに準拠していることが確認できました。</p>
+<hr />
+<h2 id="phase-4-mix-format">Phase 4: コードフォーマッタ - mix format<a class="headerlink" href="#phase-4-mix-format" title="Permanent link">&para;</a></h2>
+<h3 id="mix-format">mix formatとは<a class="headerlink" href="#mix-format" title="Permanent link">&para;</a></h3>
+<p><strong>mix format</strong>は、Elixir 1.6以降に標準搭載されたコードフォーマッタです：</p>
+<ul>
+<li>一貫したコードスタイル</li>
+<li>チーム開発での統一性</li>
+<li>読みやすいコード</li>
+<li>フォーマットに関する議論の削減</li>
+</ul>
+<h3 id="_12">設定ファイルの作成<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p><code>.formatter.exs</code>を編集して、プロジェクトの設定を調整：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># .formatter.exs</span>
+<span class="p">[</span>
+<span class="w">  </span><span class="ss">inputs</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;{mix,.formatter}.exs&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;{config,lib,test}/**/*.{ex,exs}&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="ss">line_length</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">import_deps</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="_13">使用方法<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># コードを自動整形</span>
+mix<span class="w"> </span>format
+
+<span class="c1"># フォーマット状態をチェック（CI用）</span>
+mix<span class="w"> </span>format<span class="w"> </span>--check-formatted
+</code></pre></div>
+<p><strong>コミット</strong>:
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: コードフォーマッタの設定とコード整形&quot;</span>
+</code></pre></div></p>
+<h3 id="_14">フォーマッタの利点<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>フォーマッタを導入することで：
+- <strong>統一性</strong>: チーム全体で同じコードスタイル
+- <strong>効率性</strong>: フォーマットを気にせず開発に集中
+- <strong>可読性</strong>: 一貫した見た目で理解しやすい
+- <strong>自動化</strong>: CI/CDでの自動チェック</p>
+<hr />
+<h2 id="phase-5-excoveralls">Phase 5: コードカバレッジ - ExCoveralls<a class="headerlink" href="#phase-5-excoveralls" title="Permanent link">&para;</a></h2>
+<h3 id="excoveralls">ExCoverallsとは<a class="headerlink" href="#excoveralls" title="Permanent link">&para;</a></h3>
+<p><strong>ExCoveralls</strong>は、Elixir用のコードカバレッジツールです：</p>
+<ul>
+<li>テストカバレッジの測定</li>
+<li>HTML/XMLレポート生成</li>
+<li>CI/CD統合対応</li>
+<li>カバレッジの可視化</li>
+</ul>
+<h3 id="_15">設定の確認<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<p><code>mix.exs</code>で既に設定済みの内容を確認：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># テストカバレッジツールとしてExCoverallsを指定</span>
+<span class="ss">test_coverage</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="ss">tool</span><span class="p">:</span><span class="w"> </span><span class="nc">ExCoveralls</span><span class="p">],</span>
+
+<span class="c1"># テスト環境での実行を指定</span>
+<span class="ss">preferred_cli_env</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="ss">coveralls</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;coveralls.detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;coveralls.html&quot;</span><span class="p">:</span><span class="w"> </span><span class="ss">:test</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="_16">使用方法と結果<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># カバレッジ測定</span>
+mix<span class="w"> </span>coveralls
+</code></pre></div>
+<p><strong>結果</strong>:
+<div class="highlight"><pre><span></span><code>COV    FILE                  LINES RELEVANT   MISSED
+83.3%  lib/fizz_buzz.ex         25        6        1
+[TOTAL]  83.3%
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># HTMLレポート生成</span>
+mix<span class="w"> </span>coveralls.html
+<span class="c1"># Saved to: cover/</span>
+</code></pre></div>
+<h3 id="_17">カバレッジの解釈<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p>現在のカバレッジは<strong>83.3%</strong>です。これは：
+- 6つの実行可能な行のうち、5つがテストでカバーされている
+- 1つの行がまだテストされていない
+- 一般的に80%以上のカバレッジは良好とされる</p>
+<p><strong>注意</strong>: カバレッジは品質の一つの指標であり、100%が必ずしも最適ではありません。重要なのは、ビジネスロジックが適切にテストされていることです。</p>
+<hr />
+<h2 id="phase-6-mix-tasks">Phase 6: タスクランナー - Mix Tasks<a class="headerlink" href="#phase-6-mix-tasks" title="Permanent link">&para;</a></h2>
+<h3 id="mix_1">カスタムMixタスクの作成<a class="headerlink" href="#mix_1" title="Permanent link">&para;</a></h3>
+<p>開発効率を向上させるため、よく使用するコマンドを統合したカスタムタスクを作成します。</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>lib/mix/tasks
+</code></pre></div>
+<h4 id="_18">基本チェックタスク<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h4>
+<p><code>lib/mix/tasks/check.ex</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Mix.Tasks.Check</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="na">@moduledoc</span><span class="w"> </span><span class="sh">&quot;&quot;&quot;</span>
+<span class="w">  </span><span class="sh">開発時の基本チェックを実行するタスクです。</span>
+
+<span class="sh">  以下のチェックを実行します：</span>
+<span class="sh">  - mix format --check-formatted (フォーマットチェック)</span>
+<span class="sh">  - mix credo (静的解析)</span>
+<span class="sh">  - mix test (テスト実行)</span>
+<span class="w">  </span><span class="sh">&quot;&quot;&quot;</span>
+
+<span class="w">  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Mix.Task</span>
+
+<span class="w">  </span><span class="na">@shortdoc</span><span class="w"> </span><span class="s2">&quot;基本的なコード品質チェック&quot;</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">run</span><span class="p">(</span><span class="n">_args</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;==&gt; 基本チェックを開始します&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1"># フォーマットチェック</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">==&gt; フォーマットチェック&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;--check-formatted&quot;</span><span class="p">])</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✓ フォーマットチェック 完了&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1"># 静的解析</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">==&gt; 静的解析&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;credo&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✓ 静的解析 完了&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1"># テスト実行</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">==&gt; テスト実行&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✓ テスト実行 完了&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🎉 基本チェックが完了しました！&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<h4 id="_19">開発用ショートカットタスク<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<p><code>lib/mix/tasks/dev.ex</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Mix.Tasks.Dev</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="na">@moduledoc</span><span class="w"> </span><span class="sh">&quot;&quot;&quot;</span>
+<span class="w">  </span><span class="sh">開発時によく使用するタスクのためのショートカットです。</span>
+<span class="w">  </span><span class="sh">&quot;&quot;&quot;</span>
+
+<span class="w">  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Mix.Task</span>
+
+<span class="w">  </span><span class="na">@shortdoc</span><span class="w"> </span><span class="s2">&quot;開発用ショートカットコマンド&quot;</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;test&quot;</span><span class="p">])</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;format&quot;</span><span class="p">])</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✓ コードをフォーマットしました&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;coverage&quot;</span><span class="p">])</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;coveralls.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✓ カバレッジレポートを生成しました (cover/excoveralls.html)&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="n">run</span><span class="p">(</span><span class="bp">_</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nc">Mix</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sh">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sh">使用可能なコマンド:</span>
+
+<span class="sh">      mix dev.test          </span><span class="err">#</span><span class="sh"> テストを実行</span>
+<span class="sh">      mix dev.format        </span><span class="err">#</span><span class="sh"> コードをフォーマット  </span>
+<span class="sh">      mix dev.coverage      </span><span class="err">#</span><span class="sh"> カバレッジレポートを生成</span>
+<span class="w">    </span><span class="sh">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<h3 id="_20">使用方法<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基本チェック実行</span>
+mix<span class="w"> </span>check
+
+<span class="c1"># 開発用コマンド</span>
+mix<span class="w"> </span>dev<span class="w">               </span><span class="c1"># ヘルプ表示</span>
+mix<span class="w"> </span>dev.test<span class="w">          </span><span class="c1"># テスト実行</span>
+mix<span class="w"> </span>dev.format<span class="w">        </span><span class="c1"># フォーマット</span>
+mix<span class="w"> </span>dev.coverage<span class="w">      </span><span class="c1"># カバレッジレポート生成</span>
+</code></pre></div>
+<p><strong>コミット</strong>:
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: タスクランナーとしてのMixタスクを追加&quot;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="phase-7-mix_test_watch">Phase 7: タスクの自動化 - mix_test_watch<a class="headerlink" href="#phase-7-mix_test_watch" title="Permanent link">&para;</a></h2>
+<h3 id="mix_test_watch">mix_test_watchとは<a class="headerlink" href="#mix_test_watch" title="Permanent link">&para;</a></h3>
+<p><strong>mix_test_watch</strong>は、ファイルの変更を監視して自動的にテストを実行するツールです：</p>
+<ul>
+<li>ファイル変更の監視</li>
+<li>自動テスト実行</li>
+<li>リアルタイムフィードバック</li>
+<li>開発効率の向上</li>
+</ul>
+<h3 id="_21">使用方法<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ファイル監視を開始</span>
+mix<span class="w"> </span>test.watch
+</code></pre></div>
+<p>このコマンドを実行すると：
+1. ファイルの変更を監視
+2. 変更が検出されると自動的にテストを実行
+3. 結果をリアルタイムで表示</p>
+<h3 id="_22">自動化の価値<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p>自動化により以下が実現されます：</p>
+<ul>
+<li><strong>即座のフィードバック</strong>: コードを書くたびに結果が分かる</li>
+<li><strong>安心感</strong>: 常にテストが実行されている状態</li>
+<li><strong>効率性</strong>: 手動でコマンドを実行する必要がない</li>
+<li><strong>品質向上</strong>: 問題の早期発見</li>
+</ul>
+<h3 id="_23">開発ガイドの作成<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<p>チーム開発のため、開発手順をドキュメント化します。</p>
+<p><code>DEVELOPMENT.md</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># 開発ガイド</span>
+
+<span class="gu">## 使用可能なツール</span>
+
+<span class="gu">### 基本コマンド</span>
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix test`</span> - テスト実行
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix format`</span> - コード整形
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix credo`</span> - 静的解析
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix coveralls`</span> - カバレッジ測定
+
+<span class="gu">### 統合コマンド</span>
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix check`</span> - 基本チェック (format, credo, test)
+
+<span class="gu">### 開発用コマンド</span>
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix dev`</span> - 利用可能なコマンド一覧
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix dev.coverage`</span> - HTMLカバレッジレポート生成
+
+<span class="gu">### 自動化</span>
+<span class="k">-</span><span class="w"> </span><span class="sb">`mix test.watch`</span> - ファイル変更時の自動テスト実行
+
+<span class="gu">## 開発フロー</span>
+
+<span class="k">1.</span> <span class="gs">**コードを書く**</span>
+<span class="k">2.</span> <span class="gs">**フォーマット**</span>: <span class="sb">`mix format`</span>
+<span class="k">3.</span> <span class="gs">**チェック**</span>: <span class="sb">`mix check`</span>
+<span class="k">4.</span> <span class="gs">**コミット**</span>
+
+<span class="gu">## 品質基準</span>
+
+<span class="k">-</span><span class="w"> </span><span class="gs">**フォーマット**</span>: Elixir標準フォーマッタに準拠
+<span class="k">-</span><span class="w"> </span><span class="gs">**静的解析**</span>: Credoのルールをクリア
+<span class="k">-</span><span class="w"> </span><span class="gs">**テストカバレッジ**</span>: 80%以上を目標
+<span class="k">-</span><span class="w"> </span><span class="gs">**全テスト**</span>: パスすること
+</code></pre></div>
+<p><strong>コミット</strong>:
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: タスクの自動化と開発ガイドの追加&quot;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="_24">開発フローの確立<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<h3 id="_25">推奨開発フロー<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<p>自動化環境が整ったので、効率的な開発フローを確立しましょう：</p>
+<pre class="mermaid"><code>graph TD
+    A[コードを書く] --&gt; B[自動フォーマット]
+    B --&gt; C[基本チェック実行]
+    C --&gt; D{問題があるか?}
+    D --&gt;|Yes| E[問題を修正]
+    E --&gt; A
+    D --&gt;|No| F[適切なコミット]
+    F --&gt; G[継続開発]
+    G --&gt; A</code></pre>
+<h4 id="1_1">1. コードを書く<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h4>
+<p>新機能やバグ修正のコードを書きます。</p>
+<h4 id="2_1">2. 自動フォーマット<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>format
+</code></pre></div>
+<h4 id="3_1">3. 基本チェック<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>check
+</code></pre></div>
+<h4 id="4">4. 問題があれば修正<a class="headerlink" href="#4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>フォーマットエラー → <code>mix format</code>で自動修正</li>
+<li>Credo警告 → コードの改善</li>
+<li>テスト失敗 → テストまたは実装の修正</li>
+</ul>
+<h4 id="5">5. 適切なコミット<a class="headerlink" href="#5" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: 新機能を追加&quot;</span>
+</code></pre></div>
+<h4 id="6">6. 継続監視（オプション）<a class="headerlink" href="#6" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>test.watch
+</code></pre></div>
+<h3 id="_26">品質基準の設定<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<p>開発チームとして以下の基準を設定：</p>
+<ul>
+<li><strong>フォーマット</strong>: 100%準拠（自動化により保証）</li>
+<li><strong>静的解析</strong>: Credoルールクリア</li>
+<li><strong>テストカバレッジ</strong>: 80%以上を目標</li>
+<li><strong>全テスト</strong>: パス必須</li>
+</ul>
+<hr />
+<h2 id="_27">実践例：完成した開発環境<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h2>
+<h3 id="_28">プロジェクト構成<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>fizz_buzz/
+├── lib/
+│   ├── fizz_buzz.ex              # メインモジュール
+│   └── mix/
+│       └── tasks/
+│           ├── check.ex          # 基本チェックタスク
+│           └── dev.ex            # 開発用タスク
+├── test/
+│   ├── fizz_buzz_test.exs        # テストファイル
+│   └── test_helper.exs
+├── .credo.exs                    # Credo設定
+├── .formatter.exs                # フォーマッタ設定
+├── mix.exs                       # プロジェクト設定
+├── DEVELOPMENT.md                # 開発ガイド
+└── README.md                     # プロジェクト説明
+</code></pre></div>
+<h3 id="_29">使用可能なコマンド一覧<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基本的な開発コマンド</span>
+mix<span class="w"> </span><span class="nb">test</span><span class="w">                    </span><span class="c1"># テスト実行</span>
+mix<span class="w"> </span>format<span class="w">                  </span><span class="c1"># コード整形</span>
+mix<span class="w"> </span>credo<span class="w">                   </span><span class="c1"># 静的解析</span>
+mix<span class="w"> </span>coveralls<span class="w">              </span><span class="c1"># カバレッジ測定</span>
+mix<span class="w"> </span>coveralls.html<span class="w">         </span><span class="c1"># HTMLカバレッジレポート</span>
+
+<span class="c1"># 統合コマンド</span>
+mix<span class="w"> </span>check<span class="w">                   </span><span class="c1"># 基本チェック</span>
+
+<span class="c1"># 開発用ショートカット</span>
+mix<span class="w"> </span>dev<span class="w">                     </span><span class="c1"># ヘルプ表示</span>
+mix<span class="w"> </span>dev.test<span class="w">               </span><span class="c1"># テスト実行</span>
+mix<span class="w"> </span>dev.format<span class="w">             </span><span class="c1"># フォーマット実行</span>
+mix<span class="w"> </span>dev.coverage<span class="w">           </span><span class="c1"># カバレッジレポート生成</span>
+
+<span class="c1"># 自動化</span>
+mix<span class="w"> </span>test.watch<span class="w">             </span><span class="c1"># ファイル監視</span>
+</code></pre></div>
+<h3 id="_30">コミット履歴の確認<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>-10
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>033240d chore: タスクの自動化と開発ガイドの追加
+91a5383 chore: タスクランナーとしてのMixタスクを追加  
+7c5fcce chore: コードフォーマッタの設定とコード整形
+6a77eae chore: 静的コード解析ツールCredoの導入とモジュールドキュメント追加
+461e0a9 feat: プリント機能の追加
+c0f6be8 refactor: パターンマッチングとguardによる実装
+e50f01f test: 1から100までのFizzBuzzの配列を返す
+f012342 test: 15を渡したら文字列FizzBuzzを返す
+eaf7081 test: 5を渡したら文字列Buzzを返す
+372a59a test: 3を渡したら文字列Fizzを返す
+</code></pre></div>
+<p>きれいなコミット履歴が形成されています。Angularコミットメッセージ規約に従い、変更の種類が明確に分かります。</p>
+<hr />
+<h2 id="_31">トラブルシューティング<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h2>
+<h3 id="_32">よくある問題と解決策<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
+<h4 id="1_2">1. フォーマットエラー<a class="headerlink" href="#1_2" title="Permanent link">&para;</a></h4>
+<p><strong>問題</strong>:
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>format<span class="w"> </span>--check-formatted
+<span class="c1"># The following files are not formatted: lib/fizz_buzz.ex</span>
+</code></pre></div></p>
+<p><strong>解決</strong>:
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>format
+</code></pre></div></p>
+<h4 id="2-credo">2. Credo警告<a class="headerlink" href="#2-credo" title="Permanent link">&para;</a></h4>
+<p><strong>問題</strong>:
+<div class="highlight"><pre><span></span><code>[R] → Modules should have a @moduledoc tag.
+</code></pre></div></p>
+<p><strong>解決</strong>:
+<div class="highlight"><pre><span></span><code><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyModule</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="na">@moduledoc</span><span class="w"> </span><span class="sh">&quot;&quot;&quot;</span>
+<span class="w">  </span><span class="sh">モジュールの説明を記述</span>
+<span class="w">  </span><span class="sh">&quot;&quot;&quot;</span>
+<span class="k">end</span>
+</code></pre></div></p>
+<h4 id="3_2">3. テストカバレッジ低下<a class="headerlink" href="#3_2" title="Permanent link">&para;</a></h4>
+<p><strong>問題</strong>: カバレッジが目標値を下回る</p>
+<p><strong>解決策</strong>:
+- 不足しているテストケースを追加
+- 不要なコードの削除
+- テストの質を向上</p>
+<h4 id="4_1">4. 依存関係の問題<a class="headerlink" href="#4_1" title="Permanent link">&para;</a></h4>
+<p><strong>問題</strong>: 新しい依存関係が取得できない</p>
+<p><strong>解決</strong>:
+<div class="highlight"><pre><span></span><code>mix<span class="w"> </span>deps.clean<span class="w"> </span>--all
+mix<span class="w"> </span>deps.get
+</code></pre></div></p>
+<hr />
+<h2 id="ruby">Ruby版との比較<a class="headerlink" href="#ruby" title="Permanent link">&para;</a></h2>
+<h3 id="_33">ツール対応表<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>Ruby</th>
+<th>Elixir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>パッケージマネージャ</td>
+<td>Bundler</td>
+<td>Mix</td>
+</tr>
+<tr>
+<td>静的解析</td>
+<td>RuboCop</td>
+<td>Credo</td>
+</tr>
+<tr>
+<td>コードフォーマッタ</td>
+<td>RuboCop（フォーマット機能）</td>
+<td>mix format</td>
+</tr>
+<tr>
+<td>テストカバレッジ</td>
+<td>SimpleCov</td>
+<td>ExCoveralls</td>
+</tr>
+<tr>
+<td>タスクランナー</td>
+<td>Rake</td>
+<td>Mix Tasks</td>
+</tr>
+<tr>
+<td>ファイル監視</td>
+<td>Guard</td>
+<td>mix_test_watch</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_34">アプローチの違い<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h3>
+<h4 id="ruby_1">Ruby: 複数ツールの組み合わせ<a class="headerlink" href="#ruby_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Bundler + RuboCop + SimpleCov + Rake + Guard</li>
+<li>各ツールが独立している</li>
+<li>設定ファイルが複数必要</li>
+</ul>
+<h4 id="elixir-mix">Elixir: Mix中心の統合<a class="headerlink" href="#elixir-mix" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Mixが中心的な役割</li>
+<li>設定の多くがmix.exsに集約</li>
+<li>Elixirエコシステムとの統合が深い</li>
+</ul>
+<hr />
+<h2 id="_35">チーム開発での活用<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h2>
+<h3 id="_36">共通ルールの設定<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>コミットメッセージ規約</strong></li>
+<li>Angularルールの採用</li>
+<li>
+<p>プリフィックスの統一</p>
+</li>
+<li>
+<p><strong>コード品質基準</strong></p>
+</li>
+<li>フォーマッタの必須使用</li>
+<li>Credoルールの遵守</li>
+<li>
+<p>カバレッジ基準の設定</p>
+</li>
+<li>
+<p><strong>開発フロー</strong></p>
+</li>
+<li><code>mix check</code>の実行を習慣化</li>
+<li>コミット前の品質チェック</li>
+</ol>
+<h3 id="cicd">CI/CD統合例<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h3>
+<p>GitHub Actionsでの自動化例：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/elixir.yml</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Elixir CI</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">main</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">main</span><span class="w"> </span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Elixir</span>
+<span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">erlef/setup-elixir@v1</span>
+<span class="w">      </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">elixir-version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1.16&#39;</span>
+<span class="w">        </span><span class="nt">otp-version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;26&#39;</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mix deps.get</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run quality checks</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">mix format --check-formatted</span>
+<span class="w">        </span><span class="no">mix credo --strict</span>
+<span class="w">        </span><span class="no">mix test</span>
+<span class="w">        </span><span class="no">mix coveralls</span>
+</code></pre></div>
+<hr />
+<h2 id="_37">まとめ<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h2>
+<h3 id="_38">得られたもの<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h3>
+<p>この記事を通じて、以下を実現しました：</p>
+<h4 id="1_3">1. 継続的品質向上の仕組み<a class="headerlink" href="#1_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>静的解析</strong>: コードの問題を早期発見</li>
+<li><strong>自動フォーマット</strong>: 一貫したコードスタイル</li>
+<li><strong>カバレッジ測定</strong>: テストの充実度を可視化</li>
+</ul>
+<h4 id="2_2">2. 効率的な開発環境<a class="headerlink" href="#2_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>統合コマンド</strong>: 複数チェックを一度に実行</li>
+<li><strong>自動化</strong>: ファイル変更時の自動テスト</li>
+<li><strong>開発ガイド</strong>: チーム共通の開発手順</li>
+</ul>
+<h4 id="3_3">3. チーム開発での統一性<a class="headerlink" href="#3_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>コミット規約</strong>: 変更履歴の理解しやすさ</li>
+<li><strong>品質基準</strong>: 共通の品質レベル</li>
+<li><strong>ツール統一</strong>: 同じ環境での開発</li>
+</ul>
+<h4 id="4_2">4. 自動化による安心感<a class="headerlink" href="#4_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>人的ミス削減</strong>: 自動チェックによる品質保証</li>
+<li><strong>即座のフィードバック</strong>: 問題の早期発見</li>
+<li><strong>開発効率向上</strong>: 手動作業の削減</li>
+</ul>
+<h3 id="_39">学習内容の振り返り<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h3>
+<h4 id="_40">ソフトウェア開発の三種の神器<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>バージョン管理</strong> ✅</li>
+<li>Git による変更履歴管理</li>
+<li>
+<p>適切なコミットメッセージ</p>
+</li>
+<li>
+<p><strong>テスティング</strong> ✅  </p>
+</li>
+<li>ExUnit によるテスト駆動開発</li>
+<li>
+<p>ExCoveralls によるカバレッジ測定</p>
+</li>
+<li>
+<p><strong>自動化</strong> ✅</p>
+</li>
+<li>静的解析の自動実行</li>
+<li>フォーマットの自動適用</li>
+<li>テストの自動実行</li>
+</ol>
+<h4 id="elixir">Elixirエコシステムの理解<a class="headerlink" href="#elixir" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Mix</strong>: プロジェクト管理の中核</li>
+<li><strong>Credo</strong>: Elixir特有のベストプラクティス</li>
+<li><strong>mix format</strong>: 言語レベルでのフォーマット支援</li>
+<li><strong>Mix Tasks</strong>: カスタムタスクによる効率化</li>
+</ul>
+<h3 id="_41">次のステップ<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h3>
+<p>「動作するきれいなコード」を書く環境が整いました。次回は：</p>
+<ul>
+<li>より高度なリファクタリング技法</li>
+<li>オブジェクト指向的設計パターンのElixir版</li>
+<li>パフォーマンス最適化</li>
+<li>実際のWebアプリケーション開発</li>
+</ul>
+<p>これらの基盤の上に、より実践的なElixirアプリケーション開発を進めていきましょう。</p>
+<hr />
+<h2 id="_42">参考資料<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h2>
+<h3 id="_43">公式ドキュメント<a class="headerlink" href="#_43" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://elixir-lang.org/docs.html">Elixir公式ドキュメント</a></li>
+<li><a href="https://hexdocs.pm/mix/Mix.html">Mix documentation</a></li>
+<li><a href="https://hexdocs.pm/ex_unit/ExUnit.html">ExUnit documentation</a></li>
+</ul>
+<h3 id="_44">使用ツール<a class="headerlink" href="#_44" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://github.com/rrrene/credo">Credo</a> - 静的コード解析</li>
+<li><a href="https://github.com/parroty/excoveralls">ExCoveralls</a> - コードカバレッジ</li>
+<li><a href="https://github.com/lpil/mix-test.watch">mix_test_watch</a> - ファイル監視</li>
+</ul>
+<h3 id="_45">参考記事<a class="headerlink" href="#_45" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit">Angularコミットメッセージ規約</a></li>
+<li><a href="https://hexdocs.pm/elixir/main/writing-documentation.html">Elixirのベストプラクティス</a></li>
+</ul>
+<p>Elixirの世界で「動作するきれいなコード」を継続的に書き続ける環境が整いました。開発を楽しんでください！</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works" target="_blank" rel="noopener" title="GitHub Repository/claude-code-booster" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>
