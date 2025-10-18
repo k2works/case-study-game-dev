@@ -61,12 +61,18 @@ tox を使ってすべての品質チェックを一度に実行できます：
 # すべての品質チェックとテストを実行（推奨）
 uv run tox -e all
 
-# 個別タスクの実行
+# 品質チェック系タスク
 uv run tox -e test        # テストのみ
 uv run tox -e lint        # リンターのみ
 uv run tox -e type        # 型チェックのみ
 uv run tox -e coverage    # カバレッジレポートのみ
 uv run tox -e format      # フォーマットのみ
+
+# 開発系タスク
+uv run tox -e notebook    # Jupyter Notebook を起動
+uv run tox -e notebook-lab # Jupyter Lab を起動
+uv run tox -e train       # モデル訓練を実行
+uv run tox -e predict     # 予測を実行
 ```
 
 #### 個別コマンドの実行

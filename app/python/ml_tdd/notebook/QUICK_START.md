@@ -12,6 +12,20 @@ cd app/python/ml_tdd/notebook
 
 ### ステップ 2: Jupyter Notebook を起動
 
+**方法 1: tox を使う（推奨）**
+
+```bash
+uv run tox -e notebook
+```
+
+または Jupyter Lab を使う場合：
+
+```bash
+uv run tox -e notebook-lab
+```
+
+**方法 2: 直接起動**
+
 ```bash
 uv run jupyter notebook
 ```

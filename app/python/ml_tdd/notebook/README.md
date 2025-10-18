@@ -60,6 +60,19 @@ uv add jupyter matplotlib seaborn
 
 ### 2. Jupyter Notebook の起動
 
+**方法 1: tox を使う（推奨）**
+
+```bash
+# プロジェクトルートから実行
+cd app/python/ml_tdd
+uv run tox -e notebook
+
+# または Jupyter Lab を使用する場合
+uv run tox -e notebook-lab
+```
+
+**方法 2: 直接起動**
+
 ```bash
 # notebook ディレクトリに移動
 cd notebook
@@ -68,8 +81,7 @@ cd notebook
 uv run jupyter notebook
 
 # または Jupyter Lab を使用する場合
-# uv add jupyterlab
-# uv run jupyter lab
+uv run jupyter lab
 ```
 
 ### 3. ブラウザでノートブックを開く
