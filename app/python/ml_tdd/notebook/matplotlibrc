@@ -1,0 +1,22 @@
+# Matplotlib 設定ファイル
+# 日本語フォントを強制的に適用
+
+# フォントファミリー
+font.family: sans-serif
+font.sans-serif: BIZ UDGothic, MS Gothic, Yu Gothic, Meiryo, DejaVu Sans
+
+# マイナス記号の文字化け対策
+axes.unicode_minus: False
+
+# フォントサイズ
+font.size: 10
+axes.titlesize: 14
+axes.labelsize: 12
+xtick.labelsize: 10
+ytick.labelsize: 10
+legend.fontsize: 10
+
+# 図のスタイル
+figure.figsize: 10, 6
+figure.dpi: 100
+savefig.dpi: 150
