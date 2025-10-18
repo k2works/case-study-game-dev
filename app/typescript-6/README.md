@@ -104,9 +104,40 @@ npm run preview
 #### Electron アプリケーションのパッケージング
 
 ```bash
-# 実行可能ファイルの生成（今後実装予定）
-npm run package
+# 現在のプラットフォーム用にビルド
+npm run dist
+
+# Windows 用ビルド（NSIS インストーラー + ポータブル版）
+npm run build:win
+
+# macOS 用ビルド（DMG + ZIP）
+npm run build:mac
+
+# Linux 用ビルド（AppImage + deb）
+npm run build:linux
+
+# すべてのプラットフォーム用にビルド
+npm run build:all
 ```
+
+**ビルド成果物：**
+
+- Windows: `dist/ぷよぷよゲーム Setup X.X.X.exe` (インストーラー)
+- Windows: `dist/ぷよぷよゲーム X.X.X.exe` (ポータブル版)
+- macOS: `dist/ぷよぷよゲーム-X.X.X.dmg`
+- macOS: `dist/ぷよぷよゲーム-X.X.X-mac.zip`
+- Linux: `dist/ぷよぷよゲーム-X.X.X.AppImage`
+- Linux: `dist/ぷよぷよゲーム_X.X.X_amd64.deb`
+
+**アイコンファイルの準備：**
+
+アプリケーションのアイコンをカスタマイズする場合は、以下のファイルを `build/` ディレクトリに配置してください：
+
+- `build/icon.ico` - Windows 用アイコン（256x256px 以上）
+- `build/icon.icns` - macOS 用アイコン（512x512px 以上）
+- `build/icon.png` - Linux 用アイコン（512x512px）
+
+詳細は `build/README.md` を参照してください。
 
 **[⬆ back to top](#構成)**
 
