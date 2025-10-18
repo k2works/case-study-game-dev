@@ -40,9 +40,7 @@ describe('GameInfo', () => {
 
   it('次のぷよペアが表示される（赤と青）', () => {
     const nextPuyoPair = { mainType: PuyoType.Red, subType: PuyoType.Blue }
-    const { container } = render(
-      <GameInfo score={0} chainCount={0} nextPuyoPair={nextPuyoPair} />
-    )
+    const { container } = render(<GameInfo score={0} chainCount={0} nextPuyoPair={nextPuyoPair} />)
 
     expect(screen.getByText('NEXT')).toBeInTheDocument()
 
@@ -58,9 +56,7 @@ describe('GameInfo', () => {
 
   it('次のぷよペアが表示される（緑と黄）', () => {
     const nextPuyoPair = { mainType: PuyoType.Green, subType: PuyoType.Yellow }
-    const { container } = render(
-      <GameInfo score={0} chainCount={0} nextPuyoPair={nextPuyoPair} />
-    )
+    const { container } = render(<GameInfo score={0} chainCount={0} nextPuyoPair={nextPuyoPair} />)
 
     const puyos = container.querySelectorAll('[style*="border-radius: 50%"]')
     expect(puyos).toHaveLength(2)
