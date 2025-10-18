@@ -21,26 +21,26 @@ export function GameInfo({ score, chainCount, nextPuyoPair }: GameInfoProps) {
   return (
     <div
       style={{
-        padding: '20px',
+        padding: '12px',
         backgroundColor: '#f5f5f5',
         borderRadius: '8px',
-        minWidth: '200px'
+        minWidth: '120px'
       }}
     >
-      <div style={{ marginBottom: '20px' }}>
-        <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>スコア</h3>
-        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{score}</div>
+      <div style={{ marginBottom: '16px' }}>
+        <h3 style={{ margin: '0 0 6px 0', fontSize: '14px' }}>スコア</h3>
+        <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{score}</div>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>連鎖数</h3>
-        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h3 style={{ margin: '0 0 6px 0', fontSize: '14px' }}>連鎖数</h3>
+        <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
           {chainCount > 0 ? `${chainCount}連鎖` : '-'}
         </div>
       </div>
 
       <div>
-        <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>NEXT</h3>
+        <h3 style={{ margin: '0 0 6px 0', fontSize: '14px' }}>NEXT</h3>
         {nextPuyoPair ? (
           <div
             style={{
@@ -52,8 +52,8 @@ export function GameInfo({ score, chainCount, nextPuyoPair }: GameInfoProps) {
           >
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '28px',
+                height: '28px',
                 borderRadius: '50%',
                 backgroundColor: puyoColors[nextPuyoPair.subType],
                 border: '2px solid #333'
@@ -61,8 +61,8 @@ export function GameInfo({ score, chainCount, nextPuyoPair }: GameInfoProps) {
             />
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '28px',
+                height: '28px',
                 borderRadius: '50%',
                 backgroundColor: puyoColors[nextPuyoPair.mainType],
                 border: '2px solid #333'
