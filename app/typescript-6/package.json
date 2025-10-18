@@ -22,7 +22,10 @@
     "guard": "gulp guard",
     "check": "gulp checkAndFix",
     "commit": "git add . && git commit",
-    "setup": "npm install && npm run check"
+    "setup": "npm install && npm run check",
+    "prerelease": "gulp prerelease",
+    "release": "gulp release",
+    "fullrelease": "gulp fullRelease"
   },
   "dependencies": {
     "react": "^18.3.1",

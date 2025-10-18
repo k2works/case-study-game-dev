@@ -31,6 +31,15 @@ export const depcruise = shell.task(['npm run depcruise'])
 // 全体チェックタスク（自動修正付き）
 export const checkAndFix = series(lintFix, format, depcruise, test)
 
+// リリース前チェックタスク（ビルド含む）
+export const prerelease = series(lintFix, format, depcruise, test, coverage, build)
+
+// リリースタスク（プッシュ実行）
+export const release = shell.task(['git push origin HEAD'])
+
+// 完全リリースフロー
+export const fullRelease = series(prerelease, release)
+
 // ファイル監視タスク（Guard）
 export function guard() {
   console.log('🔍 Guard is watching for file changes...')

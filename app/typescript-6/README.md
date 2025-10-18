@@ -158,6 +158,37 @@ npm run format:check
 npm run check
 ```
 
+#### リリース
+
+```bash
+# リリース前チェック（lint + format + test + coverage + build）
+npm run prerelease
+
+# リモートブランチへプッシュ
+npm run release
+
+# 完全リリースフロー（prerelease + release）
+npm run fullrelease
+```
+
+**リリースフロー：**
+
+1. **リリース前チェック**: `npm run prerelease`
+   - コード整形（lint + format）
+   - 依存関係チェック
+   - 全テスト実行
+   - カバレッジ測定
+   - プロダクションビルド
+
+2. **リモートプッシュ**: `npm run release`
+   - 現在のブランチをリモートにプッシュ
+
+3. **プルリクエスト作成**: GitHub で PR を作成
+   - ブランチ: case-X → main
+   - 変更内容のサマリーを記載
+
+4. **コードレビューとマージ**: レビュー承認後にマージ
+
 **[⬆ back to top](#構成)**
 
 ### 開発
@@ -184,6 +215,11 @@ npx gulp lint          # ESLint チェック
 npx gulp format        # Prettier フォーマット
 npx gulp checkAndFix   # 全体チェック（自動修正付き）
 npx gulp guard         # ファイル監視モード
+
+# リリースタスク
+npx gulp prerelease    # リリース前チェック（lint + format + test + coverage + build）
+npx gulp release       # リモートプッシュ
+npx gulp fullRelease   # 完全リリース（prerelease + release）
 ```
 
 #### コード品質基準
