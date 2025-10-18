@@ -1,4 +1,4 @@
-import { PuyoType } from '../game/Puyo'
+import { PuyoType } from '@/game/Puyo'
 
 interface GameInfoProps {
   score: number

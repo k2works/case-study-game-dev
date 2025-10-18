@@ -1,4 +1,4 @@
-import { ConfigSchema } from '../schemas/config.schema'
+import { ConfigSchema } from '@/schemas/config.schema'
 
 /**
  * Config クラス

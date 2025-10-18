@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { PuyoType } from './Puyo'
-import type { Config } from './Config'
+import { PuyoType } from '@/game/Puyo'
+import type { Config } from '@/game/Config'
 
 /**
  * PuyoImage クラス

@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import type { Config } from './Config'
-import { PuyoType } from './Puyo'
-import type { PuyoImage } from './PuyoImage'
-import { EraseInfoSchema, type EraseInfo } from '../schemas/stage.schema'
+import type { Config } from '@/game/Config'
+import { PuyoType } from '@/game/Puyo'
+import type { PuyoImage } from '@/game/PuyoImage'
+import { EraseInfoSchema, type EraseInfo } from '@/schemas/stage.schema'
 
 /**
  * Stage クラス

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { Score } from './Score'
+import { Score } from '@/game/Score'
 
 describe('Score', () => {
   it('インスタンスが作成できる', () => {

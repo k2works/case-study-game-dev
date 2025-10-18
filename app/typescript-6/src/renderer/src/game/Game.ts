@@ -1,10 +1,10 @@
-import { Config } from './Config'
-import { PuyoImage } from './PuyoImage'
-import { Stage } from './Stage'
-import { Player } from './Player'
-import { Score } from './Score'
-import { PuyoType } from './Puyo'
-import { GameMode } from '../schemas/game.schema'
+import { Config } from '@/game/Config'
+import { PuyoImage } from '@/game/PuyoImage'
+import { Stage } from '@/game/Stage'
+import { Player } from '@/game/Player'
+import { Score } from '@/game/Score'
+import { PuyoType } from '@/game/Puyo'
+import { GameMode } from '@/schemas/game.schema'
 
 /**
  * Game クラス

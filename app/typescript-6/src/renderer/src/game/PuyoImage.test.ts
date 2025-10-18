@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { PuyoImage } from './PuyoImage'
-import type { Config } from './Config'
+import { PuyoImage } from '@/game/PuyoImage'
+import type { Config } from '@/game/Config'
 
 describe('PuyoImage', () => {
   it('インスタンスが作成できる', () => {

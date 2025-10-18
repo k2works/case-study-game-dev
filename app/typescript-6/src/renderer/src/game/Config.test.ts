@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { Config } from './Config'
+import { Config } from '@/game/Config'
 
 describe('Config', () => {
   it('デフォルト設定でインスタンスが作成できる', () => {

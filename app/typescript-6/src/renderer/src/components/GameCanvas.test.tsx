@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { GameCanvas } from './GameCanvas'
+import { GameCanvas } from '@/components/GameCanvas'
 
 describe('GameCanvas', () => {
   it('canvas要素がレンダリングされる', () => {

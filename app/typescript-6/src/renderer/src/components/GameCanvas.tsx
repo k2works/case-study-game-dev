@@ -1,11 +1,11 @@
 import { useRef, useEffect } from 'react'
-import { Game } from '../game/Game'
-import { Config } from '../game/Config'
-import { PuyoImage } from '../game/PuyoImage'
-import { Stage } from '../game/Stage'
-import { Player } from '../game/Player'
-import { Score } from '../game/Score'
-import { useKeyboard } from '../hooks/useKeyboard'
+import { Game } from '@/game/Game'
+import { Config } from '@/game/Config'
+import { PuyoImage } from '@/game/PuyoImage'
+import { Stage } from '@/game/Stage'
+import { Player } from '@/game/Player'
+import { Score } from '@/game/Score'
+import { useKeyboard } from '@/hooks/useKeyboard'
 
 interface GameCanvasProps {
   width: number

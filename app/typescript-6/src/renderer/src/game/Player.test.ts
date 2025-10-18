@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { Player } from './Player'
-import { Config } from './Config'
-import type { PuyoImage } from './PuyoImage'
-import { Stage } from './Stage'
-import { PuyoType } from './Puyo'
+import { Player } from '@/game/Player'
+import { Config } from '@/game/Config'
+import type { PuyoImage } from '@/game/PuyoImage'
+import { Stage } from '@/game/Stage'
+import { PuyoType } from '@/game/Puyo'
 
 describe('Player', () => {
   let mockConfig: Config

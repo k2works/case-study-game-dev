@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { GameCanvas } from './components/GameCanvas'
-import { GameInfo } from './components/GameInfo'
-import type { Game } from './game/Game'
-import { PuyoType } from './game/Puyo'
+import { GameCanvas } from '@/components/GameCanvas'
+import { GameInfo } from '@/components/GameInfo'
+import type { Game } from '@/game/Game'
+import { PuyoType } from '@/game/Puyo'
 
 function App() {
   const [game, setGame] = useState<Game | null>(null)

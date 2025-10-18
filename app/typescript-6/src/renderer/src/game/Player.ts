@@ -1,8 +1,8 @@
-import type { Config } from './Config'
-import type { PuyoImage } from './PuyoImage'
-import type { Stage } from './Stage'
-import { Puyo, PuyoType } from './Puyo'
-import { RotationSchema } from '../schemas/player.schema'
+import type { Config } from '@/game/Config'
+import type { PuyoImage } from '@/game/PuyoImage'
+import type { Stage } from '@/game/Stage'
+import { Puyo, PuyoType } from '@/game/Puyo'
+import { RotationSchema } from '@/schemas/player.schema'
 
 /**
  * Player クラス

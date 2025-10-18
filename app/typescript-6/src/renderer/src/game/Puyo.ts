@@ -1,5 +1,5 @@
-import { PuyoSchema } from '../schemas/puyo.schema'
-import { PuyoType } from './PuyoType'
+import { PuyoSchema } from '@/schemas/puyo.schema'
+import { PuyoType } from '@/game/PuyoType'
 
 export { PuyoType }
 

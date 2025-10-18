@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PuyoType } from '../game/PuyoType'
+import { PuyoType } from '@/game/PuyoType'
 
 /**
  * Puyo のバリデーションスキーマ

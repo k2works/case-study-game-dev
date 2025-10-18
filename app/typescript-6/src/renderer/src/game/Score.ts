@@ -1,4 +1,4 @@
-import { ScoreValueSchema } from '../schemas/score.schema'
+import { ScoreValueSchema } from '@/schemas/score.schema'
 
 /**
  * Score クラス

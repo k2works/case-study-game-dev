@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { Puyo, PuyoType } from './Puyo'
+import { Puyo, PuyoType } from '@/game/Puyo'
 
 describe('Puyo', () => {
   describe('初期化', () => {

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { Stage } from './Stage'
-import { Config } from './Config'
-import { PuyoType } from './Puyo'
-import type { PuyoImage } from './PuyoImage'
+import { Stage } from '@/game/Stage'
+import { Config } from '@/game/Config'
+import { PuyoType } from '@/game/Puyo'
+import type { PuyoImage } from '@/game/PuyoImage'
 
 describe('Stage', () => {
   let config: Config
