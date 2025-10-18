@@ -122,12 +122,16 @@ npm run build:all
 
 **ビルド成果物：**
 
-- Windows: `dist/ぷよぷよゲーム Setup X.X.X.exe` (インストーラー)
-- Windows: `dist/ぷよぷよゲーム X.X.X.exe` (ポータブル版)
+- Windows ZIP: `dist/ぷよぷよゲーム-0.1.0-win.zip` (約 108MB)
+- Windows アンパッケージ版: `dist/win-unpacked/ぷよぷよゲーム.exe` (約 181MB)
 - macOS: `dist/ぷよぷよゲーム-X.X.X.dmg`
 - macOS: `dist/ぷよぷよゲーム-X.X.X-mac.zip`
 - Linux: `dist/ぷよぷよゲーム-X.X.X.AppImage`
 - Linux: `dist/ぷよぷよゲーム_X.X.X_amd64.deb`
+
+**注意**:
+- Windows 版はコード署名なしでビルドされます（開発環境用）
+- 本番環境では適切なコード署名証明書を設定することを推奨します
 
 **アイコンファイルの準備：**
 
