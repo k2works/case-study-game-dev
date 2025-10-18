@@ -1,21 +1,7 @@
-import { z } from 'zod'
+import { PuyoSchema } from '../schemas/puyo.schema'
+import { PuyoType } from './PuyoType'
 
-export enum PuyoType {
-  Empty = 0,
-  Red = 1,
-  Green = 2,
-  Blue = 3,
-  Yellow = 4
-}
-
-/**
- * Puyo のバリデーションスキーマ
- */
-const PuyoSchema = z.object({
-  x: z.number().int('x must be an integer'),
-  y: z.number().int('y must be an integer'),
-  type: z.nativeEnum(PuyoType, { errorMap: () => ({ message: 'Invalid PuyoType' }) })
-})
+export { PuyoType }
 
 export class Puyo {
   constructor(

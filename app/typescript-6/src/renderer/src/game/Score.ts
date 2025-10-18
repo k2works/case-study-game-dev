@@ -1,9 +1,4 @@
-import { z } from 'zod'
-
-/**
- * スコア値のバリデーションスキーマ
- */
-const ScoreValueSchema = z.number().int().nonnegative()
+import { ScoreValueSchema } from '../schemas/score.schema'
 
 /**
  * Score クラス

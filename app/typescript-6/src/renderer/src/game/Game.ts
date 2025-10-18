@@ -1,28 +1,10 @@
-import { z } from 'zod'
 import { Config } from './Config'
 import { PuyoImage } from './PuyoImage'
 import { Stage } from './Stage'
 import { Player } from './Player'
 import { Score } from './Score'
 import { PuyoType } from './Puyo'
-
-/**
- * ゲームモードのバリデーションスキーマ
- */
-export const GameModeSchema = z.enum([
-  'newPuyo',
-  'playing',
-  'checkFall',
-  'falling',
-  'checkErase',
-  'erasing',
-  'gameOver'
-])
-
-/**
- * ゲームモード
- */
-export type GameMode = z.infer<typeof GameModeSchema>
+import { GameMode } from '../schemas/game.schema'
 
 /**
  * Game クラス

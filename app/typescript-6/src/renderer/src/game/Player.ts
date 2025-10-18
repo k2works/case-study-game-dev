@@ -1,13 +1,8 @@
-import { z } from 'zod'
 import type { Config } from './Config'
 import type { PuyoImage } from './PuyoImage'
 import type { Stage } from './Stage'
 import { Puyo, PuyoType } from './Puyo'
-
-/**
- * 回転状態のバリデーションスキーマ
- */
-const RotationSchema = z.number().int().min(0).max(3)
+import { RotationSchema } from '../schemas/player.schema'
 
 /**
  * Player クラス
