@@ -25,7 +25,8 @@ export default defineConfig({
         '**/*.config.{js,ts}',
         'src/main/**',
         'src/preload/**',
-        'src/renderer/src/vite-env.d.ts'
+        'src/renderer/src/vite-env.d.ts',
+        'src/renderer/src/main.tsx'
       ]
     }
   }
