@@ -1,6 +1,14 @@
-.idea
-*.iml
-*.iml### Node template
+# IDEA workspace files (user-specific)
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf
+
+# Project structure files are tracked
+!.idea/
+!*.iml
+
+### Node template
 # Logs
 logs
 *.log
