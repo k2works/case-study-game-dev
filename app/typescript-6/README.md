@@ -193,6 +193,19 @@ npm run format:check
 npm run check
 ```
 
+#### クリーンアップ
+
+```bash
+# ビルド成果物とキャッシュをクリーン
+npm run clean
+```
+
+**クリーン対象：**
+- `dist/` - electron-builder のビルド成果物
+- `out/` - electron-vite のビルド出力
+- `coverage/` - テストカバレッジレポート
+- `node_modules/.cache/` - ビルドキャッシュ
+
 #### リリース
 
 ```bash
@@ -250,6 +263,9 @@ npx gulp lint          # ESLint チェック
 npx gulp format        # Prettier フォーマット
 npx gulp checkAndFix   # 全体チェック（自動修正付き）
 npx gulp guard         # ファイル監視モード
+
+# クリーンアップタスク
+npx gulp clean         # ビルド成果物とキャッシュをクリーン
 
 # リリースタスク
 npx gulp prerelease    # リリース前チェック（lint + format + test + coverage + build）

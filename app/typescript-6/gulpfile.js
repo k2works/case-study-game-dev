@@ -1,5 +1,19 @@
 import { watch, series } from 'gulp'
 import shell from 'gulp-shell'
+import { deleteAsync } from 'del'
+
+// クリーンタスク
+export async function clean() {
+  console.log('🧹 Cleaning build artifacts and cache...')
+  const deletedPaths = await deleteAsync([
+    'dist',
+    'out',
+    'coverage',
+    'node_modules/.cache'
+  ])
+  console.log(`✓ Deleted ${deletedPaths.length} directories`)
+  deletedPaths.forEach(path => console.log(`  - ${path}`))
+}
 
 // テストタスク
 export const test = shell.task(['npm run test'])
