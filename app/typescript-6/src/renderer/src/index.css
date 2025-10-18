@@ -10,8 +10,68 @@ body {
 .App {
   text-align: center;
   padding: 2rem;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 h1 {
   color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* ゲームコンテナ - デスクトップ */
+.game-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* タブレット以下 (768px未満) */
+@media (max-width: 768px) {
+  .App {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .game-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+/* スマートフォン (480px未満) */
+@media (max-width: 480px) {
+  .App {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .game-container {
+    gap: 12px;
+  }
+}
+
+/* GameInfo レスポンシブ対応 */
+@media (max-width: 768px) {
+  .game-info {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-info {
+    max-width: 100%;
+  }
 }

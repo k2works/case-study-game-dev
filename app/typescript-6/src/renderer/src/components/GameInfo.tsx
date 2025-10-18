@@ -20,6 +20,7 @@ export function GameInfo({ score, chainCount, nextPuyoPair }: GameInfoProps) {
 
   return (
     <div
+      className="game-info"
       style={{
         padding: '12px',
         backgroundColor: '#f5f5f5',

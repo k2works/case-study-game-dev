@@ -33,7 +33,7 @@ function App() {
   return (
     <div className="App">
       <h1>ぷよぷよゲーム</h1>
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+      <div className="game-container">
         <GameCanvas width={192} height={384} onGameReady={handleGameReady} />
         <GameInfo score={score} chainCount={chainCount} nextPuyoPair={nextPuyoPair} />
       </div>
