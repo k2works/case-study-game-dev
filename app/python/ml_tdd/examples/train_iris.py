@@ -49,11 +49,11 @@ def main() -> None:
 
     # 訓練データでの評価
     train_accuracy = classifier.evaluate(X_train, y_train)
-    print(f"  訓練データ正解率: {train_accuracy:.4f} ({train_accuracy*100:.2f}%)")
+    print(f"  訓練データ正解率: {train_accuracy:.4f} ({train_accuracy * 100:.2f}%)")
 
     # テストデータでの評価
     test_accuracy = classifier.evaluate(X_test, y_test)
-    print(f"  テストデータ正解率: {test_accuracy:.4f} ({test_accuracy*100:.2f}%)")
+    print(f"  テストデータ正解率: {test_accuracy:.4f} ({test_accuracy * 100:.2f}%)")
     print()
 
     # 過学習チェック
@@ -73,7 +73,7 @@ def main() -> None:
 
     print("  サンプル | 予測値      | 正解値      | 結果")
     print("  " + "-" * 50)
-    for i, (pred, actual) in enumerate(zip(predictions, sample_y), 1):
+    for i, (pred, actual) in enumerate(zip(predictions, sample_y, strict=True), 1):
         result = "OK" if pred == actual else "NG"
         print(f"  {i:7} | {pred:11} | {actual:11} | {result}")
     print()
@@ -90,7 +90,7 @@ def main() -> None:
     print("=" * 60)
     print()
     print("最終結果:")
-    print(f"  - テストデータ正解率: {test_accuracy*100:.2f}%")
+    print(f"  - テストデータ正解率: {test_accuracy * 100:.2f}%")
     print(f"  - モデル保存先: {model_path}")
     print()
 

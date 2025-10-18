@@ -65,14 +65,14 @@ def main() -> None:
     )
     print("  " + "-" * 70)
 
-    for i, (idx, row) in enumerate(test_data.iterrows(), 1):
+    for i, (_idx, row) in enumerate(test_data.iterrows(), 1):
         print(
             f"  {i:>4} | "
             f"{row['sepal_length']:>12.1f} | "
             f"{row['sepal_width']:>11.1f} | "
             f"{row['petal_length']:>12.1f} | "
             f"{row['petal_width']:>11.1f} | "
-            f"{predictions[i-1]:>11}"
+            f"{predictions[i - 1]:>11}"
         )
     print("  " + "-" * 70)
     print()

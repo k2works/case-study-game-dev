@@ -1,5 +1,7 @@
 """Iris 分類器のテスト."""
 
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -83,9 +85,7 @@ class TestIrisClassifierDataLoading:
 ,3.0,1.4,0.2,setosa
 7.0,,4.7,1.4,versicolor"""
 
-        with tempfile.NamedTemporaryFile(
-            mode="w", delete=False, suffix=".csv"
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".csv") as f:
             f.write(test_data)
             temp_path = f.name
 
@@ -105,12 +105,14 @@ class TestIrisClassifierTraining:
     def test_モデルの訓練(self) -> None:
         """モデルを訓練できることを確認."""
         classifier = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 4.9, 7.0],
-            "sepal_width": [3.5, 3.0, 3.2],
-            "petal_length": [1.4, 1.4, 4.7],
-            "petal_width": [0.2, 0.2, 1.4],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 4.9, 7.0],
+                "sepal_width": [3.5, 3.0, 3.2],
+                "petal_length": [1.4, 1.4, 4.7],
+                "petal_width": [0.2, 0.2, 1.4],
+            }
+        )
         y_train = pd.Series(["setosa", "setosa", "versicolor"])
 
         classifier.train(X_train, y_train)
@@ -120,16 +122,19 @@ class TestIrisClassifierTraining:
     def test_訓練済みモデルの属性確認(self) -> None:
         """訓練済みモデルが適切な属性を持つことを確認."""
         classifier = IrisClassifier(max_depth=3)
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 4.9, 7.0],
-            "sepal_width": [3.5, 3.0, 3.2],
-            "petal_length": [1.4, 1.4, 4.7],
-            "petal_width": [0.2, 0.2, 1.4],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 4.9, 7.0],
+                "sepal_width": [3.5, 3.0, 3.2],
+                "petal_length": [1.4, 1.4, 4.7],
+                "petal_width": [0.2, 0.2, 1.4],
+            }
+        )
         y_train = pd.Series(["setosa", "setosa", "versicolor"])
 
         classifier.train(X_train, y_train)
 
+        assert classifier.model is not None
         assert classifier.model.max_depth == 3
         assert hasattr(classifier.model, "classes_")
 
@@ -145,12 +150,14 @@ class TestIrisClassifierTraining:
     def test_特徴量とラベルの数が不一致の拒否(self) -> None:
         """特徴量とラベルの数が一致しない場合を拒否."""
         classifier = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 4.9],
-            "sepal_width": [3.5, 3.0],
-            "petal_length": [1.4, 1.4],
-            "petal_width": [0.2, 0.2],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 4.9],
+                "sepal_width": [3.5, 3.0],
+                "petal_length": [1.4, 1.4],
+                "petal_width": [0.2, 0.2],
+            }
+        )
         y_train = pd.Series(["setosa"])  # 数が一致しない
 
         with pytest.raises(ValueError):
@@ -164,24 +171,28 @@ class TestIrisClassifierPrediction:
     def trained_classifier(self) -> IrisClassifier:
         """訓練済みの分類器を返す fixture."""
         classifier = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 4.9, 7.0, 6.4],
-            "sepal_width": [3.5, 3.0, 3.2, 3.2],
-            "petal_length": [1.4, 1.4, 4.7, 4.5],
-            "petal_width": [0.2, 0.2, 1.4, 1.5],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 4.9, 7.0, 6.4],
+                "sepal_width": [3.5, 3.0, 3.2, 3.2],
+                "petal_length": [1.4, 1.4, 4.7, 4.5],
+                "petal_width": [0.2, 0.2, 1.4, 1.5],
+            }
+        )
         y_train = pd.Series(["setosa", "setosa", "versicolor", "versicolor"])
         classifier.train(X_train, y_train)
         return classifier
 
     def test_単一サンプルの予測(self, trained_classifier: IrisClassifier) -> None:
         """単一サンプルを予測できることを確認."""
-        X_test = pd.DataFrame({
-            "sepal_length": [5.0],
-            "sepal_width": [3.5],
-            "petal_length": [1.3],
-            "petal_width": [0.3],
-        })
+        X_test = pd.DataFrame(
+            {
+                "sepal_length": [5.0],
+                "sepal_width": [3.5],
+                "petal_length": [1.3],
+                "petal_width": [0.3],
+            }
+        )
 
         predictions = trained_classifier.predict(X_test)
 
@@ -190,12 +201,14 @@ class TestIrisClassifierPrediction:
 
     def test_複数サンプルの予測(self, trained_classifier: IrisClassifier) -> None:
         """複数サンプルを予測できることを確認."""
-        X_test = pd.DataFrame({
-            "sepal_length": [5.0, 7.0],
-            "sepal_width": [3.5, 3.2],
-            "petal_length": [1.3, 4.7],
-            "petal_width": [0.3, 1.4],
-        })
+        X_test = pd.DataFrame(
+            {
+                "sepal_length": [5.0, 7.0],
+                "sepal_width": [3.5, 3.2],
+                "petal_length": [1.3, 4.7],
+                "petal_width": [0.3, 1.4],
+            }
+        )
 
         predictions = trained_classifier.predict(X_test)
 
@@ -204,12 +217,14 @@ class TestIrisClassifierPrediction:
     def test_未訓練モデルでの予測拒否(self) -> None:
         """未訓練モデルでの予測を拒否することを確認."""
         classifier = IrisClassifier()
-        X_test = pd.DataFrame({
-            "sepal_length": [5.0],
-            "sepal_width": [3.5],
-            "petal_length": [1.3],
-            "petal_width": [0.3],
-        })
+        X_test = pd.DataFrame(
+            {
+                "sepal_length": [5.0],
+                "sepal_width": [3.5],
+                "petal_length": [1.3],
+                "petal_width": [0.3],
+            }
+        )
 
         with pytest.raises(ValueError):
             classifier.predict(X_test)
@@ -228,12 +243,14 @@ class TestIrisClassifierEvaluation:
 
     def test_正解率の計算(self, trained_classifier: IrisClassifier) -> None:
         """正解率を計算できることを確認."""
-        X_test = pd.DataFrame({
-            "sepal_length": [5.1, 7.0],
-            "sepal_width": [3.5, 3.2],
-            "petal_length": [1.4, 4.7],
-            "petal_width": [0.2, 1.4],
-        })
+        X_test = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 7.0],
+                "sepal_width": [3.5, 3.2],
+                "petal_length": [1.4, 4.7],
+                "petal_width": [0.2, 1.4],
+            }
+        )
         y_test = pd.Series(["setosa", "versicolor"])
 
         accuracy = trained_classifier.evaluate(X_test, y_test)
@@ -243,12 +260,14 @@ class TestIrisClassifierEvaluation:
     def test_完全一致時の正解率(self) -> None:
         """全て正解の場合に正解率が 1.0 になることを確認."""
         classifier = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 7.0],
-            "sepal_width": [3.5, 3.2],
-            "petal_length": [1.4, 4.7],
-            "petal_width": [0.2, 1.4],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 7.0],
+                "sepal_width": [3.5, 3.2],
+                "petal_length": [1.4, 4.7],
+                "petal_width": [0.2, 1.4],
+            }
+        )
         y_train = pd.Series(["setosa", "versicolor"])
         classifier.train(X_train, y_train)
 
@@ -265,18 +284,20 @@ class TestIrisClassifierPersistence:
     def trained_classifier(self) -> IrisClassifier:
         """訓練済みの分類器."""
         classifier = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 7.0],
-            "sepal_width": [3.5, 3.2],
-            "petal_length": [1.4, 4.7],
-            "petal_width": [0.2, 1.4],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 7.0],
+                "sepal_width": [3.5, 3.2],
+                "petal_length": [1.4, 4.7],
+                "petal_width": [0.2, 1.4],
+            }
+        )
         y_train = pd.Series(["setosa", "versicolor"])
         classifier.train(X_train, y_train)
         return classifier
 
     def test_モデルの保存(
-        self, trained_classifier: IrisClassifier, tmp_path: any
+        self, trained_classifier: IrisClassifier, tmp_path: Any
     ) -> None:
         """訓練済みモデルを保存できることを確認."""
         model_path = tmp_path / "iris_model.pkl"
@@ -285,16 +306,18 @@ class TestIrisClassifierPersistence:
 
         assert model_path.exists()
 
-    def test_モデルの読み込み(self, tmp_path: any) -> None:
+    def test_モデルの読み込み(self, tmp_path: Any) -> None:
         """保存したモデルを読み込めることを確認."""
         # モデルを訓練して保存
         classifier1 = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 7.0],
-            "sepal_width": [3.5, 3.2],
-            "petal_length": [1.4, 4.7],
-            "petal_width": [0.2, 1.4],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 7.0],
+                "sepal_width": [3.5, 3.2],
+                "petal_length": [1.4, 4.7],
+                "petal_width": [0.2, 1.4],
+            }
+        )
         y_train = pd.Series(["setosa", "versicolor"])
         classifier1.train(X_train, y_train)
 
@@ -307,26 +330,30 @@ class TestIrisClassifierPersistence:
 
         assert classifier2.model is not None
 
-    def test_保存したモデルでの予測一貫性(self, tmp_path: any) -> None:
+    def test_保存したモデルでの予測一貫性(self, tmp_path: Any) -> None:
         """保存前後で予測結果が一致することを確認."""
         # モデルを訓練
         classifier1 = IrisClassifier()
-        X_train = pd.DataFrame({
-            "sepal_length": [5.1, 7.0],
-            "sepal_width": [3.5, 3.2],
-            "petal_length": [1.4, 4.7],
-            "petal_width": [0.2, 1.4],
-        })
+        X_train = pd.DataFrame(
+            {
+                "sepal_length": [5.1, 7.0],
+                "sepal_width": [3.5, 3.2],
+                "petal_length": [1.4, 4.7],
+                "petal_width": [0.2, 1.4],
+            }
+        )
         y_train = pd.Series(["setosa", "versicolor"])
         classifier1.train(X_train, y_train)
 
         # テストデータ
-        X_test = pd.DataFrame({
-            "sepal_length": [5.0],
-            "sepal_width": [3.4],
-            "petal_length": [1.5],
-            "petal_width": [0.2],
-        })
+        X_test = pd.DataFrame(
+            {
+                "sepal_length": [5.0],
+                "sepal_width": [3.4],
+                "petal_length": [1.5],
+                "petal_width": [0.2],
+            }
+        )
 
         # 保存前の予測
         pred_before = classifier1.predict(X_test)

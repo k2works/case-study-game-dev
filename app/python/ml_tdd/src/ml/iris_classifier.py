@@ -136,7 +136,8 @@ class IrisClassifier:
 
         # 決定木モデルの作成
         self.model = tree.DecisionTreeClassifier(
-            max_depth=self.max_depth, random_state=0  # 再現性のため
+            max_depth=self.max_depth,
+            random_state=0,  # 再現性のため
         )
 
         # モデルの訓練
