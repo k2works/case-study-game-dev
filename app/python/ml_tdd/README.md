@@ -103,9 +103,23 @@ ml_tdd/
 │       ├── cinema_predictor.py      # 映画興行収入予測モデル
 │       ├── survived_classifier.py   # 生存予測モデル
 │       └── boston_predictor.py      # 住宅価格予測モデル
+├── api/                       # Web API 層
+│   ├── __init__.py
+│   ├── application.py         # FastAPI エンドポイント定義
+│   ├── models.py              # Pydantic モデル
+│   ├── service.py             # ビジネスロジック層
+│   └── domain.py              # ドメイン層（ML モデル操作）
 ├── test/                      # テストコード
 │   ├── __init__.py
-│   └── test_basic.py          # 基本的な環境確認テスト
+│   ├── test_basic.py          # 基本的な環境確認テスト
+│   ├── test_api_models.py     # Pydantic モデルテスト
+│   ├── test_domain.py         # ドメイン層テスト
+│   ├── test_service.py        # サービス層テスト
+│   └── test_application.py    # API エンドポイントテスト
+├── script/                    # 実行スクリプト
+│   ├── run_api.py             # API サーバー起動スクリプト
+│   ├── api_client_example.py  # API クライアント使用例
+│   └── train_*.py             # モデル訓練スクリプト
 ├── data/                      # データセット
 │   ├── iris.csv
 │   ├── cinema.csv
@@ -113,9 +127,65 @@ ml_tdd/
 │   └── Boston.csv
 ├── model/                     # 訓練済みモデルの保存先
 │   └── .gitkeep
+├── notebook/                  # Jupyter Notebook
+│   └── boston_exploration.ipynb
 ├── pyproject.toml             # プロジェクト設定ファイル
 ├── tox.ini                    # タスクランナー設定ファイル
 └── README.md                  # このファイル
+```
+
+## API の使用
+
+### API サーバーの起動
+
+```bash
+# FastAPI サーバーを起動
+python script/run_api.py
+
+# または uvicorn で直接起動
+uv run uvicorn api.application:app --reload
+```
+
+サーバーが起動したら以下の URL にアクセスできます：
+- **Swagger UI**: http://127.0.0.1:8000/docs
+- **ReDoc**: http://127.0.0.1:8000/redoc
+- **API ルート**: http://127.0.0.1:8000/
+
+### API クライアント例の実行
+
+```bash
+# Python スクリプトから API を使用
+python script/api_client_example.py
+```
+
+### 各エンドポイントの使用例
+
+**Iris 分類**:
+```bash
+curl -X POST "http://127.0.0.1:8000/iris" \
+  -H "Content-Type: application/json" \
+  -d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}'
+```
+
+**Cinema 売上予測**:
+```bash
+curl -X POST "http://127.0.0.1:8000/cinema" \
+  -H "Content-Type: application/json" \
+  -d '{"sns1": 500, "sns2": 300, "actor": 70, "original": 1}'
+```
+
+**Survived 生存予測**:
+```bash
+curl -X POST "http://127.0.0.1:8000/survived" \
+  -H "Content-Type: application/json" \
+  -d '{"pclass": 3, "age": 22, "sex": "male"}'
+```
+
+**Boston 住宅価格予測**:
+```bash
+curl -X POST "http://127.0.0.1:8000/boston" \
+  -H "Content-Type: application/json" \
+  -d '{"rm": 6.5, "lstat": 4.98, "ptratio": 15.3}'
 ```
 
 ## 開発フロー
