@@ -48,7 +48,12 @@ async def predict_iris(model: IrisModel) -> dict:
     Returns:
         予測された種名
     """
-    features = [[model.sepal_length, model.sepal_width, model.petal_length, model.petal_width]]
+    features = [[
+        model.sepal_length,
+        model.sepal_width,
+        model.petal_length,
+        model.petal_width,
+    ]]
 
     species = service.predict_iris(features)
     return {"species": species}
@@ -80,7 +85,9 @@ async def predict_survived(model: SurvivedModel) -> dict:
     Returns:
         予測結果（0: 死亡, 1: 生存）
     """
-    survived = service.predict_survived(pclass=model.pclass, age=model.age, sex=model.sex)
+    survived = service.predict_survived(
+        pclass=model.pclass, age=model.age, sex=model.sex
+    )
     return {"survived": survived}
 
 
@@ -94,5 +101,7 @@ async def predict_boston(model: BostonModel) -> dict:
     Returns:
         予測された住宅価格
     """
-    predicted_price = service.predict_boston(rm=model.rm, lstat=model.lstat, ptratio=model.ptratio)
+    predicted_price = service.predict_boston(
+        rm=model.rm, lstat=model.lstat, ptratio=model.ptratio
+    )
     return {"predicted_price": predicted_price}

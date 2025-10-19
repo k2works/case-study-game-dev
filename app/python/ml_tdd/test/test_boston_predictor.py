@@ -80,7 +80,8 @@ class TestBostonPredictorEncodeCrime:
 
         # CRIME 列が削除され、ダミー変数が追加されることを確認
         assert "CRIME" not in df_encoded.columns
-        # drop_first=True により、アルファベット順で最初（high）が削除され low が作成される
+        # drop_first=True により、アルファベット順で最初（high）が削除され
+        # low が作成される
         assert "low" in df_encoded.columns
 
     def test_ダミー変数の値が正しい(self):
@@ -91,7 +92,8 @@ class TestBostonPredictorEncodeCrime:
 
         df_encoded = predictor._encode_crime(df)
 
-        # drop_first=True により、アルファベット順で最初（high）が削除され、low と medium が作成される
+        # drop_first=True により、アルファベット順で最初（high）が削除され、
+        # low と medium が作成される
         assert "low" in df_encoded.columns
         assert "medium" in df_encoded.columns
 

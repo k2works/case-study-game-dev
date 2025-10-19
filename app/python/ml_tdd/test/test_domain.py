@@ -1,8 +1,5 @@
 """ドメイン層のテストモジュール."""
 
-import numpy as np
-import pandas as pd
-import pytest
 
 
 class TestIrisDomain:
@@ -65,7 +62,9 @@ class TestSurvivedDomain:
         from api.domain import SurvivedDomain
 
         domain = SurvivedDomain()
-        X_dict = [{"Pclass": 3, "Age": 22, "SibSp": 0, "Parch": 0, "Fare": 7.25, "male": 1}]
+        X_dict = [
+            {"Pclass": 3, "Age": 22, "SibSp": 0, "Parch": 0, "Fare": 7.25, "male": 1}
+        ]
         result = domain.predict(X_dict)
 
         assert len(result) == 1
