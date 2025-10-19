@@ -89,3 +89,4 @@ site/
 # Environment variables
 .env
 .env.local
+nul
