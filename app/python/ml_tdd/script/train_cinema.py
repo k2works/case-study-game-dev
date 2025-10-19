@@ -79,8 +79,8 @@ def main() -> None:
 
     # モデルの保存
     print("\n7. モデルの保存...")
-    model_path = "models/cinema_model.pkl"
-    Path("models").mkdir(exist_ok=True)
+    model_path = "model/cinema_model.pkl"
+    Path("model").mkdir(exist_ok=True)
     predictor.save_model(model_path)
     print(f"   モデルを保存しました: {model_path}")
 
