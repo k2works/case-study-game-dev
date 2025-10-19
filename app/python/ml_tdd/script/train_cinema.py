@@ -75,9 +75,7 @@ def main() -> None:
     print("   " + "-" * 32)
     for i in range(min(5, len(y))):
         error = predictions[i] - y.iloc[i]
-        print(
-            f"   {y.iloc[i]:>10.2f} {predictions[i]:>10.2f} {error:>10.2f}"
-        )
+        print(f"   {y.iloc[i]:>10.2f} {predictions[i]:>10.2f} {error:>10.2f}")
 
     # モデルの保存
     print("\n7. モデルの保存...")

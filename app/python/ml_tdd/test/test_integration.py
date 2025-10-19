@@ -24,9 +24,7 @@ class TestAPIIntegration:
         assert response.status_code == 200
         assert response.json() == {"status": "ok"}
 
-    def test_Iris予測のエンドツーエンドフロー(
-        self, client, iris_sample_data
-    ) -> None:
+    def test_Iris予測のエンドツーエンドフロー(self, client, iris_sample_data) -> None:
         """Iris 予測の完全なフローが正しく動作する."""
         response = client.post("/iris", json=iris_sample_data)
 
@@ -106,7 +104,7 @@ class TestAPIIntegration:
         """必須フィールドが欠けている場合エラーを返す."""
         invalid_data = {
             "rm": 6.5,
-            "lstat": 4.98
+            "lstat": 4.98,
             # ptratio が欠けている
         }
         response = client.post("/boston", json=invalid_data)

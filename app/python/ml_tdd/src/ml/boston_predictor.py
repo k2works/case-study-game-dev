@@ -169,9 +169,7 @@ class BostonPredictor:
             result_transform: np.ndarray = self.scaler_X.transform(X)
             return result_transform
 
-    def standardize_target(
-        self, y: pd.DataFrame, fit: bool = True
-    ) -> np.ndarray:
+    def standardize_target(self, y: pd.DataFrame, fit: bool = True) -> np.ndarray:
         """目的変数を標準化.
 
         Args:

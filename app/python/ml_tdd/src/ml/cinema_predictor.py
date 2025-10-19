@@ -88,9 +88,7 @@ class CinemaPredictor:
 
         return self.model.predict(X)
 
-    def evaluate(
-        self, y_true: pd.Series, y_pred: np.ndarray
-    ) -> Dict[str, float]:
+    def evaluate(self, y_true: pd.Series, y_pred: np.ndarray) -> Dict[str, float]:
         """モデルの性能を評価する.
 
         Args:

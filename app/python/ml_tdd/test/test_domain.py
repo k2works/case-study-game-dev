@@ -1,7 +1,6 @@
 """ドメイン層のテストモジュール."""
 
 
-
 class TestIrisDomain:
     """IrisDomain のテスト."""
 

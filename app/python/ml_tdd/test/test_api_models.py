@@ -1,4 +1,5 @@
 """API Pydantic モデルのテストモジュール."""
+
 import pytest
 from pydantic import ValidationError
 

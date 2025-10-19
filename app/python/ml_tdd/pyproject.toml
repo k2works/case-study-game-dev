@@ -47,6 +47,16 @@ select = [
 ]
 ignore = []
 
+[tool.ruff.lint.per-file-ignores]
+# Jupyter Notebook ファイルでは以下のルールを無視
+"notebook/*.ipynb" = [
+    "E501",  # 行の長さ制限を無視
+    "E402",  # モジュールレベルのインポート位置を無視
+    "B007",  # 未使用のループ変数を無視
+    "B905",  # zip() の strict パラメータを無視
+    "C408",  # dict() リテラルの推奨を無視
+]
+
 [tool.ruff.lint.mccabe]
 max-complexity = 7  # 循環的複雑度の制限
 

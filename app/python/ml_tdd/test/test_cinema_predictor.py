@@ -57,9 +57,7 @@ class TestCinemaPredictorDataLoading:
 2,,600,250,0,11000
 3,150,,300,1,12000"""
 
-        with tempfile.NamedTemporaryFile(
-            mode="w", delete=False, suffix=".csv"
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".csv") as f:
             f.write(test_data)
             temp_path = f.name
 

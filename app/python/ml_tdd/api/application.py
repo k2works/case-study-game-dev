@@ -48,12 +48,14 @@ async def predict_iris(model: IrisModel) -> dict:
     Returns:
         予測された種名
     """
-    features = [[
-        model.sepal_length,
-        model.sepal_width,
-        model.petal_length,
-        model.petal_width,
-    ]]
+    features = [
+        [
+            model.sepal_length,
+            model.sepal_width,
+            model.petal_length,
+            model.petal_width,
+        ]
+    ]
 
     species = service.predict_iris(features)
     return {"species": species}

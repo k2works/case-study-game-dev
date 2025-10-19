@@ -25,9 +25,7 @@ class IrisDomain:
             with open(self.model_path, "rb") as f:
                 self.model = pickle.load(f)
         except FileNotFoundError as e:
-            raise FileNotFoundError(
-                f"Model file not found: {self.model_path}"
-            ) from e
+            raise FileNotFoundError(f"Model file not found: {self.model_path}") from e
 
     def predict(self, X: List[List[float]]) -> List[str]:
         """予測を実行.
@@ -67,9 +65,7 @@ class CinemaDomain:
             with open(self.model_path, "rb") as f:
                 self.model = pickle.load(f)
         except FileNotFoundError as e:
-            raise FileNotFoundError(
-                f"Model file not found: {self.model_path}"
-            ) from e
+            raise FileNotFoundError(f"Model file not found: {self.model_path}") from e
 
     def predict(self, X: List[List[Union[int, float]]]) -> List[float]:
         """予測を実行.
@@ -109,9 +105,7 @@ class SurvivedDomain:
             with open(self.model_path, "rb") as f:
                 self.model = pickle.load(f)
         except FileNotFoundError as e:
-            raise FileNotFoundError(
-                f"Model file not found: {self.model_path}"
-            ) from e
+            raise FileNotFoundError(f"Model file not found: {self.model_path}") from e
 
     def predict(self, X_dict: List[Dict[str, Union[int, float]]]) -> List[int]:
         """予測を実行.
@@ -168,9 +162,7 @@ class BostonDomain:
             with open(self.scaler_y_path, "rb") as f:
                 self.scaler_y = pickle.load(f)
         except FileNotFoundError as e:
-            raise FileNotFoundError(
-                f"Model or scaler file not found: {e}"
-            ) from e
+            raise FileNotFoundError(f"Model or scaler file not found: {e}") from e
 
     def predict(self, X_dict: List[Dict[str, float]]) -> List[float]:
         """予測を実行.

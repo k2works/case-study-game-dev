@@ -1,4 +1,5 @@
 """Survived 分類器のテストモジュール."""
+
 import os
 import tempfile
 
@@ -205,9 +206,7 @@ class TestSurvivedClassifierPersistence:
 
         from sklearn.model_selection import train_test_split
 
-        X_train, _, y_train, _ = train_test_split(
-            X, y, test_size=0.2, random_state=0
-        )
+        X_train, _, y_train, _ = train_test_split(X, y, test_size=0.2, random_state=0)
 
         classifier.train(X_train, y_train)
 

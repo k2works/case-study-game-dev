@@ -90,10 +90,12 @@ def main() -> None:
         predicted = predictions[i, 0]
         error = abs(actual - predicted)
 
-        print(f"\nサンプル {i+1}:")
-        print(f"  特徴量: RM={X_test.iloc[i]['RM']:.2f}, "
-              f"LSTAT={X_test.iloc[i]['LSTAT']:.2f}, "
-              f"PTRATIO={X_test.iloc[i]['PTRATIO']:.2f}")
+        print(f"\nサンプル {i + 1}:")
+        print(
+            f"  特徴量: RM={X_test.iloc[i]['RM']:.2f}, "
+            f"LSTAT={X_test.iloc[i]['LSTAT']:.2f}, "
+            f"PTRATIO={X_test.iloc[i]['PTRATIO']:.2f}"
+        )
         print(f"  実際の価格: ${actual:.2f}K")
         print(f"  予測価格:   ${predicted:.2f}K")
         print(f"  誤差:       ${error:.2f}K")

@@ -1,4 +1,5 @@
 """Survived 生存予測器モジュール."""
+
 import os
 import pickle
 from typing import Optional, Tuple

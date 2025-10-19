@@ -1,4 +1,5 @@
 """Boston 住宅価格予測器のテストモジュール."""
+
 import os
 import tempfile
 
@@ -417,9 +418,7 @@ class TestBostonPredictorPersistence:
         predictor.train(X_scaled, y_scaled)
 
         # 一時ファイル作成
-        with tempfile.NamedTemporaryFile(
-            delete=False, suffix="_model.pkl"
-        ) as f_model:
+        with tempfile.NamedTemporaryFile(delete=False, suffix="_model.pkl") as f_model:
             model_path = f_model.name
         with tempfile.NamedTemporaryFile(
             delete=False, suffix="_scaler_X.pkl"
@@ -459,9 +458,7 @@ class TestBostonPredictorPersistence:
         predictor.train(X_scaled, y_scaled)
 
         # 一時ファイル作成
-        with tempfile.NamedTemporaryFile(
-            delete=False, suffix="_model.pkl"
-        ) as f_model:
+        with tempfile.NamedTemporaryFile(delete=False, suffix="_model.pkl") as f_model:
             model_path = f_model.name
         with tempfile.NamedTemporaryFile(
             delete=False, suffix="_scaler_X.pkl"

@@ -46,9 +46,7 @@ def plot_predictions(y_true, y_pred, save_path="results/cinema_predictions.png")
     plt.close()
 
 
-def plot_residuals(
-    y_true, y_pred, save_path="results/cinema_residuals.png"
-):
+def plot_residuals(y_true, y_pred, save_path="results/cinema_residuals.png"):
     """残差プロットを作成."""
     residuals = y_pred - y_true
 

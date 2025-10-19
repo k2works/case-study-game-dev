@@ -26,12 +26,10 @@ def main() -> None:
     survived_count = int(y_train.sum())
     total_count = len(y_train)
     print("\n[訓練データのクラス分布]")
-    print(
-        f"  生存: {survived_count} ({survived_count/total_count*100:.1f}%)"
-    )
+    print(f"  生存: {survived_count} ({survived_count / total_count * 100:.1f}%)")
     print(
         f"  死亡: {total_count - survived_count} "
-        f"({(total_count-survived_count)/total_count*100:.1f}%)"
+        f"({(total_count - survived_count) / total_count * 100:.1f}%)"
     )
 
     # モデルの訓練
@@ -73,7 +71,7 @@ def main() -> None:
         predicted = predictions[i]
         result = "O" if actual == predicted else "X"
 
-        print(f"\nサンプル {i+1}: {result}")
+        print(f"\nサンプル {i + 1}: {result}")
         print(
             f"  Pclass: {int(row['Pclass'])}, Age: {row['Age']:.0f}, "
             f"Sex: {'male' if row['male'] == 1 else 'female'}"

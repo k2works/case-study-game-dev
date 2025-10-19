@@ -1,7 +1,6 @@
 """サービス層のテストモジュール."""
 
 
-
 class TestMLService:
     """MLService のテスト."""
 
