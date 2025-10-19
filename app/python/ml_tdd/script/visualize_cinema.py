@@ -1,10 +1,9 @@
 """Cinema 予測モデルの結果可視化スクリプト."""
 
-import sys
-from pathlib import Path
-
 # Windows の文字エンコーディング問題を回避
 import io
+import sys
+from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 

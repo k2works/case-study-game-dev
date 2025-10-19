@@ -1,6 +1,5 @@
 """Boston 住宅価格予測モデルの訓練スクリプト."""
 
-import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.ml.boston_predictor import BostonPredictor
@@ -61,7 +60,7 @@ def main() -> None:
 
     # モデルの評価（標準化されたデータで）
     score = predictor.evaluate(X_test_scaled, y_test_scaled)
-    print(f"\n[モデルの評価]")
+    print("\n[モデルの評価]")
     print(f"  決定係数（R^2）: {score:.4f}")
 
     # モデルとスケーラーの保存

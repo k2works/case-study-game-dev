@@ -1,6 +1,5 @@
 """サービス層のテストモジュール."""
 
-import pytest
 
 
 class TestMLService:

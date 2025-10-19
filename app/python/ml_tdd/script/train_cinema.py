@@ -1,10 +1,9 @@
 """Cinema 予測モデルの訓練スクリプト."""
 
-import sys
-from pathlib import Path
-
 # Windows の文字エンコーディング問題を回避
 import io
+import sys
+from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
@@ -48,7 +47,7 @@ def main() -> None:
     predictions = predictor.predict(X)
     metrics = predictor.evaluate(y, predictions)
 
-    print(f"\n   評価指標:")
+    print("\n   評価指標:")
     print(f"   - R² スコア: {metrics['r2']:.4f}")
     print(f"   - MAE (平均絶対誤差): {metrics['mae']:.2f}")
     print(f"   - RMSE (二乗平均平方根誤差): {metrics['rmse']:.2f}")
