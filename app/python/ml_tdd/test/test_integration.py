@@ -1,7 +1,5 @@
 """API 統合テスト."""
 
-import pytest
-
 
 class TestAPIIntegration:
     """API 全体の統合テスト."""

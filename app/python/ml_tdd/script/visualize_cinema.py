@@ -11,10 +11,10 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
 
-from src.ml.cinema_predictor import CinemaPredictor
+from src.ml.cinema_predictor import CinemaPredictor  # noqa: E402
 
 # 日本語フォント設定
 plt.rcParams["font.sans-serif"] = ["MS Gothic", "Yu Gothic", "DejaVu Sans"]

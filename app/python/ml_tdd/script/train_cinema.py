@@ -11,7 +11,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.ml.cinema_predictor import CinemaPredictor
+from src.ml.cinema_predictor import CinemaPredictor  # noqa: E402
 
 
 def main() -> None:
@@ -66,7 +66,7 @@ def main() -> None:
     # モデル係数の表示
     print("\n5. モデルの係数（各特徴量の重要度）:")
     print(f"   - 切片: {predictor.model.intercept_:.2f}")
-    for feature, coef in zip(X.columns, predictor.model.coef_):
+    for feature, coef in zip(X.columns, predictor.model.coef_, strict=False):
         print(f"   - {feature}: {coef:.4f}")
 
     # 予測例の表示
