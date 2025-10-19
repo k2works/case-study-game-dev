@@ -75,6 +75,11 @@ ignore_missing_imports = true
 module = "pandas.*"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "test.*"
+disallow_untyped_defs = false
+check_untyped_defs = false
+
 [tool.pytest.ini_options]
 testpaths = ["test"]
 addopts = "--cov=src --cov-report=html --cov-report=term-missing --verbose"

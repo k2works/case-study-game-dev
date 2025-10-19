@@ -86,7 +86,7 @@ class CinemaPredictor:
         if self.model is None:
             raise ValueError("Model is not trained yet")
 
-        return self.model.predict(X)
+        return self.model.predict(X)  # type: ignore[no-any-return]
 
     def evaluate(self, y_true: pd.Series, y_pred: np.ndarray) -> Dict[str, float]:
         """モデルの性能を評価する.
