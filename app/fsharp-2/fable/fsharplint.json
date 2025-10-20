@@ -25,7 +25,9 @@
     },
     "cyclomaticComplexity": {
       "enabled": true,
-      "maxComplexity": 7
+      "config": {
+        "maxComplexity": 7
+      }
     }
   }
 }
