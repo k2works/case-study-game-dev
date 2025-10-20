@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ぷよぷよゲーム</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      #game-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      #info-panel {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 200px;
+      }
+      #info-panel h2 {
+        margin-top: 0;
+        color: #333;
+        font-size: 18px;
+      }
+      .info-item {
+        margin: 15px 0;
+      }
+      .info-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+      .info-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2196F3;
+      }
+      .chain-value {
+        color: #FF9800;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="ステージ"></div>
+      <div id="game-over" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.8); color: white; padding: 40px; border-radius: 10px; text-align: center; font-size: 24px; z-index: 1000;">
+        <h1 style="margin: 0 0 20px 0; font-size: 48px; color: #FF6B6B;">GAME OVER</h1>
+        <p style="margin: 10px 0; font-size: 20px;">スコア: <span id="final-score">0</span></p>
+        <p style="margin: 20px 0; font-size: 16px; color: #AAA;">Enter キーを押してリスタート</p>
+      </div>
+    </div>
+    <div id="info-panel">
+      <h2>ゲーム情報</h2>
+      <div class="info-item">
+        <div class="info-label">スコア</div>
+        <div class="info-value" id="score">0</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">連鎖数</div>
+        <div class="info-value chain-value" id="chain">0</div>
+      </div>
+    </div>
+    <script type="text/javascript" src="./target/scala-3.3.3/puyo-puyo-game-fastopt/main.js"></script>
+    <script type="text/javascript">
+      PuyoPuyoGame.main();
+    </script>
+  </body>
+</html>

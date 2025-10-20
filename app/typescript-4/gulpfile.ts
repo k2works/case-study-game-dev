@@ -37,8 +37,19 @@ export async function test() {
   }
 }
 
+// Run dependency
+export async function dependency() {
+    try {
+        await execAsync('npm run dependency');
+        console.log('✓ All dependency passed');
+    } catch (error) {
+        console.error('✗ Dependency failed');
+        throw error;
+    }
+}
+
 // Check and fix (lint + format + test)
-export const checkAndFix = series(lint, format, test);
+export const checkAndFix = series(lint, format, test, dependency);
 
 // Watch mode
 export function watchMode() {

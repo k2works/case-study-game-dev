@@ -2,13 +2,14 @@
 
 ## 概要
 
-Test Driven Development (TDD) で作成したぷよぷよゲームです。Kotlin Multiplatform と Compose Desktop を使用して実装されています。
+Test Driven Development (TDD) で作成したぷよぷよゲームです。Kotlin Multiplatform と Compose Multiplatform を使用して、Desktop 版と Web 版の両方で動作します。
 
 ### 目的
 
 - テスト駆動開発 (TDD) の実践的な学習
-- Kotlin Multiplatform と Compose Desktop の習得
+- Kotlin Multiplatform と Compose Multiplatform の習得
 - よいソフトウェアの開発規律の実践
+- クロスプラットフォーム開発の体験
 
 ### 前提
 
@@ -43,8 +44,12 @@ cd build/compose/jars
 **開発環境で実行:**
 
 ```bash
-# Gradle タスクで実行
+# Gradle タスクで実行（Desktop 版）
 ./gradlew run
+
+# Web 版を実行
+./gradlew jsBrowserDevelopmentRun
+# ブラウザで http://localhost:8080/ にアクセス
 ```
 
 **[⬆ back to top](#構成)**
@@ -167,10 +172,26 @@ java -jar puyo-puyo-tdd-windows-x64-1.0.0.jar
 
 #### 開発環境でのアプリケーション実行
 
+**Desktop 版:**
+
 ```bash
 # Compose Desktop アプリケーションを起動
 ./gradlew run
 ```
+
+**Web 版:**
+
+```bash
+# 開発サーバーを起動
+./gradlew jsBrowserDevelopmentRun
+
+# ブラウザで http://localhost:8080/ にアクセス
+```
+
+**Web 版の開発:**
+- ホットリロード: ファイル変更時に自動再コンパイル
+- デバッグ: ブラウザの開発者ツールを使用
+- ポート変更: `build.gradle.kts` の `devServer` 設定を変更
 
 #### コードフォーマット
 
@@ -263,9 +284,13 @@ puyo-puyo-tdd/
 │   │   ├── ScoreTest.kt
 │   │   └── StageTest.kt
 │   ├── jvmMain/kotlin/         # JVM 固有コード
-│   │   └── Main.kt             # エントリーポイント
-│   └── jvmTest/kotlin/         # JVM テスト
-│       └── GameAppTest.kt      # UI テスト
+│   │   └── Main.kt             # エントリーポイント (Desktop)
+│   ├── jvmTest/kotlin/         # JVM テスト
+│   │   └── GameAppTest.kt      # UI テスト
+│   ├── jsMain/kotlin/          # JavaScript 固有コード
+│   │   └── Main.kt             # エントリーポイント (Web)
+│   └── jsMain/resources/       # Web リソース
+│       └── index.html          # HTML エントリーポイント
 ├── build.gradle.kts            # ビルド設定
 ├── RELEASE.md                  # リリースノート
 └── README.md                   # このファイル
@@ -277,10 +302,12 @@ puyo-puyo-tdd/
 - **Kotlin**: 2.1.0 (Multiplatform)
 - **Compose Multiplatform**: 1.7.1
 - **Compose Desktop**: デスクトップ UI
+- **Compose for Web (Canvas)**: Web UI (experimental)
 
 ### ビルド・依存関係管理
 - **Gradle**: 8.5
 - **Java Toolchain**: 21
+- **Webpack**: 5.94.0 (Web バンドリング)
 
 ### テスト
 - **JUnit**: 単体テスト
@@ -313,6 +340,30 @@ Refactor (コードを改善)
 - すべてのテストが合格
 - ktlint 違反なし
 - Detekt 警告なし
+
+## 既知の問題
+
+### Web 版の制限事項
+
+#### CJK フォント表示の問題
+
+Compose Multiplatform Web (Canvas) には現在、日本語・中国語・韓国語（CJK）フォントの表示に関する既知の制限があります。
+
+**問題:**
+- 日本語テキストが□（tofu 文字）として表示される
+- カスタムフォントの適用が正しく機能しない
+
+**原因:**
+- Skiko が WebGL (OpenGL ES) を使用してレンダリングを行っているため、HTML/CSS レベルでのフォント設定が効かない
+- Canvas 2D API へのフォントパッチが機能しない
+
+**対応状況:**
+- JetBrains チームによる公式 Issue: [#3967](https://github.com/JetBrains/compose-multiplatform/issues/3967)
+- 「ワークアラウンドがない他の問題を解決した後に対応予定」との回答
+
+**回避策:**
+- 現時点では根本的な回避策はありません
+- Desktop 版では問題なく日本語が表示されます
 
 ## 参照
 

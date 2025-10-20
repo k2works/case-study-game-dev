@@ -1,0 +1,31 @@
+{
+  "name": "puyo-puyo-game",
+  "version": "0.1.0",
+  "description": "Puyo Puyo game implemented in Scala.js with TDD",
+  "scripts": {
+    "compile": "sbt fastLinkJS",
+    "build": "sbt fullLinkJS",
+    "test": "sbt test",
+    "test:watch": "sbt \"~ test\"",
+    "serve": "npx http-server . -p 8083 -o",
+    "dev": "npm run compile && npm run serve",
+    "format": "sbt format",
+    "format:check": "sbt formatCheck",
+    "lint": "sbt lint",
+    "coverage": "sbt clean coverage test coverageReport",
+    "check": "sbt check",
+    "clean": "sbt clean"
+  },
+  "keywords": [
+    "puyo-puyo",
+    "scala",
+    "scalajs",
+    "tdd",
+    "game"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

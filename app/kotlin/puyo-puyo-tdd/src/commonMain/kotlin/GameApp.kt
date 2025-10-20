@@ -6,13 +6,44 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.Typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// 日本語フォントをサポートするタイポグラフィ
+// 注意: Compose Multiplatform Web では現在 CJK フォントの表示に制限があります
+// 参照: https://github.com/JetBrains/compose-multiplatform/issues/3967
+private val JapaneseTypography = Typography(
+    h3 = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 48.sp,
+    ),
+    h5 = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Medium,
+        fontSize = 24.sp,
+    ),
+    body1 = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+    ),
+    button = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+    ),
+)
 
 @Composable
 fun GameApp() {
@@ -131,7 +162,9 @@ fun GameApp() {
                 }
                 .focusable(),
     ) {
-        MaterialTheme {
+        MaterialTheme(
+            typography = JapaneseTypography,
+        ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colors.background,
