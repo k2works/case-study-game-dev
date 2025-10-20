@@ -58,6 +58,22 @@ module 盤面 =
         let 訪問済み = Array.init (int 盤面.行数) (fun _ -> Array.create (int 盤面.列数) false)
         let mutable グループリスト = []
 
+        /// 座標が盤面内かつ未訪問かチェック
+        let 訪問可能か (列: int) (行: int) : bool =
+            行 >= 0 && 行 < (int 盤面.行数) && 列 >= 0 && 列 < (int 盤面.列数) && not 訪問済み.[行].[列]
+
+        /// 指定位置が対象色と一致するかチェック
+        let 色が一致するか (列: int) (行: int) (対象色: ぷよの色) : bool =
+            match セル取得 盤面 (LanguagePrimitives.Int32WithMeasure<列> 列) (LanguagePrimitives.Int32WithMeasure<行> 行) with
+            | 埋まっている 色 -> 色 = 対象色
+            | _ -> false
+
+        /// 隣接セルを処理
+        let 隣接セルを処理 (キュー: System.Collections.Generic.Queue<int * int>) (隣列: int) (隣行: int) (対象色: ぷよの色) : unit =
+            if 訪問可能か 隣列 隣行 && 色が一致するか 隣列 隣行 対象色 then
+                訪問済み.[隣行].[隣列] <- true
+                キュー.Enqueue((隣列, 隣行))
+
         /// BFS で同じ色のつながったぷよを探索
         let BFS探索 (開始列: int) (開始行: int) (対象色: ぷよの色) : (int<列> * int<行>) list =
             let キュー = System.Collections.Generic.Queue<int * int>()
@@ -71,20 +87,10 @@ module 盤面 =
                 グループ <- (現在列, 現在行) :: グループ
 
                 // 上下左右の隣接セルをチェック
-                let 隣接セル = [ (現在列 - 1, 現在行); (現在列 + 1, 現在行); (現在列, 現在行 - 1); (現在列, 現在行 + 1) ]
-
-                for (隣列, 隣行) in 隣接セル do
-                    if 隣行 >= 0 && 隣行 < (int 盤面.行数) && 隣列 >= 0 && 隣列 < (int 盤面.列数) && not 訪問済み.[隣行].[隣列] then
-                        match
-                            セル取得
-                                盤面
-                                (LanguagePrimitives.Int32WithMeasure<列> 隣列)
-                                (LanguagePrimitives.Int32WithMeasure<行> 隣行)
-                        with
-                        | 埋まっている 色 when 色 = 対象色 ->
-                            訪問済み.[隣行].[隣列] <- true
-                            キュー.Enqueue((隣列, 隣行))
-                        | _ -> ()
+                隣接セルを処理 キュー (現在列 - 1) 現在行 対象色
+                隣接セルを処理 キュー (現在列 + 1) 現在行 対象色
+                隣接セルを処理 キュー 現在列 (現在行 - 1) 対象色
+                隣接セルを処理 キュー 現在列 (現在行 + 1) 対象色
 
             グループ
             |> List.map (fun (列, 行) ->

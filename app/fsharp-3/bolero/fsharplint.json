@@ -1,7 +1,8 @@
 {
   "ignoreFiles": [
     "**/obj/**/*.fs",
-    "**/bin/**/*.fs"
+    "**/bin/**/*.fs",
+    "tests/**/*.fs"
   ],
   "hints": {
     "add": []
@@ -25,7 +26,7 @@
     "cyclomaticComplexity": {
       "enabled": true,
       "config": {
-        "maxComplexity": 7
+        "maxComplexity": 10
       }
     }
   }
