@@ -78,54 +78,67 @@ let private dropPuyo (random: Random) (model: Model) =
                     NextPair = Some newNextPair }
     | None -> model
 
+// メッセージハンドラー: ゲーム開始
+let private handleStartGame (random: Random) (model: Model) =
+    { model with
+        CurrentPair = Some(generatePuyoPair random)
+        NextPair = Some(generatePuyoPair random)
+        GameState = Playing }
+
+// メッセージハンドラー: 定期的な落下
+let private handleTick (random: Random) (model: Model) =
+    if model.GameState = GameOver then
+        model
+    else
+        dropPuyo random model
+
+// メッセージハンドラー: 左移動
+let private handleMoveLeft (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        match tryMovePuyoPair model.Board pair Left with
+        | Some movedPair ->
+            { model with CurrentPair = Some movedPair }
+        | None -> model
+    | None -> model
+
+// メッセージハンドラー: 右移動
+let private handleMoveRight (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        match tryMovePuyoPair model.Board pair Right with
+        | Some movedPair ->
+            { model with CurrentPair = Some movedPair }
+        | None -> model
+    | None -> model
+
+// メッセージハンドラー: 回転
+let private handleRotate (model: Model) =
+    match model.CurrentPair with
+    | Some pair ->
+        match tryRotatePuyoPair model.Board pair with
+        | Some rotatedPair ->
+            { model with CurrentPair = Some rotatedPair }
+        | None -> model
+    | None -> model
+
+// メッセージハンドラー: ゲーム再開
+let private handleRestartGame (random: Random) (model: Model) =
+    { init () with
+        CurrentPair = Some(generatePuyoPair random)
+        NextPair = Some(generatePuyoPair random)
+        GameState = Playing }
+
 // ランダム生成器を受け取る更新関数（テスト用）
 let updateWithRandom (random: Random) msg model =
     match msg with
-    | StartGame ->
-        { model with
-            CurrentPair = Some(generatePuyoPair random)
-            NextPair = Some(generatePuyoPair random)
-            GameState = Playing }
-    | Tick ->
-        // ゲームオーバー状態では何もしない
-        if model.GameState = GameOver then
-            model
-        else
-            dropPuyo random model
-    | MoveLeft ->
-        match model.CurrentPair with
-        | Some pair ->
-            match tryMovePuyoPair model.Board pair Left with
-            | Some movedPair ->
-                { model with
-                    CurrentPair = Some movedPair }
-            | None -> model
-        | None -> model
-    | MoveRight ->
-        match model.CurrentPair with
-        | Some pair ->
-            match tryMovePuyoPair model.Board pair Right with
-            | Some movedPair ->
-                { model with
-                    CurrentPair = Some movedPair }
-            | None -> model
-        | None -> model
-    | Rotate ->
-        match model.CurrentPair with
-        | Some pair ->
-            match tryRotatePuyoPair model.Board pair with
-            | Some rotatedPair ->
-                { model with
-                    CurrentPair = Some rotatedPair }
-            | None -> model
-        | None -> model
+    | StartGame -> handleStartGame random model
+    | Tick -> handleTick random model
+    | MoveLeft -> handleMoveLeft model
+    | MoveRight -> handleMoveRight model
+    | Rotate -> handleRotate model
     | MoveDown -> dropPuyo random model
-    | RestartGame ->
-        // ゲームを初期状態にリセットして新しいぷよペアを生成
-        { init () with
-            CurrentPair = Some(generatePuyoPair random)
-            NextPair = Some(generatePuyoPair random)
-            GameState = Playing }
+    | RestartGame -> handleRestartGame random model
 
 // 更新関数（Elmish用）
 let update msg model =
