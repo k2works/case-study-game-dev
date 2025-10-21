@@ -23,6 +23,7 @@
     <Compile Include="Domain\ゲームロジックテスト.fs" />
     <Compile Include="Elmish\モデルテスト.fs" />
     <Compile Include="Elmish\更新テスト.fs" />
+    <Compile Include="Integration\ゲーム統合テスト.fs" />
   </ItemGroup>
 
   <ItemGroup>

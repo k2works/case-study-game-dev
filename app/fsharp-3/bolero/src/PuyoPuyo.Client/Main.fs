@@ -9,5 +9,5 @@ type MyApp() =
     inherit ProgramComponent<モデル, メッセージ>()
 
     override this.Program =
-        Program.mkProgram (fun _ -> モデル.初期化 (), Cmd.none) 更新.更新 ゲーム画面.ビュー
+        Program.mkProgram (fun _ -> モデル.初期化 (), Cmd.none) 更新.メッセージをモデルに適用 ゲーム画面.ビュー
         |> Program.withSubscription サブスクリプション.タイマー
