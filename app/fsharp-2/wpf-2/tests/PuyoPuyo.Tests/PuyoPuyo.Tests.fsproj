@@ -24,6 +24,7 @@
     <Compile Include="Domain\PuyoPairTests.fs" />
     <Compile Include="Domain\GameLogicTests.fs" />
     <Compile Include="Elmish\UpdateTests.fs" />
+    <Compile Include="Integration\GameScenarioTests.fs" />
     <Compile Include="Tests.fs" />
   </ItemGroup>
 
