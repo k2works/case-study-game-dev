@@ -327,3 +327,52 @@ let ``消去パターンがない場合でも着地後は重力が適用され�
     Board.getCell finalBoard 2 11 |> should equal (Cell.Filled PuyoColor.Red) // 落下した位置
     Board.getCell finalBoard 2 12 |> should equal (Cell.Filled PuyoColor.Blue) // 元のまま
     Board.getCell finalBoard 3 12 |> should equal (Cell.Filled PuyoColor.Green) // 元のまま
+
+[<Fact>]
+let ``1連鎖の場合_連鎖情報が正しく返される`` () =
+    // Arrange: 4つの赤ぷよを配置
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 10 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 10 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 11 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 11 (Cell.Filled PuyoColor.Red)
+
+    // Act
+    let (_, chainInfo) = Board.clearAndApplyGravityRepeatedlyWithInfo board
+
+    // Assert
+    chainInfo.ChainCount |> should equal 1
+    chainInfo.ClearedPuyoCount |> should equal 4
+    chainInfo.IsZenkeshi |> should equal true
+
+[<Fact>]
+let ``2連鎖の場合_連鎖情報が正しく返される`` () =
+    // Arrange: 階段状の配置で2連鎖を作る
+    // 下に赤4つ（横一列）、赤の上に青4つ（階段状）
+    // 赤が消えると青が落ちて横一列に揃う
+    let board = Board.create 6 13
+
+    let board =
+        board
+        // 1連鎖目: 赤ぷよ4つ（横一列 y=12）
+        |> fun b -> Board.setCell b 0 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Red)
+        // 2連鎖目: 青ぷよ4つ（階段状に配置）
+        // 赤が消えると青が y=12 に落ちて横一列になる
+        |> fun b -> Board.setCell b 0 9 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 1 10 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 2 11 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 3 11 (Cell.Filled PuyoColor.Blue)
+
+    // Act
+    let (_, chainInfo) = Board.clearAndApplyGravityRepeatedlyWithInfo board
+
+    // Assert
+    chainInfo.ChainCount |> should equal 2
+    chainInfo.ClearedPuyoCount |> should equal 8
+    chainInfo.IsZenkeshi |> should equal true

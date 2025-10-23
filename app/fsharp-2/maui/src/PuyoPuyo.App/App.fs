@@ -172,12 +172,18 @@ module App =
         | Some piece ->
             let boardWithPuyo = Board.fixPuyoPair model.Board piece
 
-            // 連鎖処理（再帰的に消去と重力を適用）
-            let (boardAfterChain, isZenkeshi) =
-                Board.clearAndApplyGravityRepeatedly boardWithPuyo
+            // 連鎖処理（再帰的に消去と重力を適用）、連鎖情報を取得
+            let (boardAfterChain, chainInfo) =
+                Board.clearAndApplyGravityRepeatedlyWithInfo boardWithPuyo
+
+            // 連鎖スコアを計算
+            let chainScore = Board.calculateScore chainInfo
 
             // 全消しボーナスを計算
-            let bonusScore = if isZenkeshi then 3600 else 0
+            let zenkeshiBonus = if chainInfo.IsZenkeshi then 3600 else 0
+
+            // 総スコア
+            let totalScore = chainScore + zenkeshiBonus
 
             // 新しいぷよを生成
             let nextPiece = PuyoPair.createRandom 2 1 0
@@ -190,7 +196,7 @@ module App =
                 { model with
                     Board = boardAfterChain
                     CurrentPiece = None
-                    Score = model.Score + bonusScore
+                    Score = model.Score + totalScore
                     Status = GameOver },
                 []
             else
@@ -198,7 +204,7 @@ module App =
                 { model with
                     Board = boardAfterChain
                     CurrentPiece = Some nextPiece
-                    Score = model.Score + bonusScore },
+                    Score = model.Score + totalScore },
                 []
         | None -> model, []
 

@@ -11,6 +11,12 @@ type Board =
       Rows: int
       Cells: Cell[][] }
 
+/// 連鎖情報
+type ChainInfo =
+    { ChainCount: int
+      ClearedPuyoCount: int
+      IsZenkeshi: bool }
+
 module Board =
     /// 空のボードを作成
     let create (cols: int) (rows: int) : Board =
@@ -154,3 +160,64 @@ module Board =
 
             // 再帰的に次の消去判定
             clearAndApplyGravityRepeatedly boardAfterClear
+
+    /// 再帰的に消去と重力を適用（連鎖情報付き）
+    /// 戻り値: (最終的なボード状態, ChainInfo)
+    let clearAndApplyGravityRepeatedlyWithInfo (board: Board) : Board * ChainInfo =
+        let rec loop (currentBoard: Board) (chainCount: int) (totalCleared: int) : Board * ChainInfo =
+            let groups = findConnectedGroups currentBoard
+
+            if List.isEmpty groups then
+                // 消去するぷよがない場合、重力を適用して終了
+                let boardAfterGravity = applyGravity currentBoard
+                let isZenkeshi = checkZenkeshi boardAfterGravity
+
+                let chainInfo =
+                    { ChainCount = chainCount
+                      ClearedPuyoCount = totalCleared
+                      IsZenkeshi = isZenkeshi }
+
+                (boardAfterGravity, chainInfo)
+            else
+                // 消去と重力を適用
+                let positions = groups |> List.concat
+                let clearedCount = List.length positions
+
+                let boardAfterClear = currentBoard |> clearPuyos positions |> applyGravity
+
+                // 再帰的に次の連鎖を処理
+                loop boardAfterClear (chainCount + 1) (totalCleared + clearedCount)
+
+        loop board 0 0
+
+    /// 連鎖ボーナス倍率を計算
+    let private getChainBonus (chainCount: int) : int =
+        match chainCount with
+        | 0 -> 0
+        | 1 -> 0 // 1連鎖はボーナスなし
+        | 2 -> 8
+        | 3 -> 16
+        | 4 -> 32
+        | 5 -> 64
+        | 6 -> 96
+        | 7 -> 128
+        | _ -> 160
+
+    /// スコアを計算
+    let calculateScore (chainInfo: ChainInfo) : int =
+        if chainInfo.ChainCount = 0 then
+            0
+        else
+            // 各連鎖のスコアを累積計算
+            let rec calculateChainScore (chain: int) (remaining: int) (acc: int) : int =
+                if chain > chainInfo.ChainCount || remaining <= 0 then
+                    acc
+                else
+                    // 1連鎖あたり最低4個消える想定で分配
+                    let puyoInThisChain = min 4 remaining
+                    let bonus = getChainBonus chain
+                    let score = puyoInThisChain * 10 * max 1 (1 + bonus)
+
+                    calculateChainScore (chain + 1) (remaining - puyoInThisChain) (acc + score)
+
+            calculateChainScore 1 chainInfo.ClearedPuyoCount 0
