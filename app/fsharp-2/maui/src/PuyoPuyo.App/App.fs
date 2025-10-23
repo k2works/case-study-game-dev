@@ -109,6 +109,17 @@ module App =
                 | None -> model, []
             | None -> model, []
 
+        | Rotate when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryRotatePuyoPair model.Board piece with
+                | Some rotatedPiece ->
+                    { model with
+                        CurrentPiece = Some rotatedPiece },
+                    []
+                | None -> model, []
+            | None -> model, []
+
         | _ -> model, []
 
     /// セルを描画
