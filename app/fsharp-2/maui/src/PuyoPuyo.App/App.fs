@@ -14,16 +14,15 @@ type GameStatus =
     | GameOver
 
 /// ゲームのModel
-type Model = {
-    Board: Board
-    CurrentPiece: PuyoPair option
-    NextPiece: PuyoPair option
-    Score: int
-    Level: int
-    GameTime: int
-    LastChainCount: int
-    Status: GameStatus
-}
+type Model =
+    { Board: Board
+      CurrentPiece: PuyoPair option
+      NextPiece: PuyoPair option
+      Score: int
+      Level: int
+      GameTime: int
+      LastChainCount: int
+      Status: GameStatus }
 
 /// ゲームのメッセージ
 type Msg =
@@ -58,20 +57,17 @@ module App =
 
     /// 初期状態
     let private initModel () : Model =
-        {
-            Board = Board.create 6 13
-            CurrentPiece = None
-            NextPiece = None
-            Score = 0
-            Level = 1
-            GameTime = 0
-            LastChainCount = 0
-            Status = NotStarted
-        }
+        { Board = Board.create 6 13
+          CurrentPiece = None
+          NextPiece = None
+          Score = 0
+          Level = 1
+          GameTime = 0
+          LastChainCount = 0
+          Status = NotStarted }
 
     /// Init 関数
-    let init () =
-        initModel (), []
+    let init () = initModel (), []
 
     /// Update 関数
     let update (msg: Msg) (model: Model) =
@@ -80,43 +76,40 @@ module App =
             let firstPiece = PuyoPair.createRandom 2 1 0
             let nextPiece = PuyoPair.createRandom 2 1 0
 
-            {
-                model with
-                    Board = Board.create 6 13
-                    CurrentPiece = Some firstPiece
-                    NextPiece = Some nextPiece
-                    Score = 0
-                    GameTime = 0
-                    Status = Playing
-            }, []
+            { model with
+                Board = Board.create 6 13
+                CurrentPiece = Some firstPiece
+                NextPiece = Some nextPiece
+                Score = 0
+                GameTime = 0
+                Status = Playing },
+            []
 
-        | ResetGame ->
-            initModel (), []
+        | ResetGame -> initModel (), []
 
         | MoveLeft when model.Status = Playing ->
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Direction.Left with
                 | Some movedPiece ->
-                    { model with CurrentPiece = Some movedPiece }, []
-                | None ->
-                    model, []
-            | None ->
-                model, []
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    []
+                | None -> model, []
+            | None -> model, []
 
         | MoveRight when model.Status = Playing ->
             match model.CurrentPiece with
             | Some piece ->
                 match GameLogic.tryMovePuyoPair model.Board piece Direction.Right with
                 | Some movedPiece ->
-                    { model with CurrentPiece = Some movedPiece }, []
-                | None ->
-                    model, []
-            | None ->
-                model, []
+                    { model with
+                        CurrentPiece = Some movedPiece },
+                    []
+                | None -> model, []
+            | None -> model, []
 
-        | _ ->
-            model, []
+        | _ -> model, []
 
     /// セルを描画
     let private viewCell (cell: Cell) =
@@ -125,18 +118,13 @@ module App =
             | Cell.Empty -> Colors.LightGray
             | Cell.Filled puyoColor -> toColor puyoColor
 
-        Ellipse()
-            .fill(color)
-            .size(28., 28.)
-            .margin(2.)
+        Ellipse().fill(color).size(28., 28.).margin (2.)
 
     /// ボードを描画
     let private viewBoard (board: Board) (currentPiece: PuyoPair option) =
         // ボードのコピーを作成
         let displayBoard =
-            Array.init board.Rows (fun y ->
-                Array.init board.Cols (fun x ->
-                    Board.getCell board x y))
+            Array.init board.Rows (fun y -> Array.init board.Cols (fun x -> Board.getCell board x y))
 
         // 現在のぷよを重ねて表示
         match currentPiece with
@@ -167,20 +155,14 @@ module App =
             ContentPage(
                 (ScrollView(
                     (VStack(spacing = 20.) {
-                        Label($"Score: {model.Score}")
-                            .font(size = 24.)
-                            .centerTextHorizontal()
+                        Label($"Score: {model.Score}").font(size = 24.).centerTextHorizontal ()
 
-                        Label($"Level: {model.Level}")
-                            .font(size = 18.)
-                            .centerTextHorizontal()
+                        Label($"Level: {model.Level}").font(size = 18.).centerTextHorizontal ()
 
                         viewBoard model.Board model.CurrentPiece
 
                         match model.Status with
-                        | NotStarted ->
-                            Button("Start Game", StartGame)
-                                .centerHorizontal()
+                        | NotStarted -> Button("Start Game", StartGame).centerHorizontal ()
                         | Playing ->
                             (HStack(spacing = 10.) {
                                 Button("Left", MoveLeft)
@@ -188,22 +170,19 @@ module App =
                                 Button("Rotate", Rotate)
                                 Button("Drop", HardDrop)
                             })
-                                .centerHorizontal()
+                                .centerHorizontal ()
 
-                            Button("Reset", ResetGame)
-                                .centerHorizontal()
+                            Button("Reset", ResetGame).centerHorizontal ()
                         | GameOver ->
-                            Label("Game Over!")
-                                .font(size = 32.)
-                                .centerTextHorizontal()
+                            Label("Game Over!").font(size = 32.).centerTextHorizontal ()
 
-                            Button("New Game", ResetGame)
-                                .centerHorizontal()
+                            Button("New Game", ResetGame).centerHorizontal ()
                     })
                         .padding(20.)
-                        .centerVertical()
+                        .centerVertical ()
                 ))
-            ).title("ぷよぷよ")
+            )
+                .title ("ぷよぷよ")
         )
 
     let program = Program.statefulWithCmdMsg init update view mapCmd

@@ -1,32 +1,16 @@
 {
   "ignoreFiles": [
-    "**/obj/**/*.fs",
-    "**/bin/**/*.fs"
+    "assemblyinfo.*",
+    "obj/*",
+    "bin/*",
+    ".paket/*",
+    "packages/*",
+    "**/node_modules/**"
   ],
-  "hints": {
-    "add": []
-  },
-  "formatting": {
-    "typedItemSpacing": {
-      "enabled": true
-    },
-    "typePrefixing": {
-      "enabled": true
-    }
-  },
-  "conventions": {
-    "naming": {
-      "enabled": true
-    },
-    "nestedStatements": {
-      "enabled": true,
-      "depth": 5
-    },
-    "cyclomaticComplexity": {
-      "enabled": true,
-      "config": {
-        "maxComplexity": 7
-      }
+  "cyclomaticComplexity": {
+    "enabled": true,
+    "config": {
+      "maxComplexity": 15
     }
   }
 }

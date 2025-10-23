@@ -18,8 +18,7 @@ let ``ぷよペアを左に移動できる`` () =
     | Some movedPair ->
         movedPair.X |> should equal 2
         movedPair.Y |> should equal 5
-    | None ->
-        failwith "移動できるはずです"
+    | None -> failwith "移動できるはずです"
 
 [<Fact>]
 let ``ぷよペアを右に移動できる`` () =
@@ -35,8 +34,7 @@ let ``ぷよペアを右に移動できる`` () =
     | Some movedPair ->
         movedPair.X |> should equal 3
         movedPair.Y |> should equal 5
-    | None ->
-        failwith "移動できるはずです"
+    | None -> failwith "移動できるはずです"
 
 [<Fact>]
 let ``左端では左に移動できない`` () =

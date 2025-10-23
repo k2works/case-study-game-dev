@@ -40,15 +40,25 @@ Task("Build")
 });
 
 Task("Test")
-    .IsDependentOn("Build")
+    .Description("Run tests using xUnit v3 in-process runner")
     .Does(() =>
 {
-    DotNetTest("./PuyoPuyo.sln", new DotNetTestSettings
+    // テストプロジェクトのみをビルド（MAUIプロジェクトのビルド問題を回避）
+    DotNetBuild("./tests/PuyoPuyo.Tests/PuyoPuyo.Tests.fsproj", new DotNetBuildSettings
     {
-        Configuration = configuration,
-        NoBuild = true,
-        NoRestore = true
+        Configuration = configuration
     });
+
+    // xUnit v3のin-process runnerを使用してテストを実行
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "run --project ./tests/PuyoPuyo.Tests/PuyoPuyo.Tests.fsproj --no-build"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("Tests failed. Please check the test results above.");
+    }
 });
 
 Task("Run-Windows")
@@ -86,6 +96,52 @@ Task("Watch-Test")
         Arguments = "watch test --project ./tests/PuyoPuyo.Tests/PuyoPuyo.Tests.fsproj"
     });
 });
+
+Task("Format")
+    .Description("Format F# code using Fantomas")
+    .Does(() =>
+{
+    StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fantomas ."
+    });
+});
+
+Task("Format-Check")
+    .Description("Check F# code formatting using Fantomas")
+    .Does(() =>
+{
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fantomas --check ."
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("Code formatting check failed. Run 'dotnet cake --target=Format' to fix formatting issues.");
+    }
+});
+
+Task("Lint")
+    .Description("Lint F# code using FSharpLint")
+    .Does(() =>
+{
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "fsharplint lint PuyoPuyo.sln"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("Linting failed. Please fix the issues reported above.");
+    }
+});
+
+Task("CheckAll")
+    .Description("Run all quality checks: format check, lint, and test")
+    .IsDependentOn("Format-Check")
+    .IsDependentOn("Lint")
+    .IsDependentOn("Test");
 
 ///////////////////////////////////////////////////////////////////////////////
 // ターゲット

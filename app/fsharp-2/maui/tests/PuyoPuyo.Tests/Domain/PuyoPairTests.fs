@@ -25,8 +25,8 @@ let ``回転状態0のとき2つ目のぷよは上にある`` () =
     let (pos1, pos2) = PuyoPair.getPositions pair
 
     // Assert
-    pos1 |> should equal (2, 5)  // 軸ぷよ
-    pos2 |> should equal (2, 4)  // 2つ目のぷよは上
+    pos1 |> should equal (2, 5) // 軸ぷよ
+    pos2 |> should equal (2, 4) // 2つ目のぷよは上
 
 [<Fact>]
 let ``回転状態1のとき2つ目のぷよは右にある`` () =
@@ -37,8 +37,8 @@ let ``回転状態1のとき2つ目のぷよは右にある`` () =
     let (pos1, pos2) = PuyoPair.getPositions pair
 
     // Assert
-    pos1 |> should equal (2, 5)  // 軸ぷよ
-    pos2 |> should equal (3, 5)  // 2つ目のぷよは右
+    pos1 |> should equal (2, 5) // 軸ぷよ
+    pos2 |> should equal (3, 5) // 2つ目のぷよは右
 
 [<Fact>]
 let ``回転状態2のとき2つ目のぷよは下にある`` () =
@@ -49,8 +49,8 @@ let ``回転状態2のとき2つ目のぷよは下にある`` () =
     let (pos1, pos2) = PuyoPair.getPositions pair
 
     // Assert
-    pos1 |> should equal (2, 5)  // 軸ぷよ
-    pos2 |> should equal (2, 6)  // 2つ目のぷよは下
+    pos1 |> should equal (2, 5) // 軸ぷよ
+    pos2 |> should equal (2, 6) // 2つ目のぷよは下
 
 [<Fact>]
 let ``回転状態3のとき2つ目のぷよは左にある`` () =
@@ -61,5 +61,5 @@ let ``回転状態3のとき2つ目のぷよは左にある`` () =
     let (pos1, pos2) = PuyoPair.getPositions pair
 
     // Assert
-    pos1 |> should equal (2, 5)  // 軸ぷよ
-    pos2 |> should equal (1, 5)  // 2つ目のぷよは左
+    pos1 |> should equal (2, 5) // 軸ぷよ
+    pos2 |> should equal (1, 5) // 2つ目のぷよは左
