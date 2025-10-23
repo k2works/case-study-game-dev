@@ -173,3 +173,36 @@ let ``回転後も下に移動できる`` () =
         let movedDown = GameLogic.tryMovePuyoPair board rotatedPair Direction.Down
         movedDown |> should not' (equal None)
     | None -> failwith "回転できるはずです"
+
+[<Fact>]
+let ``新しいぷよを配置できない場合_ゲームオーバーになる`` () =
+    // Arrange: ボードの上部（新しいぷよが配置される位置）にぷよを配置
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 2 0 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 1 (Cell.Filled PuyoColor.Red)
+
+    // 新しいぷよペア（x=2, y=1 が軸、rotation=0 なので上方向の x=2, y=0 に2つ目）
+    let newPiece = PuyoPair.create 2 1 PuyoColor.Blue PuyoColor.Green 0
+
+    // Act: ゲームオーバー判定
+    let isGameOver = GameLogic.checkGameOver board newPiece
+
+    // Assert: ゲームオーバーになっていることを確認
+    isGameOver |> should equal true
+
+[<Fact>]
+let ``新しいぷよを配置できる場合_ゲームオーバーにならない`` () =
+    // Arrange: 空のボード
+    let board = Board.create 6 13
+
+    // 新しいぷよペア（x=2, y=1 が軸、rotation=0 なので上方向の x=2, y=0 に2つ目）
+    let newPiece = PuyoPair.create 2 1 PuyoColor.Blue PuyoColor.Green 0
+
+    // Act: ゲームオーバー判定
+    let isGameOver = GameLogic.checkGameOver board newPiece
+
+    // Assert: ゲームオーバーにならないことを確認
+    isGameOver |> should equal false

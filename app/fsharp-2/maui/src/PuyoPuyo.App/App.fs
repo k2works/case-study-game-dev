@@ -179,11 +179,27 @@ module App =
             // 全消しボーナスを計算
             let bonusScore = if isZenkeshi then 3600 else 0
 
-            { model with
-                Board = boardAfterChain
-                CurrentPiece = None
-                Score = model.Score + bonusScore },
-            [ DispatchMsg SpawnNewPiece ]
+            // 新しいぷよを生成
+            let nextPiece = PuyoPair.createRandom 2 1 0
+
+            // ゲームオーバー判定
+            let isGameOver = GameLogic.checkGameOver boardAfterChain nextPiece
+
+            if isGameOver then
+                // ゲームオーバー
+                { model with
+                    Board = boardAfterChain
+                    CurrentPiece = None
+                    Score = model.Score + bonusScore
+                    Status = GameOver },
+                []
+            else
+                // ゲーム続行
+                { model with
+                    Board = boardAfterChain
+                    CurrentPiece = Some nextPiece
+                    Score = model.Score + bonusScore },
+                []
         | None -> model, []
 
     /// 新規ぷよ生成処理
