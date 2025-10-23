@@ -140,10 +140,12 @@ module Board =
         let groups = findConnectedGroups board
 
         if List.isEmpty groups then
-            // 消去するぷよがない場合は終了
+            // 消去するぷよがない場合でも、重力を適用してから終了
+            // （着地時に浮いているぷよを落とすため）
+            let boardAfterGravity = applyGravity board
             // 全消し判定を行う
-            let isZenkeshi = checkZenkeshi board
-            (board, isZenkeshi)
+            let isZenkeshi = checkZenkeshi boardAfterGravity
+            (boardAfterGravity, isZenkeshi)
         else
             // 消去と重力を適用
             let positions = groups |> List.concat

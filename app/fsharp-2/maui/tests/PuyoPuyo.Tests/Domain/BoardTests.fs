@@ -307,3 +307,23 @@ let ``盤面上にぷよが残っていると全消しにならない`` () =
 
     // Assert: 全消しにならない（青ぷよが残る）
     isZenkeshi |> should equal false
+
+[<Fact>]
+let ``消去パターンがない場合でも着地後は重力が適用される`` () =
+    // Arrange: 空中に浮いたぷよと下にぷよがある状態
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 2 8 (Cell.Filled PuyoColor.Red) // 空中に浮いている
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Blue) // 下にある
+        |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Green) // 下にある
+
+    // Act: 消去パターンがないが、連鎖処理を実行（重力が適用されるべき）
+    let (finalBoard, isZenkeshi) = Board.clearAndApplyGravityRepeatedly board
+
+    // Assert: 赤ぷよが落下している
+    Board.getCell finalBoard 2 8 |> should equal Cell.Empty // 元の位置は空
+    Board.getCell finalBoard 2 11 |> should equal (Cell.Filled PuyoColor.Red) // 落下した位置
+    Board.getCell finalBoard 2 12 |> should equal (Cell.Filled PuyoColor.Blue) // 元のまま
+    Board.getCell finalBoard 3 12 |> should equal (Cell.Filled PuyoColor.Green) // 元のまま
