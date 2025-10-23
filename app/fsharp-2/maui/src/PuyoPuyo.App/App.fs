@@ -261,7 +261,7 @@ module App =
             | Cell.Empty -> Colors.LightGray
             | Cell.Filled puyoColor -> toColor puyoColor
 
-        Ellipse().fill(color).size(28., 28.).margin (2.)
+        Ellipse().fill(color).size(24., 24.).margin (1.5)
 
     /// ボードを描画
     let private viewBoard (board: Board) (currentPiece: PuyoPair option) =
@@ -297,32 +297,32 @@ module App =
         Application(
             ContentPage(
                 (ScrollView(
-                    (VStack(spacing = 20.) {
-                        Label($"Score: {model.Score}").font(size = 24.).centerTextHorizontal ()
+                    (VStack(spacing = 10.) {
+                        Label($"Score: {model.Score}").font(size = 16.).centerTextHorizontal ()
 
-                        Label($"Level: {model.Level}").font(size = 18.).centerTextHorizontal ()
+                        Label($"Level: {model.Level}").font(size = 14.).centerTextHorizontal ()
 
                         viewBoard model.Board model.CurrentPiece
 
                         match model.Status with
-                        | NotStarted -> Button("Start Game", StartGame).centerHorizontal ()
+                        | NotStarted ->
+                            Button("Start Game", StartGame).size(120., 40.).font(size = 14.).centerHorizontal ()
                         | Playing ->
-                            (HStack(spacing = 10.) {
-                                Button("Left", MoveLeft)
-                                Button("Down", MoveDown)
-                                Button("Right", MoveRight)
-                                Button("Rotate", Rotate)
-                                Button("Drop", HardDrop)
+                            (HStack(spacing = 5.) {
+                                Button("←", MoveLeft).size(50., 40.).font (size = 16.)
+                                Button("↓", MoveDown).size(50., 40.).font (size = 16.)
+                                Button("↻", Rotate).size(50., 40.).font (size = 16.)
+                                Button("→", MoveRight).size(50., 40.).font (size = 16.)
                             })
                                 .centerHorizontal ()
 
-                            Button("Reset", ResetGame).centerHorizontal ()
+                            Button("Reset", ResetGame).size(100., 35.).font(size = 12.).centerHorizontal ()
                         | GameOver ->
-                            Label("Game Over!").font(size = 32.).centerTextHorizontal ()
+                            Label("GAME OVER").font(size = 28.).textColor(Colors.Red).centerTextHorizontal ()
 
-                            Button("New Game", ResetGame).centerHorizontal ()
+                            Button("New Game", ResetGame).size(120., 40.).font(size = 14.).centerHorizontal ()
                     })
-                        .padding(20.)
+                        .padding(10.)
                         .centerVertical ()
                 ))
             )
