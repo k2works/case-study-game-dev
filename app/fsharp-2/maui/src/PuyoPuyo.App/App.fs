@@ -56,7 +56,7 @@ module App =
         | DispatchMsg msg -> Cmd.ofMsg msg
         | StartTimer ->
             let timerSub dispatch =
-                let timerInterval = 1000.0 // 1000ms ごとに落下
+                let timerInterval = 1500.0 // 1500ms ごとに落下
 
                 async {
                     while true do
@@ -160,10 +160,9 @@ module App =
             match GameLogic.tryMovePuyoPair model.Board piece Direction.Down with
             | Some movedPiece ->
                 { model with
-                    CurrentPiece = Some movedPiece
-                    IsFastFalling = true },
+                    CurrentPiece = Some movedPiece },
                 []
-            | None -> { model with IsFastFalling = false }, [ DispatchMsg FixPiece ]
+            | None -> model, [ DispatchMsg FixPiece ]
         | None -> model, []
 
     /// ぷよ固定処理
@@ -197,14 +196,16 @@ module App =
                     Board = boardAfterChain
                     CurrentPiece = None
                     Score = model.Score + totalScore
-                    Status = GameOver },
+                    Status = GameOver
+                    IsFastFalling = false },
                 []
             else
                 // ゲーム続行
                 { model with
                     Board = boardAfterChain
                     CurrentPiece = Some nextPiece
-                    Score = model.Score + totalScore },
+                    Score = model.Score + totalScore
+                    IsFastFalling = false },
                 []
         | None -> model, []
 
@@ -225,7 +226,7 @@ module App =
 
     /// タイマーステップ処理
     let private handleTimeStep (model: Model) =
-        let interval = if model.IsFastFalling then 50 else 1000
+        let interval = if model.IsFastFalling then 50 else 1500
 
         match model.CurrentPiece with
         | Some piece ->
