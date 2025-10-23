@@ -93,6 +93,28 @@ module App =
         | ResetGame ->
             initModel (), []
 
+        | MoveLeft when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryMovePuyoPair model.Board piece Direction.Left with
+                | Some movedPiece ->
+                    { model with CurrentPiece = Some movedPiece }, []
+                | None ->
+                    model, []
+            | None ->
+                model, []
+
+        | MoveRight when model.Status = Playing ->
+            match model.CurrentPiece with
+            | Some piece ->
+                match GameLogic.tryMovePuyoPair model.Board piece Direction.Right with
+                | Some movedPiece ->
+                    { model with CurrentPiece = Some movedPiece }, []
+                | None ->
+                    model, []
+            | None ->
+                model, []
+
         | _ ->
             model, []
 
