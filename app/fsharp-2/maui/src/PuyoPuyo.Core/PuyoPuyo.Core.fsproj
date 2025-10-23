@@ -7,8 +7,8 @@
 
   <ItemGroup>
     <Compile Include="Domain\Puyo.fs" />
-    <Compile Include="Domain\Board.fs" />
     <Compile Include="Domain\PuyoPair.fs" />
+    <Compile Include="Domain\Board.fs" />
     <Compile Include="Domain\GameLogic.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>

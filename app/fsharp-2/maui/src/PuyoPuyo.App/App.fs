@@ -22,7 +22,8 @@ type Model =
       Level: int
       GameTime: int
       LastChainCount: int
-      Status: GameStatus }
+      Status: GameStatus
+      IsFastFalling: bool }
 
 /// ゲームのメッセージ
 type Msg =
@@ -31,6 +32,8 @@ type Msg =
     | MoveLeft
     | MoveRight
     | MoveDown
+    | StartFastFall
+    | StopFastFall
     | Rotate
     | HardDrop
     | GameStep
@@ -41,11 +44,37 @@ type Msg =
     | CheckGameOver
 
 module App =
-    type CmdMsg = | NoOp
+    type CmdMsg =
+        | NoOp
+        | DispatchMsg of Msg
+        | StartTimer
+        | ScheduleNextTick of int
 
     let mapCmd cmdMsg =
         match cmdMsg with
         | NoOp -> Cmd.none
+        | DispatchMsg msg -> Cmd.ofMsg msg
+        | StartTimer ->
+            let timerSub dispatch =
+                let timerInterval = 500.0 // 500ms ごとに落下
+
+                async {
+                    while true do
+                        do! Async.Sleep(int timerInterval)
+                        dispatch TimeStep
+                }
+                |> Async.Start
+
+            Cmd.ofSub timerSub
+        | ScheduleNextTick interval ->
+            let timerSub dispatch =
+                async {
+                    do! Async.Sleep interval
+                    dispatch TimeStep
+                }
+                |> Async.Start
+
+            Cmd.ofSub timerSub
 
     /// PuyoColor を MAUI Color に変換
     let private toColor (puyoColor: PuyoColor) =
@@ -64,62 +93,141 @@ module App =
           Level = 1
           GameTime = 0
           LastChainCount = 0
-          Status = NotStarted }
+          Status = NotStarted
+          IsFastFalling = false }
 
     /// Init 関数
     let init () = initModel (), []
 
+    /// ゲーム開始処理
+    let private handleStartGame (model: Model) =
+        let firstPiece = PuyoPair.createRandom 2 1 0
+        let nextPiece = PuyoPair.createRandom 2 1 0
+
+        { model with
+            Board = Board.create 6 13
+            CurrentPiece = Some firstPiece
+            NextPiece = Some nextPiece
+            Score = 0
+            GameTime = 0
+            Status = Playing
+            IsFastFalling = false },
+        [ StartTimer ]
+
+    /// リセット処理
+    let private handleResetGame () = initModel (), []
+
+    /// 左移動処理
+    let private handleMoveLeft (model: Model) =
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryMovePuyoPair model.Board piece Direction.Left with
+            | Some movedPiece ->
+                { model with
+                    CurrentPiece = Some movedPiece },
+                []
+            | None -> model, []
+        | None -> model, []
+
+    /// 右移動処理
+    let private handleMoveRight (model: Model) =
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryMovePuyoPair model.Board piece Direction.Right with
+            | Some movedPiece ->
+                { model with
+                    CurrentPiece = Some movedPiece },
+                []
+            | None -> model, []
+        | None -> model, []
+
+    /// 回転処理
+    let private handleRotate (model: Model) =
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryRotatePuyoPair model.Board piece with
+            | Some rotatedPiece ->
+                { model with
+                    CurrentPiece = Some rotatedPiece },
+                []
+            | None -> model, []
+        | None -> model, []
+
+    /// 下移動処理
+    let private handleMoveDown (model: Model) =
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryMovePuyoPair model.Board piece Direction.Down with
+            | Some movedPiece ->
+                { model with
+                    CurrentPiece = Some movedPiece
+                    IsFastFalling = true },
+                []
+            | None -> { model with IsFastFalling = false }, [ DispatchMsg FixPiece ]
+        | None -> model, []
+
+    /// ぷよ固定処理
+    let private handleFixPiece (model: Model) =
+        match model.CurrentPiece with
+        | Some piece ->
+            let newBoard = Board.fixPuyoPair model.Board piece
+
+            { model with
+                Board = newBoard
+                CurrentPiece = None },
+            [ DispatchMsg SpawnNewPiece ]
+        | None -> model, []
+
+    /// 新規ぷよ生成処理
+    let private handleSpawnNewPiece (model: Model) =
+        let newPiece =
+            match model.NextPiece with
+            | Some next -> next
+            | None -> PuyoPair.createRandom 2 1 0
+
+        let nextPiece = PuyoPair.createRandom 2 1 0
+
+        { model with
+            CurrentPiece = Some newPiece
+            NextPiece = Some nextPiece
+            IsFastFalling = false },
+        []
+
+    /// タイマーステップ処理
+    let private handleTimeStep (model: Model) =
+        let interval = if model.IsFastFalling then 50 else 500
+
+        match model.CurrentPiece with
+        | Some piece ->
+            match GameLogic.tryMovePuyoPair model.Board piece Direction.Down with
+            | Some movedPiece ->
+                { model with
+                    CurrentPiece = Some movedPiece },
+                [ ScheduleNextTick interval ]
+            | None -> model, [ DispatchMsg FixPiece; ScheduleNextTick interval ]
+        | None -> model, [ ScheduleNextTick interval ]
+
+    /// 高速落下開始処理
+    let private handleStartFastFall (model: Model) = { model with IsFastFalling = true }, []
+
+    /// 高速落下停止処理
+    let private handleStopFastFall (model: Model) =
+        { model with IsFastFalling = false }, []
+
     /// Update 関数
     let update (msg: Msg) (model: Model) =
         match msg with
-        | StartGame ->
-            let firstPiece = PuyoPair.createRandom 2 1 0
-            let nextPiece = PuyoPair.createRandom 2 1 0
-
-            { model with
-                Board = Board.create 6 13
-                CurrentPiece = Some firstPiece
-                NextPiece = Some nextPiece
-                Score = 0
-                GameTime = 0
-                Status = Playing },
-            []
-
-        | ResetGame -> initModel (), []
-
-        | MoveLeft when model.Status = Playing ->
-            match model.CurrentPiece with
-            | Some piece ->
-                match GameLogic.tryMovePuyoPair model.Board piece Direction.Left with
-                | Some movedPiece ->
-                    { model with
-                        CurrentPiece = Some movedPiece },
-                    []
-                | None -> model, []
-            | None -> model, []
-
-        | MoveRight when model.Status = Playing ->
-            match model.CurrentPiece with
-            | Some piece ->
-                match GameLogic.tryMovePuyoPair model.Board piece Direction.Right with
-                | Some movedPiece ->
-                    { model with
-                        CurrentPiece = Some movedPiece },
-                    []
-                | None -> model, []
-            | None -> model, []
-
-        | Rotate when model.Status = Playing ->
-            match model.CurrentPiece with
-            | Some piece ->
-                match GameLogic.tryRotatePuyoPair model.Board piece with
-                | Some rotatedPiece ->
-                    { model with
-                        CurrentPiece = Some rotatedPiece },
-                    []
-                | None -> model, []
-            | None -> model, []
-
+        | StartGame -> handleStartGame model
+        | ResetGame -> handleResetGame ()
+        | MoveLeft when model.Status = Playing -> handleMoveLeft model
+        | MoveRight when model.Status = Playing -> handleMoveRight model
+        | Rotate when model.Status = Playing -> handleRotate model
+        | MoveDown when model.Status = Playing -> handleMoveDown model
+        | FixPiece when model.Status = Playing -> handleFixPiece model
+        | SpawnNewPiece when model.Status = Playing -> handleSpawnNewPiece model
+        | TimeStep when model.Status = Playing -> handleTimeStep model
+        | StartFastFall when model.Status = Playing -> handleStartFastFall model
+        | StopFastFall when model.Status = Playing -> handleStopFastFall model
         | _ -> model, []
 
     /// セルを描画
@@ -177,6 +285,7 @@ module App =
                         | Playing ->
                             (HStack(spacing = 10.) {
                                 Button("Left", MoveLeft)
+                                Button("Down", MoveDown)
                                 Button("Right", MoveRight)
                                 Button("Rotate", Rotate)
                                 Button("Drop", HardDrop)

@@ -39,3 +39,13 @@ module Board =
             { board with Cells = newCells }
         else
             board
+
+    /// ぷよペアをボードに固定
+    let fixPuyoPair (board: Board) (pair: PuyoPuyo.Core.Domain.PuyoPair) : Board =
+        let (pos1, pos2) = PuyoPuyo.Core.Domain.PuyoPair.getPositions pair
+        let (x1, y1) = pos1
+        let (x2, y2) = pos2
+
+        board
+        |> fun b -> setCell b x1 y1 (Filled pair.Puyo1Color)
+        |> fun b -> setCell b x2 y2 (Filled pair.Puyo2Color)

@@ -118,3 +118,58 @@ let ``壁キックできない場合は回転しない`` () =
 
     // Assert
     result |> should equal None
+
+[<Fact>]
+let ``ぷよペアを下に移動できる`` () =
+    // Arrange
+    let board = Board.create 6 13
+    let pair = PuyoPair.create 3 5 PuyoColor.Red PuyoColor.Green 0
+
+    // Act
+    let result = GameLogic.tryMovePuyoPair board pair Direction.Down
+
+    // Assert
+    match result with
+    | Some movedPair -> movedPair.Y |> should equal 6
+    | None -> failwith "下に移動できるはずです"
+
+[<Fact>]
+let ``下端では下に移動できない`` () =
+    // Arrange
+    let board = Board.create 6 13
+    let pair = PuyoPair.create 3 12 PuyoColor.Red PuyoColor.Green 0 // 軸ぷよがy=12（下端）、2つ目のぷよは y=11
+
+    // Act
+    let result = GameLogic.tryMovePuyoPair board pair Direction.Down
+
+    // Assert
+    result |> should equal None
+
+[<Fact>]
+let ``下にぷよがある場合は移動できない`` () =
+    // Arrange
+    let board = Board.create 6 13
+    let board = Board.setCell board 3 6 (Cell.Filled PuyoColor.Blue) // 軸ぷよの下に障害物
+    let pair = PuyoPair.create 3 5 PuyoColor.Red PuyoColor.Green 0
+
+    // Act
+    let result = GameLogic.tryMovePuyoPair board pair Direction.Down
+
+    // Assert
+    result |> should equal None
+
+[<Fact>]
+let ``回転後も下に移動できる`` () =
+    // Arrange
+    let board = Board.create 6 13
+    let pair = PuyoPair.create 2 1 PuyoColor.Red PuyoColor.Green 0 // 初期位置（上向き）
+
+    // Act
+    let rotated = GameLogic.tryRotatePuyoPair board pair // 回転（右向きになる）
+
+    // Assert - 回転後も下に移動できることを確認
+    match rotated with
+    | Some rotatedPair ->
+        let movedDown = GameLogic.tryMovePuyoPair board rotatedPair Direction.Down
+        movedDown |> should not' (equal None)
+    | None -> failwith "回転できるはずです"
