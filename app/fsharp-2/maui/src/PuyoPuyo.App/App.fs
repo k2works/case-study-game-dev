@@ -103,9 +103,10 @@ module App =
             | Cell.Empty -> Colors.LightGray
             | Cell.Filled puyoColor -> toColor puyoColor
 
-        BoxView(color)
-            .size(30., 30.)
-            .margin(1.)
+        Ellipse()
+            .fill(color)
+            .size(28., 28.)
+            .margin(2.)
 
     /// ボードを描画
     let private viewBoard (board: Board) (currentPiece: PuyoPair option) =
