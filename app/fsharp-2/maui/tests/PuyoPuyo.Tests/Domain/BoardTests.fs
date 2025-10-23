@@ -212,3 +212,47 @@ let ``重力を適用すると複数のぷよが落ちる`` () =
     Board.getCell newBoard 1 10 |> should equal (Cell.Filled PuyoColor.Blue)
     Board.getCell newBoard 1 11 |> should equal (Cell.Filled PuyoColor.Yellow)
     Board.getCell newBoard 1 12 |> should equal (Cell.Filled PuyoColor.Red)
+
+[<Fact>]
+let ``連鎖が発生する_基本ケース`` () =
+    // Arrange: 赤ぷよ2x2と青ぷよ縦3+横1を配置
+    // 赤ぷよが消えると青ぷよが落下して4つつながる
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 11 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 11 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 3 11 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 2 8 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 2 9 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 2 10 (Cell.Filled PuyoColor.Blue)
+
+    // Act: 再帰的に消去と重力を適用
+    let finalBoard = Board.clearAndApplyGravityRepeatedly board
+
+    // Assert: 全て消えているはず（2連鎖発生）
+    Board.getCell finalBoard 1 11 |> should equal Cell.Empty
+    Board.getCell finalBoard 2 11 |> should equal Cell.Empty
+    Board.getCell finalBoard 3 11 |> should equal Cell.Empty
+
+[<Fact>]
+let ``連鎖が発生しない_消去パターンなし`` () =
+    // Arrange: 消去パターンがない状態
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Green)
+
+    // Act
+    let finalBoard = Board.clearAndApplyGravityRepeatedly board
+
+    // Assert: 何も変わっていないはず
+    Board.getCell finalBoard 1 12 |> should equal (Cell.Filled PuyoColor.Red)
+    Board.getCell finalBoard 2 12 |> should equal (Cell.Filled PuyoColor.Blue)
+    Board.getCell finalBoard 3 12 |> should equal (Cell.Filled PuyoColor.Green)

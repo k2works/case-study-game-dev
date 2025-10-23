@@ -172,19 +172,11 @@ module App =
         | Some piece ->
             let boardWithPuyo = Board.fixPuyoPair model.Board piece
 
-            // 消去処理
-            let groups = Board.findConnectedGroups boardWithPuyo
-
-            let boardAfterClear =
-                if List.isEmpty groups then
-                    Board.applyGravity boardWithPuyo
-                else
-                    let positions = groups |> List.concat
-
-                    boardWithPuyo |> Board.clearPuyos positions |> Board.applyGravity
+            // 連鎖処理（再帰的に消去と重力を適用）
+            let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardWithPuyo
 
             { model with
-                Board = boardAfterClear
+                Board = boardAfterChain
                 CurrentPiece = None },
             [ DispatchMsg SpawnNewPiece ]
         | None -> model, []
