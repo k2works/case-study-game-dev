@@ -56,7 +56,7 @@ module App =
         | DispatchMsg msg -> Cmd.ofMsg msg
         | StartTimer ->
             let timerSub dispatch =
-                let timerInterval = 500.0 // 500ms ごとに落下
+                let timerInterval = 1000.0 // 1000ms ごとに落下
 
                 async {
                     while true do
@@ -206,7 +206,7 @@ module App =
 
     /// タイマーステップ処理
     let private handleTimeStep (model: Model) =
-        let interval = if model.IsFastFalling then 50 else 500
+        let interval = if model.IsFastFalling then 50 else 1000
 
         match model.CurrentPiece with
         | Some piece ->
