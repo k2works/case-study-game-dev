@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Domain\Puyo.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
 
