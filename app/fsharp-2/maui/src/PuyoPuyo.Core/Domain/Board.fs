@@ -129,13 +129,21 @@ module Board =
 
         { board with Cells = newCells }
 
+    /// 全消し判定（盤面上のすべてのぷよが消えたか）
+    let checkZenkeshi (board: Board) : bool =
+        board.Cells
+        |> Array.forall (fun row -> row |> Array.forall (fun cell -> cell = Empty))
+
     /// 再帰的に消去と重力を適用（連鎖処理）
-    let rec clearAndApplyGravityRepeatedly (board: Board) : Board =
+    /// 戻り値: (最終的なボード状態, 全消しフラグ)
+    let rec clearAndApplyGravityRepeatedly (board: Board) : Board * bool =
         let groups = findConnectedGroups board
 
         if List.isEmpty groups then
             // 消去するぷよがない場合は終了
-            board
+            // 全消し判定を行う
+            let isZenkeshi = checkZenkeshi board
+            (board, isZenkeshi)
         else
             // 消去と重力を適用
             let positions = groups |> List.concat

@@ -173,11 +173,16 @@ module App =
             let boardWithPuyo = Board.fixPuyoPair model.Board piece
 
             // 連鎖処理（再帰的に消去と重力を適用）
-            let boardAfterChain = Board.clearAndApplyGravityRepeatedly boardWithPuyo
+            let (boardAfterChain, isZenkeshi) =
+                Board.clearAndApplyGravityRepeatedly boardWithPuyo
+
+            // 全消しボーナスを計算
+            let bonusScore = if isZenkeshi then 3600 else 0
 
             { model with
                 Board = boardAfterChain
-                CurrentPiece = None },
+                CurrentPiece = None
+                Score = model.Score + bonusScore },
             [ DispatchMsg SpawnNewPiece ]
         | None -> model, []
 

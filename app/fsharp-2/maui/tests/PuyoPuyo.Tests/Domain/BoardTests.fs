@@ -231,12 +231,14 @@ let ``連鎖が発生する_基本ケース`` () =
         |> fun b -> Board.setCell b 2 10 (Cell.Filled PuyoColor.Blue)
 
     // Act: 再帰的に消去と重力を適用
-    let finalBoard = Board.clearAndApplyGravityRepeatedly board
+    let (finalBoard, isZenkeshi) = Board.clearAndApplyGravityRepeatedly board
 
     // Assert: 全て消えているはず（2連鎖発生）
     Board.getCell finalBoard 1 11 |> should equal Cell.Empty
     Board.getCell finalBoard 2 11 |> should equal Cell.Empty
     Board.getCell finalBoard 3 11 |> should equal Cell.Empty
+    // 全消しになっている
+    isZenkeshi |> should equal true
 
 [<Fact>]
 let ``連鎖が発生しない_消去パターンなし`` () =
@@ -250,9 +252,58 @@ let ``連鎖が発生しない_消去パターンなし`` () =
         |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Green)
 
     // Act
-    let finalBoard = Board.clearAndApplyGravityRepeatedly board
+    let (finalBoard, isZenkeshi) = Board.clearAndApplyGravityRepeatedly board
 
     // Assert: 何も変わっていないはず
     Board.getCell finalBoard 1 12 |> should equal (Cell.Filled PuyoColor.Red)
     Board.getCell finalBoard 2 12 |> should equal (Cell.Filled PuyoColor.Blue)
     Board.getCell finalBoard 3 12 |> should equal (Cell.Filled PuyoColor.Green)
+    // 全消しにならない
+    isZenkeshi |> should equal false
+
+[<Fact>]
+let ``盤面上のぷよがすべて消えると全消しになる`` () =
+    // Arrange: 4つの赤ぷよを配置
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 10 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 10 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 11 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 11 (Cell.Filled PuyoColor.Red)
+
+    // Act: 消去判定と実行
+    let groups = Board.findConnectedGroups board
+    let positions = groups |> List.concat
+    let clearedBoard = Board.clearPuyos positions board
+
+    // 全消し判定
+    let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+    // Assert: 全消しになっていることを確認
+    isZenkeshi |> should equal true
+
+[<Fact>]
+let ``盤面上にぷよが残っていると全消しにならない`` () =
+    // Arrange: 赤ぷよ4つと青ぷよ1つを配置
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 10 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 10 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 11 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 11 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 3 11 (Cell.Filled PuyoColor.Blue)
+
+    // Act: 消去判定と実行（赤ぷよのみ消える）
+    let groups = Board.findConnectedGroups board
+    let positions = groups |> List.concat
+    let clearedBoard = Board.clearPuyos positions board
+
+    // 全消し判定
+    let isZenkeshi = Board.checkZenkeshi clearedBoard
+
+    // Assert: 全消しにならない（青ぷよが残る）
+    isZenkeshi |> should equal false
