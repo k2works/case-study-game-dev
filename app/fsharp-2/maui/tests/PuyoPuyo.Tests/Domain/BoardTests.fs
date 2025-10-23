@@ -76,3 +76,139 @@ let ``ぷよペアを固定しても元のボードは変更されない`` () =
     let (x1, y1) = pos1
     Board.getCell board x1 y1 |> should equal Cell.Empty // 元のボードは空のまま
     Board.getCell newBoard x1 y1 |> should equal (Cell.Filled PuyoColor.Red) // 新しいボードには固定
+
+[<Fact>]
+let ``横に4つ並んだぷよを検出できる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 0 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Red)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 1
+    groups |> List.head |> List.length |> should equal 4
+
+[<Fact>]
+let ``縦に4つ並んだぷよを検出できる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 2 9 (Cell.Filled PuyoColor.Green)
+        |> fun b -> Board.setCell b 2 10 (Cell.Filled PuyoColor.Green)
+        |> fun b -> Board.setCell b 2 11 (Cell.Filled PuyoColor.Green)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Green)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 1
+    groups |> List.head |> List.length |> should equal 4
+
+[<Fact>]
+let ``L字型につながった5つのぷよを検出できる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 10 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 1 11 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Blue)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 1
+    groups |> List.head |> List.length |> should equal 5
+
+[<Fact>]
+let ``3つ以下のぷよは検出されない`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 0 12 (Cell.Filled PuyoColor.Yellow)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Yellow)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Yellow)
+
+    // Act
+    let groups = Board.findConnectedGroups board
+
+    // Assert
+    groups |> List.length |> should equal 0
+
+[<Fact>]
+let ``指定した位置のぷよを消去できる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 0 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Red)
+        |> fun b -> Board.setCell b 3 12 (Cell.Filled PuyoColor.Red)
+
+    // Act
+    let positions = [ (0, 12); (1, 12); (2, 12); (3, 12) ]
+    let newBoard = board |> Board.clearPuyos positions
+
+    // Assert
+    Board.getCell newBoard 0 12 |> should equal Cell.Empty
+    Board.getCell newBoard 1 12 |> should equal Cell.Empty
+    Board.getCell newBoard 2 12 |> should equal Cell.Empty
+    Board.getCell newBoard 3 12 |> should equal Cell.Empty
+
+[<Fact>]
+let ``重力を適用すると浮いているぷよが落ちる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 2 8 (Cell.Filled PuyoColor.Green) // 浮いているぷよ
+        |> fun b -> Board.setCell b 2 12 (Cell.Filled PuyoColor.Red) // 下にあるぷよ
+
+    // Act
+    let newBoard = Board.applyGravity board
+
+    // Assert
+    Board.getCell newBoard 2 8 |> should equal Cell.Empty
+    Board.getCell newBoard 2 11 |> should equal (Cell.Filled PuyoColor.Green) // 落ちた
+    Board.getCell newBoard 2 12 |> should equal (Cell.Filled PuyoColor.Red)
+
+[<Fact>]
+let ``重力を適用すると複数のぷよが落ちる`` () =
+    // Arrange
+    let board = Board.create 6 13
+
+    let board =
+        board
+        |> fun b -> Board.setCell b 1 5 (Cell.Filled PuyoColor.Blue)
+        |> fun b -> Board.setCell b 1 6 (Cell.Filled PuyoColor.Yellow)
+        |> fun b -> Board.setCell b 1 12 (Cell.Filled PuyoColor.Red)
+
+    // Act
+    let newBoard = Board.applyGravity board
+
+    // Assert
+    Board.getCell newBoard 1 5 |> should equal Cell.Empty
+    Board.getCell newBoard 1 6 |> should equal Cell.Empty
+    Board.getCell newBoard 1 10 |> should equal (Cell.Filled PuyoColor.Blue)
+    Board.getCell newBoard 1 11 |> should equal (Cell.Filled PuyoColor.Yellow)
+    Board.getCell newBoard 1 12 |> should equal (Cell.Filled PuyoColor.Red)

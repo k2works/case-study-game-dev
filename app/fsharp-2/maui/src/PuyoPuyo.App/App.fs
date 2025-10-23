@@ -170,10 +170,21 @@ module App =
     let private handleFixPiece (model: Model) =
         match model.CurrentPiece with
         | Some piece ->
-            let newBoard = Board.fixPuyoPair model.Board piece
+            let boardWithPuyo = Board.fixPuyoPair model.Board piece
+
+            // 消去処理
+            let groups = Board.findConnectedGroups boardWithPuyo
+
+            let boardAfterClear =
+                if List.isEmpty groups then
+                    Board.applyGravity boardWithPuyo
+                else
+                    let positions = groups |> List.concat
+
+                    boardWithPuyo |> Board.clearPuyos positions |> Board.applyGravity
 
             { model with
-                Board = newBoard
+                Board = boardAfterClear
                 CurrentPiece = None },
             [ DispatchMsg SpawnNewPiece ]
         | None -> model, []
