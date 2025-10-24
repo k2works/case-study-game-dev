@@ -265,4 +265,86 @@ public class BoardTests
         finalBoard.GetCell(2, 12).Should().Be(Cell.Filled(PuyoColor.Blue));  // 青が落ちてきた
         finalBoard.GetCell(3, 12).Should().Be(Cell.Empty);
     }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedly_消去対象がない場合は盤面が変わらない()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(0, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Blue));
+
+        // Act
+        var result = board.ClearAndApplyGravityRepeatedly();
+
+        // Assert - 消去対象がないため、盤面は変わらない
+        result.GetCell(0, 12).Should().Be(Cell.Filled(PuyoColor.Red));
+        result.GetCell(1, 12).Should().Be(Cell.Filled(PuyoColor.Blue));
+    }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedly_2連鎖が正常に動作する()
+    {
+        // Arrange - 1連鎖目で赤が消え、2連鎖目で青が消えるパターン
+        var board = Board.Create(6, 13);
+        board = board
+            // 赤ぷよ（2x2の正方形）
+            .SetCell(1, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 12, Cell.Filled(PuyoColor.Red))
+            // 青ぷよ（縦に3つ + 横に1つ）
+            .SetCell(3, 11, Cell.Filled(PuyoColor.Blue))
+            .SetCell(2, 7, Cell.Filled(PuyoColor.Blue))
+            .SetCell(2, 8, Cell.Filled(PuyoColor.Blue))
+            .SetCell(2, 9, Cell.Filled(PuyoColor.Blue));
+
+        // Act
+        var result = board.ClearAndApplyGravityRepeatedly();
+
+        // Assert - すべてのぷよが消えている（2連鎖が発生）
+        for (int y = 0; y < 13; y++)
+        {
+            for (int x = 0; x < 6; x++)
+            {
+                result.GetCell(x, y).Should().Be(Cell.Empty);
+            }
+        }
+    }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedly_3連鎖が正常に動作する()
+    {
+        // Arrange - 3連鎖が発生するパターン
+        var board = Board.Create(6, 13);
+        board = board
+            // 1連鎖目: 赤ぷよ（下部）
+            .SetCell(0, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(0, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Red))
+            // 2連鎖目: 青ぷよ（中部）
+            .SetCell(0, 6, Cell.Filled(PuyoColor.Blue))
+            .SetCell(0, 7, Cell.Filled(PuyoColor.Blue))
+            .SetCell(0, 8, Cell.Filled(PuyoColor.Blue))
+            .SetCell(1, 8, Cell.Filled(PuyoColor.Blue))
+            // 3連鎖目: 緑ぷよ（上部）
+            .SetCell(0, 2, Cell.Filled(PuyoColor.Green))
+            .SetCell(0, 3, Cell.Filled(PuyoColor.Green))
+            .SetCell(0, 4, Cell.Filled(PuyoColor.Green))
+            .SetCell(1, 4, Cell.Filled(PuyoColor.Green));
+
+        // Act
+        var result = board.ClearAndApplyGravityRepeatedly();
+
+        // Assert - すべてのぷよが消えている（3連鎖が発生）
+        for (int y = 0; y < 13; y++)
+        {
+            for (int x = 0; x < 6; x++)
+            {
+                result.GetCell(x, y).Should().Be(Cell.Empty);
+            }
+        }
+    }
 }

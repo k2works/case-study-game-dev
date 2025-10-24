@@ -142,23 +142,10 @@ public partial class MainPage : ContentPage
             // 移動できない（着地）
             var boardWithPuyo = this.board.FixPuyoPair(this.currentPiece);
 
-            // 消去処理
-            var groups = boardWithPuyo.FindConnectedGroups();
-            Board boardAfterClear;
+            // 連鎖処理（消去と重力を繰り返し適用）
+            var boardAfterChain = boardWithPuyo.ClearAndApplyGravityRepeatedly();
 
-            if (groups.Count > 0)
-            {
-                // 消去対象がある場合
-                var positions = groups.SelectMany(g => g).ToList();
-                boardAfterClear = boardWithPuyo.ClearPuyos(positions).ApplyGravity();
-            }
-            else
-            {
-                // 消去対象がない場合も重力を適用
-                boardAfterClear = boardWithPuyo.ApplyGravity();
-            }
-
-            this.board = boardAfterClear;
+            this.board = boardAfterChain;
             this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
             this.gameDrawable.Board = this.board;
             this.gameDrawable.CurrentPiece = this.currentPiece;

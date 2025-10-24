@@ -237,4 +237,26 @@ public sealed record Board
 
         return new Board(Cols, Rows, newCells);
     }
+
+    /// <summary>
+    /// 消去と重力を繰り返し適用する（連鎖処理）
+    /// </summary>
+    public Board ClearAndApplyGravityRepeatedly()
+    {
+        var groups = FindConnectedGroups();
+
+        if (groups.Count == 0)
+        {
+            // 消去対象がない場合は終了
+            return this;
+        }
+
+        // 消去して重力を適用
+        var positions = groups.SelectMany(g => g).ToList();
+        var clearedBoard = ClearPuyos(positions);
+        var boardAfterGravity = clearedBoard.ApplyGravity();
+
+        // 再帰的に消去判定を繰り返す
+        return boardAfterGravity.ClearAndApplyGravityRepeatedly();
+    }
 }
