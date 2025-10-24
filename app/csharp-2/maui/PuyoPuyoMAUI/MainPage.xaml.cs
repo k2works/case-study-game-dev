@@ -13,6 +13,7 @@ public partial class MainPage : ContentPage
     private Board board = null!;
     private PuyoPair? currentPiece;
     private IDispatcherTimer? gameTimer;
+    private bool isFastFalling;
 
     public MainPage()
     {
@@ -55,30 +56,7 @@ public partial class MainPage : ContentPage
 
     private void OnGameTick(object? sender, EventArgs e)
     {
-        if (this.currentPiece == null)
-        {
-            return;
-        }
-
-        // 下に移動を試みる
-        var movedPiece = GameLogic.TryMovePuyoPair(this.board, this.currentPiece, Direction.Down);
-
-        if (movedPiece != null)
-        {
-            // 移動成功
-            this.currentPiece = movedPiece;
-            this.gameDrawable.CurrentPiece = this.currentPiece;
-            this.gameView.Invalidate();
-        }
-        else
-        {
-            // 移動できない（着地）
-            this.board = this.board.FixPuyoPair(this.currentPiece);
-            this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
-            this.gameDrawable.Board = this.board;
-            this.gameDrawable.CurrentPiece = this.currentPiece;
-            this.gameView.Invalidate();
-        }
+        this.DropPuyo();
     }
 
     private void OnLeftButtonClicked(object? sender, EventArgs e)
@@ -130,5 +108,68 @@ public partial class MainPage : ContentPage
             this.gameDrawable.CurrentPiece = this.currentPiece;
             this.gameView.Invalidate();
         }
+    }
+
+    private void OnDownButtonClicked(object? sender, EventArgs e)
+    {
+        if (this.currentPiece == null)
+        {
+            return;
+        }
+
+        this.DropPuyo();
+    }
+
+    private void DropPuyo()
+    {
+        if (this.currentPiece == null)
+        {
+            return;
+        }
+
+        // 下に移動を試みる
+        var movedPiece = GameLogic.TryMovePuyoPair(this.board, this.currentPiece, Direction.Down);
+
+        if (movedPiece != null)
+        {
+            // 移動成功
+            this.currentPiece = movedPiece;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
+        else
+        {
+            // 移動できない（着地）
+            this.board = this.board.FixPuyoPair(this.currentPiece);
+            this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
+            this.gameDrawable.Board = this.board;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
+    }
+
+    private void OnDownButtonPressed(object? sender, EventArgs e)
+    {
+        this.isFastFalling = true;
+        this.UpdateTimerInterval();
+    }
+
+    private void OnDownButtonReleased(object? sender, EventArgs e)
+    {
+        this.isFastFalling = false;
+        this.UpdateTimerInterval();
+    }
+
+    private void UpdateTimerInterval()
+    {
+        if (this.gameTimer == null)
+        {
+            return;
+        }
+
+        // 高速落下モードでは100ms、通常モードでは1000ms
+        this.gameTimer.Interval = this.isFastFalling
+            ? TimeSpan.FromMilliseconds(100)
+            : TimeSpan.FromSeconds(1);
     }
 }
