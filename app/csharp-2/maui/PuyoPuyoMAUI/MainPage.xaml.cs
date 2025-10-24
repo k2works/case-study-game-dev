@@ -1,3 +1,7 @@
+// <copyright file="MainPage.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using PuyoPuyoMAUI.Domain;
 using PuyoPuyoMAUI.Graphics;
 
@@ -5,48 +9,48 @@ namespace PuyoPuyoMAUI;
 
 public partial class MainPage : ContentPage
 {
-    private readonly GameDrawable _gameDrawable;
-    private Board _board;
-    private PuyoPair? _currentPiece;
-    private IDispatcherTimer? _gameTimer;
+    private readonly GameDrawable gameDrawable;
+    private Board board = null!;
+    private PuyoPair? currentPiece;
+    private IDispatcherTimer? gameTimer;
 
     public MainPage()
     {
-        InitializeComponent();
+        this.InitializeComponent();
 
         // ゲーム描画オブジェクトの初期化
-        _gameDrawable = new GameDrawable();
-        gameView.Drawable = _gameDrawable;
+        this.gameDrawable = new GameDrawable();
+        this.gameView.Drawable = this.gameDrawable;
 
         // ゲームの初期化
-        InitializeGame();
+        this.InitializeGame();
 
         // ゲームループの開始（1秒ごとに更新）
-        StartGameLoop();
+        this.StartGameLoop();
     }
 
     private void InitializeGame()
     {
         // 空のボードを作成
-        _board = Board.Create(6, 13);
+        this.board = Board.Create(6, 13);
 
         // 最初のぷよペアを生成
-        _currentPiece = PuyoPair.CreateRandom(2, 1, 0);
+        this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
 
         // 描画オブジェクトに設定
-        _gameDrawable.Board = _board;
-        _gameDrawable.CurrentPiece = _currentPiece;
+        this.gameDrawable.Board = this.board;
+        this.gameDrawable.CurrentPiece = this.currentPiece;
 
         // 画面を更新
-        gameView.Invalidate();
+        this.gameView.Invalidate();
     }
 
     private void StartGameLoop()
     {
-        _gameTimer = Dispatcher.CreateTimer();
-        _gameTimer.Interval = TimeSpan.FromSeconds(1);
-        _gameTimer.Tick += OnGameTick;
-        _gameTimer.Start();
+        this.gameTimer = this.Dispatcher.CreateTimer();
+        this.gameTimer.Interval = TimeSpan.FromSeconds(1);
+        this.gameTimer.Tick += this.OnGameTick;
+        this.gameTimer.Start();
     }
 
     private void OnGameTick(object? sender, EventArgs e)

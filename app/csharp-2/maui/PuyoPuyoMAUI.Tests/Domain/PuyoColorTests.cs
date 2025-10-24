@@ -1,6 +1,6 @@
-using Xunit;
 using FluentAssertions;
 using PuyoPuyoMAUI.Domain;
+using Xunit;
 
 namespace PuyoPuyoMAUI.Tests.Domain;
 

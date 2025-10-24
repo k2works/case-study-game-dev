@@ -1,10 +1,14 @@
+// <copyright file="GameDrawable.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using Microsoft.Maui.Graphics;
 using PuyoPuyoMAUI.Domain;
 
 namespace PuyoPuyoMAUI.Graphics;
 
 /// <summary>
-/// ゲームボードとぷよを描画するクラス
+/// ゲームボードとぷよを描画するクラス.
 /// </summary>
 public class GameDrawable : IDrawable
 {
@@ -22,27 +26,27 @@ public class GameDrawable : IDrawable
         canvas.FillColor = Colors.Black;
         canvas.FillRectangle(dirtyRect);
 
-        if (Board == null)
+        if (this.Board == null)
         {
             return;
         }
 
         // ボードの枠を描画
-        DrawBoardFrame(canvas);
+        this.DrawBoardFrame(canvas);
 
         // ボードのセルを描画
-        DrawCells(canvas);
+        this.DrawCells(canvas);
 
         // 現在のぷよペアを描画
-        if (CurrentPiece != null)
+        if (this.CurrentPiece != null)
         {
-            DrawCurrentPiece(canvas);
+            this.DrawCurrentPiece(canvas);
         }
     }
 
     private void DrawBoardFrame(ICanvas canvas)
     {
-        if (Board == null)
+        if (this.Board == null)
         {
             return;
         }
@@ -52,25 +56,25 @@ public class GameDrawable : IDrawable
         canvas.DrawRectangle(
             BoardOffsetX,
             BoardOffsetY,
-            Board.Cols * CellSize,
-            Board.Rows * CellSize);
+            this.Board.Cols * CellSize,
+            this.Board.Rows * CellSize);
     }
 
     private void DrawCells(ICanvas canvas)
     {
-        if (Board == null)
+        if (this.Board == null)
         {
             return;
         }
 
-        for (int y = 0; y < Board.Rows; y++)
+        for (int y = 0; y < this.Board.Rows; y++)
         {
-            for (int x = 0; x < Board.Cols; x++)
+            for (int x = 0; x < this.Board.Cols; x++)
             {
-                var cell = Board.GetCell(x, y);
+                var cell = this.Board.GetCell(x, y);
                 if (cell.IsFilled)
                 {
-                    DrawPuyo(canvas, x, y, cell.Color);
+                    this.DrawPuyo(canvas, x, y, cell.Color);
                 }
             }
         }
@@ -78,34 +82,34 @@ public class GameDrawable : IDrawable
 
     private void DrawCurrentPiece(ICanvas canvas)
     {
-        if (CurrentPiece == null)
+        if (this.CurrentPiece == null)
         {
             return;
         }
 
-        var (pos1, pos2) = CurrentPiece.GetPositions();
-        DrawPuyo(canvas, pos1.X, pos1.Y, CurrentPiece.Puyo1Color);
-        DrawPuyo(canvas, pos2.X, pos2.Y, CurrentPiece.Puyo2Color);
+        var (pos1, pos2) = this.CurrentPiece.GetPositions();
+        this.DrawPuyo(canvas, pos1.X, pos1.Y, this.CurrentPiece.Puyo1Color);
+        this.DrawPuyo(canvas, pos2.X, pos2.Y, this.CurrentPiece.Puyo2Color);
     }
 
     private void DrawPuyo(ICanvas canvas, int x, int y, PuyoColor color)
     {
-        var pixelX = BoardOffsetX + x * CellSize;
-        var pixelY = BoardOffsetY + y * CellSize;
+        var pixelX = BoardOffsetX + (x * CellSize);
+        var pixelY = BoardOffsetY + (y * CellSize);
 
         // ぷよ本体を描画（円）
         canvas.FillColor = color.ToColor();
         canvas.FillCircle(
-            pixelX + CellSize / 2,
-            pixelY + CellSize / 2,
-            CellSize / 2 - 2);
+            pixelX + (CellSize / 2),
+            pixelY + (CellSize / 2),
+            (CellSize / 2) - 2);
 
         // ぷよの輪郭を描画
         canvas.StrokeColor = Colors.White;
         canvas.StrokeSize = 1;
         canvas.DrawCircle(
-            pixelX + CellSize / 2,
-            pixelY + CellSize / 2,
-            CellSize / 2 - 2);
+            pixelX + (CellSize / 2),
+            pixelY + (CellSize / 2),
+            (CellSize / 2) - 2);
     }
 }
