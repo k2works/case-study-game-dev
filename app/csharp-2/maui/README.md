@@ -211,6 +211,10 @@ dotnet cake build.cake --target=Restore  # パッケージ復元
 dotnet cake build.cake --target=Lint     # 静的解析
 dotnet cake build.cake --target=Build    # ビルド
 dotnet cake build.cake --target=Test     # テスト実行
+
+# カバレッジ計測
+dotnet cake build.cake --target=Coverage         # カバレッジ計測（XML）
+dotnet cake build.cake --target=Coverage-Report  # HTMLレポート生成
 ```
 
 #### 品質基準
@@ -220,7 +224,7 @@ dotnet cake build.cake --target=Test     # テスト実行
 | テスト成功率 | 100% | ✅ 65/65 |
 | コンパイラ警告 | 0個 | ✅ |
 | Linter 警告 | 0個 | ✅ |
-| テストカバレッジ | 80%以上 | 🎯 計画中 |
+| テストカバレッジ | 80%以上 | ✅ 94.89% (Line) / 94.05% (Branch) |
 
 #### コーディング規約
 

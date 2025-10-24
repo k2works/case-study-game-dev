@@ -89,6 +89,79 @@ Task("Test")
     Information("テストが完了しました");
 });
 
+Task("Coverage")
+    .Description("テストカバレッジを計測")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    var coverageDirectory = Directory("./coverage");
+    var coverageFile = coverageDirectory + File("coverage.cobertura.xml");
+
+    // カバレッジディレクトリをクリーン
+    if (DirectoryExists(coverageDirectory))
+    {
+        DeleteDirectory(coverageDirectory, new DeleteDirectorySettings {
+            Recursive = true,
+            Force = true
+        });
+    }
+
+    CreateDirectory(coverageDirectory);
+
+    // カバレッジ付きでテストを実行
+    DotNetTest("./PuyoPuyoMAUI.sln", new DotNetTestSettings
+    {
+        Configuration = configuration,
+        NoBuild = true,
+        NoRestore = true,
+        ArgumentCustomization = args => args
+            .Append("/p:CollectCoverage=true")
+            .Append("/p:CoverletOutputFormat=cobertura")
+            .Append($"/p:CoverletOutput={MakeAbsolute(coverageDirectory)}/")
+            .Append("/p:ExcludeByFile=\"**/Platforms/**/*\"")
+    });
+
+    Information($"カバレッジファイル: {coverageFile}");
+    Information("テストカバレッジの計測が完了しました");
+});
+
+Task("Coverage-Report")
+    .Description("テストカバレッジのHTMLレポートを生成")
+    .IsDependentOn("Coverage")
+    .Does(() =>
+{
+    var coverageDirectory = Directory("./coverage");
+    var coverageFile = coverageDirectory + File("coverage.cobertura.xml");
+    var reportDirectory = coverageDirectory + Directory("report");
+
+    // ReportGenerator をインストール（グローバルツール）
+    try
+    {
+        StartProcess("dotnet", new ProcessSettings {
+            Arguments = new ProcessArgumentBuilder()
+                .Append("tool")
+                .Append("install")
+                .Append("-g")
+                .Append("dotnet-reportgenerator-globaltool")
+        });
+    }
+    catch
+    {
+        Information("ReportGenerator already installed");
+    }
+
+    // レポート生成
+    StartProcess("reportgenerator", new ProcessSettings {
+        Arguments = new ProcessArgumentBuilder()
+            .AppendQuoted($"-reports:{coverageFile}")
+            .AppendQuoted($"-targetdir:{reportDirectory}")
+            .Append("-reporttypes:Html")
+    });
+
+    Information($"カバレッジレポート: {reportDirectory}/index.html");
+    Information("HTMLレポートの生成が完了しました");
+});
+
 Task("Format")
     .Description("コードを自動フォーマット")
     .Does(() =>
