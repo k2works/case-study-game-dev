@@ -1,4 +1,8 @@
-﻿using Android.App;
+﻿// <copyright file="MainActivity.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
 

@@ -1,3 +1,7 @@
+// <copyright file="MainPage.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace PuyoPuyoMAUI;
 
 public partial class MainPage : ContentPage
@@ -6,22 +10,22 @@ public partial class MainPage : ContentPage
 
     public MainPage()
     {
-        InitializeComponent();
+        this.InitializeComponent();
     }
 
     private void OnCounterClicked(object? sender, EventArgs e)
     {
-        count++;
+        this.count++;
 
-        if (count == 1)
+        if (this.count == 1)
         {
-            CounterBtn.Text = $"Clicked {count} time";
+            this.CounterBtn.Text = $"Clicked {this.count} time";
         }
         else
         {
-            CounterBtn.Text = $"Clicked {count} times";
+            this.CounterBtn.Text = $"Clicked {this.count} times";
         }
 
-        SemanticScreenReader.Announce(CounterBtn.Text);
+        SemanticScreenReader.Announce(this.CounterBtn.Text);
     }
 }

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+// <copyright file="App.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PuyoPuyoMAUI;
 
@@ -6,7 +10,7 @@ public partial class App : Application
 {
     public App()
     {
-        InitializeComponent();
+        this.InitializeComponent();
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

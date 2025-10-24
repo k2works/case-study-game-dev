@@ -1,3 +1,7 @@
+// <copyright file="App.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
