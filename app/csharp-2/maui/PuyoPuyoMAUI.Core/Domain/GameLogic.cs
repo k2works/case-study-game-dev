@@ -74,4 +74,13 @@ public static class GameLogic
         // 回転できない
         return null;
     }
+
+    /// <summary>
+    /// ゲームオーバー判定
+    /// </summary>
+    public static bool CheckGameOver(Board board, PuyoPair newPiece)
+    {
+        // 新しいぷよが配置できない場合はゲームオーバー
+        return !CanPlacePuyoPair(board, newPiece);
+    }
 }

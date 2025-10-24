@@ -188,4 +188,73 @@ public class GameLogicTests
         result!.Rotation.Should().Be(1);
         result.X.Should().Be(3);  // 位置は変わらない
     }
+
+    [Fact]
+    public void CheckGameOver_新しいぷよを配置できない場合はゲームオーバーと判定される()
+    {
+        // Arrange - ボードの上部（新しいぷよが配置される位置）にぷよを配置
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(2, 0, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 1, Cell.Filled(PuyoColor.Red));
+
+        // 新しいぷよペア（Y=1, Rotation=0 なら x=2, y=0 と x=2, y=1 に配置される）
+        var newPiece = new PuyoPair(2, 1, PuyoColor.Blue, PuyoColor.Green, 0);
+
+        // Act - ゲームオーバー判定
+        var isGameOver = GameLogic.CheckGameOver(board, newPiece);
+
+        // Assert
+        isGameOver.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CheckGameOver_新しいぷよを配置できる場合はゲームオーバーにならない()
+    {
+        // Arrange - 空のボード
+        var board = Board.Create(6, 13);
+
+        // 新しいぷよペア（Y=1 なら Rotation=0 で Y=0 と Y=1 に配置される）
+        var newPiece = new PuyoPair(2, 1, PuyoColor.Blue, PuyoColor.Green, 0);
+
+        // Act - ゲームオーバー判定
+        var isGameOver = GameLogic.CheckGameOver(board, newPiece);
+
+        // Assert
+        isGameOver.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CheckGameOver_回転状態も考慮される()
+    {
+        // Arrange - ボードの上部にぷよを配置（回転後の位置にぷよがある）
+        var board = Board.Create(6, 13);
+        board = board.SetCell(2, 1, Cell.Filled(PuyoColor.Red));
+
+        // 縦向きのぷよペア（Rotation = 0, Y=1 なら y=0 と y=1 に配置される）
+        var newPiece = new PuyoPair(2, 1, PuyoColor.Blue, PuyoColor.Green, 0);
+
+        // Act - ゲームオーバー判定
+        var isGameOver = GameLogic.CheckGameOver(board, newPiece);
+
+        // Assert
+        isGameOver.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CheckGameOver_ボードの下の方にぷよがあってもゲームオーバーにならない()
+    {
+        // Arrange - ボードの下の方にぷよを配置
+        var board = Board.Create(6, 13);
+        board = board.SetCell(2, 12, Cell.Filled(PuyoColor.Red));
+
+        // 新しいぷよペア（上部に配置される、Y=1 で Rotation=0 なら y=0 と y=1）
+        var newPiece = new PuyoPair(2, 1, PuyoColor.Blue, PuyoColor.Green, 0);
+
+        // Act - ゲームオーバー判定
+        var isGameOver = GameLogic.CheckGameOver(board, newPiece);
+
+        // Assert
+        isGameOver.Should().BeFalse();
+    }
 }

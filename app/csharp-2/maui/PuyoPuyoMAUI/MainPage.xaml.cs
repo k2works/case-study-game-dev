@@ -15,6 +15,7 @@ public partial class MainPage : ContentPage
     private IDispatcherTimer? gameTimer;
     private bool isFastFalling;
     private int score;
+    private bool isGameOver;
 
     public MainPage()
     {
@@ -42,6 +43,11 @@ public partial class MainPage : ContentPage
         // スコアを初期化
         this.score = 0;
         this.scoreLabel.Text = "Score: 0";
+
+        // ゲームオーバーフラグを初期化
+        this.isGameOver = false;
+        this.gameOverLabel.IsVisible = false;
+        this.restartButton.IsVisible = false;
 
         // 描画オブジェクトに設定
         this.gameDrawable.Board = this.board;
@@ -127,7 +133,7 @@ public partial class MainPage : ContentPage
 
     private void DropPuyo()
     {
-        if (this.currentPiece == null)
+        if (this.currentPiece == null || this.isGameOver)
         {
             return;
         }
@@ -168,11 +174,36 @@ public partial class MainPage : ContentPage
             // スコア表示更新
             this.scoreLabel.Text = $"Score: {this.score}";
 
-            this.board = boardAfterChain;
-            this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
-            this.gameDrawable.Board = this.board;
-            this.gameDrawable.CurrentPiece = this.currentPiece;
-            this.gameView.Invalidate();
+            // 新しいぷよを生成
+            var nextPiece = PuyoPair.CreateRandom(2, 1, 0);
+
+            // ゲームオーバー判定
+            if (GameLogic.CheckGameOver(boardAfterChain, nextPiece))
+            {
+                // ゲームオーバー
+                this.board = boardAfterChain;
+                this.currentPiece = null;
+                this.isGameOver = true;
+                this.gameTimer?.Stop();
+
+                this.gameDrawable.Board = this.board;
+                this.gameDrawable.CurrentPiece = null;
+
+                // ゲームオーバー表示
+                this.gameOverLabel.IsVisible = true;
+                this.restartButton.IsVisible = true;
+
+                this.gameView.Invalidate();
+            }
+            else
+            {
+                // ゲーム続行
+                this.board = boardAfterChain;
+                this.currentPiece = nextPiece;
+                this.gameDrawable.Board = this.board;
+                this.gameDrawable.CurrentPiece = this.currentPiece;
+                this.gameView.Invalidate();
+            }
         }
     }
 
@@ -199,5 +230,14 @@ public partial class MainPage : ContentPage
         this.gameTimer.Interval = this.isFastFalling
             ? TimeSpan.FromMilliseconds(100)
             : TimeSpan.FromSeconds(1);
+    }
+
+    private void OnRestartButtonClicked(object? sender, EventArgs e)
+    {
+        // ゲームを初期状態に戻す
+        this.InitializeGame();
+
+        // タイマーを再開
+        this.gameTimer?.Start();
     }
 }

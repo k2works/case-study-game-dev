@@ -15,6 +15,31 @@
                HorizontalOptions="Center"
                Margin="0,0,0,20"/>
 
+        <!-- ゲームオーバー表示 -->
+        <Label Grid.Row="1"
+               x:Name="gameOverLabel"
+               Text="GAME OVER"
+               FontSize="32"
+               FontAttributes="Bold"
+               TextColor="Red"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               IsVisible="False"
+               ZIndex="10"/>
+
+        <!-- リスタートボタン（ゲームオーバー時のみ表示）-->
+        <Button Grid.Row="1"
+                x:Name="restartButton"
+                Text="リスタート"
+                Clicked="OnRestartButtonClicked"
+                WidthRequest="200"
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="0,100,0,0"
+                IsVisible="False"
+                ZIndex="10"/>
+
         <!-- ゲーム画面 -->
         <Border Grid.Row="1"
                 Stroke="Gray"
