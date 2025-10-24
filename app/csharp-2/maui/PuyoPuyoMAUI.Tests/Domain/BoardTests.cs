@@ -365,4 +365,78 @@ public class BoardTests
         result.GetCell(2, 11).Should().Be(Cell.Filled(PuyoColor.Red));  // 落ちた位置
         result.GetCell(2, 12).Should().Be(Cell.Filled(PuyoColor.Blue));
     }
+
+    [Fact]
+    public void CheckZenkeshi_盤面が空の場合は全消しと判定される()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+
+        // Act
+        var isZenkeshi = board.CheckZenkeshi();
+
+        // Assert
+        isZenkeshi.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CheckZenkeshi_盤面にぷよが残っている場合は全消しと判定されない()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board.SetCell(3, 12, Cell.Filled(PuyoColor.Blue));
+
+        // Act
+        var isZenkeshi = board.CheckZenkeshi();
+
+        // Assert
+        isZenkeshi.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedlyWithZenkeshi_全消しの場合はTrueを返す()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(1, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 12, Cell.Filled(PuyoColor.Red));
+
+        // Act
+        var (finalBoard, isZenkeshi) = board.ClearAndApplyGravityRepeatedlyWithZenkeshi();
+
+        // Assert
+        isZenkeshi.Should().BeTrue();
+
+        // すべてのセルが空であることを確認
+        for (int y = 0; y < 13; y++)
+        {
+            for (int x = 0; x < 6; x++)
+            {
+                finalBoard.GetCell(x, y).Should().Be(Cell.Empty);
+            }
+        }
+    }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedlyWithZenkeshi_全消しでない場合はFalseを返す()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(0, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Blue));
+
+        // Act
+        var (finalBoard, isZenkeshi) = board.ClearAndApplyGravityRepeatedlyWithZenkeshi();
+
+        // Assert
+        isZenkeshi.Should().BeFalse();
+
+        // ぷよが残っていることを確認
+        finalBoard.GetCell(0, 12).Should().Be(Cell.Filled(PuyoColor.Red));
+        finalBoard.GetCell(1, 12).Should().Be(Cell.Filled(PuyoColor.Blue));
+    }
 }

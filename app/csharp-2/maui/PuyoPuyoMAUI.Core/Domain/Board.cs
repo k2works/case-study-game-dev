@@ -262,4 +262,33 @@ public sealed record Board
         // 再帰的に消去判定を繰り返す
         return clearedBoard.ClearAndApplyGravityRepeatedly();
     }
+
+    /// <summary>
+    /// 全消し判定
+    /// </summary>
+    public bool CheckZenkeshi()
+    {
+        for (int y = 0; y < Rows; y++)
+        {
+            for (int x = 0; x < Cols; x++)
+            {
+                if (!GetCell(x, y).IsEmpty)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 消去と重力を繰り返し適用し、全消しフラグも返す
+    /// </summary>
+    public (Board FinalBoard, bool IsZenkeshi) ClearAndApplyGravityRepeatedlyWithZenkeshi()
+    {
+        var finalBoard = ClearAndApplyGravityRepeatedly();
+        var isZenkeshi = finalBoard.CheckZenkeshi();
+        return (finalBoard, isZenkeshi);
+    }
 }
