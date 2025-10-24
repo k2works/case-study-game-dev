@@ -61,6 +61,61 @@ Task("Test")
     }
 });
 
+Task("Coverage")
+    .Description("Run tests with code coverage using coverlet")
+    .Does(() =>
+{
+    // カバレッジ出力ディレクトリをクリーンアップ
+    CleanDirectory("./coverage");
+
+    // coverletを使用してテストを実行
+    var exitCode = StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = $"test ./tests/PuyoPuyo.Tests/PuyoPuyo.Tests.fsproj " +
+                    "--configuration " + configuration + " " +
+                    "/p:CollectCoverage=true " +
+                    "/p:CoverletOutputFormat=cobertura " +
+                    "/p:CoverletOutput=../../coverage/coverage.cobertura.xml " +
+                    "/p:Exclude=[xunit.*]*%2c[*.Tests]*"
+    });
+
+    if (exitCode != 0)
+    {
+        throw new Exception("Tests with coverage failed. Please check the test results above.");
+    }
+
+    Information("Coverage report generated at: ./coverage/coverage.cobertura.xml");
+});
+
+Task("Coverage-Report")
+    .Description("Generate HTML coverage report using ReportGenerator")
+    .IsDependentOn("Coverage")
+    .Does(() =>
+{
+    // ReportGeneratorツールがインストールされているか確認（既にインストール済みの場合はスキップ）
+    StartProcess("dotnet", new ProcessSettings
+    {
+        Arguments = "tool install --global dotnet-reportgenerator-globaltool",
+        RedirectStandardError = true,
+        RedirectStandardOutput = true
+    });
+
+    // レポート生成
+    var exitCode = StartProcess("reportgenerator", new ProcessSettings
+    {
+        Arguments = "\"-reports:./coverage/coverage.cobertura.xml\" " +
+                    "\"-targetdir:./coverage/report\" " +
+                    "\"-reporttypes:Html;TextSummary\""
+    });
+
+    if (exitCode != 0)
+    {
+        Warning("Failed to generate full report, but HTML report should be available.");
+    }
+
+    Information("HTML coverage report generated at: ./coverage/report/index.html");
+});
+
 Task("Run-Windows")
     .Does(() =>
 {
