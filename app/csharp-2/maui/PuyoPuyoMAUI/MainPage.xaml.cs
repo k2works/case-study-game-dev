@@ -61,7 +61,19 @@ public partial class MainPage : ContentPage
 
     private void OnLeftButtonClicked(object? sender, EventArgs e)
     {
-        // 左移動の処理（次のイテレーションで実装）
+        if (this.currentPiece == null)
+        {
+            return;
+        }
+
+        // 左に移動を試みる
+        var movedPiece = GameLogic.TryMovePuyoPair(this.board, this.currentPiece, Direction.Left);
+        if (movedPiece != null)
+        {
+            this.currentPiece = movedPiece;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
     }
 
     private void OnRotateButtonClicked(object? sender, EventArgs e)
@@ -71,6 +83,18 @@ public partial class MainPage : ContentPage
 
     private void OnRightButtonClicked(object? sender, EventArgs e)
     {
-        // 右移動の処理（次のイテレーションで実装）
+        if (this.currentPiece == null)
+        {
+            return;
+        }
+
+        // 右に移動を試みる
+        var movedPiece = GameLogic.TryMovePuyoPair(this.board, this.currentPiece, Direction.Right);
+        if (movedPiece != null)
+        {
+            this.currentPiece = movedPiece;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
     }
 }
