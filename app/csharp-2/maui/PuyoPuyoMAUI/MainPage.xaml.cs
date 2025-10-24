@@ -147,15 +147,26 @@ public partial class MainPage : ContentPage
             // 移動できない（着地）
             var boardWithPuyo = this.board.FixPuyoPair(this.currentPiece);
 
-            // 連鎖処理（消去と重力を繰り返し適用、全消し判定付き）
-            var (boardAfterChain, isZenkeshi) = boardWithPuyo.ClearAndApplyGravityRepeatedlyWithZenkeshi();
+            // 連鎖処理（消去と重力を繰り返し適用、連鎖情報と全消し判定付き）
+            var (boardAfterChain, clearedCounts, isZenkeshi) = boardWithPuyo.ClearAndApplyGravityRepeatedlyWithChainInfo();
+
+            // スコア加算（連鎖ごと）
+            for (int i = 0; i < clearedCounts.Count; i++)
+            {
+                int chainNumber = i + 1;
+                int clearedCount = clearedCounts[i];
+                int chainScore = clearedCount * 10 * chainNumber;
+                this.score += chainScore;
+            }
 
             // 全消しボーナス加算
             if (isZenkeshi)
             {
                 this.score += 3600;
-                this.scoreLabel.Text = $"Score: {this.score}";
             }
+
+            // スコア表示更新
+            this.scoreLabel.Text = $"Score: {this.score}";
 
             this.board = boardAfterChain;
             this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);

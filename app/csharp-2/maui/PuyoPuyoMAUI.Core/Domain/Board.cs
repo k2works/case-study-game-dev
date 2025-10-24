@@ -291,4 +291,42 @@ public sealed record Board
         var isZenkeshi = finalBoard.CheckZenkeshi();
         return (finalBoard, isZenkeshi);
     }
+
+    /// <summary>
+    /// 消去と重力を繰り返し適用し、連鎖情報と全消しフラグも返す
+    /// </summary>
+    public (Board FinalBoard, List<int> ClearedCounts, bool IsZenkeshi) ClearAndApplyGravityRepeatedlyWithChainInfo()
+    {
+        return ClearAndApplyGravityRepeatedlyWithChainInfoRecursive(new List<int>());
+    }
+
+    /// <summary>
+    /// 消去と重力を繰り返し適用し、連鎖情報を蓄積する（再帰処理）
+    /// </summary>
+    private (Board FinalBoard, List<int> ClearedCounts, bool IsZenkeshi) ClearAndApplyGravityRepeatedlyWithChainInfoRecursive(List<int> clearedCounts)
+    {
+        // まず重力を適用
+        var boardAfterGravity = ApplyGravity();
+
+        // 消去対象を検出
+        var groups = boardAfterGravity.FindConnectedGroups();
+
+        if (groups.Count == 0)
+        {
+            // 消去対象がない場合は終了
+            var isZenkeshi = boardAfterGravity.CheckZenkeshi();
+            return (boardAfterGravity, clearedCounts, isZenkeshi);
+        }
+
+        // 消去数をカウント
+        var clearedCount = groups.SelectMany(g => g).Count();
+        clearedCounts.Add(clearedCount);
+
+        // 消去して再帰的に処理
+        var positions = groups.SelectMany(g => g).ToList();
+        var clearedBoard = boardAfterGravity.ClearPuyos(positions);
+
+        // 再帰的に消去判定を繰り返す
+        return clearedBoard.ClearAndApplyGravityRepeatedlyWithChainInfoRecursive(clearedCounts);
+    }
 }

@@ -439,4 +439,69 @@ public class BoardTests
         finalBoard.GetCell(0, 12).Should().Be(Cell.Filled(PuyoColor.Red));
         finalBoard.GetCell(1, 12).Should().Be(Cell.Filled(PuyoColor.Blue));
     }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedlyWithChainInfo_1連鎖で4個消去した場合は消去数リストに4を返す()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(1, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(2, 12, Cell.Filled(PuyoColor.Red));
+
+        // Act
+        var (finalBoard, clearedCounts, isZenkeshi) = board.ClearAndApplyGravityRepeatedlyWithChainInfo();
+
+        // Assert
+        clearedCounts.Should().HaveCount(1);
+        clearedCounts[0].Should().Be(4);
+        isZenkeshi.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedlyWithChainInfo_2連鎖の場合は消去数リストに各連鎖の消去数を返す()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board
+            // 1連鎖目: 赤4個（縦一列、x=1）
+            .SetCell(1, 9, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 10, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 11, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Red))
+            // 2連鎖目: 青3個（横、y=12、x=2-4）+ 青1個（赤の上、x=1, y=8）
+            .SetCell(2, 12, Cell.Filled(PuyoColor.Blue))
+            .SetCell(3, 12, Cell.Filled(PuyoColor.Blue))
+            .SetCell(4, 12, Cell.Filled(PuyoColor.Blue))
+            // この青が赤の上、赤が消えると落下して横3個と繋がる
+            .SetCell(1, 8, Cell.Filled(PuyoColor.Blue));
+
+        // Act
+        var (finalBoard, clearedCounts, isZenkeshi) = board.ClearAndApplyGravityRepeatedlyWithChainInfo();
+
+        // Assert
+        clearedCounts.Should().HaveCount(2);
+        clearedCounts[0].Should().Be(4); // 1連鎖目: 赤4個
+        clearedCounts[1].Should().Be(4); // 2連鎖目: 青4個
+        isZenkeshi.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedlyWithChainInfo_消去なしの場合は空のリストを返す()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(0, 12, Cell.Filled(PuyoColor.Red))
+            .SetCell(1, 12, Cell.Filled(PuyoColor.Blue));
+
+        // Act
+        var (finalBoard, clearedCounts, isZenkeshi) = board.ClearAndApplyGravityRepeatedlyWithChainInfo();
+
+        // Assert
+        clearedCounts.Should().BeEmpty();
+        isZenkeshi.Should().BeFalse();
+    }
 }
