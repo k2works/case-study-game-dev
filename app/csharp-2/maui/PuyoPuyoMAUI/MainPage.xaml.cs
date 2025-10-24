@@ -78,7 +78,19 @@ public partial class MainPage : ContentPage
 
     private void OnRotateButtonClicked(object? sender, EventArgs e)
     {
-        // 回転の処理（次のイテレーションで実装）
+        if (this.currentPiece == null)
+        {
+            return;
+        }
+
+        // 回転を試みる（壁キック含む）
+        var rotatedPiece = GameLogic.TryRotatePuyoPair(this.board, this.currentPiece);
+        if (rotatedPiece != null)
+        {
+            this.currentPiece = rotatedPiece;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
     }
 
     private void OnRightButtonClicked(object? sender, EventArgs e)
