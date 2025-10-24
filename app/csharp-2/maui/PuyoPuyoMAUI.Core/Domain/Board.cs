@@ -243,20 +243,23 @@ public sealed record Board
     /// </summary>
     public Board ClearAndApplyGravityRepeatedly()
     {
-        var groups = FindConnectedGroups();
+        // まず重力を適用
+        var boardAfterGravity = ApplyGravity();
+
+        // 消去対象を検出
+        var groups = boardAfterGravity.FindConnectedGroups();
 
         if (groups.Count == 0)
         {
             // 消去対象がない場合は終了
-            return this;
+            return boardAfterGravity;
         }
 
-        // 消去して重力を適用
+        // 消去して再帰的に処理
         var positions = groups.SelectMany(g => g).ToList();
-        var clearedBoard = ClearPuyos(positions);
-        var boardAfterGravity = clearedBoard.ApplyGravity();
+        var clearedBoard = boardAfterGravity.ClearPuyos(positions);
 
         // 再帰的に消去判定を繰り返す
-        return boardAfterGravity.ClearAndApplyGravityRepeatedly();
+        return clearedBoard.ClearAndApplyGravityRepeatedly();
     }
 }

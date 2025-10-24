@@ -347,4 +347,22 @@ public class BoardTests
             }
         }
     }
+
+    [Fact]
+    public void ClearAndApplyGravityRepeatedly_消去なしでも浮いたぷよが落下する()
+    {
+        // Arrange - 消去対象はないが、宙に浮いたぷよがある
+        var board = Board.Create(6, 13);
+        board = board
+            .SetCell(2, 5, Cell.Filled(PuyoColor.Red))   // 浮いているぷよ
+            .SetCell(2, 12, Cell.Filled(PuyoColor.Blue));  // 下にあるぷよ
+
+        // Act
+        var result = board.ClearAndApplyGravityRepeatedly();
+
+        // Assert - 浮いていたぷよが落下している
+        result.GetCell(2, 5).Should().Be(Cell.Empty);
+        result.GetCell(2, 11).Should().Be(Cell.Filled(PuyoColor.Red));  // 落ちた位置
+        result.GetCell(2, 12).Should().Be(Cell.Filled(PuyoColor.Blue));
+    }
 }
