@@ -86,18 +86,21 @@ module App =
 
     /// 初期状態
     let private initModel () : Model =
+        let firstPiece = PuyoPair.createRandom 2 1 0
+        let nextPiece = PuyoPair.createRandom 2 1 0
+
         { Board = Board.create 6 13
-          CurrentPiece = None
-          NextPiece = None
+          CurrentPiece = Some firstPiece
+          NextPiece = Some nextPiece
           Score = 0
           Level = 1
           GameTime = 0
           LastChainCount = 0
-          Status = NotStarted
+          Status = Playing
           IsFastFalling = false }
 
     /// Init 関数
-    let init () = initModel (), []
+    let init () = initModel (), [ StartTimer ]
 
     /// ゲーム開始処理
     let private handleStartGame (model: Model) =
@@ -115,7 +118,7 @@ module App =
         [ StartTimer ]
 
     /// リセット処理
-    let private handleResetGame () = initModel (), []
+    let private handleResetGame () = initModel (), [ StartTimer ]
 
     /// 左移動処理
     let private handleMoveLeft (model: Model) =
@@ -305,35 +308,35 @@ module App =
             ContentPage(
                 (ScrollView(
                     (VStack(spacing = 10.) {
-                        Label($"Score: {model.Score}").font(size = 16.).centerTextHorizontal ()
+                        // スコア表示
+                        Label($"Score: {model.Score}").font(size = 24.).centerTextHorizontal ()
 
-                        Label($"Level: {model.Level}").font(size = 14.).centerTextHorizontal ()
-
+                        // ゲームボード
                         viewBoard model.Board model.CurrentPiece
 
-                        match model.Status with
-                        | NotStarted ->
-                            Button("Start Game", StartGame).size(120., 40.).font(size = 14.).centerHorizontal ()
-                        | Playing ->
-                            (HStack(spacing = 5.) {
-                                Button("←", MoveLeft).size(50., 40.).font (size = 16.)
-                                Button("↓", MoveDown).size(50., 40.).font (size = 16.)
-                                Button("↻", Rotate).size(50., 40.).font (size = 16.)
-                                Button("→", MoveRight).size(50., 40.).font (size = 16.)
-                            })
-                                .centerHorizontal ()
+                        // ゲームオーバー表示
+                        if model.Status = GameOver then
+                            Label("GAME OVER").font(size = 32.).textColor(Colors.Red).centerTextHorizontal ()
 
-                            Button("Reset", ResetGame).size(100., 35.).font(size = 12.).centerHorizontal ()
-                        | GameOver ->
-                            Label("GAME OVER").font(size = 28.).textColor(Colors.Red).centerTextHorizontal ()
+                            Button("リスタート", ResetGame).size(200., 50.).font(size = 16.).centerHorizontal ()
 
-                            Button("New Game", ResetGame).size(120., 40.).font(size = 14.).centerHorizontal ()
+                        // コントロールボタン
+                        HStack(spacing = 20.) {
+                            Button("← 左", MoveLeft).size(100., 50.).font(size = 14.)
+
+                            VStack(spacing = 10.) {
+                                Button("回転", Rotate).size(100., 50.).font(size = 14.)
+                                Button("↓ 下", MoveDown).size(100., 50.).font(size = 14.)
+                            }
+
+                            Button("右 →", MoveRight).size(100., 50.).font(size = 14.)
+                        }
                     })
                         .padding(10.)
                         .centerVertical ()
                 ))
             )
-                .title ("ぷよぷよ")
+                .title ("ぷよぷよ TDD")
         )
 
     let program = Program.statefulWithCmdMsg init update view mapCmd
