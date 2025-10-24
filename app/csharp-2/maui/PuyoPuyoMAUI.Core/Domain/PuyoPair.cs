@@ -67,4 +67,20 @@ public sealed record PuyoPair
         var color2 = colors[random.Next(colors.Length)];
         return new PuyoPair(x, y, color1, color2, rotation);
     }
+
+    /// <summary>
+    /// 時計回りに回転
+    /// </summary>
+    public PuyoPair RotateClockwise()
+    {
+        return this with { Rotation = (Rotation + 1) % 4 };
+    }
+
+    /// <summary>
+    /// 反時計回りに回転
+    /// </summary>
+    public PuyoPair RotateCounterClockwise()
+    {
+        return this with { Rotation = (Rotation + 3) % 4 };
+    }
 }
