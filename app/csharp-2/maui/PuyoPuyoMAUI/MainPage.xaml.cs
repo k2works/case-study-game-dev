@@ -55,8 +55,30 @@ public partial class MainPage : ContentPage
 
     private void OnGameTick(object? sender, EventArgs e)
     {
-        // ゲームの更新処理（次のイテレーションで実装）
-        // 現在は何もしない
+        if (this.currentPiece == null)
+        {
+            return;
+        }
+
+        // 下に移動を試みる
+        var movedPiece = GameLogic.TryMovePuyoPair(this.board, this.currentPiece, Direction.Down);
+
+        if (movedPiece != null)
+        {
+            // 移動成功
+            this.currentPiece = movedPiece;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
+        else
+        {
+            // 移動できない（着地）
+            this.board = this.board.FixPuyoPair(this.currentPiece);
+            this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
+            this.gameDrawable.Board = this.board;
+            this.gameDrawable.CurrentPiece = this.currentPiece;
+            this.gameView.Invalidate();
+        }
     }
 
     private void OnLeftButtonClicked(object? sender, EventArgs e)
