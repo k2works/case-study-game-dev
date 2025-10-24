@@ -99,4 +99,142 @@ public sealed record Board
             .SetCell(pos1.X, pos1.Y, Cell.Filled(pair.Puyo1Color))
             .SetCell(pos2.X, pos2.Y, Cell.Filled(pair.Puyo2Color));
     }
+
+    /// <summary>
+    /// 4つ以上つながっているぷよグループを検出
+    /// </summary>
+    public List<List<(int X, int Y)>> FindConnectedGroups()
+    {
+        var visited = new HashSet<(int, int)>();
+        var groups = new List<List<(int X, int Y)>>();
+
+        for (int y = 0; y < Rows; y++)
+        {
+            for (int x = 0; x < Cols; x++)
+            {
+                if (visited.Contains((x, y)))
+                {
+                    continue;
+                }
+
+                var cell = GetCell(x, y);
+                if (cell.IsEmpty)
+                {
+                    continue;
+                }
+
+                var group = FindConnectedPuyos(x, y, cell.Color!, visited);
+                if (group.Count >= 4)
+                {
+                    groups.Add(group);
+                }
+            }
+        }
+
+        return groups;
+    }
+
+    /// <summary>
+    /// BFSで同じ色のぷよをたどる
+    /// </summary>
+    private List<(int X, int Y)> FindConnectedPuyos(int startX, int startY, PuyoColor color, HashSet<(int, int)> visited)
+    {
+        var result = new List<(int X, int Y)>();
+        var queue = new Queue<(int X, int Y)>();
+        queue.Enqueue((startX, startY));
+
+        while (queue.Count > 0)
+        {
+            var (x, y) = queue.Dequeue();
+
+            if (visited.Contains((x, y)))
+            {
+                continue;
+            }
+
+            visited.Add((x, y));
+            result.Add((x, y));
+
+            // 隣接セル（上下左右）をチェック
+            var neighbors = new[]
+            {
+                (x - 1, y),  // 左
+                (x + 1, y),  // 右
+                (x, y - 1),  // 上
+                (x, y + 1),  // 下
+            };
+
+            foreach (var (nx, ny) in neighbors)
+            {
+                if (visited.Contains((nx, ny)))
+                {
+                    continue;
+                }
+
+                var cell = GetCell(nx, ny);
+                if (!cell.IsEmpty && cell.Color == color)
+                {
+                    queue.Enqueue((nx, ny));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 指定された位置のぷよを消去
+    /// </summary>
+    public Board ClearPuyos(List<(int X, int Y)> positions)
+    {
+        var newBoard = this;
+        foreach (var (x, y) in positions)
+        {
+            newBoard = newBoard.SetCell(x, y, Cell.Empty);
+        }
+
+        return newBoard;
+    }
+
+    /// <summary>
+    /// 重力を適用してぷよを落下させる
+    /// </summary>
+    public Board ApplyGravity()
+    {
+        var newCells = new Cell[Rows][];
+        for (int y = 0; y < Rows; y++)
+        {
+            newCells[y] = new Cell[Cols];
+        }
+
+        // 各列ごとに処理
+        for (int x = 0; x < Cols; x++)
+        {
+            // 列の中で空でないセルを集める
+            var column = new List<Cell>();
+            for (int y = 0; y < Rows; y++)
+            {
+                var cell = GetCell(x, y);
+                if (!cell.IsEmpty)
+                {
+                    column.Add(cell);
+                }
+            }
+
+            // 下から詰める
+            int startY = Rows - column.Count;
+            for (int i = 0; i < column.Count; i++)
+            {
+                newCells[startY + i][x] = column[i];
+            }
+
+            // 上の空白を埋める
+            for (int y = 0; y < startY; y++)
+            {
+                newCells[y][x] = Cell.Empty;
+            }
+        }
+
+        return new Board(Cols, Rows, newCells);
+    }
 }
