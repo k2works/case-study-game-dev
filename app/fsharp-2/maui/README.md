@@ -129,9 +129,38 @@ dotnet test
 # 詳細な出力で実行
 dotnet test --verbosity normal
 
-# カバレッジレポート付きで実行
-dotnet test --collect:"XPlat Code Coverage"
+# Cake タスクでテストを実行
+dotnet cake --target=Test
 ```
+
+#### コードカバレッジ
+
+このプロジェクトは coverlet を使用してコードカバレッジを測定しています。
+
+```bash
+# カバレッジ測定のみ実行（Cobertura形式のXMLを生成）
+dotnet cake --target=Coverage
+
+# カバレッジ測定 + HTML レポート生成
+dotnet cake --target=Coverage-Report
+
+# 生成されたHTMLレポートをブラウザで開く（Windows）
+start coverage/report/index.html
+```
+
+**現在のカバレッジ率:**
+
+| メトリクス | カバレッジ率 | 詳細              |
+| :--------- | :----------- | :---------------- |
+| Line       | 84.66%       | 127/150 行        |
+| Branch     | 82.45%       | 94/114 分岐       |
+| Method     | 82.14%       | メソッドカバレッジ |
+
+カバレッジレポートには以下が含まれます：
+
+- `coverage/coverage.cobertura.xml` - Cobertura 形式のカバレッジデータ
+- `coverage/report/index.html` - ブラウザで閲覧可能な詳細レポート
+- モジュールごとの詳細カバレッジ情報
 
 **[⬆ back to top](#構成)**
 
