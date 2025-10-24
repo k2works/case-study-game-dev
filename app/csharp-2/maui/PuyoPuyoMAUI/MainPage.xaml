@@ -4,10 +4,19 @@
              x:Class="PuyoPuyoMAUI.MainPage"
              Title="ぷよぷよ TDD">
 
-    <Grid RowDefinitions="*,Auto" Padding="20">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20">
+
+        <!-- スコア表示 -->
+        <Label Grid.Row="0"
+               x:Name="scoreLabel"
+               Text="Score: 0"
+               FontSize="24"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               Margin="0,0,0,20"/>
 
         <!-- ゲーム画面 -->
-        <Border Grid.Row="0"
+        <Border Grid.Row="1"
                 Stroke="Gray"
                 StrokeThickness="2"
                 Background="Black"
@@ -19,7 +28,7 @@
         </Border>
 
         <!-- コントロールボタン -->
-        <HorizontalStackLayout Grid.Row="1"
+        <HorizontalStackLayout Grid.Row="2"
                                Spacing="20"
                                HorizontalOptions="Center"
                                VerticalOptions="End"

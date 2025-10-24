@@ -14,6 +14,7 @@ public partial class MainPage : ContentPage
     private PuyoPair? currentPiece;
     private IDispatcherTimer? gameTimer;
     private bool isFastFalling;
+    private int score;
 
     public MainPage()
     {
@@ -37,6 +38,10 @@ public partial class MainPage : ContentPage
 
         // 最初のぷよペアを生成
         this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
+
+        // スコアを初期化
+        this.score = 0;
+        this.scoreLabel.Text = "Score: 0";
 
         // 描画オブジェクトに設定
         this.gameDrawable.Board = this.board;
@@ -142,8 +147,15 @@ public partial class MainPage : ContentPage
             // 移動できない（着地）
             var boardWithPuyo = this.board.FixPuyoPair(this.currentPiece);
 
-            // 連鎖処理（消去と重力を繰り返し適用）
-            var boardAfterChain = boardWithPuyo.ClearAndApplyGravityRepeatedly();
+            // 連鎖処理（消去と重力を繰り返し適用、全消し判定付き）
+            var (boardAfterChain, isZenkeshi) = boardWithPuyo.ClearAndApplyGravityRepeatedlyWithZenkeshi();
+
+            // 全消しボーナス加算
+            if (isZenkeshi)
+            {
+                this.score += 3600;
+                this.scoreLabel.Text = $"Score: {this.score}";
+            }
 
             this.board = boardAfterChain;
             this.currentPiece = PuyoPair.CreateRandom(2, 1, 0);
