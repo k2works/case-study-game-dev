@@ -87,4 +87,16 @@ public sealed record Board
 
         return this with { Cells = newCells };
     }
+
+    /// <summary>
+    /// ぷよペアをボードに固定
+    /// </summary>
+    public Board FixPuyoPair(PuyoPair pair)
+    {
+        var (pos1, pos2) = pair.GetPositions();
+
+        return this
+            .SetCell(pos1.X, pos1.Y, Cell.Filled(pair.Puyo1Color))
+            .SetCell(pos2.X, pos2.Y, Cell.Filled(pair.Puyo2Color));
+    }
 }

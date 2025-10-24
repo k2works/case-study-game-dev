@@ -72,4 +72,36 @@ public class BoardTests
         board.GetCell(6, 0).Should().Be(Cell.Empty);
         board.GetCell(0, 13).Should().Be(Cell.Empty);
     }
+
+    [Fact]
+    public void ぷよペアをボードに固定できる()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        var pair = new PuyoPair(3, 11, PuyoColor.Red, PuyoColor.Green, 0);
+
+        // Act
+        var newBoard = board.FixPuyoPair(pair);
+
+        // Assert
+        newBoard.GetCell(3, 11).Should().Be(Cell.Filled(PuyoColor.Red));
+        newBoard.GetCell(3, 10).Should().Be(Cell.Filled(PuyoColor.Green));
+    }
+
+    [Fact]
+    public void ぷよペアを固定しても元のボードは変更されない()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        var pair = new PuyoPair(3, 11, PuyoColor.Red, PuyoColor.Green, 0);
+
+        // Act
+        var newBoard = board.FixPuyoPair(pair);
+
+        // Assert
+        board.GetCell(3, 11).Should().Be(Cell.Empty);
+        board.GetCell(3, 10).Should().Be(Cell.Empty);
+        newBoard.GetCell(3, 11).Should().Be(Cell.Filled(PuyoColor.Red));
+        newBoard.GetCell(3, 10).Should().Be(Cell.Filled(PuyoColor.Green));
+    }
 }
