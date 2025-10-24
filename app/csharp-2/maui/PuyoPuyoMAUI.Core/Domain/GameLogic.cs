@@ -42,4 +42,36 @@ public static class GameLogic
 
         return CanPlacePuyoPair(board, newPair) ? newPair : null;
     }
+
+    /// <summary>
+    /// ぷよペアを回転（壁キック処理付き）
+    /// </summary>
+    /// <returns>回転後のぷよペア。回転できない場合はnull</returns>
+    public static PuyoPair? TryRotatePuyoPair(Board board, PuyoPair pair)
+    {
+        // 通常回転を試す
+        var rotated = pair.RotateClockwise();
+
+        if (CanPlacePuyoPair(board, rotated))
+        {
+            return rotated;
+        }
+
+        // 壁キックを試す（左に1マス）
+        var kickedLeft = rotated with { X = rotated.X - 1 };
+        if (CanPlacePuyoPair(board, kickedLeft))
+        {
+            return kickedLeft;
+        }
+
+        // 壁キックを試す（右に1マス）
+        var kickedRight = rotated with { X = rotated.X + 1 };
+        if (CanPlacePuyoPair(board, kickedRight))
+        {
+            return kickedRight;
+        }
+
+        // 回転できない
+        return null;
+    }
 }

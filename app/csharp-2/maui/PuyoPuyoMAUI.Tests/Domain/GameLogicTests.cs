@@ -123,4 +123,69 @@ public class GameLogicTests
         // Assert
         result.Should().BeFalse();
     }
+
+    [Fact]
+    public void 右端で回転すると左にキックされる()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        var pair = new PuyoPair(5, 5, PuyoColor.Red, PuyoColor.Green, 0);  // 右端、回転状態0（上）
+
+        // Act
+        var result = GameLogic.TryRotatePuyoPair(board, pair);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Rotation.Should().Be(1);  // 回転成功
+        result.X.Should().Be(4);  // 左に1マスキック
+    }
+
+    [Fact]
+    public void 左端で左向きから回転すると右にキックされる()
+    {
+        // Arrange
+        var board = Board.Create(6, 13)
+            .SetCell(0, 4, Cell.Filled(PuyoColor.Blue));  // 上に障害物
+        var pair = new PuyoPair(0, 5, PuyoColor.Red, PuyoColor.Green, 3);  // 左端、回転状態3（左）
+
+        // Act
+        var result = GameLogic.TryRotatePuyoPair(board, pair);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Rotation.Should().Be(0);  // 回転成功
+        result.X.Should().Be(1);  // 右に1マスキック
+    }
+
+    [Fact]
+    public void 壁キックできない場合は回転しない()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        // 右端にぷよを配置（壁キックできない状況を作る）
+        var board2 = board.SetCell(4, 5, Cell.Filled(PuyoColor.Blue));
+        var pair = new PuyoPair(5, 5, PuyoColor.Red, PuyoColor.Green, 0);
+
+        // Act
+        var result = GameLogic.TryRotatePuyoPair(board2, pair);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void 通常の回転が可能な場合は壁キックしない()
+    {
+        // Arrange
+        var board = Board.Create(6, 13);
+        var pair = new PuyoPair(3, 5, PuyoColor.Red, PuyoColor.Green, 0);
+
+        // Act
+        var result = GameLogic.TryRotatePuyoPair(board, pair);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Rotation.Should().Be(1);
+        result.X.Should().Be(3);  // 位置は変わらない
+    }
 }
