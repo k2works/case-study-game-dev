@@ -9,6 +9,7 @@
     <Compile Include="Domain\Types.fs" />
     <Compile Include="Data\DataLoader.fs" />
     <Compile Include="Ml\IrisClassifier.fs" />
+    <Compile Include="Ml\CinemaPredictor.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
