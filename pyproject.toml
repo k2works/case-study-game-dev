@@ -3,4 +3,13 @@ name = "case-study-game-dev"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "notebook>=7.4.7",
+]
+
+# F# Kernel Setup
+# F# kernel (.NET Interactive) is installed separately as a .NET tool:
+# 1. Install .NET SDK (https://dotnet.microsoft.com/download)
+# 2. Install .NET Interactive: dotnet tool install -g Microsoft.dotnet-interactive
+# 3. Register F# kernel with Jupyter: dotnet interactive jupyter install
+# Verify installation: jupyter kernelspec list
