@@ -212,3 +212,38 @@ type BostonPredictor(mlContext: MLContext) =
                     Result.Ok result.Price
             with ex ->
                 Result.Error $"予測エラー: {ex.Message}"
+
+    /// モデルをファイルに保存する
+    member this.SaveModel(modelPath: string) : Result<unit, string> =
+        match trainedModel with
+        | None -> Result.Error "保存するモデルがありません"
+        | Some model ->
+            try
+                // ダミーのスキーマ用データビュー（保存時に必要）
+                let dummyData =
+                    [ { RM = 0.0f
+                        LSTAT = 0.0f
+                        PTRATIO = 0.0f
+                        RM2 = 0.0f
+                        LSTAT2 = 0.0f
+                        PTRATIO2 = 0.0f
+                        RMxLSTAT = 0.0f
+                        PRICE = 0.0f } ]
+
+                let dataView = mlContext.Data.LoadFromEnumerable(dummyData)
+                mlContext.Model.Save(model, dataView.Schema, modelPath)
+                Result.Ok()
+            with ex ->
+                Result.Error $"モデル保存エラー: {ex.Message}"
+
+    /// モデルをファイルから読み込む
+    member this.LoadModel(modelPath: string) : Result<unit, string> =
+        try
+            if not (System.IO.File.Exists(modelPath)) then
+                Result.Error $"モデルファイルが見つかりません: {modelPath}"
+            else
+                let model = mlContext.Model.Load(modelPath, ref null)
+                trainedModel <- Some model
+                Result.Ok()
+        with ex ->
+            Result.Error $"モデル読み込みエラー: {ex.Message}"
