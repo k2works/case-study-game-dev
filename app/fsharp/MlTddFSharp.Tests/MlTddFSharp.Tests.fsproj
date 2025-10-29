@@ -10,6 +10,7 @@
     <Compile Include="IrisClassifierTests.fs" />
     <Compile Include="CinemaPredictorTests.fs" />
     <Compile Include="SurvivedPredictorTests.fs" />
+    <Compile Include="BostonPredictorTests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
 
