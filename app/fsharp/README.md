@@ -23,22 +23,40 @@ MlTddFSharp/
 │   ├── SurvivedPredictorTests.fs
 │   ├── BostonPredictorTests.fs
 │   └── Main.fs
+├── MLWebApi.Domain/          # Web API ドメイン層
+│   ├── Models.fs
+│   ├── IrisPredictorWrapper.fs
+│   ├── CinemaPredictorWrapper.fs
+│   ├── SurvivedPredictorWrapper.fs
+│   └── BostonPredictorWrapper.fs
+├── MLWebApi.Service/         # Web API サービス層
+│   └── PredictionService.fs
+├── MLWebApi.Application/     # Web API アプリケーション層
+│   ├── Handlers.fs
+│   └── Program.fs
 ├── data/                     # データセット
 │   ├── iris.csv
 │   ├── cinema.csv
 │   ├── Survived.csv
 │   └── Boston.csv
 ├── model/                    # 訓練済みモデル保存先
+│   ├── iris_model.zip
+│   ├── cinema_model.zip
+│   ├── survived_model.zip
+│   └── boston_model.zip
 ├── notebook/                 # Jupyter Notebook
 │   ├── 01_iris_exploration.ipynb
 │   ├── 02_cinema_exploration.ipynb
 │   ├── 03_boston_exploration.ipynb
 │   └── 04_survived_exploration.ipynb
-└── script/                   # F# スクリプト
-    ├── iris_exploration.fsx
-    ├── cinema_exploration.fsx
-    ├── survived_exploration.fsx
-    └── boston_exploration.fsx
+├── script/                   # F# スクリプト
+│   ├── iris_exploration.fsx
+│   ├── cinema_exploration.fsx
+│   ├── survived_exploration.fsx
+│   ├── boston_exploration.fsx
+│   └── train_models.fsx           # モデル訓練スクリプト
+├── Dockerfile                # Docker イメージ定義
+└── docker-compose.yml        # Docker Compose 設定
 ```
 
 ## 🚀 セットアップ
@@ -261,6 +279,182 @@ jupyter lab
 - 二乗平均平方根誤差（RMSE）: 約 $9.1k
 - アルゴリズム: Sdca（確率的双対座標上昇法）
 - 特徴: 特徴量エンジニアリング、データ標準化、欠損値補完
+
+## 🌐 Web API
+
+### 概要
+
+Giraffe を使った F# Web API で、訓練済みモデルを使った予測エンドポイントを提供します。
+
+### アーキテクチャ
+
+3 層アーキテクチャを採用：
+
+- **Domain 層**: モデルラッパー、リクエスト/レスポンスモデル
+- **Service 層**: ビジネスロジック、予測サービス
+- **Application 層**: HTTP ハンドラ、ルーティング
+
+### API エンドポイント
+
+#### ヘルスチェック
+
+```bash
+GET /health
+```
+
+レスポンス:
+
+```json
+{
+  "status": "healthy",
+  "message": "ML Web API is running"
+}
+```
+
+#### Iris 予測
+
+```bash
+POST /predict/iris
+Content-Type: application/json
+
+{
+  "SepalLength": 5.1,
+  "SepalWidth": 3.5,
+  "PetalLength": 1.4,
+  "PetalWidth": 0.2
+}
+```
+
+レスポンス:
+
+```json
+{
+  "predictedSpecies": "Iris-setosa",
+  "confidence": 0.9995042
+}
+```
+
+#### Cinema 予測
+
+```bash
+POST /predict/cinema
+Content-Type: application/json
+
+{
+  "SNS1": 100.0,
+  "SNS2": 50.0,
+  "Actor": 80.0,
+  "Original": 1.0
+}
+```
+
+レスポンス:
+
+```json
+{
+  "predictedSales": 8371.57
+}
+```
+
+#### Survived 予測
+
+```bash
+POST /predict/survived
+Content-Type: application/json
+
+{
+  "Pclass": 1.0,
+  "Sex": "female",
+  "Age": 30.0
+}
+```
+
+レスポンス:
+
+```json
+{
+  "survived": true,
+  "probability": 0.92
+}
+```
+
+#### Boston 予測
+
+```bash
+POST /predict/boston
+Content-Type: application/json
+
+{
+  "CRIME": "low",
+  "RM": 7.5,
+  "LSTAT": 5.0,
+  "PTRATIO": 15.0
+}
+```
+
+レスポンス:
+
+```json
+{
+  "predictedPrice": 35.2
+}
+```
+
+### ローカルでの実行
+
+```bash
+cd MLWebApi.Application
+dotnet run
+```
+
+API は `http://localhost:5261` で起動します。
+
+#### Swagger UI でのテスト
+
+ブラウザで `http://localhost:5261/swagger` にアクセスすると、Swagger UI が開きます。
+
+Swagger UI では以下が可能です：
+
+- すべてのエンドポイントの一覧表示
+- リクエスト/レスポンスのスキーマ確認
+- インタラクティブな API テスト
+- サンプルリクエストの実行
+
+### Docker での実行
+
+#### モデルの訓練
+
+```bash
+cd app/fsharp
+dotnet fsi script/train_models.fsx
+```
+
+#### Docker イメージのビルドと起動
+
+```bash
+cd app/fsharp
+docker-compose up -d
+```
+
+API は `http://localhost:8080` で起動します。
+
+#### API のテスト
+
+```bash
+# ヘルスチェック
+curl -X GET http://localhost:8080/health
+
+# Iris 予測
+curl -X POST http://localhost:8080/predict/iris \
+  -H "Content-Type: application/json" \
+  -d '{"SepalLength": 5.1, "SepalWidth": 3.5, "PetalLength": 1.4, "PetalWidth": 0.2}'
+```
+
+#### Docker コンテナの停止
+
+```bash
+docker-compose down
+```
 
 ## 📝 ライセンス
 
