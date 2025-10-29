@@ -6,14 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Domain\Types.fs" />
+    <Compile Include="Data\DataLoader.fs" />
+    <Compile Include="Ml\IrisClassifier.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Deedle" Version="3.0.0" />
     <PackageReference Include="FSharp.Stats" Version="0.6.0" />
-    <PackageReference Include="Microsoft.ML" Version="4.0.3" />
-    <PackageReference Include="Microsoft.ML.FastTree" Version="4.0.3" />
+    <PackageReference Include="Microsoft.ML" Version="3.0.1" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="3.0.1" />
   </ItemGroup>
 
 </Project>
