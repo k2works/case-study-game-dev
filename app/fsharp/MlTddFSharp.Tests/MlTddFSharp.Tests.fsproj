@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="BasicTests.fs" />
     <Compile Include="IrisClassifierTests.fs" />
+    <Compile Include="CinemaPredictorTests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
 
