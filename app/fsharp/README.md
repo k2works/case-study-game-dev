@@ -8,27 +8,31 @@
 MlTddFSharp/
 ├── MlTddFSharp/              # メインプロジェクト
 │   ├── Domain/               # ドメインモデル
-│   │   └── Types.fs          # データ型定義（IrisData, CinemaData など）
+│   │   └── Types.fs          # データ型定義（IrisData, CinemaData, SurvivedData など）
 │   ├── Data/                 # データ処理
 │   │   └── DataLoader.fs     # CSV ローダー
 │   ├── Ml/                   # 機械学習モデル
-│   │   ├── IrisClassifier.fs # Iris 分類器
-│   │   └── CinemaPredictor.fs # Cinema 回帰モデル
+│   │   ├── IrisClassifier.fs    # Iris 分類器（多クラス分類）
+│   │   ├── CinemaPredictor.fs   # Cinema 回帰モデル
+│   │   └── SurvivedPredictor.fs # Survived 生存予測モデル（二値分類）
 │   └── Program.fs            # エントリポイント
 ├── MlTddFSharp.Tests/        # テストプロジェクト
 │   ├── IrisClassifierTests.fs
 │   ├── CinemaPredictorTests.fs
+│   ├── SurvivedPredictorTests.fs
 │   └── Main.fs
 ├── data/                     # データセット
 │   ├── iris.csv
-│   └── cinema.csv
+│   ├── cinema.csv
+│   └── Survived.csv
 ├── model/                    # 訓練済みモデル保存先
 ├── notebook/                 # Jupyter Notebook
 │   ├── 01_iris_exploration.ipynb
 │   └── 02_cinema_exploration.ipynb
 └── script/                   # F# スクリプト
     ├── iris_exploration.fsx
-    └── cinema_exploration.fsx
+    ├── cinema_exploration.fsx
+    └── survived_exploration.fsx
 ```
 
 ## 🚀 セットアップ
@@ -94,6 +98,13 @@ dotnet fsi
   - 実測値 vs 予測値の比較
   - 予測例の実行
 
+- `script/survived_exploration.fsx` - Survived データセットの探索と分析
+  - データの基本統計量とクラス分布
+  - グループ別欠損値補完
+  - 二値分類モデルの訓練と評価
+  - 混同行列の表示
+  - 予測例の実行
+
 ### Jupyter Notebook の使用
 
 Jupyter をお使いの方は、.NET Interactive をインストールすることで Notebook 形式でも実行できます：
@@ -131,6 +142,14 @@ jupyter lab
   - CSV ファイルからデータ読み込み
   - 欠損値の補完（平均値で置換）
   - 回帰モデル（FastTree）
+  - 予測機能
+  - Result 型によるエラーハンドリング
+
+- **SurvivedPredictor**: Survived 生存予測モデル（二値分類）
+  - CSV ファイルからデータ読み込み
+  - グループ別欠損値補完（Pclass と Survived でグループ化）
+  - カテゴリカル変数のエンコーディング（Sex を OneHotEncoding）
+  - 二値分類モデル（FastTree）
   - 予測機能
   - Result 型によるエラーハンドリング
 
@@ -181,6 +200,23 @@ jupyter lab
 - R^2（決定係数）: 約 64%
 - 平均絶対誤差（MAE）: 約 391 万円
 - アルゴリズム: FastTree（決定木ベースの回帰）
+
+## 🚢 Survived 生存予測モデル
+
+### データセット
+
+- 891 サンプル（タイタニック乗客データ）
+- 目的変数: Survived（生存 0/1）
+- 特徴量: Pclass（客室クラス）、Sex（性別）、Age（年齢）
+- クラス不均衡: 死亡 549 サンプル、生存 342 サンプル
+
+### モデル性能
+
+- 精度（Accuracy）: 約 78%
+- AUC: 約 0.84
+- F1 スコア: 約 0.71
+- アルゴリズム: FastTree（決定木ベースの二値分類）
+- 特徴: グループ別欠損値補完、カテゴリカルエンコーディング
 
 ## 📝 ライセンス
 
