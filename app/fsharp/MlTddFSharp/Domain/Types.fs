@@ -26,3 +26,28 @@ module Types =
           PredictedSpecies: string
 
           Score: float32[] }
+
+    [<CLIMutable>]
+    type CinemaData =
+        { [<LoadColumn(0)>]
+          CinemaId: int
+
+          [<LoadColumn(1)>]
+          SNS1: float32
+
+          [<LoadColumn(2)>]
+          SNS2: float32
+
+          [<LoadColumn(3)>]
+          Actor: float32
+
+          [<LoadColumn(4)>]
+          Original: float32
+
+          [<LoadColumn(5)>]
+          Sales: float32 }
+
+    [<CLIMutable>]
+    type CinemaPrediction =
+        { [<ColumnName("Score")>]
+          PredictedSales: float32 }
