@@ -1,0 +1,9 @@
+{
+  "IndentSize": 4,
+  "MaxLineLength": 120,
+  "SpaceBeforeColon": false,
+  "SpaceAfterComma": true,
+  "SpaceAfterSemicolon": true,
+  "IndentOnTryWith": true,
+  "NewlineBetweenTypeDefinitionAndMembers": true
+}
