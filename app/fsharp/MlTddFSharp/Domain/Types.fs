@@ -51,3 +51,27 @@ module Types =
     type CinemaPrediction =
         { [<ColumnName("Score")>]
           PredictedSales: float32 }
+
+    [<CLIMutable>]
+    type SurvivedData =
+        { [<LoadColumn(0)>]
+          PassengerId: int
+
+          [<LoadColumn(1)>]
+          Survived: bool
+
+          [<LoadColumn(2)>]
+          Pclass: float32
+
+          [<LoadColumn(3)>]
+          Sex: string
+
+          [<LoadColumn(4)>]
+          Age: float32 }
+
+    [<CLIMutable>]
+    type SurvivedPrediction =
+        { [<ColumnName("PredictedLabel")>]
+          Survived: bool
+
+          Score: float32 }
