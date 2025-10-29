@@ -11,6 +11,7 @@
     <Compile Include="Ml\IrisClassifier.fs" />
     <Compile Include="Ml\CinemaPredictor.fs" />
     <Compile Include="Ml\SurvivedPredictor.fs" />
+    <Compile Include="Ml\BostonPredictor.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
