@@ -75,3 +75,39 @@ module Types =
           Survived: bool
 
           Score: float32 }
+
+    [<CLIMutable>]
+    type BostonData =
+        { [<LoadColumn(0)>]
+          CRIME: string
+
+          [<LoadColumn(5)>]
+          RM: float32
+
+          [<LoadColumn(10)>]
+          PTRATIO: float32
+
+          [<LoadColumn(12)>]
+          LSTAT: float32
+
+          [<LoadColumn(13)>]
+          PRICE: float32 }
+
+    [<CLIMutable>]
+    type BostonFeatures =
+        { RM: float32
+          LSTAT: float32
+          PTRATIO: float32
+          RM2: float32
+          LSTAT2: float32
+          PTRATIO2: float32
+
+          [<ColumnName("RM_x_LSTAT")>]
+          RMxLSTAT: float32
+
+          PRICE: float32 }
+
+    [<CLIMutable>]
+    type BostonPrediction =
+        { [<ColumnName("Score")>]
+          Price: float32 }
