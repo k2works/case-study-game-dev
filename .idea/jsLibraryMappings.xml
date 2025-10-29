@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <excludedPredefinedLibrary name="case-study-game-dev/app/clojure-3/node_modules" />
+    <excludedPredefinedLibrary name="case-study-game-dev/app/clojure/node_modules" />
+    <excludedPredefinedLibrary name="case-study-game-dev/app/fsharp-2/fable/node_modules" />
+    <excludedPredefinedLibrary name="case-study-game-dev/app/fsharp/fable/node_modules" />
+    <excludedPredefinedLibrary name="case-study-game-dev/app/typescript-4/node_modules" />
+    <excludedPredefinedLibrary name="case-study-game-dev/app/typescript-5/puyo-puyo-game/node_modules" />
+    <excludedPredefinedLibrary name="case-study-game-dev/app/typescript/node_modules" />
+  </component>
+</project>
