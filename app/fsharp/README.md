@@ -31,7 +31,8 @@ MlTddFSharp/
 ├── model/                    # 訓練済みモデル保存先
 ├── notebook/                 # Jupyter Notebook
 │   ├── 01_iris_exploration.ipynb
-│   └── 02_cinema_exploration.ipynb
+│   ├── 02_cinema_exploration.ipynb
+│   └── 03_boston_exploration.ipynb
 └── script/                   # F# スクリプト
     ├── iris_exploration.fsx
     ├── cinema_exploration.fsx
@@ -139,6 +140,7 @@ jupyter lab
 
 - `notebook/01_iris_exploration.ipynb` - Iris データセットの探索と視覚化
 - `notebook/02_cinema_exploration.ipynb` - Cinema データセットの探索と視覚化
+- `notebook/03_boston_exploration.ipynb` - Boston データセットの探索と視覚化
 
 ## 🧪 実装済み機能
 
