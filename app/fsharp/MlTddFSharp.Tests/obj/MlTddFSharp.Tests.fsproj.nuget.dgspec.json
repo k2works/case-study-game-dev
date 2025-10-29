@@ -1,0 +1,182 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp.Tests\\MlTddFSharp.Tests.fsproj": {}
+  },
+  "projects": {
+    "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp.Tests\\MlTddFSharp.Tests.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp.Tests\\MlTddFSharp.Tests.fsproj",
+        "projectName": "MlTddFSharp.Tests",
+        "projectPath": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp.Tests\\MlTddFSharp.Tests.fsproj",
+        "packagesPath": "C:\\Users\\PC202411-1\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp.Tests\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\PC202411-1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net10.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Program Files\\dotnet\\sdk\\9.0.306\\FSharp\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net10.0": {
+            "targetAlias": "net10.0",
+            "projectReferences": {
+              "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp\\MlTddFSharp.fsproj": {
+                "projectPath": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp\\MlTddFSharp.fsproj"
+              }
+            }
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net10.0": {
+          "targetAlias": "net10.0",
+          "dependencies": {
+            "Expecto": {
+              "target": "Package",
+              "version": "[10.2.3, )",
+              "generatePathProperty": true
+            },
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[9.0.303, )",
+              "generatePathProperty": true
+            },
+            "FsCheck": {
+              "target": "Package",
+              "version": "[3.3.1, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp\\MlTddFSharp.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp\\MlTddFSharp.fsproj",
+        "projectName": "MlTddFSharp",
+        "projectPath": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp\\MlTddFSharp.fsproj",
+        "packagesPath": "C:\\Users\\PC202411-1\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PC202411-1\\RiderProjects\\case-study-game-dev\\app\\fsharp\\MlTddFSharp\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\PC202411-1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net10.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Program Files\\dotnet\\sdk\\9.0.306\\FSharp\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net10.0": {
+            "targetAlias": "net10.0",
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net10.0": {
+          "targetAlias": "net10.0",
+          "dependencies": {
+            "Deedle": {
+              "target": "Package",
+              "version": "[3.0.0, )",
+              "generatePathProperty": true
+            },
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[9.0.303, )",
+              "generatePathProperty": true
+            },
+            "FSharp.Stats": {
+              "target": "Package",
+              "version": "[0.6.0, )",
+              "generatePathProperty": true
+            },
+            "Microsoft.ML": {
+              "target": "Package",
+              "version": "[4.0.3, )",
+              "generatePathProperty": true
+            },
+            "Microsoft.ML.FastTree": {
+              "target": "Package",
+              "version": "[4.0.3, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

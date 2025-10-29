@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="MlTddFSharp.Tests">
+    <resource name="FSharpSignatureData.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationData.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.MlTddFSharp.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.MlTddFSharp.Tests" action="remove"></resource>
+  </assembly>
+</linker>
