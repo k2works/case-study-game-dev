@@ -8,21 +8,27 @@
 MlTddFSharp/
 ├── MlTddFSharp/              # メインプロジェクト
 │   ├── Domain/               # ドメインモデル
-│   │   └── Types.fs          # データ型定義
+│   │   └── Types.fs          # データ型定義（IrisData, CinemaData など）
 │   ├── Data/                 # データ処理
 │   │   └── DataLoader.fs     # CSV ローダー
 │   ├── Ml/                   # 機械学習モデル
-│   │   └── IrisClassifier.fs # Iris 分類器
+│   │   ├── IrisClassifier.fs # Iris 分類器
+│   │   └── CinemaPredictor.fs # Cinema 回帰モデル
 │   └── Program.fs            # エントリポイント
 ├── MlTddFSharp.Tests/        # テストプロジェクト
 │   ├── IrisClassifierTests.fs
+│   ├── CinemaPredictorTests.fs
 │   └── Main.fs
 ├── data/                     # データセット
-│   └── iris.csv
+│   ├── iris.csv
+│   └── cinema.csv
 ├── model/                    # 訓練済みモデル保存先
 ├── notebook/                 # Jupyter Notebook
-│   └── 01_iris_exploration.ipynb
+│   ├── 01_iris_exploration.ipynb
+│   └── 02_cinema_exploration.ipynb
 └── script/                   # F# スクリプト
+    ├── iris_exploration.fsx
+    └── cinema_exploration.fsx
 ```
 
 ## 🚀 セットアップ
@@ -81,6 +87,13 @@ dotnet fsi
   - 混同行列の表示
   - 予測例の実行
 
+- `script/cinema_exploration.fsx` - Cinema データセットの探索と分析
+  - データの基本統計量
+  - 欠損値の確認
+  - 回帰モデルの訓練と評価
+  - 実測値 vs 予測値の比較
+  - 予測例の実行
+
 ### Jupyter Notebook の使用
 
 Jupyter をお使いの方は、.NET Interactive をインストールすることで Notebook 形式でも実行できます：
@@ -100,16 +113,24 @@ jupyter lab
 
 ### 利用可能な Notebook
 
-- `01_iris_exploration.ipynb` - Iris データセットの探索と視覚化
+- `notebook/01_iris_exploration.ipynb` - Iris データセットの探索と視覚化
+- `notebook/02_cinema_exploration.ipynb` - Cinema データセットの探索と視覚化
 
 ## 🧪 実装済み機能
 
 ### ✅ 完了
 
-- **IrisClassifier**: Iris 分類モデル
+- **IrisClassifier**: Iris 分類モデル（多クラス分類）
   - CSV ファイルからデータ読み込み
   - 80/20 でデータ分割
   - 多クラス分類（SdcaMaximumEntropy）
+  - 予測機能
+  - Result 型によるエラーハンドリング
+
+- **CinemaPredictor**: Cinema 売上予測モデル（回帰）
+  - CSV ファイルからデータ読み込み
+  - 欠損値の補完（平均値で置換）
+  - 回帰モデル（FastTree）
   - 予測機能
   - Result 型によるエラーハンドリング
 
@@ -144,8 +165,22 @@ jupyter lab
 
 ### モデル性能
 
-- 精度: 80% 以上
+- 精度: 80% 以上（マクロ精度）
 - アルゴリズム: SdcaMaximumEntropy（最大エントロピー法）
+
+## 🎬 Cinema 売上予測モデル
+
+### データセット
+
+- 100 サンプル
+- 目的変数: Sales（売上、万円）
+- 4 特徴量: SNS1、SNS2、Actor（メディア露出）、Original（原作有無）
+
+### モデル性能
+
+- R^2（決定係数）: 約 64%
+- 平均絶対誤差（MAE）: 約 391 万円
+- アルゴリズム: FastTree（決定木ベースの回帰）
 
 ## 📝 ライセンス
 
