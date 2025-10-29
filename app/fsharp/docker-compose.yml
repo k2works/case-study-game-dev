@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  mlwebapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ml-webapi
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - MODEL_DIRECTORY=/app/model
+    restart: unless-stopped
