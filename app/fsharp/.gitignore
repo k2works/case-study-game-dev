@@ -1,0 +1,34 @@
+# F#/.NET ビルド出力
+**/bin/
+**/obj/
+
+# 訓練済みモデル（実行時に生成）
+model/*.zip
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Rider
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet パッケージ
+*.nupkg
+*.snupkg
+packages/
+
+# テスト結果
+TestResults/
+BenchmarkDotNet.Artifacts/
+
+# ログ
+*.log
