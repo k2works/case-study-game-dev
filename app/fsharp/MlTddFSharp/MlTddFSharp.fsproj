@@ -10,6 +10,7 @@
     <Compile Include="Data\DataLoader.fs" />
     <Compile Include="Ml\IrisClassifier.fs" />
     <Compile Include="Ml\CinemaPredictor.fs" />
+    <Compile Include="Ml\SurvivedPredictor.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
