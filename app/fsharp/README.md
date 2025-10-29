@@ -8,23 +8,26 @@
 MlTddFSharp/
 ├── MlTddFSharp/              # メインプロジェクト
 │   ├── Domain/               # ドメインモデル
-│   │   └── Types.fs          # データ型定義（IrisData, CinemaData, SurvivedData など）
+│   │   └── Types.fs          # データ型定義（IrisData, CinemaData, SurvivedData, BostonData など）
 │   ├── Data/                 # データ処理
 │   │   └── DataLoader.fs     # CSV ローダー
 │   ├── Ml/                   # 機械学習モデル
-│   │   ├── IrisClassifier.fs    # Iris 分類器（多クラス分類）
-│   │   ├── CinemaPredictor.fs   # Cinema 回帰モデル
-│   │   └── SurvivedPredictor.fs # Survived 生存予測モデル（二値分類）
+│   │   ├── IrisClassifier.fs      # Iris 分類器（多クラス分類）
+│   │   ├── CinemaPredictor.fs     # Cinema 回帰モデル
+│   │   ├── SurvivedPredictor.fs   # Survived 生存予測モデル（二値分類）
+│   │   └── BostonPredictor.fs     # Boston 住宅価格予測モデル（高度な回帰）
 │   └── Program.fs            # エントリポイント
 ├── MlTddFSharp.Tests/        # テストプロジェクト
 │   ├── IrisClassifierTests.fs
 │   ├── CinemaPredictorTests.fs
 │   ├── SurvivedPredictorTests.fs
+│   ├── BostonPredictorTests.fs
 │   └── Main.fs
 ├── data/                     # データセット
 │   ├── iris.csv
 │   ├── cinema.csv
-│   └── Survived.csv
+│   ├── Survived.csv
+│   └── Boston.csv
 ├── model/                    # 訓練済みモデル保存先
 ├── notebook/                 # Jupyter Notebook
 │   ├── 01_iris_exploration.ipynb
@@ -32,7 +35,8 @@ MlTddFSharp/
 └── script/                   # F# スクリプト
     ├── iris_exploration.fsx
     ├── cinema_exploration.fsx
-    └── survived_exploration.fsx
+    ├── survived_exploration.fsx
+    └── boston_exploration.fsx
 ```
 
 ## 🚀 セットアップ
@@ -105,6 +109,15 @@ dotnet fsi
   - 混同行列の表示
   - 予測例の実行
 
+- `script/boston_exploration.fsx` - Boston データセットの探索と分析
+  - データの基本統計量
+  - 欠損値の確認と補完
+  - 特徴量エンジニアリング（2 乗項 + 交互作用項）
+  - データ標準化
+  - 回帰モデルの訓練と評価
+  - 実測値 vs 予測値の比較
+  - 予測例の実行
+
 ### Jupyter Notebook の使用
 
 Jupyter をお使いの方は、.NET Interactive をインストールすることで Notebook 形式でも実行できます：
@@ -151,6 +164,15 @@ jupyter lab
   - カテゴリカル変数のエンコーディング（Sex を OneHotEncoding）
   - 二値分類モデル（FastTree）
   - 予測機能
+  - Result 型によるエラーハンドリング
+
+- **BostonPredictor**: Boston 住宅価格予測モデル（高度な回帰）
+  - CSV ファイルからデータ読み込み
+  - 欠損値の補完（訓練データの平均値で置換）
+  - 特徴量エンジニアリング（2 乗項 + 交互作用項で 3 個 → 7 個の特徴量）
+  - データ標準化（NormalizeMinMax）
+  - 回帰モデル（Sdca）
+  - 予測機能（前処理パイプライン適用）
   - Result 型によるエラーハンドリング
 
 ### 📋 TODO
@@ -217,6 +239,24 @@ jupyter lab
 - F1 スコア: 約 0.71
 - アルゴリズム: FastTree（決定木ベースの二値分類）
 - 特徴: グループ別欠損値補完、カテゴリカルエンコーディング
+
+## 🏠 Boston 住宅価格予測モデル
+
+### データセット
+
+- 506 サンプル（ボストン住宅データ）
+- 目的変数: PRICE（住宅価格、$1000 単位）
+- 基本特徴量: RM（平均部屋数）、LSTAT（低所得者の割合）、PTRATIO（教員 1 人当たりの児童生徒数）
+- エンジニアリング後: 7 個の特徴量（元の 3 個 + 2 乗項 3 個 + 交互作用項 1 個）
+- カテゴリカル変数: CRIME（犯罪率カテゴリ）
+
+### モデル性能
+
+- R²（決定係数）: 約 31%
+- 平均絶対誤差（MAE）: 約 $6.7k
+- 二乗平均平方根誤差（RMSE）: 約 $9.1k
+- アルゴリズム: Sdca（確率的双対座標上昇法）
+- 特徴: 特徴量エンジニアリング、データ標準化、欠損値補完
 
 ## 📝 ライセンス
 
