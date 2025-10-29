@@ -147,3 +147,17 @@ site
 !docs/**/CLAUDE.local.md
 .claude
 docs/wiki
+
+# F# / .NET
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+.DS_Store
+
+# F# specific IDE files
+app/fsharp/.idea/
+
+# Temporary files
+nul
