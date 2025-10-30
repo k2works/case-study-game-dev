@@ -97,7 +97,7 @@ describe('IrisClassifier', () => {
 
       const accuracy = classifier.evaluate();
 
-      expect(accuracy).toBeGreaterThan(0.8); // 80%以上の正解率を期待
+      expect(accuracy).toBeGreaterThanOrEqual(0.8); // 80%以上の正解率を期待
       expect(accuracy).toBeLessThanOrEqual(1.0);
     });
   });
