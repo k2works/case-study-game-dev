@@ -6,6 +6,8 @@
 3. 結果の表示
 """
 
+from pathlib import Path
+
 import pandas as pd
 
 from src.ml.iris_classifier import IrisClassifier
@@ -13,6 +15,11 @@ from src.ml.iris_classifier import IrisClassifier
 
 def main() -> None:
     """メイン処理."""
+    # プロジェクトルートディレクトリを取得
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    model_path = project_root / "model" / "iris_model.pkl"
+
     print("=" * 60)
     print("保存済み Iris 分類モデルでの予測")
     print("=" * 60)
@@ -20,9 +27,8 @@ def main() -> None:
 
     # 1. 保存済みモデルの読み込み
     print("[Step 1] 保存済みモデルの読み込み")
-    model_path = "model/iris_model.pkl"
     classifier = IrisClassifier()
-    classifier.load_model(model_path)
+    classifier.load_model(str(model_path))
     print(f"  [OK] モデル読み込み完了: {model_path}")
     print()
 

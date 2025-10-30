@@ -8,6 +8,9 @@
 5. 訓練済みモデルの保存
 """
 
+import os
+from pathlib import Path
+
 from sklearn.model_selection import train_test_split
 
 from src.ml.iris_classifier import IrisClassifier
@@ -15,6 +18,15 @@ from src.ml.iris_classifier import IrisClassifier
 
 def main() -> None:
     """メイン処理."""
+    # プロジェクトルートディレクトリを取得
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    data_path = project_root / "data" / "iris.csv"
+    model_dir = project_root / "model"
+
+    # モデル保存ディレクトリが存在しない場合は作成
+    os.makedirs(model_dir, exist_ok=True)
+
     print("=" * 60)
     print("Iris 分類モデルの訓練を開始します")
     print("=" * 60)
@@ -23,7 +35,7 @@ def main() -> None:
     # 1. データの読み込み
     print("[Step 1] データの読み込み")
     classifier = IrisClassifier(max_depth=3)
-    X, y = classifier.load_data("data/iris.csv")
+    X, y = classifier.load_data(str(data_path))
     print(f"  [OK] データ読み込み完了: {len(X)} サンプル, {X.shape[1]} 特徴量")
     print(f"  [OK] クラス: {sorted(y.unique())}")
     print()
@@ -67,9 +79,9 @@ def main() -> None:
     # 5. 予測例
     print("[Step 5] 予測例")
     # テストデータから最初の 5 サンプルを予測
-    sample_X = X_test.head(5)
+    sample_x = X_test.head(5)
     sample_y = y_test.head(5)
-    predictions = classifier.predict(sample_X)
+    predictions = classifier.predict(sample_x)
 
     print("  サンプル | 予測値      | 正解値      | 結果")
     print("  " + "-" * 50)
@@ -80,8 +92,8 @@ def main() -> None:
 
     # 6. モデルの保存
     print("[Step 6] モデルの保存")
-    model_path = "model/iris_model.pkl"
-    classifier.save_model(model_path)
+    model_path = model_dir / "iris_model.pkl"
+    classifier.save_model(str(model_path))
     print(f"  [OK] モデル保存完了: {model_path}")
     print()
 

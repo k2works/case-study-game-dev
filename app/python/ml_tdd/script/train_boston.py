@@ -1,5 +1,8 @@
 """Boston 住宅価格予測モデルの訓練スクリプト."""
 
+import os
+from pathlib import Path
+
 from sklearn.model_selection import train_test_split
 
 from src.ml.boston_predictor import BostonPredictor
@@ -7,12 +10,21 @@ from src.ml.boston_predictor import BostonPredictor
 
 def main() -> None:
     """メイン処理."""
+    # プロジェクトルートディレクトリを取得
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    data_path = project_root / "data" / "Boston.csv"
+    model_dir = project_root / "model"
+
+    # モデル保存ディレクトリが存在しない場合は作成
+    os.makedirs(model_dir, exist_ok=True)
+
     # 予測器の作成
     predictor = BostonPredictor()
     print("BostonPredictor を作成しました")
 
     # データの読み込み
-    df = predictor.load_data("data/Boston.csv")
+    df = predictor.load_data(str(data_path))
     print(f"データを読み込みました: {len(df)} サンプル")
 
     # CRIME 列のダミー変数化
@@ -64,15 +76,19 @@ def main() -> None:
     print(f"  決定係数（R^2）: {score:.4f}")
 
     # モデルとスケーラーの保存
+    model_path = model_dir / "boston_model.pkl"
+    scaler_x_path = model_dir / "boston_scaler_X.pkl"
+    scaler_y_path = model_dir / "boston_scaler_y.pkl"
+
     predictor.save_models(
-        "model/boston_model.pkl",
-        "model/boston_scaler_X.pkl",
-        "model/boston_scaler_y.pkl",
+        str(model_path),
+        str(scaler_x_path),
+        str(scaler_y_path),
     )
     print("\nモデルとスケーラーを保存しました")
-    print("  - model/boston_model.pkl")
-    print("  - model/boston_scaler_X.pkl")
-    print("  - model/boston_scaler_y.pkl")
+    print(f"  - {model_path}")
+    print(f"  - {scaler_x_path}")
+    print(f"  - {scaler_y_path}")
 
     # 予測例
     print("\n[予測例]")

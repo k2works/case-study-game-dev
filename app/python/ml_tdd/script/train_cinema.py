@@ -16,6 +16,12 @@ from src.ml.cinema_predictor import CinemaPredictor  # noqa: E402
 
 def main() -> None:
     """メイン処理."""
+    # プロジェクトルートディレクトリを取得
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    data_path = project_root / "data" / "cinema.csv"
+    model_dir = project_root / "model"
+
     print("=" * 60)
     print("Cinema 興行収入予測モデルの訓練")
     print("=" * 60)
@@ -23,7 +29,7 @@ def main() -> None:
     # データの読み込み
     print("\n1. データの読み込み...")
     predictor = CinemaPredictor()
-    X, y = predictor.load_data("data/cinema.csv")
+    X, y = predictor.load_data(str(data_path))
 
     print(f"   データサイズ: {X.shape[0]} サンプル, {X.shape[1]} 特徴量")
     print(f"   特徴量: {list(X.columns)}")
@@ -79,9 +85,9 @@ def main() -> None:
 
     # モデルの保存
     print("\n7. モデルの保存...")
-    model_path = "model/cinema_model.pkl"
-    Path("model").mkdir(exist_ok=True)
-    predictor.save_model(model_path)
+    model_dir.mkdir(exist_ok=True)
+    model_path = model_dir / "cinema_model.pkl"
+    predictor.save_model(str(model_path))
     print(f"   モデルを保存しました: {model_path}")
 
     print("\n" + "=" * 60)

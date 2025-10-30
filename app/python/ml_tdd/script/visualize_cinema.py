@@ -110,6 +110,12 @@ def plot_feature_importance(
 
 def main() -> None:
     """メイン処理."""
+    # プロジェクトルートディレクトリを取得
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    data_path = project_root / "data" / "cinema.csv"
+    model_path = project_root / "model" / "cinema_model.pkl"
+
     print("=" * 60)
     print("Cinema 予測モデルの結果可視化")
     print("=" * 60)
@@ -117,10 +123,10 @@ def main() -> None:
     # データの読み込み
     print("\n1. データとモデルの読み込み...")
     predictor = CinemaPredictor()
-    X, y = predictor.load_data("data/cinema.csv")
+    X, y = predictor.load_data(str(data_path))
 
     # 保存されたモデルの読み込み
-    predictor.load_model("models/cinema_model.pkl")
+    predictor.load_model(str(model_path))
     print("   モデルを読み込みました!")
 
     # 予測

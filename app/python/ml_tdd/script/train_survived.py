@@ -1,5 +1,8 @@
 """Survived 生存予測モデルの訓練スクリプト."""
 
+import os
+from pathlib import Path
+
 from sklearn.model_selection import train_test_split
 
 from src.ml.survived_classifier import SurvivedClassifier
@@ -7,12 +10,21 @@ from src.ml.survived_classifier import SurvivedClassifier
 
 def main() -> None:
     """メイン処理."""
+    # プロジェクトルートディレクトリを取得
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    data_path = project_root / "data" / "Survived.csv"
+    model_dir = project_root / "model"
+
+    # モデル保存ディレクトリが存在しない場合は作成
+    os.makedirs(model_dir, exist_ok=True)
+
     # 分類器の作成
     classifier = SurvivedClassifier(max_depth=9, class_weight="balanced")
     print("SurvivedClassifier を作成しました")
 
     # データの読み込みと前処理
-    X, y = classifier.load_data("data/Survived.csv", preprocess=True)
+    X, y = classifier.load_data(str(data_path), preprocess=True)
     print(f"データを読み込みました: {len(X)} サンプル")
 
     # 訓練データとテストデータに分割
@@ -58,8 +70,9 @@ def main() -> None:
     print(f"  正解率（Accuracy）: {accuracy:.4f}")
 
     # モデルの保存
-    classifier.save_model("model/survived.pkl")
-    print("\nモデルを model/survived.pkl に保存しました")
+    model_path = model_dir / "survived.pkl"
+    classifier.save_model(str(model_path))
+    print(f"\nモデルを {model_path} に保存しました")
 
     # 予測例
     print("\n[予測例]")
