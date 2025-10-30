@@ -1,0 +1,156 @@
+{
+  "model": {
+    "options": {
+      "gainFunction": "gini",
+      "splitFunction": "mean",
+      "minNumSamples": 3,
+      "maxDepth": 5,
+      "gainThreshold": 0.01,
+      "kind": "classifier"
+    },
+    "root": {
+      "kind": "classifier",
+      "gainFunction": "gini",
+      "splitFunction": "mean",
+      "minNumSamples": 3,
+      "maxDepth": 5,
+      "gainThreshold": 0.01,
+      "splitValue": 2.5999999999999996,
+      "splitColumn": 2,
+      "gain": 0.33333333333333354,
+      "numberSamples": 120,
+      "left": {
+        "kind": "classifier",
+        "gainFunction": "gini",
+        "splitFunction": "mean",
+        "minNumSamples": 3,
+        "maxDepth": 5,
+        "gainThreshold": 0.01,
+        "gain": null,
+        "distribution": [
+          [
+            1.0000000000000004
+          ]
+        ]
+      },
+      "right": {
+        "kind": "classifier",
+        "gainFunction": "gini",
+        "splitFunction": "mean",
+        "minNumSamples": 3,
+        "maxDepth": 5,
+        "gainThreshold": 0.01,
+        "splitValue": 1.75,
+        "splitColumn": 3,
+        "gain": 0.4302325581395342,
+        "numberSamples": 80,
+        "left": {
+          "kind": "classifier",
+          "gainFunction": "gini",
+          "splitFunction": "mean",
+          "minNumSamples": 3,
+          "maxDepth": 5,
+          "gainThreshold": 0.01,
+          "splitValue": 5.35,
+          "splitColumn": 2,
+          "gain": 0.08442269387539729,
+          "numberSamples": 43,
+          "left": {
+            "kind": "classifier",
+            "gainFunction": "gini",
+            "splitFunction": "mean",
+            "minNumSamples": 3,
+            "maxDepth": 5,
+            "gainThreshold": 0.01,
+            "splitValue": 4.95,
+            "splitColumn": 2,
+            "gain": 0.015070394606382667,
+            "numberSamples": 41,
+            "left": {
+              "kind": "classifier",
+              "gainFunction": "gini",
+              "splitFunction": "mean",
+              "minNumSamples": 3,
+              "maxDepth": 5,
+              "gainThreshold": 0.01,
+              "gain": null,
+              "distribution": [
+                [
+                  0,
+                  0.9999999999999992
+                ]
+              ]
+            },
+            "right": {
+              "kind": "classifier",
+              "gainFunction": "gini",
+              "splitFunction": "mean",
+              "minNumSamples": 3,
+              "maxDepth": 5,
+              "gainThreshold": 0.01,
+              "distribution": [
+                [
+                  0,
+                  0.6666666666666666,
+                  0.3333333333333333
+                ]
+              ]
+            }
+          },
+          "right": {
+            "kind": "classifier",
+            "gainFunction": "gini",
+            "splitFunction": "mean",
+            "minNumSamples": 3,
+            "maxDepth": 5,
+            "gainThreshold": 0.01,
+            "distribution": [
+              [
+                0,
+                0,
+                1
+              ]
+            ]
+          }
+        },
+        "right": {
+          "kind": "classifier",
+          "gainFunction": "gini",
+          "splitFunction": "mean",
+          "minNumSamples": 3,
+          "maxDepth": 5,
+          "gainThreshold": 0.01,
+          "gain": null,
+          "distribution": [
+            [
+              0,
+              0,
+              0.9999999999999991
+            ]
+          ]
+        }
+      }
+    },
+    "name": "DTClassifier"
+  },
+  "featureNames": [
+    "sepal_length",
+    "sepal_width",
+    "petal_length",
+    "petal_width"
+  ],
+  "labelMap": [
+    [
+      "setosa",
+      0
+    ],
+    [
+      "versicolor",
+      1
+    ],
+    [
+      "virginica",
+      2
+    ]
+  ]
+}
