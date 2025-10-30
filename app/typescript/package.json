@@ -21,7 +21,9 @@
     "train:iris": "tsx scripts/train-iris.ts",
     "predict:iris": "tsx scripts/predict-iris.ts",
     "train:cinema": "tsx scripts/train-cinema.ts",
-    "predict:cinema": "tsx scripts/predict-cinema.ts"
+    "predict:cinema": "tsx scripts/predict-cinema.ts",
+    "train:survived": "tsx scripts/train-survived.ts",
+    "predict:survived": "tsx scripts/predict-survived.ts"
   },
   "keywords": [],
   "author": "",
