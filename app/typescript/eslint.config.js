@@ -50,7 +50,7 @@ export default [
     },
   },
   {
-    files: ['scripts/**/*.ts', 'notebooks/**/*.ts'],
+    files: ['scripts/**/*.ts', 'notebooks/**/*.ts', 'src/tmp/**/*.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
