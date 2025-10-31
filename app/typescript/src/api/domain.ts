@@ -1,7 +1,7 @@
-import { IrisClassifier } from './models/IrisClassifier';
-import { CinemaPredictor } from './models/CinemaPredictor';
-import { SurvivedClassifier } from './models/SurvivedClassifier';
-import { BostonPredictor } from './models/BostonPredictor';
+import { IrisClassifier } from '../models/IrisClassifier';
+import { CinemaPredictor } from '../models/CinemaPredictor';
+import { SurvivedClassifier } from '../models/SurvivedClassifier';
+import { BostonPredictor } from '../models/BostonPredictor';
 
 /**
  * Iris 分類ドメイン

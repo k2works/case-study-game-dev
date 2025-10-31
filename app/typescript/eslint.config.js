@@ -6,7 +6,7 @@ export default [
   eslint.configs.recommended,
   {
     files: ['**/*.ts'],
-    ignores: ['**/*.d.ts', 'scripts/**/*.ts', 'notebooks/**/*.ts', 'src/api.ts'],
+    ignores: ['**/*.d.ts', 'scripts/**/*.ts', 'notebooks/**/*.ts', 'src/api/app.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -24,7 +24,7 @@ export default [
     },
   },
   {
-    files: ['src/api.ts'],
+    files: ['src/api/app.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { MLApiServer } from '../src/api';
+import { MLApiServer } from '../src/api/app';
 import type { FastifyInstance } from 'fastify';
 
 describe('ML API Server', () => {

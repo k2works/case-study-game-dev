@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { IrisDomain, CinemaDomain, SurvivedDomain, BostonDomain } from '../src/domain';
+import { IrisDomain, CinemaDomain, SurvivedDomain, BostonDomain } from '../src/api/domain';
 
 describe('Domain Layer', () => {
   describe('IrisDomain', () => {

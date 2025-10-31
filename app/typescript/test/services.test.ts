@@ -4,13 +4,13 @@ import {
   CinemaService,
   SurvivedService,
   BostonService,
-} from '../src/services';
+} from '../src/api/services';
 import type {
   IrisRequest,
   CinemaRequest,
   SurvivedRequest,
   BostonRequest,
-} from '../src/schemas';
+} from '../src/api/schemas';
 
 describe('Service Layer', () => {
   describe('IrisService', () => {

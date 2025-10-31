@@ -4,7 +4,7 @@ import {
   CinemaRequestSchema,
   SurvivedRequestSchema,
   BostonRequestSchema,
-} from '../src/schemas';
+} from '../src/api/schemas';
 
 describe('Request Schemas', () => {
   describe('IrisRequestSchema', () => {
