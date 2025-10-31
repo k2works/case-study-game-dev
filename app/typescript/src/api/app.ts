@@ -2,6 +2,7 @@ import Fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
+import { fileURLToPath } from 'url';
 import { IrisService, CinemaService, SurvivedService, BostonService } from './services';
 import {
   IrisRequestSchema,
@@ -391,7 +392,9 @@ export class MLApiServer {
 }
 
 // スクリプトとして実行された場合にサーバーを起動
-if (require.main === module) {
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isMainModule) {
   const server = new MLApiServer();
   const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
