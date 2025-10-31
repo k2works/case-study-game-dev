@@ -313,7 +313,44 @@ export class BostonPredictor {
   }
 
   /**
-   * モデルとスケーラーを保存
+   * モデルとスケーラーを単一ファイルに保存
+   */
+  async save(filePath: string): Promise<void> {
+    if (!this.model || !this.scalerX || !this.scalerY) {
+      throw new Error('Model or scalers have not been trained yet.');
+    }
+
+    const data = {
+      model: this.model,
+      scalerX: this.scalerX,
+      scalerY: this.scalerY,
+      trainMean: this.trainMean,
+    };
+
+    await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  }
+
+  /**
+   * 単一ファイルからモデルとスケーラーを読み込み
+   */
+  async load(filePath: string): Promise<void> {
+    try {
+      await fs.promises.access(filePath);
+    } catch {
+      throw new Error(`File not found: ${filePath}`);
+    }
+
+    const fileContent = await fs.promises.readFile(filePath, 'utf-8');
+    const data = JSON.parse(fileContent);
+
+    this.model = data.model;
+    this.scalerX = data.scalerX;
+    this.scalerY = data.scalerY;
+    this.trainMean = data.trainMean || null;
+  }
+
+  /**
+   * モデルとスケーラーを保存（3ファイル形式）
    */
   async saveModels(
     modelPath: string,

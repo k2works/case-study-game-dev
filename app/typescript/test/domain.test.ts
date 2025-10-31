@@ -81,8 +81,7 @@ describe('Domain Layer', () => {
     });
   });
 
-  // TODO: BostonPredictor に save/load メソッドを追加後に有効化
-  describe.skip('BostonDomain', () => {
+  describe('BostonDomain', () => {
     let domain: BostonDomain;
 
     beforeEach(() => {

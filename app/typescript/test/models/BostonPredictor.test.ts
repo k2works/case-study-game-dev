@@ -393,5 +393,56 @@ describe('BostonPredictor', () => {
 
       expect(prediction).toHaveLength(1);
     });
+
+    it('単一ファイルでモデルを保存できる', async () => {
+      const XTrain = [
+        [6.5, 5.0, 15.0],
+        [5.5, 10.0, 18.0],
+        [7.0, 3.0, 14.0],
+        [6.0, 7.0, 16.0],
+        [5.8, 12.0, 17.0],
+        [6.8, 4.5, 15.5],
+      ];
+      const yTrain = [24.0, 18.5, 33.0, 21.0, 16.0, 26.0];
+
+      predictor.standardizeFeatures(XTrain, true);
+      predictor.standardizeTarget(yTrain, true);
+      predictor.train(XTrain, yTrain);
+
+      await predictor.save(testModelPath);
+
+      expect(fs.existsSync(testModelPath)).toBe(true);
+    });
+
+    it('単一ファイルから保存したモデルを読み込める', async () => {
+      // まずモデルを訓練して保存
+      const XTrain = [
+        [6.5, 5.0, 15.0],
+        [5.5, 10.0, 18.0],
+        [7.0, 3.0, 14.0],
+        [6.0, 7.0, 16.0],
+        [5.8, 12.0, 17.0],
+        [6.8, 4.5, 15.5],
+      ];
+      const yTrain = [24.0, 18.5, 33.0, 21.0, 16.0, 26.0];
+
+      predictor.standardizeFeatures(XTrain, true);
+      predictor.standardizeTarget(yTrain, true);
+      predictor.train(XTrain, yTrain);
+      await predictor.save(testModelPath);
+
+      // 新しいインスタンスで読み込み
+      const newPredictor = new BostonPredictor();
+      await newPredictor.load(testModelPath);
+
+      expect(newPredictor.isTrained()).toBe(true);
+
+      // 予測が実行できることを確認
+      const XTest = [[6.0, 7.0, 16.0]];
+      const prediction = newPredictor.predict(XTest);
+
+      expect(prediction).toHaveLength(1);
+      expect(prediction[0]).toBeGreaterThan(0);
+    });
   });
 });

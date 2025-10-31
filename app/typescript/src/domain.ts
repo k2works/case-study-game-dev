@@ -89,11 +89,9 @@ export class SurvivedDomain {
 
 /**
  * Boston 住宅価格予測ドメイン
- * TODO: BostonPredictor に save/load メソッドを追加後に実装
  */
 export class BostonDomain {
   private model: BostonPredictor | null = null;
-  // @ts-expect-error - TODO: BostonPredictor に load メソッドを追加後に使用
   private modelPath: string;
 
   constructor(modelPath: string = 'models/boston_predictor.json') {
@@ -101,22 +99,23 @@ export class BostonDomain {
   }
 
   async loadModel(): Promise<void> {
-    // TODO: BostonPredictor に load メソッドを追加
-    throw new Error('BostonDomain.loadModel() is not yet implemented');
-    /*
     try {
       this.model = new BostonPredictor();
       await this.model.load(this.modelPath);
     } catch (error) {
       throw new Error(`Failed to load Boston model: ${error}`);
     }
-    */
   }
 
   predict(features: number[][]): number[] {
     if (!this.model) {
       throw new Error('Model not loaded');
     }
-    return this.model.predict(features);
+    // 特徴量を標準化
+    const featuresScaled = this.model.standardizeFeatures(features, false);
+    // 予測（標準化されたスケールで）
+    const predictionsScaled = this.model.predict(featuresScaled);
+    // 元のスケールに戻す
+    return this.model.inverseTransformPrediction(predictionsScaled);
   }
 }

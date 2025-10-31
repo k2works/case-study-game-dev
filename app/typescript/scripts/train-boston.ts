@@ -108,12 +108,15 @@ async function main(): Promise<void> {
   const modelPath = path.join(projectRoot, 'models/boston_model.json');
   const scalerXPath = path.join(projectRoot, 'models/boston_scalerX.json');
   const scalerYPath = path.join(projectRoot, 'models/boston_scalerY.json');
+  const singleFilePath = path.join(projectRoot, 'models/boston_predictor.json');
 
   await predictor.saveModels(modelPath, scalerXPath, scalerYPath);
+  await predictor.save(singleFilePath);
   console.log(`✓ モデルを保存しました:`);
   console.log(`  - ${modelPath}`);
   console.log(`  - ${scalerXPath}`);
-  console.log(`  - ${scalerYPath}\n`);
+  console.log(`  - ${scalerYPath}`);
+  console.log(`  - ${singleFilePath} (単一ファイル形式)\n`);
 
   // 予測例の表示
   console.log('🏠 予測例:');
