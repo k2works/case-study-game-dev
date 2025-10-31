@@ -6,7 +6,7 @@ export default [
   eslint.configs.recommended,
   {
     files: ['**/*.ts'],
-    ignores: ['**/*.d.ts', 'scripts/**/*.ts', 'notebooks/**/*.ts'],
+    ignores: ['**/*.d.ts', 'scripts/**/*.ts', 'notebooks/**/*.ts', 'src/api.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -21,6 +21,32 @@ export default [
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/explicit-function-return-type': 'warn',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+    },
+  },
+  {
+    files: ['src/api.ts'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'warn',
+      'no-console': 'off',
     },
   },
   {
