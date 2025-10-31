@@ -27,8 +27,9 @@ ml-tdd-project/
 │           ├── survived_classifier_test.clj
 │           └── boston_predictor_test.clj
 ├── scripts/                       # 実行スクリプト
-│   ├── run_iris_classifier.clj    # Iris 分類器実行スクリプト
-│   └── run_cinema_predictor.clj   # Cinema 予測器実行スクリプト
+│   ├── run_iris_classifier.clj      # Iris 分類器実行スクリプト
+│   ├── run_cinema_predictor.clj     # Cinema 予測器実行スクリプト
+│   └── run_survived_classifier.clj  # Survived 分類器実行スクリプト
 ├── resources/                     # リソースファイル
 │   └── data/                      # データセット
 │       ├── iris.csv
@@ -100,6 +101,21 @@ lein run -m clojure.main scripts/run_cinema_predictor.clj
 - テストデータでの予測
 - RMSE と R² の計算
 - サンプル予測の表示
+
+### Survived 生存予測器
+
+Survived 分類器を実行するスクリプト：
+
+```bash
+lein run -m clojure.main scripts/run_survived_classifier.clj
+```
+
+このスクリプトは以下を実行します：
+- データの読み込みと分割
+- 決定木モデルの訓練（前処理含む）
+- テストデータでの予測
+- 正解率、適合率、再現率、F1 スコアの計算
+- 混同行列の表示
 
 ## Jupyter Notebook
 
