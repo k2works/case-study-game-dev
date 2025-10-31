@@ -225,6 +225,11 @@ lein kibit
 lein run
 ```
 
+サーバーが起動したら、ブラウザで以下にアクセスできます：
+
+- **Swagger UI**: http://localhost:3000/api-docs
+- **Swagger JSON**: http://localhost:3000/api/swagger.json
+
 ### エンドポイント
 
 #### ヘルスチェック

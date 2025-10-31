@@ -5,6 +5,7 @@
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.util.response :refer [response status]]
+            [ring.util.response :as resp]
             [ml-tdd-project.ml.iris-classifier :as iris]
             [ml-tdd-project.ml.boston-predictor :as boston]
             [tablecloth.api :as tc]))
@@ -133,6 +134,13 @@
   (GET "/api/health" [] health-check)
   (POST "/api/predict/iris" [] predict-iris)
   (POST "/api/predict/boston" [] predict-boston)
+  (GET "/api/swagger.json" []
+    (-> (resp/response (slurp (clojure.java.io/resource "public/swagger.json")))
+        (resp/content-type "application/json")))
+  (GET "/api-docs" []
+    (-> (resp/response (slurp (clojure.java.io/resource "public/api-docs.html")))
+        (resp/content-type "text/html")))
+  (route/resources "/")
   (route/not-found {:error "Not found"}))
 
 (def app
