@@ -81,7 +81,6 @@ export class MLApiServer {
         docExpansion: 'list',
         deepLinking: false,
       },
-      staticCSP: true,
     });
 
     // エラーハンドラーの設定
