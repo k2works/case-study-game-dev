@@ -1,5 +1,7 @@
 import Fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import cors from '@fastify/cors';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 import { IrisService, CinemaService, SurvivedService, BostonService } from './services';
 import {
   IrisRequestSchema,
@@ -24,7 +26,17 @@ export class MLApiServer {
   private bostonService: BostonService;
 
   constructor() {
-    this.app = Fastify({ logger: true });
+    this.app = Fastify({
+      logger: true,
+      ajv: {
+        customOptions: {
+          removeAdditional: false,
+          useDefaults: false,
+          coerceTypes: false,
+          strict: false,
+        },
+      },
+    });
 
     // サービスの初期化
     this.irisService = new IrisService();
@@ -37,10 +49,54 @@ export class MLApiServer {
       origin: true, // 全てのオリジンを許可（本番環境では制限すること）
     });
 
+    // Swagger の設定
+    this.app.register(swagger, {
+      openapi: {
+        info: {
+          title: 'ML Prediction API',
+          description: 'Machine Learning prediction API with 4 models',
+          version: '1.0.0',
+        },
+        servers: [
+          {
+            url: 'http://localhost:3000',
+            description: 'Development server',
+          },
+        ],
+        tags: [
+          { name: 'Health', description: 'Health check endpoints' },
+          { name: 'Iris', description: 'Iris species classification' },
+          { name: 'Cinema', description: 'Movie sales prediction' },
+          { name: 'Survived', description: 'Survival prediction' },
+          { name: 'Boston', description: 'Housing price prediction' },
+        ],
+      },
+    });
+
+    // Swagger UI の設定
+    this.app.register(swaggerUi, {
+      routePrefix: '/docs',
+      uiConfig: {
+        docExpansion: 'list',
+        deepLinking: false,
+      },
+      staticCSP: true,
+    });
+
     // エラーハンドラーの設定
     this.app.setErrorHandler((error, _request, reply) => {
+      // Fastify のバリデーションエラー
+      if (error.validation) {
+        reply.status(400).send({
+          error: 'Validation Error',
+          details: error.validation.map((err: any) => ({
+            path: err.instancePath || err.dataPath || '',
+            message: err.message || '',
+          })),
+        });
+      }
       // ZodError の場合
-      if (error.name === 'ZodError' && 'issues' in error) {
+      else if (error.name === 'ZodError' && 'issues' in error) {
         const zodError = error as unknown as ZodError;
         reply.status(400).send({
           error: 'Validation Error',
@@ -49,8 +105,9 @@ export class MLApiServer {
             message: issue.message,
           })),
         });
-      } else {
-        // その他のエラー
+      }
+      // その他のエラー
+      else {
         reply.status(500).send({
           error: 'Internal Server Error',
           message: error.message,
@@ -79,13 +136,71 @@ export class MLApiServer {
    */
   private setupRoutes(): void {
     // ヘルスチェック
-    this.app.get('/health', async (_request, reply) => {
-      reply.send({ status: 'ok', timestamp: new Date().toISOString() });
-    });
+    this.app.get(
+      '/health',
+      {
+        schema: {
+          tags: ['Health'],
+          description: 'Health check endpoint',
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                status: { type: 'string' },
+                timestamp: { type: 'string', format: 'date-time' },
+              },
+            },
+          },
+        },
+      },
+      async (_request, reply) => {
+        reply.send({ status: 'ok', timestamp: new Date().toISOString() });
+      }
+    );
 
     // Iris 分類
     this.app.post(
       '/api/iris/predict',
+      {
+        schema: {
+          tags: ['Iris'],
+          description: 'Predict Iris species based on flower measurements',
+          body: {
+            type: 'object',
+            required: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width'],
+            properties: {
+              sepal_length: {
+                type: 'number',
+                description: 'Sepal length in cm',
+              },
+              sepal_width: {
+                type: 'number',
+                description: 'Sepal width in cm',
+              },
+              petal_length: {
+                type: 'number',
+                description: 'Petal length in cm',
+              },
+              petal_width: {
+                type: 'number',
+                description: 'Petal width in cm',
+              },
+            },
+          },
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                species: {
+                  type: 'string',
+                  enum: ['setosa', 'versicolor', 'virginica'],
+                  description: 'Predicted Iris species',
+                },
+              },
+            },
+          },
+        },
+      },
       async (request: FastifyRequest<{ Body: IrisRequest }>, reply: FastifyReply) => {
         const validated = IrisRequestSchema.parse(request.body);
         const result = this.irisService.predict(validated);
@@ -96,6 +211,48 @@ export class MLApiServer {
     // Cinema 売上予測
     this.app.post(
       '/api/cinema/predict',
+      {
+        schema: {
+          tags: ['Cinema'],
+          description: 'Predict movie sales based on marketing data',
+          body: {
+            type: 'object',
+            required: ['sns1', 'sns2', 'actor', 'original'],
+            properties: {
+              sns1: {
+                type: 'integer',
+                description: 'SNS platform 1 mentions',
+              },
+              sns2: {
+                type: 'integer',
+                description: 'SNS platform 2 mentions',
+              },
+              actor: {
+                type: 'integer',
+                description: 'Lead actor popularity score (0-100)',
+                minimum: 0,
+                maximum: 100,
+              },
+              original: {
+                type: 'integer',
+                description: 'Is original work (0: sequel, 1: original)',
+                enum: [0, 1],
+              },
+            },
+          },
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                predicted_sales: {
+                  type: 'number',
+                  description: 'Predicted sales in 10,000 yen',
+                },
+              },
+            },
+          },
+        },
+      },
       async (request: FastifyRequest<{ Body: CinemaRequest }>, reply: FastifyReply) => {
         const validated = CinemaRequestSchema.parse(request.body);
         const result = this.cinemaService.predict(validated);
@@ -106,6 +263,46 @@ export class MLApiServer {
     // Survived 生存予測
     this.app.post(
       '/api/survived/predict',
+      {
+        schema: {
+          tags: ['Survived'],
+          description: 'Predict survival based on passenger information',
+          body: {
+            type: 'object',
+            required: ['pclass', 'age', 'sex'],
+            properties: {
+              pclass: {
+                type: 'integer',
+                description: 'Passenger class (1: upper, 2: middle, 3: lower)',
+                enum: [1, 2, 3],
+              },
+              age: {
+                type: 'integer',
+                description: 'Age in years',
+                minimum: 0,
+                maximum: 100,
+              },
+              sex: {
+                type: 'string',
+                description: 'Gender',
+                enum: ['male', 'female'],
+              },
+            },
+          },
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                survived: {
+                  type: 'integer',
+                  description: 'Survival prediction (0: died, 1: survived)',
+                  enum: [0, 1],
+                },
+              },
+            },
+          },
+        },
+      },
       async (
         request: FastifyRequest<{ Body: SurvivedRequest }>,
         reply: FastifyReply
@@ -119,6 +316,43 @@ export class MLApiServer {
     // Boston 住宅価格予測
     this.app.post(
       '/api/boston/predict',
+      {
+        schema: {
+          tags: ['Boston'],
+          description: 'Predict housing price based on property features',
+          body: {
+            type: 'object',
+            required: ['rm', 'lstat', 'ptratio'],
+            properties: {
+              rm: {
+                type: 'number',
+                description: 'Average number of rooms per dwelling',
+              },
+              lstat: {
+                type: 'number',
+                description: 'Percentage of lower status population',
+                minimum: 0,
+                maximum: 100,
+              },
+              ptratio: {
+                type: 'number',
+                description: 'Pupil-teacher ratio',
+              },
+            },
+          },
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                predicted_price: {
+                  type: 'number',
+                  description: 'Predicted price in $1000 units',
+                },
+              },
+            },
+          },
+        },
+      },
       async (request: FastifyRequest<{ Body: BostonRequest }>, reply: FastifyReply) => {
         const validated = BostonRequestSchema.parse(request.body);
         const result = this.bostonService.predict(validated);

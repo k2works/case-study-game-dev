@@ -30,6 +30,31 @@ describe('ML API Server', () => {
     });
   });
 
+  describe('Swagger Documentation', () => {
+    it('GET /docs should return Swagger UI', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: '/docs',
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.headers['content-type']).toContain('text/html');
+    });
+
+    it('GET /docs/json should return OpenAPI spec', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: '/docs/json',
+      });
+
+      expect(response.statusCode).toBe(200);
+      const spec = JSON.parse(response.body);
+      expect(spec.openapi).toBeDefined();
+      expect(spec.info.title).toBe('ML Prediction API');
+      expect(spec.paths).toBeDefined();
+    });
+  });
+
   describe('Iris API', () => {
     it('POST /api/iris/predict で Setosa を予測できる', async () => {
       const response = await app.inject({
