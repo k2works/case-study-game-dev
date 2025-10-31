@@ -1,0 +1,4 @@
+{:lint-as {clojure.test.check.properties/for-all clojure.core/let}
+ :linters {:unresolved-symbol {:level :warning}
+           :unused-binding {:level :warning}
+           :missing-docstring {:level :info}}}
