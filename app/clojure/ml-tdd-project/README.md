@@ -215,6 +215,64 @@ lein cljfmt fix     # 自動修正
 lein kibit
 ```
 
+## Web API
+
+機械学習モデルを Web API として公開しています。
+
+### API の起動
+
+```bash
+lein run
+```
+
+### エンドポイント
+
+#### ヘルスチェック
+
+```bash
+curl http://localhost:3000/api/health
+```
+
+レスポンス：
+```json
+{"status":"ok"}
+```
+
+#### Iris 予測
+
+```bash
+curl -X POST http://localhost:3000/api/predict/iris \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sepal-length": 5.1,
+    "sepal-width": 3.5,
+    "petal-length": 1.4,
+    "petal-width": 0.2
+  }'
+```
+
+#### Boston 住宅価格予測
+
+```bash
+curl -X POST http://localhost:3000/api/predict/boston \
+  -H "Content-Type: application/json" \
+  -d '{
+    "CRIME": "low",
+    "ZN": 0,
+    "INDUS": 8.14,
+    "CHAS": 0,
+    "NOX": 0.538,
+    "RM": 5.95,
+    "AGE": 82,
+    "DIS": 3.99,
+    "RAD": 4,
+    "TAX": 307,
+    "PTRATIO": 21,
+    "B": 232.6,
+    "LSTAT": 27.71
+  }'
+```
+
 ## 使用ライブラリ
 
 - **Smile**: 機械学習ライブラリ
