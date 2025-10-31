@@ -81,7 +81,7 @@
   "DataFrame を 2D 配列に変換"
   [df]
   (let [rows (tc/rows df :as-double-arrays)]
-    (into-array (map double-array rows))))
+    (into-array (Class/forName "[D") rows)))
 
 (defn train
   "予測器を訓練する
