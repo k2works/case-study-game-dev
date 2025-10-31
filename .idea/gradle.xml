@@ -4,6 +4,11 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/app/kotlin" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/app/kotlin" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>

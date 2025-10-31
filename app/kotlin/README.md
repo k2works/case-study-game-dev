@@ -19,7 +19,7 @@
 - **ビルドツール**: Gradle 8.0+
 - **機械学習**: Smile 3.0.2
 - **データ処理**: Krangl 0.18.4
-- **データ可視化**: Lets-Plot 4.2.0
+- **データ可視化**: Lets-Plot（Kotlin Notebook で自動管理）
 - **Web API**: Ktor 2.3.7
 - **テスト**: JUnit 5 + Kotest 5.8.0
 - **品質管理**: Detekt 1.23.4, Kover 0.7.5
@@ -128,8 +128,9 @@ IntelliJ IDEA の Kotlin Notebook プラグインを使用して実行できま�
    - データの探索、モデルの訓練、評価結果の確認、グラフの表示が可能
 
 3. **可視化ライブラリ**
-   - Lets-Plot ライブラリを使用してグラフを作成
+   - `%use lets-plot` で Lets-Plot を自動ロード
    - ggplot2 ライクな構文で直感的にグラフ作成が可能
+   - Kotlin Notebook が適切なバージョンを自動管理
 
 ## 📁 プロジェクト構造
 
