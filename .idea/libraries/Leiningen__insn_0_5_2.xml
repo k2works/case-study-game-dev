@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: insn:0.5.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/insn/insn/0.5.2/insn-0.5.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
