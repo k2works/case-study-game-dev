@@ -26,6 +26,8 @@ ml-tdd-project/
 │           ├── cinema_predictor_test.clj
 │           ├── survived_classifier_test.clj
 │           └── boston_predictor_test.clj
+├── scripts/                       # 実行スクリプト
+│   └── run_iris_classifier.clj    # Iris 分類器実行スクリプト
 ├── resources/                     # リソースファイル
 │   └── data/                      # データセット
 │       ├── iris.csv
@@ -34,6 +36,7 @@ ml-tdd-project/
 │       └── boston.csv
 ├── model/                         # 訓練済みモデル
 ├── notebooks/                     # Jupyter Notebook
+│   └── iris_classifier.ipynb      # Iris 分類器ノートブック
 └── project.clj                    # プロジェクト設定
 ```
 
@@ -63,6 +66,71 @@ lein test
 ```bash
 lein test ml-tdd-project.ml.iris-classifier-test
 ```
+
+## 実行スクリプト
+
+Iris 分類器を実行するスクリプト：
+
+```bash
+lein run -m clojure.main scripts/run_iris_classifier.clj
+```
+
+このスクリプトは以下を実行します：
+- データの読み込みと分割
+- モデルの訓練
+- テストデータでの予測
+- 正解率の計算
+- 混同行列の表示
+
+## Jupyter Notebook
+
+### Clojupyter のインストール
+
+Jupyter Notebook で Clojure コードを実行するには、まず Clojupyter カーネルをインストールします：
+
+```bash
+lein jupyter-install
+```
+
+インストール後、利用可能なカーネルを確認：
+
+```bash
+jupyter kernelspec list
+```
+
+`clojupyter-0.4.332332` カーネルが表示されればインストール成功です。
+
+### Notebook の起動
+
+インタラクティブな実験と可視化には Jupyter Notebook を使用します：
+
+```bash
+jupyter notebook
+```
+
+ブラウザで Jupyter が開いたら：
+1. `notebooks/iris_classifier.ipynb` を開く
+2. カーネルとして `clojupyter-0.4.332332` を選択
+3. セルを実行して Iris 分類器を試す
+
+Notebook には以下が含まれます：
+- データの探索的分析
+- モデルの訓練と評価
+- パラメータチューニングの実験
+
+### トラブルシューティング
+
+**エラー: `SyntaxError: unterminated string literal`**
+
+このエラーは、Python カーネルで Clojure コードを実行しようとしている場合に発生します。
+
+**解決方法**:
+
+1. Jupyter Notebook で `Kernel` メニューを開く
+2. `Change Kernel` を選択
+3. `Clojure (clojupyter-0.4.332332)` を選択
+
+または、Notebook を閉じて再度開くと、正しいカーネルが自動的に選択されます。
 
 ## 品質チェック
 
