@@ -1,0 +1,11 @@
+complexity:
+  active: true
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 7  # 複雑すぎる関数を警告
+
+style:
+  active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
