@@ -14,6 +14,11 @@ TypeScript で機械学習を実装するプロジェクトです。TDD（テス
 ```
 app/typescript/
 ├── src/                      # ソースコード
+│   ├── api/                  # API 層
+│   │   ├── app.ts            # API サーバー
+│   │   ├── domain.ts         # ドメイン層
+│   │   ├── schemas.ts        # スキーマ定義（Zod）
+│   │   └── services.ts       # サービス層
 │   ├── models/               # 機械学習モデル
 │   ├── types/                # TypeScript 型定義
 │   └── utils/                # ユーティリティ関数
@@ -126,6 +131,79 @@ npm run format
 npm run type-check
 ```
 
+### API サーバーの起動
+
+```bash
+# API サーバーを起動
+npm run api:start
+
+# 開発モード（自動リロード）で起動
+npm run api:dev
+```
+
+サーバーが起動すると、以下の URL でアクセスできます：
+
+- **API エンドポイント**: `http://localhost:3000`
+- **Swagger UI（API ドキュメント）**: `http://localhost:3000/docs`
+- **OpenAPI 仕様（JSON）**: `http://localhost:3000/docs/json`
+
+#### API エンドポイント
+
+**ヘルスチェック**:
+```bash
+GET /health
+```
+
+**Iris 分類予測**:
+```bash
+POST /api/iris/predict
+Content-Type: application/json
+
+{
+  "sepal_length": 5.1,
+  "sepal_width": 3.5,
+  "petal_length": 1.4,
+  "petal_width": 0.2
+}
+```
+
+**Cinema 売上予測**:
+```bash
+POST /api/cinema/predict
+Content-Type: application/json
+
+{
+  "sns1": 500,
+  "sns2": 300,
+  "actor": 70,
+  "original": 1
+}
+```
+
+**Survived 生存予測**:
+```bash
+POST /api/survived/predict
+Content-Type: application/json
+
+{
+  "pclass": 1,
+  "age": 35,
+  "sex": "female"
+}
+```
+
+**Boston 住宅価格予測**:
+```bash
+POST /api/boston/predict
+Content-Type: application/json
+
+{
+  "rm": 6.5,
+  "lstat": 4.98,
+  "ptratio": 15.3
+}
+```
+
 ### モデルの訓練と予測
 
 #### Iris 分類モデル
@@ -138,7 +216,37 @@ npm run train:iris
 npm run predict:iris
 ```
 
-訓練済みモデルは `models/iris_classifier.json` に保存されます。
+#### Cinema 売上予測モデル
+
+```bash
+# モデルを訓練
+npm run train:cinema
+
+# 訓練済みモデルで予測
+npm run predict:cinema
+```
+
+#### Survived 生存予測モデル
+
+```bash
+# モデルを訓練
+npm run train:survived
+
+# 訓練済みモデルで予測
+npm run predict:survived
+```
+
+#### Boston 住宅価格予測モデル
+
+```bash
+# モデルを訓練
+npm run train:boston
+
+# 訓練済みモデルで予測
+npm run predict:boston
+```
+
+訓練済みモデルは `models/` ディレクトリに JSON ファイルとして保存されます。
 
 ## 🧪 開発
 
@@ -181,6 +289,48 @@ npm run predict:iris
 - 予測スクリプト: `scripts/predict-iris.ts`
 - ノートブック: `notebooks/iris-exploration.ipynb`
 
+### 2. Cinema 売上予測モデル
+
+- **データセット**: 映画売上データセット
+- **アルゴリズム**: 線形回帰（Linear Regression）
+- **特徴量**: SNS 言及数（2 種類）、俳優人気度、オリジナル作品フラグ
+- **出力**: 予測売上（万円単位）
+
+**ファイル**:
+
+- モデル: `src/models/CinemaPredictor.ts`
+- テスト: `test/models/CinemaPredictor.test.ts`
+- 訓練スクリプト: `scripts/train-cinema.ts`
+- 予測スクリプト: `scripts/predict-cinema.ts`
+
+### 3. Survived 生存予測モデル
+
+- **データセット**: タイタニック生存者データセット
+- **アルゴリズム**: 決定木（Decision Tree）
+- **特徴量**: 客室クラス、年齢、性別
+- **出力**: 生存予測（0: 死亡、1: 生存）
+
+**ファイル**:
+
+- モデル: `src/models/SurvivedClassifier.ts`
+- テスト: `test/models/SurvivedClassifier.test.ts`
+- 訓練スクリプト: `scripts/train-survived.ts`
+- 予測スクリプト: `scripts/predict-survived.ts`
+
+### 4. Boston 住宅価格予測モデル
+
+- **データセット**: Boston Housing データセット
+- **アルゴリズム**: 線形回帰（Linear Regression）+ 特徴量エンジニアリング
+- **特徴量**: 部屋数、低所得者割合、生徒教師比率（+ 2 乗項・交互作用項）
+- **出力**: 予測価格（$1000 単位）
+
+**ファイル**:
+
+- モデル: `src/models/BostonPredictor.ts`
+- テスト: `test/models/BostonPredictor.test.ts`
+- 訓練スクリプト: `scripts/train-boston.ts`
+- 予測スクリプト: `scripts/predict-boston.ts`
+
 ## 🛠️ 技術スタック
 
 ### 主要ライブラリ
@@ -191,6 +341,10 @@ npm run predict:iris
 - **data-forge**: データ処理ライブラリ（pandas 風）
 - **ml-cart**: 決定木アルゴリズム
 - **ml-regression**: 回帰アルゴリズム
+- **Fastify**: 高速な Web フレームワーク
+- **Zod**: スキーマバリデーション
+- **@fastify/swagger**: OpenAPI/Swagger 統合
+- **@fastify/swagger-ui**: Swagger UI 提供
 
 ### 開発ツール
 

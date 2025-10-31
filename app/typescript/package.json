@@ -25,7 +25,9 @@
     "train:survived": "tsx scripts/train-survived.ts",
     "predict:survived": "tsx scripts/predict-survived.ts",
     "train:boston": "tsx scripts/train-boston.ts",
-    "predict:boston": "tsx scripts/predict-boston.ts"
+    "predict:boston": "tsx scripts/predict-boston.ts",
+    "api:start": "tsx src/api/app.ts",
+    "api:dev": "tsx --watch src/api/app.ts"
   },
   "keywords": [],
   "author": "",
