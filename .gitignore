@@ -161,3 +161,14 @@ app/fsharp/.idea/
 
 # Temporary files
 nul
+
+# Kotlin / Gradle
+app/kotlin/.gradle/
+app/kotlin/build/
+app/kotlin/out/
+app/kotlin/.kover/
+app/kotlin/test-results/
+app/kotlin/test-output/
+
+# IDE - misc files
+.idea/misc.xml
