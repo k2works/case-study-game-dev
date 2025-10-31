@@ -79,6 +79,31 @@ cd app/kotlin
 ./gradlew run
 ```
 
+### モデルの訓練と評価
+
+```bash
+# Iris 分類モデルの訓練
+./gradlew trainIris
+
+# Iris 分類モデルの評価
+./gradlew evaluateIris
+
+# 汎用スクリプト実行
+./gradlew runScript -Pscript=script/train_iris.kts
+```
+
+### Kotlin Notebook
+
+プロジェクトには以下の Notebook が含まれています：
+
+- `notebook/iris_exploration.ipynb` - Iris データセットの探索と視覚化
+
+IntelliJ IDEA の Kotlin Notebook プラグインを使用して実行できます：
+
+1. IntelliJ IDEA で `notebook/iris_exploration.ipynb` を開く
+2. 各セルを順番に実行（Shift + Enter）
+3. データの探索、モデルの訓練、評価結果の確認が可能
+
 ## 📁 プロジェクト構造
 
 ```

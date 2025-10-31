@@ -29,6 +29,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
+    // Kotlin Scripting
+    implementation(kotlin("script-runtime"))
+
     // テスト
     testImplementation(kotlin("test"))
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
@@ -66,4 +69,32 @@ koverReport {
 
 application {
     mainClass.set("ml.MainKt")
+}
+
+// Kotlin スクリプト実行タスク
+tasks.register<JavaExec>("trainIris") {
+    group = "ml"
+    description = "Train Iris classification model"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
+    args("script/train_iris.kts")
+}
+
+tasks.register<JavaExec>("evaluateIris") {
+    group = "ml"
+    description = "Evaluate Iris classification model"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
+    args("script/evaluate_iris.kts")
+}
+
+// 汎用スクリプト実行タスク
+tasks.register<JavaExec>("runScript") {
+    group = "ml"
+    description = "Run a Kotlin script (use -Pscript=path/to/script.kts)"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
+
+    val scriptPath = project.findProperty("script") as String? ?: "script/train_iris.kts"
+    args(scriptPath)
 }
