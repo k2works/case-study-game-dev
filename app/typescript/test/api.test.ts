@@ -7,7 +7,7 @@ describe('ML API Server', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
-    server = new MLApiServer();
+    server = new MLApiServer({ logger: false });
     await server.initialize();
     app = server.getApp();
   });

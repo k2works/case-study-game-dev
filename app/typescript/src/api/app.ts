@@ -25,9 +25,9 @@ export class MLApiServer {
   private survivedService: SurvivedService;
   private bostonService: BostonService;
 
-  constructor() {
+  constructor(options?: { logger?: boolean }) {
     this.app = Fastify({
-      logger: true,
+      logger: options?.logger ?? (process.env.NODE_ENV !== 'test'),
       ajv: {
         customOptions: {
           removeAdditional: false,
