@@ -38,7 +38,8 @@
     "ml-cart": "^2.1.1",
     "ml-regression": "^6.3.0",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^7.1.12",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
