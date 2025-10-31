@@ -19,6 +19,7 @@
 - **ビルドツール**: Gradle 8.0+
 - **機械学習**: Smile 3.0.2
 - **データ処理**: Krangl 0.18.4
+- **データ可視化**: Lets-Plot 4.2.0
 - **Web API**: Ktor 2.3.7
 - **テスト**: JUnit 5 + Kotest 5.8.0
 - **品質管理**: Detekt 1.23.4, Kover 0.7.5
@@ -98,11 +99,37 @@ cd app/kotlin
 
 - `notebook/iris_exploration.ipynb` - Iris データセットの探索と視覚化
 
+#### Notebook の機能
+
+Iris データセット探索用 Notebook には以下の機能が含まれています：
+
+- **データの可視化**
+  - ヒストグラム：各特徴量の分布をクラス別に表示
+  - 散布図：特徴量間の関係を可視化
+  - 棒グラフ：クラスの分布と正解率を表示
+  - ヒートマップ：混同行列を色付きで視覚化
+  - 予測結果の可視化：元データと予測サンプルを同時にプロット
+
+- **統計分析**
+  - 基本統計量（最小値、最大値、平均値、中央値）
+  - クラス別の性能評価
+  - 混同行列とクラス別正解率
+
+#### 実行方法
+
 IntelliJ IDEA の Kotlin Notebook プラグインを使用して実行できます：
 
-1. IntelliJ IDEA で `notebook/iris_exploration.ipynb` を開く
-2. 各セルを順番に実行（Shift + Enter）
-3. データの探索、モデルの訓練、評価結果の確認が可能
+1. **プラグインのインストール**
+   - IntelliJ IDEA の設定から「Kotlin Notebook」プラグインをインストール
+
+2. **Notebook の実行**
+   - IntelliJ IDEA で `notebook/iris_exploration.ipynb` を開く
+   - 各セルを順番に実行（Shift + Enter）
+   - データの探索、モデルの訓練、評価結果の確認、グラフの表示が可能
+
+3. **可視化ライブラリ**
+   - Lets-Plot ライブラリを使用してグラフを作成
+   - ggplot2 ライクな構文で直感的にグラフ作成が可能
 
 ## 📁 プロジェクト構造
 
@@ -163,6 +190,7 @@ ml-tdd-kotlin/
 - [Kotlin 公式ドキュメント](https://kotlinlang.org/docs/home.html)
 - [Smile 機械学習ライブラリ](https://haifengl.github.io/smile/)
 - [Krangl データ処理ライブラリ](https://github.com/holgerbrandl/krangl)
+- [Lets-Plot 可視化ライブラリ](https://lets-plot.org/)
 - [Ktor Web フレームワーク](https://ktor.io/)
 
 ## 📝 ライセンス

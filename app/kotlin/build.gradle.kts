@@ -22,6 +22,10 @@ dependencies {
     // データ処理
     implementation("com.github.holgerbrandl:krangl:0.18.4")
 
+    // データ可視化
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.2.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-image-export:4.2.0")
+
     // Web API
     implementation("io.ktor:ktor-server-core:2.3.7")
     implementation("io.ktor:ktor-server-netty:2.3.7")

@@ -29,6 +29,10 @@ out/
 # Kover
 .kover/
 
+# Models
+model/
+notebook/model/
+
 # Logs
 *.log
 
