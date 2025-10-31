@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
 
                  ;; 機械学習ライブラリ
-                 [com.github.haifengl/smile-core "3.0.2"]
+                 [com.github.haifengl/smile-core "1.5.3"]
 
                  ;; データ操作ライブラリ
                  [scicloj/tablecloth "7.021"]
@@ -25,4 +25,7 @@
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
-             :dev {:dependencies [[org.clojure/test.check "1.1.1"]]}})
+             :dev {:dependencies [[org.clojure/test.check "1.1.1"]]}
+             :jupyter {:dependencies [[clojupyter "0.4.332"]]}}
+
+  :aliases {"jupyter-install" ["with-profile" "+jupyter" "run" "-m" "clojupyter.cmdline" "install"]})
