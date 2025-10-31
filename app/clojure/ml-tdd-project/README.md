@@ -27,7 +27,8 @@ ml-tdd-project/
 │           ├── survived_classifier_test.clj
 │           └── boston_predictor_test.clj
 ├── scripts/                       # 実行スクリプト
-│   └── run_iris_classifier.clj    # Iris 分類器実行スクリプト
+│   ├── run_iris_classifier.clj    # Iris 分類器実行スクリプト
+│   └── run_cinema_predictor.clj   # Cinema 予測器実行スクリプト
 ├── resources/                     # リソースファイル
 │   └── data/                      # データセット
 │       ├── iris.csv
@@ -36,7 +37,8 @@ ml-tdd-project/
 │       └── boston.csv
 ├── model/                         # 訓練済みモデル
 ├── notebooks/                     # Jupyter Notebook
-│   └── iris_classifier.ipynb      # Iris 分類器ノートブック
+│   ├── iris_classifier.ipynb      # Iris 分類器ノートブック
+│   └── cinema_predictor.ipynb     # Cinema 予測器ノートブック
 └── project.clj                    # プロジェクト設定
 ```
 
@@ -69,6 +71,8 @@ lein test ml-tdd-project.ml.iris-classifier-test
 
 ## 実行スクリプト
 
+### Iris 分類器
+
 Iris 分類器を実行するスクリプト：
 
 ```bash
@@ -81,6 +85,21 @@ lein run -m clojure.main scripts/run_iris_classifier.clj
 - テストデータでの予測
 - 正解率の計算
 - 混同行列の表示
+
+### Cinema 興行収入予測器
+
+Cinema 予測器を実行するスクリプト：
+
+```bash
+lein run -m clojure.main scripts/run_cinema_predictor.clj
+```
+
+このスクリプトは以下を実行します：
+- データの読み込みと分割
+- 線形回帰モデルの訓練
+- テストデータでの予測
+- RMSE と R² の計算
+- サンプル予測の表示
 
 ## Jupyter Notebook
 
@@ -108,6 +127,8 @@ jupyter kernelspec list
 jupyter notebook
 ```
 
+#### Iris 分類器ノートブック
+
 ブラウザで Jupyter が開いたら：
 1. `notebooks/iris_classifier.ipynb` を開く
 2. カーネルとして `clojupyter-0.4.332332` を選択
@@ -117,6 +138,19 @@ Notebook には以下が含まれます：
 - データの探索的分析
 - モデルの訓練と評価
 - パラメータチューニングの実験
+
+#### Cinema 予測器ノートブック
+
+ブラウザで Jupyter が開いたら：
+1. `notebooks/cinema_predictor.ipynb` を開く
+2. カーネルとして `clojupyter-0.4.332332` を選択
+3. セルを実行して Cinema 予測器を試す
+
+Notebook には以下が含まれます：
+- データの読み込みと前処理
+- 線形回帰モデルの訓練と評価
+- 予測精度の分析
+- 残差の統計
 
 ### トラブルシューティング
 
