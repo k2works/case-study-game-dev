@@ -29,13 +29,14 @@ ml-tdd-project/
 ├── scripts/                       # 実行スクリプト
 │   ├── run_iris_classifier.clj      # Iris 分類器実行スクリプト
 │   ├── run_cinema_predictor.clj     # Cinema 予測器実行スクリプト
-│   └── run_survived_classifier.clj  # Survived 分類器実行スクリプト
+│   ├── run_survived_classifier.clj  # Survived 分類器実行スクリプト
+│   └── run_boston_predictor.clj     # Boston 予測器実行スクリプト
 ├── resources/                     # リソースファイル
 │   └── data/                      # データセット
 │       ├── iris.csv
 │       ├── cinema.csv
-│       ├── survived.csv
-│       └── boston.csv
+│       ├── Survived.csv
+│       └── Boston.csv
 ├── model/                         # 訓練済みモデル
 ├── notebooks/                     # Jupyter Notebook
 │   ├── iris_classifier.ipynb      # Iris 分類器ノートブック
@@ -116,6 +117,23 @@ lein run -m clojure.main scripts/run_survived_classifier.clj
 - テストデータでの予測
 - 正解率、適合率、再現率、F1 スコアの計算
 - 混同行列の表示
+
+### Boston 住宅価格予測器
+
+Boston 予測器を実行するスクリプト：
+
+```bash
+lein run -m clojure.main scripts/run_boston_predictor.clj
+```
+
+このスクリプトは以下を実行します：
+- データの読み込みと分割
+- CRIME カテゴリカル変数のダミー変数化
+- 欠損値の補完（平均値で補完）
+- 線形回帰モデルの訓練
+- テストデータでの予測
+- RMSE と R² の計算
+- 予測値と実際の値の統計表示
 
 ## Jupyter Notebook
 
