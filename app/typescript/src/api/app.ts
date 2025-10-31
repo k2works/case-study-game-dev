@@ -77,11 +77,10 @@ export class MLApiServer {
     // Swagger UI の設定
     this.app.register(swaggerUi, {
       routePrefix: '/docs',
+      initOAuth: {},
       uiConfig: {
         docExpansion: 'list',
         deepLinking: false,
-        tryItOutEnabled: true,
-        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch', 'options'],
       },
     });
 
