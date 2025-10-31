@@ -27,7 +27,9 @@
     "train:boston": "tsx scripts/train-boston.ts",
     "predict:boston": "tsx scripts/predict-boston.ts",
     "api:start": "tsx src/api/app.ts",
-    "api:dev": "tsx --watch src/api/app.ts"
+    "api:dev": "tsx --watch src/api/app.ts",
+    "test:swagger2": "tsx src/tmp/test-server.ts",
+    "test:openapi": "tsx src/tmp/test-server-openapi.ts"
   },
   "keywords": [],
   "author": "",

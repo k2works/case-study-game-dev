@@ -45,73 +45,75 @@ export class MLApiServer {
     this.survivedService = new SurvivedService();
     this.bostonService = new BostonService();
 
-    // CORS の設定
-    this.app.register(cors, {
-      origin: true, // 全てのオリジンを許可（本番環境では制限すること）
-    });
+    // プラグインとルートを同じコンテキストで登録
+    this.app.register(async (app) => {
+      // CORS の設定
+      await app.register(cors, {
+        origin: true, // 全てのオリジンを許可（本番環境では制限すること）
+      });
 
-    // Swagger の設定
-    this.app.register(swagger, {
-      openapi: {
-        info: {
-          title: 'ML Prediction API',
-          description: 'Machine Learning prediction API with 4 models',
-          version: '1.0.0',
+      // Swagger の設定
+      await app.register(swagger, {
+        openapi: {
+          info: {
+            title: 'ML Prediction API',
+            description: 'Machine Learning prediction API with 4 models',
+            version: '1.0.0',
+          },
+          tags: [
+            { name: 'Health', description: 'Health check endpoints' },
+            { name: 'Iris', description: 'Iris species classification' },
+            { name: 'Cinema', description: 'Movie sales prediction' },
+            { name: 'Survived', description: 'Survival prediction' },
+            { name: 'Boston', description: 'Housing price prediction' },
+          ],
         },
-        tags: [
-          { name: 'Health', description: 'Health check endpoints' },
-          { name: 'Iris', description: 'Iris species classification' },
-          { name: 'Cinema', description: 'Movie sales prediction' },
-          { name: 'Survived', description: 'Survival prediction' },
-          { name: 'Boston', description: 'Housing price prediction' },
-        ],
-      },
-    });
+      });
 
-    // Swagger UI の設定
-    this.app.register(swaggerUi, {
-      routePrefix: '/docs',
-      initOAuth: {},
-      uiConfig: {
-        docExpansion: 'list',
-        deepLinking: false,
-      },
-    });
+      // Swagger UI の設定
+      await app.register(swaggerUi, {
+        routePrefix: '/docs',
+        uiConfig: {
+          docExpansion: 'list',
+          deepLinking: false,
+        },
+      });
 
-    // エラーハンドラーの設定
-    this.app.setErrorHandler((error, _request, reply) => {
-      // Fastify のバリデーションエラー
-      if (error.validation) {
-        reply.status(400).send({
-          error: 'Validation Error',
-          details: error.validation.map((err: any) => ({
-            path: err.instancePath || err.dataPath || '',
-            message: err.message || '',
-          })),
-        });
-      }
-      // ZodError の場合
-      else if (error.name === 'ZodError' && 'issues' in error) {
-        const zodError = error as unknown as ZodError;
-        reply.status(400).send({
-          error: 'Validation Error',
-          details: zodError.issues.map((issue) => ({
-            path: issue.path.join('.'),
-            message: issue.message,
-          })),
-        });
-      }
-      // その他のエラー
-      else {
-        reply.status(500).send({
-          error: 'Internal Server Error',
-          message: error.message,
-        });
-      }
-    });
+      // エラーハンドラーの設定
+      app.setErrorHandler((error, _request, reply) => {
+        // Fastify のバリデーションエラー
+        if (error.validation) {
+          reply.status(400).send({
+            error: 'Validation Error',
+            details: error.validation.map((err: any) => ({
+              path: err.instancePath || err.dataPath || '',
+              message: err.message || '',
+            })),
+          });
+        }
+        // ZodError の場合
+        else if (error.name === 'ZodError' && 'issues' in error) {
+          const zodError = error as unknown as ZodError;
+          reply.status(400).send({
+            error: 'Validation Error',
+            details: zodError.issues.map((issue) => ({
+              path: issue.path.join('.'),
+              message: issue.message,
+            })),
+          });
+        }
+        // その他のエラー
+        else {
+          reply.status(500).send({
+            error: 'Internal Server Error',
+            message: error.message,
+          });
+        }
+      });
 
-    // ルートの設定
-    this.setupRoutes();
+      // ルートの設定（プラグイン登録と同じコンテキスト内）
+      this.setupRoutes(app);
+    });
   }
 
   /**
@@ -129,9 +131,9 @@ export class MLApiServer {
   /**
    * API ルートを設定
    */
-  private setupRoutes(): void {
+  private setupRoutes(app: FastifyInstance): void {
     // ヘルスチェック
-    this.app.get(
+    app.get(
       '/health',
       {
         schema: {
@@ -154,7 +156,7 @@ export class MLApiServer {
     );
 
     // Iris 分類
-    this.app.post(
+    app.post(
       '/api/iris/predict',
       {
         schema: {
@@ -204,7 +206,7 @@ export class MLApiServer {
     );
 
     // Cinema 売上予測
-    this.app.post(
+    app.post(
       '/api/cinema/predict',
       {
         schema: {
@@ -256,7 +258,7 @@ export class MLApiServer {
     );
 
     // Survived 生存予測
-    this.app.post(
+    app.post(
       '/api/survived/predict',
       {
         schema: {
@@ -309,7 +311,7 @@ export class MLApiServer {
     );
 
     // Boston 住宅価格予測
-    this.app.post(
+    app.post(
       '/api/boston/predict',
       {
         schema: {
