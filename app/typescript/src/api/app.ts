@@ -58,12 +58,6 @@ export class MLApiServer {
           description: 'Machine Learning prediction API with 4 models',
           version: '1.0.0',
         },
-        servers: [
-          {
-            url: 'http://localhost:3000',
-            description: 'Development server',
-          },
-        ],
         tags: [
           { name: 'Health', description: 'Health check endpoints' },
           { name: 'Iris', description: 'Iris species classification' },
