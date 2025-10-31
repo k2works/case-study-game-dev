@@ -80,6 +80,7 @@ export class MLApiServer {
       uiConfig: {
         docExpansion: 'list',
         deepLinking: false,
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch', 'options'],
       },
     });
 
