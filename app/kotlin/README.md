@@ -89,19 +89,33 @@ cd app/kotlin
 # Iris 分類モデルの評価
 ./gradlew evaluateIris
 
+# Cinema 興行収入予測モデルの訓練
+./gradlew trainCinema
+
+# Cinema 興行収入予測モデルの評価
+./gradlew evaluateCinema
+
 # 汎用スクリプト実行
-./gradlew runScript -Pscript=script/train_iris.kts
+./gradlew runScript -Pscript=script/train_cinema.kts
+```
+
+**注意**: Kotlin Scripting の依存関係が必要です。スクリプトが動作しない場合は、以下のコマンドで直接実行できます：
+
+```bash
+# kotlinc を使用してスクリプトを直接実行
+kotlinc -script script/train_cinema.kts -classpath build/libs/ml-tdd-kotlin-1.0-SNAPSHOT.jar
 ```
 
 ### Kotlin Notebook
 
 プロジェクトには以下の Notebook が含まれています：
 
-- `notebook/iris_exploration.ipynb` - Iris データセットの探索と視覚化
+- `notebook/iris_exploration.ipynb` - Iris データセットの探索と視覚化（分類問題）
+- `notebook/cinema_exploration.ipynb` - Cinema データセットの探索と視覚化（回帰問題）
 
 #### Notebook の機能
 
-Iris データセット探索用 Notebook には以下の機能が含まれています：
+**Iris データセット探索用 Notebook**（分類問題）には以下の機能が含まれています：
 
 - **データの可視化**
   - ヒストグラム：各特徴量の分布をクラス別に表示
@@ -114,6 +128,18 @@ Iris データセット探索用 Notebook には以下の機能が含まれて�
   - 基本統計量（最小値、最大値、平均値、中央値）
   - クラス別の性能評価
   - 混同行列とクラス別正解率
+
+**Cinema データセット探索用 Notebook**（回帰問題）には以下の機能が含まれています：
+
+- **データの可視化**
+  - ヒストグラム：興行収入の分布を表示
+  - 散布図：各特徴量（SNS1, SNS2, actor）と興行収入の関係を可視化
+  - 予測 vs 実測：回帰モデルの性能を視覚的に確認
+
+- **統計分析**
+  - 基本統計量（最小値、最大値、平均値、中央値、標準偏差）
+  - モデル評価指標（R², MAE, RMSE）
+  - 予測誤差の分析
 
 #### 実行方法
 
@@ -147,16 +173,29 @@ ml-tdd-kotlin/
 │   │   │       └── BostonPredictor.kt
 │   │   └── resources/
 │   │       └── data/            # データセット
-│   │           └── iris.csv
+│   │           ├── iris.csv
+│   │           ├── cinema.csv
+│   │           ├── Survived.csv
+│   │           └── Boston.csv
 │   └── test/
 │       └── kotlin/
 │           └── ml/              # テストコード
 │               ├── BasicTest.kt
 │               ├── SmileBasicsTest.kt
-│               └── DataLoaderTest.kt
+│               ├── DataLoaderTest.kt
+│               ├── IrisClassifierTest.kt
+│               └── CinemaPredictorTest.kt
 ├── model/                       # 訓練済みモデルの保存先
+│   ├── iris_model.ser
+│   └── cinema_model.ser
 ├── script/                      # モデル訓練・評価スクリプト
+│   ├── train_iris.kts
+│   ├── evaluate_iris.kts
+│   ├── train_cinema.kts
+│   └── evaluate_cinema.kts
 ├── notebook/                    # Kotlin Notebook
+│   ├── iris_exploration.ipynb
+│   └── cinema_exploration.ipynb
 ├── build.gradle.kts
 ├── settings.gradle.kts
 ├── detekt.yml
