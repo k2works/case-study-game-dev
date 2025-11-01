@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: Machine Learning API
+  description: Kotlin で構築された機械学習予測 API
+  version: 1.0.0
+  contact:
+    name: ML API Team
+servers:
+  - url: http://localhost:8080
+    description: ローカル開発サーバー
+paths:
+  /:
+    get:
+      summary: API 情報取得
+      description: API のバージョンと利用可能なエンドポイントを返します
+      operationId: getApiInfo
+      tags:
+        - General
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+  /health:
+    get:
+      summary: ヘルスチェック
+      description: API のヘルスステータスを返します
+      operationId: healthCheck
+      tags:
+        - General
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /iris:
+    post:
+      summary: Iris 品種予測
+      description: 花の測定値から Iris の品種を予測します
+      operationId: predictIris
+      tags:
+        - Prediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IrisRequest'
+      responses:
+        '200':
+          description: 予測成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IrisResponse'
+        '400':
+          description: リクエストが不正です
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /cinema:
+    post:
+      summary: 映画興行収入予測
+      description: SNS バズ数や俳優人気度から映画の興行収入を予測します
+      operationId: predictCinema
+      tags:
+        - Prediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CinemaRequest'
+      responses:
+        '200':
+          description: 予測成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CinemaResponse'
+        '400':
+          description: リクエストが不正です
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /survived:
+    post:
+      summary: タイタニック生存予測
+      description: 乗客の情報から生存確率を予測します
+      operationId: predictSurvived
+      tags:
+        - Prediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurvivedRequest'
+      responses:
+        '200':
+          description: 予測成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurvivedResponse'
+        '400':
+          description: リクエストが不正です
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /boston:
+    post:
+      summary: ボストン住宅価格予測
+      description: 住宅の特徴から価格を予測します
+      operationId: predictBoston
+      tags:
+        - Prediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BostonRequest'
+      responses:
+        '200':
+          description: 予測成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BostonResponse'
+        '400':
+          description: リクエストが不正です
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    MessageResponse:
+      type: object
+      required:
+        - message
+        - version
+        - endpoints
+      properties:
+        message:
+          type: string
+          example: Machine Learning API with Kotlin
+        version:
+          type: string
+          example: 1.0.0
+        endpoints:
+          type: array
+          items:
+            type: string
+          example: ["/iris", "/cinema", "/survived", "/boston"]
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: ok
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Invalid request
+    IrisRequest:
+      type: object
+      required:
+        - sepalLength
+        - sepalWidth
+        - petalLength
+        - petalWidth
+      properties:
+        sepalLength:
+          type: number
+          format: double
+          minimum: 0
+          example: 5.1
+          description: がく片の長さ（cm）
+        sepalWidth:
+          type: number
+          format: double
+          minimum: 0
+          example: 3.5
+          description: がく片の幅（cm）
+        petalLength:
+          type: number
+          format: double
+          minimum: 0
+          example: 1.4
+          description: 花弁の長さ（cm）
+        petalWidth:
+          type: number
+          format: double
+          minimum: 0
+          example: 0.2
+          description: 花弁の幅（cm）
+    IrisResponse:
+      type: object
+      required:
+        - species
+      properties:
+        species:
+          type: string
+          enum: [setosa, versicolor, virginica]
+          example: setosa
+          description: 予測された Iris の品種
+    CinemaRequest:
+      type: object
+      required:
+        - sns1
+        - sns2
+        - actor
+        - original
+      properties:
+        sns1:
+          type: integer
+          minimum: 0
+          example: 500
+          description: SNS1 のバズ数
+        sns2:
+          type: integer
+          minimum: 0
+          example: 300
+          description: SNS2 のバズ数
+        actor:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 70
+          description: 俳優の人気度（0-100）
+        original:
+          type: integer
+          enum: [0, 1]
+          example: 1
+          description: オリジナル作品かどうか（0=続編、1=オリジナル）
+    CinemaResponse:
+      type: object
+      required:
+        - predictedSales
+      properties:
+        predictedSales:
+          type: number
+          format: double
+          example: 7300.52
+          description: 予測された興行収入（万円）
+    SurvivedRequest:
+      type: object
+      required:
+        - pclass
+        - age
+        - sex
+      properties:
+        pclass:
+          type: integer
+          minimum: 1
+          maximum: 3
+          example: 3
+          description: 客室クラス（1=1等、2=2等、3=3等）
+        age:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 22
+          description: 年齢
+        sex:
+          type: string
+          enum: [male, female]
+          example: male
+          description: 性別
+    SurvivedResponse:
+      type: object
+      required:
+        - survived
+      properties:
+        survived:
+          type: integer
+          enum: [0, 1]
+          example: 0
+          description: 生存予測（0=死亡、1=生存）
+    BostonRequest:
+      type: object
+      required:
+        - rm
+        - lstat
+        - ptratio
+      properties:
+        rm:
+          type: number
+          format: double
+          minimum: 0
+          example: 6.5
+          description: 平均部屋数
+        lstat:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          example: 4.98
+          description: 低所得者の割合（%）
+        ptratio:
+          type: number
+          format: double
+          minimum: 0
+          example: 15.3
+          description: 生徒と教師の比率
+    BostonResponse:
+      type: object
+      required:
+        - predictedPrice
+      properties:
+        predictedPrice:
+          type: number
+          format: double
+          example: 24.5
+          description: 予測された住宅価格（$1000 単位）
