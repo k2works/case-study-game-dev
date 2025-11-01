@@ -50,8 +50,5 @@ lazy val root = project
     // Spark のログレベルを抑制
     Test / javaOptions += "-Dspark.master=local[2]",
     Test / javaOptions += "-Dspark.ui.enabled=false",
-    Test / javaOptions += "-Dspark.driver.bindAddress=127.0.0.1",
-
-    // Hadoop の Windows 問題を回避
-    Test / envVars := Map("HADOOP_HOME" -> "C:\\")
+    Test / javaOptions += "-Dspark.driver.bindAddress=127.0.0.1"
   )
