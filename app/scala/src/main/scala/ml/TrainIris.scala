@@ -51,6 +51,27 @@ object TrainIris {
       println(f"Test Accuracy: ${accuracy * 100}%.2f%%")
       println()
 
+      // モデルを保存（Windows以外の環境のみ）
+      val osName = System.getProperty("os.name").toLowerCase
+      val isWindows = osName.contains("win")
+
+      if (!isWindows) {
+        val modelPath = args.headOption.getOrElse("model/iris_model")
+        println(s"Saving model to $modelPath...")
+        try {
+          model.write.overwrite().save(modelPath)
+          println("Model saved successfully")
+        } catch {
+          case e: Exception =>
+            println(s"Warning: Could not save model (${e.getMessage})")
+        }
+        println()
+      } else {
+        println("Note: Model persistence is disabled on Windows due to Hadoop limitations")
+        println("      The model was trained successfully (10 seconds to retrain)")
+        println()
+      }
+
       println("=== Training Completed ===")
 
     } finally {

@@ -26,13 +26,36 @@ scala scripts/train_iris.scala [data_path] [model_path]
 **出力:**
 - 訓練データとテストデータの件数
 - テストセットでの精度（Accuracy）
+- 保存されたモデル（Linux/Mac のみ）
 
-**注意:** モデルの永続化機能は Windows の制約により削除されました。モデルは都度訓練する方式となっています（約10秒で完了）。
+**注意:**
+- Windows 環境ではモデルの永続化が無効化されています（Hadoop の制約）
+- Linux/Mac 環境では自動的にモデルが保存されます
+- Windows では都度訓練する方式（約10秒で完了）
 
 ### 2. evaluate_iris.scala
 
-**注意:** このスクリプトは保存されたモデルを読み込む前提のため、Windows 環境では使用できません。
-代わりに Jupyter Notebook（`notebooks/iris_exploration.ipynb`）を使用してください。
+保存済みの Iris モデルを評価します（Linux/Mac のみ）。
+
+**使用方法:**
+
+```bash
+# Scalaスクリプトとして実行（Linux/Mac）
+scala scripts/evaluate_iris.scala [model_path] [data_path]
+```
+
+**パラメータ:**
+- `model_path` (オプション): モデルファイルのパス（デフォルト: `model/iris_model`）
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/iris.csv`）
+
+**出力:**
+- Accuracy（精度）
+- Weighted Precision（適合率）
+- Weighted Recall（再現率）
+- F1 Score
+- 予測結果のサンプル
+
+**注意:** Windows 環境では使用できません。代わりに Jupyter Notebook（`notebooks/iris_exploration.ipynb`）を使用してください。
 
 ## 実行例
 
@@ -69,13 +92,17 @@ Training Completed Successfully
 
 ## 注意事項
 
-### Windows 環境での制限
+### OS ごとの動作の違い
 
-Windows 環境では Hadoop の `winutils.exe` の問題により、モデルの保存・読み込みができません。
+**Linux/Mac 環境:**
+- ✅ モデルの保存・読み込みが可能
+- ✅ `train_iris.scala` でモデルが自動保存される
+- ✅ `evaluate_iris.scala` で保存済みモデルを評価可能
 
-**現在の仕様:**
-- モデルは都度訓練する方式（約10秒で完了）
-- 永続化が必要な場合は WSL、Docker、または Linux/Mac 環境を使用
+**Windows 環境:**
+- ❌ モデルの保存・読み込みが無効化（Hadoop の `winutils.exe` 問題）
+- ✅ モデルの訓練と評価は正常に動作（約10秒で完了）
+- ⚠️ `evaluate_iris.scala` は使用不可（代わりに Jupyter Notebook を使用）
 
 ### 必要な環境
 
