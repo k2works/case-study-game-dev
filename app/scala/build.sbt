@@ -18,7 +18,7 @@ lazy val root = project
       "-Xfatal-warnings"
     ),
 
-    // 依存ライブラリ
+    // 依存ライブラリ (すべて Scala 2.13 版を使用)
     libraryDependencies ++= Seq(
       // Spark Core と MLlib
       "org.apache.spark" %% "spark-core" % sparkVersion,
