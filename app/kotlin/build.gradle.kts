@@ -176,6 +176,36 @@ tasks.register<JavaExec>("evaluateSurvived") {
     )
 }
 
+tasks.register<JavaExec>("trainBoston") {
+    group = "ml"
+    description = "Train Boston housing price prediction model"
+    dependsOn("classes")
+
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file("script/train_boston.kts").absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
+}
+
+tasks.register<JavaExec>("evaluateBoston") {
+    group = "ml"
+    description = "Evaluate Boston housing price prediction model"
+    dependsOn("classes")
+
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file("script/evaluate_boston.kts").absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
+}
+
 // 汎用スクリプト実行タスク
 tasks.register<JavaExec>("runScript") {
     group = "ml"
