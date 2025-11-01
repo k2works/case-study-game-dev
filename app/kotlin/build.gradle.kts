@@ -40,6 +40,10 @@ dependencies {
     implementation(kotlin("scripting-dependencies"))
     implementation(kotlin("scripting-dependencies-maven"))
 
+    // Kotlin Compiler for script execution (added to implementation for simplicity)
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.21")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.21")
+
     // テスト
     testImplementation(kotlin("test"))
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
@@ -80,45 +84,82 @@ application {
 }
 
 // Kotlin スクリプト実行タスク
+// Note: Kotlin コンパイラを使用してスクリプトを実行します
+
 tasks.register<JavaExec>("trainIris") {
     group = "ml"
     description = "Train Iris classification model"
+    dependsOn("classes")
+
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
-    args("script/train_iris.kts")
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file("script/train_iris.kts").absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
 }
 
 tasks.register<JavaExec>("evaluateIris") {
     group = "ml"
     description = "Evaluate Iris classification model"
+    dependsOn("classes")
+
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
-    args("script/evaluate_iris.kts")
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file("script/evaluate_iris.kts").absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
 }
 
 tasks.register<JavaExec>("trainCinema") {
     group = "ml"
     description = "Train Cinema box office prediction model"
+    dependsOn("classes")
+
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
-    args("script/train_cinema.kts")
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file("script/train_cinema.kts").absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
 }
 
 tasks.register<JavaExec>("evaluateCinema") {
     group = "ml"
     description = "Evaluate Cinema box office prediction model"
+    dependsOn("classes")
+
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
-    args("script/evaluate_cinema.kts")
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file("script/evaluate_cinema.kts").absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
 }
 
 // 汎用スクリプト実行タスク
 tasks.register<JavaExec>("runScript") {
     group = "ml"
     description = "Run a Kotlin script (use -Pscript=path/to/script.kts)"
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
+    dependsOn("classes")
 
     val scriptPath = project.findProperty("script") as String? ?: "script/train_iris.kts"
-    args(scriptPath)
+
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+    args = listOf(
+        "-script",
+        file(scriptPath).absolutePath,
+        "-classpath",
+        sourceSets["main"].runtimeClasspath.asPath
+    )
 }
