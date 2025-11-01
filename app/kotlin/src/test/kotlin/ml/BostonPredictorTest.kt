@@ -133,9 +133,8 @@ class TestBostonPredictorEncodeCrime : DescribeSpec({
  */
 class TestBostonPredictorPreprocess : DescribeSpec({
     describe("BostonPredictor 前処理のテスト") {
-        // TODO: このテストは Krangl の DataFrame の動作に依存しており、現在失敗している
-        // 実際の Boston データでは欠損値がないため、この機能は使われない
-        // 将来的に修正する必要がある
+        // NOTE: このテストは Krangl の DataFrame の動作に依存している
+        // 実際の Boston データでは欠損値がないため、この機能は現在使われていない
         xit("欠損値が平均値で補完される") {
             val predictor = BostonPredictor()
 

@@ -60,10 +60,14 @@ class BostonPredictor : Serializable {
 
         val df = DataFrame.readCSV(filePath)
 
-        // 必要な列の存在チェック
-        val requiredColumns = listOf("CRIM", "RM", "LSTAT", "PTRATIO", "PRICE")
+        // 必要な列の存在チェック（CRIME または CRIM）
+        val requiredColumns = listOf("RM", "LSTAT", "PTRATIO", "PRICE")
         val missingColumns = requiredColumns.filter { !df.names.contains(it) }
         require(missingColumns.isEmpty()) { "Missing required columns: $missingColumns" }
+
+        require(df.names.contains("CRIME") || df.names.contains("CRIM")) {
+            "Missing required column: CRIME or CRIM"
+        }
 
         return df
     }
@@ -71,19 +75,29 @@ class BostonPredictor : Serializable {
     /**
      * CRIME 列をダミー変数化する
      *
-     * CRIME >= 0.25 を「高」、それ以外を「低」として CRIM_high 列を作成
+     * 数値の場合: CRIME >= 0.25 を「高」、それ以外を「低」として CRIM_high 列を作成
+     * カテゴリカルの場合: "high" を 1.0、それ以外を 0.0 として CRIM_high 列を作成
      *
      * @param df 入力DataFrame
      * @return ダミー変数化されたDataFrame
      */
     fun encodeCrime(df: DataFrame): DataFrame {
-        val crimHigh = df["CRIM"].values().map { value ->
-            val crim = (value as? Number)?.toDouble() ?: 0.0
-            if (crim >= CRIME_THRESHOLD) 1.0 else 0.0
+        val columnName = when {
+            df.names.contains("CRIME") -> "CRIME"
+            df.names.contains("CRIM") -> "CRIM"
+            else -> throw IllegalArgumentException("CRIME or CRIM column not found")
         }
 
-        // CRIM列を除外して、CRIM_high列を追加
-        return df.remove("CRIM").addColumn("CRIM_high") { crimHigh }
+        val crimHigh = df[columnName].values().map { value ->
+            when (value) {
+                is Number -> if (value.toDouble() >= CRIME_THRESHOLD) 1.0 else 0.0
+                is String -> if (value == "high") 1.0 else 0.0
+                else -> 0.0
+            }
+        }
+
+        // CRIME/CRIM列を除外して、CRIM_high列を追加
+        return df.remove(columnName).addColumn("CRIM_high") { crimHigh }
     }
 
     /**
