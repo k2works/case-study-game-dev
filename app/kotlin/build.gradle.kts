@@ -19,6 +19,9 @@ dependencies {
     implementation("com.github.haifengl:smile-core:3.0.2")
     implementation("com.github.haifengl:smile-kotlin:3.0.2")
 
+    // BLAS implementation for linear algebra (required for OLS regression)
+    implementation("org.bytedeco:openblas-platform:0.3.21-1.5.8")
+
     // データ処理
     implementation("com.github.holgerbrandl:krangl:0.18.4")
 
@@ -31,6 +34,11 @@ dependencies {
 
     // Kotlin Scripting
     implementation(kotlin("script-runtime"))
+    implementation(kotlin("scripting-common"))
+    implementation(kotlin("scripting-jvm"))
+    implementation(kotlin("scripting-jvm-host"))
+    implementation(kotlin("scripting-dependencies"))
+    implementation(kotlin("scripting-dependencies-maven"))
 
     // テスト
     testImplementation(kotlin("test"))
@@ -86,6 +94,22 @@ tasks.register<JavaExec>("evaluateIris") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
     args("script/evaluate_iris.kts")
+}
+
+tasks.register<JavaExec>("trainCinema") {
+    group = "ml"
+    description = "Train Cinema box office prediction model"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
+    args("script/train_cinema.kts")
+}
+
+tasks.register<JavaExec>("evaluateCinema") {
+    group = "ml"
+    description = "Evaluate Cinema box office prediction model"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("kotlin.script.experimental.jvm.BasicJvmScriptEvaluator")
+    args("script/evaluate_cinema.kts")
 }
 
 // 汎用スクリプト実行タスク
