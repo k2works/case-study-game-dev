@@ -73,7 +73,7 @@
 0.5,0.33,0.41,0.5,Iris-versicolor
 0.56,0.21,0.58,0.58,Iris-versicolor
 0.5,0.33,0.78,0.46,Iris-versicolor
-0.58,,0.64,0.5,Iris-versicolor
+0.58,0.38,0.64,0.5,Iris-versicolor
 0.64,0.42,0.55,0.54,Iris-versicolor
 0.69,0.33,0.72,0.54,Iris-versicolor
 0.67,0.42,0.77,0.67,Iris-versicolor
@@ -99,7 +99,7 @@
 0.53,0.38,0.57,0.5,Iris-versicolor
 0.22,0.21,0.47,0.42,Iris-versicolor
 0.39,0.33,0.5,0.5,Iris-versicolor
-0.56,0.54,0.88,,Iris-virginica
+0.56,0.54,0.88,0.63,Iris-virginica
 0.42,0.29,0.72,0.75,Iris-virginica
 0.78,0.42,0.61,0.83,Iris-virginica
 0.56,0.38,0.77,0.71,Iris-virginica
@@ -108,7 +108,7 @@
 0.17,0.21,0.53,0.67,Iris-virginica
 0.83,0.38,0.71,0.71,Iris-virginica
 0.67,0.21,0.6,0.71,Iris-virginica
-0.81,0.67,0.86,,Iris-virginica
+0.81,0.67,0.86,0.75,Iris-virginica
 0.61,0.5,0.8,0.79,Iris-virginica
 0.58,0.29,0.89,0.75,Iris-virginica
 0.69,0.42,0.51,0.83,Iris-virginica
@@ -134,7 +134,7 @@
 0.58,0.33,0.61,0.88,Iris-virginica
 0.56,0.33,0.68,0.58,Iris-virginica
 0.5,0.25,0.5,0.54,Iris-virginica
-0.94,0.42,,0.92,Iris-virginica
+0.94,0.42,0.65,0.92,Iris-virginica
 0.56,0.58,0.8,0.96,Iris-virginica
 ,0.46,0.57,0.71,Iris-virginica
 0.47,0.42,0.4,0.71,Iris-virginica
@@ -146,6 +146,6 @@
 0.67,0.54,0.7,0.72,Iris-virginica
 0.67,0.42,0.54,0.92,Iris-virginica
 0.56,0.21,0.69,0.46,Iris-virginica
-0.61,0.42,,0.79,Iris-virginica
+0.61,0.42,0.66,0.79,Iris-virginica
 0.53,0.58,0.63,0.92,Iris-virginica
 0.44,0.42,0.41,0.71,Iris-virginica

@@ -1,4 +1,4 @@
-val scala3Version = "3.3.1"
+val scala213Version = "2.13.12"
 val sparkVersion = "3.5.0"
 
 lazy val root = project
@@ -7,9 +7,9 @@ lazy val root = project
     name := "ml-tdd-scala",
     version := "0.1.0-SNAPSHOT",
 
-    scalaVersion := scala3Version,
+    scalaVersion := scala213Version,
 
-    // Scala 3 の設定
+    // Scala の設定
     scalacOptions ++= Seq(
       "-encoding", "UTF-8",
       "-feature",
@@ -18,7 +18,7 @@ lazy val root = project
       "-Xfatal-warnings"
     ),
 
-    // 依存ライブラリ (すべて Scala 2.13 版を使用)
+    // 依存ライブラリ
     libraryDependencies ++= Seq(
       // Spark Core と MLlib
       "org.apache.spark" %% "spark-core" % sparkVersion,
@@ -34,11 +34,24 @@ lazy val root = project
       "io.circe" %% "circe-core" % "0.14.6",
       "io.circe" %% "circe-generic" % "0.14.6",
       "io.circe" %% "circe-parser" % "0.14.6"
-    ).map(_.cross(CrossVersion.for3Use2_13)),
+    ),
+
+    // Java 17 でのモジュール制限を回避（runとtestの両方で必要）
+    fork := true,
+    javaOptions ++= Seq(
+      "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+      "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+      "--add-opens=java.base/java.nio=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens=java.base/java.util=ALL-UNNAMED"
+    ),
 
     // Spark のログレベルを抑制
-    Test / fork := true,
     Test / javaOptions += "-Dspark.master=local[2]",
     Test / javaOptions += "-Dspark.ui.enabled=false",
-    Test / javaOptions += "-Dspark.driver.bindAddress=127.0.0.1"
+    Test / javaOptions += "-Dspark.driver.bindAddress=127.0.0.1",
+
+    // Hadoop の Windows 問題を回避
+    Test / envVars := Map("HADOOP_HOME" -> "C:\\")
   )
