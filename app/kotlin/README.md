@@ -101,6 +101,12 @@ cd app/kotlin
 # Survived 生存予測モデルの評価
 ./gradlew evaluateSurvived
 
+# Boston 住宅価格予測モデルの訓練
+./gradlew trainBoston
+
+# Boston 住宅価格予測モデルの評価
+./gradlew evaluateBoston
+
 # 汎用スクリプト実行
 ./gradlew runScript -Pscript=script/train_cinema.kts
 ```
@@ -119,6 +125,7 @@ kotlinc -script script/train_cinema.kts -classpath build/libs/ml-tdd-kotlin-1.0-
 - `notebook/iris_exploration.ipynb` - Iris データセットの探索と視覚化（分類問題）
 - `notebook/cinema_exploration.ipynb` - Cinema データセットの探索と視覚化（回帰問題）
 - `notebook/survived_exploration.ipynb` - Survived データセットの探索と視覚化（二値分類）
+- `notebook/boston_exploration.ipynb` - Boston データセットの探索と視覚化（回帰問題・特徴量エンジニアリング）
 
 #### Notebook の機能
 
@@ -161,6 +168,22 @@ kotlinc -script script/train_cinema.kts -classpath build/libs/ml-tdd-kotlin-1.0-
   - モデル評価指標（正解率、Precision、Recall、F1 Score）
   - クラス別の性能評価（死亡/生存）
   - データ前処理（Pclass ごとの Age 補完、Sex カラムのエンコード）
+
+**Boston データセット探索用 Notebook**（回帰問題・特徴量エンジニアリング）には以下の機能が含まれています：
+
+- **データの可視化**
+  - ヒストグラム：住宅価格、部屋数、犯罪率の分布を表示
+  - 散布図：各特徴量（RM, LSTAT, PTRATIO）と価格の関係を可視化
+  - 予測 vs 実測：回帰モデルの性能を視覚的に確認
+  - 誤差分析：予測誤差の分布をヒストグラムで表示
+
+- **統計分析**
+  - 基本統計量（最小値、最大値、平均値、中央値）
+  - 相関分析：各特徴量と価格の相関係数を計算
+  - モデル評価指標（R², MAE, RMSE）
+  - 価格帯別の精度分析
+  - データ前処理（CRIME ダミー変数化、外れ値除外）
+  - 特徴量エンジニアリング（2乗項、交互作用項、標準化）
 
 #### 実行方法
 
@@ -210,18 +233,22 @@ ml-tdd-kotlin/
 ├── model/                       # 訓練済みモデルの保存先
 │   ├── iris_model.ser
 │   ├── cinema_model.ser
-│   └── survived_model.ser
+│   ├── survived_model.ser
+│   └── boston_model.bin
 ├── script/                      # モデル訓練・評価スクリプト
 │   ├── train_iris.kts
 │   ├── evaluate_iris.kts
 │   ├── train_cinema.kts
 │   ├── evaluate_cinema.kts
 │   ├── train_survived.kts
-│   └── evaluate_survived.kts
+│   ├── evaluate_survived.kts
+│   ├── train_boston.kts
+│   └── evaluate_boston.kts
 ├── notebook/                    # Kotlin Notebook
 │   ├── iris_exploration.ipynb
 │   ├── cinema_exploration.ipynb
-│   └── survived_exploration.ipynb
+│   ├── survived_exploration.ipynb
+│   └── boston_exploration.ipynb
 ├── build.gradle.kts
 ├── settings.gradle.kts
 ├── detekt.yml
