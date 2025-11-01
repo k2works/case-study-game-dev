@@ -54,7 +54,7 @@ sudo mv cs /usr/local/bin/
 
 ```bash
 # Scala 2.13 用の Almond をインストール
-cs launch almond:0.13.14 --scala 2.13.12 -- --install
+coursier launch --scala-version 2.13.12 almond -- --install --force
 
 # インストールされたカーネルを確認
 jupyter kernelspec list
@@ -63,9 +63,42 @@ jupyter kernelspec list
 **出力例:**
 ```
 Available kernels:
-  scala213    /Users/username/Library/Jupyter/kernels/scala213
+  scala       C:\Users\username\AppData\Roaming\jupyter\kernels\scala
   python3     /usr/local/share/jupyter/kernels/python3
 ```
+
+### 3.1. Java 17 モジュールアクセスの設定（Windows のみ）
+
+Windows 環境で Java 17 を使用している場合、Spark が正常に動作するようにカーネル設定を編集する必要があります。
+
+**カーネル設定ファイルの場所:**
+- Windows: `%APPDATA%\jupyter\kernels\scala\kernel.json`
+- Mac/Linux: `~/.local/share/jupyter/kernels/scala/kernel.json`
+
+**編集内容:**
+
+`kernel.json` ファイルを開き、`argv` 配列の `"java"` の後に以下の行を追加：
+
+```json
+{
+  "argv": [
+    "java",
+    "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+    "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+    "--add-opens=java.base/java.nio=ALL-UNNAMED",
+    "--add-opens=java.base/java.lang=ALL-UNNAMED",
+    "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+    "--add-opens=java.base/java.util=ALL-UNNAMED",
+    "-cp",
+    "...",
+    "..."
+  ],
+  "display_name": "Scala",
+  "language": "scala"
+}
+```
+
+この設定により、Spark が Java のモジュールにアクセスできるようになります。
 
 ### 4. Spark 依存関係の追加
 
