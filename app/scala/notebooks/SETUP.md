@@ -69,18 +69,19 @@ Available kernels:
 
 ### 4. Spark 依存関係の追加
 
-Notebook 内で Spark を使用するため、最初のセルで以下を実行：
+**重要:** Almond カーネルでは、Spark の依存関係が自動的にロードされません。Notebook を使用する際は、**最初のセル**で必ず ivy インポートを実行してください。
+
+`iris_exploration.ipynb` には既に最初のセルに以下が含まれています：
 
 ```scala
+// Spark 依存関係の読み込み
 import $ivy.`org.apache.spark::spark-sql:3.5.0`
 import $ivy.`org.apache.spark::spark-mllib:3.5.0`
 
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.ml._
-import org.apache.spark.ml.classification._
-import org.apache.spark.ml.feature._
-import org.apache.spark.ml.evaluation._
+println("Spark 依存関係が正常にロードされました")
 ```
+
+このセルを実行すると、Spark のライブラリがダウンロードされ、以降のセルで Spark API が使用可能になります。
 
 ### 5. Notebook の起動
 
@@ -135,8 +136,11 @@ val spark = SparkSession.builder()
 
 1. Jupyter Notebook/Lab を起動
 2. `notebooks/iris_exploration.ipynb` を開く
-3. カーネルとして "Scala 2.13" を選択
-4. セルを順番に実行
+3. カーネルとして "Scala 2.13" または "Scala" を選択
+4. **最初のセル（Spark 依存関係のロード）を必ず実行**
+5. 以降のセルを順番に実行
+
+**注意:** 最初のセルの実行時に Spark ライブラリのダウンロードが行われるため、初回は数分かかる場合があります。
 
 ## 代替手段
 
