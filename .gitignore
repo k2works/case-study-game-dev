@@ -172,3 +172,8 @@ app/kotlin/test-output/
 
 # IDE - misc files
 .idea/misc.xml
+### Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+*.ipynb[_-]checkpoints
+Untitled*.ipynb
