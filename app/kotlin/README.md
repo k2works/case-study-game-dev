@@ -95,6 +95,12 @@ cd app/kotlin
 # Cinema 興行収入予測モデルの評価
 ./gradlew evaluateCinema
 
+# Survived 生存予測モデルの訓練
+./gradlew trainSurvived
+
+# Survived 生存予測モデルの評価
+./gradlew evaluateSurvived
+
 # 汎用スクリプト実行
 ./gradlew runScript -Pscript=script/train_cinema.kts
 ```
@@ -112,6 +118,7 @@ kotlinc -script script/train_cinema.kts -classpath build/libs/ml-tdd-kotlin-1.0-
 
 - `notebook/iris_exploration.ipynb` - Iris データセットの探索と視覚化（分類問題）
 - `notebook/cinema_exploration.ipynb` - Cinema データセットの探索と視覚化（回帰問題）
+- `notebook/survived_exploration.ipynb` - Survived データセットの探索と視覚化（二値分類）
 
 #### Notebook の機能
 
@@ -140,6 +147,20 @@ kotlinc -script script/train_cinema.kts -classpath build/libs/ml-tdd-kotlin-1.0-
   - 基本統計量（最小値、最大値、平均値、中央値、標準偏差）
   - モデル評価指標（R², MAE, RMSE）
   - 予測誤差の分析
+
+**Survived データセット探索用 Notebook**（二値分類）には以下の機能が含まれています：
+
+- **データの可視化**
+  - ヒストグラム：Age の分布を表示
+  - 棒グラフ：Pclass の分布とクラス別正解率を表示
+  - 散布図：Age vs Survived、Pclass vs Age の関係を可視化
+  - 混同行列：予測精度の詳細分析
+
+- **統計分析**
+  - 基本統計量（最小値、最大値、平均値、中央値）
+  - モデル評価指標（正解率、Precision、Recall、F1 Score）
+  - クラス別の性能評価（死亡/生存）
+  - データ前処理（Pclass ごとの Age 補完、Sex カラムのエンコード）
 
 #### 実行方法
 
@@ -184,18 +205,23 @@ ml-tdd-kotlin/
 │               ├── SmileBasicsTest.kt
 │               ├── DataLoaderTest.kt
 │               ├── IrisClassifierTest.kt
-│               └── CinemaPredictorTest.kt
+│               ├── CinemaPredictorTest.kt
+│               └── SurvivedClassifierTest.kt
 ├── model/                       # 訓練済みモデルの保存先
 │   ├── iris_model.ser
-│   └── cinema_model.ser
+│   ├── cinema_model.ser
+│   └── survived_model.ser
 ├── script/                      # モデル訓練・評価スクリプト
 │   ├── train_iris.kts
 │   ├── evaluate_iris.kts
 │   ├── train_cinema.kts
-│   └── evaluate_cinema.kts
+│   ├── evaluate_cinema.kts
+│   ├── train_survived.kts
+│   └── evaluate_survived.kts
 ├── notebook/                    # Kotlin Notebook
 │   ├── iris_exploration.ipynb
-│   └── cinema_exploration.ipynb
+│   ├── cinema_exploration.ipynb
+│   └── survived_exploration.ipynb
 ├── build.gradle.kts
 ├── settings.gradle.kts
 ├── detekt.yml
