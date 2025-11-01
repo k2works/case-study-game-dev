@@ -74,14 +74,16 @@ Available kernels:
 `iris_exploration.ipynb` には既に最初のセルに以下が含まれています：
 
 ```scala
-// Spark 依存関係の読み込み
-import $ivy.`org.apache.spark::spark-sql:3.5.0`
-import $ivy.`org.apache.spark::spark-mllib:3.5.0`
+// Spark 依存関係の読み込み（Scala 2.13 を明示的に指定）
+import $ivy.`org.apache.spark:spark-sql_2.13:3.5.0`
+import $ivy.`org.apache.spark:spark-mllib_2.13:3.5.0`
 
 println("Spark 依存関係が正常にロードされました")
 ```
 
-このセルを実行すると、Spark のライブラリがダウンロードされ、以降のセルで Spark API が使用可能になります。
+**注意点:**
+- Almond カーネルが Scala 3 でインストールされている場合でも、Spark は Scala 2.13 でビルドされているため、`_2.13` サフィックスを明示的に指定する必要があります
+- このセルを実行すると、Spark のライブラリがダウンロードされ、以降のセルで Spark API が使用可能になります
 
 ### 5. Notebook の起動
 
