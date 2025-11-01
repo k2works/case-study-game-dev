@@ -21,6 +21,7 @@
 - **データ処理**: Krangl 0.18.4
 - **データ可視化**: Lets-Plot（Kotlin Notebook で自動管理）
 - **Web API**: Ktor 2.3.7
+- **API ドキュメント**: Swagger UI / OpenAPI 3.0.3
 - **テスト**: JUnit 5 + Kotest 5.8.0
 - **品質管理**: Detekt 1.23.4, Kover 0.7.5
 
@@ -76,8 +77,52 @@ cd app/kotlin
 ### アプリケーションの実行
 
 ```bash
-# アプリケーションを実行
+# Web API サーバーを起動
 ./gradlew run
+```
+
+サーバーが起動すると、以下のエンドポイントが利用可能になります：
+
+#### API エンドポイント
+
+- **API 情報**: `GET http://localhost:8080/`
+- **ヘルスチェック**: `GET http://localhost:8080/health`
+- **Iris 品種予測**: `POST http://localhost:8080/iris`
+- **Cinema 興行収入予測**: `POST http://localhost:8080/cinema`
+- **Survived 生存予測**: `POST http://localhost:8080/survived`
+- **Boston 住宅価格予測**: `POST http://localhost:8080/boston`
+
+#### API ドキュメント
+
+- **Swagger UI**: http://localhost:8080/swagger-ui
+  - インタラクティブな API ドキュメント
+  - Try-it-out 機能で実際に API を試すことが可能
+
+- **OpenAPI ドキュメント**: http://localhost:8080/openapi
+  - ReDoc 形式の API ドキュメント
+
+#### リクエスト例
+
+```bash
+# Iris 品種予測
+curl -X POST http://localhost:8080/iris \
+  -H "Content-Type: application/json" \
+  -d '{"sepalLength":5.1,"sepalWidth":3.5,"petalLength":1.4,"petalWidth":0.2}'
+
+# Cinema 興行収入予測
+curl -X POST http://localhost:8080/cinema \
+  -H "Content-Type: application/json" \
+  -d '{"sns1":500,"sns2":300,"actor":70,"original":1}'
+
+# Survived 生存予測
+curl -X POST http://localhost:8080/survived \
+  -H "Content-Type: application/json" \
+  -d '{"pclass":3,"age":22,"sex":"male"}'
+
+# Boston 住宅価格予測
+curl -X POST http://localhost:8080/boston \
+  -H "Content-Type: application/json" \
+  -d '{"rm":6.5,"lstat":4.98,"ptratio":15.3}'
 ```
 
 ### モデルの訓練と評価
@@ -209,18 +254,26 @@ ml-tdd-kotlin/
 ├── src/
 │   ├── main/
 │   │   ├── kotlin/
-│   │   │   └── ml/              # 機械学習モデル本体
+│   │   │   └── ml/              # 機械学習モデルと API
 │   │   │       ├── DataLoader.kt
 │   │   │       ├── IrisClassifier.kt
 │   │   │       ├── CinemaPredictor.kt
 │   │   │       ├── SurvivedClassifier.kt
-│   │   │       └── BostonPredictor.kt
+│   │   │       ├── BostonPredictor.kt
+│   │   │       └── api/         # Web API（Chapter 8）
+│   │   │           ├── Main.kt           # アプリケーションエントリーポイント
+│   │   │           ├── Application.kt    # Ktor ルーティング設定
+│   │   │           ├── Models.kt         # リクエスト/レスポンスモデル
+│   │   │           ├── Domain.kt         # ドメイン層（モデルロード・予測）
+│   │   │           └── Service.kt        # サービス層（ビジネスロジック）
 │   │   └── resources/
-│   │       └── data/            # データセット
-│   │           ├── iris.csv
-│   │           ├── cinema.csv
-│   │           ├── Survived.csv
-│   │           └── Boston.csv
+│   │       ├── data/            # データセット
+│   │       │   ├── iris.csv
+│   │       │   ├── cinema.csv
+│   │       │   ├── Survived.csv
+│   │       │   └── Boston.csv
+│   │       └── openapi/         # OpenAPI 仕様
+│   │           └── documentation.yaml
 │   └── test/
 │       └── kotlin/
 │           └── ml/              # テストコード
@@ -229,12 +282,16 @@ ml-tdd-kotlin/
 │               ├── DataLoaderTest.kt
 │               ├── IrisClassifierTest.kt
 │               ├── CinemaPredictorTest.kt
-│               └── SurvivedClassifierTest.kt
+│               ├── SurvivedClassifierTest.kt
+│               └── api/         # API テスト（Chapter 8）
+│                   ├── ModelsTest.kt
+│                   ├── DomainTest.kt
+│                   ├── ServiceTest.kt
+│                   └── ApplicationTest.kt
 ├── model/                       # 訓練済みモデルの保存先
-│   ├── iris_model.ser
+│   ├── iris.bin
 │   ├── cinema_model.ser
-│   ├── survived_model.ser
-│   └── boston_model.bin
+│   └── survived_model.ser
 ├── script/                      # モデル訓練・評価スクリプト
 │   ├── train_iris.kts
 │   ├── evaluate_iris.kts
@@ -271,6 +328,8 @@ ml-tdd-kotlin/
 - **データ前処理**: 欠損値処理、外れ値除外、特徴量エンジニアリング
 - **モデル評価**: 正解率、R²、MAE、RMSE の理解
 - **Web API 開発**: Ktor による機械学習 API の構築
+- **3層アーキテクチャ**: Application/Service/Domain の設計パターン
+- **API ドキュメント**: Swagger UI / OpenAPI を使った API ドキュメントの自動生成
 
 ## 📊 品質指標
 
@@ -285,6 +344,8 @@ ml-tdd-kotlin/
 - [Krangl データ処理ライブラリ](https://github.com/holgerbrandl/krangl)
 - [Lets-Plot 可視化ライブラリ](https://lets-plot.org/)
 - [Ktor Web フレームワーク](https://ktor.io/)
+- [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- [OpenAPI Specification](https://swagger.io/specification/)
 
 ## 📝 ライセンス
 

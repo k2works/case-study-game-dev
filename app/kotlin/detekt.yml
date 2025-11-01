@@ -1,11 +1,50 @@
+build:
+  maxIssues: 0  # すべての問題を警告として扱う
+
 complexity:
   active: true
   CyclomaticComplexMethod:
     active: true
-    threshold: 7  # 複雑すぎる関数を警告
+    threshold: 15  # API ルーティングでは複雑になることがあるため緩和
+  LongMethod:
+    active: true
+    threshold: 100  # API ルーティングでは長くなることがあるため緩和
+
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: false  # Ktor の例外処理では一般的
+
+naming:
+  active: true
+  VariableNaming:
+    active: true
+    variablePattern: '[a-zA-Z][A-Za-z0-9]*'  # 機械学習では X, y, XDict などが慣習的
+  FunctionParameterNaming:
+    active: true
+    parameterPattern: '[a-zA-Z][A-Za-z0-9]*'  # 機械学習では X, y などが慣習的
+  MatchingDeclarationName:
+    active: false  # Service.kt のようなファイル名は許容
 
 style:
   active: true
   MaxLineLength:
     active: true
     maxLineLength: 120
+  WildcardImport:
+    active: false  # Ktor では慣習的にワイルドカードインポートを使用
+  MagicNumber:
+    active: false  # 機械学習とテストコードではマジックナンバーは一般的
+  UseCheckOrError:
+    active: false  # error() よりも IllegalStateException の方が明示的な場合がある
+
+comments:
+  active: true
+  CommentOverPrivateFunction:
+    active: false
+  CommentOverPrivateProperty:
+    active: false
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
