@@ -26,29 +26,13 @@ scala scripts/train_iris.scala [data_path] [model_path]
 **出力:**
 - 訓練データとテストデータの件数
 - テストセットでの精度（Accuracy）
-- 保存されたモデル（Windows環境では保存不可の場合あり）
+
+**注意:** モデルの永続化機能は Windows の制約により削除されました。モデルは都度訓練する方式となっています（約10秒で完了）。
 
 ### 2. evaluate_iris.scala
 
-保存済みのIrisモデルを評価します。
-
-**使用方法:**
-
-```bash
-# Scalaスクリプトとして実行
-scala scripts/evaluate_iris.scala [model_path] [data_path]
-```
-
-**パラメータ:**
-- `model_path` (オプション): モデルファイルのパス（デフォルト: `model/iris_model`）
-- `data_path` (オプション): データファイルのパス（デフォルト: `data/iris.csv`）
-
-**出力:**
-- Accuracy（精度）
-- Weighted Precision（適合率）
-- Weighted Recall（再現率）
-- F1 Score
-- 予測結果のサンプル
+**注意:** このスクリプトは保存されたモデルを読み込む前提のため、Windows 環境では使用できません。
+代わりに Jupyter Notebook（`notebooks/iris_exploration.ipynb`）を使用してください。
 
 ## 実行例
 
@@ -82,43 +66,16 @@ Training Completed Successfully
 ==================================================
 ```
 
-### 評価
-
-```bash
-$ scala scripts/evaluate_iris.scala
-==================================================
-Iris Model Evaluation
-==================================================
-
-Loading data from data/iris.csv...
-Loaded 150 records
-
-Preparing features...
-Prepared 148 records
-
-Loading model from model/iris_model...
-Model loaded successfully
-
-Making predictions...
-Accuracy: 97.83%
-Weighted Precision: 97.92%
-Weighted Recall: 97.83%
-F1 Score: 97.85%
-
-Sample predictions:
-[予測結果のテーブル表示]
-```
 
 ## 注意事項
 
-### Windows環境でのモデル保存
+### Windows 環境での制限
 
-Windows環境では、Hadoopの`winutils.exe`が必要なため、モデルの保存・読み込みが失敗する場合があります。
+Windows 環境では Hadoop の `winutils.exe` の問題により、モデルの保存・読み込みができません。
 
-**回避策:**
-1. Linux/Mac環境で実行
-2. WSL (Windows Subsystem for Linux) を使用
-3. モデル保存機能を使用せず、訓練のみ実行
+**現在の仕様:**
+- モデルは都度訓練する方式（約10秒で完了）
+- 永続化が必要な場合は WSL、Docker、または Linux/Mac 環境を使用
 
 ### 必要な環境
 
