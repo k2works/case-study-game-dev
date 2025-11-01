@@ -32,6 +32,10 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
+    // Swagger UI / OpenAPI
+    implementation("io.ktor:ktor-server-swagger:2.3.7")
+    implementation("io.ktor:ktor-server-openapi:2.3.7")
+
     // Kotlin Scripting
     implementation(kotlin("script-runtime"))
     implementation(kotlin("scripting-common"))
@@ -80,7 +84,7 @@ koverReport {
 }
 
 application {
-    mainClass.set("ml.MainKt")
+    mainClass.set("ml.api.MainKt")
 }
 
 // Kotlin スクリプト実行タスク
@@ -93,11 +97,19 @@ tasks.register<JavaExec>("trainIris") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    // Windows のコマンドライン長制限を回避するため、クラスパスをファイルに書き出す
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/iris-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/train_iris.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -108,11 +120,18 @@ tasks.register<JavaExec>("evaluateIris") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/iris-eval-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/evaluate_iris.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -123,11 +142,19 @@ tasks.register<JavaExec>("trainCinema") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    // Windows のコマンドライン長制限を回避するため、クラスパスをファイルに書き出す
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/cinema-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/train_cinema.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -138,11 +165,18 @@ tasks.register<JavaExec>("evaluateCinema") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/cinema-eval-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/evaluate_cinema.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -153,11 +187,18 @@ tasks.register<JavaExec>("trainSurvived") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/survived-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/train_survived.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -168,11 +209,18 @@ tasks.register<JavaExec>("evaluateSurvived") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/survived-eval-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/evaluate_survived.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -183,11 +231,18 @@ tasks.register<JavaExec>("trainBoston") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/boston-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/train_boston.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -198,11 +253,18 @@ tasks.register<JavaExec>("evaluateBoston") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/boston-eval-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file("script/evaluate_boston.kts").absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
 
@@ -216,10 +278,17 @@ tasks.register<JavaExec>("runScript") {
 
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+
+    val classpathFile = file("${layout.buildDirectory.get().asFile}/tmp/runscript-classpath.txt")
+    doFirst {
+        classpathFile.parentFile.mkdirs()
+        classpathFile.writeText(sourceSets["main"].runtimeClasspath.asPath)
+    }
+
     args = listOf(
         "-script",
         file(scriptPath).absolutePath,
-        "-classpath",
-        sourceSets["main"].runtimeClasspath.asPath
+        "-cp",
+        "@${classpathFile.absolutePath}"
     )
 }
