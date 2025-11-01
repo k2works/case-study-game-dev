@@ -81,7 +81,11 @@ class IrisClassifierTest : StringSpec({
         predictions.size shouldBe 143
 
         // 予測結果が3種類のいずれか
-        predictions.all { it in listOf("setosa", "versicolor", "virginica", "Iris-setosa", "Iris-versicolor", "Iris-virginica") } shouldBe true
+        val validLabels = listOf(
+            "setosa", "versicolor", "virginica",
+            "Iris-setosa", "Iris-versicolor", "Iris-virginica"
+        )
+        predictions.all { it in validLabels } shouldBe true
     }
 
     "モデル性能の評価" {

@@ -13,6 +13,7 @@ import java.util.Properties
  *
  * @property maxDepth 決定木の最大深さ（デフォルト: 2）
  */
+@Suppress("VariableNaming", "FunctionParameterNaming")
 class IrisClassifier(val maxDepth: Int = 2) : Serializable {
 
     var model: DecisionTree? = null
@@ -22,6 +23,16 @@ class IrisClassifier(val maxDepth: Int = 2) : Serializable {
 
     init {
         require(maxDepth >= 1) { "maxDepth must be at least 1" }
+    }
+
+    companion object {
+        private const val serialVersionUID = 1L
+
+        // Feature indices
+        private const val SEPAL_LENGTH_IDX = 0
+        private const val SEPAL_WIDTH_IDX = 1
+        private const val PETAL_LENGTH_IDX = 2
+        private const val PETAL_WIDTH_IDX = 3
     }
 
     /**
@@ -48,10 +59,7 @@ class IrisClassifier(val maxDepth: Int = 2) : Serializable {
         val petalWidthIdx = header.indexOf("petal_width")
         val speciesIdx = header.indexOf("species")
 
-        require(sepalLengthIdx >= 0 && sepalWidthIdx >= 0 && petalLengthIdx >= 0 &&
-                petalWidthIdx >= 0 && speciesIdx >= 0) {
-            "Required columns not found in CSV"
-        }
+        requireAllColumnsPresent(sepalLengthIdx, sepalWidthIdx, petalLengthIdx, petalWidthIdx, speciesIdx)
 
         // データ行を読み込み（欠損値を含む行は除外）
         val validRows = mutableListOf<Pair<DoubleArray, String>>()
@@ -60,27 +68,14 @@ class IrisClassifier(val maxDepth: Int = 2) : Serializable {
             val values = lines[i].split(",")
             if (values.size != header.size) continue
 
-            try {
-                // 全ての値が空でないか確認
-                if (values[sepalLengthIdx].isBlank() || values[sepalWidthIdx].isBlank() ||
-                    values[petalLengthIdx].isBlank() || values[petalWidthIdx].isBlank() ||
-                    values[speciesIdx].isBlank()) {
-                    continue  // 欠損値を含む行はスキップ
-                }
-
-                val features = doubleArrayOf(
-                    values[sepalLengthIdx].toDouble(),
-                    values[sepalWidthIdx].toDouble(),
-                    values[petalLengthIdx].toDouble(),
-                    values[petalWidthIdx].toDouble()
-                )
-                val label = values[speciesIdx].trim()
-
-                validRows.add(Pair(features, label))
-            } catch (e: NumberFormatException) {
-                // パースエラーの行もスキップ
-                continue
-            }
+            parseDataRow(
+                values,
+                sepalLengthIdx,
+                sepalWidthIdx,
+                petalLengthIdx,
+                petalWidthIdx,
+                speciesIdx
+            )?.let { validRows.add(it) }
         }
 
         require(validRows.isNotEmpty()) { "No valid data found in CSV" }
@@ -111,10 +106,10 @@ class IrisClassifier(val maxDepth: Int = 2) : Serializable {
 
         // DataFrame を作成
         val data = DataFrame.of(
-            DoubleVector.of("sepal_length", X.map { it[0] }.toDoubleArray()),
-            DoubleVector.of("sepal_width", X.map { it[1] }.toDoubleArray()),
-            DoubleVector.of("petal_length", X.map { it[2] }.toDoubleArray()),
-            DoubleVector.of("petal_width", X.map { it[3] }.toDoubleArray()),
+            DoubleVector.of("sepal_length", X.map { it[SEPAL_LENGTH_IDX] }.toDoubleArray()),
+            DoubleVector.of("sepal_width", X.map { it[SEPAL_WIDTH_IDX] }.toDoubleArray()),
+            DoubleVector.of("petal_length", X.map { it[PETAL_LENGTH_IDX] }.toDoubleArray()),
+            DoubleVector.of("petal_width", X.map { it[PETAL_WIDTH_IDX] }.toDoubleArray()),
             IntVector.of("species", yInt)
         )
 
@@ -137,10 +132,10 @@ class IrisClassifier(val maxDepth: Int = 2) : Serializable {
         // DataFrameを作成（ダミーのspecies列を含める）
         val dummySpecies = IntArray(X.size) { 0 }  // ダミー値
         val testData = DataFrame.of(
-            DoubleVector.of("sepal_length", X.map { it[0] }.toDoubleArray()),
-            DoubleVector.of("sepal_width", X.map { it[1] }.toDoubleArray()),
-            DoubleVector.of("petal_length", X.map { it[2] }.toDoubleArray()),
-            DoubleVector.of("petal_width", X.map { it[3] }.toDoubleArray()),
+            DoubleVector.of("sepal_length", X.map { it[SEPAL_LENGTH_IDX] }.toDoubleArray()),
+            DoubleVector.of("sepal_width", X.map { it[SEPAL_WIDTH_IDX] }.toDoubleArray()),
+            DoubleVector.of("petal_length", X.map { it[PETAL_LENGTH_IDX] }.toDoubleArray()),
+            DoubleVector.of("petal_width", X.map { it[PETAL_WIDTH_IDX] }.toDoubleArray()),
             IntVector.of("species", dummySpecies)
         )
 
@@ -189,6 +184,61 @@ class IrisClassifier(val maxDepth: Int = 2) : Serializable {
         java.io.ObjectInputStream(java.io.FileInputStream(filePath)).use { ois ->
             @Suppress("UNCHECKED_CAST")
             model = ois.readObject() as DecisionTree
+        }
+    }
+
+    /**
+     * すべての必須列が存在するか確認する
+     */
+    @Suppress("LongParameterList")
+    private fun requireAllColumnsPresent(
+        sepalLengthIdx: Int,
+        sepalWidthIdx: Int,
+        petalLengthIdx: Int,
+        petalWidthIdx: Int,
+        speciesIdx: Int
+    ) {
+        require(sepalLengthIdx >= 0) { "sepal_length column not found" }
+        require(sepalWidthIdx >= 0) { "sepal_width column not found" }
+        require(petalLengthIdx >= 0) { "petal_length column not found" }
+        require(petalWidthIdx >= 0) { "petal_width column not found" }
+        require(speciesIdx >= 0) { "species column not found" }
+    }
+
+    /**
+     * CSV の 1 行をパースして特徴量とラベルのペアを返す
+     * 欠損値やパースエラーがある場合は null を返す
+     */
+    @Suppress("LongParameterList", "CyclomaticComplexMethod", "ComplexCondition")
+    private fun parseDataRow(
+        values: List<String>,
+        sepalLengthIdx: Int,
+        sepalWidthIdx: Int,
+        petalLengthIdx: Int,
+        petalWidthIdx: Int,
+        speciesIdx: Int
+    ): Pair<DoubleArray, String>? {
+        // 全ての値が空でないか確認
+        if (values[sepalLengthIdx].isBlank() ||
+            values[sepalWidthIdx].isBlank() ||
+            values[petalLengthIdx].isBlank() ||
+            values[petalWidthIdx].isBlank() ||
+            values[speciesIdx].isBlank()
+        ) {
+            return null
+        }
+
+        return try {
+            val features = doubleArrayOf(
+                values[sepalLengthIdx].toDouble(),
+                values[sepalWidthIdx].toDouble(),
+                values[petalLengthIdx].toDouble(),
+                values[petalWidthIdx].toDouble()
+            )
+            val label = values[speciesIdx].trim()
+            Pair(features, label)
+        } catch (e: NumberFormatException) {
+            null
         }
     }
 }

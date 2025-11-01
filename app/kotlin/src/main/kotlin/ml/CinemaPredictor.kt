@@ -20,6 +20,7 @@ import kotlin.math.sqrt
  *
  * @property model 訓練済みの線形回帰モデル（未訓練時は null）
  */
+@Suppress("VariableNaming", "FunctionParameterNaming", "TooGenericExceptionCaught", "SwallowedException")
 class CinemaPredictor : Serializable {
 
     var model: LinearModel? = null
@@ -44,6 +45,7 @@ class CinemaPredictor : Serializable {
      * @param removeOutliers 外れ値を除外するかどうか
      * @return 特徴量と目的変数のペア
      */
+    @Suppress("CyclomaticComplexMethod")
     fun loadData(filePath: String, removeOutliers: Boolean = true): Pair<Array<DoubleArray>, DoubleArray> {
         val file = File(filePath)
         require(file.exists()) { "File not found: $filePath" }
@@ -112,6 +114,7 @@ class CinemaPredictor : Serializable {
     /**
      * CSVの1行をパースしてデータ行に変換する
      */
+    @Suppress("CyclomaticComplexMethod", "LongParameterList", "ReturnCount")
     private fun parseDataRow(
         values: List<String>,
         sns1Idx: Int,
