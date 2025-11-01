@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: com.epam/parso:2.0.14">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/epam/parso/2.0.14/parso-2.0.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

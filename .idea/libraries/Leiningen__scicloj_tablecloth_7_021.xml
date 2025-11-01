@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: scicloj/tablecloth:7.021">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/scicloj/tablecloth/7.021/tablecloth-7.021.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,264 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ML TDD Project API",
+    "description": "機械学習モデルを提供する REST API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "開発サーバー"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "ヘルスチェック",
+        "description": "API サーバーの稼働状態を確認します",
+        "responses": {
+          "200": {
+            "description": "正常",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/predict/iris": {
+      "post": {
+        "summary": "Iris 品種分類",
+        "description": "アヤメの特徴量から品種を予測します",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["sepal-length", "sepal-width", "petal-length", "petal-width"],
+                "properties": {
+                  "sepal-length": {
+                    "type": "number",
+                    "description": "がく片の長さ (cm)",
+                    "example": 5.1
+                  },
+                  "sepal-width": {
+                    "type": "number",
+                    "description": "がく片の幅 (cm)",
+                    "example": 3.5
+                  },
+                  "petal-length": {
+                    "type": "number",
+                    "description": "花びらの長さ (cm)",
+                    "example": 1.4
+                  },
+                  "petal-width": {
+                    "type": "number",
+                    "description": "花びらの幅 (cm)",
+                    "example": 0.2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "予測成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "prediction": {
+                      "type": "string",
+                      "enum": ["setosa", "versicolor", "virginica"],
+                      "example": "setosa"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "不正な入力",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid input data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "予測エラー",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/predict/boston": {
+      "post": {
+        "summary": "Boston 住宅価格予測",
+        "description": "住宅の特徴から価格を予測します",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["CRIME", "ZN", "INDUS", "CHAS", "NOX", "RM", "AGE", "DIS", "RAD", "TAX", "PTRATIO", "B", "LSTAT"],
+                "properties": {
+                  "CRIME": {
+                    "type": "string",
+                    "enum": ["very_low", "low", "high"],
+                    "description": "犯罪率",
+                    "example": "low"
+                  },
+                  "ZN": {
+                    "type": "number",
+                    "description": "25,000平方フィート以上の住宅区画の割合",
+                    "example": 0
+                  },
+                  "INDUS": {
+                    "type": "number",
+                    "description": "非小売業の土地面積の割合",
+                    "example": 8.14
+                  },
+                  "CHAS": {
+                    "type": "number",
+                    "description": "チャールズ川ダミー変数 (1: 川沿い, 0: それ以外)",
+                    "example": 0
+                  },
+                  "NOX": {
+                    "type": "number",
+                    "description": "窒素酸化物濃度",
+                    "example": 0.538
+                  },
+                  "RM": {
+                    "type": "number",
+                    "description": "平均部屋数",
+                    "example": 5.95
+                  },
+                  "AGE": {
+                    "type": "number",
+                    "description": "1940年以前に建てられた持ち家の割合",
+                    "example": 82
+                  },
+                  "DIS": {
+                    "type": "number",
+                    "description": "5つのボストン雇用センターまでの距離",
+                    "example": 3.99
+                  },
+                  "RAD": {
+                    "type": "number",
+                    "description": "幹線道路へのアクセス指数",
+                    "example": 4
+                  },
+                  "TAX": {
+                    "type": "number",
+                    "description": "固定資産税率",
+                    "example": 307
+                  },
+                  "PTRATIO": {
+                    "type": "number",
+                    "description": "生徒と教師の比率",
+                    "example": 21
+                  },
+                  "B": {
+                    "type": "number",
+                    "description": "黒人居住者の割合",
+                    "example": 232.6
+                  },
+                  "LSTAT": {
+                    "type": "number",
+                    "description": "低所得者の割合",
+                    "example": 27.71
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "予測成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "prediction": {
+                      "type": "number",
+                      "description": "予測価格 ($1000単位)",
+                      "example": 24.5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "不正な入力",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid input data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "予測エラー",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
