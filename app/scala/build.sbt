@@ -51,6 +51,16 @@ lazy val root = project
       "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.3"
     ),
 
+    // Jackson バージョンを強制的に 2.15.3 にオーバーライド
+    dependencyOverrides ++= Seq(
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.3",
+      "com.fasterxml.jackson.core" % "jackson-core" % "2.15.3",
+      "com.fasterxml.jackson.core" % "jackson-annotations" % "2.15.3",
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.3",
+      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.15.3",
+      "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.15.3"
+    ),
+
     // Java 17+ でのモジュール制限を回避（runとtestの両方で必要）
     fork := true,
     javaOptions ++= Seq(
