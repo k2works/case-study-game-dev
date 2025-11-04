@@ -9,8 +9,10 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 - **分類問題（基礎）**: Decision Tree による Iris 分類（Chapter 4）
 - **回帰問題（基礎）**: Linear Regression による Cinema 興行収入予測（Chapter 5）
 - **分類問題（実践）**: Logistic Regression による Survived 生存予測（Chapter 6）
+- **回帰問題（高度）**: Linear Regression による Boston 住宅価格予測（Chapter 7）
+- **REST API**: Akka HTTP による機械学習 API（Chapter 8）
 - **TDD**: ScalaTest を使用したテスト駆動開発
-- **複数の実行方法**: CLI スクリプト、Jupyter Notebook、sbt による実行
+- **複数の実行方法**: CLI スクリプト、Jupyter Notebook、sbt、REST API
 - **クロスプラットフォーム**: Linux/Mac/Windows 対応（一部制限あり）
 
 ## 技術スタック
@@ -20,6 +22,8 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 - **sbt**: 1.9.7
 - **Java**: 17 または 21 推奨 ⚠️ **Java 25 は現在非対応**
 - **ScalaTest**: 3.2.17
+- **Akka HTTP**: 10.5.3 (Chapter 8)
+- **Circe**: 0.14.6 (Chapter 8)
 - **Jupyter Kernel**: Almond (Scala 2.13)
 
 ## プロジェクト構成
@@ -30,17 +34,32 @@ app/scala/
 ├── .sbtopts                           # sbt Java オプション設定
 ├── run-with-java21.ps1                # Java 21 で実行する PowerShell スクリプト
 ├── src/
-│   ├── main/scala/ml/
-│   │   ├── IrisClassifier.scala       # Chapter 4: 分類モデル（基礎）
-│   │   ├── TrainIris.scala            # Iris 訓練スクリプト
-│   │   ├── CinemaPredictor.scala      # Chapter 5: 回帰モデル（基礎）
-│   │   ├── TrainCinema.scala          # Cinema 訓練スクリプト
-│   │   ├── SurvivedClassifier.scala   # Chapter 6: 分類モデル（実践）
-│   │   └── TrainSurvived.scala        # Survived 訓練スクリプト
+│   ├── main/scala/
+│   │   ├── ml/
+│   │   │   ├── IrisClassifier.scala       # Chapter 4: 分類モデル（基礎）
+│   │   │   ├── TrainIris.scala            # Iris 訓練スクリプト
+│   │   │   ├── CinemaPredictor.scala      # Chapter 5: 回帰モデル（基礎）
+│   │   │   ├── TrainCinema.scala          # Cinema 訓練スクリプト
+│   │   │   ├── SurvivedClassifier.scala   # Chapter 6: 分類モデル（実践）
+│   │   │   ├── TrainSurvived.scala        # Survived 訓練スクリプト
+│   │   │   ├── BostonPredictor.scala      # Chapter 7: 回帰モデル（高度）
+│   │   │   ├── TrainBoston.scala          # Boston 訓練スクリプト
+│   │   │   └── api/                       # Chapter 8: REST API
+│   │   │       ├── Models.scala           # リクエスト/レスポンスモデル
+│   │   │       ├── ApiRoutes.scala        # HTTP ルーティング
+│   │   │       ├── SparkSessionManager.scala  # Spark Session 管理
+│   │   │       ├── domain/
+│   │   │       │   └── ModelPredictor.scala   # モデル予測（Domain層）
+│   │   │       └── service/
+│   │   │           └── PredictionService.scala  # ビジネスロジック（Service層）
+│   │   └── runServer.scala                # API サーバー起動
 │   └── test/scala/ml/
 │       ├── IrisClassifierSpec.scala   # Iris テスト
 │       ├── CinemaPredictorSpec.scala  # Cinema テスト
-│       └── SurvivedClassifierSpec.scala  # Survived テスト
+│       ├── SurvivedClassifierSpec.scala  # Survived テスト
+│       ├── BostonPredictorSpec.scala  # Boston テスト
+│       └── api/
+│           └── ModelsSpec.scala       # API モデルテスト
 ├── scripts/
 │   ├── train_iris.scala               # Iris 訓練用スタンドアロンスクリプト
 │   ├── evaluate_iris.scala            # Iris 評価用スタンドアロンスクリプト
@@ -57,7 +76,8 @@ app/scala/
 ├── data/
 │   ├── iris.csv                       # Iris データセット
 │   ├── cinema.csv                     # Cinema データセット
-│   └── Survived.csv                   # Survived データセット
+│   ├── Survived.csv                   # Survived データセット
+│   └── Boston.csv                     # Boston データセット
 └── README.md                          # このファイル
 ```
 
@@ -231,7 +251,76 @@ Accuracy: 81.20%
 ==================================================
 ```
 
-### 2. Jupyter Notebook で探索
+#### Boston 住宅価格予測モデル（Chapter 7）
+
+```bash
+# モデルの訓練と評価
+sbt "runMain ml.TrainBoston"
+
+# テストの実行
+sbt "testOnly ml.BostonPredictorSpec"
+```
+
+### 2. ML API サーバーの起動（Chapter 8）
+
+```bash
+# API サーバーを起動
+sbt "runMain runServer"
+```
+
+**出力例:**
+```
+==================================================
+ML API Server Starting...
+==================================================
+
+✓ iris model loaded from model/iris_model
+⚠ cinema model not found at model/cinema_model (skipping)
+⚠ survived model not found at model/survived_model (skipping)
+⚠ boston model not found at model/boston_model (skipping)
+
+==================================================
+Server online at http://localhost:8080/
+==================================================
+
+Available endpoints:
+  GET  /api/health          - Health check
+  POST /api/predict/iris    - Iris classification
+  POST /api/predict/cinema  - Cinema revenue prediction
+  POST /api/predict/survived - Survived prediction
+  POST /api/predict/boston  - Boston price prediction
+
+Press RETURN to stop...
+```
+
+**API の使用例（cURL）:**
+
+```bash
+# ヘルスチェック
+curl http://localhost:8080/api/health
+
+# Iris 予測
+curl -X POST http://localhost:8080/api/predict/iris \
+  -H "Content-Type: application/json" \
+  -d '{"sepalLength": 5.1, "sepalWidth": 3.5, "petalLength": 1.4, "petalWidth": 0.2}'
+
+# レスポンス例
+{"prediction":"setosa"}
+
+# Cinema 予測
+curl -X POST http://localhost:8080/api/predict/cinema \
+  -H "Content-Type: application/json" \
+  -d '{"budget": 50000, "popularity": 85.5, "runtime": 120, "voteAverage": 7.5, "genre": "Action"}'
+
+# Boston 予測
+curl -X POST http://localhost:8080/api/predict/boston \
+  -H "Content-Type: application/json" \
+  -d '{"crim": 0.00632, "zn": 18.0, "indus": 2.31, "chas": 0, "nox": 0.538, "rm": 6.575, "age": 65.2, "dis": 4.09, "rad": 1, "tax": 296.0, "ptratio": 15.3, "b": 396.9, "lstat": 4.98}'
+```
+
+**注意**: Windows 環境ではモデルの永続化ができないため、API 起動前にモデルを訓練する必要があります（Linux/Mac のみ）。
+
+### 3. Jupyter Notebook で探索
 
 対話的にデータ探索とモデル訓練を行う場合：
 
@@ -243,11 +332,12 @@ jupyter notebook
 # - notebooks/iris_exploration.ipynb (Iris 分類モデル)
 # - notebooks/cinema_exploration.ipynb (Cinema 回帰モデル)
 # - notebooks/survived_exploration.ipynb (Survived 生存予測モデル)
+# - notebooks/boston_exploration.ipynb (Boston 住宅価格予測モデル)
 ```
 
 詳細なセットアップ手順は [notebooks/SETUP.md](notebooks/SETUP.md) を参照してください。
 
-### 3. スタンドアロンスクリプト（Linux/Mac のみ）
+### 4. スタンドアロンスクリプト（Linux/Mac のみ）
 
 ```bash
 # Scala CLI を使用

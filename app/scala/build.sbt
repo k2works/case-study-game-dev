@@ -31,9 +31,11 @@ lazy val root = project
       // Akka HTTP と Circe (第8章で使用)
       "com.typesafe.akka" %% "akka-http" % "10.5.3",
       "com.typesafe.akka" %% "akka-stream" % "2.8.5",
+      "com.typesafe.akka" %% "akka-http-testkit" % "10.5.3" % Test,
       "io.circe" %% "circe-core" % "0.14.6",
       "io.circe" %% "circe-generic" % "0.14.6",
-      "io.circe" %% "circe-parser" % "0.14.6"
+      "io.circe" %% "circe-parser" % "0.14.6",
+      "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
     ),
 
     // Java 17+ でのモジュール制限を回避（runとtestの両方で必要）
