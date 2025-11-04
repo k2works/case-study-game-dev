@@ -52,6 +52,7 @@ app/scala/
 ├── notebooks/
 │   ├── iris_exploration.ipynb         # Iris Jupyter Notebook
 │   ├── cinema_exploration.ipynb       # Cinema Jupyter Notebook
+│   ├── survived_exploration.ipynb     # Survived Jupyter Notebook
 │   └── SETUP.md                       # Notebook セットアップガイド
 ├── data/
 │   ├── iris.csv                       # Iris データセット
@@ -238,7 +239,10 @@ Accuracy: 81.20%
 # Jupyter Notebook を起動
 jupyter notebook
 
-# notebooks/iris_exploration.ipynb を開く
+# ノートブックを開く
+# - notebooks/iris_exploration.ipynb (Iris 分類モデル)
+# - notebooks/cinema_exploration.ipynb (Cinema 回帰モデル)
+# - notebooks/survived_exploration.ipynb (Survived 生存予測モデル)
 ```
 
 詳細なセットアップ手順は [notebooks/SETUP.md](notebooks/SETUP.md) を参照してください。

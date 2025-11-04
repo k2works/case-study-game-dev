@@ -332,6 +332,7 @@ Windows環境でモデルの保存時に発生します。訓練と評価は正�
 
 ### Survived Life Prediction (Chapter 6)
 
+- **Notebook**: `../notebooks/survived_exploration.ipynb` - Jupyter Notebookでのインタラクティブな探索
 - **Tests**: `../src/test/scala/ml/SurvivedClassifierSpec.scala` - ユニットテスト
 - **Main Code**: `../src/main/scala/ml/SurvivedClassifier.scala` - コアの実装
 - **Training Script**: `../src/main/scala/ml/TrainSurvived.scala` - 訓練スクリプト
