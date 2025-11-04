@@ -36,19 +36,29 @@ lazy val root = project
       "io.circe" %% "circe-parser" % "0.14.6"
     ),
 
-    // Java 17 でのモジュール制限を回避（runとtestの両方で必要）
+    // Java 17+ でのモジュール制限を回避（runとtestの両方で必要）
     fork := true,
     javaOptions ++= Seq(
+      // モジュールアクセス許可
       "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
       "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
       "--add-opens=java.base/java.nio=ALL-UNNAMED",
       "--add-opens=java.base/java.lang=ALL-UNNAMED",
       "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
-      "--add-opens=java.base/java.util=ALL-UNNAMED"
+      "--add-opens=java.base/java.util=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+      "--add-opens=java.base/java.net=ALL-UNNAMED",
+      "--add-opens=java.base/java.io=ALL-UNNAMED",
+      "--add-opens=java.base/javax.security.auth.x500=ALL-UNNAMED",
+
+      // Java 23+ セキュリティマネージャー対応
+      "-Djava.security.manager=allow"
     ),
 
     // Spark のログレベルを抑制
-    Test / javaOptions += "-Dspark.master=local[2]",
-    Test / javaOptions += "-Dspark.ui.enabled=false",
-    Test / javaOptions += "-Dspark.driver.bindAddress=127.0.0.1"
+    Test / javaOptions ++= Seq(
+      "-Dspark.master=local[2]",
+      "-Dspark.ui.enabled=false",
+      "-Dspark.driver.bindAddress=127.0.0.1"
+    )
   )
