@@ -42,7 +42,13 @@ lazy val root = project
       "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.11.0",
       "io.swagger.core.v3" % "swagger-core" % "2.2.20",
       "io.swagger.core.v3" % "swagger-annotations" % "2.2.20",
-      "io.swagger.core.v3" % "swagger-models" % "2.2.20"
+      "io.swagger.core.v3" % "swagger-models" % "2.2.20",
+
+      // Jackson バージョンを Spark 互換の 2.15.x に固定
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.3",
+      "com.fasterxml.jackson.core" % "jackson-core" % "2.15.3",
+      "com.fasterxml.jackson.core" % "jackson-annotations" % "2.15.3",
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.3"
     ),
 
     // Java 17+ でのモジュール制限を回避（runとtestの両方で必要）
