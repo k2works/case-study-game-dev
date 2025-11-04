@@ -6,8 +6,9 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 
 このプロジェクトでは、以下を実現します：
 
-- **分類問題**: Apache Spark MLlib を使用した Decision Tree による Iris 分類
-- **回帰問題**: Linear Regression による Cinema 興行収入予測
+- **分類問題（基礎）**: Decision Tree による Iris 分類（Chapter 4）
+- **回帰問題（基礎）**: Linear Regression による Cinema 興行収入予測（Chapter 5）
+- **分類問題（実践）**: Logistic Regression による Survived 生存予測（Chapter 6）
 - **TDD**: ScalaTest を使用したテスト駆動開発
 - **複数の実行方法**: CLI スクリプト、Jupyter Notebook、sbt による実行
 - **クロスプラットフォーム**: Linux/Mac/Windows 対応（一部制限あり）
@@ -30,18 +31,23 @@ app/scala/
 ├── run-with-java21.ps1                # Java 21 で実行する PowerShell スクリプト
 ├── src/
 │   ├── main/scala/ml/
-│   │   ├── IrisClassifier.scala       # Chapter 4: 分類モデル
+│   │   ├── IrisClassifier.scala       # Chapter 4: 分類モデル（基礎）
 │   │   ├── TrainIris.scala            # Iris 訓練スクリプト
-│   │   ├── CinemaPredictor.scala      # Chapter 5: 回帰モデル
-│   │   └── TrainCinema.scala          # Cinema 訓練スクリプト
+│   │   ├── CinemaPredictor.scala      # Chapter 5: 回帰モデル（基礎）
+│   │   ├── TrainCinema.scala          # Cinema 訓練スクリプト
+│   │   ├── SurvivedClassifier.scala   # Chapter 6: 分類モデル（実践）
+│   │   └── TrainSurvived.scala        # Survived 訓練スクリプト
 │   └── test/scala/ml/
 │       ├── IrisClassifierSpec.scala   # Iris テスト
-│       └── CinemaPredictorSpec.scala  # Cinema テスト
+│       ├── CinemaPredictorSpec.scala  # Cinema テスト
+│       └── SurvivedClassifierSpec.scala  # Survived テスト
 ├── scripts/
 │   ├── train_iris.scala               # Iris 訓練用スタンドアロンスクリプト
 │   ├── evaluate_iris.scala            # Iris 評価用スタンドアロンスクリプト
 │   ├── train_cinema.scala             # Cinema 訓練用スタンドアロンスクリプト
 │   ├── evaluate_cinema.scala          # Cinema 評価用スタンドアロンスクリプト
+│   ├── train_survived.scala           # Survived 訓練用スタンドアロンスクリプト
+│   ├── evaluate_survived.scala        # Survived 評価用スタンドアロンスクリプト
 │   └── README.md                      # スクリプト詳細
 ├── notebooks/
 │   ├── iris_exploration.ipynb         # Iris Jupyter Notebook
@@ -49,7 +55,8 @@ app/scala/
 │   └── SETUP.md                       # Notebook セットアップガイド
 ├── data/
 │   ├── iris.csv                       # Iris データセット
-│   └── cinema.csv                     # Cinema データセット
+│   ├── cinema.csv                     # Cinema データセット
+│   └── Survived.csv                   # Survived データセット
 └── README.md                          # このファイル
 ```
 
@@ -175,6 +182,54 @@ Test R² Score: 82.45%
 === Training Completed ===
 ```
 
+#### Survived 生存予測モデル（Chapter 6）
+
+```bash
+# モデルの訓練と評価
+sbt "runMain ml.TrainSurvived"
+
+# テストの実行
+sbt "testOnly ml.SurvivedClassifierSpec"
+```
+
+**出力例:**
+```
+==================================================
+Survived 生存予測モデル訓練
+==================================================
+
+データ読み込み中: data/Survived.csv
+データ件数: 891
+
+=== 欠損値の確認 ===
++-------+----+----+
+|summary| age|fare|
++-------+----+----+
+|  count| 714| 891|
++-------+----+----+
+
+=== 欠損値補完中... ===
+欠損値補完完了
+
+=== クラスバランス ===
++--------+-----+
+|survived|count|
++--------+-----+
+|       0|  385|
+|       1|  237|
++--------+-----+
+
+=== モデル訓練中... ===
+モデル訓練完了
+
+=== モデル評価 ===
+Accuracy: 81.20%
+
+==================================================
+訓練完了
+==================================================
+```
+
 ### 2. Jupyter Notebook で探索
 
 対話的にデータ探索とモデル訓練を行う場合：
@@ -206,6 +261,7 @@ sbt test
 # 特定のテストを実行
 sbt "testOnly ml.IrisClassifierSpec"
 sbt "testOnly ml.CinemaPredictorSpec"
+sbt "testOnly ml.SurvivedClassifierSpec"
 
 # カバレッジ付きでテスト
 sbt clean coverage test coverageReport
@@ -225,6 +281,16 @@ sbt clean coverage test coverageReport
 - データ分割のテスト
 - LinearRegression モデル訓練のテスト
 - R² スコア評価のテスト
+
+**Survived 生存予測モデルのテスト内容:**
+- データ読み込みのテスト
+- Imputer による欠損値補完のテスト
+- カテゴリカル変数エンコーディングのテスト
+- 外れ値除去のテスト
+- 特徴量統合のテスト
+- データ分割のテスト
+- LogisticRegression モデル訓練のテスト
+- Accuracy 評価のテスト
 
 ## OS ごとの違い
 

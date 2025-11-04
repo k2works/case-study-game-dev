@@ -4,6 +4,7 @@
 
 - **Iris Classification** (Chapter 4): Decision Tree による分類モデル
 - **Cinema Revenue Prediction** (Chapter 5): Linear Regression による回帰モデル
+- **Survived Life Prediction** (Chapter 6): Logistic Regression による生存予測モデル
 
 ## スクリプト一覧
 
@@ -113,6 +114,62 @@ scala scripts/evaluate_cinema.scala [model_path] [data_path]
 
 **注意:** Windows 環境では使用できません。代わりに Jupyter Notebook（`notebooks/cinema_exploration.ipynb`）を使用してください。
 
+### 5. train_survived.scala
+
+Survived データセットを使用して Logistic Regression モデルを訓練します。
+
+**使用方法:**
+
+```bash
+# sbtから実行
+cd app/scala
+sbt "runMain ml.TrainSurvived"
+
+# または、Scalaスクリプトとして実行（要: scala CLI）
+scala scripts/train_survived.scala [data_path] [model_path]
+```
+
+**パラメータ:**
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/Survived.csv`）
+- `model_path` (オプション): モデルの保存先（デフォルト: `model/survived_model`）
+
+**出力:**
+- 訓練データとテストデータの件数
+- テストセットでの精度（Accuracy）
+- 欠損値補完の統計
+- クラスバランスの情報
+- 保存されたモデル（Linux/Mac のみ）
+
+**注意:**
+- Windows 環境ではモデルの永続化が無効化されています（Hadoop の制約）
+- Linux/Mac 環境では自動的にモデルが保存されます
+- Windows では都度訓練する方式（約10秒で完了）
+
+### 6. evaluate_survived.scala
+
+保存済みの Survived モデルを評価します（Linux/Mac のみ）。
+
+**使用方法:**
+
+```bash
+# Scalaスクリプトとして実行（Linux/Mac）
+scala scripts/evaluate_survived.scala [model_path] [data_path]
+```
+
+**パラメータ:**
+- `model_path` (オプション): モデルファイルのパス（デフォルト: `model/survived_model`）
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/Survived.csv`）
+
+**出力:**
+- Accuracy（精度）
+- AUC（Area Under ROC Curve）
+- Precision（適合率）
+- Recall（再現率）
+- F1 Score
+- 予測結果のサンプル
+
+**注意:** Windows 環境では使用できません。代わりに sbt から `sbt "runMain ml.TrainSurvived"` を実行してください。
+
 ## 実行例
 
 ### Iris 訓練
@@ -179,6 +236,47 @@ Training Completed Successfully
 ==================================================
 ```
 
+### Survived 訓練
+
+```bash
+$ cd app/scala
+$ sbt "runMain ml.TrainSurvived"
+==================================================
+Survived 生存予測モデル訓練
+==================================================
+
+データ読み込み中: data/Survived.csv
+データ件数: 891
+
+=== 欠損値の確認 ===
++-------+----+----+
+|summary| age|fare|
++-------+----+----+
+|  count| 714| 891|
++-------+----+----+
+
+=== 欠損値補完中... ===
+欠損値補完完了
+
+=== クラスバランス ===
++--------+-----+
+|survived|count|
++--------+-----+
+|       0|  385|
+|       1|  237|
++--------+-----+
+
+=== モデル訓練中... ===
+モデル訓練完了
+
+=== モデル評価 ===
+Accuracy: 81.20%
+
+==================================================
+訓練完了
+==================================================
+```
+
 
 ## 注意事項
 
@@ -186,13 +284,13 @@ Training Completed Successfully
 
 **Linux/Mac 環境:**
 - ✅ モデルの保存・読み込みが可能
-- ✅ `train_iris.scala` でモデルが自動保存される
-- ✅ `evaluate_iris.scala` で保存済みモデルを評価可能
+- ✅ `train_iris.scala`, `train_cinema.scala`, `train_survived.scala` でモデルが自動保存される
+- ✅ `evaluate_iris.scala`, `evaluate_cinema.scala`, `evaluate_survived.scala` で保存済みモデルを評価可能
 
 **Windows 環境:**
 - ❌ モデルの保存・読み込みが無効化（Hadoop の `winutils.exe` 問題）
 - ✅ モデルの訓練と評価は正常に動作（約10秒で完了）
-- ⚠️ `evaluate_iris.scala` は使用不可（代わりに Jupyter Notebook を使用）
+- ⚠️ `evaluate_*.scala` は使用不可（代わりに sbt から `runMain` を使用）
 
 ### 必要な環境
 
@@ -231,3 +329,9 @@ Windows環境でモデルの保存時に発生します。訓練と評価は正�
 - **Tests**: `../src/test/scala/ml/CinemaPredictorSpec.scala` - ユニットテスト
 - **Main Code**: `../src/main/scala/ml/CinemaPredictor.scala` - コアの実装
 - **Training Script**: `../src/main/scala/ml/TrainCinema.scala` - 訓練スクリプト
+
+### Survived Life Prediction (Chapter 6)
+
+- **Tests**: `../src/test/scala/ml/SurvivedClassifierSpec.scala` - ユニットテスト
+- **Main Code**: `../src/main/scala/ml/SurvivedClassifier.scala` - コアの実装
+- **Training Script**: `../src/main/scala/ml/TrainSurvived.scala` - 訓練スクリプト
