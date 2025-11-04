@@ -26,6 +26,7 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 ```
 app/scala/
 ├── build.sbt                          # ビルド定義
+├── run-with-java21.ps1                # Java 21 で実行する PowerShell スクリプト
 ├── src/
 │   ├── main/scala/ml/
 │   │   ├── IrisClassifier.scala       # Chapter 4: 分類モデル
@@ -85,6 +86,19 @@ sbt test
 **Java バージョンの確認**:
 ```bash
 java -version
+```
+
+**Java 21 への切り替え方法（Scoop 使用時）**:
+```bash
+# Java 21 に切り替え
+scoop reset openjdk21
+
+# バージョン確認（新しいターミナルで）
+java -version
+
+# または、PowerShell スクリプトで実行
+cd app/scala
+powershell -ExecutionPolicy Bypass -File run-with-java21.ps1
 ```
 
 ## 使用方法
