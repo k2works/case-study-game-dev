@@ -234,7 +234,25 @@ jupyter lab notebooks/
 - 相関行列
 - 品種ごとの特徴量分析
 
-**注意**: Jupyter を使用する前に、Python 仮想環境をアクティベートする必要があります。
+### Rust 実装チュートリアル（Jupyter Notebook）
+
+```bash
+# Jupyter Notebook を起動
+jupyter notebook notebooks/iris_rust_tutorial.ipynb
+```
+
+このノートブックには以下が含まれています：
+- Rust プロジェクト構造の説明
+- エラーハンドリングの実装
+- IrisClassifier の詳細解説
+- Python からの Rust コード実行方法
+- Rust vs Python の比較
+- 型安全性とパフォーマンスの解説
+
+**注意**:
+- Windows 環境では evcxr_jupyter (Rust カーネル) のビルドに問題があるため、Python カーネルでコード解説を行います
+- 実際の Rust コードは `cargo run --example` で実行してください
+- Jupyter を使用する前に、Python 仮想環境をアクティベートする必要があります
 
 ## 学習の進め方
 
