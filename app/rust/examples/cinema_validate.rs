@@ -85,24 +85,45 @@ fn main() -> Result<()> {
     let std_r2 = calculate_std(&r2_scores, mean_r2);
     println!("\n   R² スコア:");
     println!("     平均: {:.4} (± {:.4})", mean_r2, std_r2);
-    println!("     最高: {:.4}", r2_scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
-    println!("     最低: {:.4}", r2_scores.iter().cloned().fold(f64::INFINITY, f64::min));
+    println!(
+        "     最高: {:.4}",
+        r2_scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
+    );
+    println!(
+        "     最低: {:.4}",
+        r2_scores.iter().cloned().fold(f64::INFINITY, f64::min)
+    );
 
     // MAE の統計
     let mean_mae = mae_scores.iter().sum::<f64>() / mae_scores.len() as f64;
     let std_mae = calculate_std(&mae_scores, mean_mae);
     println!("\n   MAE (平均絶対誤差):");
     println!("     平均: {:.2} 万円 (± {:.2})", mean_mae, std_mae);
-    println!("     最良: {:.2} 万円", mae_scores.iter().cloned().fold(f64::INFINITY, f64::min));
-    println!("     最悪: {:.2} 万円", mae_scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
+    println!(
+        "     最良: {:.2} 万円",
+        mae_scores.iter().cloned().fold(f64::INFINITY, f64::min)
+    );
+    println!(
+        "     最悪: {:.2} 万円",
+        mae_scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
+    );
 
     // RMSE の統計
     let mean_rmse = rmse_scores.iter().sum::<f64>() / rmse_scores.len() as f64;
     let std_rmse = calculate_std(&rmse_scores, mean_rmse);
     println!("\n   RMSE (二乗平均平方根誤差):");
     println!("     平均: {:.2} 万円 (± {:.2})", mean_rmse, std_rmse);
-    println!("     最良: {:.2} 万円", rmse_scores.iter().cloned().fold(f64::INFINITY, f64::min));
-    println!("     最悪: {:.2} 万円", rmse_scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
+    println!(
+        "     最良: {:.2} 万円",
+        rmse_scores.iter().cloned().fold(f64::INFINITY, f64::min)
+    );
+    println!(
+        "     最悪: {:.2} 万円",
+        rmse_scores
+            .iter()
+            .cloned()
+            .fold(f64::NEG_INFINITY, f64::max)
+    );
 
     println!("\n検証完了！");
 
@@ -123,10 +144,6 @@ fn concatenate_targets(a: &Array1<f64>, b: &Array1<f64>) -> Array1<f64> {
 
 // 標準偏差を計算
 fn calculate_std(values: &[f64], mean: f64) -> f64 {
-    let variance = values
-        .iter()
-        .map(|&x| (x - mean).powi(2))
-        .sum::<f64>()
-        / values.len() as f64;
+    let variance = values.iter().map(|&x| (x - mean).powi(2)).sum::<f64>() / values.len() as f64;
     variance.sqrt()
 }

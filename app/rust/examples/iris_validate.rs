@@ -82,9 +82,19 @@ fn main() -> Result<()> {
     let std_dev = variance.sqrt();
 
     println!("\n3. 結果:");
-    println!("   平均精度: {:.2}% (± {:.2}%)", mean_accuracy * 100.0, std_dev * 100.0);
-    println!("   最高精度: {:.2}%", accuracies.iter().cloned().fold(f64::NEG_INFINITY, f64::max) * 100.0);
-    println!("   最低精度: {:.2}%", accuracies.iter().cloned().fold(f64::INFINITY, f64::min) * 100.0);
+    println!(
+        "   平均精度: {:.2}% (± {:.2}%)",
+        mean_accuracy * 100.0,
+        std_dev * 100.0
+    );
+    println!(
+        "   最高精度: {:.2}%",
+        accuracies.iter().cloned().fold(f64::NEG_INFINITY, f64::max) * 100.0
+    );
+    println!(
+        "   最低精度: {:.2}%",
+        accuracies.iter().cloned().fold(f64::INFINITY, f64::min) * 100.0
+    );
 
     println!("\n検証完了！");
 

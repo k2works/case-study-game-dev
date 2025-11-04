@@ -56,12 +56,20 @@ fn main() -> Result<()> {
     let sample_predictions = predictor.predict(&test_features.slice(s![..5, ..]).to_owned())?;
     let sample_targets = test_targets.slice(s![..5]);
 
-    for (i, (&pred, &actual)) in sample_predictions.iter().zip(sample_targets.iter()).enumerate() {
+    for (i, (&pred, &actual)) in sample_predictions
+        .iter()
+        .zip(sample_targets.iter())
+        .enumerate()
+    {
         let diff = (pred - actual).abs();
         let symbol = if diff < 500.0 { "✓" } else { "✗" };
         println!(
             "   {} サンプル {}: 実際 = {:.0} 万円 | 予測 = {:.0} 万円 | 誤差 = {:.0} 万円",
-            symbol, i + 1, actual, pred, diff
+            symbol,
+            i + 1,
+            actual,
+            pred,
+            diff
         );
     }
 
