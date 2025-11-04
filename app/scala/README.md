@@ -1,12 +1,13 @@
-# Scala + Apache Spark - Iris Classification
+# Scala + Apache Spark - Machine Learning with TDD
 
-Apache Spark MLlib を使用した Iris データセット分類のサンプルプロジェクト。TDD（Test-Driven Development）アプローチで実装しています。
+Apache Spark MLlib を使用した機械学習モデルのサンプルプロジェクト。TDD（Test-Driven Development）アプローチで実装しています。
 
 ## 概要
 
 このプロジェクトでは、以下を実現します：
 
-- **機械学習**: Apache Spark MLlib を使用した Decision Tree による Iris 分類
+- **分類問題**: Apache Spark MLlib を使用した Decision Tree による Iris 分類
+- **回帰問題**: Linear Regression による Cinema 興行収入予測
 - **TDD**: ScalaTest を使用したテスト駆動開発
 - **複数の実行方法**: CLI スクリプト、Jupyter Notebook、sbt による実行
 - **クロスプラットフォーム**: Linux/Mac/Windows 対応（一部制限あり）
@@ -24,13 +25,16 @@ Apache Spark MLlib を使用した Iris データセット分類のサンプル�
 
 ```
 app/scala/
-├── build.sbt                   # ビルド定義
+├── build.sbt                          # ビルド定義
 ├── src/
 │   ├── main/scala/ml/
-│   │   ├── IrisClassifier.scala       # コア実装
-│   │   └── TrainIris.scala            # 訓練スクリプト
+│   │   ├── IrisClassifier.scala       # Chapter 4: 分類モデル
+│   │   ├── TrainIris.scala            # Iris 訓練スクリプト
+│   │   ├── CinemaPredictor.scala      # Chapter 5: 回帰モデル
+│   │   └── TrainCinema.scala          # Cinema 訓練スクリプト
 │   └── test/scala/ml/
-│       └── IrisClassifierSpec.scala   # テスト
+│       ├── IrisClassifierSpec.scala   # Iris テスト
+│       └── CinemaPredictorSpec.scala  # Cinema テスト
 ├── scripts/
 │   ├── train_iris.scala               # 訓練用スタンドアロンスクリプト
 │   ├── evaluate_iris.scala            # 評価用スタンドアロンスクリプト
@@ -39,7 +43,8 @@ app/scala/
 │   ├── iris_exploration.ipynb         # Jupyter Notebook
 │   └── SETUP.md                       # Notebook セットアップガイド
 ├── data/
-│   └── iris.csv                       # Iris データセット
+│   ├── iris.csv                       # Iris データセット
+│   └── cinema.csv                     # Cinema データセット
 └── README.md                          # このファイル
 ```
 
@@ -77,12 +82,14 @@ Java 25 を使用する場合、build.sbt に以下の設定が自動的に適�
 
 ### 1. sbt から実行（推奨）
 
+#### Iris 分類モデル（Chapter 4）
+
 ```bash
 # モデルの訓練と評価
 sbt "runMain ml.TrainIris"
 
 # テストの実行
-sbt test
+sbt "testOnly ml.IrisClassifierSpec"
 ```
 
 **出力例:**
@@ -104,6 +111,39 @@ Model training completed
 
 Evaluating model...
 Test Accuracy: 97.83%
+
+=== Training Completed ===
+```
+
+#### Cinema 回帰モデル（Chapter 5）
+
+```bash
+# モデルの訓練と評価
+sbt "runMain ml.TrainCinema"
+
+# テストの実行
+sbt "testOnly ml.CinemaPredictorSpec"
+```
+
+**出力例:**
+```
+=== Cinema Revenue Prediction Model Training ===
+
+Loading data from data/cinema.csv...
+Loaded 200 records
+
+Preparing features...
+Prepared 200 records (null values skipped)
+
+Splitting data into training and test sets...
+Training set: 140 records
+Test set: 60 records
+
+Training model...
+Model training completed
+
+Evaluating model...
+Test R² Score: 82.45%
 
 === Training Completed ===
 ```
@@ -138,17 +178,26 @@ sbt test
 
 # 特定のテストを実行
 sbt "testOnly ml.IrisClassifierSpec"
+sbt "testOnly ml.CinemaPredictorSpec"
 
 # カバレッジ付きでテスト
 sbt clean coverage test coverageReport
 ```
 
-**テスト内容:**
+**Iris 分類モデルのテスト内容:**
 - データ読み込みのテスト
 - 特徴量準備のテスト
 - データ分割のテスト
 - モデル訓練のテスト
 - 精度評価のテスト
+
+**Cinema 回帰モデルのテスト内容:**
+- データ読み込みのテスト
+- ジャンルの OneHot エンコーディングのテスト
+- 特徴量統合のテスト
+- データ分割のテスト
+- LinearRegression モデル訓練のテスト
+- R² スコア評価のテスト
 
 ## OS ごとの違い
 
