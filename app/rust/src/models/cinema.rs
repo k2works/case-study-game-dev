@@ -104,6 +104,54 @@ impl CinemaPredictor {
         Ok(())
     }
 
+    /// 興行収入を予測
+    pub fn predict(&self, features: &Array2<f64>) -> Result<Array1<f64>> {
+        let model = self.model.as_ref()
+            .ok_or_else(|| Error::Model("Model not trained yet".to_string()))?;
+
+        let predictions = model.predict(features);
+        Ok(predictions)
+    }
+
+    /// モデルを評価（R², MAE, RMSE を計算）
+    pub fn evaluate(&self, features: &Array2<f64>, targets: &Array1<f64>) -> Result<(f64, f64, f64)> {
+        // 予測を実行
+        let predictions = self.predict(features)?;
+
+        // 平均値を計算
+        let mean = targets.mean().unwrap_or(0.0);
+
+        // SS_tot (Total Sum of Squares)
+        let ss_tot: f64 = targets.iter()
+            .map(|&y| (y - mean).powi(2))
+            .sum();
+
+        // SS_res (Residual Sum of Squares)
+        let ss_res: f64 = targets.iter()
+            .zip(predictions.iter())
+            .map(|(&y_true, &y_pred)| (y_true - y_pred).powi(2))
+            .sum();
+
+        // R² (決定係数)
+        let r2 = if ss_tot == 0.0 {
+            0.0
+        } else {
+            1.0 - (ss_res / ss_tot)
+        };
+
+        // MAE (Mean Absolute Error)
+        let mae: f64 = targets.iter()
+            .zip(predictions.iter())
+            .map(|(&y_true, &y_pred)| (y_true - y_pred).abs())
+            .sum::<f64>() / targets.len() as f64;
+
+        // RMSE (Root Mean Squared Error)
+        let mse = ss_res / targets.len() as f64;
+        let rmse = mse.sqrt();
+
+        Ok((r2, mae, rmse))
+    }
+
 }
 
 impl Default for CinemaPredictor {
@@ -186,5 +234,64 @@ mod tests {
 
         // モデルが設定されているか確認
         assert!(predictor.model.is_some());
+    }
+
+    #[test]
+    fn test_predict() {
+        let mut predictor = CinemaPredictor::new();
+        let (features, targets) = CinemaPredictor::load_data("data/cinema.csv").unwrap();
+        predictor.train(&features, &targets).unwrap();
+
+        // 予測を実行
+        let predictions = predictor.predict(&features).unwrap();
+
+        // 予測数が入力と同じであることを確認
+        assert_eq!(predictions.len(), features.nrows());
+
+        // 予測値が有限値であることを確認
+        for &pred in predictions.iter() {
+            assert!(pred.is_finite(), "Prediction should be finite");
+        }
+    }
+
+    #[test]
+    fn test_predict_before_training() {
+        let predictor = CinemaPredictor::new();
+        let (features, _) = CinemaPredictor::load_data("data/cinema.csv").unwrap();
+
+        // 訓練前の予測はエラーになるべき
+        let result = predictor.predict(&features);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_evaluate() {
+        let mut predictor = CinemaPredictor::new();
+        let (features, targets) = CinemaPredictor::load_data("data/cinema.csv").unwrap();
+        predictor.train(&features, &targets).unwrap();
+
+        // 評価を実行
+        let (r2, mae, rmse) = predictor.evaluate(&features, &targets).unwrap();
+
+        // R² は 0 から 1 の範囲（訓練データなので高い値を期待）
+        assert!(r2 >= 0.0 && r2 <= 1.0, "R² should be between 0 and 1, found: {}", r2);
+        assert!(r2 > 0.5, "R² should be > 0.5 for training data, found: {}", r2);
+
+        // MAE は正の値
+        assert!(mae > 0.0, "MAE should be positive");
+
+        // RMSE は正の値で、MAE より大きいか等しい
+        assert!(rmse > 0.0, "RMSE should be positive");
+        assert!(rmse >= mae, "RMSE should be >= MAE");
+    }
+
+    #[test]
+    fn test_evaluate_before_training() {
+        let predictor = CinemaPredictor::new();
+        let (features, targets) = CinemaPredictor::load_data("data/cinema.csv").unwrap();
+
+        // 訓練前の評価はエラーになるべき
+        let result = predictor.evaluate(&features, &targets);
+        assert!(result.is_err());
     }
 }
