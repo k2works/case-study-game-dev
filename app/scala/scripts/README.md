@@ -5,6 +5,7 @@
 - **Iris Classification** (Chapter 4): Decision Tree による分類モデル
 - **Cinema Revenue Prediction** (Chapter 5): Linear Regression による回帰モデル
 - **Survived Life Prediction** (Chapter 6): Logistic Regression による生存予測モデル
+- **Boston Housing Price Prediction** (Chapter 7): Linear Regression による住宅価格予測モデル
 
 ## スクリプト一覧
 
@@ -170,6 +171,69 @@ scala scripts/evaluate_survived.scala [model_path] [data_path]
 
 **注意:** Windows 環境では使用できません。代わりに sbt から `sbt "runMain ml.TrainSurvived"` を実行してください。
 
+### 7. train_boston.scala
+
+Boston データセットを使用して Linear Regression モデルを訓練します（高度な回帰技術）。
+
+**使用方法:**
+
+```bash
+# sbtから実行
+cd app/scala
+sbt "runMain ml.TrainBoston"
+
+# または、Scalaスクリプトとして実行（要: scala CLI）
+scala scripts/train_boston.scala [data_path] [model_path]
+```
+
+**パラメータ:**
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/Boston.csv`）
+- `model_path` (オプション): モデルの保存先（デフォルト: `model/boston_model`）
+
+**特徴:**
+- カテゴリカル変数のエンコーディング（CRIME 変数）
+- 特徴量エンジニアリング（RM2, LSTAT2, PTRATIO2, RM_LSTAT, RM_PTRATIO）
+- データ標準化（StandardScaler）
+- L2正則化（Ridge Regression）
+
+**出力:**
+- 訓練データとテストデータの件数
+- テストセットでの R² スコア
+- RMSE（Root Mean Squared Error）
+- MAE（Mean Absolute Error）
+- MSE（Mean Squared Error）
+- 保存されたモデル（Linux/Mac のみ）
+
+**注意:**
+- Windows 環境ではモデルの永続化が無効化されています（Hadoop の制約）
+- Linux/Mac 環境では自動的にモデルが保存されます
+- Windows では都度訓練する方式（約10秒で完了）
+
+### 8. evaluate_boston.scala
+
+保存済みの Boston モデルを評価します（Linux/Mac のみ）。
+
+**使用方法:**
+
+```bash
+# Scalaスクリプトとして実行（Linux/Mac）
+scala scripts/evaluate_boston.scala [model_path] [data_path]
+```
+
+**パラメータ:**
+- `model_path` (オプション): モデルファイルのパス（デフォルト: `model/boston_model`）
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/Boston.csv`）
+
+**出力:**
+- R² Score（決定係数）
+- RMSE（Root Mean Squared Error）
+- MAE（Mean Absolute Error）
+- MSE（Mean Squared Error）
+- 予測結果のサンプル
+- 予測誤差の統計
+
+**注意:** Windows 環境では使用できません。代わりに Jupyter Notebook（`notebooks/boston_exploration.ipynb`）を使用してください。
+
 ## 実行例
 
 ### Iris 訓練
@@ -277,6 +341,48 @@ Accuracy: 81.20%
 ==================================================
 ```
 
+### Boston 訓練
+
+```bash
+$ cd app/scala
+$ sbt "runMain ml.TrainBoston"
+==================================================
+Boston 住宅価格予測モデル訓練
+==================================================
+
+データ読み込み中: data/Boston.csv
+データ件数: 506
+
+=== カテゴリカル変数エンコーディング中... ===
+カテゴリカル変数エンコーディング完了
+
+=== 特徴量エンジニアリング中... ===
+特徴量エンジニアリング完了
+
+=== データクリーニング完了 ===
+クリーニング前: 506, クリーニング後: 490
+
+=== 特徴量統合中... ===
+特徴量統合完了: 490 件
+
+=== データ標準化中... ===
+データ標準化完了
+
+訓練データ: 343, テストデータ: 147
+
+=== モデル訓練中... ===
+モデル訓練完了
+
+=== モデル評価 ===
+R² Score: 82.45%
+RMSE: 4.5678
+MAE: 3.2345
+MSE: 20.8642
+
+==================================================
+訓練完了
+==================================================
+```
 
 ## 注意事項
 
@@ -336,3 +442,10 @@ Windows環境でモデルの保存時に発生します。訓練と評価は正�
 - **Tests**: `../src/test/scala/ml/SurvivedClassifierSpec.scala` - ユニットテスト
 - **Main Code**: `../src/main/scala/ml/SurvivedClassifier.scala` - コアの実装
 - **Training Script**: `../src/main/scala/ml/TrainSurvived.scala` - 訓練スクリプト
+
+### Boston Housing Price Prediction (Chapter 7)
+
+- **Notebook**: `../notebooks/boston_exploration.ipynb` - Jupyter Notebookでのインタラクティブな探索
+- **Tests**: `../src/test/scala/ml/BostonPredictorSpec.scala` - ユニットテスト
+- **Main Code**: `../src/main/scala/ml/BostonPredictor.scala` - コアの実装
+- **Training Script**: `../src/main/scala/ml/TrainBoston.scala` - 訓練スクリプト
