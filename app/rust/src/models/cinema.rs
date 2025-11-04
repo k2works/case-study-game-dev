@@ -2,11 +2,11 @@
 //!
 //! 線形回帰を使用して、映画の SNS 露出度から興行収入を予測します。
 
-use ndarray::prelude::*;
-use linfa::prelude::*;
-use linfa_linear::{LinearRegression, FittedLinearRegression};
-use std::path::Path;
 use crate::error::{Error, Result};
+use linfa::prelude::*;
+use linfa_linear::{FittedLinearRegression, LinearRegression};
+use ndarray::prelude::*;
+use std::path::Path;
 
 /// Cinema 興行収入予測器
 pub struct CinemaPredictor {
@@ -14,7 +14,8 @@ pub struct CinemaPredictor {
 }
 
 impl CinemaPredictor {
-    /// 新しい CinemaPredictor を作成
+    /// 新しい `CinemaPredictor` を作成
+    #[must_use]
     pub fn new() -> Self {
         Self { model: None }
     }
@@ -39,7 +40,7 @@ impl CinemaPredictor {
             let sns1 = record[1].parse::<f64>().ok();
             let sns2 = record[2].parse::<f64>().ok();
             let actor = record[3].parse::<f64>().ok();
-            let original = record[4].parse::<i32>().ok().map(|x| x as f64);
+            let original = record[4].parse::<i32>().ok().map(f64::from);
             let sales = record[5].parse::<f64>().ok();
 
             sns1_values.push(sns1);
@@ -59,7 +60,10 @@ impl CinemaPredictor {
         // 欠損値を平均値で補完
         let sns1_filled: Vec<f64> = sns1_values.iter().map(|v| v.unwrap_or(sns1_mean)).collect();
         let sns2_filled: Vec<f64> = sns2_values.iter().map(|v| v.unwrap_or(sns2_mean)).collect();
-        let actor_filled: Vec<f64> = actor_values.iter().map(|v| v.unwrap_or(actor_mean)).collect();
+        let actor_filled: Vec<f64> = actor_values
+            .iter()
+            .map(|v| v.unwrap_or(actor_mean))
+            .collect();
         let original_filled: Vec<f64> = original_values.iter().map(|v| v.unwrap_or(0.0)).collect();
 
         let n_samples = sns1_filled.len();
@@ -74,7 +78,7 @@ impl CinemaPredictor {
         }
 
         let features_array = Array2::from_shape_vec((n_samples, 4), features)
-            .map_err(|e| Error::Model(format!("Failed to create feature array: {}", e)))?;
+            .map_err(|e| Error::Model(format!("Failed to create feature array: {e}")))?;
 
         let targets_array = Array1::from_vec(sales_values);
 
@@ -82,6 +86,7 @@ impl CinemaPredictor {
     }
 
     /// 欠損値を除いた平均値を計算
+    #[allow(clippy::cast_precision_loss)]
     fn calculate_mean(values: &[Option<f64>]) -> f64 {
         let valid_values: Vec<f64> = values.iter().filter_map(|&v| v).collect();
         if valid_values.is_empty() {
@@ -97,8 +102,9 @@ impl CinemaPredictor {
         let dataset = Dataset::new(features.clone(), targets.clone());
 
         // 線形回帰モデルを訓練
-        let model = LinearRegression::default().fit(&dataset)
-            .map_err(|e| Error::Linfa(format!("Failed to train model: {}", e)))?;
+        let model = LinearRegression::default()
+            .fit(&dataset)
+            .map_err(|e| Error::Linfa(format!("Failed to train model: {e}")))?;
 
         self.model = Some(model);
         Ok(())
@@ -106,7 +112,9 @@ impl CinemaPredictor {
 
     /// 興行収入を予測
     pub fn predict(&self, features: &Array2<f64>) -> Result<Array1<f64>> {
-        let model = self.model.as_ref()
+        let model = self
+            .model
+            .as_ref()
             .ok_or_else(|| Error::Model("Model not trained yet".to_string()))?;
 
         let predictions = model.predict(features);
@@ -114,7 +122,12 @@ impl CinemaPredictor {
     }
 
     /// モデルを評価（R², MAE, RMSE を計算）
-    pub fn evaluate(&self, features: &Array2<f64>, targets: &Array1<f64>) -> Result<(f64, f64, f64)> {
+    #[allow(clippy::cast_precision_loss)]
+    pub fn evaluate(
+        &self,
+        features: &Array2<f64>,
+        targets: &Array1<f64>,
+    ) -> Result<(f64, f64, f64)> {
         // 予測を実行
         let predictions = self.predict(features)?;
 
@@ -122,12 +135,11 @@ impl CinemaPredictor {
         let mean = targets.mean().unwrap_or(0.0);
 
         // SS_tot (Total Sum of Squares)
-        let ss_tot: f64 = targets.iter()
-            .map(|&y| (y - mean).powi(2))
-            .sum();
+        let ss_tot: f64 = targets.iter().map(|&y| (y - mean).powi(2)).sum();
 
         // SS_res (Residual Sum of Squares)
-        let ss_res: f64 = targets.iter()
+        let ss_res: f64 = targets
+            .iter()
             .zip(predictions.iter())
             .map(|(&y_true, &y_pred)| (y_true - y_pred).powi(2))
             .sum();
@@ -140,10 +152,12 @@ impl CinemaPredictor {
         };
 
         // MAE (Mean Absolute Error)
-        let mae: f64 = targets.iter()
+        let mae: f64 = targets
+            .iter()
             .zip(predictions.iter())
             .map(|(&y_true, &y_pred)| (y_true - y_pred).abs())
-            .sum::<f64>() / targets.len() as f64;
+            .sum::<f64>()
+            / targets.len() as f64;
 
         // RMSE (Root Mean Squared Error)
         let mse = ss_res / targets.len() as f64;
@@ -151,7 +165,6 @@ impl CinemaPredictor {
 
         Ok((r2, mae, rmse))
     }
-
 }
 
 impl Default for CinemaPredictor {
@@ -274,8 +287,16 @@ mod tests {
         let (r2, mae, rmse) = predictor.evaluate(&features, &targets).unwrap();
 
         // R² は 0 から 1 の範囲（訓練データなので高い値を期待）
-        assert!(r2 >= 0.0 && r2 <= 1.0, "R² should be between 0 and 1, found: {}", r2);
-        assert!(r2 > 0.5, "R² should be > 0.5 for training data, found: {}", r2);
+        assert!(
+            r2 >= 0.0 && r2 <= 1.0,
+            "R² should be between 0 and 1, found: {}",
+            r2
+        );
+        assert!(
+            r2 > 0.5,
+            "R² should be > 0.5 for training data, found: {}",
+            r2
+        );
 
         // MAE は正の値
         assert!(mae > 0.0, "MAE should be positive");

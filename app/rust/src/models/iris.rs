@@ -12,7 +12,8 @@ pub struct IrisClassifier {
 }
 
 impl IrisClassifier {
-    /// 新しい IrisClassifier を作成
+    /// 新しい `IrisClassifier` を作成
+    #[must_use]
     pub fn new() -> Self {
         Self { model: None }
     }
@@ -27,18 +28,18 @@ impl IrisClassifier {
             let record = result?;
 
             // 特徴量（4つ）を読み込む
-            let sepal_length: f64 = record[0].parse().map_err(|_| {
-                Error::Model("Failed to parse sepal_length".to_string())
-            })?;
-            let sepal_width: f64 = record[1].parse().map_err(|_| {
-                Error::Model("Failed to parse sepal_width".to_string())
-            })?;
-            let petal_length: f64 = record[2].parse().map_err(|_| {
-                Error::Model("Failed to parse petal_length".to_string())
-            })?;
-            let petal_width: f64 = record[3].parse().map_err(|_| {
-                Error::Model("Failed to parse petal_width".to_string())
-            })?;
+            let sepal_length: f64 = record[0]
+                .parse()
+                .map_err(|_| Error::Model("Failed to parse sepal_length".to_string()))?;
+            let sepal_width: f64 = record[1]
+                .parse()
+                .map_err(|_| Error::Model("Failed to parse sepal_width".to_string()))?;
+            let petal_length: f64 = record[2]
+                .parse()
+                .map_err(|_| Error::Model("Failed to parse petal_length".to_string()))?;
+            let petal_width: f64 = record[3]
+                .parse()
+                .map_err(|_| Error::Model("Failed to parse petal_width".to_string()))?;
 
             features.extend_from_slice(&[sepal_length, sepal_width, petal_length, petal_width]);
 
@@ -50,7 +51,7 @@ impl IrisClassifier {
 
         let n_samples = targets.len();
         let features_array = Array2::from_shape_vec((n_samples, 4), features)
-            .map_err(|e| Error::Model(format!("Failed to create features array: {}", e)))?;
+            .map_err(|e| Error::Model(format!("Failed to create features array: {e}")))?;
         let targets_array = Array1::from_vec(targets);
 
         Ok((features_array, targets_array))
@@ -79,13 +80,15 @@ impl IrisClassifier {
     /// モデルをトレーニング
     pub fn train(&mut self, features: &Array2<f64>, targets: &Array1<usize>) -> Result<()> {
         // Dataset を作成
-        let dataset = Dataset::new(features.clone(), targets.clone())
-            .with_feature_names(vec!["sepal_length", "sepal_width", "petal_length", "petal_width"]);
+        let dataset = Dataset::new(features.clone(), targets.clone()).with_feature_names(vec![
+            "sepal_length",
+            "sepal_width",
+            "petal_length",
+            "petal_width",
+        ]);
 
         // Decision Tree でトレーニング
-        let model = DecisionTree::params()
-            .max_depth(Some(5))
-            .fit(&dataset)?;
+        let model = DecisionTree::params().max_depth(Some(5)).fit(&dataset)?;
 
         self.model = Some(model);
         Ok(())
@@ -103,6 +106,7 @@ impl IrisClassifier {
     }
 
     /// モデルの精度を評価
+    #[allow(clippy::cast_precision_loss)]
     pub fn evaluate(&self, features: &Array2<f64>, targets: &Array1<usize>) -> Result<f64> {
         let predictions = self.predict(features)?;
 
