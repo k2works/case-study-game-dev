@@ -39,7 +39,7 @@ lazy val root = project
     // Java 17+ でのモジュール制限を回避（runとtestの両方で必要）
     fork := true,
     javaOptions ++= Seq(
-      // モジュールアクセス許可
+      // Java 17, 21 用: モジュールアクセス許可
       "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
       "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
       "--add-opens=java.base/java.nio=ALL-UNNAMED",
@@ -50,15 +50,21 @@ lazy val root = project
       "--add-opens=java.base/java.net=ALL-UNNAMED",
       "--add-opens=java.base/java.io=ALL-UNNAMED",
       "--add-opens=java.base/javax.security.auth.x500=ALL-UNNAMED",
+      "--add-opens=java.base/javax.security.auth=ALL-UNNAMED",
 
-      // Java 23+ セキュリティマネージャー対応
-      "-Djava.security.manager=allow"
+      // 注意: Java 25 は現在非対応
+      // 理由: Hadoop 3.3.4 が Java 25 で削除された Subject.getSubject() に依存
+      // 対応予定: Apache Spark 4.0 リリース待ち
+      "-DHADOOP_USER_NAME=hadoop",
+      "-Duser.name=hadoop"
     ),
 
     // Spark のログレベルを抑制
     Test / javaOptions ++= Seq(
       "-Dspark.master=local[2]",
       "-Dspark.ui.enabled=false",
-      "-Dspark.driver.bindAddress=127.0.0.1"
+      "-Dspark.driver.bindAddress=127.0.0.1",
+      "-DHADOOP_USER_NAME=hadoop",
+      "-Duser.name=hadoop"
     )
   )

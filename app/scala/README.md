@@ -17,7 +17,7 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 - **Scala**: 2.13.12
 - **Apache Spark**: 3.5.0
 - **sbt**: 1.9.7
-- **Java**: 17+
+- **Java**: 17 または 21 推奨 ⚠️ **Java 25 は現在非対応**
 - **ScalaTest**: 3.2.17
 - **Jupyter Kernel**: Almond (Scala 2.13)
 
@@ -52,7 +52,7 @@ app/scala/
 
 ### 前提条件
 
-- **Java**: 17 以上（Java 25 でも動作確認済み）
+- **Java**: 17 または 21 を推奨 ⚠️ **Java 25 は現在非対応**
 - **sbt**: 1.9.7 以上
 - **Scala**: 2.13.12（sbt が自動管理）
 
@@ -69,14 +69,23 @@ sbt update
 sbt test
 ```
 
-### Java 25 での動作について
+### ⚠️ Java 25 の制約について
 
-Java 25 を使用する場合、build.sbt に以下の設定が自動的に適用されます：
+**現在、Java 25 では実行できません。**
 
-- **セキュリティマネージャーの許可**: `-Djava.security.manager=allow`
-- **モジュールアクセスの許可**: `--add-opens` による各種パッケージへのアクセス許可
+**理由**:
+- Java 25 で `Subject.getSubject()` メソッドが削除された
+- Apache Spark 3.5.0 が使用する Hadoop 3.3.4 がこのメソッドに依存している
+- Apache Spark 4.0 で Java 25 対応予定（リリース時期未定）
 
-これらの設定により、Java 25 でも Apache Spark が正常に動作します。
+**推奨環境**:
+- Java 17（LTS）
+- Java 21（LTS）
+
+**Java バージョンの確認**:
+```bash
+java -version
+```
 
 ## 使用方法
 
