@@ -83,4 +83,31 @@ class CinemaPredictorSpec extends AnyFlatSpec with Matchers {
     r2 should be >= 0.0
     r2 should be <= 1.0
   }
+
+  it should "モデルを保存してロードできる" in {
+    // OS 検出: Windows ではスキップ
+    val osName = System.getProperty("os.name").toLowerCase
+    val isWindows = osName.contains("win")
+
+    if (isWindows) {
+      cancel("Model persistence is not supported on Windows due to Hadoop limitations")
+    }
+
+    val predictor = CinemaPredictor(spark)
+    val df = predictor.loadData("data/cinema.csv")
+    val encoded = predictor.encodeGenre(df)
+    val assembled = predictor.assembleFeatures(encoded)
+    val (trainData, testData) = predictor.splitData(assembled)
+    val model = predictor.train(trainData)
+
+    val modelPath = "model/test_cinema_model"
+    predictor.saveModel(model, modelPath)
+
+    val loadedModel = predictor.loadModel(modelPath)
+    loadedModel should not be null
+
+    // ロードしたモデルでも予測できるはず
+    val r2 = predictor.evaluate(loadedModel, testData)
+    r2 should be > 0.5
+  }
 }

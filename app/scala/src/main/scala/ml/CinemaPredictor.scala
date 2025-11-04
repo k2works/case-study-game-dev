@@ -78,6 +78,14 @@ class CinemaPredictor(spark: SparkSession) {
 
     evaluator.evaluate(predictions)
   }
+
+  def saveModel(model: PipelineModel, path: String): Unit = {
+    model.write.overwrite().save(path)
+  }
+
+  def loadModel(path: String): PipelineModel = {
+    PipelineModel.load(path)
+  }
 }
 
 object CinemaPredictor {
