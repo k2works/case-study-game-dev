@@ -24,6 +24,7 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 - **ScalaTest**: 3.2.17
 - **Akka HTTP**: 10.5.3 (Chapter 8)
 - **Circe**: 0.14.6 (Chapter 8)
+- **Swagger UI**: 2.11.0 (Chapter 8 - API Documentation)
 - **Jupyter Kernel**: Almond (Scala 2.13)
 
 ## プロジェクト構成
@@ -48,6 +49,7 @@ app/scala/
 │   │   │   └── api/                       # Chapter 8: REST API
 │   │   │       ├── Models.scala           # リクエスト/レスポンスモデル
 │   │   │       ├── ApiRoutes.scala        # HTTP ルーティング
+│   │   │       ├── SwaggerDocService.scala # Swagger API ドキュメント設定
 │   │   │       ├── SparkSessionManager.scala  # Spark Session 管理
 │   │   │       ├── domain/
 │   │   │       │   └── ModelPredictor.scala   # モデル予測（Domain層）
@@ -287,6 +289,9 @@ ML API Server Starting...
 Server online at http://localhost:8080/
 ==================================================
 
+API Documentation:
+  http://localhost:8080/swagger
+
 Available endpoints:
   GET  /api/health          - Health check
   POST /api/predict/iris    - Iris classification
@@ -296,6 +301,11 @@ Available endpoints:
 
 Press RETURN to stop...
 ```
+
+**Swagger UI でのAPI確認:**
+
+ブラウザで http://localhost:8080/swagger を開くと、インタラクティブなAPI ドキュメントが表示されます。
+各エンドポイントの詳細を確認し、ブラウザから直接APIをテストできます。
 
 **API の使用例（cURL）:**
 

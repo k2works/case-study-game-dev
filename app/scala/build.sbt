@@ -35,7 +35,14 @@ lazy val root = project
       "io.circe" %% "circe-core" % "0.14.6",
       "io.circe" %% "circe-generic" % "0.14.6",
       "io.circe" %% "circe-parser" % "0.14.6",
-      "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
+      "de.heikoseeberger" %% "akka-http-circe" % "1.39.2",
+
+      // Swagger UI (API ドキュメント)
+      "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.11.0",
+      "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.11.0",
+      "io.swagger.core.v3" % "swagger-core" % "2.2.20",
+      "io.swagger.core.v3" % "swagger-annotations" % "2.2.20",
+      "io.swagger.core.v3" % "swagger-models" % "2.2.20"
     ),
 
     // Java 17+ でのモジュール制限を回避（runとtestの両方で必要）
