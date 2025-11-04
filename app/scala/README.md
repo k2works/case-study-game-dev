@@ -32,7 +32,8 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 app/scala/
 ├── build.sbt                          # ビルド定義
 ├── .sbtopts                           # sbt Java オプション設定
-├── run-with-java21.ps1                # Java 21 で実行する PowerShell スクリプト
+├── run-with-java21.ps1                # Java 21 でテストを実行する PowerShell スクリプト
+├── run-api-server.ps1                 # Java 21 で API サーバーを起動する PowerShell スクリプト
 ├── src/
 │   ├── main/scala/
 │   │   ├── ml/
@@ -266,6 +267,9 @@ sbt "testOnly ml.BostonPredictorSpec"
 ```bash
 # API サーバーを起動
 sbt "runMain runServer"
+
+# または、PowerShell スクリプトで Java 21 を使用（Windows）
+powershell -ExecutionPolicy Bypass -File run-api-server.ps1
 ```
 
 **出力例:**
