@@ -11,7 +11,7 @@ linfa-trees = "0.7"
 linfa-linear = "0.7"
 
 # データ処理
-ndarray = "0.16"
+ndarray = "0.15"
 # polars = { version = "0.44", features = ["lazy"] }  # Windows環境でビルドエラー
 csv = "1.3"
 
