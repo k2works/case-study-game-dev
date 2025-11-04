@@ -1,0 +1,12 @@
+# Jupyter Notebook (minimal)
+notebook>=7.0.0
+jupyter_core>=5.0.0
+
+# Data Science Libraries
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Scikit-learn (for comparison)
+scikit-learn>=1.3.0

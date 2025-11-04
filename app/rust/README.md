@@ -27,9 +27,12 @@ Rust で機械学習を学ぶプロジェクト。テスト駆動開発（TDD）
 ### 前提条件
 
 - Rust 1.88 以上がインストールされていること
+- Python 3.11 以上がインストールされていること（Jupyter Notebook 用）
 - just コマンド（オプション）: `cargo install just`
 
 ### インストール
+
+#### Rust 環境
 
 ```bash
 # Rust のインストール（未インストールの場合）
@@ -46,6 +49,36 @@ cargo build
 
 # テスト実行
 cargo test
+```
+
+#### Jupyter Notebook 環境
+
+```bash
+# Windows の場合
+setup_jupyter.bat
+
+# Linux/macOS の場合
+chmod +x setup_jupyter.sh
+./setup_jupyter.sh
+```
+
+または手動でセットアップ:
+
+```bash
+# Python 仮想環境を作成
+python -m venv venv
+
+# 仮想環境をアクティベート（Windows）
+venv\Scripts\activate
+
+# 仮想環境をアクティベート（Linux/macOS）
+source venv/bin/activate
+
+# パッケージをインストール
+pip install notebook pandas matplotlib seaborn scikit-learn
+
+# Jupyter カーネルを登録
+python -m ipykernel install --user --name=ml-tdd-rust --display-name="ML TDD Rust"
 ```
 
 ## 開発コマンド
@@ -181,8 +214,17 @@ cargo run --example iris_validate
 ### データ探索（Jupyter Notebook）
 
 ```bash
+# 仮想環境をアクティベート（Windows）
+venv\Scripts\activate
+
+# 仮想環境をアクティベート（Linux/macOS）
+source venv/bin/activate
+
 # Jupyter Notebook を起動
 jupyter notebook notebooks/iris_exploration.ipynb
+
+# または Jupyter Lab を使用
+jupyter lab notebooks/
 ```
 
 このノートブックには以下が含まれています：
@@ -191,6 +233,8 @@ jupyter notebook notebooks/iris_exploration.ipynb
 - ペアプロット
 - 相関行列
 - 品種ごとの特徴量分析
+
+**注意**: Jupyter を使用する前に、Python 仮想環境をアクティベートする必要があります。
 
 ## 学習の進め方
 
