@@ -1,6 +1,9 @@
-# Scala Scripts - Iris Classification
+# Scala Scripts - Machine Learning
 
-このディレクトリには、Irisデータセットの機械学習モデルを訓練・評価するためのスクリプトが含まれています。
+このディレクトリには、機械学習モデルを訓練・評価するためのスクリプトが含まれています。
+
+- **Iris Classification** (Chapter 4): Decision Tree による分類モデル
+- **Cinema Revenue Prediction** (Chapter 5): Linear Regression による回帰モデル
 
 ## スクリプト一覧
 
@@ -57,9 +60,62 @@ scala scripts/evaluate_iris.scala [model_path] [data_path]
 
 **注意:** Windows 環境では使用できません。代わりに Jupyter Notebook（`notebooks/iris_exploration.ipynb`）を使用してください。
 
+### 3. train_cinema.scala
+
+Cinemaデータセットを使用してLinear Regressionモデルを訓練します。
+
+**使用方法:**
+
+```bash
+# sbtから実行
+cd app/scala
+sbt "runMain ml.TrainCinema"
+
+# または、Scalaスクリプトとして実行（要: scala CLI）
+scala scripts/train_cinema.scala [data_path] [model_path]
+```
+
+**パラメータ:**
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/cinema.csv`）
+- `model_path` (オプション): モデルの保存先（デフォルト: `model/cinema_model`）
+
+**出力:**
+- 訓練データとテストデータの件数
+- テストセットでの R² スコア
+- RMSE（Root Mean Squared Error）
+- 保存されたモデル（Linux/Mac のみ）
+
+**注意:**
+- Windows 環境ではモデルの永続化が無効化されています（Hadoop の制約）
+- Linux/Mac 環境では自動的にモデルが保存されます
+- Windows では都度訓練する方式（約10秒で完了）
+
+### 4. evaluate_cinema.scala
+
+保存済みの Cinema モデルを評価します（Linux/Mac のみ）。
+
+**使用方法:**
+
+```bash
+# Scalaスクリプトとして実行（Linux/Mac）
+scala scripts/evaluate_cinema.scala [model_path] [data_path]
+```
+
+**パラメータ:**
+- `model_path` (オプション): モデルファイルのパス（デフォルト: `model/cinema_model`）
+- `data_path` (オプション): データファイルのパス（デフォルト: `data/cinema.csv`）
+
+**出力:**
+- R² Score（決定係数）
+- RMSE（Root Mean Squared Error）
+- MAE（Mean Absolute Error）
+- 予測結果のサンプル
+
+**注意:** Windows 環境では使用できません。代わりに Jupyter Notebook（`notebooks/cinema_exploration.ipynb`）を使用してください。
+
 ## 実行例
 
-### 訓練
+### Iris 訓練
 
 ```bash
 $ cd app/scala
@@ -83,6 +139,40 @@ Model training completed
 
 Evaluating model on test set...
 Test Accuracy: 97.83%
+
+==================================================
+Training Completed Successfully
+==================================================
+```
+
+### Cinema 訓練
+
+```bash
+$ cd app/scala
+$ sbt "runMain ml.TrainCinema"
+==================================================
+Cinema Revenue Prediction Model Training
+==================================================
+
+Loading data from data/cinema.csv...
+Loaded 200 records
+
+Encoding genre with OneHot encoding...
+Genre encoding completed
+
+Assembling features...
+Assembled 200 records (null values skipped)
+
+Splitting data into training and test sets...
+Training set: 140 records
+Test set: 60 records
+
+Training Linear Regression model...
+Model training completed
+
+Evaluating model on test set...
+Test R² Score: 82.45%
+Test RMSE: 15234.56
 
 ==================================================
 Training Completed Successfully
@@ -128,6 +218,16 @@ Windows環境でモデルの保存時に発生します。訓練と評価は正�
 
 ## 関連ファイル
 
+### Iris Classification (Chapter 4)
+
 - **Notebook**: `../notebooks/iris_exploration.ipynb` - Jupyter Notebookでのインタラクティブな探索
 - **Tests**: `../src/test/scala/ml/IrisClassifierSpec.scala` - ユニットテスト
-- **Main Code**: `../src/main/scala/ml/` - コアの実装
+- **Main Code**: `../src/main/scala/ml/IrisClassifier.scala` - コアの実装
+- **Training Script**: `../src/main/scala/ml/TrainIris.scala` - 訓練スクリプト
+
+### Cinema Revenue Prediction (Chapter 5)
+
+- **Notebook**: `../notebooks/cinema_exploration.ipynb` - Jupyter Notebookでのインタラクティブな探索
+- **Tests**: `../src/test/scala/ml/CinemaPredictorSpec.scala` - ユニットテスト
+- **Main Code**: `../src/main/scala/ml/CinemaPredictor.scala` - コアの実装
+- **Training Script**: `../src/main/scala/ml/TrainCinema.scala` - 訓練スクリプト

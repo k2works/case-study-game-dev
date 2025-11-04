@@ -38,11 +38,14 @@ app/scala/
 │       ├── IrisClassifierSpec.scala   # Iris テスト
 │       └── CinemaPredictorSpec.scala  # Cinema テスト
 ├── scripts/
-│   ├── train_iris.scala               # 訓練用スタンドアロンスクリプト
-│   ├── evaluate_iris.scala            # 評価用スタンドアロンスクリプト
+│   ├── train_iris.scala               # Iris 訓練用スタンドアロンスクリプト
+│   ├── evaluate_iris.scala            # Iris 評価用スタンドアロンスクリプト
+│   ├── train_cinema.scala             # Cinema 訓練用スタンドアロンスクリプト
+│   ├── evaluate_cinema.scala          # Cinema 評価用スタンドアロンスクリプト
 │   └── README.md                      # スクリプト詳細
 ├── notebooks/
-│   ├── iris_exploration.ipynb         # Jupyter Notebook
+│   ├── iris_exploration.ipynb         # Iris Jupyter Notebook
+│   ├── cinema_exploration.ipynb       # Cinema Jupyter Notebook
 │   └── SETUP.md                       # Notebook セットアップガイド
 ├── data/
 │   ├── iris.csv                       # Iris データセット
