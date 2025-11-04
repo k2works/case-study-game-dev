@@ -296,6 +296,27 @@ jupyter notebook notebooks/iris_rust_tutorial.ipynb
 - 実際の Rust コードは `cargo run --example` で実行してください
 - Jupyter を使用する前に、Python 仮想環境をアクティベートする必要があります
 
+### Cinema データ探索（Jupyter Notebook）
+
+```bash
+# Jupyter Notebook を起動
+jupyter notebook notebooks/cinema_exploration.ipynb
+```
+
+このノートブックには以下が含まれています：
+- データの基本統計と欠損値の確認
+- 特徴量の分布（ヒストグラム）
+- 相関行列と興行収入との関係性
+- 散布図による可視化
+- 原作有無による興行収入の比較
+- 線形回帰モデルの予測性能の考察
+
+**主な発見**:
+- SNS1, SNS2 と興行収入に正の相関
+- 原作ありの作品はやや高い興行収入の傾向
+- 欠損値は3つの特徴量に存在（平均値で補完）
+- 線形回帰で R² ≈ 0.79（訓練）、0.54（検証）
+
 ## 学習の進め方
 
 各章を順番に進めることをおすすめします：
