@@ -336,6 +336,7 @@
       <root url="file://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.7.10/kotlin-stdlib-1.7.10.jar" />
       <root url="file://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.7.10/kotlin-reflect-1.7.10.jar" />
       <root url="file://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.13.0/commons-lang3-3.13.0.jar" />
+      <root url="file://$USER_HOME$/Library/Caches/JetBrains/IntelliJIdea2025.2/kotlinNotebook/case-study-game-dev.5c01fc27/kernels/0.13.0-600-1/kotlin-jupyter-ide-classpath-shadowed-jar/kotlin-jupyter-ide-classpath-shadowed-0.13.0-600-1.jar" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -600,6 +601,7 @@
       <root url="file://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.7.10/kotlin-stdlib-1.7.10-sources.jar" />
       <root url="file://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.7.10/kotlin-reflect-1.7.10-sources.jar" />
       <root url="file://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.13.0/commons-lang3-3.13.0-sources.jar" />
+      <root url="file://$USER_HOME$/Library/Caches/JetBrains/IntelliJIdea2025.2/kotlinNotebook/case-study-game-dev.5c01fc27/kernels/0.13.0-600-1/kotlin-jupyter-script-classpath-shadowed-sources-jar/kotlin-jupyter-script-classpath-shadowed-0.13.0-600-1-sources.jar" />
     </SOURCES>
   </library>
 </component>
