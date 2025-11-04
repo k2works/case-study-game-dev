@@ -26,6 +26,7 @@ Apache Spark MLlib を使用した機械学習モデルのサンプルプロジ�
 ```
 app/scala/
 ├── build.sbt                          # ビルド定義
+├── .sbtopts                           # sbt Java オプション設定
 ├── run-with-java21.ps1                # Java 21 で実行する PowerShell スクリプト
 ├── src/
 │   ├── main/scala/ml/
@@ -244,6 +245,46 @@ sbt clean coverage test coverageReport
 **対処法**: モデルは約 10 秒で再訓練できるため、Windows では都度訓練する方式を採用
 
 ## トラブルシューティング
+
+### IntelliJ IDEA で Java モジュールアクセスエラー
+
+**エラー例**:
+```
+java.lang.IllegalAccessError: class org.apache.spark.storage.StorageUtils$ cannot access class sun.nio.ch.DirectBuffer
+```
+
+**原因**: IntelliJ IDEA が Java 17/21 のモジュールアクセス制限を適用している
+
+**解決方法 1: Run Configuration に VM options を追加**
+
+1. IntelliJ IDEA で Run → Edit Configurations を開く
+2. 該当するテストの設定を選択
+3. "Modify options" → "Add VM options" を選択
+4. 以下の VM options を追加:
+
+```
+--add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+--add-opens=java.base/java.nio=ALL-UNNAMED
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+--add-opens=java.base/java.util=ALL-UNNAMED
+--add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+--add-opens=java.base/java.net=ALL-UNNAMED
+--add-opens=java.base/java.io=ALL-UNNAMED
+--add-opens=java.base/javax.security.auth.x500=ALL-UNNAMED
+--add-opens=java.base/javax.security.auth=ALL-UNNAMED
+```
+
+**解決方法 2: sbt から実行（推奨）**
+
+sbt からの実行は自動的に適切な Java オプションが適用されます：
+
+```bash
+sbt test
+# または PowerShell スクリプトで
+powershell -ExecutionPolicy Bypass -File run-with-java21.ps1
+```
 
 ### IntelliJ IDEA で "value should is not a member of String" エラー
 
