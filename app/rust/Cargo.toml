@@ -2,7 +2,7 @@
 name = "ml-tdd-rust"
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.88"
 
 [dependencies]
 # 機械学習
@@ -11,8 +11,8 @@ linfa-trees = "0.7"
 linfa-linear = "0.7"
 
 # データ処理
-ndarray = "0.15"
-polars = { version = "0.36", features = ["lazy", "dtype-full"] }
+ndarray = "0.16"
+# polars = { version = "0.44", features = ["lazy"] }  # Windows環境でビルドエラー
 csv = "1.3"
 
 # シリアライゼーション
