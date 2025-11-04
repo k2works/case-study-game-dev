@@ -1,0 +1,30 @@
+# Rust
+/target/
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+*.profraw
+
+# Models (Windows環境ではモデル永続化が困難)
+model/
+*.bin
+*.model
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local

@@ -1,0 +1,39 @@
+[package]
+name = "ml-tdd-rust"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+
+[dependencies]
+# 機械学習
+linfa = "0.7"
+linfa-trees = "0.7"
+linfa-linear = "0.7"
+
+# データ処理
+ndarray = "0.15"
+polars = { version = "0.36", features = ["lazy", "dtype-full"] }
+csv = "1.3"
+
+# シリアライゼーション
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+
+# エラーハンドリング
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Web API（第8章で使用）
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+[dev-dependencies]
+approx = "0.5"  # 浮動小数点の比較
+
+[profile.release]
+opt-level = 3       # 最大最適化
+lto = true          # Link Time Optimization
+codegen-units = 1   # 最適化優先

@@ -1,0 +1,31 @@
+.PHONY: test lint fmt check all
+
+# すべてのチェックを実行
+all: fmt lint test
+
+# テスト実行
+test:
+	cargo test --verbose
+
+# リンター実行
+lint:
+	cargo clippy -- -D warnings
+
+# フォーマット
+fmt:
+	cargo fmt
+
+# フォーマットチェック
+check-fmt:
+	cargo fmt --check
+
+# カバレッジ
+coverage:
+	cargo tarpaulin --out Html --output-dir coverage
+
+# ビルド
+build:
+	cargo build --release
+
+# すべての品質チェック（CI用）
+ci: check-fmt lint test
