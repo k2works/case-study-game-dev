@@ -15,10 +15,10 @@ Rust で機械学習を学ぶプロジェクト。テスト駆動開発（TDD）
 
 ## 技術スタック
 
-- **Rust**: 1.70+
+- **Rust**: 1.88+
 - **linfa**: 機械学習アルゴリズム（scikit-learn 相当）
 - **ndarray**: 多次元配列（NumPy 相当）
-- **polars**: DataFrame 処理（pandas 相当）
+- **csv**: CSV ファイル処理
 - **axum**: Web API フレームワーク
 - **tokio**: 非同期ランタイム
 
@@ -26,13 +26,17 @@ Rust で機械学習を学ぶプロジェクト。テスト駆動開発（TDD）
 
 ### 前提条件
 
-- Rust 1.70 以上がインストールされていること
+- Rust 1.88 以上がインストールされていること
+- just コマンド（オプション）: `cargo install just`
 
 ### インストール
 
 ```bash
 # Rust のインストール（未インストールの場合）
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# just のインストール（オプション）
+cargo install just
 
 # プロジェクトディレクトリに移動
 cd app/rust
@@ -46,28 +50,48 @@ cargo test
 
 ## 開発コマンド
 
+### just を使用（推奨）
+
 ```bash
 # すべての品質チェックを実行
-make all
+just all
 
 # テスト実行
-make test
-cargo test
+just test
 
 # リンター実行
-make lint
-cargo clippy
+just lint
 
 # コードフォーマット
-make fmt
+just fmt
+
+# リリースビルド
+just build
+
+# CI チェック（フォーマット、リンター、テスト）
+just ci
+
+# クリーン
+just clean
+
+# ドキュメント生成
+just doc
+```
+
+### cargo を直接使用
+
+```bash
+# テスト実行
+cargo test --verbose
+
+# リンター実行
+cargo clippy -- -D warnings
+
+# コードフォーマット
 cargo fmt
 
 # リリースビルド
-make build
 cargo build --release
-
-# CI チェック（フォーマット、リンター、テスト）
-make ci
 ```
 
 ## プロジェクト構造
@@ -78,7 +102,7 @@ app/rust/
 ├── .cargo/
 │   └── config.toml      # cargo 設定
 ├── rustfmt.toml         # フォーマッター設定
-├── Makefile             # 開発タスク定義
+├── justfile             # 開発タスク定義（just コマンド用）
 ├── src/
 │   ├── lib.rs           # ライブラリルート
 │   ├── main.rs          # API サーバーエントリポイント
