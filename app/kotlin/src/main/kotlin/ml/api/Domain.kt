@@ -13,7 +13,7 @@ import kotlin.math.pow
 /**
  * Iris 分類ドメイン
  */
-class IrisDomain(private val modelPath: String = "model/iris.bin") {
+class IrisDomain(private val modelPath: String = "model/iris_model.ser") {
     var model: DecisionTree? = null
         private set
 
@@ -63,7 +63,7 @@ class IrisDomain(private val modelPath: String = "model/iris.bin") {
 /**
  * Cinema 売上予測ドメイン
  */
-class CinemaDomain(private val modelPath: String = "model/cinema.bin") {
+class CinemaDomain(private val modelPath: String = "model/cinema_model.ser") {
     var model: LinearModel? = null
         private set
 
@@ -94,7 +94,7 @@ class CinemaDomain(private val modelPath: String = "model/cinema.bin") {
 /**
  * Survived 生存予測ドメイン
  */
-class SurvivedDomain(private val modelPath: String = "model/survived.bin") {
+class SurvivedDomain(private val modelPath: String = "model/survived_model.ser") {
     var model: DecisionTree? = null
         private set
 
