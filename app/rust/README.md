@@ -107,13 +107,90 @@ app/rust/
 │   ├── lib.rs           # ライブラリルート
 │   ├── main.rs          # API サーバーエントリポイント
 │   ├── models/          # 機械学習モデル
+│   │   ├── mod.rs       # モデルモジュール
+│   │   └── iris.rs      # Iris 分類器
 │   ├── api/             # API 層（Chapter 8）
 │   ├── utils/           # ユーティリティ
 │   └── error.rs         # エラー型定義
+├── examples/            # サンプルスクリプト
+│   ├── iris_train.rs    # Iris 訓練スクリプト
+│   └── iris_validate.rs # Iris 検証スクリプト（K-Fold）
+├── notebooks/           # Jupyter Notebook
+│   └── iris_exploration.ipynb  # Iris データ探索
 ├── tests/               # 統合テスト
 ├── data/                # データセット
+│   └── iris.csv         # Iris データセット
 └── README.md            # このファイル
 ```
+
+## 実行例
+
+### Iris 分類モデルの訓練
+
+```bash
+# 訓練スクリプトを実行
+cargo run --example iris_train
+```
+
+出力例:
+```
+=== Iris 分類モデルの訓練 ===
+
+1. データ読み込み中...
+   データ件数: 150 件
+   特徴量数: 4 個
+   訓練データ: 120 件
+   検証データ: 30 件
+
+2. モデル訓練中...
+   訓練完了
+
+3. モデル評価:
+   訓練データ精度: 98.33%
+   検証データ精度: 70.00%
+
+4. サンプル予測:
+   ✓ 実際: virginica    | 予測: virginica
+   ✓ 実際: virginica    | 予測: virginica
+   ...
+```
+
+### K-Fold 交差検証
+
+```bash
+# 交差検証スクリプトを実行
+cargo run --example iris_validate
+```
+
+出力例:
+```
+=== Iris 分類モデルの K-Fold 交差検証 ===
+
+1. データ読み込み中...
+   データ件数: 150 件
+
+2. 5-Fold 交差検証実行中...
+   Fold 1: 精度 = 100.00% (訓練: 120 件, テスト: 30 件)
+   Fold 2: 精度 = 93.33% (訓練: 120 件, テスト: 30 件)
+   ...
+
+3. 結果:
+   平均精度: 88.67% (± 10.87%)
+```
+
+### データ探索（Jupyter Notebook）
+
+```bash
+# Jupyter Notebook を起動
+jupyter notebook notebooks/iris_exploration.ipynb
+```
+
+このノートブックには以下が含まれています：
+- データの基本統計
+- 特徴量の分布（ヒストグラム、箱ひげ図）
+- ペアプロット
+- 相関行列
+- 品種ごとの特徴量分析
 
 ## 学習の進め方
 
