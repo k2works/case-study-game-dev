@@ -1,5 +1,6 @@
 //! Rust Machine Learning with TDD
 
+pub mod api;
 pub mod error;
 pub mod models;
 

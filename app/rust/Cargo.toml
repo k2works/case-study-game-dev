@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.88"
 
+[[bin]]
+name = "ml-api-server"
+path = "src/main.rs"
+
 [dependencies]
 # 機械学習
 linfa = "0.7"
@@ -29,9 +33,18 @@ axum = "0.7"
 tokio = { version = "1", features = ["full"] }
 tower = "0.4"
 tower-http = { version = "0.5", features = ["cors", "trace"] }
+validator = { version = "0.16", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# OpenAPI / Swagger UI
+utoipa = { version = "4", features = ["axum_extras", "chrono"] }
+utoipa-swagger-ui = { version = "6", features = ["axum"] }
 
 [dev-dependencies]
 approx = "0.5"  # 浮動小数点の比較
+http-body-util = "0.1"  # HTTP ボディ処理
+tower = { version = "0.4", features = ["util"] }  # テスト用
 
 [profile.release]
 opt-level = 3       # 最大最適化

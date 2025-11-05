@@ -21,6 +21,7 @@ Rust で機械学習を学ぶプロジェクト。テスト駆動開発（TDD）
 - **csv**: CSV ファイル処理
 - **axum**: Web API フレームワーク
 - **tokio**: 非同期ランタイム
+- **utoipa**: OpenAPI / Swagger UI ドキュメント自動生成
 
 ## セットアップ
 
@@ -85,12 +86,27 @@ python -m ipykernel install --user --name=ml-tdd-rust --display-name="ML TDD Rus
 
 ### just を使用（推奨）
 
+#### 利用可能なタスク一覧を表示
+
 ```bash
-# すべての品質チェックを実行
+# すべてのタスクを表示
+just --list
+
+# または単に
+just
+```
+
+#### 品質チェック
+
+```bash
+# すべての品質チェックを実行（フォーマット、リンター、テスト）
 just all
 
-# テスト実行
+# テスト実行（ユニットテスト + 統合テスト）
 just test
+
+# API 統合テストのみ実行
+just test-api
 
 # リンター実行
 just lint
@@ -98,11 +114,71 @@ just lint
 # コードフォーマット
 just fmt
 
+# CI チェック（フォーマット、リンター、テスト）
+just ci
+```
+
+#### API サーバー
+
+```bash
+# API サーバーを起動（ログ表示あり）
+just serve
+
+# または
+just api
+
+# リリースビルドで起動
+just serve-release
+
+# ヘルスチェック（別ターミナルで実行）
+just api-health
+
+# すべての API エンドポイントをテスト（別ターミナルで実行）
+just api-test-all
+```
+
+**Swagger UI をブラウザで開く:**
+```bash
+# Windows
+just api-docs-windows
+
+# macOS
+just api-docs-mac
+
+# Linux
+just api-docs-linux
+```
+
+#### サンプルスクリプト実行
+
+```bash
+# Iris 訓練
+just example-iris-train
+
+# Iris K-Fold 検証
+just example-iris-validate
+
+# Cinema 訓練
+just example-cinema-train
+
+# Survived 訓練
+just example-survived-train
+
+# Boston 訓練
+just example-boston-train
+
+# すべてのサンプルスクリプトを実行
+just examples-all
+```
+
+#### その他
+
+```bash
 # リリースビルド
 just build
 
-# CI チェック（フォーマット、リンター、テスト）
-just ci
+# デバッグビルド
+just build-debug
 
 # クリーン
 just clean
@@ -570,6 +646,348 @@ jupyter notebook notebooks/boston_exploration.ipynb
 - 犯罪率が低いエリアほど住宅価格が高い
 - 欠損値はなし
 - 線形回帰で R² ≈ 0.76（訓練・検証とも）
+
+## Web API サーバーの起動（Chapter 8）
+
+### サーバー起動
+
+#### 方法1: 起動スクリプトを使用（推奨）
+
+```bash
+# Windows の場合
+start_api_server.bat
+
+# Linux/macOS の場合
+chmod +x start_api_server.sh
+./start_api_server.sh
+```
+
+起動スクリプトは以下を自動で行います：
+- 必要なデータファイルの存在確認
+- ログレベルの設定（RUST_LOG 環境変数）
+- API サーバーの起動
+
+#### 方法2: cargo コマンドを直接使用
+
+```bash
+# ログを表示するために環境変数を設定
+# Windows (PowerShell)
+$env:RUST_LOG="ml_tdd_rust=info,tower_http=debug"
+
+# Windows (CMD)
+set RUST_LOG=ml_tdd_rust=info,tower_http=debug
+
+# Linux/macOS
+export RUST_LOG=ml_tdd_rust=info,tower_http=debug
+
+# API サーバーをビルドして起動
+cargo run --bin ml-api-server
+```
+
+サーバーが起動すると、以下のように表示されます：
+
+```
+Machine Learning API サーバー起動: http://127.0.0.1:3000
+Swagger UI: http://127.0.0.1:3000/swagger-ui
+OpenAPI Spec: http://127.0.0.1:3000/api-docs/openapi.json
+ヘルスチェック: http://127.0.0.1:3000/health
+Iris 分類: POST http://127.0.0.1:3000/predict/iris
+Cinema 予測: POST http://127.0.0.1:3000/predict/cinema
+Survived 予測: POST http://127.0.0.1:3000/predict/survived
+Boston 予測: POST http://127.0.0.1:3000/predict/boston
+```
+
+サーバーが起動すると、以下のエンドポイントが `http://127.0.0.1:3000` で利用可能になります。
+
+### Swagger UI でのドキュメント確認
+
+サーバー起動後、ブラウザで以下の URL にアクセスすると、インタラクティブな API ドキュメントを確認できます：
+
+```
+http://127.0.0.1:3000/swagger-ui
+```
+
+Swagger UI では以下のことが可能です：
+- すべての API エンドポイントの一覧表示
+- 各エンドポイントの詳細（パラメータ、レスポンス）確認
+- ブラウザから直接 API をテスト実行
+- リクエスト/レスポンスのスキーマ確認
+- curl コマンドの自動生成
+
+**OpenAPI 仕様 JSON**:
+- `http://127.0.0.1:3000/api-docs/openapi.json`
+
+### API エンドポイント
+
+#### ヘルスチェック
+
+```bash
+curl http://127.0.0.1:3000/health
+```
+
+レスポンス例:
+```json
+{
+  "status": "OK",
+  "version": "0.1.0",
+  "models": ["iris", "cinema", "survived", "boston"]
+}
+```
+
+#### Iris 分類予測
+
+```bash
+curl -X POST http://127.0.0.1:3000/predict/iris \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sepal_length": 5.1,
+    "sepal_width": 3.5,
+    "petal_length": 1.4,
+    "petal_width": 0.2
+  }'
+```
+
+レスポンス例:
+```json
+{
+  "species": "setosa",
+  "confidence": 0.95
+}
+```
+
+#### Cinema 興行収入予測
+
+```bash
+curl -X POST http://127.0.0.1:3000/predict/cinema \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sns1": 50,
+    "sns2": 30,
+    "actor": 70,
+    "original": 1
+  }'
+```
+
+レスポンス例:
+```json
+{
+  "revenue": 1234.56,
+  "unit": "百万円"
+}
+```
+
+#### Survived 生存予測
+
+```bash
+curl -X POST http://127.0.0.1:3000/predict/survived \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pclass": 1,
+    "sex": "female",
+    "age": 29.0,
+    "sibsp": 0,
+    "parch": 0,
+    "fare": 211.3375
+  }'
+```
+
+レスポンス例:
+```json
+{
+  "survived": true,
+  "probability": 0.75
+}
+```
+
+#### Boston 住宅価格予測
+
+```bash
+curl -X POST http://127.0.0.1:3000/predict/boston \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rm": 6.575,
+    "lstat": 4.98,
+    "ptratio": 15.3,
+    "crime": "low"
+  }'
+```
+
+レスポンス例:
+```json
+{
+  "price": 28.5,
+  "unit": "千ドル"
+}
+```
+
+**crime パラメータの値**:
+- `"very_low"`: 犯罪率が非常に低い
+- `"low"`: 犯罪率が低い
+- `"high"`: 犯罪率が高い
+
+### エラーレスポンス
+
+バリデーションエラーの例:
+```json
+{
+  "error": "ValidationError",
+  "message": "sepal_length: Validation error: range [{\"min\": 0.0, \"max\": 10.0}]"
+}
+```
+
+### API の特徴
+
+- **フレームワーク**: Axum 0.7（高速・型安全な Web フレームワーク）
+- **API ドキュメント**: OpenAPI 3.0 / Swagger UI による自動生成ドキュメント
+- **バリデーション**: validator クレートによるリクエストバリデーション
+- **CORS**: すべてのオリジンからのアクセスを許可（開発環境）
+- **エラーハンドリング**: HTTP ステータスコードと JSON エラーレスポンス
+- **ロギング**: tracing クレートによる構造化ログ
+- **非同期**: Tokio ランタイムによる非同期処理
+
+### 統合テスト
+
+API の統合テストを実行:
+
+```bash
+# 統合テストのみ実行
+cargo test --test api_test
+
+# すべてのテスト（ユニットテスト + 統合テスト）を実行
+cargo test
+```
+
+## トラブルシューティング
+
+### サーバーが起動しない / ブラウザでアクセスできない
+
+#### 1. ログが表示されない
+
+**問題**: サーバーを起動しても何も表示されない
+
+**解決方法**: 環境変数 `RUST_LOG` を設定してください
+
+```bash
+# Windows (PowerShell)
+$env:RUST_LOG="ml_tdd_rust=info,tower_http=debug"
+cargo run --bin ml-api-server
+
+# Windows (CMD)
+set RUST_LOG=ml_tdd_rust=info,tower_http=debug
+cargo run --bin ml-api-server
+
+# または起動スクリプトを使用
+start_api_server.bat
+```
+
+#### 2. データファイルが見つからない
+
+**問題**: `No such file or directory` エラーが出る
+
+**解決方法**: カレントディレクトリを確認してください
+
+```bash
+# 正しいディレクトリにいることを確認
+pwd  # または Windows では cd
+
+# app/rust ディレクトリに移動
+cd app/rust
+
+# data ディレクトリの存在を確認
+ls data/  # または Windows では dir data
+```
+
+#### 3. Swagger UI にアクセスできない
+
+**問題**: ブラウザで http://127.0.0.1:3000/swagger-ui にアクセスできない
+
+**解決方法**:
+
+1. **サーバーが起動しているか確認**
+
+```bash
+# 別のターミナルで実行
+curl http://127.0.0.1:3000/health
+
+# 以下のレスポンスが返ってくれば OK
+# {"status":"OK","version":"0.1.0","models":["iris","cinema","survived","boston"]}
+```
+
+2. **正しい URL にアクセスしているか確認**
+
+- ✅ 正しい: `http://127.0.0.1:3000/swagger-ui`
+- ✅ 正しい: `http://localhost:3000/swagger-ui`
+- ❌ 間違い: `https://` (http を使用)
+- ❌ 間違い: ポート番号なし
+
+3. **ブラウザのキャッシュをクリア**
+
+- ブラウザの再読み込み: `Ctrl+F5` (Windows) または `Cmd+Shift+R` (Mac)
+- プライベートモード / シークレットモードで開く
+
+4. **ファイアウォールの確認 (Windows)**
+
+```powershell
+# PowerShell を管理者権限で実行
+# ファイアウォールルールを確認
+Get-NetFirewallRule | Where-Object {$_.DisplayName -like "*ml-api-server*"}
+
+# 必要に応じて例外を追加
+New-NetFirewallRule -DisplayName "ML API Server" -Direction Inbound -LocalPort 3000 -Protocol TCP -Action Allow
+```
+
+#### 4. ポート 3000 が既に使用されている
+
+**問題**: `Address already in use` エラー
+
+**解決方法**: ポートを使用しているプロセスを確認して終了
+
+```bash
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <プロセスID> /F
+
+# Linux/macOS
+lsof -i :3000
+kill <プロセスID>
+```
+
+または、別のポートを使用するように `src/main.rs` を編集:
+
+```rust
+// 3000 を別のポート（例: 8080）に変更
+let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+```
+
+#### 5. API が応答しない
+
+**問題**: Swagger UI は開けるが、API の実行がタイムアウトする
+
+**考えられる原因**:
+- データファイルが大きすぎる
+- モデルの訓練に時間がかかっている（毎回訓練している簡易実装のため）
+
+**解決方法**:
+- ブラウザのコンソール（F12）でエラーメッセージを確認
+- サーバーのログで詳細を確認
+- タイムアウト設定を増やす
+
+### デバッグ方法
+
+詳細なログを表示するには:
+
+```bash
+# より詳細なログレベルに設定
+export RUST_LOG=debug  # または Windows: set RUST_LOG=debug
+cargo run --bin ml-api-server
+```
+
+特定のモジュールのみログを表示:
+
+```bash
+export RUST_LOG=ml_tdd_rust=trace,axum=debug,tower_http=debug
+cargo run --bin ml-api-server
+```
 
 ## 学習の進め方
 

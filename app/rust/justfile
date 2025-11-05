@@ -1,37 +1,152 @@
-# すべてのチェックを実行
+# デフォルトタスク（ヘルプ表示）
+default:
+    @just --list
+
+# すべてのチェックを実行（フォーマット、リンター、テスト）
 all: fmt lint test
 
-# テスト実行
+# テスト実行（ユニットテスト + 統合テスト）
 test:
     cargo test --verbose
 
-# リンター実行
+# API 統合テストのみ実行
+test-api:
+    cargo test --test api_test --verbose
+
+# リンター実行（すべての警告をエラーとして扱う）
 lint:
     cargo clippy -- -D warnings
 
-# フォーマット
+# フォーマット（自動修正）
 fmt:
     cargo fmt
 
-# フォーマットチェック
+# フォーマットチェック（CI 用、修正なし）
 check-fmt:
     cargo fmt --check
 
-# カバレッジ
+# カバレッジ測定（HTML レポート生成）
 coverage:
     cargo tarpaulin --out Html --output-dir coverage
 
-# ビルド
+# リリースビルド
 build:
     cargo build --release
 
-# すべての品質チェック（CI用）
+# デバッグビルド
+build-debug:
+    cargo build
+
+# すべての品質チェック（CI 用）
 ci: check-fmt lint test
 
-# クリーン
+# クリーン（ビルド成果物を削除）
 clean:
     cargo clean
 
-# ドキュメント生成
+# ドキュメント生成（ブラウザで開く）
 doc:
     cargo doc --no-deps --open
+
+# ============================================
+# API サーバー関連タスク
+# ============================================
+
+# API サーバーを起動（ログ表示あり）
+serve:
+    @echo "API サーバーを起動しています..."
+    @echo "Swagger UI: http://127.0.0.1:3000/swagger-ui"
+    @echo ""
+    RUST_LOG=ml_tdd_rust=info,tower_http=debug cargo run --bin ml-api-server
+
+# API サーバーを起動（エイリアス）
+api: serve
+
+# API サーバーをリリースビルドで起動
+serve-release:
+    @echo "API サーバーを起動しています（リリースビルド）..."
+    @echo "Swagger UI: http://127.0.0.1:3000/swagger-ui"
+    @echo ""
+    cargo build --release --bin ml-api-server
+    RUST_LOG=ml_tdd_rust=info,tower_http=debug ./target/release/ml-api-server
+
+# ヘルスチェック（curl で確認）
+api-health:
+    @echo "API ヘルスチェック実行中..."
+    @curl -s http://127.0.0.1:3000/health | jq '.' || curl -s http://127.0.0.1:3000/health
+
+# Swagger UI をブラウザで開く（Windows）
+api-docs-windows:
+    @echo "Swagger UI を開いています..."
+    @start http://127.0.0.1:3000/swagger-ui
+
+# Swagger UI をブラウザで開く（macOS）
+api-docs-mac:
+    @echo "Swagger UI を開いています..."
+    @open http://127.0.0.1:3000/swagger-ui
+
+# Swagger UI をブラウザで開く（Linux）
+api-docs-linux:
+    @echo "Swagger UI を開いています..."
+    @xdg-open http://127.0.0.1:3000/swagger-ui
+
+# すべての API エンドポイントをテスト（curl）
+api-test-all:
+    @echo "=== Iris 分類テスト ==="
+    @curl -s -X POST http://127.0.0.1:3000/predict/iris \
+        -H "Content-Type: application/json" \
+        -d '{"sepal_length":5.1,"sepal_width":3.5,"petal_length":1.4,"petal_width":0.2}' | jq '.'
+    @echo ""
+    @echo "=== Cinema 興行収入予測テスト ==="
+    @curl -s -X POST http://127.0.0.1:3000/predict/cinema \
+        -H "Content-Type: application/json" \
+        -d '{"sns1":50,"sns2":30,"actor":70,"original":1}' | jq '.'
+    @echo ""
+    @echo "=== Survived 生存予測テスト ==="
+    @curl -s -X POST http://127.0.0.1:3000/predict/survived \
+        -H "Content-Type: application/json" \
+        -d '{"pclass":1,"sex":"female","age":29.0,"sibsp":0,"parch":0,"fare":211.3375}' | jq '.'
+    @echo ""
+    @echo "=== Boston 住宅価格予測テスト ==="
+    @curl -s -X POST http://127.0.0.1:3000/predict/boston \
+        -H "Content-Type: application/json" \
+        -d '{"rm":6.575,"lstat":4.98,"ptratio":15.3,"crime":"low"}' | jq '.'
+
+# ============================================
+# サンプルスクリプト実行タスク
+# ============================================
+
+# Iris 訓練スクリプトを実行
+example-iris-train:
+    cargo run --example iris_train
+
+# Iris K-Fold 検証スクリプトを実行
+example-iris-validate:
+    cargo run --example iris_validate
+
+# Cinema 訓練スクリプトを実行
+example-cinema-train:
+    cargo run --example cinema_train
+
+# Cinema K-Fold 検証スクリプトを実行
+example-cinema-validate:
+    cargo run --example cinema_validate
+
+# Survived 訓練スクリプトを実行
+example-survived-train:
+    cargo run --example survived_train
+
+# Survived K-Fold 検証スクリプトを実行
+example-survived-validate:
+    cargo run --example survived_validate
+
+# Boston 訓練スクリプトを実行
+example-boston-train:
+    cargo run --example boston_train
+
+# Boston K-Fold 検証スクリプトを実行
+example-boston-validate:
+    cargo run --example boston_validate
+
+# すべてのサンプルスクリプトを実行
+examples-all: example-iris-train example-cinema-train example-survived-train example-boston-train
