@@ -38,8 +38,7 @@ fn main() -> Result<()> {
     println!("3. モデル評価:");
 
     // 訓練データでの評価
-    let (train_r2, train_mae, train_rmse) =
-        predictor.evaluate(&train_features, &train_targets)?;
+    let (train_r2, train_mae, train_rmse) = predictor.evaluate(&train_features, &train_targets)?;
     println!("   訓練データ:");
     println!("     R² スコア: {:.4}", train_r2);
     println!("     MAE: {:.2}", train_mae);

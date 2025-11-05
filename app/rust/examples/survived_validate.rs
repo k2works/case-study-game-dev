@@ -88,11 +88,7 @@ fn main() -> Result<()> {
     );
     println!(
         "   最高精度: {:.2}%",
-        accuracies
-            .iter()
-            .cloned()
-            .fold(f64::NEG_INFINITY, f64::max)
-            * 100.0
+        accuracies.iter().cloned().fold(f64::NEG_INFINITY, f64::max) * 100.0
     );
     println!(
         "   最低精度: {:.2}%",
