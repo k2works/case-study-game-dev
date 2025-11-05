@@ -3,10 +3,14 @@
 .idea/tasks.xml
 .idea/usage.statistics.xml
 .idea/shelf
+.idea/gradle.xml
+.idea/libraries/
+.idea/misc.xml
 
-# Project structure files are tracked
+# Project structure files are tracked (selective)
 !.idea/
-!*.iml
+# Note: *.iml files are now ignored (removed from whitelist)
+*.iml
 
 ### Node template
 # Logs
@@ -170,8 +174,6 @@ app/kotlin/.kover/
 app/kotlin/test-results/
 app/kotlin/test-output/
 
-# IDE - misc files
-.idea/misc.xml
 ### Jupyter Notebook
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
