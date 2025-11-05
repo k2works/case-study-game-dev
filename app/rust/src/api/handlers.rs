@@ -2,9 +2,15 @@
 //!
 //! 各エンドポイントのハンドラ関数を提供
 
-use super::schema::*;
+use super::schema::{
+    BostonRequest, BostonResponse, CinemaRequest, CinemaResponse, HealthResponse, IrisRequest,
+    IrisResponse, SurvivedRequest, SurvivedResponse,
+};
 use crate::error::Result;
-use crate::models::{boston::BostonPredictor, cinema::CinemaPredictor, iris::IrisClassifier, survived::SurvivedClassifier};
+use crate::models::{
+    boston::BostonPredictor, cinema::CinemaPredictor, iris::IrisClassifier,
+    survived::SurvivedClassifier,
+};
 use axum::{extract::Json, http::StatusCode};
 use ndarray::Array2;
 use validator::Validate;
@@ -63,7 +69,8 @@ pub async fn predict_iris(
 
     // モデルで予測（簡易実装：毎回訓練）
     let classifier_loader = IrisClassifier::new();
-    let (train_features, train_targets) = classifier_loader.load_data(std::path::Path::new("data/iris.csv"))?;
+    let (train_features, train_targets) =
+        classifier_loader.load_data(std::path::Path::new("data/iris.csv"))?;
 
     let mut classifier = IrisClassifier::new();
     classifier.train(&train_features, &train_targets)?;
@@ -105,10 +112,10 @@ pub async fn predict_cinema(
     let features = Array2::from_shape_vec(
         (1, 4),
         vec![
-            payload.sns1 as f64,
-            payload.sns2 as f64,
-            payload.actor as f64,
-            payload.original as f64,
+            f64::from(payload.sns1),
+            f64::from(payload.sns2),
+            f64::from(payload.actor),
+            f64::from(payload.original),
         ],
     )
     .map_err(|e| crate::error::Error::Model(format!("Failed to create feature array: {e}")))?;
@@ -163,11 +170,11 @@ pub async fn predict_survived(
     let features = Array2::from_shape_vec(
         (1, 6),
         vec![
-            payload.pclass as f64,
+            f64::from(payload.pclass),
             sex_encoded,
             payload.age,
-            payload.sibsp as f64,
-            payload.parch as f64,
+            f64::from(payload.sibsp),
+            f64::from(payload.parch),
             payload.fare,
         ],
     )
@@ -226,7 +233,13 @@ pub async fn predict_boston(
     // 特徴量を準備（5つの基本特徴量）
     let features = Array2::from_shape_vec(
         (1, 5),
-        vec![payload.rm, payload.lstat, payload.ptratio, crime_low, crime_high],
+        vec![
+            payload.rm,
+            payload.lstat,
+            payload.ptratio,
+            crime_low,
+            crime_high,
+        ],
     )
     .map_err(|e| crate::error::Error::Model(format!("Failed to create feature array: {e}")))?;
 

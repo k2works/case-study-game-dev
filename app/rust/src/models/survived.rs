@@ -101,18 +101,20 @@ impl SurvivedClassifier {
         let features_array = Array2::from_shape_vec((n_samples, 6), features)
             .map_err(|e| Error::Model(format!("Failed to create feature array: {e}")))?;
 
-        let targets_array =
-            Array1::from_vec(survived_values.iter().map(|&x| x as usize).collect());
+        // Survived は 0 または 1 のみなので、安全に usize に変換
+        #[allow(clippy::cast_sign_loss)]
+        let targets_array = Array1::from_vec(survived_values.iter().map(|&x| x as usize).collect());
 
         Ok((features_array, targets_array))
     }
 
     /// 性別を数値にエンコード（male=1.0, female=0.0）
+    #[allow(clippy::match_same_arms)]
     fn encode_sex(sex: &str) -> f64 {
         match sex.trim().to_lowercase().as_str() {
             "male" => 1.0,
             "female" => 0.0,
-            _ => 1.0, // デフォルトは male
+            _ => 1.0, // デフォルトは male（意図的に male と同じ値）
         }
     }
 
@@ -130,9 +132,8 @@ impl SurvivedClassifier {
     /// モデルを訓練
     pub fn train(&mut self, features: &Array2<f64>, targets: &Array1<usize>) -> Result<()> {
         // linfa の Dataset を作成
-        let dataset = Dataset::new(features.clone(), targets.clone()).with_feature_names(vec![
-            "pclass", "sex", "age", "sibsp", "parch", "fare",
-        ]);
+        let dataset = Dataset::new(features.clone(), targets.clone())
+            .with_feature_names(vec!["pclass", "sex", "age", "sibsp", "parch", "fare"]);
 
         // Decision Tree モデルを訓練
         let model = DecisionTree::params()
@@ -285,6 +286,10 @@ mod tests {
         // 精度は 0.0 から 1.0 の範囲
         assert!(accuracy >= 0.0 && accuracy <= 1.0);
         // 訓練データなので、ある程度の精度を期待
-        assert!(accuracy > 0.5, "Accuracy should be > 0.5, found: {}", accuracy);
+        assert!(
+            accuracy > 0.5,
+            "Accuracy should be > 0.5, found: {}",
+            accuracy
+        );
     }
 }

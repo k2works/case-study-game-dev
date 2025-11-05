@@ -18,18 +18,20 @@ pub enum CrimeLevel {
 }
 
 impl CrimeLevel {
-    /// 文字列から CrimeLevel に変換
+    /// 文字列から `CrimeLevel` に変換
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(s: &str) -> Result<Self> {
         match s.trim().to_lowercase().as_str() {
             "very_low" => Ok(CrimeLevel::VeryLow),
             "low" => Ok(CrimeLevel::Low),
             "high" => Ok(CrimeLevel::High),
-            _ => Err(Error::Model(format!("Invalid crime level: {}", s))),
+            _ => Err(Error::Model(format!("Invalid crime level: {s}"))),
         }
     }
 
     /// ダミー変数化（VeryLow を基準 = 0 とする）
     /// Low = [1, 0], High = [0, 1]
+    #[must_use]
     pub fn to_dummies(self) -> (f64, f64) {
         match self {
             CrimeLevel::VeryLow => (0.0, 0.0),
@@ -48,6 +50,7 @@ pub struct StandardScaler {
 
 impl StandardScaler {
     /// 新しい `StandardScaler` を作成
+    #[must_use]
     pub fn new() -> Self {
         Self {
             mean: Array1::zeros(0),
@@ -62,6 +65,8 @@ impl StandardScaler {
     }
 
     /// データを標準化（Z-score normalization）
+    #[must_use]
+    #[allow(clippy::op_ref)]
     pub fn transform(&self, data: &Array2<f64>) -> Array2<f64> {
         let mean_broadcast = self.mean.broadcast(data.dim()).unwrap();
         let std_broadcast = self.std.broadcast(data.dim()).unwrap();
@@ -69,6 +74,8 @@ impl StandardScaler {
     }
 
     /// 標準化されたデータを元のスケールに戻す
+    #[must_use]
+    #[allow(clippy::op_ref)]
     pub fn inverse_transform(&self, data: &Array2<f64>) -> Array2<f64> {
         let mean_broadcast = self.mean.broadcast(data.dim()).unwrap();
         let std_broadcast = self.std.broadcast(data.dim()).unwrap();
@@ -155,7 +162,7 @@ impl BostonPredictor {
         // CRIME をダミー変数化
         let crime_dummies: Vec<(f64, f64)> = crime_values
             .iter()
-            .map(|s| CrimeLevel::from_str(s).map(|c| c.to_dummies()))
+            .map(|s| CrimeLevel::from_str(s).map(CrimeLevel::to_dummies))
             .collect::<Result<Vec<_>>>()?;
 
         let n_samples = rm_filled.len();
@@ -191,8 +198,8 @@ impl BostonPredictor {
 
     /// 特徴量エンジニアリング（2乗項、交互作用項を追加）
     ///
-    /// 入力: [RM, LSTAT, PTRATIO, CRIME_LOW, CRIME_HIGH]
-    /// 出力: [RM, LSTAT, PTRATIO, CRIME_LOW, CRIME_HIGH, RM^2, RM*LSTAT]
+    /// 入力: [RM, LSTAT, PTRATIO, `CRIME_LOW`, `CRIME_HIGH`]
+    /// 出力: [RM, LSTAT, PTRATIO, `CRIME_LOW`, `CRIME_HIGH`, RM^2, RM*LSTAT]
     pub fn engineer_features(features: &Array2<f64>) -> Result<Array2<f64>> {
         let n_samples = features.nrows();
 

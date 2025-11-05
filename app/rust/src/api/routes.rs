@@ -2,7 +2,15 @@
 //!
 //! エンドポイントのルーティング設定
 
-use super::{handlers, schema::*};
+#![allow(clippy::needless_for_each)]
+
+use super::{
+    handlers,
+    schema::{
+        BostonRequest, BostonResponse, CinemaRequest, CinemaResponse, ErrorResponse,
+        HealthResponse, IrisRequest, IrisResponse, SurvivedRequest, SurvivedResponse,
+    },
+};
 use axum::{
     routing::{get, post},
     Router,
@@ -11,7 +19,8 @@ use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-/// OpenAPI ドキュメント定義
+/// `OpenAPI` ドキュメント定義
+#[allow(clippy::needless_for_each)]
 #[derive(OpenApi)]
 #[openapi(
     paths(
